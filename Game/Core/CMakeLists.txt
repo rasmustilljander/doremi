@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.2.1)
 
 # Root project settings
-set(PROJECT_NAME Graphics)
+set(PROJECT_NAME GameCore)
 project(${PROJECT_NAME})
 
 # Set the files used in the target
@@ -11,7 +11,7 @@ file(GLOB_RECURSE SOURCES Source/ *.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
-#set(LIBRARIES ${EXTERNAL_LIBRARIES_ALL})
+set(LIBRARIES ${EXTERNAL_LIBRARIES_ALL})
 
 # Add the target
 add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
