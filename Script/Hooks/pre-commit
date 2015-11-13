@@ -1,0 +1,8 @@
+#! /bin/bash
+echo "Attempt to run auto formatting on modified files."
+cd $SSP_CODE_HOME
+if [ `git diff --cached --name-only | grep ".cpp\|.hpp" | xargs External/clang-format/clang-format -i` ]
+then
+  echo "Attempt done. Check files for satisfying result."
+  exit 0
+fi
