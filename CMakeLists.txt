@@ -80,8 +80,8 @@ include_directories(${EXTERNAL_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Add subdirectories
-add_subdirectory(Engine)
-add_subdirectory(Game)
+add_subdirectory(Do-Re-Mi)
+add_subdirectory(Do-Re-Mi-Engine)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL 
