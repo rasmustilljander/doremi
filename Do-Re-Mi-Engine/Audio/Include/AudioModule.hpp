@@ -1,3 +1,4 @@
+#pragma once
 #include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModule.hpp>
 #include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
 
