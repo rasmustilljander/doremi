@@ -82,6 +82,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 # Add subdirectories
 add_subdirectory(Do-Re-Mi)
 add_subdirectory(Do-Re-Mi-Engine)
+add_subdirectory(Utility)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL 
