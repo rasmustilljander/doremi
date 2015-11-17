@@ -30,12 +30,14 @@ namespace Doremi
             throw std::runtime_error("1Failed to load engine - please check your installation.");
         }
 
-        INITIALIZE_ENGINE libInitializeEngine = (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+        INITIALIZE_ENGINE libInitializeEngine =
+        (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
 
         if(libInitializeEngine == nullptr)
         {
             throw std::runtime_error("2Failed to load engine - please check your installation.");
         }
-        const DoremiEngine::Core::SharedContext& a =  libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::AUDIO);
+        const DoremiEngine::Core::SharedContext& a =
+        libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::AUDIO);
     }
 }

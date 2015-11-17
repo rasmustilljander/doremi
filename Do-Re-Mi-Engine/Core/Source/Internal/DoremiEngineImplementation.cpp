@@ -17,7 +17,7 @@ namespace DoremiEngine
         {
         }
 
-        SharedContext &DoremiEngineImplementation::Initialize(const size_t &p_flags)
+        SharedContext& DoremiEngineImplementation::Initialize(const size_t& p_flags)
         {
             m_sharedContext = new SharedContext();
 
@@ -51,16 +51,19 @@ namespace DoremiEngine
             return *m_sharedContext;
         }
 
-        void DoremiEngineImplementation::LoadAudioModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadAudioModule(SharedContext& o_sharedContext)
         {
             m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
 
-            if (m_audioLibrary != nullptr)
+            if(m_audioLibrary != nullptr)
             {
-                CREATE_AUDIO_MODULE functionCreateAudioModule = (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary, "CreateAudioModule");
-                if (functionCreateAudioModule != nullptr)
+                CREATE_AUDIO_MODULE functionCreateAudioModule =
+                (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary,
+                                                                "CreateAudioModule");
+                if(functionCreateAudioModule != nullptr)
                 {
-                    m_audioModule = static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
+                    m_audioModule =
+                    static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
                     m_audioModule->Startup();
                     o_sharedContext.sound = m_audioModule;
                 }
@@ -72,34 +75,35 @@ namespace DoremiEngine
             else
             {
                 // TODO logger
-            }            
+            }
         }
 
-        void DoremiEngineImplementation::LoadGraphicModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadGraphicModule(SharedContext& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadMemoryModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadMemoryModule(SharedContext& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadNetworkModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadNetworkModule(SharedContext& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadPhysicsModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadPhysicsModule(SharedContext& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadScriptModule(SharedContext &o_sharedContext)
+        void DoremiEngineImplementation::LoadScriptModule(SharedContext& o_sharedContext)
         {
         }
     }
 }
 
-const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t &p_flags)
+const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_flags)
 {
-    DoremiEngine::Core::DoremiEngineImplementation *engine = new DoremiEngine::Core::DoremiEngineImplementation();
+    DoremiEngine::Core::DoremiEngineImplementation* engine =
+    new DoremiEngine::Core::DoremiEngineImplementation();
     engine->Initialize(p_flags);
     return engine->GetSharedContext();
 }

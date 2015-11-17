@@ -26,7 +26,7 @@ namespace DoremiEngine
             TODO docs
             */
             virtual void Startup() = 0;
-            
+
             /**
             TODO docs
             */
@@ -41,6 +41,7 @@ namespace DoremiEngine
 }
 
 extern "C" {
-typedef DoremiEngine::Audio::AudioModule *(*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
-AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule *CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
+typedef DoremiEngine::Audio::AudioModule* (*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
+AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule*
+CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
 }

@@ -8,27 +8,22 @@ namespace DoremiEngine
     {
         AudioModuleImplementation::AudioModuleImplementation()
         {
-
         }
 
         AudioModuleImplementation::~AudioModuleImplementation()
         {
-
         }
 
         void AudioModuleImplementation::Startup()
         {
-
         }
-        
+
         void AudioModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
         {
-
         }
 
         void AudioModuleImplementation::Shutdown()
         {
-
         }
 
         float AudioModuleImplementation::DoFunction(float a, float b)
@@ -38,7 +33,7 @@ namespace DoremiEngine
             cout << "a" << a << std::endl;
             cout << "b" << b << std::endl;
 
-            return a*b;
+            return a * b;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace DoremiEngine
         class EngineModule
         {
             public:
-                
             /**
             TODO
             */

@@ -15,7 +15,7 @@
 #include <exception>
 #include <iostream>
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     // Might not be the best way of doing console writing
     AllocConsole();

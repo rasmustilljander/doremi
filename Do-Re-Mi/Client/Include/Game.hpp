@@ -22,6 +22,6 @@ namespace Doremi
 
 
         private:
-        void *m_engineModule;
+        void* m_engineModule;
     };
 }

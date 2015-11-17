@@ -21,12 +21,12 @@ namespace DoremiEngine
             /**
                 TODO docs
             */
-            virtual const SharedContext &GetSharedContext() const = 0;
+            virtual const SharedContext& GetSharedContext() const = 0;
         };
     }
 }
 
 extern "C" {
-typedef const DoremiEngine::Core::SharedContext &(*INITIALIZE_ENGINE)(const size_t &);
-ROOTENGINE_DLL_EXPORT const DoremiEngine::Core::SharedContext &InitializeEngine(const size_t &p_flags);
+typedef const DoremiEngine::Core::SharedContext& (*INITIALIZE_ENGINE)(const size_t&);
+ROOTENGINE_DLL_EXPORT const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_flags);
 }
