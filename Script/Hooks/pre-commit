@@ -6,3 +6,4 @@ then
   echo "Attempt done. Check files for satisfying result."
   exit 0
 fi
+exit 0
