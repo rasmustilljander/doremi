@@ -1,15 +1,19 @@
 PA2526 Large Game Project @ Blekinge Institute of Technology
 ==
 
-Eric Ahlström
-John Bergsten
-Lucas Holmqvist
-Simon Hyltegård
-Christian Markowicz
-Rebecca Künkel
-Rasmus Tilljander
-Joakim Westgren
-Konrad Öhman
+Team members
+------------
+|	Name				|	Nickname	|	TODO acronym	|
+| --------------------- | ------------- | ----------------- |
+| Eric Ahlström		    |				| TODOEA			|
+| John Bergsten			|   			| TODOJB			|
+| Lucas Holmqvist		| 	            | TODOLH			|
+| Simon Hyltegård		| 		        | TODOSH			|
+| Christian Markowicz   | 			    | TODOCH			|
+| Rebecca Künkel		| 		        | TODORK			|
+| Rasmus Tilljander 	| bulten/meraz	| TODORT			|
+| Joakim Westgren   	|         		| TODOJW			|
+| Konrad Öhman    		|				| TODOKO			|
 
 
 License
