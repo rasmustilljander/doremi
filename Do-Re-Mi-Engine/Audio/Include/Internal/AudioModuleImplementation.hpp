@@ -1,24 +1,39 @@
 #pragma once
-#include <AudioEngine.hpp>
-
+#include <AudioModule.hpp>
 
 namespace DoremiEngine
 {
     namespace Audio
     {
-
-        class AudioEngineImplementation : public AudioEngine
+        class AudioModuleImplementation : public AudioModule
         {
             public:
             /**
                 TODO docs
             */
-            AudioEngineImplementation();
+            AudioModuleImplementation();
 
             /**
                 TODO docs
             */
-            virtual ~AudioEngineImplementation();
+            virtual ~AudioModuleImplementation();
+
+            /**
+                TODO docs
+            */
+            void Startup() override;
+
+            /**
+                TODO docs
+            */
+            void SetWorkingDirectory(const std::string& p_workingDirectory) override;
+
+            /**
+                TODO docs
+            */
+            void Shutdown() override;
+
+            float DoFunction(float a, float b) override;
         };
     }
 }

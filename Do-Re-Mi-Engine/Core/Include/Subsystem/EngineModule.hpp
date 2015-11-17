@@ -11,13 +11,19 @@ namespace DoremiEngine
 {
     namespace Core
     {
-        class EngineSubsystem
+        class EngineModule
         {
             public:
+                
+            /**
+            TODO
+            */
+            virtual void Startup() = 0;
+
             /**
                 TODO
             */
-            virtual void SetWorkingDirectory(std::string p_workingDirectory) = 0;
+            virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
 
             /**
                 TODO

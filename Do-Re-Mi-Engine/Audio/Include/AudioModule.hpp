@@ -1,4 +1,4 @@
-#include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineSubsystem.hpp>
+#include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModule.hpp>
 #include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
 
 #if defined(_WINDLL)
@@ -14,15 +14,33 @@ namespace DoremiEngine
         /**
         TODO docs
         */
-        class AudioModule : public DoremiEngine::Core::EngineSubsystem
+        class AudioModule : public DoremiEngine::Core::EngineModule
         {
             public:
-            virtual void DoFunction() = 0;
+            /**
+                TODO remove this test method
+            */
+            virtual float DoFunction(float a, float b) = 0;
+
+            /**
+            TODO docs
+            */
+            virtual void Startup() = 0;
+            
+            /**
+            TODO docs
+            */
+            virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
+
+            /**
+            TODO docs
+            */
+            virtual void Shutdown() = 0;
         };
     }
 }
 
 extern "C" {
-typedef DoremiEngine::Audio::AudioModule *(*CREATE_AUDIO_MODULE)(DoremiEngine::Core::SharedContext);
-AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule *CreateSoundInterface(DoremiEngine::Core::SharedContext p_context);
+typedef DoremiEngine::Audio::AudioModule *(*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
+AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule *CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
 }

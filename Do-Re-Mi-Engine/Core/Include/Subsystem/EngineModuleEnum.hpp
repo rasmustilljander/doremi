@@ -14,11 +14,10 @@ namespace DoremiEngine
             {
                 AUDIO = 1,
                 GRAPHIC = 2,
-                MEMORY = 4,
-                NETWORK = 8,
-                PHYSICS = 16,
-                SCRIPT = 64,
-                ALL = AUDIO | GRAPHIC | MEMORY | NETWORK | PHYSICS | SCRIPT
+                NETWORK = 4,
+                PHYSICS = 8,
+                SCRIPT = 16,
+                ALL = AUDIO | GRAPHIC | NETWORK | PHYSICS | SCRIPT
             };
         };
     }

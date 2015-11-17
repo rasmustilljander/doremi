@@ -2,6 +2,8 @@
 #include <Game.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <Do-Re-Mi-Engine/Core/Include/DoremiEngine.hpp>
+#include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModuleEnum.hpp>
+#include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
 
 // Third party
 
@@ -25,16 +27,15 @@ namespace Doremi
 
         if(m_engineModule == nullptr)
         {
-            throw std::runtime_error("Failed to load engine - please check your installation.");
+            throw std::runtime_error("1Failed to load engine - please check your installation.");
         }
 
-        INITIALIZE_ENGINE libInitializeEngine =
-        (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+        INITIALIZE_ENGINE libInitializeEngine = (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
 
         if(libInitializeEngine == nullptr)
         {
-            throw std::runtime_error("Failed to load engine - please check your installation.");
+            throw std::runtime_error("2Failed to load engine - please check your installation.");
         }
-        //  = libInitializeEngine(RootEngine::SubsystemInit::INIT_ALL);
+        const DoremiEngine::Core::SharedContext& a =  libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::AUDIO);
     }
 }

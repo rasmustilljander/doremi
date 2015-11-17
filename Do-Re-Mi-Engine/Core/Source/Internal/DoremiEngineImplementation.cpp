@@ -33,11 +33,6 @@ namespace DoremiEngine
                 LoadGraphicModule(*m_sharedContext);
             }
 
-            if((p_flags & EngineModuleEnum::MEMORY) == EngineModuleEnum::MEMORY)
-            {
-                LoadMemoryModule(*m_sharedContext);
-            }
-
             if((p_flags & EngineModuleEnum::NETWORK) == EngineModuleEnum::NETWORK)
             {
                 LoadNetworkModule(*m_sharedContext);
@@ -58,8 +53,26 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadAudioModule(SharedContext &o_sharedContext)
         {
-            //            m_audioModule =
-            //            (DoremiEngine::Audio::AudioModule*)DynamicLoader::LoadSharedLibrary("Audio.dll");
+            m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
+
+            if (m_audioLibrary != nullptr)
+            {
+                CREATE_AUDIO_MODULE functionCreateAudioModule = (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary, "CreateAudioModule");
+                if (functionCreateAudioModule != nullptr)
+                {
+                    m_audioModule = static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
+                    m_audioModule->Startup();
+                    o_sharedContext.sound = m_audioModule;
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }            
         }
 
         void DoremiEngineImplementation::LoadGraphicModule(SharedContext &o_sharedContext)
@@ -84,8 +97,9 @@ namespace DoremiEngine
     }
 }
 
-const DoremiEngine::Core::SharedContext &InitializeModule(const size_t &p_flags)
+const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t &p_flags)
 {
-    DoremiEngine::Core::DoremiEngine *engine = new DoremiEngine::Core::DoremiEngineImplementation();
+    DoremiEngine::Core::DoremiEngineImplementation *engine = new DoremiEngine::Core::DoremiEngineImplementation();
+    engine->Initialize(p_flags);
     return engine->GetSharedContext();
 }
