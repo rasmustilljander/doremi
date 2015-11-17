@@ -24,7 +24,7 @@ IndentFunctionDeclarationAfterType: false
 IndentWidth: 4
 Language: Cpp
 MaxEmptyLinesToKeep: 2
-NamespaceIndentation: None
+NamespaceIndentation: All
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
 PenaltyBreakBeforeFirstCallParameter: 100
@@ -34,7 +34,7 @@ PenaltyBreakString: 100
 PenaltyExcessCharacter: 1
 PenaltyReturnTypeOnItsOwnLine: 20
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: Always
+SpaceBeforeParens: Never
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles: false
