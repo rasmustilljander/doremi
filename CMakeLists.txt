@@ -1,7 +1,7 @@
 # CMake settings
 cmake_minimum_required(VERSION 3.2.1)
 
-set(SOLUTION_NAME SSP15)
+set(SOLUTION_NAME Do-Re-Mi)
 project(${SOLUTION_NAME})
 
 option(COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
