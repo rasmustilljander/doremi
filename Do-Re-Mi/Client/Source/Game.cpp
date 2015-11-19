@@ -4,6 +4,7 @@
 #include <Do-Re-Mi-Engine/Core/Include/DoremiEngine.hpp>
 #include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
+#include <Do-Re-Mi/Core/Include/EntityComponent/EntitySubSystemInterface.hpp>
 
 // Third party
 
