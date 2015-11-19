@@ -1,7 +1,7 @@
 #pragma once
 
 #include <DoremiEngine.hpp>
-#include <SharedContext.hpp>
+#include <Internal/SharedContextImplementation.hpp>
 
 namespace DoremiEngine
 {
@@ -30,19 +30,19 @@ namespace DoremiEngine
             */
             const SharedContext& GetSharedContext() const override
             {
-                return *m_sharedContext;
+                return *static_cast<SharedContext*>(m_sharedContext);
             }
 
             private:
-            SharedContext* m_sharedContext;
+            SharedContextImplementation* m_sharedContext;
 
             // Loading .dll
-            void LoadAudioModule(SharedContext& o_sharedContext);
-            void LoadGraphicModule(SharedContext& o_sharedContext);
-            void LoadMemoryModule(SharedContext& o_sharedContext);
-            void LoadNetworkModule(SharedContext& o_sharedContext);
-            void LoadPhysicsModule(SharedContext& o_sharedContext);
-            void LoadScriptModule(SharedContext& o_sharedContext);
+            void LoadAudioModule(SharedContextImplementation& o_sharedContext);
+            void LoadGraphicModule(SharedContextImplementation& o_sharedContext);
+            void LoadMemoryModule(SharedContextImplementation& o_sharedContext);
+            void LoadNetworkModule(SharedContextImplementation& o_sharedContext);
+            void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
+            void LoadScriptModule(SharedContextImplementation& o_sharedContext);
 
             // Pointers to .dll processes
             void* m_audioLibrary;

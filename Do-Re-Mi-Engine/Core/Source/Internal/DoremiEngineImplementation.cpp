@@ -5,6 +5,8 @@
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
+#include <Internal/SharedContextImplementation.hpp>
+
 namespace DoremiEngine
 {
     namespace Core
@@ -19,9 +21,9 @@ namespace DoremiEngine
 
         SharedContext& DoremiEngineImplementation::Initialize(const size_t& p_flags)
         {
-            m_sharedContext = new SharedContext();
+            m_sharedContext = new SharedContextImplementation();
 
-            m_sharedContext->core = this;
+            m_sharedContext->SetCoreModule(this);
 
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
@@ -51,7 +53,7 @@ namespace DoremiEngine
             return *m_sharedContext;
         }
 
-        void DoremiEngineImplementation::LoadAudioModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadAudioModule(SharedContextImplementation& o_sharedContext)
         {
             m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
 
@@ -65,7 +67,7 @@ namespace DoremiEngine
                     m_audioModule =
                     static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
                     m_audioModule->Startup();
-                    o_sharedContext.sound = m_audioModule;
+                    o_sharedContext.SetAudioModule(m_audioModule);
                 }
                 else
                 {
@@ -78,23 +80,23 @@ namespace DoremiEngine
             }
         }
 
-        void DoremiEngineImplementation::LoadGraphicModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadGraphicModule(SharedContextImplementation& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadMemoryModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadMemoryModule(SharedContextImplementation& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadNetworkModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadPhysicsModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
         {
         }
 
-        void DoremiEngineImplementation::LoadScriptModule(SharedContext& o_sharedContext)
+        void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext)
         {
         }
     }

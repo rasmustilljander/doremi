@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace DoremiEngine
 {
@@ -39,23 +40,19 @@ namespace DoremiEngine
 
     namespace Core
     {
-        struct SharedContext
+        class SharedContext
         {
-            const char* workingDirectory;
-            const char* preferenceDirectory;
-            Audio::AudioModule* sound;
-            DoremiEngine* core;
-            Graphic::GraphicModule* graphic;
-            Memory::MemoryModule* memory;
-            Network::NetworkModule* network;
-            Physics::PhysicsModule* physics;
-            Script::ScriptModule* script;
+            public:
+            virtual const std::string GetWorkingDirectory() const = 0;
+            virtual const std::string GetPreferenceDirectory() const = 0;
 
-            SharedContext()
-            : workingDirectory(nullptr), preferenceDirectory(nullptr), sound(nullptr), core(nullptr),
-              graphic(nullptr), memory(nullptr), network(nullptr), physics(nullptr), script(nullptr)
-            {
-            }
+            virtual const Audio::AudioModule& GetAudioModule() const = 0;
+            virtual const DoremiEngine& GetCoreModule() const = 0;
+            virtual const Graphic::GraphicModule& GetGraphicModule() const = 0;
+            virtual const Memory::MemoryModule& GetMemoryModule() const = 0;
+            virtual const Network::NetworkModule& GetNetworkModule() const = 0;
+            virtual const Physics::PhysicsModule& GetPhysicsModule() const = 0;
+            virtual const Script::ScriptModule& GetScriptModule() const = 0;
         };
     }
 }
