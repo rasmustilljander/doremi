@@ -1,7 +1,7 @@
 #include <Internal/DoremiEngineImplementation.hpp>
 #include <Subsystem/EngineModuleEnum.hpp>
 
-#include <Do-Re-Mi-Engine/Audio/Include/AudioModule.hpp>
+#include <DoremiEngine/Audio/Include/AudioModule.hpp>
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 

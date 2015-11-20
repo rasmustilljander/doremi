@@ -1,9 +1,9 @@
 // Project specific
 #include <Game.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
-#include <Do-Re-Mi-Engine/Core/Include/DoremiEngine.hpp>
-#include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModuleEnum.hpp>
-#include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Core/Include/DoremiEngine.hpp>
+#include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 
 // Third party

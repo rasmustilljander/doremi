@@ -1,6 +1,6 @@
 #pragma once
-#include <Do-Re-Mi-Engine/Core/Include/Subsystem/EngineModule.hpp>
-#include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 #if defined(_WINDLL)
 #define AUDIO_DLL_EXPORT __declspec(dllexport)

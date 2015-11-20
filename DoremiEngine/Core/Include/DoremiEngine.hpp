@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Do-Re-Mi-Engine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 #if defined(_WINDLL)
 #define ROOTENGINE_DLL_EXPORT __declspec(dllexport)
