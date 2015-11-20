@@ -1,7 +1,7 @@
 # CMake settings
 cmake_minimum_required(VERSION 3.2.1)
 
-set(SOLUTION_NAME Do-Re-Mi)
+set(SOLUTION_NAME Doremi)
 project(${SOLUTION_NAME})
 
 option(COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
@@ -80,8 +80,8 @@ include_directories(${EXTERNAL_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Add subdirectories
-add_subdirectory(Do-Re-Mi)
-add_subdirectory(Do-Re-Mi-Engine)
+add_subdirectory(Doremi)
+add_subdirectory(DoremiEngine)
 add_subdirectory(Utility)
 
 # Copy game resources

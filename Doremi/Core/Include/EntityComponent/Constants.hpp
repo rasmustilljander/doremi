@@ -6,13 +6,13 @@ typedef int EntityID;
 
 enum class ComponentType : int
 {
-	None = 0x00,
-	Physics = 0x01,
+    None = 0x00,
+    Physics = 0x01,
 };
 
 enum class Blueprints : int
 {
-	FirstEntity,
+    FirstEntity,
 };
 
 typedef std::map<ComponentType, void*> EntityBlueprint;
