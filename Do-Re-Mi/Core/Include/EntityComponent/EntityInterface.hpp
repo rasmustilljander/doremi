@@ -3,10 +3,10 @@
 #include <EntityComponent/ComponentTable.hpp>
 #include <EntityComponent/StorageShelf.hpp>
 
-class EntitySubSystemInterface
+class EntityInterface
 {
 public:
-	static EntitySubSystemInterface* GetInstance();
+	static EntityInterface* GetInstance();
 
 	// Registers a blueprint for entity creation with an ID
 	void RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint);
@@ -26,9 +26,9 @@ public:
 	}
 
 private:
-	EntitySubSystemInterface();
-	~EntitySubSystemInterface();
-	static EntitySubSystemInterface* m_singleton;
+	EntityInterface();
+	~EntityInterface();
+	static EntityInterface* m_singleton;
 
 };
 

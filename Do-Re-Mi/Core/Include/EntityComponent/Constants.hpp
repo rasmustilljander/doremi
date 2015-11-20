@@ -7,11 +7,7 @@ typedef int EntityID;
 enum class ComponentType : int
 {
 	None = 0x00,
-	Transform = 0x01,
-	Render = 0x02,
-	Physics = 0x04,
-	Sound = 0x08,
-	Velocity = 0x10,
+	Physics = 0x01,
 };
 
 enum class Blueprints : int

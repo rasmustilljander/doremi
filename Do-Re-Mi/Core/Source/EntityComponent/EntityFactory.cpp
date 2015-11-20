@@ -1,6 +1,6 @@
-#include <EntityComponent/EntityFactory.hpp>
-#include <EntityComponent/EntityManager.hpp>
-#include <EntityComponent/ComponentTable.hpp>
+#include <Do-Re-Mi/Core/Include/EntityComponent/EntityFactory.hpp>
+#include <Do-Re-Mi/Core/Include/EntityComponent/EntityManager.hpp>
+#include <Do-Re-Mi/Core/Include/EntityComponent/ComponentTable.hpp>
 #include <EntityComponent/StorageShelf.hpp>
 
 EntityFactory* EntityFactory::mSingleton = nullptr;

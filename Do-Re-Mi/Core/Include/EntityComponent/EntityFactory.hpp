@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <map>
-#include <EntityComponent/Constants.hpp>
 #include <vector>
+
+#include <EntityComponent/Constants.hpp>
 
 using namespace std;
 
