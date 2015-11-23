@@ -35,7 +35,7 @@ namespace DoremiEngine
             virtual void Shutdown() = 0;
 
             //Test function
-            virtual float DoSomething(const float& posx) = 0;
+            virtual float ExampleMethod(const float& posx) = 0;
         };
     }
 }

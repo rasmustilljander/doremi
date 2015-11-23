@@ -17,9 +17,13 @@ namespace Doremi
         public:
             static ComponentTable* GetInstance();
             
+            /** Checks if entity has components specified in the bitmask*/
             bool HasComponent(int pEntityID, int pMask);
+            /** Adds components in bitmask to entity*/
             void AddComponent(int pEntityID, int pMask);
+            /** Removeds components in bitmask from entity*/
             void RemoveComponent(int pEntityID, int pMask);
+            /** Clears bitmask for entity (data remains, but is unused)*/
             void RemoveEntity(int pEntityID);
 
 

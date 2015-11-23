@@ -6,11 +6,11 @@ namespace Doremi
 {
     namespace Core
     {
-        class PhysicsManager : public Manager
+        class ExampleManager : public Manager
         {
         public:
-            PhysicsManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            virtual ~PhysicsManager();
+            ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            virtual ~ExampleManager();
             void Update(double p_dt) override;
         };
     }

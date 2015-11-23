@@ -23,7 +23,8 @@ namespace DoremiEngine
         */
         void PhysicsModuleImplementation::Shutdown() {}
 
-        float PhysicsModuleImplementation::DoSomething(const float& posx) 
+        // Only an example method to demonstrate how the engine is used
+        float PhysicsModuleImplementation::ExampleMethod(const float& posx) 
         {
             return posx * 400;
         }

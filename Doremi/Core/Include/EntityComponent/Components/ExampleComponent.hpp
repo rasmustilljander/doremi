@@ -3,14 +3,14 @@ namespace Doremi
 {
     namespace Core
     {
-        struct PhysicsComponent
+        struct ExampleComponent
         {
             float posX;
             float posY;
-            PhysicsComponent(float p_posX, float p_posY) : posX(p_posX), posY(p_posY)
+            ExampleComponent(float p_posX, float p_posY) : posX(p_posX), posY(p_posY)
             {
             }
-            PhysicsComponent() : posX(0), posY(0)
+            ExampleComponent() : posX(0), posY(0)
             {
             }
         };

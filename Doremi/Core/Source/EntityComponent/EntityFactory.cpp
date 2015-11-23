@@ -3,6 +3,7 @@
 #include <EntityComponent/EntityManager.hpp>
 #include <EntityComponent/ComponentTable.hpp>
 #include <EntityComponent/StorageShelf.hpp>
+#include <EntityComponent/Components/ExampleComponent.hpp>
 
 namespace Doremi
 {
@@ -50,13 +51,16 @@ namespace Doremi
             // copy components
             for (EntityBlueprint::iterator iter = tComponentMap.begin(); iter != tComponentMap.end(); ++iter)
             {
+                // Add bitmask
                 tComponentTable->AddComponent(tNewEntityID, (int)iter->first);
 
-                // if (iter->first == ComponentType::Physics)
-                //{
-                //	memcpy(GetComponent<PhysicsComponent>(tNewEntityID), iter->second,
-                // sizeof(PhysicsComponent));
-                //}
+                // Check which component we copy
+                if (iter->first == ComponentType::Example)
+                {
+                    memcpy(GetComponent<ExampleComponent>(tNewEntityID), iter->second,
+                        sizeof(ExampleComponent));
+                }
+
             }
 
             return tNewEntityID;

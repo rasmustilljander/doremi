@@ -47,10 +47,11 @@ namespace Doremi
 
         void EntityManager::RemoveEntity(int pEntityID)
         {
-            // Remove from table
+            // Remove bitmask
             ComponentTable* tCompTable = tCompTable->GetInstance();
             tCompTable->RemoveEntity(pEntityID);
 
+            //Checks if the entity id have been put in the free entity slots list
             std::list<EntityID>::iterator findIter =
                 std::find(mFreeEntitySlots.begin(), mFreeEntitySlots.end(), pEntityID);
 

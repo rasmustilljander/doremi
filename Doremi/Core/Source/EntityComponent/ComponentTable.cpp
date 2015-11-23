@@ -19,6 +19,7 @@ namespace Doremi
 
         ComponentTable::ComponentTable()
         {
+            // Sets memory for the component bitmask to 0. No components for any entity
             memset(mComponentTable, 0, sizeof(mComponentTable));
         }
 
@@ -43,6 +44,7 @@ namespace Doremi
 
         void ComponentTable::AddComponent(int pEntityID, int pMask)
         {
+            // Adds a new component to the bit mask in the component table
             int tLineToAddTo = mComponentTable[pEntityID];
 
             tLineToAddTo = tLineToAddTo | pMask;
