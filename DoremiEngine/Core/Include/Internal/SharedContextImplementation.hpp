@@ -6,9 +6,6 @@ namespace DoremiEngine
 {
     namespace Core
     {
-        /**
-
-        */
         class SharedContextImplementation : public SharedContext
         {
             public:
