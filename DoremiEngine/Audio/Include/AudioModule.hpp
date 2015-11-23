@@ -17,7 +17,7 @@ namespace DoremiEngine
         */
         class AudioModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
                 TODO remove this test method
             */
@@ -42,7 +42,7 @@ namespace DoremiEngine
 }
 
 extern "C" {
-typedef DoremiEngine::Audio::AudioModule* (*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
-AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule*
-CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
+    typedef DoremiEngine::Audio::AudioModule* (*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
+    AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule*
+        CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
 }

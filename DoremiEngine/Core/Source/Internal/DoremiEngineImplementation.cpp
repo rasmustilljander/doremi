@@ -2,6 +2,7 @@
 #include <Subsystem/EngineModuleEnum.hpp>
 
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
@@ -94,6 +95,29 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
         {
+            m_physicsLibrary = DynamicLoader::LoadSharedLibrary("Physics.dll");
+
+            if (m_physicsLibrary != nullptr)
+            {
+                CREATE_PHYSICS_MODULE functionCreatePhysicsModule =
+                    (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary,
+                        "CreatePhysicsModule");
+                if (functionCreatePhysicsModule != nullptr)
+                {
+                    m_physicsModule =
+                        static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
+                    m_physicsModule->Startup();
+                    o_sharedContext.SetPhysicsModule(m_physicsModule);
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
         }
 
         void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext)

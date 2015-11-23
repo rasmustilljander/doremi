@@ -46,13 +46,13 @@ namespace DoremiEngine
             virtual const std::string GetWorkingDirectory() const = 0;
             virtual const std::string GetPreferenceDirectory() const = 0;
 
-            virtual const Audio::AudioModule& GetAudioModule() const = 0;
-            virtual const DoremiEngine& GetCoreModule() const = 0;
-            virtual const Graphic::GraphicModule& GetGraphicModule() const = 0;
-            virtual const Memory::MemoryModule& GetMemoryModule() const = 0;
-            virtual const Network::NetworkModule& GetNetworkModule() const = 0;
-            virtual const Physics::PhysicsModule& GetPhysicsModule() const = 0;
-            virtual const Script::ScriptModule& GetScriptModule() const = 0;
+            virtual Audio::AudioModule& GetAudioModule() const = 0;
+            virtual DoremiEngine& GetCoreModule() const = 0;
+            virtual Graphic::GraphicModule& GetGraphicModule() const = 0;
+            virtual Memory::MemoryModule& GetMemoryModule() const = 0;
+            virtual Network::NetworkModule& GetNetworkModule() const = 0;
+            virtual Physics::PhysicsModule& GetPhysicsModule() const = 0;
+            virtual Script::ScriptModule& GetScriptModule() const = 0;
         };
     }
 }

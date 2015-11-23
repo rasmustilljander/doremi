@@ -1,4 +1,6 @@
 #pragma once
+
+// Standard libraries
 #include <map>
 typedef int EntityID;
 
