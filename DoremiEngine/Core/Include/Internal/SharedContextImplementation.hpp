@@ -56,31 +56,65 @@ namespace DoremiEngine
 
             Audio::AudioModule& GetAudioModule() const
             {
-                return *m_audio;
+                if(m_audio != nullptr)
+                {
+                    return *m_audio;
+                }
+                throw std::runtime_error("Audiomodule has not been initialized.");
             }
+
             DoremiEngine& GetCoreModule() const
             {
-                return *m_core;
+                if(m_core != nullptr)
+                {
+                    return *m_core;
+                }
+                throw std::runtime_error("Coremodule has not been initialized.");
             };
+
             Graphic::GraphicModule& GetGraphicModule() const
             {
-                return *m_graphic;
+                if(m_graphic != nullptr)
+                {
+                    return *m_graphic;
+                }
+                throw std::runtime_error("Graphic module has not been initialized.");
             };
+
             Memory::MemoryModule& GetMemoryModule() const
             {
-                return *m_memory;
+                if(m_memory != nullptr)
+                {
+                    return *m_memory;
+                }
+                throw std::runtime_error("Memory module has not been initialized.");
             };
+
             Network::NetworkModule& GetNetworkModule() const
             {
-                return *m_network;
+                if(m_network != nullptr)
+                {
+                    return *m_network;
+                }
+                throw std::runtime_error("Network module has not been initialized.");
             };
+
             Physics::PhysicsModule& GetPhysicsModule() const
             {
-                return *m_physics;
+                if(m_physics != nullptr)
+                {
+                    return *m_physics;
+                }
+                throw std::runtime_error("Physics module has not been initialized.");
             };
+
             Script::ScriptModule& GetScriptModule() const
             {
-                return *m_script;
+                if(m_script != nullptr)
+                {
+                    return *m_script;
+                }
+                throw std::runtime_error("Script module has not been initialized.");
             };
 
             private:
