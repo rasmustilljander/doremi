@@ -4,78 +4,73 @@ cmake_minimum_required(VERSION 3.2.1)
 set(SOLUTION_NAME Doremi)
 project(${SOLUTION_NAME})
 
+# Add options
 option(COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
-option(COMPILE_64_BIT_BUILD "Unchecked is 32 bit" OFF)
+option(LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
 
-set(OUTPUT_FOLDER ${CMAKE_BINARY_DIR}/build)
+# Fetch environment variable
+set(CODE_REPOSITORY_ROOT $ENV{SSP_CODE_HOME})
+set(RESOURCE_REPOSITORY_ROOT $ENV{SSP_RESOURCE_HOME})
+STRING(REGEX REPLACE "\\\\" "/" CODE_REPOSITORY_ROOT ${CODE_REPOSITORY_ROOT})
+STRING(REGEX REPLACE "\\\\" "/" RESOURCE_REPOSITORY_ROOT ${RESOURCE_REPOSITORY_ROOT})
 
-if(COMPILE_64_BIT_BUILD)
-	set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/64)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(EXTERNAL_DLLS ${CMAKE_SOURCE_DIR}/External/dll/x64)
+#Check if 32 or 64 bit
+if(LINK_64_BIT_BUILD)
+	set(ARCHITECTURE_BIT_VALUE x64)
 	else()
-	set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/32)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
-	set(EXTERNAL_DLLS ${CMAKE_SOURCE_DIR}/External/dll/x86)
+	set(ARCHITECTURE_BIT_VALUE x86)
 endif()
+message(${ARCHITECTURE_BIT_VALUE})
+
+# Set output folders
+set(OUTPUT_FOLDER ${CMAKE_BINARY_DIR}/build/${ARCHITECTURE_BIT_VALUE})
+
+# Visual studio adds their own folder onto this, notice uppercase Debug/Release, thus do not add them manually.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 
 # Path for copying .dll to correct folder
 if(COMPILE_RELEASE_BUILD)
-	set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/Release)	
-	set(EXTERNAL_DLLS ${EXTERNAL_DLLS}/Release)
+	set(COMPILE_RELEASE_BUILD_VALUE "release") # Atm this wont work on non-windows systems
 else()
-	set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/Debug)
-	set(EXTERNAL_DLLS ${EXTERNAL_DLLS}/Debug)
+	set(COMPILE_RELEASE_BUILD_VALUE "debug") # Atm this wont work on non-windows systems
 endif()
 
+# Set the final
+set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/${COMPILE_RELEASE_BUILD_VALUE})
+set(EXTERNAL_DLLS ${RESOURCE_REPOSITORY_ROOT}/External/dll/${ARCHITECTURE_BIT_VALUE}/${COMPILE_RELEASE_BUILD_VALUE})
+
 # Find external libraries and modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{SSP_RESOURCE_HOME}/CMake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RESOURCE_REPOSITORY_ROOT}/CMake/Modules/")
 include(create_source_group)
+
+# Set external library lookuppath
+set(EXTERNAL_LIBRARY_LOOKUP_PATH ${RESOURCE_REPOSITORY_ROOT}/External/lib/${ARCHITECTURE_BIT_VALUE}/${COMPILE_RELEASE_BUILD_VALUE})
 
 # Find external dependencies
 find_package(DIRECTX11 REQUIRED)
 
-# Set external dependencies include paths
+# Set includepaths for external dependencies
 set(EXTERNAL_INCLUDE_DIRS 
 	${DIRECTX11_INCLUDE_DIRS}
 )
 
-# 
-if(COMPILE_64_BIT_BUILD)
-	set(EXTERNAL_LIBRARIES_ALL
-		${DIRECTX11_LIBRARY_64}
-		${DIRECTX11_COMPILER_LIBRARY_64}
-		${DIRECTX11_DXGUID_LIBRARY_64}
-	)
-	set(EXTERNAL_LIBRARIES_GRAPHICS
-		${DIRECTX11_LIBRARY_64}
-		${DIRECTX11_COMPILER_LIBRARY_64}
-		${DIRECTX11_DXGUID_LIBRARY_64}
-	)
-else()
-	set(EXTERNAL_LIBRARIES_ALL
-		${DIRECTX11_LIBRARY}
-		${DIRECTX11_COMPILER_LIBRARY}
-		${DIRECTX11_DXGUID_LIBRARY}
-	)
-	set(EXTERNAL_LIBRARIES_GRAPHICS
-		${DIRECTX11_LIBRARY}
-		${DIRECTX11_COMPILER_LIBRARY}
-		${DIRECTX11_DXGUID_LIBRARY}
-	)
-endif()
+# Set library groups
+set(EXTERNAL_LIBRARIES_GRAPHICS
+	${DIRECTX11_LIBRARY}
+	${DIRECTX11_COMPILER_LIBRARY}
+	${DIRECTX11_DXGUID_LIBRARY}
+)
+set(EXTERNAL_LIBRARIES_ALL
+	${EXTERNAL_LIBRARIES_GRAPHICS}
+)
 
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
-#add_definitions(-D_USE_MATH_DEFINES)
-#add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 add_definitions(/MP)
-#add_definitions(_CRT_SECURE_NO_WARNINGS)
 
+# Add default include directories
 include_directories(${EXTERNAL_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR})
 
@@ -86,8 +81,8 @@ add_subdirectory(Utility)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_BINARY_DIR}/SPH		# I would love to move this to below line for debug
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources ${OUTPUT_FOLDER}
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/SPH # This row is only required for debugging from visual studio GUI
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${OUTPUT_FOLDER}
 )
 
 # Move external dlls to executing folder

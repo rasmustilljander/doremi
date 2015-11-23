@@ -14,6 +14,7 @@ create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADE
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
 set(LIBRARIES DynamicLoader GameCore)
 
+
 # Add the target
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})

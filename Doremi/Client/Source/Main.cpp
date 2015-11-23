@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         Doremi::GameMain gameMain = Doremi::GameMain();
         gameMain.Start();
     }
-    catch(std::exception e)
+    catch(const std::exception& e)
     {
         // TODO more information
         std::cout << "Unknown exception: " << e.what() << std::endl;
