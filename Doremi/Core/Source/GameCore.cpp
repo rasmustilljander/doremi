@@ -6,6 +6,7 @@
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
+#include <Manager/ClientNetworkManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -95,6 +96,8 @@ namespace Doremi
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
+
+            Manager* t_networkManager = new ClientNetworkManager(a);
             
             //Lucas Testkod
             //sharedContext.GetAudioModule().Startup();
@@ -117,6 +120,7 @@ namespace Doremi
 
             // Add manager to list of managers
             m_managers.push_back(t_physicsManager);
+            m_managers.push_back(t_networkManager);
 
             // Create all entities (debug purposes only so far)
             GenerateWorld();

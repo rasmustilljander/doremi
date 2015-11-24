@@ -31,7 +31,7 @@ namespace DoremiEngine
 			/**
 			TODO docs
 			*/
-			virtual void SendMessage(const NetMessage& p_message, Connection& p_sendToConnection) = 0;
+			virtual void SendNeworkMessage(const NetMessage& p_message, Connection& p_sendToConnection) = 0;
 
 			/**
 			TODO

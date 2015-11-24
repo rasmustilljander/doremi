@@ -20,38 +20,38 @@ namespace Doremi
 		{
 			public:
 			/**
-				TODO doc
+				TODOCM doc
 			*/
 			ClientNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
 			/**
-				TODO doc
+				TODOCM doc
 			*/
 			virtual ~ClientNetworkManager();
 
 			/**
-				TODO doc
+				TODOCM doc
 			*/
 			void Update(double p_dt) override;
 
 			private:
 			/**
-				TODO doc
+				TODOCM doc
 			*/
 			double m_nextUpdateTimer;
 
 			/**
-			TODO doc
+			    TODOCM doc
 			*/
 			double m_updateInterval;
 
 			/**
-			TODO doc
+			    TODOCM doc
 			*/
 			ConnectionState m_masterConnectionState;
 
 			/**
-			TODO doc
+			    TODOCM doc
 			*/
 			ConnectionState m_serverConnectionState;
 		};

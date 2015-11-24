@@ -10,32 +10,32 @@ namespace DoremiEngine
 		{
 			public:
 			/**
-				TODO docs	
+				TODOCM docs	
 			*/
 				NetworkModuleImplementation();
 
 			/**
-				TODO docs
+				TODOCM docs
 			*/
 			virtual ~NetworkModuleImplementation();
 
 			/**
-				TODO docs
+				TODOCM docs
 			*/
 			void Startup() override;
 
 			/**
-				TODO docs
+				TODOCM docs
 			*/
 			void SetWorkingDirectory(const std::string& p_workingDirectory) override;
 
 			/**
-				TODO docs
+				TODOCM docs
 			*/
-			void SendMessage(const NetMessage& p_message, Connection& p_sendToConnection) override;
+			void SendNeworkMessage(const NetMessage& p_message, Connection& p_sendToConnection) override;
 
 			/**
-				TODO docs
+				TODOCM docs
 			*/
 			void Shutdown() override;
 		};

@@ -8,7 +8,7 @@ namespace Doremi
 	{
 		ClientNetworkManager::ClientNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
 			:Manager(p_sharedContext), m_masterConnectionState(ConnectionState::DISCONNECTED), m_serverConnectionState(ConnectionState::DISCONNECTED),
-			m_nextUpdateTimer(0.0f), m_updateInterval(0.0f)
+			m_nextUpdateTimer(0.0f), m_updateInterval(1000.0f)
 		{
 
 		}
@@ -20,7 +20,9 @@ namespace Doremi
 
 		void ClientNetworkManager::Update(double p_dt)
 		{
-			if (m_nextUpdateTimer < m_updateInterval)
+            m_nextUpdateTimer += p_dt;
+
+			if (m_nextUpdateTimer >= m_updateInterval)
 			{
 				m_nextUpdateTimer -= m_updateInterval;
 			}
