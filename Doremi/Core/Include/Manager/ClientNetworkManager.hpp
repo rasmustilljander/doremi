@@ -1,6 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/Manager/Manager.hpp>
-#include <DoremiEngine/Network/Include/NetworkModuleInterface.hpp>
+#include <DoremiEngine/Network/Include/NetworkModule.hpp>
 
 namespace Doremi
 {

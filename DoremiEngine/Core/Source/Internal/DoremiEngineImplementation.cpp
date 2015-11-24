@@ -236,7 +236,7 @@ namespace DoremiEngine
 				if (functionCreateNetworkModule != nullptr)
 				{
 					m_networkModule =
-						static_cast<Network::NetworkModuleInterface*>(functionCreateNetworkModule(o_sharedContext));
+						static_cast<Network::NetworkModule*>(functionCreateNetworkModule(o_sharedContext));
 					m_networkModule->Startup();
 					o_sharedContext.SetNetworkModule(m_networkModule);
 				}

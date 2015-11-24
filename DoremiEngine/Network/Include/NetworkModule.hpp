@@ -1,43 +1,48 @@
 #pragma once
-#include <NetworkModuleInterface.hpp>
-#include <string>
+#include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
+
+#if defined(_WINDLL)
+#define NETWORK_DLL_EXPORT __declspec(dllexport)
+#else
+#define NETWORK_DLL_EXPORT __declspec(dllimport)
+#endif
 
 namespace DoremiEngine
 {
 	namespace Network
 	{
-		class NetworkModule : public NetworkModuleInterface
+		struct NetMessage;
+		struct Connection;
+
+		class NetworkModule : public DoremiEngine::Core::EngineModule
 		{
-			public:
+		public:
 			/**
-				TODO docs	
+			TODO
 			*/
-			NetworkModule();
+			virtual void Startup() = 0;
 
 			/**
-				TODO docs
+			TODO
 			*/
-			virtual ~NetworkModule();
+			virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
 
 			/**
-				TODO docs
+			TODO docs
 			*/
-			void Startup() override;
+			virtual void SendMessage(const NetMessage& p_message, Connection& p_sendToConnection) = 0;
 
 			/**
-				TODO docs
+			TODO
 			*/
-			void SetWorkingDirectory(const std::string& p_workingDirectory) override;
-
-			/**
-				TODO docs
-			*/
-			void SendMessage(const NetMessage& p_message, Connection& p_sendToConnection) override;
-
-			/**
-				TODO docs
-			*/
-			void Shutdown() override;
+			virtual void Shutdown() = 0;
 		};
 	}
+}
+
+extern "C" {
+	typedef DoremiEngine::Network::NetworkModule* (*CREATE_NETWORK_MODULE)(const DoremiEngine::Core::SharedContext&);
+	NETWORK_DLL_EXPORT DoremiEngine::Network::NetworkModule*
+		CreateNetworkModule(const DoremiEngine::Core::SharedContext& p_context);
 }
