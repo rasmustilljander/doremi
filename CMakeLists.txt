@@ -5,7 +5,7 @@ set(SOLUTION_NAME Doremi)
 project(${SOLUTION_NAME})
 
 # Add options
-option(COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
+option(LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
 option(LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
 
 # Fetch environment variable
@@ -14,13 +14,12 @@ set(RESOURCE_REPOSITORY_ROOT $ENV{SSP_RESOURCE_HOME})
 STRING(REGEX REPLACE "\\\\" "/" CODE_REPOSITORY_ROOT ${CODE_REPOSITORY_ROOT})
 STRING(REGEX REPLACE "\\\\" "/" RESOURCE_REPOSITORY_ROOT ${RESOURCE_REPOSITORY_ROOT})
 
-#Check if 32 or 64 bit
+# Check if 32 or 64 bit
 if(LINK_64_BIT_BUILD)
 	set(ARCHITECTURE_BIT_VALUE x64)
 	else()
 	set(ARCHITECTURE_BIT_VALUE x86)
 endif()
-message(${ARCHITECTURE_BIT_VALUE})
 
 # Set output folders
 set(OUTPUT_FOLDER ${CMAKE_BINARY_DIR}/build/${ARCHITECTURE_BIT_VALUE})
@@ -31,7 +30,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 
 # Path for copying .dll to correct folder
-if(COMPILE_RELEASE_BUILD)
+if(LINK_AND_COMPILE_RELEASE_BUILD)
 	set(COMPILE_RELEASE_BUILD_VALUE "release") # Atm this wont work on non-windows systems
 else()
 	set(COMPILE_RELEASE_BUILD_VALUE "debug") # Atm this wont work on non-windows systems
@@ -46,24 +45,37 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RESOURCE_REPOSITORY_ROOT}/CMake/Mo
 include(create_source_group)
 
 # Set external library lookuppath
-set(EXTERNAL_LIBRARY_LOOKUP_PATH ${RESOURCE_REPOSITORY_ROOT}/External/lib/${ARCHITECTURE_BIT_VALUE}/${COMPILE_RELEASE_BUILD_VALUE})
+set(EXTERNAL_LIBRARY_LOOKUP_PATH ${RESOURCE_REPOSITORY_ROOT}/External/lib/)
 
 # Find external dependencies
-find_package(DIRECTX11 REQUIRED)
+find_package(FMod REQUIRED)
+find_package(DirectX11 REQUIRED)
+find_package(WinSock2 REQUIRED)
 
 # Set includepaths for external dependencies
-set(EXTERNAL_INCLUDE_DIRS 
-	${DIRECTX11_INCLUDE_DIRS}
+set(EXTERNAL_INCLUDE_DIRECTORY
+	${FMOD_INCLUDE_DIRECTORY}
+	${DIRECTX11_INCLUDE_DIRECTORY}
+	${WINSOCK2_INCLUDE_DIRECTORY}
 )
 
 # Set library groups
+set(EXTERNAL_LIBRARIES_AUDIO
+	${FMOD_LIBRARY}
+)
 set(EXTERNAL_LIBRARIES_GRAPHICS
 	${DIRECTX11_LIBRARY}
 	${DIRECTX11_COMPILER_LIBRARY}
 	${DIRECTX11_DXGUID_LIBRARY}
 )
+set(EXTERNAL_LIBRARIES_NETWORK
+	${WINSOCK2_LIBRARY}
+)
+# Combine all for debugging
 set(EXTERNAL_LIBRARIES_ALL
+	${EXTERNAL_LIBRARIES_AUDIO}
 	${EXTERNAL_LIBRARIES_GRAPHICS}
+	${EXTERNAL_LIBRARIES_NETWORK}
 )
 
 # Set global compiler options
@@ -81,7 +93,7 @@ add_subdirectory(Utility)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/SPH # This row is only required for debugging from visual studio GUI
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${OUTPUT_FOLDER}
 )
 
@@ -89,10 +101,11 @@ add_custom_target(_resourceCopy ALL
 add_custom_target(_dependencies ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS} ${OUTPUT_FOLDER})
 
 # Set the default configuration
-if (COMPILE_RELEASE_BUILD)
+if (LINK_AND_COMPILE_RELEASE_BUILD)
     set(CMAKE_BUILD_TYPE "Release")
 else()
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
+
 # Required as cmake does not rebuild correctly
 set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
