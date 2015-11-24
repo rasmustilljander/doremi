@@ -65,7 +65,7 @@ namespace DoremiEngine
             Audio::AudioModule* m_audioModule;
             Graphic::GraphicModule* m_graphicModule;
             Memory::MemoryModule* m_memoryModule;
-            Network::NetworkModule* m_networkModule;
+            Network::NetworkModuleInterface* m_networkModule;
             Physics::PhysicsModule* m_physicsModule;
             Script::ScriptModule* m_scriptModule;
         };

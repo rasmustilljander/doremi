@@ -25,7 +25,7 @@ namespace DoremiEngine
 
     namespace Network
     {
-        class NetworkModule;
+        class NetworkModuleInterface;
     }
 
     namespace Physics
@@ -49,7 +49,7 @@ namespace DoremiEngine
             virtual DoremiEngine& GetCoreModule() const = 0;
             virtual Graphic::GraphicModule& GetGraphicModule() const = 0;
             virtual Memory::MemoryModule& GetMemoryModule() const = 0;
-            virtual Network::NetworkModule& GetNetworkModule() const = 0;
+            virtual Network::NetworkModuleInterface& GetNetworkModule() const = 0;
             virtual Physics::PhysicsModule& GetPhysicsModule() const = 0;
             virtual Script::ScriptModule& GetScriptModule() const = 0;
         };

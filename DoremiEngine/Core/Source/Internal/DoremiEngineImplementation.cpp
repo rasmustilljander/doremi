@@ -4,6 +4,7 @@
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Network/Include/NetworkModule.hpp>
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
@@ -225,6 +226,29 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
+			m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
+
+			if (m_networkLibrary != nullptr)
+			{
+				CREATE_NETWORK_MODULE functionCreateNetworkModule =
+					(CREATE_NETWORK_MODULE)DynamicLoader::LoadProcess(m_networkLibrary,
+						"CreateNetworkModule");
+				if (functionCreateNetworkModule != nullptr)
+				{
+					m_networkModule =
+						static_cast<Network::NetworkModuleInterface*>(functionCreateNetworkModule(o_sharedContext));
+					m_networkModule->Startup();
+					o_sharedContext.SetNetworkModule(m_networkModule);
+				}
+				else
+				{
+					// TODO logger
+				}
+			}
+			else
+			{
+				// TODO logger
+			}
         }
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)

@@ -37,7 +37,7 @@ namespace DoremiEngine
             {
                 m_memory = p_memoryModule;
             }
-            void SetNetworkModule(Network::NetworkModule* p_networkModule)
+            void SetNetworkModule(Network::NetworkModuleInterface* p_networkModule)
             {
                 m_network = p_networkModule;
             }
@@ -91,7 +91,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Memory module has not been initialized.");
             };
 
-            Network::NetworkModule& GetNetworkModule() const
+            Network::NetworkModuleInterface& GetNetworkModule() const
             {
                 if(m_network != nullptr)
                 {
@@ -124,7 +124,7 @@ namespace DoremiEngine
             DoremiEngine* m_core;
             Graphic::GraphicModule* m_graphic;
             Memory::MemoryModule* m_memory;
-            Network::NetworkModule* m_network;
+            Network::NetworkModuleInterface* m_network;
             Physics::PhysicsModule* m_physics;
             Script::ScriptModule* m_script;
         };
