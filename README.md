@@ -9,7 +9,7 @@ Team members
 | John Bergsten			|   			| TODOJB			|
 | Lucas Holmqvist		| 	            | TODOLH			|
 | Simon Hyltegård		| 		        | TODOSH			|
-| Christian Markowicz   | 			    | TODOCH			|
+| Christian Markowicz   | 			    | TODOCM			|
 | Rebecca Künkel		| 		        | TODORK			|
 | Rasmus Tilljander 	| bulten/meraz	| TODORT			|
 | Joakim Westgren   	|         		| TODOJW			|

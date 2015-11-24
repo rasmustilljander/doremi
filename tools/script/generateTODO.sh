@@ -8,7 +8,7 @@ mkdir -p TODO
 ./todoLocation.sh TODOJB TODO/John Bergsten.todo
 ./todoLocation.sh TODOLH TODO/Lucas Holmqvist.todo
 ./todoLocation.sh TODOSH TODO/Simon Hyltegård.todo
-./todoLocation.sh TODOCH TODO/Christian Markowicz.todo
+./todoLocation.sh TODOCM TODO/Christian Markowicz.todo
 ./todoLocation.sh TODORK TODO/Rebecca Künkel.todo
 ./todoLocation.sh TODORT TODO/Rasmus Tilljander.todo
 ./todoLocation.sh TODOJW TODO/Joakim Westgren.todo
