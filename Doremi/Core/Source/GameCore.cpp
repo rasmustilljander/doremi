@@ -2,13 +2,14 @@
 #include <GameCore.hpp>
 #include <EntityComponent/EntityInterface.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
+#include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
-
+#include <EventHandler/EventHandler.hpp>
 // Third party
 
 // Standard libraries
@@ -87,13 +88,15 @@ namespace Doremi
             while (true)
             {
                 // Have all managers update
-                size_t length = m_managers.size();
+                
+				size_t length = m_managers.size();
                 for (size_t i = 0; i < length; i++)
                 {
                     m_managers[i]->Update(0.017);
                 }
+				EventHandler::GetInstance()->DeliverEvents();
             }
-
+			
                 //Game Loop
               
 

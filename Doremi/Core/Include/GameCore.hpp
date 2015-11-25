@@ -1,6 +1,5 @@
 #pragma once
 // Project specific
-#include <Doremi/Core/Include/Manager/Manager.hpp>
 
 // Standard libraries
 #include <vector>
@@ -8,6 +7,7 @@ namespace Doremi
 {
     namespace Core
     {
+		class Manager;
         class EntityInterface;
         class GameCore
         {
