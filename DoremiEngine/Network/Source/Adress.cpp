@@ -7,7 +7,11 @@ namespace DoremiEngine
     {
         Adress::Adress()
         {
+            SetIP(127, 0, 0, 1);
 
+            SetNetPort(26500);
+
+            ComposeAdress();
         }
 
         Adress::Adress(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)

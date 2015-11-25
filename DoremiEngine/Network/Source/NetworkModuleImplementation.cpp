@@ -58,11 +58,25 @@ namespace DoremiEngine
 
 		}
 
+        void NetworkModuleImplementation::ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
+        {
+
+        }
+
+        void NetworkModuleImplementation::ConnectReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
+        {
+
+        }
+
 		void NetworkModuleImplementation::Shutdown()
 		{
             //TODO move shutdown to other place
             #ifdef WIN32
-            WSACleanup();
+            int Result = WSACleanup();
+            if (Result == SOCKET_ERROR)
+            {
+                throw std::runtime_error("Failed to shutdown winsock, WSACleanup failed.");
+            }
             #endif
 		}
 	}

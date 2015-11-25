@@ -33,6 +33,16 @@ namespace DoremiEngine
 			*/
 			virtual void SendNeworkMessage(const NetMessage& p_message, Connection& p_sendToConnection) = 0;
 
+            /**
+            TODOCM docs
+            */
+            virtual void ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+
+            /**
+            TODOCM docs
+            */
+            virtual void ConnectReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+
 			/**
 			TODO
 			*/

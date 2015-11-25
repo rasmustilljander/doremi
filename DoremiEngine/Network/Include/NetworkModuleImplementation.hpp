@@ -34,6 +34,16 @@ namespace DoremiEngine
 			*/
 			void SendNeworkMessage(const NetMessage& p_message, Connection& p_sendToConnection) override;
 
+            /**
+                TODOCM docs
+            */
+            void ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port);
+
+            /**
+                TODOCM docs
+            */
+            void ConnectReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port);
+
 			/**
 				TODOCM docs
 			*/

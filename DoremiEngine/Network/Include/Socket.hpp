@@ -28,13 +28,13 @@ namespace DoremiEngine
             /**
                 TODOCM log
             */
-            void CreateWaitingTCPSocket(const Adress &p_adress, const uint8_t &p_maxConnections);
+            void CreateWaitingTCPSocket(const Adress &p_myAdress, const uint8_t &p_maxConnections);
 
             /**
                 TODOCM log
 
             */
-            void CreateConnectingTCPSocket();
+            void CreateAndConnectTCPSocket(const Adress &p_connectAdress);
 
             /**
                 TODOCM log
@@ -61,6 +61,11 @@ namespace DoremiEngine
                 TODOCM log
             */
             void BindSocket(const Adress &p_adress);
+
+            /**
+                TODOCM log
+            */
+            void ConnectSocket(const Adress &p_connectAdress);
 
             /**
                 TODOCM log
