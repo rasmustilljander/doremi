@@ -10,7 +10,8 @@ namespace Doremi
 			:Manager(p_sharedContext), m_masterConnectionState(ConnectionState::DISCONNECTED), m_serverConnectionState(ConnectionState::DISCONNECTED),
 			m_nextUpdateTimer(0.0f), m_updateInterval(1000.0f)
 		{
-
+            //TODOCM remove test code
+            p_sharedContext.GetNetworkModule().Startup();
 		}
 
 		ClientNetworkManager::~ClientNetworkManager()

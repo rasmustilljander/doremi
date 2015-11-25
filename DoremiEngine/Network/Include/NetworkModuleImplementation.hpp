@@ -38,6 +38,12 @@ namespace DoremiEngine
 				TODOCM docs
 			*/
 			void Shutdown() override;
+
+            private:
+            /**
+                TODOCM docs
+            */
+            bool m_isInitialized;
 		};
 	}
 }

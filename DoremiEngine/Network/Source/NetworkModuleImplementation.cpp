@@ -2,6 +2,7 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <NetMessage.hpp>
 #include <Connection.hpp>
+#include <Adress.hpp>
 
 #ifdef WIN32
 #include <WinSock2.h>
@@ -15,7 +16,7 @@ namespace DoremiEngine
 {
 	namespace Network
 	{
-		NetworkModuleImplementation::NetworkModuleImplementation()
+		NetworkModuleImplementation::NetworkModuleImplementation() : m_isInitialized(false)
 		{
 			
 		}
@@ -27,6 +28,11 @@ namespace DoremiEngine
 
 		void NetworkModuleImplementation::Startup()
 		{
+            if (m_isInitialized)
+            {
+                throw std::runtime_error("Failed to Startup Network Module, function already called.");
+            }
+
             #ifdef WIN32
             WSADATA wsaData;
 
@@ -38,6 +44,8 @@ namespace DoremiEngine
             }
             #elif
             #endif
+
+            m_isInitialized = true;
 		}
 
 		void NetworkModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)

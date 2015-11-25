@@ -60,7 +60,7 @@ namespace DoremiEngine
             /**
                 TODOCM log
             */
-            void SetAdress(const Adress &p_adress);
+            void BindSocket(const Adress &p_adress);
 
             /**
                 TODOCM log
