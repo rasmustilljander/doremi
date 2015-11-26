@@ -13,11 +13,11 @@ namespace Doremi
         public:
             static EntityManager* GetInstance();
 
-            // Adds entity and returns id of newly added entity
+            /** Adds entity and returns id of newly added entity*/
             EntityID AddEntity();
-            // Removes specified entity
+            /** Removes specified entity*/
             void RemoveEntity(int pEntityID);
-            // Returns last entity ID
+            /** Returns last entity ID*/
             const int GetLastEntity()
             {
                 return mNextSlot;

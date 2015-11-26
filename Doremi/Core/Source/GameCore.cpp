@@ -1,6 +1,6 @@
 // Project specific
 #include <GameCore.hpp>
-#include <EntityComponent/EntityInterface.hpp>
+#include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
@@ -30,7 +30,7 @@ namespace Doremi
         // Only for testing, should be removed!
         void GenerateWorld() 
         {
-            Doremi::Core::EntityInterface* t_entityInterface = Doremi::Core::EntityInterface::GetInstance();
+            Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
             
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
@@ -42,12 +42,12 @@ namespace Doremi
             t_entityBlueprint[ComponentType::Example] = t_exampleComponent;
 
             // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in the future)
-            t_entityInterface->RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
+            t_entityHandler->RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
             
             // Create a couple of entities using the newly created blueprint
             for (size_t i = 0; i < 2; i++)
             {
-                t_entityInterface->CreateEntity(Blueprints::ExampleEntity);
+                t_entityHandler->CreateEntity(Blueprints::ExampleEntity);
             }
         }
 
@@ -71,8 +71,9 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& a =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::AUDIO); //Should add more modules to bitmask to initialize them
 
-            EntityInterface* t_enitiyInterface = EntityInterface::GetInstance();
+            EntityHandler* t_entityHandler = EntityHandler::GetInstance();
             
+            ////////////////Example only////////////////
             // Create manager
             Manager* t_physicsManager = new ExampleManager(a);
 
@@ -81,6 +82,7 @@ namespace Doremi
 
             // Create all entities (debug purposes only so far)
             GenerateWorld();
+            ////////////////End Example////////////////
         }
 
         void GameCore::StartCore()

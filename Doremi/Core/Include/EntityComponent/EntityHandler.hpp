@@ -9,10 +9,10 @@ namespace Doremi
 {
     namespace Core
     {
-        class EntityInterface
+        class EntityHandler
         {
         public:
-            static EntityInterface* GetInstance();
+            static EntityHandler* GetInstance();
 
             /** Registers a blueprint for entity creation with an ID*/
             void RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint);
@@ -23,8 +23,10 @@ namespace Doremi
             /** Checks if the entity specified has the entities in the mask. Mask has to be created manually*/
             bool HasComponents(EntityID p_id, int p_mask);
 
-            /** creates an entity according to the provided blueprint id*/
-            void CreateEntity(Blueprints p_blueprintID);
+            /** 
+            Creates an entity according to the provided blueprint id
+            Also returns EntityID of newly created entity*/
+            int CreateEntity(Blueprints p_blueprintID);
 
             /** Returns desired component. Example: GetComponentFromStorage<ComponentName>(id);*/
             template <class T> T* GetComponentFromStorage(EntityID p_id)
@@ -41,9 +43,9 @@ namespace Doremi
             /** Removes the entire entity at the specific location*/
             void RemoveEntity(int p_entityID);
         private:
-            EntityInterface();
-            ~EntityInterface();
-            static EntityInterface* m_singleton;
+            EntityHandler();
+            ~EntityHandler();
+            static EntityHandler* m_singleton;
         };
     }
 }

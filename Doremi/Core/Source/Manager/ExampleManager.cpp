@@ -2,7 +2,7 @@
 #include <Manager/ExampleManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
-#include <EntityComponent/EntityInterface.hpp>
+#include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
@@ -39,14 +39,14 @@ namespace Doremi
 			EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
             // Loop through all entities
-            size_t length = EntityInterface::GetInstance()->GetLastEntityIndex();
+            size_t length = EntityHandler::GetInstance()->GetLastEntityIndex();
             for (size_t i = 0; i < length; i++)
             {
                 // Check that the current entity has the relevant components
-                if (EntityInterface::GetInstance()->HasComponents(i, (int)ComponentType::Example))
+                if (EntityHandler::GetInstance()->HasComponents(i, (int)ComponentType::Example))
                 {
                     // Get component
-                    ExampleComponent* t_example = EntityInterface::GetInstance()->GetComponentFromStorage<ExampleComponent>(i);
+                    ExampleComponent* t_example = EntityHandler::GetInstance()->GetComponentFromStorage<ExampleComponent>(i);
                     
                     // Perform desired operation
                     t_example->posX++;

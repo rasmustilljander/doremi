@@ -12,11 +12,5 @@ namespace Doremi
         Manager::~Manager()
         {
         }
-
-        void Manager::Update(double p_dt)
-        {
-
-        }
-
     }
 }
