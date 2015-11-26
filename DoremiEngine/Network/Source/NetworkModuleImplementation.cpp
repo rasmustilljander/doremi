@@ -1,7 +1,10 @@
+// Project specific
 #include <NetworkModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <NetMessage.hpp>
 #include <Adress.hpp>
+
+// Standard libraries
 
 #ifdef WIN32
 #include <WinSock2.h>
@@ -68,6 +71,7 @@ namespace DoremiEngine
             Socket* newSocket = new Socket();
             Adress newAdress = Adress(p_a, p_b, p_c, p_d, p_port);
 
+            // Create a TCP socket used for incomming connections
             newSocket->CreateWaitingTCPSocket(newAdress, 1);
 
             // Save socket to map
@@ -93,7 +97,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Invalid socketID sent to AcceptConnection.");
             }
 
-            // Accept connection
+            // Accept an incomming connection
             newSocket = new Socket(iter->second->AcceptTCPConnection(newAdress));
 
             // Save socket to map
@@ -110,6 +114,7 @@ namespace DoremiEngine
             Socket* newSocket = new Socket();
             Adress newAdress = Adress(p_a, p_b, p_c, p_d, p_port);
 
+            // Create a socket and attempt connect it to a socket used for incomming
             newSocket->CreateAndConnectTCPSocket(newAdress);
 
             // Save socket to map

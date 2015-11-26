@@ -1,4 +1,6 @@
+// Project specific
 #include <Manager/ServerNetworkManager.hpp>
+#include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <DoremiEngine/Network/Include/NetMessage.hpp>
 
 namespace Doremi

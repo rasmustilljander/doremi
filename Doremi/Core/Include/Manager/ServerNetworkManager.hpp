@@ -1,11 +1,17 @@
 #pragma once
+
+// Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
-#include <DoremiEngine/Network/Include/NetworkModule.hpp>
+
 
 namespace Doremi
 {
     namespace Core
     {
+        class NetworkModule;
+        /**
+            Manager class for Server, contains the logic for the connection pattern
+        */
         class ServerNetworkManager : public Manager
         {
             public:

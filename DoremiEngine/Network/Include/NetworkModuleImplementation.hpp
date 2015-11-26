@@ -1,5 +1,9 @@
 #pragma once
+
+// Project specific
 #include <NetworkModule.hpp>
+
+// Standard libraries
 #include <Socket.hpp>
 #include <string>
 #include <map>
@@ -8,6 +12,10 @@ namespace DoremiEngine
 {
     namespace Network
     {
+        /**
+            Computing the data-flow management of incomming and outcomming packages
+            Creates and removes connections
+        */
         class NetworkModuleImplementation : public NetworkModule
         {
             public:

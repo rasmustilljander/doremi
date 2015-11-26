@@ -1,4 +1,6 @@
 #pragma once
+
+// Standard libraries
 #include <string>
 #include <WinSock2.h>
 
@@ -6,6 +8,9 @@ namespace DoremiEngine
 {
     namespace Network
     {
+        /**
+            Adress class for comosing and holding adress information
+        */
         class Adress
         {
             public:

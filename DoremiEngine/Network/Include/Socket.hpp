@@ -1,6 +1,10 @@
 #pragma once
-#include <string>
+
+// Project specific
 #include <Adress.hpp>
+
+// Standard libraries
+#include <string>
 
 #ifdef WIN32
 #include <WinSock2.h>

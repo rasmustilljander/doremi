@@ -1,4 +1,6 @@
 #pragma once
+
+// Project specific
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 
@@ -14,6 +16,10 @@ namespace DoremiEngine
     {
         struct NetMessage;
 
+        /**
+            Computing the data-flow management of incomming and outcomming packages
+            Creates and removes connections
+        */
         class NetworkModule : public DoremiEngine::Core::EngineModule
         {
             public:
