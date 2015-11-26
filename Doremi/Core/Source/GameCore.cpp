@@ -69,7 +69,7 @@ namespace Doremi
                 throw std::runtime_error("2Failed to load engine - please check your installation.");
             }
             const DoremiEngine::Core::SharedContext& a =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::AUDIO); //Should add more modules to bitmask to initialize them
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
             

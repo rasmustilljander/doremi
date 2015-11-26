@@ -1,6 +1,6 @@
 #include <PhysicsModuleImplementation.hpp>
 
-#include <iostream>
+#include <Bullet/btBulletDynamicsCommon.h>
 namespace DoremiEngine
 {
     namespace Physics
@@ -8,26 +8,13 @@ namespace DoremiEngine
         PhysicsModuleImplementation::PhysicsModuleImplementation() {}
         PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
-        /**
-        TODO
-        */
-        void PhysicsModuleImplementation::Startup() {}
-
-        /**
-        TODO
-        */
-        void PhysicsModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
-
-        /**
-        TODO
-        */
-        void PhysicsModuleImplementation::Shutdown() {}
-
-        // Only an example method to demonstrate how the engine is used
-        float PhysicsModuleImplementation::ExampleMethod(const float& posx) 
+        void PhysicsModuleImplementation::Startup() 
         {
-            return posx * 400;
         }
+
+        void PhysicsModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
+        
+        void PhysicsModuleImplementation::Shutdown() {}
     }
 }
 

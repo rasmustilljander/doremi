@@ -25,8 +25,6 @@ namespace DoremiEngine
             TODO
             */
             void Shutdown() override;
-
-            float ExampleMethod(const float& posx) override;
         };
     }
 }

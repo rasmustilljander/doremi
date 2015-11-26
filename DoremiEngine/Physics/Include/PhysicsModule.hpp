@@ -15,9 +15,6 @@ namespace DoremiEngine
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
         public:
-            //PhysicsModule();
-
-            //virtual ~PhysicsModule();
 
             /**
             TODO
