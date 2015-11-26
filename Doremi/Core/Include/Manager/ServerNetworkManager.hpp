@@ -1,5 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/Manager/Manager.hpp>
+#include <DoremiEngine/Network/Include/NetworkModule.hpp>
 
 namespace Doremi
 {
@@ -7,7 +8,7 @@ namespace Doremi
     {
         class ServerNetworkManager : public Manager
         {
-        public:
+            public:
             /**
             TODOCM doc
             */
@@ -25,4 +26,3 @@ namespace Doremi
         };
     }
 }
-

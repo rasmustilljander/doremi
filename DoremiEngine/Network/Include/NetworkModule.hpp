@@ -10,49 +10,62 @@
 
 namespace DoremiEngine
 {
-	namespace Network
-	{
-		struct NetMessage;
-		struct Connection;
+    namespace Network
+    {
+        struct NetMessage;
 
-		class NetworkModule : public DoremiEngine::Core::EngineModule
-		{
-		public:
-			/**
-			TODO
-			*/
-			virtual void Startup() = 0;
-
-			/**
-			TODO
-			*/
-			virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
-
-			/**
-			TODO docs
-			*/
-			virtual void SendNeworkMessage(const NetMessage& p_message, Connection& p_sendToConnection) = 0;
+        class NetworkModule : public DoremiEngine::Core::EngineModule
+        {
+            public:
+            /**
+                Startup the Network Module, if WIN32 is specified - winsock is initialized
+            */
+            virtual void Startup() = 0;
 
             /**
-            TODOCM docs
+                TODOCM doc
             */
-            virtual void ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+            virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
 
             /**
-            TODOCM docs
+                Send data to a specified socket TODOCM check if this is the true way to send
+               messages or if you need the adress and -from- socket
             */
-            virtual void ConnectReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+            virtual void SendNeworkMessage(const NetMessage& p_message, size_t& p_sendToSocket) = 0;
 
-			/**
-			TODO
-			*/
-			virtual void Shutdown() = 0;
-		};
-	}
+            /**
+                Create a unreliable socket connection
+            */
+            virtual void
+            ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+
+            /**
+                Create a socket and connects to a reliable standby socket
+            */
+            virtual size_t
+            ConnectToReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+
+            /**
+                Create a socket in standby, which will be able to recieve reliable connections
+            */
+            virtual size_t
+            CreateReliableConnection(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
+
+            /**
+                Accept an incomming connection to a socket in standby(CreateReliableConnection)
+            */
+            virtual size_t AcceptConnection(size_t p_socketID) = 0;
+
+            /**
+                Shutdown the network system, including winsock if WIN32 is specified
+            */
+            virtual void Shutdown() = 0;
+        };
+    }
 }
 
 extern "C" {
-	typedef DoremiEngine::Network::NetworkModule* (*CREATE_NETWORK_MODULE)(const DoremiEngine::Core::SharedContext&);
-	NETWORK_DLL_EXPORT DoremiEngine::Network::NetworkModule*
-		CreateNetworkModule(const DoremiEngine::Core::SharedContext& p_context);
+typedef DoremiEngine::Network::NetworkModule* (*CREATE_NETWORK_MODULE)(const DoremiEngine::Core::SharedContext&);
+NETWORK_DLL_EXPORT DoremiEngine::Network::NetworkModule*
+CreateNetworkModule(const DoremiEngine::Core::SharedContext& p_context);
 }

@@ -23,18 +23,27 @@ namespace DoremiEngine
             /**
                 TODOCM log
             */
+            Socket(SOCKET p_socketHandle);
+
+            /**
+                TODOCM log
+            */
             ~Socket();
 
             /**
-                TODOCM log
+                Creates a TCP socket used for incomming connections
             */
-            void CreateWaitingTCPSocket(const Adress &p_myAdress, const uint8_t &p_maxConnections);
+            void CreateWaitingTCPSocket(const Adress& p_myAdress, const uint8_t& p_maxConnections);
 
             /**
-                TODOCM log
-
+                Create a TCP socket and connect to an adress
             */
-            void CreateAndConnectTCPSocket(const Adress &p_connectAdress);
+            void CreateAndConnectTCPSocket(const Adress& p_connectAdress);
+
+            /**
+                Accept a TCP connection if CreateWaitingTCPSocket is called
+            */
+            Socket AcceptTCPConnection(Adress& p_inAdress);
 
             /**
                 TODOCM log
@@ -53,22 +62,22 @@ namespace DoremiEngine
 
             private:
             /**
-                TODOCM log
+                Creates a TCP socket used for binding or connecting
             */
             void CreateTCPSocket();
 
             /**
-                TODOCM log
+                Bind TCP socket to incomming connections
             */
-            void BindSocket(const Adress &p_adress);
+            void BindSocket(const Adress& p_adress);
 
             /**
-                TODOCM log
+                Connect socket to adress
             */
-            void ConnectSocket(const Adress &p_connectAdress);
+            void ConnectSocket(const Adress& p_connectAdress);
 
             /**
-                TODOCM log
+                Socket handle used for API calls
             */
             SOCKET m_socketHandle;
         };
