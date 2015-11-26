@@ -65,8 +65,7 @@ namespace Doremi
 			{
 				//Cast the event to the correct format
 				ExampleEvent* t_event = (ExampleEvent*)p_event;
-
-				cout << "Got example event!" << t_event->myInt << endl;
+				int t_intFromEvent = t_event->myInt;
 				break;
 			}
 			default:
