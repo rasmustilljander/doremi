@@ -86,8 +86,8 @@ add_subdirectory(Utility)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${OUTPUT_FOLDER}
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
 )
 
 # Move external dlls to executing folder
