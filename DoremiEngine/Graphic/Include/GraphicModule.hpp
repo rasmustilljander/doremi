@@ -15,6 +15,7 @@ namespace DoremiEngine
         /**
         TODO docs
         */
+        enum class ShaderType;
         class GraphicModule : public DoremiEngine::Core::EngineModule
         {
             public:
@@ -33,8 +34,37 @@ namespace DoremiEngine
             */
             virtual void Shutdown() = 0;
 
+            /**
+            Load model from specified file. Returns modelID
+            */
+            virtual int LoadObject(const std::string& p_fileName, const std::string& p_materialFileName) = 0;
+            
+            /**
+            Load shader from specified file. Returns shaderID
+            */
+            virtual int LoadShader(ShaderType p_shaderType, const std::string& p_fileName) = 0;
 
-            // TODOKO add more interface functions
+            /**
+            Set specified shader to active 
+            */
+            virtual void BindShader(ShaderType p_shaderType, int p_shaderID) = 0;
+           
+            /**
+            Initializes DirectX
+            */
+            virtual void InitializeDirectX() = 0;
+
+            /**
+            Draw objects
+            */
+            virtual void Draw() = 0;
+
+            /**
+            Computes after effects such as glow and lighting
+            */
+            virtual void ComputeAfterEffects() = 0;
+
+            // TODORK add more interface functions
         };
     }
 }
