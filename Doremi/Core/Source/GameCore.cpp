@@ -19,7 +19,6 @@
 #include <string>
 
 
-
 // Third party
 
 // Standard libraries

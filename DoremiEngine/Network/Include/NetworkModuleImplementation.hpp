@@ -42,7 +42,12 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            void SendNeworkMessage(const NetMessage& p_message, size_t& p_sendToSocket) override;
+            bool SendData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) override;
+
+            /**
+                TODOCM docs
+            */
+            bool RecieveData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket) override;
 
             /**
                 TODOCM docs

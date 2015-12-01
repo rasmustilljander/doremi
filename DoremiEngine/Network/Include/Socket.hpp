@@ -55,14 +55,14 @@ namespace DoremiEngine
             void CreateUDPSocket();
 
             /**
-                TODOCM log
+                Send data to socket
             */
-            void Send();
+            bool Send(void* t_data, const uint32_t &t_dataSize);
 
             /**
-                TODOCM log
+                Recieve data from socket
             */
-            void Recieve();
+            bool Recieve(void* t_data, const uint32_t &t_dataSize);
 
             private:
             /**
@@ -84,6 +84,11 @@ namespace DoremiEngine
                 Socket handle used for API calls
             */
             SOCKET m_socketHandle;
+
+            /**
+                Max Size of package, TCP shoudln't care, TODOCM check if true
+            */
+            uint32_t m_messageSize;
         };
     }
 }

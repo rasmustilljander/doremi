@@ -1,8 +1,8 @@
 #pragma once
 
-namespace DoremiEngine
+namespace Doremi
 {
-    namespace Network
+    namespace Core
     {
         /**
             A network message will contain:

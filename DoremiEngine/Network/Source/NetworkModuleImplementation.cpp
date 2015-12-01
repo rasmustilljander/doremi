@@ -1,7 +1,6 @@
 // Project specific
 #include <NetworkModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
-#include <NetMessage.hpp>
 #include <Adress.hpp>
 
 // Standard libraries
@@ -53,8 +52,34 @@ namespace DoremiEngine
         {
         }
 
-        void NetworkModuleImplementation::SendNeworkMessage(const NetMessage& p_message, size_t& p_sendToSocket)
+        bool NetworkModuleImplementation::SendData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket)
         {
+            // Check if socket exist in map TODOCM remove if not using map
+            std::map<size_t, Socket*>::iterator iter = m_SocketHandleMap.find(p_sendToSocket);
+            if (iter == m_SocketHandleMap.end())
+            {
+                throw std::runtime_error("Invalid socketID sent to SendData.");
+            }
+
+            // Attempt to send data, returns true if all data is sent
+            bool SendSuccessful = iter->second->Send(t_data, t_dataSize);
+
+            return SendSuccessful;
+        }
+
+        bool NetworkModuleImplementation::RecieveData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket)
+        {
+            // Check if socket exist in map TODOCM remove if not using map
+            std::map<size_t, Socket*>::iterator iter = m_SocketHandleMap.find(p_recieveFromSocket);
+            if (iter == m_SocketHandleMap.end())
+            {
+                throw std::runtime_error("Invalid socketID sent to RecieveData.");
+            }
+
+            // Attempt to recieve data, returns true if all data is sent
+            bool RecieveSuccessful = iter->second->Recieve(t_data, t_dataSize);
+            
+            return RecieveSuccessful;
         }
 
         void NetworkModuleImplementation::ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
@@ -127,7 +152,7 @@ namespace DoremiEngine
 
         void NetworkModuleImplementation::Shutdown()
         {
-// TODO move shutdown to other place
+            // TODO move shutdown to other place
 #ifdef WIN32
             int Result = WSACleanup();
             if(Result == SOCKET_ERROR)

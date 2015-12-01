@@ -34,10 +34,14 @@ namespace DoremiEngine
             virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
 
             /**
-                Send data to a specified socket TODOCM check if this is the true way to send
-               messages or if you need the adress and -from- socket
+                Send data to a specified socket, returns true if successful
             */
-            virtual void SendNeworkMessage(const NetMessage& p_message, size_t& p_sendToSocket) = 0;
+            virtual bool SendData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) = 0;
+
+            /**
+                Recieve data from a specified socket, returns true if successful
+            */
+            virtual bool RecieveData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket) = 0;
 
             /**
                 Create a unreliable socket connection
