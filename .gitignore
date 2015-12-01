@@ -3,3 +3,6 @@ tools/script/TODO
 
 # Ignore log files
 logs
+
+# Ignore format cache
+.formatCache

@@ -4,16 +4,26 @@ logFile="logs/gitlogs.txt"
 mkdir -p logs
 touch logs/gitlogs.txt
 date=`date '+%Y-%m-%d %H:%M'`
+error=0
+> .formatCache
 
-
+# Find all files that has been changed
 files=`git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp"`
 echo "[$date] All files: $files" >> $logFile
 
-echo -e "[$date] Checking formatting for files."
-for file in $(git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp")
+# Cross reference with deleted files, aka, remove deleted files from format check.
+for deletedFile in $(git diff --cached --summary | grep delete | cut -d" " -f5)
+do
+	files=`echo "$files" | grep -v $deletedFile`
+done
+
+echo -e "Checking formatting in source files."
+for file in $(echo "$files")
 do
 	echo -e "[$date] File: $file." >> $logFile
-	echo -e "[$date] File: $file."
+	echo -e "Checking $file."
+	
+	# Get information about the chunks
 	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -c 2-)
 	do
 		echo "[$date] line = $line" >> $logFile
@@ -27,13 +37,28 @@ do
 		echo [$date] $newCode >> $logFile
 		echo [$date] $oldCode >> $logFile
 		if [ "$newCode" != "$oldCode" ]; then
-			echo -e "[$date] Aborting. The following file does not have the correct formatting."
-			echo -e "[$date] File: $file rows: $startLine-$endLine"
-			#echo -e "[$date] Run 'git format' following command to format this part (Do not forget to add the same file using 'git add')"
-			#echo $file $startLine $endLine > .formatCache
-			exit 1
+			echo -e "Detected problems with formatting on rows $startLine-$endLine"
+			echo $file,$startLine,$endLine >> .formatCache
+			error=1
 		fi
 	done
 done
 
+if [ $error -ne 0 ]; then
+	RED='\033[0;31m'
+	PURPLE='\033[0;35m'
+	NC='\033[0m' # No Color
+	echo -e ""
+	echo -e "Format check incomplete, found problems in the following files:"	
+	echo -e "\t(Run './tools/script/formatFromCache.sh' to format these changes.)" 
+	echo -e "\t(Do not forget to add the same file using 'git add /../'.)"
+	echo -e ""
+	for faultyFile in $(cat .formatCache | cut -d"," -f1)
+	do
+	echo -e "${RED}\t$faultyFile"
+	done
+	exit $error
+fi
+
+echo -e "Check complete. No problems detected."
 exit 0
