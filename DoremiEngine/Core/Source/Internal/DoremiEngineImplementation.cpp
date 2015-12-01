@@ -121,6 +121,10 @@ namespace DoremiEngine
                 LoadScriptModule(*m_sharedContext);
             }
 
+            if ((p_flags & EngineModuleEnum::INPUT) == EngineModuleEnum::INPUT)
+            {
+                LoadInputModule(*m_sharedContext);
+            }
             return *m_sharedContext;
         }
 
@@ -279,6 +283,10 @@ namespace DoremiEngine
         }
 
         void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext)
+        {
+        }
+
+        void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
         }
     }

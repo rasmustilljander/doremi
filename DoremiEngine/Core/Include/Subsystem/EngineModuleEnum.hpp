@@ -17,7 +17,8 @@ namespace DoremiEngine
                 NETWORK = 4,
                 PHYSICS = 8,
                 SCRIPT = 16,
-                ALL = AUDIO | GRAPHIC | NETWORK | PHYSICS | SCRIPT
+                INPUT = 32,
+                ALL = AUDIO | GRAPHIC | NETWORK | PHYSICS | SCRIPT | INPUT
             };
         };
     }

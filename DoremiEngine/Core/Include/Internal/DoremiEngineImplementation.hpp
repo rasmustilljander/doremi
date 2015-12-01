@@ -49,6 +49,7 @@ namespace DoremiEngine
             void LoadNetworkModule(SharedContextImplementation& o_sharedContext);
             void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
             void LoadScriptModule(SharedContextImplementation& o_sharedContext);
+            void LoadInputModule(SharedContextImplementation& o_sharedContext);
 
             // Shared context
             SharedContextImplementation* m_sharedContext;
