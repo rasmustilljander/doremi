@@ -1,27 +1,39 @@
 #! /bin/bash
 cd $SSP_CODE_HOME
 logFile="logs/gitlogs.txt"
+mkdir -p logs
+touch logs/gitlogs.txt
 date=`date '+%Y-%m-%d %H:%M'`
 
-files=`git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp"`
-echo "All files: $files" >> $logFile
 
-echo -e "Attempting to format files."
+files=`git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp"`
+echo "[$date] All files: $files" >> $logFile
+
+echo -e "[$date] Checking formatting for files."
 for file in $(git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp")
 do
-	echo -e "Formatting file $file" >> $logFile
-	echo -e "Formatting file $file"
+	echo -e "[$date] File: $file." >> $logFile
+	echo -e "[$date] File: $file."
 	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -c 2-)
 	do
-		echo $date "line = $line" >> $logFile
+		echo "[$date] line = $line" >> $logFile
 		startLine=$(echo $line | cut -d"," -f1)
 		endLine=$(echo $line | cut -d"," -f2)
 		endLine=$((startLine + endLine))
-		echo "$date startLine = $startLine" >> $logFile
-		echo "$date endLine = $endLine" >> $logFile
-		./tools/bin/clang-format.exe -lines=$startLine:$endLine -i $file
+		echo "[$date] startLine = $startLine" >> $logFile
+		echo "[$date] endLine = $endLine" >> $logFile
+		newCode=`./tools/bin/clang-format.exe -lines=$startLine:$endLine $file`
+		oldCode=`cat $file`
+		echo [$date] $newCode >> $logFile
+		echo [$date] $oldCode >> $logFile
+		if [ "$newCode" != "$oldCode" ]; then
+			echo -e "[$date] Aborting. The following file does not have the correct formatting."
+			echo -e "[$date] File: $file rows: $startLine-$endLine"
+			#echo -e "[$date] Run 'git format' following command to format this part (Do not forget to add the same file using 'git add')"
+			#echo $file $startLine $endLine > .formatCache
+			exit 1
+		fi
 	done
 done
 
-echo -e "Formatting complete"
 exit 0
