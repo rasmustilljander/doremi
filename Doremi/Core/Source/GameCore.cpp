@@ -7,6 +7,7 @@
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
 #include <Manager/ClientNetworkManager.hpp>
+#include <Manager/ServerNetworkManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -14,7 +15,9 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <EventHandler/EventHandler.hpp>
+
 #include <string>
+
 
 
 // Third party
@@ -63,10 +66,12 @@ namespace Doremi
             }
         }
 
+
         void GameCore::LoadEngineLibrary()
         {
             // Load engine DLL
             m_engineLibrary = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
+
 
             if(m_engineLibrary == nullptr)
             {
@@ -75,7 +80,8 @@ namespace Doremi
             }
         }
 
-        void GameCore::Initialize()
+
+        void GameCore::InitializeClient()
         {
             START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
 
@@ -117,13 +123,53 @@ namespace Doremi
             //Lucas Testkod slut
             ////////////////Example only////////////////
             // Create manager
+
             Manager* t_physicsManager = new ExampleManager(sharedContext);
+            Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
+
 
             // Add manager to list of managers
             m_managers.push_back(t_physicsManager);
-            m_managers.push_back(t_networkManager);
+            m_managers.push_back(t_clientNetworkManager);
 
-            // Create all entities (debug purposes only so far)
+            GenerateWorld();
+            ////////////////End Example////////////////
+        }
+
+        void GameCore::InitializeServer()
+        {
+            // Load engine DLLs
+            void* m_engineModule = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
+
+            if (m_engineModule == nullptr)
+            {
+                throw std::runtime_error(
+                    "1Failed to load engine - please check your installation.");
+            }
+
+            INITIALIZE_ENGINE libInitializeEngine =
+                (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+
+            if (libInitializeEngine == nullptr)
+            {
+                throw std::runtime_error(
+                    "2Failed to load engine - please check your installation.");
+            }
+            const DoremiEngine::Core::SharedContext& a =
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+
+            EntityHandler* t_entityHandler = EntityHandler::GetInstance();
+            Manager* t_networkManager = new ClientNetworkManager(a);
+
+            ////////////////Example only////////////////
+            // Create manager
+            Manager* t_physicsManager = new ExampleManager(a);
+            Manager* t_clientNetworkManager = new ServerNetworkManager(a);
+
+            // Add manager to list of managers
+            m_managers.push_back(t_physicsManager);
+            m_managers.push_back(t_clientNetworkManager);
+
             GenerateWorld();
             ////////////////End Example////////////////
         }
@@ -141,8 +187,6 @@ namespace Doremi
                 }
                 EventHandler::GetInstance()->DeliverEvents();
             }
-
-            // Game Loop
         }
     }
 }

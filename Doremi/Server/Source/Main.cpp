@@ -1,5 +1,5 @@
 // Project specific
-
+#include <Server.hpp>
 
 // Third party
 
@@ -24,6 +24,8 @@ int main(int argc, char** argv)
 
     try
     {
+        Doremi::ServerMain serverMain = Doremi::ServerMain();
+        serverMain.Start();
     }
     catch(std::exception e)
     {

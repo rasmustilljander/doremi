@@ -15,8 +15,13 @@ namespace Doremi
             public:
             GameCore();
             virtual ~GameCore();
-            /** Initializes entity system and different engine DLLs*/
-            void Initialize();
+
+            /** Initializes entity system and different engine DLLs for client*/
+            void InitializeClient();
+
+            /** Initializes entity system and different engine DLLs for server*/
+            void InitializeServer();
+
             /** Starts the game. Game loop*/
             void StartCore();
 

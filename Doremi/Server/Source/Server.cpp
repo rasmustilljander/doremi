@@ -1,5 +1,6 @@
 // Project specific
 #include <Server.hpp>
+#include <Doremi/Core/Include/GameCore.hpp>
 
 // Third party
 
@@ -19,5 +20,9 @@ namespace Doremi
 
     void ServerMain::Start()
     {
+        // Start the game
+        Core::GameCore* gameCore = new Core::GameCore();
+        gameCore->InitializeServer();
+        gameCore->StartCore();
     }
 }

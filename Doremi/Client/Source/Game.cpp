@@ -25,8 +25,8 @@ namespace Doremi
     void GameMain::Start()
     {
         // Start the game
-        Core::GameCore gameCore = Core::GameCore();
-        gameCore.Initialize();
-        gameCore.StartCore();
+        Core::GameCore* gameCore = new Core::GameCore();
+        gameCore->InitializeClient();
+        gameCore->StartCore();
     }
 }
