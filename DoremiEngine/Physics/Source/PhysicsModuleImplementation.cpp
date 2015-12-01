@@ -5,8 +5,12 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        PhysicsModuleImplementation::PhysicsModuleImplementation() {}
-        PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
+        PhysicsModuleImplementation::PhysicsModuleImplementation()
+        {
+        }
+        PhysicsModuleImplementation::~PhysicsModuleImplementation()
+        {
+        }
 
         void PhysicsModuleImplementation::Startup()
         {
