@@ -33,6 +33,7 @@ namespace DoremiEngine
 
             //Test function
             virtual float ExampleMethod(const float& posx) = 0;
+            virtual void ExampleMethodAltersData(float* p_posX, float* p_posY) = 0;
         };
     }
 }

@@ -4,6 +4,7 @@
 #include <EntityComponent/ComponentTable.hpp>
 #include <EntityComponent/StorageShelf.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
+#include <EntityComponent/Components/Example2Component.hpp>
 
 namespace Doremi
 {
@@ -59,6 +60,11 @@ namespace Doremi
                 {
                     memcpy(GetComponent<ExampleComponent>(tNewEntityID), iter->second,
                         sizeof(ExampleComponent));
+                }
+                else if (iter->first == ComponentType::Example2)
+                {
+                    memcpy(GetComponent<Example2Component>(tNewEntityID), iter->second,
+                        sizeof(Example2Component));
                 }
 
             }

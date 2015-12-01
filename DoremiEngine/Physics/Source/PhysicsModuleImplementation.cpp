@@ -24,9 +24,16 @@ namespace DoremiEngine
         {
         }
 
+        // Only an example method to demonstrate how the engine is used
         float PhysicsModuleImplementation::ExampleMethod(const float& posx)
         {
             return 1;
+        }
+
+        void PhysicsModuleImplementation::ExampleMethodAltersData(float* p_posX, float* p_posY)
+        {
+            *p_posX = 5;
+            *p_posY = *p_posX * 2;
         }
     }
 }

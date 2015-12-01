@@ -2,6 +2,7 @@
 #include <GameCore.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
+#include <EntityComponent/Components/Example2Component.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
@@ -34,16 +35,18 @@ namespace Doremi
             
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
+            Example2Component* t_example2Component = new Example2Component();
             
             // Declare blueprint (do not reuse variables for more blueprints)
             EntityBlueprint t_entityBlueprint;
 
             // Set components of the blueprint
             t_entityBlueprint[ComponentType::Example] = t_exampleComponent;
+            t_entityBlueprint[ComponentType::Example2] = t_example2Component;
 
             // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in the future)
             t_entityHandler->RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
-            
+
             // Create a couple of entities using the newly created blueprint
             for (size_t i = 0; i < 2; i++)
             {

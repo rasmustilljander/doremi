@@ -27,6 +27,7 @@ namespace DoremiEngine
             void Shutdown() override;
 
             float ExampleMethod(const float& posx) override;
+            void ExampleMethodAltersData(float* p_posX, float* p_posY);
         };
     }
 }

@@ -13,6 +13,7 @@ enum class ComponentType : int
 {
     None = 0x00,
     Example = 0x01,
+    Example2 = 0x02,
 };
 
 /** 
