@@ -8,7 +8,7 @@
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
-
+#include <Windows.h>
 namespace DoremiEngine
 {
     namespace Core
@@ -24,8 +24,8 @@ namespace DoremiEngine
         SharedContext& DoremiEngineImplementation::Initialize(const size_t& p_flags)
         {
             m_sharedContext = new SharedContextImplementation();
-
             m_sharedContext->SetCoreModule(this);
+            BuildWorkingDirectory(*m_sharedContext);
 
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
@@ -53,6 +53,14 @@ namespace DoremiEngine
             }
 
             return *m_sharedContext;
+        }
+
+        void DoremiEngineImplementation::BuildWorkingDirectory(SharedContextImplementation& o_sharedContext)
+        {
+            char path[254];
+            GetModuleFileNameA(NULL, path, 254);
+            std::string* directoryPath = new std::string(path);            
+            o_sharedContext.SetWorkingDirectory(directoryPath->substr(0, directoryPath->length() - 10));
         }
 
         void DoremiEngineImplementation::LoadAudioModule(SharedContextImplementation& o_sharedContext)

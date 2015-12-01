@@ -24,11 +24,6 @@ namespace DoremiEngine
             /**
             TODO
             */
-            virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
-
-            /**
-            TODO
-            */
             virtual void Shutdown() = 0;
 
             //Test function

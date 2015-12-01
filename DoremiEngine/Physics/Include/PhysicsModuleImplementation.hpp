@@ -19,11 +19,6 @@ namespace DoremiEngine
             /**
             TODO
             */
-            void SetWorkingDirectory(const std::string& p_workingDirectory) override;
-
-            /**
-            TODO
-            */
             void Shutdown() override;
 
             float ExampleMethod(const float& posx) override;

@@ -44,7 +44,6 @@ namespace DoremiEngine
         {
             public:
             virtual const std::string GetWorkingDirectory() const = 0;
-            virtual const std::string GetPreferenceDirectory() const = 0;
 
             virtual Audio::AudioModule& GetAudioModule() const = 0;
             virtual DoremiEngine& GetCoreModule() const = 0;

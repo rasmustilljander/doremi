@@ -20,10 +20,6 @@ namespace DoremiEngine
             
         }
 
-        void GraphicModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
-        {
-        }
-
         void GraphicModuleImplementation::Shutdown()
         {
         }
@@ -57,7 +53,6 @@ namespace DoremiEngine
         {
             //TODORK call AfterEffects method in GraphicsMain when it exists
         }
-
     }
 }
 

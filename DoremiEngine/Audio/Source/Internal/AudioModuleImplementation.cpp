@@ -18,10 +18,6 @@ namespace DoremiEngine
         {
         }
 
-        void AudioModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
-        {
-        }
-
         void AudioModuleImplementation::Shutdown()
         {
         }

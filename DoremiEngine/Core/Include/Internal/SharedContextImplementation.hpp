@@ -10,10 +10,15 @@ namespace DoremiEngine
         {
             public:
             SharedContextImplementation()
-            : m_workingDirectory(""), m_preferenceDirectory(""), m_audio(nullptr), m_core(nullptr),
+            : m_workingDirectory(""), m_audio(nullptr), m_core(nullptr),
               m_graphic(nullptr), m_memory(nullptr), m_network(nullptr), m_physics(nullptr),
               m_script(nullptr)
             {
+            }
+
+            void SetWorkingDirectory(const std::string& p_workingDirectory)
+            {
+                m_workingDirectory = p_workingDirectory;
             }
 
             void SetAudioModule(Audio::AudioModule* p_audioModule)
@@ -48,10 +53,6 @@ namespace DoremiEngine
             const std::string GetWorkingDirectory() const
             {
                 return m_workingDirectory;
-            };
-            const std::string GetPreferenceDirectory() const
-            {
-                return m_preferenceDirectory;
             };
 
             Audio::AudioModule& GetAudioModule() const
@@ -119,7 +120,6 @@ namespace DoremiEngine
 
             private:
             std::string m_workingDirectory;
-            std::string m_preferenceDirectory;
             Audio::AudioModule* m_audio;
             DoremiEngine* m_core;
             Graphic::GraphicModule* m_graphic;

@@ -16,10 +16,6 @@ namespace DoremiEngine
         {
         }
 
-        void PhysicsModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
-        {
-        }
-
         void PhysicsModuleImplementation::Shutdown()
         {
         }

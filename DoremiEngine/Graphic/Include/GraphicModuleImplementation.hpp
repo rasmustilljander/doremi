@@ -26,11 +26,6 @@ namespace DoremiEngine
             /**
             TODO docs
             */
-            void SetWorkingDirectory(const std::string& p_workingDirectory) override;
-
-            /**
-            TODO docs
-            */
             void Shutdown() override;
 
             /**

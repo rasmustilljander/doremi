@@ -34,6 +34,8 @@ namespace DoremiEngine
             }
 
             private:
+            void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
+
             SharedContextImplementation* m_sharedContext;
 
             // Loading .dll
