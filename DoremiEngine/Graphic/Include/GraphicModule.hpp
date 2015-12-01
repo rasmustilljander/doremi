@@ -19,10 +19,10 @@ namespace DoremiEngine
         {
             public:
             /**
-            TODO docs
+            Initializes the important graphic things like direct x
             */
             virtual void Startup() = 0;
-
+            
             /**
             TODO docs
             */
@@ -32,6 +32,11 @@ namespace DoremiEngine
             TODO docs
             */
             virtual void Shutdown() = 0;
+
+            
+            //TODOKO add more interface functions
+            
+
         };
     }
 }
