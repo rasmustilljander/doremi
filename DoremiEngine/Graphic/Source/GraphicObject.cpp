@@ -1,7 +1,6 @@
 #include <GraphicObject.hpp>
 
 
-
 GraphicObject::GraphicObject()
 {
 }

@@ -22,7 +22,7 @@ namespace DoremiEngine
             Initializes the important graphic things like direct x
             */
             virtual void Startup() = 0;
-            
+
             /**
             TODO docs
             */
@@ -33,10 +33,8 @@ namespace DoremiEngine
             */
             virtual void Shutdown() = 0;
 
-            
-            //TODOKO add more interface functions
-            
 
+            // TODOKO add more interface functions
         };
     }
 }

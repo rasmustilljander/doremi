@@ -1,7 +1,6 @@
 #include <MeshLoader.hpp>
 
 
-
 MeshLoader::MeshLoader()
 {
 }

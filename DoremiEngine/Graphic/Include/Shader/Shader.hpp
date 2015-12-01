@@ -1,8 +1,7 @@
 #pragma once
 class Shader
 {
-public:
+    public:
     Shader();
     ~Shader();
 };
-

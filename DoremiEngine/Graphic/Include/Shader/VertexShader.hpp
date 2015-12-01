@@ -1,10 +1,8 @@
 #pragma once
 #include <Shader/Shader.hpp>
-class VertexShader :
-    public Shader
+class VertexShader : public Shader
 {
-public:
+    public:
     VertexShader();
     ~VertexShader();
 };
-

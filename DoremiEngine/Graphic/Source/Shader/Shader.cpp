@@ -1,7 +1,6 @@
 #include <Shader/Shader.hpp>
 
 
-
 Shader::Shader()
 {
 }

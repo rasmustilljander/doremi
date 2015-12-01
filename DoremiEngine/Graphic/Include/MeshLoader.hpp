@@ -1,8 +1,7 @@
 #pragma once
 class MeshLoader
 {
-public:
+    public:
     MeshLoader();
     ~MeshLoader();
 };
-

@@ -1,7 +1,6 @@
 #include <Shader/PixelShader.hpp>
 
 
-
 PixelShader::PixelShader()
 {
 }

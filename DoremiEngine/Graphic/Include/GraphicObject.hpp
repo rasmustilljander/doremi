@@ -1,8 +1,7 @@
 #pragma once
 class GraphicObject
 {
-public:
+    public:
     GraphicObject();
     ~GraphicObject();
 };
-

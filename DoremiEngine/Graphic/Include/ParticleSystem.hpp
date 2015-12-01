@@ -1,8 +1,7 @@
 #pragma once
 class ParticleSystem
 {
-public:
+    public:
     ParticleSystem();
     ~ParticleSystem();
 };
-

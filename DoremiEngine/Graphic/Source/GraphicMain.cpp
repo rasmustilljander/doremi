@@ -1,7 +1,6 @@
 #include <GraphicMain.hpp>
 
 
-
 GraphicMain::GraphicMain()
 {
 }
