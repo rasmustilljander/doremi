@@ -121,6 +121,7 @@ namespace Doremi
             //Manager* t_audioManager = new AudioManager(sharedContext);
             //m_managers.push_back(t_audioManager);
             //Lucas Testkod slut
+
             ////////////////Example only////////////////
             // Create manager
 
@@ -141,34 +142,33 @@ namespace Doremi
             // Load engine DLLs
             void* m_engineModule = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
 
-            if (m_engineModule == nullptr)
+            if(m_engineModule == nullptr)
             {
                 throw std::runtime_error(
-                    "1Failed to load engine - please check your installation.");
+                "1Failed to load engine - please check your installation.");
             }
 
             INITIALIZE_ENGINE libInitializeEngine =
-                (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+            (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
 
-            if (libInitializeEngine == nullptr)
+            if(libInitializeEngine == nullptr)
             {
                 throw std::runtime_error(
-                    "2Failed to load engine - please check your installation.");
+                "2Failed to load engine - please check your installation.");
             }
             const DoremiEngine::Core::SharedContext& a =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+            libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
-            Manager* t_networkManager = new ClientNetworkManager(a);
 
             ////////////////Example only////////////////
             // Create manager
             Manager* t_physicsManager = new ExampleManager(a);
-            Manager* t_clientNetworkManager = new ServerNetworkManager(a);
+            Manager* t_serverNetworkManager = new ServerNetworkManager(a);
 
             // Add manager to list of managers
             m_managers.push_back(t_physicsManager);
-            m_managers.push_back(t_clientNetworkManager);
+            m_managers.push_back(t_serverNetworkManager);
 
             GenerateWorld();
             ////////////////End Example////////////////
