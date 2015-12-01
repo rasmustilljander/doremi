@@ -3,6 +3,7 @@
 
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
@@ -83,6 +84,29 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadGraphicModule(SharedContextImplementation& o_sharedContext)
         {
+            m_graphicLibrary = DynamicLoader::LoadSharedLibrary("Graphic.dll");
+
+            if(m_graphicLibrary != nullptr)
+            {
+                CREATE_GRAPHIC_MODULE functionCreateAudioModule =
+                (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_audioLibrary,
+                                                                  "CreateGraphicModule");
+                if(functionCreateAudioModule != nullptr)
+                {
+                    m_graphicModule =
+                    static_cast<Graphic::GraphicModule*>(functionCreateAudioModule(o_sharedContext));
+                    m_graphicModule->Startup();
+                    o_sharedContext.SetGraphicModule(m_graphicModule);
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
         }
 
         void DoremiEngineImplementation::LoadMemoryModule(SharedContextImplementation& o_sharedContext)
@@ -97,15 +121,15 @@ namespace DoremiEngine
         {
             m_physicsLibrary = DynamicLoader::LoadSharedLibrary("Physics.dll");
 
-            if (m_physicsLibrary != nullptr)
+            if(m_physicsLibrary != nullptr)
             {
                 CREATE_PHYSICS_MODULE functionCreatePhysicsModule =
-                    (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary,
-                        "CreatePhysicsModule");
-                if (functionCreatePhysicsModule != nullptr)
+                (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary,
+                                                                  "CreatePhysicsModule");
+                if(functionCreatePhysicsModule != nullptr)
                 {
                     m_physicsModule =
-                        static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
+                    static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
                     m_physicsModule->Startup();
                     o_sharedContext.SetPhysicsModule(m_physicsModule);
                 }

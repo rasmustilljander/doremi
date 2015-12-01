@@ -33,7 +33,6 @@ namespace DoremiEngine
             */
             void Shutdown() override;
 
-            float DoFunction(float a, float b) override;
         };
     }
 }

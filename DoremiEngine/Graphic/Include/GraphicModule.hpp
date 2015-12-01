@@ -19,11 +19,6 @@ namespace DoremiEngine
         {
             public:
             /**
-            TODO remove this test method
-            */
-            virtual float DoFunction(float a, float b) = 0;
-
-            /**
             TODO docs
             */
             virtual void Startup() = 0;

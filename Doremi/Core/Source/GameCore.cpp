@@ -29,10 +29,10 @@ namespace Doremi
         }
 
         // Only for testing, should be removed!
-        void GenerateWorld() 
+        void GenerateWorld()
         {
             Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
-            
+
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();
@@ -44,38 +44,43 @@ namespace Doremi
             t_entityBlueprint[ComponentType::Example] = t_exampleComponent;
             t_entityBlueprint[ComponentType::Example2] = t_example2Component;
 
-            // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in the future)
+            // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in
+            // the future)
             t_entityHandler->RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
 
             // Create a couple of entities using the newly created blueprint
-            for (size_t i = 0; i < 2; i++)
+            for(size_t i = 0; i < 2; i++)
             {
                 t_entityHandler->CreateEntity(Blueprints::ExampleEntity);
             }
         }
 
         void GameCore::Initialize()
-        {  
+        {
             // Load engine DLLs
             void* m_engineModule = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
 
-            if (m_engineModule == nullptr)
+            if(m_engineModule == nullptr)
             {
-                throw std::runtime_error("1Failed to load engine - please check your installation.");
+                throw std::runtime_error(
+                "1Failed to load engine - please check your installation.");
             }
 
             INITIALIZE_ENGINE libInitializeEngine =
-                (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+            (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
 
-            if (libInitializeEngine == nullptr)
+            if(libInitializeEngine == nullptr)
             {
-                throw std::runtime_error("2Failed to load engine - please check your installation.");
+                throw std::runtime_error(
+                "2Failed to load engine - please check your installation.");
             }
+
             const DoremiEngine::Core::SharedContext& a =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
+
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
-            
+
             ////////////////Example only////////////////
             // Create manager
             Manager* t_physicsManager = new ExampleManager(a);
@@ -90,21 +95,19 @@ namespace Doremi
 
         void GameCore::StartCore()
         {
-            while (true)
+            while(true)
             {
                 // Have all managers update
-                
-				size_t length = m_managers.size();
-                for (size_t i = 0; i < length; i++)
+
+                size_t length = m_managers.size();
+                for(size_t i = 0; i < length; i++)
                 {
                     m_managers[i]->Update(0.017);
                 }
-				EventHandler::GetInstance()->DeliverEvents();
+                EventHandler::GetInstance()->DeliverEvents();
             }
-			
-                //Game Loop
-              
 
+            // Game Loop
         }
     }
 }

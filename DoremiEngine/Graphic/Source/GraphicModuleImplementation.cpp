@@ -26,15 +26,7 @@ namespace DoremiEngine
         {
         }
 
-        float GraphicModuleImplementation::DoFunction(float a, float b)
-        {
-            using namespace std;
-            cout << "From .dll" << std::endl;
-            cout << "a" << a << std::endl;
-            cout << "b" << b << std::endl;
 
-            return a * b;
-        }
     }
 }
 
