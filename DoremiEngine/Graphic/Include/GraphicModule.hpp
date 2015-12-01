@@ -1,6 +1,7 @@
 #pragma once
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Graphic/Include/ShaderTypeEnum.hpp>
 
 #if defined(_WINDLL)
 #define GRAPHIC_DLL_EXPORT __declspec(dllexport)
@@ -15,7 +16,6 @@ namespace DoremiEngine
         /**
         TODO docs
         */
-        enum class ShaderType;
         class GraphicModule : public DoremiEngine::Core::EngineModule
         {
             public:

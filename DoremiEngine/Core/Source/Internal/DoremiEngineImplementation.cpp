@@ -88,13 +88,13 @@ namespace DoremiEngine
 
             if(m_graphicLibrary != nullptr)
             {
-                CREATE_GRAPHIC_MODULE functionCreateAudioModule =
-                (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_audioLibrary,
+                CREATE_GRAPHIC_MODULE functionCreateGraphicModule =
+                (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_graphicLibrary,
                                                                   "CreateGraphicModule");
-                if(functionCreateAudioModule != nullptr)
+                if(functionCreateGraphicModule != nullptr)
                 {
                     m_graphicModule =
-                    static_cast<Graphic::GraphicModule*>(functionCreateAudioModule(o_sharedContext));
+                    static_cast<Graphic::GraphicModule*>(functionCreateGraphicModule(o_sharedContext));
                     m_graphicModule->Startup();
                     o_sharedContext.SetGraphicModule(m_graphicModule);
                 }

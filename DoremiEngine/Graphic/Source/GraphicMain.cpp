@@ -3,6 +3,7 @@
 #include <Shader/PixelShader.hpp>
 #include <GraphicObject.hpp>
 #include <ModelLoader.hpp>
+#include <ShaderTypeEnum.hpp>
 namespace DoremiEngine
 {
     namespace Graphic

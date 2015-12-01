@@ -18,7 +18,7 @@ namespace DoremiEngine
         }
         bool VertexShader::LoadShader(const std::string& p_fileName)
         {
-            return true;
+            return false;
         }
     }
 }

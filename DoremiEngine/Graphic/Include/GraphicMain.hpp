@@ -11,7 +11,7 @@ namespace DoremiEngine
         class PixelShader;
         class VertexShader;
         class GraphicObject;
-        enum class ShaderType { VertexShader, PixelShader };
+        enum class ShaderType;
         class GraphicMain
         {
         public:
@@ -23,6 +23,7 @@ namespace DoremiEngine
             int LoadShader(const ShaderType& p_type, const std::string& p_fileName);
             void BindShader(const ShaderType& p_type, const int& p_shaderID);
             int LoadObject(const std::string& p_meshFileName, const std::string& p_materialName);
+            
         private:
             static GraphicMain* m_singleton;
             GraphicMain();
