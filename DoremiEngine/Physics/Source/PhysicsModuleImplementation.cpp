@@ -12,9 +12,13 @@ namespace DoremiEngine
         {
         }
 
-        void PhysicsModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
-        
-        void PhysicsModuleImplementation::Shutdown() {}
+        void PhysicsModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
+        {
+        }
+
+        void PhysicsModuleImplementation::Shutdown()
+        {
+        }
 
         float PhysicsModuleImplementation::ExampleMethod(const float& posx)
         {
