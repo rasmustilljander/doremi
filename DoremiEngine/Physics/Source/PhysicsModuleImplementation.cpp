@@ -8,7 +8,7 @@ namespace DoremiEngine
         PhysicsModuleImplementation::PhysicsModuleImplementation() {}
         PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
-        void PhysicsModuleImplementation::Startup() 
+        void PhysicsModuleImplementation::Startup()
         {
         }
 
