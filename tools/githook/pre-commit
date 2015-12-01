@@ -1,9 +1,27 @@
 #! /bin/bash
-echo "Attempt to run auto formatting on modified files."
 cd $SSP_CODE_HOME
-if [ `git diff --cached --name-only | grep ".cpp\|.hpp" | xargs tools/bin/clang-format -i` ]
-then
-  echo "Attempt done. Check files for satisfying result."
-  exit 0
-fi
+logFile="logs/gitlogs.txt"
+date=`date '+%Y-%m-%d %H:%M'`
+
+files=`git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp"`
+echo "All files: $files" >> $logFile
+
+echo -e "Attempting to format files."
+for file in $(git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp")
+do
+	echo -e "Formatting file $file" >> $logFile
+	echo -e "Formatting file $file"
+	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -c 2-)
+	do
+		echo $date "line = $line" >> $logFile
+		startLine=$(echo $line | cut -d"," -f1)
+		endLine=$(echo $line | cut -d"," -f2)
+		endLine=$((startLine + endLine))
+		echo "$date startLine = $startLine" >> $logFile
+		echo "$date endLine = $endLine" >> $logFile
+		./tools/bin/clang-format.exe -lines=$startLine:$endLine -i $file
+	done
+done
+
+echo -e "Formatting complete"
 exit 0

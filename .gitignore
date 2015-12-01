@@ -1,2 +1,5 @@
 # Ignore folders
 tools/script/TODO
+
+# Ignore log files
+logs
