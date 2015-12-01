@@ -1,11 +1,16 @@
 #include <GraphicObject.hpp>
 
-
-GraphicObject::GraphicObject()
+namespace DoremiEngine
 {
-}
+    namespace Graphic
+    {
+        GraphicObject::GraphicObject()
+        {
+        }
 
 
-GraphicObject::~GraphicObject()
-{
+        GraphicObject::~GraphicObject()
+        {
+        }
+    }
 }

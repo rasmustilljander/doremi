@@ -1,7 +1,13 @@
 #pragma once
-class ParticleSystem
+namespace DoremiEngine
 {
-    public:
-    ParticleSystem();
-    ~ParticleSystem();
-};
+    namespace Graphic
+    {
+        class ParticleSystem
+        {
+        public:
+            ParticleSystem();
+            ~ParticleSystem();
+        };
+    }
+}

@@ -1,8 +1,16 @@
 #pragma once
 #include <Shader/Shader.hpp>
-class PixelShader : public Shader
+namespace DoremiEngine
 {
-    public:
-    PixelShader();
-    ~PixelShader();
-};
+    namespace Graphic
+    {
+        class PixelShader : public Shader
+        {
+        public:
+            PixelShader();
+            ~PixelShader();
+            void SetActiveShader() override;
+            bool LoadShader(const std::string& p_fileName) override;
+        };
+    }
+}

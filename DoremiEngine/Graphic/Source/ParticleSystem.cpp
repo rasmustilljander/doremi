@@ -1,11 +1,16 @@
 #include <ParticleSystem.hpp>
 
-
-ParticleSystem::ParticleSystem()
+namespace DoremiEngine
 {
-}
+    namespace Graphic
+    {
+        ParticleSystem::ParticleSystem()
+        {
+        }
 
 
-ParticleSystem::~ParticleSystem()
-{
+        ParticleSystem::~ParticleSystem()
+        {
+        }
+    }
 }

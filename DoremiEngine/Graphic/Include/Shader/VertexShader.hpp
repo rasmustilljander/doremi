@@ -1,8 +1,16 @@
 #pragma once
 #include <Shader/Shader.hpp>
-class VertexShader : public Shader
+namespace DoremiEngine
 {
-    public:
-    VertexShader();
-    ~VertexShader();
-};
+    namespace Graphic
+    {
+        class VertexShader : public Shader
+        {
+        public:
+            VertexShader();
+            ~VertexShader();
+            void SetActiveShader() override;
+            bool LoadShader(const std::string& p_fileName) override;
+        };
+    }
+}

@@ -1,11 +1,24 @@
 #include <Shader/VertexShader.hpp>
 
-
-VertexShader::VertexShader()
+namespace DoremiEngine
 {
-}
+    namespace Graphic
+    {
+        VertexShader::VertexShader()
+        {
+        }
 
 
-VertexShader::~VertexShader()
-{
+        VertexShader::~VertexShader()
+        {
+        }
+        void VertexShader::SetActiveShader()
+        {
+
+        }
+        bool VertexShader::LoadShader(const std::string& p_fileName)
+        {
+            return true;
+        }
+    }
 }
