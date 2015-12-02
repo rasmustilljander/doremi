@@ -5,12 +5,17 @@
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
+#include <Manager/AudioManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <EventHandler/EventHandler.hpp>
+#include <string>
+
+
 // Third party
 
 // Standard libraries
@@ -28,8 +33,8 @@ namespace Doremi
         {
         }
 
-        // Only for testing, should be removed!
-        void GenerateWorld()
+        // Only for testing, should be removed! TODO
+        void GenerateWorld() 
         {
             Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
 
@@ -78,9 +83,12 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& a =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
-
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
 
+            a.GetAudioModule().Startup();
+            a.GetAudioModule().LoadSound("Sounds/Latino.wav");
+
+            Manager* t_audioManager = new AudioManager(a);
             ////////////////Example only////////////////
             // Create manager
             Manager* t_physicsManager = new ExampleManager(a);

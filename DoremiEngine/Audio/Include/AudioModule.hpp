@@ -26,6 +26,13 @@ namespace DoremiEngine
             /**
             TODO docs
             */
+            
+            virtual int Update() = 0;
+
+
+            //Loads sound from file (Used for debugging) TODOLH remove at release
+            virtual void LoadSound(const std::string& p_soundName) = 0;
+
             virtual void Startup() = 0;
 
             /**
