@@ -5,7 +5,8 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        PhysicsModuleImplementation::PhysicsModuleImplementation()
+        PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext)
+        : m_sharedContext(p_sharedContext)
         {
         }
         PhysicsModuleImplementation::~PhysicsModuleImplementation()
@@ -36,6 +37,7 @@ namespace DoremiEngine
 
 DoremiEngine::Physics::PhysicsModule* CreatePhysicsModule(const DoremiEngine::Core::SharedContext& p_sharedContext)
 {
-    DoremiEngine::Physics::PhysicsModule* physics = new DoremiEngine::Physics::PhysicsModuleImplementation();
+    DoremiEngine::Physics::PhysicsModule* physics =
+    new DoremiEngine::Physics::PhysicsModuleImplementation(p_sharedContext);
     return physics;
 }
