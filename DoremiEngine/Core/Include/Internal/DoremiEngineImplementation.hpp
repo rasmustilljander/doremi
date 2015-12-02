@@ -61,7 +61,7 @@ namespace DoremiEngine
             void* m_networkLibrary;
             void* m_physicsLibrary;
             void* m_scriptLibrary;
-            //void* m_inputLibrary;//TODOEA GIssar att detta ska med
+            void* m_inputLibrary;
 
             // Pointers to the interfaces
             Audio::AudioModule* m_audioModule;
@@ -70,7 +70,7 @@ namespace DoremiEngine
             Network::NetworkModule* m_networkModule;
             Physics::PhysicsModule* m_physicsModule;
             Script::ScriptModule* m_scriptModule;
-            //Input::InputModule* m_inputModule; // Gissar att dettta ska med!
+            Input::InputModule* m_inputModule;
         };
     }
 }

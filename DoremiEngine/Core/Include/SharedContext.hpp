@@ -37,6 +37,11 @@ namespace DoremiEngine
     {
         class ScriptModule;
     }
+    
+    namespace Input
+    {
+        class InputModule;
+    }
 
     namespace Core
     {
@@ -52,6 +57,7 @@ namespace DoremiEngine
             virtual Network::NetworkModule& GetNetworkModule() const = 0;
             virtual Physics::PhysicsModule& GetPhysicsModule() const = 0;
             virtual Script::ScriptModule& GetScriptModule() const = 0;
+            virtual Input::InputModule& GetInputModule() const = 0;
         };
     }
 }
