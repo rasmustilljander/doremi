@@ -6,7 +6,8 @@ namespace DoremiEngine
 {
     namespace Audio
     {
-        AudioModuleImplementation::AudioModuleImplementation()
+        AudioModuleImplementation::AudioModuleImplementation(const Core::SharedContext& p_sharedContext)
+        : m_sharedContext(p_sharedContext)
         {
         }
 
@@ -36,6 +37,7 @@ namespace DoremiEngine
 
 DoremiEngine::Audio::AudioModule* CreateAudioModule(const DoremiEngine::Core::SharedContext& p_sharedContext)
 {
-    DoremiEngine::Audio::AudioModule* audio = new DoremiEngine::Audio::AudioModuleImplementation();
+    DoremiEngine::Audio::AudioModule* audio =
+    new DoremiEngine::Audio::AudioModuleImplementation(p_sharedContext);
     return audio;
 }

@@ -3,6 +3,10 @@
 
 namespace DoremiEngine
 {
+    namespace Core
+    {
+        class SharedContext;
+    }
     namespace Audio
     {
         class AudioModuleImplementation : public AudioModule
@@ -11,7 +15,7 @@ namespace DoremiEngine
             /**
                 TODO docs
             */
-            AudioModuleImplementation();
+            AudioModuleImplementation(const Core::SharedContext& p_sharedContext);
 
             /**
                 TODO docs
@@ -29,6 +33,9 @@ namespace DoremiEngine
             void Shutdown() override;
 
             float DoFunction(float a, float b) override;
+
+            private:
+            const Core::SharedContext& m_sharedContext;
         };
     }
 }
