@@ -257,7 +257,7 @@ namespace DoremiEngine
             m_deviceContext->PSSetSamplers(0, 1, &m_sampler);
 
             LoadMesh("test");
-            LoadTexture("C:/Users/Konrad/Pictures/Test.dds");
+            LoadTexture("Test.dds");
         }
 
         int GraphicMain::LoadShader(const ShaderType& p_type, const std::string& p_fileName)
@@ -340,8 +340,9 @@ namespace DoremiEngine
         int GraphicMain::LoadTexture(const std::string& p_textureFileName)
         {
             //Doesnt work for some reason
+            std::string fileLocation = m_sharedContext.GetWorkingDirectory() + "Textures/" + p_textureFileName;
             ModelLoader t_loader = ModelLoader();
-            ID3D11ShaderResourceView* newTexture = t_loader.LoadTexture(p_textureFileName, m_device);
+            ID3D11ShaderResourceView* newTexture = t_loader.LoadTexture(fileLocation, m_device);
             if (newTexture == nullptr)
             {
                 //ERROR
@@ -365,7 +366,7 @@ namespace DoremiEngine
             m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
 
-            //m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
+            m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
             ID3D11Buffer* bufferPointer = m_Meshes[p_meshID]->m_bufferHandle;
             unsigned int stride = sizeof(Vertex);
             unsigned int offset = 0;
