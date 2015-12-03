@@ -14,9 +14,7 @@ namespace DoremiEngine
         AudioModuleImplementation::~AudioModuleImplementation()
         {
         }
-
-
-
+        
         void AudioModuleImplementation::ERRCHECK(const FMOD_RESULT& p_Result)
         {
             if (p_Result != FMOD_OK)

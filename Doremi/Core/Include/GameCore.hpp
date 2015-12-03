@@ -19,7 +19,14 @@ namespace Doremi
             /** Starts the game. Game loop*/
             void StartCore();
 
-        private:
+            private:
+            void LoadEngineLibrary();
+
+            // Engine variables
+            STOP_ENGINE m_stopEngineFunction;
+            void* m_engineLibrary;
+
+            // Managers
             std::vector<Manager*> m_managers;
         };
     }

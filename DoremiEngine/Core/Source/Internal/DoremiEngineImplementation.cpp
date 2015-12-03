@@ -14,14 +14,82 @@ namespace DoremiEngine
     namespace Core
     {
         DoremiEngineImplementation::DoremiEngineImplementation()
+            : m_audioLibrary(nullptr),
+              m_graphicLibrary(nullptr),
+              m_memoryLibrary(nullptr),
+              m_networkLibrary(nullptr),
+              m_physicsLibrary(nullptr),
+              m_scriptLibrary(nullptr),
+              m_audioModule(nullptr),
+              m_graphicModule(nullptr),
+              m_memoryModule(nullptr),
+              m_networkModule(nullptr),
+              m_physicsModule(nullptr),
+              m_scriptModule(nullptr)
         {
         }
 
         DoremiEngineImplementation::~DoremiEngineImplementation()
         {
+            if(m_audioModule != nullptr)
+            {
+                delete m_audioModule;
+            }
+
+            if(m_graphicModule != nullptr)
+            {
+                delete m_graphicModule;
+            }
+
+            //    if (m_memoryModule != nullptr)
+            //    {
+            //        delete m_memoryModule;
+            //    }
+
+            // TODORT
+            //    if (m_networkModule != nullptr)
+            //    {
+            //        delete m_networkModule;
+            //    }
+
+            if(m_physicsModule != nullptr)
+            {
+                delete m_physicsModule;
+            }
+
+            //    if (m_scriptModule != nullptr)
+            //    {
+            //        delete m_scriptModule;
+            //    }
+
+
+            if(m_audioLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_audioLibrary);
+            }
+            if(m_graphicLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_graphicLibrary);
+            }
+            if(m_memoryLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_memoryLibrary);
+            }
+            if(m_networkLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_networkLibrary);
+            }
+            if(m_physicsLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_physicsLibrary);
+            }
+            if(m_scriptLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_scriptLibrary);
+            }
         }
 
-        SharedContext& DoremiEngineImplementation::Initialize(const size_t& p_flags)
+        SharedContext& DoremiEngineImplementation::Start(const size_t& p_flags)
         {
             m_sharedContext = new SharedContextImplementation();
             m_sharedContext->SetCoreModule(this);
@@ -53,6 +121,40 @@ namespace DoremiEngine
             }
 
             return *m_sharedContext;
+        }
+
+        void DoremiEngineImplementation::Stop()
+        {
+            if(m_audioModule != nullptr)
+            {
+                m_audioModule->Shutdown();
+            }
+
+            if(m_graphicModule != nullptr)
+            {
+                m_graphicModule->Shutdown();
+            }
+
+            //    if (m_memoryModule != nullptr)
+            //    {
+            //        m_memoryModule->Shutdown();
+            //    }
+
+            // TODORT
+            //    if (m_networkModule != nullptr)
+            //    {
+            //        m_networkModule->Shutdown();
+            //    }
+
+            if(m_physicsModule != nullptr)
+            {
+                m_physicsModule->Shutdown();
+            }
+
+            //    if (m_scriptModule != nullptr)
+            //    {
+            //        m_scriptModule->Shutdown();
+            //    }
         }
 
         void DoremiEngineImplementation::BuildWorkingDirectory(SharedContextImplementation& o_sharedContext)
@@ -158,10 +260,25 @@ namespace DoremiEngine
     }
 }
 
-const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_flags)
+namespace
 {
-    DoremiEngine::Core::DoremiEngineImplementation* engine =
-    new DoremiEngine::Core::DoremiEngineImplementation();
-    engine->Initialize(p_flags);
-    return engine->GetSharedContext();
+    DoremiEngine::Core::DoremiEngineImplementation* engine = nullptr;
+}
+
+const DoremiEngine::Core::SharedContext& StartEngine(const size_t& p_flags)
+{
+    if(engine == nullptr)
+    {
+        engine = new DoremiEngine::Core::DoremiEngineImplementation();
+        engine->Start(p_flags);
+        return engine->GetSharedContext();
+    }
+    throw std::exception("Engine has already been started, it must be stopped before it can be started again.");
+}
+
+void StopEngine()
+{
+    engine->Stop();
+    delete engine;
+    engine = nullptr;
 }

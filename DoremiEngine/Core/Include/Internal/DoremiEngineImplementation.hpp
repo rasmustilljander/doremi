@@ -21,9 +21,15 @@ namespace DoremiEngine
             virtual ~DoremiEngineImplementation();
 
             /**
-                TODO docs
+                Start the engine and all modules of interest
             */
-            SharedContext& Initialize(const size_t&);
+            SharedContext& Start(const size_t&);
+
+            /**
+                Stops the engine and all modules
+            */
+            void Stop();
+
 
             /**
                 TODO docs
@@ -36,8 +42,6 @@ namespace DoremiEngine
             private:
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
 
-            SharedContextImplementation* m_sharedContext;
-
             // Loading .dll
             void LoadAudioModule(SharedContextImplementation& o_sharedContext);
             void LoadGraphicModule(SharedContextImplementation& o_sharedContext);
@@ -45,6 +49,9 @@ namespace DoremiEngine
             void LoadNetworkModule(SharedContextImplementation& o_sharedContext);
             void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
             void LoadScriptModule(SharedContextImplementation& o_sharedContext);
+
+            // Shared context
+            SharedContextImplementation* m_sharedContext;
 
             // Pointers to .dll processes
             void* m_audioLibrary;

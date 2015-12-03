@@ -27,6 +27,8 @@ namespace DoremiEngine
 }
 
 extern "C" {
-typedef const DoremiEngine::Core::SharedContext& (*INITIALIZE_ENGINE)(const size_t&);
-ROOTENGINE_DLL_EXPORT const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_flags);
+typedef const DoremiEngine::Core::SharedContext& (*START_ENGINE)(const size_t&);
+typedef const void (*STOP_ENGINE)();
+ROOTENGINE_DLL_EXPORT const DoremiEngine::Core::SharedContext& StartEngine(const size_t& p_flags);
+ROOTENGINE_DLL_EXPORT void StopEngine();
 }

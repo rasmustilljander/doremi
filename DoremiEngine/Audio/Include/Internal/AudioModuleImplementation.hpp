@@ -69,6 +69,7 @@ namespace DoremiEngine
             int                        m_fmodKey;
             unsigned int               m_fmodVersion;
             int                        time = 0;
+
             const Core::SharedContext& m_sharedContext;
             float m_distanceFactor = 0;
 

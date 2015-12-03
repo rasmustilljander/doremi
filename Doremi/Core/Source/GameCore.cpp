@@ -26,15 +26,16 @@ namespace Doremi
 {
     namespace Core
     {
-        GameCore::GameCore()
-        {
-        }
+        GameCore::GameCore() { LoadEngineLibrary(); }
+
         GameCore::~GameCore()
         {
+            m_stopEngineFunction();
+            DynamicLoader::FreeSharedLibrary(m_engineLibrary);
         }
 
         // Only for testing, should be removed! TODO
-        void GenerateWorld() 
+        void GenerateWorld()
         {
             Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
 
@@ -60,28 +61,37 @@ namespace Doremi
             }
         }
 
+        void GameCore::LoadEngineLibrary()
+        {
+            // Load engine DLL
+            m_engineLibrary = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
+
+            if(m_engineLibrary == nullptr)
+            {
+                // TODORT proper logging
+                throw std::runtime_error("1Failed to load engine - please check your installation.");
+            }
+        }
+
         void GameCore::Initialize()
         {
-            // Load engine DLLs
-            void* m_engineModule = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
-
-            if(m_engineModule == nullptr)
-            {
-                throw std::runtime_error(
-                "1Failed to load engine - please check your installation.");
-            }
-
-            INITIALIZE_ENGINE libInitializeEngine =
-            (INITIALIZE_ENGINE)DynamicLoader::LoadProcess(m_engineModule, "InitializeEngine");
+            START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
 
             if(libInitializeEngine == nullptr)
             {
-                throw std::runtime_error(
-                "2Failed to load engine - please check your installation.");
+                // TODORT proper logging
+                throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& a =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+            m_stopEngineFunction = (STOP_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StopEngine");
+
+            if(m_stopEngineFunction == nullptr)
+            {
+                // TODORT proper logging
+                throw std::runtime_error("Failed to load engine - please check your installation.");
+            }
+
+            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
 
@@ -102,7 +112,7 @@ namespace Doremi
             //Lucas Testkod slut*/
             ////////////////Example only////////////////
             // Create manager
-            Manager* t_physicsManager = new ExampleManager(a);
+            Manager* t_physicsManager = new ExampleManager(sharedContext);
 
             // Add manager to list of managers
             m_managers.push_back(t_physicsManager);
