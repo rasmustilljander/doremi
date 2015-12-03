@@ -59,7 +59,12 @@ namespace DoremiEngine
             */
             virtual void ComputeAfterEffects() = 0;
 
+            /**
+            Swaps buffers and clears backbuffer
+            */
+            virtual void EndDraw() = 0;
             // TODORK add more interface functions
+           
         };
     }
 }

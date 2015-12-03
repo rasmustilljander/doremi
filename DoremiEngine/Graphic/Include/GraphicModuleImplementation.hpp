@@ -11,8 +11,9 @@ namespace DoremiEngine
             /**
             TODO docs
             */
-            GraphicModuleImplementation();
+            //GraphicModuleImplementation();
 
+            GraphicModuleImplementation(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {};
             /**
             TODO docs
             */
@@ -57,6 +58,14 @@ namespace DoremiEngine
             Computes after effects such as glow and lighting
             */
             void ComputeAfterEffects() override;
+
+            /**
+            Swaps buffers and clears backbuffer
+            */
+            void EndDraw() override;
+
+        private:
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
         };
     }
 }

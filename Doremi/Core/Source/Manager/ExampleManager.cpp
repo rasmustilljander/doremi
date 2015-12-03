@@ -61,7 +61,7 @@ namespace Doremi
                     //Give instructions to engine where we want complex data to be changed
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
                     //Test run GraphicsModule
-                    m_sharedContext.GetGraphicModule().LoadShader(DoremiEngine::Graphic::ShaderType::VertexShader, "hej");
+                    m_sharedContext.GetGraphicModule().EndDraw();
                 }
             }
         }

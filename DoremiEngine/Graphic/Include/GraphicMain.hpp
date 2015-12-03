@@ -5,21 +5,32 @@
 // Third party
 #include <dxgi.h>
 #include <d3d11_1.h>
+#include <DirectXMath.h>
 //Not used?
 #include <d3dcommon.h>
 #include <d3dcompiler.h>
+#include <Windows.h>
+#include <windowsx.h>
 
 // Standard libraries
 #include <vector>
 #include <string>
+#include <map>
 namespace DoremiEngine
 {
     namespace Graphic
     {
         class PixelShader;
         class VertexShader;
-        class GraphicObject;
+        struct MeshInfo;
         enum class ShaderType;
+
+        struct MatrixBufferType
+        {            
+            DirectX::XMMATRIX view;
+            DirectX::XMMATRIX projection;
+        };
+
         class GraphicMain
         {
         public:
@@ -30,12 +41,27 @@ namespace DoremiEngine
             */
             int LoadShader(const ShaderType& p_type, const std::string& p_fileName);
             void BindShader(const ShaderType& p_type, const int& p_shaderID);
-            int LoadObject(const std::string& p_meshFileName, const std::string& p_materialName);
-            
+
+            void InitializeDirectX();
+
+            //Load Functions
+            int LoadMesh(const std::string& p_meshFileName);
+            int LoadTexture(const std::string& p_textureFileName);
+
+            //Draw Functions
+            //TODORK Implement draws
+            void Draw(const int& p_meshID, const int& p_textureID); //Should take one matrix
+            void DrawInstanced(const int& p_meshID); //Should take a list of matrices too
+            void DrawParticles();
+            void ComputeAfterEffects();
+            void EndDraw();
+
+            //TODO Place in the correct place with SDL
+            void CreateGraphicWindow();
         private:
             static GraphicMain* m_singleton;
             GraphicMain();
-            void InitializeDirectX();
+            
 
             //Direct X main stuff
             ID3D11Device* m_device;
@@ -44,10 +70,15 @@ namespace DoremiEngine
             ID3D11RenderTargetView* m_backBuffer;
             ID3D11Texture2D* m_depthBuffer;
             ID3D11DepthStencilView* m_depthView;
+            ID3D11SamplerState* m_sampler; //TODORK put in the right place
+            ID3D11Buffer* m_worldMatrix;
 
             std::vector<VertexShader*> m_vertexShaders;
             std::vector<PixelShader*> m_pixelShaders;
-            std::vector<GraphicObject*> m_graphicObjects;      
+            std::vector<MeshInfo*> m_Meshes;
+            std::vector<ID3D11ShaderResourceView*> m_textures;
+            std::map<std::string, int> m_loadedMeshes;
+            //TODOKO List with materials
         };
     }
 }

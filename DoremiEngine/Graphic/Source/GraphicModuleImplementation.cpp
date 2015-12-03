@@ -7,17 +7,14 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        GraphicModuleImplementation::GraphicModuleImplementation()
-        {
-        }
-
         GraphicModuleImplementation::~GraphicModuleImplementation()
         {
         }
 
         void GraphicModuleImplementation::Startup()
         {
-            
+            GraphicMain::GetInstance()->CreateGraphicWindow();
+            GraphicMain::GetInstance()->InitializeDirectX();
         }
 
         void GraphicModuleImplementation::Shutdown()
@@ -26,7 +23,7 @@ namespace DoremiEngine
 
         int GraphicModuleImplementation::LoadObject(const std::string& p_fileName, const std::string& p_materialFileName)
         {
-            return GraphicMain::GetInstance()->LoadObject(p_fileName, p_materialFileName);
+            return GraphicMain::GetInstance()->LoadMesh(p_fileName);
         }
 
         int GraphicModuleImplementation::LoadShader(ShaderType p_shaderType, const std::string& p_fileName)
@@ -53,11 +50,16 @@ namespace DoremiEngine
         {
             //TODORK call AfterEffects method in GraphicsMain when it exists
         }
+
+        void GraphicModuleImplementation::EndDraw()
+        {
+            GraphicMain::GetInstance()->EndDraw();
+        }
     }
 }
 
 DoremiEngine::Graphic::GraphicModule* CreateGraphicModule(const DoremiEngine::Core::SharedContext& p_sharedContext)
 {
-    DoremiEngine::Graphic::GraphicModule* graphic = new DoremiEngine::Graphic::GraphicModuleImplementation();
+    DoremiEngine::Graphic::GraphicModule* graphic = new DoremiEngine::Graphic::GraphicModuleImplementation(p_sharedContext);
     return graphic;
 }
