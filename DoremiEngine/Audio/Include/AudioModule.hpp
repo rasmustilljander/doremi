@@ -18,22 +18,24 @@ namespace DoremiEngine
         class AudioModule : public DoremiEngine::Core::EngineModule
         {
         public:
-            /**
-                TODO remove this test method
-            */
-            virtual float DoFunction(float a, float b) = 0;
 
-            /**
-            TODO docs
-            */
-            
+            //Updates the audiomodule
             virtual int Update() = 0;
 
-
             //Loads sound from file (Used for debugging) TODOLH remove at release
-            virtual void LoadSound(const std::string& p_soundName) = 0;
+            virtual size_t LoadSound(const std::string& p_soundName) = 0;
 
+            //Plays a sound that is already in the system
+            virtual void PlaySound(size_t p_soundID, bool p_loop) = 0;
+
+            //Initialize code
             virtual void Startup() = 0;
+
+            //Sets up the recording variables and returns the ID of the sound that will take care of the recording
+            virtual size_t SetupRecording() = 0;
+
+            //Starts recording to the given soundvariable
+            virtual int StartRecording() = 0;
 
             /**
             TODO docs

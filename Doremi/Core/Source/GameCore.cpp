@@ -86,7 +86,9 @@ namespace Doremi
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
 
             a.GetAudioModule().Startup();
-            a.GetAudioModule().LoadSound("Sounds/Latino.wav");
+            size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Latino.wav");
+            a.GetAudioModule().PlaySound(t_soundNumber, true);
+            //a.GetAudioModule().SetupRecording();
 
             Manager* t_audioManager = new AudioManager(a);
             ////////////////Example only////////////////
