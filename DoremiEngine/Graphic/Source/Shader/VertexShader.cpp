@@ -36,7 +36,8 @@ namespace DoremiEngine
             shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif              
             std::wstring convertedName = StringToWstring(p_fileName);
-            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "main", "vs_5_0", shaderFlags, 0, &m_shaderInformation, 0);
+            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "VS_main", "vs_5_0", shaderFlags, 0, &m_shaderInformation, 0);
+            
             bool success = CheckHRESULT(res, "Error Compiling from file " + p_fileName);
             if (!success)
             {

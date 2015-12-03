@@ -30,7 +30,7 @@ namespace DoremiEngine
 #endif  
             ID3DBlob *tShader;
             std::wstring convertedName = StringToWstring(p_fileName);
-            D3DCompileFromFile(convertedName.c_str(), 0, 0, "main", "ps_5_0", shaderFlags, 0, &tShader, 0);
+            D3DCompileFromFile(convertedName.c_str(), 0, 0, "PS_main", "ps_5_0", shaderFlags, 0, &tShader, 0);
             HRESULT res = p_device->CreatePixelShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &m_shader);
             bool success = CheckHRESULT(res, "Error Compiling from file " + p_fileName);
             if (!success)

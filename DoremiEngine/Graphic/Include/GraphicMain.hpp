@@ -18,6 +18,10 @@
 #include <map>
 namespace DoremiEngine
 {
+    namespace Core
+    {
+        class SharedContext;
+    }
     namespace Graphic
     {
         class PixelShader;
@@ -34,17 +38,19 @@ namespace DoremiEngine
         class GraphicMain
         {
         public:
-            static GraphicMain* GetInstance();
+            GraphicMain(const Core::SharedContext& p_sharedContext);
             ~GraphicMain();
+            void SetWorkingDirectory(const std::string& p_workingDirectory);
             /**
             Loads the shader from the given location and returns an id
             */
-            int LoadShader(const ShaderType& p_type, const std::string& p_fileName);
+
             void BindShader(const ShaderType& p_type, const int& p_shaderID);
 
             void InitializeDirectX();
 
             //Load Functions
+            int LoadShader(const ShaderType& p_type, const std::string& p_fileName);
             int LoadMesh(const std::string& p_meshFileName);
             int LoadTexture(const std::string& p_textureFileName);
 
@@ -59,9 +65,7 @@ namespace DoremiEngine
             //TODO Place in the correct place with SDL
             void CreateGraphicWindow();
         private:
-            static GraphicMain* m_singleton;
-            GraphicMain();
-            
+            const Core::SharedContext& m_sharedContext;
 
             //Direct X main stuff
             ID3D11Device* m_device;

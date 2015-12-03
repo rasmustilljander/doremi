@@ -5,6 +5,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
+        class GraphicMain;
         class GraphicModuleImplementation : public GraphicModule
         {
             public:
@@ -65,6 +66,7 @@ namespace DoremiEngine
 
         private:
             const Core::SharedContext& m_sharedContext;
+            GraphicMain* m_graphicMain;
         };
     }
 }

@@ -1,3 +1,6 @@
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
+
+//Inside module
 #include <GraphicMain.hpp>
 #include <Shader/VertexShader.hpp>
 #include <Shader/PixelShader.hpp>
@@ -5,21 +8,13 @@
 #include <ModelLoader.hpp>
 #include <ShaderTypeEnum.hpp>
 #include <HelpFunctions.hpp>
+
 namespace DoremiEngine
 {
     namespace Graphic
     {
-        GraphicMain* GraphicMain::m_singleton = nullptr;
-        GraphicMain* GraphicMain::GetInstance()
-        {
-            if (m_singleton == nullptr)
-            {
-                m_singleton = new GraphicMain();
-            }
-            return m_singleton;
-        }
 
-        GraphicMain::GraphicMain()
+        GraphicMain::GraphicMain(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
         }
 
@@ -55,6 +50,8 @@ namespace DoremiEngine
             // Handle any messages the switch statement didn't
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
+
+
 
         void GraphicMain::CreateGraphicWindow()
         {
@@ -192,8 +189,8 @@ namespace DoremiEngine
 
             //TODO add more different things like transparancy
             //TODOKO Move code to better location
-            int vertexShaderID = LoadShader(ShaderType::VertexShader, "C:/Users/Konrad/doremi/DoremiEngine/Graphic/BasicVertexShader.hlsl");
-            int pixelShadderID = LoadShader(ShaderType::PixelShader, "C:/Users/Konrad/doremi/DoremiEngine/Graphic/BasicPixelShader.hlsl");
+            int vertexShaderID = LoadShader(ShaderType::VertexShader, "BasicVertexShader.hlsl");
+            int pixelShadderID = LoadShader(ShaderType::PixelShader, "BasicPixelShader.hlsl");
 
             D3D11_INPUT_ELEMENT_DESC ied[] =
             {
@@ -265,6 +262,8 @@ namespace DoremiEngine
 
         int GraphicMain::LoadShader(const ShaderType& p_type, const std::string& p_fileName)
         {
+            
+            std::string filePath = m_sharedContext.GetWorkingDirectory() + "ShaderFiles/" + p_fileName;
             int returnID;
             bool success;
             switch (p_type)
@@ -272,7 +271,7 @@ namespace DoremiEngine
             case ShaderType::VertexShader:
             {
                 VertexShader* t_shader = new VertexShader();
-                success = t_shader->LoadShader(p_fileName, m_device);               
+                success = t_shader->LoadShader(filePath, m_device);
                 if (!success)
                 {
                     //Some kind of error, use debugg logger :)
@@ -286,7 +285,7 @@ namespace DoremiEngine
             case ShaderType::PixelShader:
             {
                 PixelShader* t_shader = new PixelShader();
-                success = t_shader->LoadShader(p_fileName, m_device);
+                success = t_shader->LoadShader(filePath, m_device);
                 if (!success)
                 {
                     //Some kind of error, use debugg logger :)

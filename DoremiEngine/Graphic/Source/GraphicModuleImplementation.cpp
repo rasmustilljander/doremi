@@ -9,6 +9,7 @@ namespace DoremiEngine
     {
         GraphicModuleImplementation::GraphicModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
+            m_graphicMain = nullptr;
         }
 
         GraphicModuleImplementation::~GraphicModuleImplementation()
@@ -17,8 +18,12 @@ namespace DoremiEngine
 
         void GraphicModuleImplementation::Startup()
         {
-            GraphicMain::GetInstance()->CreateGraphicWindow();
-            GraphicMain::GetInstance()->InitializeDirectX();
+            if (m_graphicMain == nullptr) //TODO Review if this is a good idea for avoiding multiple instanciations
+            {
+                m_graphicMain = new GraphicMain(m_sharedContext);
+                m_graphicMain->CreateGraphicWindow();
+                m_graphicMain->InitializeDirectX();
+            }
         }
 
         void GraphicModuleImplementation::Shutdown()
@@ -27,12 +32,12 @@ namespace DoremiEngine
 
         int GraphicModuleImplementation::LoadObject(const std::string& p_fileName, const std::string& p_materialFileName)
         {
-            return GraphicMain::GetInstance()->LoadMesh(p_fileName);
+            return m_graphicMain->LoadMesh(p_fileName);
         }
 
         int GraphicModuleImplementation::LoadShader(ShaderType p_shaderType, const std::string& p_fileName)
         {
-            return GraphicMain::GetInstance()->LoadShader(p_shaderType, p_fileName);
+            return m_graphicMain->LoadShader(p_shaderType, p_fileName);
         }
 
         void GraphicModuleImplementation::InitializeDirectX()
@@ -42,7 +47,7 @@ namespace DoremiEngine
 
         void GraphicModuleImplementation::BindShader(ShaderType p_shaderType, int p_shaderID)
         {
-            GraphicMain::GetInstance()->BindShader(p_shaderType, p_shaderID);
+            m_graphicMain->BindShader(p_shaderType, p_shaderID);
         }
 
         void GraphicModuleImplementation::Draw()
@@ -57,7 +62,7 @@ namespace DoremiEngine
 
         void GraphicModuleImplementation::EndDraw()
         {
-            GraphicMain::GetInstance()->EndDraw();
+            m_graphicMain->EndDraw();
         }
     }
 }
