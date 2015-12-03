@@ -11,21 +11,17 @@ namespace Doremi
     {
         EntityHandler* EntityHandler::m_singleton = nullptr;
 
-        EntityHandler::EntityHandler()
-        {
-        }
+        EntityHandler::EntityHandler() {}
 
-        EntityHandler::~EntityHandler()
-        {
-        }
+        EntityHandler::~EntityHandler() {}
 
-        EntityHandler* EntityHandler::GetInstance()
+        EntityHandler& EntityHandler::GetInstance()
         {
-            if (m_singleton == nullptr)
+            if(m_singleton == nullptr)
             {
                 m_singleton = new EntityHandler();
             }
-            return m_singleton;
+            return *m_singleton;
         }
 
         void EntityHandler::RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint)

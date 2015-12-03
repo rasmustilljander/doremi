@@ -38,18 +38,18 @@ namespace Doremi
 			ExampleEvent* myEvent = new ExampleEvent();
 			myEvent->eventType = Events::Example;
 			myEvent->myInt = 42;
-			EventHandler::GetInstance()->BroadcastEvent(myEvent);
+            EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
             // Loop through all entities
-            size_t length = EntityHandler::GetInstance()->GetLastEntityIndex();
-            for (size_t i = 0; i < length; i++)
+            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            for(size_t i = 0; i < length; i++)
             {
                 // Check that the current entity has the relevant components
-                if (EntityHandler::GetInstance()->HasComponents(i, (int)ComponentType::Example)|(int)ComponentType::Example2)
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
                 {
                     // Get component
-                    ExampleComponent* t_example = EntityHandler::GetInstance()->GetComponentFromStorage<ExampleComponent>(i);
-                    Example2Component* t_example2 = EntityHandler::GetInstance()->GetComponentFromStorage<Example2Component>(i);
+                    ExampleComponent* t_example = EntityHandler::GetInstance().GetComponentFromStorage<ExampleComponent>(i);
+                    Example2Component* t_example2 = EntityHandler::GetInstance().GetComponentFromStorage<Example2Component>(i);
 
                     // Perform desired operation
                     t_example->posX++;

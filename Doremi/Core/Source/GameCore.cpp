@@ -37,7 +37,7 @@ namespace Doremi
         // Only for testing, should be removed! TODO
         void GenerateWorld()
         {
-            Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
@@ -52,12 +52,12 @@ namespace Doremi
 
             // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in
             // the future)
-            t_entityHandler->RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
 
             // Create a couple of entities using the newly created blueprint
             for(size_t i = 0; i < 2; i++)
             {
-                t_entityHandler->CreateEntity(Blueprints::ExampleEntity);
+                t_entityHandler.CreateEntity(Blueprints::ExampleEntity);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
-            EntityHandler* t_entityHandler = EntityHandler::GetInstance();
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             /*
             //Lucas Testkod
@@ -131,7 +131,7 @@ namespace Doremi
                 size_t length = m_managers.size();
                 for(size_t i = 0; i < length; i++)
                 {
-                    m_managers[i]->Update(0.017);
+                    m_managers.at(i)->Update(0.017);
                 }
                 EventHandler::GetInstance()->DeliverEvents();
             }

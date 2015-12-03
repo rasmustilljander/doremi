@@ -11,8 +11,8 @@ namespace Doremi
     {
         class EntityHandler
         {
-        public:
-            static EntityHandler* GetInstance();
+            public:
+            static EntityHandler& GetInstance();
 
             /** Registers a blueprint for entity creation with an ID*/
             void RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint);
