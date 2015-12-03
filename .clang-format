@@ -16,7 +16,7 @@ ColumnLimit: 150
 CommentPragmas: ''
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
-ContinuationIndentWidth: 0
+ContinuationIndentWidth: 4
 Cpp11BracedListStyle: false
 DerivePointerBinding: false
 IndentCaseLabels: true
