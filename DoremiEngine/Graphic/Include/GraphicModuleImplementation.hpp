@@ -11,9 +11,8 @@ namespace DoremiEngine
             /**
             TODO docs
             */
-            //GraphicModuleImplementation();
+            GraphicModuleImplementation(const Core::SharedContext& p_sharedContext);
 
-            GraphicModuleImplementation(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {};
             /**
             TODO docs
             */
@@ -65,7 +64,7 @@ namespace DoremiEngine
             void EndDraw() override;
 
         private:
-            const DoremiEngine::Core::SharedContext& m_sharedContext;
+            const Core::SharedContext& m_sharedContext;
         };
     }
 }

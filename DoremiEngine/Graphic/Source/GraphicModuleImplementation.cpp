@@ -7,6 +7,10 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
+        GraphicModuleImplementation::GraphicModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        {
+        }
+
         GraphicModuleImplementation::~GraphicModuleImplementation()
         {
         }
