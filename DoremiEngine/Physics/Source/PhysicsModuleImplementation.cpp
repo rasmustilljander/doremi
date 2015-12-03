@@ -1,6 +1,5 @@
 #include <PhysicsModuleImplementation.hpp>
 
-#include <Bullet/btBulletDynamicsCommon.h>
 namespace DoremiEngine
 {
     namespace Physics
