@@ -53,14 +53,14 @@ set(EXTERNAL_LIBRARY_LOOKUP_PATH ${RESOURCE_REPOSITORY_ROOT}/External/lib/)
 find_package(FMod REQUIRED)
 find_package(DirectX11 REQUIRED)
 find_package(WinSock2 REQUIRED)
-find_package(BulletPhysics REQUIRED)
+find_package(PhysX REQUIRED)
 
 # Set includepaths for external dependencies
 set(EXTERNAL_INCLUDE_DIRECTORY
 	${FMOD_INCLUDE_DIRECTORY}
 	${DIRECTX11_INCLUDE_DIRECTORY}
 	${WINSOCK2_INCLUDE_DIRECTORY}
-	${BULLET_INCLUDE_DIRECTORY}
+	${PHYSX_INCLUDE_DIRECTORY}}
 )
 
 # Combine all for debugging
