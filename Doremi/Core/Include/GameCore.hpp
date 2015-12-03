@@ -3,15 +3,16 @@
 
 // Standard libraries
 #include <vector>
+#include <functional>
 namespace Doremi
 {
     namespace Core
     {
-		class Manager;
+        class Manager;
         class EntityInterface;
         class GameCore
         {
-        public:
+            public:
             GameCore();
             virtual ~GameCore();
             /** Initializes entity system and different engine DLLs*/
@@ -23,7 +24,7 @@ namespace Doremi
             void LoadEngineLibrary();
 
             // Engine variables
-            STOP_ENGINE m_stopEngineFunction;
+            std::function<void()> m_stopEngineFunction;
             void* m_engineLibrary;
 
             // Managers
