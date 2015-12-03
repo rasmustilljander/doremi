@@ -38,13 +38,16 @@ namespace DoremiEngine
             */
             size_t LoadSound(const std::string& p_soundName) override;
 
-            void PlaySound(size_t p_soundID, bool p_loop) override;
+            void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) override;
 
-            size_t SetupRecording() override;
+            size_t SetupRecording(bool p_loop) override;
+
+            int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) override;
 
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 
+<<<<<<< HEAD
             FMOD::System            *m_fmodSystem;
             std::vector<FMOD::Sound*> m_fmodSoundBuffer;
             FMOD::Channel           *m_fmodChannel = 0;
@@ -52,6 +55,22 @@ namespace DoremiEngine
             int                      m_fmodKey;
             unsigned int             m_fmodVersion;
             const Core::SharedContext& m_sharedContext;
+=======
+            FMOD::System              *m_fmodSystem;
+            std::vector<FMOD::Sound*>  m_fmodSoundBuffer;
+            std::vector<FMOD::Channel*>m_fmodChannel;
+            FMOD::Channel *m_background = 0;
+            FMOD::Channel *m_record = 0;
+            FMOD::Channel *m_enemy = 0;
+
+            FMOD_RESULT                m_fmodResult;
+            int                        m_fmodKey;
+            unsigned int               m_fmodVersion;
+            int                        time = 0;
+
+
+
+>>>>>>> Pulat med struktur i audio + fixar med components
         };
     }
 }

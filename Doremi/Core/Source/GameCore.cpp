@@ -87,8 +87,9 @@ namespace Doremi
 
             a.GetAudioModule().Startup();
             size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Latino.wav");
-            a.GetAudioModule().PlaySound(t_soundNumber, true);
-            //a.GetAudioModule().SetupRecording();
+            a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            size_t t = a.GetAudioModule().SetupRecording(true);
+            a.GetAudioModule().StartRecording(t, true, 1);
 
             Manager* t_audioManager = new AudioManager(a);
             ////////////////Example only////////////////
@@ -97,6 +98,7 @@ namespace Doremi
 
             // Add manager to list of managers
             m_managers.push_back(t_physicsManager);
+            m_managers.push_back(t_audioManager);
 
             // Create all entities (debug purposes only so far)
             GenerateWorld();

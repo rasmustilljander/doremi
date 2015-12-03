@@ -26,16 +26,16 @@ namespace DoremiEngine
             virtual size_t LoadSound(const std::string& p_soundName) = 0;
 
             //Plays a sound that is already in the system
-            virtual void PlaySound(size_t p_soundID, bool p_loop) = 0;
+            virtual void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) = 0;
 
             //Initialize code
             virtual void Startup() = 0;
 
             //Sets up the recording variables and returns the ID of the sound that will take care of the recording
-            virtual size_t SetupRecording() = 0;
+            virtual size_t SetupRecording(bool p_loop) = 0;
 
             //Starts recording to the given soundvariable
-            virtual int StartRecording() = 0;
+            virtual int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) = 0;
 
             /**
             TODO docs
