@@ -4,27 +4,17 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext)
-        : m_sharedContext(p_sharedContext)
-        {
-        }
-        PhysicsModuleImplementation::~PhysicsModuleImplementation()
-        {
-        }
+        PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
-        void PhysicsModuleImplementation::Startup()
-        {
-        }
+        void PhysicsModuleImplementation::Startup() {}
 
-        void PhysicsModuleImplementation::Shutdown()
-        {
-        }
+        void PhysicsModuleImplementation::Shutdown() {}
+
+        void PhysicsModuleImplementation::Update() {}
 
         // Only an example method to demonstrate how the engine is used
-        float PhysicsModuleImplementation::ExampleMethod(const float& posx)
-        {
-            return 1;
-        }
+        float PhysicsModuleImplementation::ExampleMethod(const float& posx) { return 1; }
 
         void PhysicsModuleImplementation::ExampleMethodAltersData(float* p_posX, float* p_posY)
         {

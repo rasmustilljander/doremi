@@ -28,7 +28,7 @@ namespace DoremiEngine
             */
             void Startup() override;
 
-            int Update() override;
+            void Update() override;
             /**
                 TODO docs
             */

@@ -21,7 +21,7 @@ namespace DoremiEngine
             /**
             Updates the audiomodule
             */
-            virtual int Update() = 0;
+            virtual void Update() = 0;
 
             /**
             Loads sound from file (Used for debugging) TODOLH remove at release
@@ -68,11 +68,6 @@ namespace DoremiEngine
             */
             virtual int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
                 float p_upx, float p_upy, float p_upz) = 0;
-
-            /**
-            TODO docs
-            */
-            virtual void Shutdown() = 0;
         };
     }
 }

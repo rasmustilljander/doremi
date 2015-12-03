@@ -14,19 +14,8 @@ namespace DoremiEngine
     {
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
-        public:
-
-            /**
-            TODO
-            */
-            virtual void Startup() = 0;
-
-            /**
-            TODO
-            */
-            virtual void Shutdown() = 0;
-
-            //Test function
+            public:
+            // Test function
             virtual float ExampleMethod(const float& posx) = 0;
             virtual void ExampleMethodAltersData(float* p_posX, float* p_posY) = 0;
         };

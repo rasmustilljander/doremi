@@ -21,20 +21,10 @@ namespace DoremiEngine
         {
             public:
             /**
-            Initializes the important graphic things like direct x
-            */
-            virtual void Startup() = 0;
-
-            /**
-            TODO docs
-            */
-            virtual void Shutdown() = 0;
-
-            /**
             Load model from specified file. Returns modelID
             */
             virtual int LoadObject(const std::string& p_fileName, const std::string& p_materialFileName) = 0;
-            
+
             /**
             Load shader from specified file. Returns shaderID
             */

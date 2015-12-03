@@ -12,13 +12,13 @@ namespace DoremiEngine
             m_graphicMain = nullptr;
         }
 
-        GraphicModuleImplementation::~GraphicModuleImplementation()
-        {
-        }
+        GraphicModuleImplementation::~GraphicModuleImplementation() {}
+
+        void GraphicModuleImplementation::Update() {}
 
         void GraphicModuleImplementation::Startup()
         {
-            if (m_graphicMain == nullptr) //TODO Review if this is a good idea for avoiding multiple instanciations
+            if(m_graphicMain == nullptr) // TODO Review if this is a good idea for avoiding multiple instanciations
             {
                 m_graphicMain = new GraphicMain(m_sharedContext);
                 m_graphicMain->CreateGraphicWindow();

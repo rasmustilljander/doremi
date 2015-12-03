@@ -20,6 +20,8 @@ namespace DoremiEngine
             */
             virtual ~GraphicModuleImplementation();
 
+            void Update() override;
+
             /**
             TODO docs
             */

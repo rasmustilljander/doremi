@@ -23,6 +23,11 @@ namespace DoremiEngine
                 TODO
             */
             virtual void Shutdown() = 0;
+
+            /**
+                Should be called once every frame update.
+            */
+            virtual void Update() = 0;
         };
     }
 }

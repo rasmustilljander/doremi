@@ -107,10 +107,9 @@ namespace DoremiEngine
             }
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
             m_fmodChannel[p_channelID]->setVolume(0.5f);
-            
         }
 
-        int AudioModuleImplementation::Update()
+        void AudioModuleImplementation::Update()
         {
             m_fmodSystem->update();
             static float derp = 0;
@@ -122,7 +121,7 @@ namespace DoremiEngine
             SetSoundPositionAndVelocity(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0);
             posX = sin(timer) * 100;
             if (m_recordingStarted)
-            {
+            {                
                 unsigned int timeElapsedSinceRecordingStarted = 0;
                 m_fmodChannel[2]->getPosition(&timeElapsedSinceRecordingStarted, FMOD_TIMEUNIT_MS);
                 if (timeElapsedSinceRecordingStarted > 200)
@@ -130,8 +129,6 @@ namespace DoremiEngine
                     //playsound
                 }
             }
-
-            return 0;
         }
 
         int AudioModuleImplementation::Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale)

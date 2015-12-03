@@ -14,17 +14,11 @@ namespace DoremiEngine
         {
             public:
             PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
-            virtual ~PhysicsModuleImplementation();
-
-            /**
-            TODO
-            */
             void Startup() override;
-
-            /**
-            TODO
-            */
             void Shutdown() override;
+            void Update() override;
+
+            virtual ~PhysicsModuleImplementation();
 
             float ExampleMethod(const float& posx) override;
             void ExampleMethodAltersData(float* p_posX, float* p_posY);
