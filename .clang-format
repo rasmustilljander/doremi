@@ -19,7 +19,7 @@ ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 0
 Cpp11BracedListStyle: false
 DerivePointerBinding: false
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentFunctionDeclarationAfterType: false
 IndentWidth: 4
 Language: Cpp
