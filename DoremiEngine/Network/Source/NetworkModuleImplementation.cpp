@@ -1,10 +1,8 @@
 // Project specific
 #include <NetworkModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
-#include <Adress.hpp>
 
 // Standard libraries
-
 #ifdef WIN32
 #include <WinSock2.h>
 #pragma comment(lib, "wsock32.lib") // TODOCM remove after merge with Rasmus
@@ -44,65 +42,132 @@ namespace DoremiEngine
             }
 #elif
 #endif
-
             m_isInitialized = true;
+        }
+
+        Adress* NetworkModuleImplementation::CreateAdress()
+        {
+            Adress* newAdress = new AdressImplementation();
+
+            return newAdress;
+        }
+
+        Adress* NetworkModuleImplementation::CreateAdress(uint16_t p_port)
+        {
+            Adress* newAdress = new AdressImplementation(p_port);
+
+            return newAdress;
+        }
+
+        Adress* NetworkModuleImplementation::CreateAdress(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
+        {
+            Adress* newAdress = new AdressImplementation(p_a, p_b, p_c, p_d, p_port);
+
+            return newAdress;
+        }
+
+        Socket* NetworkModuleImplementation::GetSocketFromMap(size_t p_handle)
+        {
+            // Attempt to find socket from map
+            std::map<size_t, Socket*>::iterator iter = m_socketHandleMap.find(p_handle);
+
+            // If none is found, error
+            if (iter == m_socketHandleMap.end())
+            {
+                throw std::runtime_error("Invalid socketHandle, no such Socket exists.");
+            }
+
+            return iter->second;
         }
 
         void NetworkModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
         {
         }
 
-        bool NetworkModuleImplementation::SendData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket)
+        bool NetworkModuleImplementation::SendReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket)
         {
-            // Check if socket exist in map TODOCM remove if not using map
-            std::map<size_t, Socket*>::iterator iter = m_SocketHandleMap.find(p_sendToSocket);
-            if (iter == m_SocketHandleMap.end())
-            {
-                throw std::runtime_error("Invalid socketID sent to SendData.");
-            }
+            // Get socket from map
+            Socket* socketToSendTo = GetSocketFromMap(p_sendToSocket);
 
             // Attempt to send data, returns true if all data is sent
-            bool SendSuccessful = iter->second->Send(t_data, t_dataSize);
+            bool SendSuccessful = socketToSendTo->SendTCP(t_data, t_dataSize);
 
             return SendSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket)
+        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket)
         {
-            // Check if socket exist in map TODOCM remove if not using map
-            std::map<size_t, Socket*>::iterator iter = m_SocketHandleMap.find(p_recieveFromSocket);
-            if (iter == m_SocketHandleMap.end())
-            {
-                throw std::runtime_error("Invalid socketID sent to RecieveData.");
-            }
+            // Get socket from map
+            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocket);
 
             // Attempt to recieve data, returns true if all data is sent
-            bool RecieveSuccessful = iter->second->Recieve(t_data, t_dataSize);
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize);
             
             return RecieveSuccessful;
         }
-
-        void NetworkModuleImplementation::ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
+        
+        bool NetworkModuleImplementation::SendUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo)
         {
+            // Get socket from map
+            Socket* socketToSendTo = GetSocketFromMap(p_sendToSocketHandle);
+
+            // Send Message ( will bind socket implicit)
+            bool SendSuccessful = socketToSendTo->SendUDP(*(AdressImplementation*)p_adressToSendTo, p_data, p_dataSize);
+
+            //return SendSuccessful;
+            return true;
         }
 
-        size_t NetworkModuleImplementation::CreateReliableConnection(uint32_t p_a,
-                                                                     uint32_t p_b,
-                                                                     uint32_t p_c,
-                                                                     uint32_t p_d,
-                                                                     uint16_t p_port)
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut)
+        {
+            // Get socket from map
+            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
+
+            // Recieve data and fetch adress recieved from
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize);
+
+            return RecieveSuccessful;
+        }
+
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle)
+        {
+            // Get socket from map
+            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
+
+            // Recieve data from a bound socket
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(p_data, p_dataSize);
+
+            return RecieveSuccessful;
+        }
+
+        size_t NetworkModuleImplementation::ConnectToReliable(const Adress* p_adressToConnectTo)
         {
             // TODOCM add try catch here, remove test code
             Socket* newSocket = new Socket();
-            Adress newAdress = Adress(p_a, p_b, p_c, p_d, p_port);
 
-            // Create a TCP socket used for incomming connections
-            newSocket->CreateWaitingTCPSocket(newAdress, 1);
+            // Create a socket and attempt connect it to a socket used for incomming
+            newSocket->CreateAndConnectTCPSocket(*(AdressImplementation*)p_adressToConnectTo);
 
             // Save socket to map
             std::hash<Socket*> HashMap;
             size_t key = HashMap(newSocket);
-            m_SocketHandleMap[key] = newSocket;
+            m_socketHandleMap[key] = newSocket;
+
+            return key;
+        }
+
+        size_t NetworkModuleImplementation::CreateReliableConnection(const Adress* p_adressToConnectTo, uint8_t p_maxWaitingConnections)
+        {
+            // TODOCM add try catch here, remove test code
+            Socket* newSocket = new Socket();
+
+            // Create a TCP socket used for incomming connections
+            newSocket->CreateWaitingTCPSocket(*(AdressImplementation*)p_adressToConnectTo, p_maxWaitingConnections);
+
+            // Save socket to map
+            std::hash<Socket*> HashMap;
+            size_t key = HashMap(newSocket);
+            m_socketHandleMap[key] = newSocket;
 
             return key;
         }
@@ -112,44 +177,54 @@ namespace DoremiEngine
             // TODOCM add parameters, speculate if we send adress from outside or not(on other
             // functions as well)
             // TODOCM add try catch here, remove test code
-            Adress newAdress = Adress();
-            Socket* newSocket;
+            // TODOCM Only accept a connection from a specific adress?
 
-            // Check if socket exist in map TODOCM remove if not using map
-            std::map<size_t, Socket*>::iterator iter = m_SocketHandleMap.find(p_socketID);
-            if(iter == m_SocketHandleMap.end())
-            {
-                throw std::runtime_error("Invalid socketID sent to AcceptConnection.");
-            }
+            // Get socket from map
+            Socket* socketToAcceptFrom = GetSocketFromMap(p_socketID);
 
             // Accept an incomming connection
-            newSocket = new Socket(iter->second->AcceptTCPConnection(newAdress));
+            Socket* newSocket = new Socket(socketToAcceptFrom->AcceptTCPConnection());
 
             // Save socket to map
             std::hash<Socket*> HashMap;
             size_t key = HashMap(newSocket);
-            m_SocketHandleMap[key] = newSocket;
+            m_socketHandleMap[key] = newSocket;
 
             return key;
         }
 
-        size_t NetworkModuleImplementation::ConnectToReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port)
+        size_t NetworkModuleImplementation::CreateUnreliableSocket()
         {
             // TODOCM add try catch here, remove test code
             Socket* newSocket = new Socket();
-            Adress newAdress = Adress(p_a, p_b, p_c, p_d, p_port);
 
-            // Create a socket and attempt connect it to a socket used for incomming
-            newSocket->CreateAndConnectTCPSocket(newAdress);
+            // Create a UDP socket used for incomming connections
+            newSocket->CreateUDPSocketToSendAndRecieve();
 
             // Save socket to map
             std::hash<Socket*> HashMap;
             size_t key = HashMap(newSocket);
-            m_SocketHandleMap[key] = newSocket;
+            m_socketHandleMap[key] = newSocket;
 
             return key;
         }
 
+        size_t NetworkModuleImplementation::CreateUnreliableWaitingSocket(const Adress* p_adressToConnectTo)
+        {
+            // TODOCM add try catch here, remove test code
+            Socket* newSocket = new Socket();
+
+            // Create a UDP socket used for incomming connections
+            newSocket->CreateAndBindUDPSocket(*(AdressImplementation*)p_adressToConnectTo);
+
+            // Save socket to map
+            std::hash<Socket*> HashMap;
+            size_t key = HashMap(newSocket);
+            m_socketHandleMap[key] = newSocket;
+
+            return key;
+        }
+       
         void NetworkModuleImplementation::Shutdown()
         {
             // TODO move shutdown to other place

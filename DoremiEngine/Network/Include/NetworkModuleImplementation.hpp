@@ -15,6 +15,18 @@ namespace DoremiEngine
         /**
             Computing the data-flow management of incomming and outcomming packages
             Creates and removes connections
+
+            Reliable flow
+            Server: CreateReliableConnection -> AcceptConnection
+            Client: ConnectToReliable
+
+            Then send/recv
+
+            Unreliable flow
+            Server: CreateUnreliableWaitingSocket
+            Client: CreteUnreliableSocket SendUnreliableData(will bind the socket implicit)
+
+            Then sendUnreliable/recvUnreliable
         */
         class NetworkModuleImplementation : public NetworkModule
         {
@@ -37,37 +49,72 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
+            Adress* CreateAdress() override;
+
+            /**
+                TODOCM docs
+            */
+            Adress* CreateAdress(uint16_t p_port);
+
+            /**
+                TODOCM docs
+            */
+            Adress* CreateAdress(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port);
+
+            /**
+                TODOCM docs
+            */
             void SetWorkingDirectory(const std::string& p_workingDirectory) override;
 
             /**
                 TODOCM docs
             */
-            bool SendData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) override;
+            bool SendReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) override;
 
             /**
                 TODOCM docs
             */
-            bool RecieveData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket) override;
+            bool RecieveReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket) override;
 
             /**
                 TODOCM docs
             */
-            void ConnectUnrealiable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) override;
+            bool SendUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) override;
 
             /**
                 TODOCM docs
             */
-            size_t ConnectToReliable(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) override;
+            bool RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut) override;
 
             /**
                 TODOCM docs
             */
-            size_t CreateReliableConnection(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) override;
+            bool RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle) override;
+
+            /**
+                TODOCM docs
+            */
+            size_t ConnectToReliable(const Adress* p_adressToConnectTo) override;
+
+            /**
+                TODOCM docs
+            */
+            size_t CreateReliableConnection(const Adress* p_adressToConnectTo, uint8_t p_maxWaitingConnections) override;
 
             /**
                 TODOCM docs
             */
             size_t AcceptConnection(size_t p_socketID) override;
+
+            /**
+                TODOCM docs
+            */
+            size_t CreateUnreliableSocket() override;
+
+            /**
+                TODOCM docs
+            */
+            size_t CreateUnreliableWaitingSocket(const Adress* p_adressToConnectTo) override;
 
             /**
                 TODOCM docs
@@ -78,13 +125,17 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
+            Socket* GetSocketFromMap(size_t p_handle);
+
+            /**
+                TODOCM docs
+            */
             bool m_isInitialized;
 
             /**
                 TODOCM docs
             */
-            std::map<size_t, Socket*> m_SocketHandleMap; // TODOCM change way of storing socket
-            // handles if possible
+            std::map<size_t, Socket*> m_socketHandleMap; // TODOCM change way of storing socket
         };
     }
 }

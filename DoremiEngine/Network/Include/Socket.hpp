@@ -1,7 +1,7 @@
 #pragma once
 
 // Project specific
-#include <Adress.hpp>
+#include <AdressImplementation.hpp>
 
 // Standard libraries
 #include <string>
@@ -37,32 +37,52 @@ namespace DoremiEngine
             /**
                 Creates a TCP socket used for incomming connections
             */
-            void CreateWaitingTCPSocket(const Adress& p_myAdress, const uint8_t& p_maxConnections);
+            void CreateWaitingTCPSocket(const AdressImplementation &p_myAdress, const uint8_t &p_maxConnections);
 
             /**
                 Create a TCP socket and connect to an adress
             */
-            void CreateAndConnectTCPSocket(const Adress& p_connectAdress);
+            void CreateAndConnectTCPSocket(const AdressImplementation &p_connectAdress);
 
             /**
                 Accept a TCP connection if CreateWaitingTCPSocket is called
             */
-            Socket AcceptTCPConnection(Adress& p_inAdress);
+            Socket AcceptTCPConnection();
 
             /**
-                TODOCM log
+                Creates a UDP socket needed to use SendTo function first to function
             */
-            void CreateUDPSocket();
+            void CreateUDPSocketToSendAndRecieve();
+
+            /**
+                Creates a UDP socket used for incomming incomming messages
+            */
+            void CreateAndBindUDPSocket(const AdressImplementation &p_myAdress);
+
+            /**
+                Send data using UDP
+            */
+            bool SendUDP(const AdressImplementation &p_Adress, void* p_data, const uint32_t &p_dataSize);
+
+            /**
+                Recieve data using UDP and fetch adress
+            */
+            bool RecieveUDP(AdressImplementation &p_Adress, void* p_data, const uint32_t &p_dataSize);
+
+            /**
+                Recieve data using UDP to bound socket
+            */
+            bool RecieveUDP(void* p_data, const uint32_t &p_dataSize);
 
             /**
                 Send data to socket
             */
-            bool Send(void* t_data, const uint32_t &t_dataSize);
+            bool SendTCP(void* p_data, const uint32_t &p_dataSize);
 
             /**
                 Recieve data from socket
             */
-            bool Recieve(void* t_data, const uint32_t &t_dataSize);
+            bool RecieveTCP(void* p_data, const uint32_t &p_dataSize);
 
             private:
             /**
@@ -71,14 +91,24 @@ namespace DoremiEngine
             void CreateTCPSocket();
 
             /**
+                Creates a UDP socket used for binding or send
+            */
+            void CreateUDPSocket();
+
+            /**
+                Set Socket to not Block on Recieve calls
+            */
+            void SetNonBlocking();
+
+            /**
                 Bind TCP socket to incomming connections
             */
-            void BindSocket(const Adress& p_adress);
+            void BindSocket(const AdressImplementation &p_adress);
 
             /**
                 Connect socket to adress
             */
-            void ConnectSocket(const Adress& p_connectAdress);
+            void ConnectSocket(const AdressImplementation &p_connectAdress);
 
             /**
                 Socket handle used for API calls

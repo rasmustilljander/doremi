@@ -1,110 +1,44 @@
 #pragma once
-
-// Standard libraries
 #include <string>
-#include <WinSock2.h>
 
 namespace DoremiEngine
 {
     namespace Network
     {
-        /**
-            Adress class for comosing and holding adress information
-        */
         class Adress
         {
-            public:
-            /**
-                Constructs Adress with local IP
-            */
-            Adress();
-
-            /**
-                Constructs Adress with IP in format "p_a.p_b.p_c.p_d" as in "255.255.255.255" with
-               port
-            */
-            Adress(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port);
-
-            /**
-                TODOCM doc
-            */
-            ~Adress();
-
+        public:
             /**
                 Returns port
             */
-            uint16_t GetPort() const
-            {
-                return m_port;
-            };
+            virtual uint16_t GetPort() const = 0;
 
             /**
                 Returns IP
             */
-            uint32_t GetIP() const
-            {
-                return m_IP;
-            };
-
-            /**
-                Returns composed Adress used for socket binding
-            */
-            SOCKADDR_IN GetAdress() const
-            {
-                return m_Adress;
-            };
+            virtual  uint32_t GetIP() const = 0;
 
             /**
                 Set the IP in format "p_a.p_b.p_c.p_d" as in "255.255.255.255", use ComposeAdress to
-               be able to use GetAdress after this
+                be able to use GetAdress after this
             */
-            void SetIP(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d);
+            virtual void SetIP(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d) = 0;
 
             /**
                 Set the port, use ComposeAdress to be able to use GetAdress after this
             */
-            void SetNetPort(uint16_t p_port);
-
-            /**
-                Set the actuall composed adress, warning may not use IP and PORT in a good way now
-                TODOCM extract the port and IP if possible
-            */
-            void SetAdress(SOCKADDR_IN p_adress);
+            virtual void SetNetPort(uint16_t p_port) = 0;
 
             /**
                 Compose the adress used for socket binding when the functions SetIP or/and
-               SetNetPort was used
+                SetNetPort was used
             */
-            void ComposeAdress();
+            virtual void ComposeAdress() = 0;
 
             /**
                 Returns the IP as a string
             */
-            std::string GetIPToString() const
-            {
-                return m_IPString;
-            };
-
-            private:
-            /**
-                IP in form of Big Endian
-            */
-            uint32_t m_IP;
-
-            /**
-                Port for either in/out
-            */
-            uint16_t m_port;
-
-            /**
-                Composed adress used for socket binding
-            */
-            SOCKADDR_IN m_Adress;
-
-            /**
-                string of IP used for debug
-            */
-            std::string m_IPString;
+            virtual std::string GetIPToString() const = 0;
         };
     }
 }
