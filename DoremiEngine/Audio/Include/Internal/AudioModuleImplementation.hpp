@@ -36,7 +36,8 @@ namespace DoremiEngine
             /**
             TODO docs
             */
-            size_t LoadSound(const std::string& p_soundName) override;
+
+            size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
             void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) override;
 
@@ -45,6 +46,14 @@ namespace DoremiEngine
             int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) override;
 
             float AnalyseSoundSpectrum(const size_t& p_channelID) override;
+
+            int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
+
+            int SetSoundPosAndVel(float p_posx, float p_posy, float p_posz,
+                float p_velx, float p_vely, float p_velz, const size_t& p_channelID) override;
+            
+            int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
+                float p_upx, float p_upy, float p_upz) override;
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 
@@ -61,6 +70,7 @@ namespace DoremiEngine
             unsigned int               m_fmodVersion;
             int                        time = 0;
             const Core::SharedContext& m_sharedContext;
+            float m_distanceFactor = 0;
 
             static const int m_outputRate = 4800;
             static const int m_spectrumSize = 8192;

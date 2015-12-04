@@ -2,7 +2,6 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <iostream>
 #include <windows.h>
-
 namespace DoremiEngine
 {
     namespace Audio
@@ -58,18 +57,44 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
         }
 
-        size_t AudioModuleImplementation::LoadSound(const std::string& p_soundName)
+        size_t AudioModuleImplementation::LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance)
         {
             FMOD::Sound* t_fmodSound;
-            m_fmodResult = m_fmodSystem->createSound(p_soundName.c_str(), FMOD_HARDWARE, 0, &t_fmodSound);
+            m_fmodResult = m_fmodSystem->createSound(p_soundName.c_str(), FMOD_3D, 0, &t_fmodSound);
             ERRCHECK(m_fmodResult);
-
+            m_fmodResult = t_fmodSound->set3DMinMaxDistance(p_minDistance * m_distanceFactor, p_maxDistance * m_distanceFactor);
+            ERRCHECK(m_fmodResult);
             m_fmodResult = t_fmodSound->setMode(FMOD_LOOP_NORMAL);
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
             size_t returnVal = m_fmodSoundBuffer.size() - 1;
+
+            
+
             return returnVal;
             //m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, t_fmodSound, false, &m_fmodChannel); C:/build/build/x86/Debug/Sounds/Latino.wav
+        }
+
+        int AudioModuleImplementation::SetSoundPosAndVel(float p_posx, float p_posy, float p_posz,
+            float p_velx, float p_vely, float p_velz, const size_t& p_channelID)
+        {
+            FMOD_VECTOR pos = { p_posx * m_distanceFactor, p_posy * m_distanceFactor, p_posz * m_distanceFactor };
+            FMOD_VECTOR vel = { p_velx * m_distanceFactor, p_vely * m_distanceFactor, p_velz * m_distanceFactor };
+            m_fmodResult = m_fmodChannel[p_channelID]->set3DAttributes(&pos, &vel);
+            ERRCHECK(m_fmodResult);
+            return 0;
+        }
+
+        int AudioModuleImplementation::SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
+            float p_upx, float p_upy, float p_upz)
+        {
+            FMOD_VECTOR forward = { p_forwardx, p_forwardy, p_forwardz };
+            FMOD_VECTOR up = { p_upx, p_upy, p_upz };
+            FMOD_VECTOR listenerPos = { p_posx, p_posy, p_posz };
+            
+            m_fmodResult = m_fmodSystem->set3DListenerAttributes(0, &listenerPos, 0, &forward, &up);
+            ERRCHECK(m_fmodResult);
+            return 0;
         }
 
         void AudioModuleImplementation::PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID)
@@ -83,7 +108,7 @@ namespace DoremiEngine
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_OFF);
             }
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            m_fmodChannel[p_channelID]->setVolume(0.1f);
+            m_fmodChannel[p_channelID]->setVolume(0.5f);
             
         }
 
@@ -93,6 +118,12 @@ namespace DoremiEngine
             static float derp = 0;
             derp = AnalyseSoundSpectrum(0);
             std::cout << "Freq = " << derp << std::endl;
+            static float timer = 0;
+            timer+= 0.01f;
+            static float posX = 0;
+            SetSoundPosAndVel(0.0f, 0.0f, posX, 0.0f, 0.0f, sin(timer), 0); //sin(timer- 0.01f)
+            posX = sin(timer) * 100;
+
             /*
             time++;
             static bool derp;
@@ -101,6 +132,14 @@ namespace DoremiEngine
             {
                 PlayASound(1, false);
             }*/
+            return 0;
+        }
+
+        int AudioModuleImplementation::Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale)
+        {
+            m_fmodResult = m_fmodSystem->set3DSettings(p_dopplerScale, p_distanceFactor, p_rollOffScale);
+            ERRCHECK(m_fmodResult);
+            m_distanceFactor = p_distanceFactor;
             return 0;
         }
 
