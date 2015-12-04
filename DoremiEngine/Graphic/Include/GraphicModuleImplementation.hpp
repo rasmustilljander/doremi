@@ -1,6 +1,7 @@
 #pragma once
 #include <GraphicModule.hpp>
 
+
 namespace DoremiEngine
 {
     namespace Graphic
@@ -52,7 +53,7 @@ namespace DoremiEngine
             /**
             Draw objects
             */
-            void Draw() override;
+            void Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix) override;
 
             /**
             Computes after effects such as glow and lighting

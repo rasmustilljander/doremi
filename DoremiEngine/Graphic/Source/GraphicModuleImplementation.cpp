@@ -50,9 +50,9 @@ namespace DoremiEngine
             m_graphicMain->BindShader(p_shaderType, p_shaderID);
         }
 
-        void GraphicModuleImplementation::Draw()
+        void GraphicModuleImplementation::Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix)
         {
-            //TODORK call Draw method in GraphicsMain when it exists
+            m_graphicMain->Draw(p_meshID, p_textureID, p_translationMatrix); //TODO Decide if we should use direcx math
         }
 
         void GraphicModuleImplementation::ComputeAfterEffects()

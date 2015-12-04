@@ -60,10 +60,17 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example->posX, &t_example->posY);
                     //Give instructions to engine where we want complex data to be changed
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
-                    //Test run GraphicsModule
-                    m_sharedContext.GetGraphicModule().EndDraw();
                 }
             }
+            //Test run GraphicsModule
+            //Should obviously not be here....
+            //Creates a rotating translation matrix for putting out the unit box
+            static float rot = 0;
+            rot += 0.005f;
+            DirectX::XMFLOAT4X4 world;
+            DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
+            m_sharedContext.GetGraphicModule().Draw(0, 0, world);
+            m_sharedContext.GetGraphicModule().EndDraw();
         }
 		void ExampleManager::OnEvent(Event* p_event)
 		{

@@ -226,14 +226,10 @@ namespace DoremiEngine
             m_deviceContext->Unmap(tBuffer, NULL);
             m_deviceContext->VSSetConstantBuffers(0, 1, &tBuffer);
 
-            //World Matrix
-            bd.ByteWidth = sizeof(XMMATRIX);
+            //World Matrix, should perhaps be here....
+            bd.ByteWidth = sizeof(XMFLOAT4X4);
             m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
-            XMMATRIX world = XMMatrixTranspose(XMMatrixTranslation(0, 0, 4.0f));
 
-            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &world, sizeof(world));
-            m_deviceContext->Unmap(m_worldMatrix, NULL);
             m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
             //For texture sampler
@@ -352,21 +348,24 @@ namespace DoremiEngine
             return m_textures.size() - 1;         
         }
 
-        void GraphicMain::Draw(const int& p_meshID, const int& p_textureID) //Should take one matrix
+        void GraphicMain::Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix) //Should take one matrix
         {
-            //Shouldnt be here!!
-            static float rot = 0;
-            rot+=0.005f;
-            DirectX::XMMATRIX world = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0,0.5,1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f));
-
+            if (p_meshID > m_Meshes.size() - 1)
+            {
+                //TODOKO Print error message
+                return;
+            }
             D3D11_MAPPED_SUBRESOURCE tMS;
             m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &world, sizeof(world));
+            memcpy(tMS.pData, &p_translationMatrix, sizeof(p_translationMatrix));
             m_deviceContext->Unmap(m_worldMatrix, NULL);
             m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
-
-            m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
+            if (p_textureID <= m_textures.size() -1)
+            {
+                m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
+            }
+            
             ID3D11Buffer* bufferPointer = m_Meshes[p_meshID]->m_bufferHandle;
             unsigned int stride = sizeof(Vertex);
             unsigned int offset = 0;
@@ -383,7 +382,9 @@ namespace DoremiEngine
 
         void GraphicMain::EndDraw() 
         {
-            Draw(0,0);
+
+            //To here
+
             m_swapChain->Present(1, 0); //TODO Evaluate if vsync should always be active
             float color[] = { 0.3f,0.0f,0.5f,1.0f };
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);

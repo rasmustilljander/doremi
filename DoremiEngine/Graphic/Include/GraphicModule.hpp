@@ -3,6 +3,7 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/ShaderTypeEnum.hpp>
 
+#include <DirectXMath.h> //TODO Review if we should use Direct x math
 #if defined(_WINDLL)
 #define GRAPHIC_DLL_EXPORT __declspec(dllexport)
 #else
@@ -50,9 +51,9 @@ namespace DoremiEngine
             virtual void InitializeDirectX() = 0;
 
             /**
-            Draw objects
+            Draw Object with the translation matrix specified (p_meshID = 0 is a unit box)
             */
-            virtual void Draw() = 0;
+            virtual void Draw(const int& p_meshID, const int& p_textureID,const DirectX::XMFLOAT4X4& p_translationMatrix) = 0;
 
             /**
             Computes after effects such as glow and lighting

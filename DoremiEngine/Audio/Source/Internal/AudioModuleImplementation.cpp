@@ -120,7 +120,7 @@ namespace DoremiEngine
             static float timer = 0;
             timer+= 0.01f;
             static float posX = 0;
-            SetSoundPosAndVel(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0); //sin(timer- 0.01f)
+            //SetSoundPosAndVel(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0); //sin(timer- 0.01f)
             posX = sin(timer) * 100;
 
             /*

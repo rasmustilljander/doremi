@@ -56,7 +56,7 @@ namespace DoremiEngine
 
             //Draw Functions
             //TODORK Implement draws
-            void Draw(const int& p_meshID, const int& p_textureID); //Should take one matrix
+            void Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix); //Should take one matrix
             void DrawInstanced(const int& p_meshID); //Should take a list of matrices too
             void DrawParticles();
             void ComputeAfterEffects();
