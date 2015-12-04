@@ -97,19 +97,19 @@ namespace Doremi
 
             
             //Lucas Testkod
-            a.GetAudioModule().Startup();
-            a.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            a.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-            //size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
-            //size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
-            //size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            //a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
-            size_t t = a.GetAudioModule().SetupRecording(true);
-            a.GetAudioModule().StartRecording(t, true, 0);
-            //a.GetAudioModule().SetSoundPosAndVel(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            //sharedContext.GetAudioModule().Startup();
+            //sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
+            //sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
+            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
+            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
+            ////a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            //size_t t = sharedContext.GetAudioModule().SetupRecording(true);
+            //sharedContext.GetAudioModule().StartRecording(t, true, 0);
+            //sharedContext.GetAudioModule().SetSoundPosAndVel(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 
-            Manager* t_audioManager = new AudioManager(a);
-            m_managers.push_back(t_audioManager);
+            //Manager* t_audioManager = new AudioManager(sharedContext);
+            //m_managers.push_back(t_audioManager);
             //Lucas Testkod slut
             ////////////////Example only////////////////
             // Create manager
