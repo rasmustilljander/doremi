@@ -5,6 +5,7 @@
 #include <EntityComponent/StorageShelf.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
+#include <EntityComponent/Components/AudioComponent.hpp>
 
 namespace Doremi
 {
@@ -66,7 +67,11 @@ namespace Doremi
                     memcpy(GetComponent<Example2Component>(tNewEntityID), iter->second,
                         sizeof(Example2Component));
                 }
-
+                else if (iter->first == ComponentType::Audio)
+                {
+                    memcpy(GetComponent<AudioComponent>(tNewEntityID), iter->second,
+                        sizeof(AudioComponent));
+                }
             }
 
             return tNewEntityID;

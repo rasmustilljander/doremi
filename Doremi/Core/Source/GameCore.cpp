@@ -86,7 +86,8 @@ namespace Doremi
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
 
             a.GetAudioModule().Startup();
-            size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Latino.wav");
+            //size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Latino.wav");
+            size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Test sounds/High to low pitch.wav");
             a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
             size_t t = a.GetAudioModule().SetupRecording(true);
             a.GetAudioModule().StartRecording(t, true, 1);

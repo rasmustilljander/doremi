@@ -10,10 +10,13 @@ namespace Doremi
         {
             float posX;
             float posY;
-            ExampleComponent(float p_posX, float p_posY) : posX(p_posX), posY(p_posY)
+            float x, y, z;
+            size_t channelID;
+            size_t soundID;
+            AudioComponent(float p_posX, float p_posY, float p_x, float p_y, float p_z) : posX(p_posX), posY(p_posY), x(p_x), y(p_y), z(p_z)
             {
             }
-            ExampleComponent() : posX(0), posY(0)
+            AudioComponent() : posX(0), posY(0)
             {
             }
         };

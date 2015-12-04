@@ -44,18 +44,11 @@ namespace DoremiEngine
 
             int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) override;
 
+            float AnalyseSoundSpectrum(const size_t& p_channelID) override;
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 
-<<<<<<< HEAD
-            FMOD::System            *m_fmodSystem;
-            std::vector<FMOD::Sound*> m_fmodSoundBuffer;
-            FMOD::Channel           *m_fmodChannel = 0;
-            FMOD_RESULT              m_fmodResult;
-            int                      m_fmodKey;
-            unsigned int             m_fmodVersion;
-            const Core::SharedContext& m_sharedContext;
-=======
+
             FMOD::System              *m_fmodSystem;
             std::vector<FMOD::Sound*>  m_fmodSoundBuffer;
             std::vector<FMOD::Channel*>m_fmodChannel;
@@ -67,10 +60,12 @@ namespace DoremiEngine
             int                        m_fmodKey;
             unsigned int               m_fmodVersion;
             int                        time = 0;
+            const Core::SharedContext& m_sharedContext;
 
-
-
->>>>>>> Pulat med struktur i audio + fixar med components
+            static const int m_outputRate = 4800;
+            static const int m_spectrumSize = 8192;
+            const float m_spectrumRange = ((float)m_outputRate / 2.0f);
+            const float m_binSize = m_spectrumRange / ((float)m_spectrumSize);
         };
     }
 }

@@ -89,7 +89,11 @@ namespace DoremiEngine
 
         int AudioModuleImplementation::Update()
         {
-            m_fmodSystem->update();/*
+            m_fmodSystem->update();
+            static float derp = 0;
+            derp = AnalyseSoundSpectrum(0);
+            std::cout << "Freq = " << derp << std::endl;
+            /*
             time++;
             static bool derp;
             m_fmodChannel->isPlaying(&derp);
@@ -113,11 +117,11 @@ namespace DoremiEngine
             
             if (p_loop)
             {
-                m_fmodResult = m_fmodSystem->createSound(0, FMOD_2D | FMOD_SOFTWARE | FMOD_LOOP_NORMAL  | FMOD_OPENUSER, &exinfo, &t_fmodSound);
+                m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_NORMAL  | FMOD_OPENUSER, &exinfo, &t_fmodSound);
             }
             else
             {
-                m_fmodResult = m_fmodSystem->createSound(0, FMOD_2D | FMOD_SOFTWARE | FMOD_LOOP_OFF | FMOD_OPENUSER, &exinfo, &t_fmodSound);
+                m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_OFF | FMOD_OPENUSER, &exinfo, &t_fmodSound);
             }
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
@@ -134,9 +138,34 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
 
             // Dont hear what is being recorded otherwise it will feedback. 
-            //m_fmodResult = m_fmodChannel->setVolume(0);
-            //ERRCHECK(m_fmodResult);
+            m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
+            ERRCHECK(m_fmodResult);
             return 0;
+        }
+
+        float AudioModuleImplementation::AnalyseSoundSpectrum(const size_t& p_channelID)
+        {
+            FMOD_RESULT t_result;
+            float spectrum[m_spectrumSize];
+            t_result = m_fmodChannel[p_channelID]->getSpectrum(spectrum, m_spectrumSize, 0, FMOD_DSP_FFT_WINDOW_TRIANGLE);
+            ERRCHECK(t_result);
+
+            float max = 0;
+            size_t highestFrequencyBand = 0;
+            for (size_t i = 0; i < 8192; i++)
+            {
+                if (spectrum[i]>0.0001f && spectrum[i] > max)
+                {
+                    max = spectrum[i];
+                    highestFrequencyBand = i;
+                }
+            }
+            float dominantHz = (float)highestFrequencyBand * m_binSize;
+            /*if (dominantHz < 20)
+            {
+                dominantHz = 0;
+            }*/
+            return dominantHz;
         }
     }
 }

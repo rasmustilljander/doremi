@@ -37,6 +37,9 @@ namespace DoremiEngine
             //Starts recording to the given soundvariable
             virtual int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) = 0;
 
+            //Analyze a sound at the giving moment and returns the frequency
+            virtual float AnalyseSoundSpectrum(const size_t& p_channelID) = 0;
+
             /**
             TODO docs
             */
