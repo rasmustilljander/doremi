@@ -59,8 +59,9 @@ namespace DoremiEngine
 
         size_t AudioModuleImplementation::LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance)
         {
+            std::string fileLocation = m_sharedContext.GetWorkingDirectory() + p_soundName;
             FMOD::Sound* t_fmodSound;
-            m_fmodResult = m_fmodSystem->createSound(p_soundName.c_str(), FMOD_3D, 0, &t_fmodSound);
+            m_fmodResult = m_fmodSystem->createSound(fileLocation.c_str(), FMOD_3D, 0, &t_fmodSound);
             ERRCHECK(m_fmodResult);
             m_fmodResult = t_fmodSound->set3DMinMaxDistance(p_minDistance * m_distanceFactor, p_maxDistance * m_distanceFactor);
             ERRCHECK(m_fmodResult);
@@ -121,7 +122,7 @@ namespace DoremiEngine
             static float timer = 0;
             timer+= 0.01f;
             static float posX = 0;
-            SetSoundPosAndVel(0.0f, 0.0f, posX, 0.0f, 0.0f, sin(timer), 0); //sin(timer- 0.01f)
+            SetSoundPosAndVel(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0); //sin(timer- 0.01f)
             posX = sin(timer) * 100;
 
             /*
