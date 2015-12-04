@@ -365,7 +365,7 @@ namespace DoremiEngine
             m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
 
-            m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
+            //m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
             ID3D11Buffer* bufferPointer = m_Meshes[p_meshID]->m_bufferHandle;
             unsigned int stride = sizeof(Vertex);
             unsigned int offset = 0;
