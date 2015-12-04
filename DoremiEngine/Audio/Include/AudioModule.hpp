@@ -18,15 +18,38 @@ namespace DoremiEngine
         class AudioModule : public DoremiEngine::Core::EngineModule
         {
         public:
-            /**
-                TODO remove this test method
-            */
-            virtual float DoFunction(float a, float b) = 0;
 
-            /**
-            TODO docs
-            */
+            //Updates the audiomodule
+            virtual int Update() = 0;
+
+            //Loads sound from file (Used for debugging) TODOLH remove at release
+            virtual size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) = 0;
+
+            //Plays a sound that is already in the system
+            virtual void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) = 0;
+
+            //Initialize code
             virtual void Startup() = 0;
+
+            //Sets up the recording variables and returns the ID of the sound that will take care of the recording
+            virtual size_t SetupRecording(bool p_loop) = 0;
+
+            //Starts recording to the given soundvariable
+            virtual int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) = 0;
+
+            //Analyze a sound at the giving moment and returns the frequency
+            virtual float AnalyseSoundSpectrum(const size_t& p_channelID) = 0;
+
+            //Sets up the 3D sound params are the distance value (1 for meters, 100 for centimeters, 3.28 for feet
+            virtual int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) = 0;
+
+            //Sets the position and velocity of a sound
+            virtual int SetSoundPosAndVel(float p_posx, float p_posy, float p_posz,
+                float p_velx, float p_vely, float p_velz, const size_t& p_channelID) = 0;
+
+            //Sets the listener position
+            virtual int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
+                float p_upx, float p_upy, float p_upz) = 0;
 
             /**
             TODO docs

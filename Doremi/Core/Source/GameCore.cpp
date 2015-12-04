@@ -5,12 +5,17 @@
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
+#include <Manager/AudioManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <EventHandler/EventHandler.hpp>
+#include <string>
+
+
 // Third party
 
 // Standard libraries
@@ -28,8 +33,8 @@ namespace Doremi
         {
         }
 
-        // Only for testing, should be removed!
-        void GenerateWorld()
+        // Only for testing, should be removed! TODO
+        void GenerateWorld() 
         {
             Doremi::Core::EntityHandler* t_entityHandler = Doremi::Core::EntityHandler::GetInstance();
 
@@ -78,9 +83,23 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& a =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
-
             EntityHandler* t_entityHandler = EntityHandler::GetInstance();
 
+            /*
+            //Lucas Testkod
+            a.GetAudioModule().Startup();
+            a.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
+            a.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            //size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Latino.wav");
+            //size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
+            size_t t_soundNumber = a.GetAudioModule().LoadSound("C:/build/build/x86/Debug/Sounds/Test sounds/4000hz.wav", 0.5f, 5000.0f);
+            a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            size_t t = a.GetAudioModule().SetupRecording(true);
+            a.GetAudioModule().StartRecording(t, true, 1);
+
+            Manager* t_audioManager = new AudioManager(a);
+            m_managers.push_back(t_audioManager);
+            //Lucas Testkod slut*/
             ////////////////Example only////////////////
             // Create manager
             Manager* t_physicsManager = new ExampleManager(a);
