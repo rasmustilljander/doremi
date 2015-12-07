@@ -12,7 +12,7 @@ namespace DoremiEngine
             SharedContextImplementation()
             : m_workingDirectory(""), m_audio(nullptr), m_core(nullptr),
               m_graphic(nullptr), m_memory(nullptr), m_network(nullptr), m_physics(nullptr),
-              m_script(nullptr)
+              m_script(nullptr), m_input(nullptr)
             {
             }
 
@@ -47,7 +47,11 @@ namespace DoremiEngine
             }
             void SetScriptModule(Script::ScriptModule* p_scriptModule)
             {
-                p_scriptModule = m_script;
+                 m_script = p_scriptModule;
+            }
+            void SetInputModule(Input::InputModule* p_inputModule)
+            {
+                 m_input = p_inputModule;
             }
 
             const std::string GetWorkingDirectory() const
@@ -118,6 +122,15 @@ namespace DoremiEngine
                 throw std::runtime_error("Script module has not been initialized.");
             };
 
+            Input::InputModule& GetInputModule() const
+            {
+                if (m_input != nullptr)
+                {
+                    return *m_input;
+                }
+                throw std::runtime_error("Input module has not been initialized.");
+            };
+
             private:
             std::string m_workingDirectory;
             Audio::AudioModule* m_audio;
@@ -127,6 +140,7 @@ namespace DoremiEngine
             Network::NetworkModule* m_network;
             Physics::PhysicsModule* m_physics;
             Script::ScriptModule* m_script;
+            Input::InputModule* m_input;
         };
     }
 }

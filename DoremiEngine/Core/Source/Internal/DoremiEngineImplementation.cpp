@@ -5,6 +5,7 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
+#include <DoremiEngine/Input/Include/InputModule.hpp>
 
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
@@ -21,12 +22,14 @@ namespace DoremiEngine
               m_networkLibrary(nullptr),
               m_physicsLibrary(nullptr),
               m_scriptLibrary(nullptr),
+              m_inputLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
               m_memoryModule(nullptr),
               m_networkModule(nullptr),
               m_physicsModule(nullptr),
-              m_scriptModule(nullptr)
+              m_scriptModule(nullptr),
+              m_inputModule(nullptr)
         {
         }
 
@@ -288,6 +291,28 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
+            m_inputLibrary = DynamicLoader::LoadSharedLibrary("Input.dll");
+
+            if (m_inputLibrary != nullptr)
+            {
+                CREATE_INPUT_MODULE functionCreateInputModule =
+                    (CREATE_INPUT_MODULE)DynamicLoader::LoadProcess(m_inputLibrary,
+                        "CreateInputModule");
+                if (functionCreateInputModule != nullptr)
+                {
+                    m_inputModule = static_cast<Input::InputModule*>(functionCreateInputModule(o_sharedContext));
+                    m_inputModule->Startup();
+                    o_sharedContext.SetInputModule(m_inputModule);
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
         }
     }
 }

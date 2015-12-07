@@ -26,14 +26,34 @@ namespace DoremiEngine
         {
         }
 
-        float InputModuleImplementation::DoFunction(float a, float b)
+        void InputModuleImplementation::Update()
         {
-            using namespace std;
-            cout << "From .dll" << std::endl;
-            cout << "a" << a << std::endl;
-            cout << "b" << b << std::endl;
 
-            return a * b;
+        }
+        int InputModuleImplementation::CreateWindow(int p_width, int p_height)
+        {
+            return 0;
+        }
+        void InputModuleImplementation::PrintInputStructsDEBUG()
+        {
+        }
+        void InputModuleImplementation::PrintInputMouseMovement()
+        {
+        }
+        void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event & p_eventVariable)
+        {
+        }
+        void InputModuleImplementation::SwitchCaseEventsForTyping(SDL_Event & p_eventVariable)
+        {
+        }
+        void InputModuleImplementation::ResetMouseMovementStruct()
+        {
+        }
+        void InputModuleImplementation::RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
+        {
+        }
+        void InputModuleImplementation::AddToList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
+        {
         }
     }
 }

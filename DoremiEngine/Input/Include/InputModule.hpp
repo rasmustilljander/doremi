@@ -1,7 +1,7 @@
 #pragma once
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
-
+#include <vector>
 #if defined(_WINDLL)
 #define INPUT_DLL_EXPORT __declspec(dllexport)
 #else
@@ -19,11 +19,6 @@ namespace DoremiEngine
         {
         public:
             /**
-                TODO remove this test method
-            */
-            virtual float DoFunction(float a, float b) = 0;
-
-            /**
             TODO docs
             */
             virtual void Startup() = 0;
@@ -37,6 +32,18 @@ namespace DoremiEngine
             TODO docs
             */
             virtual void Shutdown() = 0;
+
+            virtual void Update() = 0;
+            virtual int CreateWindow(int p_width, int p_height) = 0;
+            virtual void PrintInputStructsDEBUG() = 0;
+            virtual void PrintInputMouseMovement() = 0;
+
+            /////GET//////////////////
+            virtual const std::vector<int> GetKeyBoardInput() const = 0;
+            virtual const std::vector<int> GetMouseButtonInput() const = 0;
+            virtual const int GetMouseMovementX() const = 0;
+            virtual const int GetMouseMovementY() const = 0;
+            //////////////////////////
         };
     }
 }

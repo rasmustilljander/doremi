@@ -54,12 +54,14 @@ find_package(FMod REQUIRED)
 find_package(DirectX11 REQUIRED)
 find_package(WinSock2 REQUIRED)
 find_package(PhysX REQUIRED)
+find_package(SDL2 REQUIRED)
 
 # Set includepaths for external dependencies
 set(EXTERNAL_INCLUDE_DIRECTORY
 	${FMOD_INCLUDE_DIRECTORY}
 	${WINSOCK2_INCLUDE_DIRECTORY}
-	${PHYSX_INCLUDE_DIRECTORY}}
+	${PHYSX_INCLUDE_DIRECTORY}
+	${SDL2_INCLUDE_DIRECTORY}
 )
 
 # Combine all for debugging
@@ -68,6 +70,7 @@ set(EXTERNAL_LIBRARIES_ALL
 	${EXTERNAL_LIBRARIES_GRAPHICS}
 	${EXTERNAL_LIBRARIES_NETWORK}
 	${EXTERNAL_LIBRARY_PHYSICS}
+	${EXTERNAL_LIBRARIES_INPUT}
 )
 
 # Set global compiler options
