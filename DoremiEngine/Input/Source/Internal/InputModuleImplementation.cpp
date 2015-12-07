@@ -25,7 +25,6 @@ namespace DoremiEngine
             {
                 //TODO logger maybe
             }
-
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
@@ -44,7 +43,7 @@ namespace DoremiEngine
 
 
             SDL_Event eventVariable;
-            SwitchCaseEventsForPlaying(eventVariable);//Will fetch theMouseclicks and mousewheelscrolls
+            SwitchCaseEventsForPlaying(eventVariable);
 
 
             //TODEA
