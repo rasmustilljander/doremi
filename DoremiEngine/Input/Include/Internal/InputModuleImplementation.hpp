@@ -49,9 +49,9 @@ namespace DoremiEngine
             */
             void Shutdown() override;
             void Update();
-            int CreateWindow(int p_width, int p_height);
-            void PrintInputStructsDEBUG();
-            void PrintInputMouseMovement();
+            int CreateWindow(int p_width, int p_height);//Returns 1 if a window is created
+            void PrintInputStructsDEBUG();//TODOEA Ta bort i slutet kanske
+            void PrintInputMouseMovement();//TODEA Ta bort skiten slutet
             /////GET//////////////////
             const std::vector<int> GetKeyBoardInput() const { return m_keyboardButtonsDown; }
             const std::vector<int> GetMouseButtonInput() const { return m_mouseButtonsDown; }
