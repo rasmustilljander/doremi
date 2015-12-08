@@ -34,7 +34,7 @@ namespace DoremiEngine
                 printf("Error!  You are using an old version of FMOD %08x.  This program requires %08x\n", m_fmodVersion, FMOD_VERSION);
                 return;
             }
-            m_fmodResult = m_fmodSystem->init(32, FMOD_INIT_NORMAL, 0);
+            m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
             ERRCHECK(m_fmodResult);
             m_fmodChannel.push_back(m_background);
             m_fmodChannel.push_back(m_enemy);
@@ -58,6 +58,25 @@ namespace DoremiEngine
         size_t AudioModuleImplementation::LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance)
         {
             std::string fileLocation = m_sharedContext.GetWorkingDirectory() + p_soundName;
+            std::string t_soundName = p_soundName;
+            char* t_name = new char;
+            for(size_t i = 0; i < m_fmodSoundBuffer.size(); i++)
+            {
+                m_fmodSoundBuffer[i]->getName(t_name, 250);
+                std::string t_string;
+                t_string = std::string(t_name);
+                size_t derp = t_string.size();
+                size_t hej = t_soundName.find_last_of("/", t_string.size());
+                t_soundName.erase(0, hej + 1);
+                if(t_name == t_soundName)
+                {
+
+                    return 0;
+                }
+                return 0;
+            }
+
+
             FMOD::Sound* t_fmodSound;
             m_fmodResult = m_fmodSystem->createSound(fileLocation.c_str(), FMOD_3D, 0, &t_fmodSound);
             ERRCHECK(m_fmodResult);

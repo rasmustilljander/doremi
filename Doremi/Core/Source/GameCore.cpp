@@ -3,6 +3,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
+#include <EntityComponent/Components/AudioComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
@@ -47,7 +48,7 @@ namespace Doremi
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();
-            
+
             // Declare blueprint (do not reuse variables for more blueprints)
             EntityBlueprint t_entityBlueprint;
 
@@ -105,15 +106,23 @@ namespace Doremi
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
+
             // Lucas Testkod
+
+
             sharedContext.GetAudioModule().Startup();
             sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
             sharedContext.GetAudioModule().SetListenerPos(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+
+            EntityBlueprint t_audioBlueprint;
+            AudioComponent* t_audioComponent = new AudioComponent();
+            t_audioComponent->soundID = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
+            sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
             // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
             // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
             // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
-            sharedContext.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            // t_audioBlueprint[ComponentType::Audio] =
+            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, 0);
             sharedContext.GetAudioModule().SetVolumeOnChannel(0, 0);
             size_t t = sharedContext.GetAudioModule().SetupRecording(true);
             sharedContext.GetAudioModule().StartRecording(t, true, 1);
@@ -121,7 +130,7 @@ namespace Doremi
 
             Manager* t_audioManager = new AudioManager(sharedContext);
             m_managers.push_back(t_audioManager);
-            // Lucas Testkod slut*/
+            // Lucas Testkod slut
             ////////////////Example only////////////////
             // Create manager
 
