@@ -100,36 +100,36 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL ^ DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
+            const DoremiEngine::Core::SharedContext& sharedContext =
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL ^ DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
-            //Lucas Testkod
+            // Lucas Testkod
             sharedContext.GetAudioModule().Startup();
             sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            sharedContext.GetAudioModule().SetListenerPos(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
+            size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
+            sharedContext.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            size_t t = sharedContext.GetAudioModule().SetupRecording(true);
+            sharedContext.GetAudioModule().StartRecording(t, true, 1);
+            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 
-            //size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
-            //size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
-            //size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            //TODOEA ERIC KOMMENTERADE BORDE DETTA size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
-            //TODOEA ERIC KOMMENTERADE BORDE DETTA sharedContext.GetAudioModule().PlayASound(t_soundNumber, true, 0);
-            //TODOEA ERIC KOMMENTERADE BORDE DETTA size_t t = sharedContext.GetAudioModule().SetupRecording(true);
-            //TODOEA ERIC KOMMENTERADE BORDE DETTA sharedContext.GetAudioModule().StartRecording(t, true, 1);
-            //TODOEA ERIC KOMMENTERADE BORDE DETTA sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-
-            //Manager* t_audioManager = new AudioManager(sharedContext);
-            //m_managers.push_back(t_audioManager);
-            //Lucas Testkod slut*/
+            Manager* t_audioManager = new AudioManager(sharedContext);
+            m_managers.push_back(t_audioManager);
+            // Lucas Testkod slut*/
             ////////////////Example only////////////////
             // Create manager
 
-            //Manager* t_physicsManager = new ExampleManager(sharedContext);
+            // Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
 
 
             // Add manager to list of managers
-            //m_managers.push_back(t_physicsManager);
+            // m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
 
             GenerateWorld();

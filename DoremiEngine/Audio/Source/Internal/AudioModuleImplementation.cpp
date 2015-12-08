@@ -112,6 +112,7 @@ namespace DoremiEngine
         int AudioModuleImplementation::SetVolumeOnChannel(const size_t& p_channelID, float p_volume)
         {
             m_fmodChannel[p_channelID]->setVolume(p_volume);
+            return 0;
         }
 
         void AudioModuleImplementation::Update()

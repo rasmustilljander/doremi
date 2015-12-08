@@ -66,8 +66,8 @@ namespace DoremiEngine
             /**
             Sets the listener position
             */
-            virtual int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
-                float p_upx, float p_upy, float p_upz) = 0;
+            virtual int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz, float p_upx,
+                                       float p_upy, float p_upz) = 0;
             /**
             Sets the channels volume volume is 0 - 1, where  is loudest
             */

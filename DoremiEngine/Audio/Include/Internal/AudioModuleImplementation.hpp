@@ -53,28 +53,28 @@ namespace DoremiEngine
 
             int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
 
-            int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz,
-                float p_velx, float p_vely, float p_velz, const size_t& p_channelID) override;
-            
-            int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
-                float p_upx, float p_upy, float p_upz) override;
+            int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz, const size_t& p_channelID) override;
+
+            int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz, float p_upx,
+                               float p_upy, float p_upz) override;
 
             int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) override;
-        private:
+
+            private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 
 
-            FMOD::System              *m_fmodSystem;
-            std::vector<FMOD::Sound*>  m_fmodSoundBuffer;
-            std::vector<FMOD::Channel*>m_fmodChannel;
-            FMOD::Channel *m_background = 0;
-            FMOD::Channel *m_record = 0;
-            FMOD::Channel *m_enemy = 0;
+            FMOD::System* m_fmodSystem;
+            std::vector<FMOD::Sound*> m_fmodSoundBuffer;
+            std::vector<FMOD::Channel*> m_fmodChannel;
+            FMOD::Channel* m_background = 0;
+            FMOD::Channel* m_record = 0;
+            FMOD::Channel* m_enemy = 0;
 
-            FMOD_RESULT                m_fmodResult;
-            int                        m_fmodKey;
-            unsigned int               m_fmodVersion;
-            int                        time = 0;
+            FMOD_RESULT m_fmodResult;
+            int m_fmodKey;
+            unsigned int m_fmodVersion;
+            int time = 0;
 
             const Core::SharedContext& m_sharedContext;
             float m_distanceFactor = 0;
