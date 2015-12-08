@@ -20,7 +20,7 @@ namespace DoremiEngine
             if (p_Result != FMOD_OK)
             {
                 printf("FMOD error! (%d) %s\n", p_Result, FMOD_ErrorString(p_Result));
-                exit(5);
+                //exit(5);
             }
         }
 
@@ -71,10 +71,9 @@ namespace DoremiEngine
             
 
             return returnVal;
-            //m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, t_fmodSound, false, &m_fmodChannel); C:/build/build/x86/Debug/Sounds/Latino.wav
         }
 
-        int AudioModuleImplementation::SetSoundPosAndVel(float p_posx, float p_posy, float p_posz,
+        int AudioModuleImplementation::SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz,
             float p_velx, float p_vely, float p_velz, const size_t& p_channelID)
         {
             FMOD_VECTOR pos = { p_posx * m_distanceFactor, p_posy * m_distanceFactor, p_posz * m_distanceFactor };
@@ -120,17 +119,18 @@ namespace DoremiEngine
             static float timer = 0;
             timer+= 0.01f;
             static float posX = 0;
-            //SetSoundPosAndVel(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0); //sin(timer- 0.01f)
+            SetSoundPositionAndVelocity(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0);
             posX = sin(timer) * 100;
-
-            /*
-            time++;
-            static bool derp;
-            m_fmodChannel->isPlaying(&derp);
-            if (!derp)
+            if (m_recordingStarted)
             {
-                PlayASound(1, false);
-            }*/
+                unsigned int timeElapsedSinceRecordingStarted = 0;
+                m_fmodChannel[2]->getPosition(&timeElapsedSinceRecordingStarted, FMOD_TIMEUNIT_MS);
+                if (timeElapsedSinceRecordingStarted > 200)
+                {
+                    //playsound
+                }
+            }
+
             return 0;
         }
 
@@ -171,7 +171,11 @@ namespace DoremiEngine
         {
             m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec);
             ERRCHECK(m_fmodResult);
-            Sleep(200);
+            /**
+                TODOLH Annan lösning än sleep
+            */
+            //Sleep(200); ska ta in det som är under i updaten
+            m_recordingStarted = true;
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
             ERRCHECK(m_fmodResult);
 

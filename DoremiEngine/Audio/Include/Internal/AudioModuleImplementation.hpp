@@ -49,7 +49,7 @@ namespace DoremiEngine
 
             int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
 
-            int SetSoundPosAndVel(float p_posx, float p_posy, float p_posz,
+            int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz,
                 float p_velx, float p_vely, float p_velz, const size_t& p_channelID) override;
             
             int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
@@ -72,6 +72,7 @@ namespace DoremiEngine
 
             const Core::SharedContext& m_sharedContext;
             float m_distanceFactor = 0;
+            bool m_recordingStarted = false;
 
             static const int m_outputRate = 4800;
             static const int m_spectrumSize = 8192;
