@@ -104,10 +104,8 @@ namespace Doremi
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
-
-
-            // Lucas Testkod
-            /*sharedContext.GetAudioModule().Startup();
+            /*//Lucas Testkod
+            sharedContext.GetAudioModule().Startup();
             sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
             sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
 
