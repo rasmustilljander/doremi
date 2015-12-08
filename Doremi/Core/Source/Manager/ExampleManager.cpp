@@ -3,11 +3,14 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
+#include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
+
+
 
 // Third party
 
@@ -60,6 +63,11 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example->posX, &t_example->posY);
                     //Give instructions to engine where we want complex data to be changed
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
+
+                    //Test run GraphicsModule
+
+                    m_sharedContext.GetInputModule().Update();//TODOEA
+
                 }
             }
             //Test run GraphicsModule

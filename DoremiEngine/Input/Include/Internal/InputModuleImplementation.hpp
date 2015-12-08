@@ -1,7 +1,9 @@
 #pragma once
+#include <unordered_map>
 #include <InputModule.hpp>
 #include <vector>
 #include <SDL2/SDL.h>
+
 
 namespace DoremiEngine
 {
@@ -15,12 +17,11 @@ namespace DoremiEngine
                 int x = 0;
                 int y = 0;
             };
-            ///thiongs that will be sent!
+
             MouseMovementStruct m_mouseMovementStruct;
             std::vector<int>m_keyboardButtonsDown;//used for typing.
             std::vector<int>m_mouseButtonsDown;//will be sent if the target wants the buttons of the mouse(no scrolling)
             int m_mouseWheelSpins = 0;//Y direction
-            //////////////////////////
 
 
             public:
@@ -48,7 +49,7 @@ namespace DoremiEngine
                 TODO docs
             */
             void Shutdown() override;
-            void Update();
+            void Update() override;
             int CreateWindow(int p_width, int p_height);//Returns 1 if a window is created
             void PrintInputStructsDEBUG();//TODOEA Ta bort i slutet kanske
             void PrintInputMouseMovement();//TODEA Ta bort skiten slutet
@@ -57,6 +58,7 @@ namespace DoremiEngine
             const std::vector<int> GetMouseButtonInput() const { return m_mouseButtonsDown; }
             const int GetMouseMovementX() const { return m_mouseMovementStruct.x; }
             const int GetMouseMovementY() const { return m_mouseMovementStruct.y; }
+            const int GetMouseWheelSpins() const { return m_mouseWheelSpins; }
             //////////////////////////
 
 
@@ -67,6 +69,7 @@ namespace DoremiEngine
             void SwitchCaseEventsForPlaying(SDL_Event &p_eventVariable);
             void SwitchCaseEventsForTyping(SDL_Event &p_eventVariable);
             void ResetMouseMovementStruct();
+            void ResetButtonsDown();
             //void ResetInputForPlayingStruct();
             void AddToList(SDL_Keycode p_eventvariable, std::vector<int> &o_listToUse);
             void RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int> &o_listToUse);

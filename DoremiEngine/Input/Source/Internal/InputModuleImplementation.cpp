@@ -25,6 +25,7 @@ namespace DoremiEngine
             {
                 //TODO logger maybe
             }
+            CreateWindow(500, 500);
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
@@ -37,6 +38,7 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Update()
         {
+            //ResetButtonsDown();
             ResetMouseMovementStruct();
             m_mouseWheelSpins = 0;
 
@@ -53,7 +55,7 @@ namespace DoremiEngine
         int InputModuleImplementation::CreateWindow(int p_width, int p_height)
         {
             //1200,200 är plats för window
-            m_win = SDL_CreateWindow("Hello World!", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
+            m_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
             if (!m_win)
             {
                 std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -117,18 +119,16 @@ namespace DoremiEngine
                 switch (p_eventVariable.type)
                 {
 
-                case SDL_KEYDOWN://kan va bra om vi ska skriva text!
+                case SDL_KEYDOWN:
                     AddToList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                     break;
 
                 case SDL_KEYUP:
                     RemoveFromList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                     break;
-                    SDLK_f;
 
                 case SDL_MOUSEBUTTONDOWN:
                     AddToList(p_eventVariable.button.button, m_mouseButtonsDown);
-                    //m_mouseButtonsDown.push_back(eventVariable.button.button);
                     break;
 
                 case SDL_MOUSEBUTTONUP:
@@ -140,7 +140,7 @@ namespace DoremiEngine
                     m_mouseMovementStruct.y = p_eventVariable.motion.yrel;
                     break;
 
-                case SDL_MOUSEWHEEL: //TODEA Fix mousewheelshit för båda eventcaseshitsen
+                case SDL_MOUSEWHEEL: 
                     m_mouseWheelSpins = p_eventVariable.wheel.y;
                     break;
 
@@ -187,6 +187,11 @@ namespace DoremiEngine
         {
             m_mouseMovementStruct.x = 0;
             m_mouseMovementStruct.y = 0;
+        }
+        void InputModuleImplementation::ResetButtonsDown()
+        {
+            m_keyboardButtonsDown.clear();
+            m_mouseButtonsDown.clear();
         }
         void InputModuleImplementation::RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
         {

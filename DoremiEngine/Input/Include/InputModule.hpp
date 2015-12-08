@@ -43,6 +43,7 @@ namespace DoremiEngine
             virtual const std::vector<int> GetMouseButtonInput() const = 0;
             virtual const int GetMouseMovementX() const = 0;
             virtual const int GetMouseMovementY() const = 0;
+            virtual const int GetMouseWheelSpins() const = 0;
             //////////////////////////
         };
     }
