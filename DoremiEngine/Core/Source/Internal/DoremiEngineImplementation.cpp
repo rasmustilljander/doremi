@@ -7,6 +7,7 @@
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
+
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
@@ -143,10 +144,10 @@ namespace DoremiEngine
                 m_graphicModule->Shutdown();
             }
 
-            //    if (m_memoryModule != nullptr)
-            //    {
-            //        m_memoryModule->Shutdown();
-            //    }
+            if(m_memoryModule != nullptr)
+            {
+                m_memoryModule->Shutdown();
+            }
 
             // TODORT
             //    if (m_networkModule != nullptr)
@@ -229,11 +230,32 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadMemoryModule(SharedContextImplementation& o_sharedContext)
         {
+            using namespace DynamicLoader;
+            m_memoryLibrary = LoadSharedLibrary("Memory.dll");
+
+            if(m_memoryLibrary != nullptr)
+            {
+                CREATE_MEMORY_MODULE functionCreateAudioModule = (CREATE_MEMORY_MODULE)LoadProcess(m_memoryLibrary, "CreateMemoryModule");
+                if(functionCreateAudioModule != nullptr)
+                {
+                    m_memoryModule = static_cast<Memory::MemoryModule*>(functionCreateAudioModule(o_sharedContext));
+                    m_memoryModule->Startup();
+                    o_sharedContext.SetMemoryModule(m_memoryModule);
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
         }
 
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
-			m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
+            m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
 
 			if (m_networkLibrary != nullptr)
 			{
