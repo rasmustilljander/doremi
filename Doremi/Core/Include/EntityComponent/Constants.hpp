@@ -15,10 +15,11 @@ enum class ComponentType : int
     Example = 0x01,
     Example2 = 0x02,
     Audio = 0x04,
+
 };
 
-/** 
-Lists all available types of entities, as blueprints. 
+/**
+Lists all available types of entities, as blueprints.
 WARNING! Subject to change due to low scalability*/
 enum class Blueprints : int
 {

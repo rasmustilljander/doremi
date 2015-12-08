@@ -114,6 +114,7 @@ namespace Doremi
             // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
             size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
             sharedContext.GetAudioModule().PlayASound(t_soundNumber, true, 0);
+            sharedContext.GetAudioModule().SetVolumeOnChannel(0, 0);
             size_t t = sharedContext.GetAudioModule().SetupRecording(true);
             sharedContext.GetAudioModule().StartRecording(t, true, 1);
             sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);

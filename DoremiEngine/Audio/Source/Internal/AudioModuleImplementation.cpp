@@ -67,17 +67,14 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
             size_t returnVal = m_fmodSoundBuffer.size() - 1;
-
-            
-
             return returnVal;
         }
 
-        int AudioModuleImplementation::SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz,
-            float p_velx, float p_vely, float p_velz, const size_t& p_channelID)
+        int AudioModuleImplementation::SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz,
+                                                                   const size_t& p_channelID)
         {
-            FMOD_VECTOR pos = { p_posx * m_distanceFactor, p_posy * m_distanceFactor, p_posz * m_distanceFactor };
-            FMOD_VECTOR vel = { p_velx * m_distanceFactor, p_vely * m_distanceFactor, p_velz * m_distanceFactor };
+            FMOD_VECTOR pos = {p_posx * m_distanceFactor, p_posy * m_distanceFactor, p_posz * m_distanceFactor};
+            FMOD_VECTOR vel = {p_velx * m_distanceFactor, p_vely * m_distanceFactor, p_velz * m_distanceFactor};
             m_fmodResult = m_fmodChannel[p_channelID]->set3DAttributes(&pos, &vel);
             ERRCHECK(m_fmodResult);
             return 0;
