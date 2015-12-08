@@ -15,6 +15,8 @@ namespace DoremiEngine
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
             public:
+            virtual void Update() = 0;
+
             // Test function
             virtual float ExampleMethod(const float& posx) = 0;
             virtual void ExampleMethodAltersData(float* p_posX, float* p_posY) = 0;

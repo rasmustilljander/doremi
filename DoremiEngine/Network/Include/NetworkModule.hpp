@@ -57,14 +57,9 @@ namespace DoremiEngine
             virtual Adress* CreateAdress(uint32_t p_a, uint32_t p_b, uint32_t p_c, uint32_t p_d, uint16_t p_port) = 0;
 
             /**
-                TODOCM doc
-            */
-            virtual void SetWorkingDirectory(const std::string& p_workingDirectory) = 0;
-
-            /**
                 Send data to a specified socket, returns true if successful
             */
-            virtual bool SendReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) = 0;
+            virtual bool SendReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_sendToSocket) = 0;
 
             /**
                 Recieve data from a specified socket, returns true if successful

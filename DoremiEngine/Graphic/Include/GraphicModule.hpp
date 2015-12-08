@@ -21,6 +21,11 @@ namespace DoremiEngine
         {
             public:
             /**
+               TODORT docs
+            */
+            virtual void Update() = 0;
+
+            /**
             Load model from specified file. Returns modelID
             */
             virtual int LoadObject(const std::string& p_fileName, const std::string& p_materialFileName) = 0;

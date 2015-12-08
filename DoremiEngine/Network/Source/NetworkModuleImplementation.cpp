@@ -80,11 +80,7 @@ namespace DoremiEngine
             return iter->second;
         }
 
-        void NetworkModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
-        {
-        }
-
-        bool NetworkModuleImplementation::SendReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket)
+        bool NetworkModuleImplementation::SendReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_sendToSocket)
         {
             // Get socket from map
             Socket* socketToSendTo = GetSocketFromMap(p_sendToSocket);

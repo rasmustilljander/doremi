@@ -64,12 +64,7 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            void SetWorkingDirectory(const std::string& p_workingDirectory) override;
-
-            /**
-                TODOCM docs
-            */
-            bool SendReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_sendToSocket) override;
+            bool SendReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_sendToSocket) override;
 
             /**
                 TODOCM docs

@@ -28,7 +28,11 @@ namespace DoremiEngine
             */
             void Startup() override;
 
+            /**
+                TORORT docs
+            */
             void Update() override;
+
             /**
                 TODO docs
             */
