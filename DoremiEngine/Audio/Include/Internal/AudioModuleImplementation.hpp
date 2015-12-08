@@ -58,6 +58,8 @@ namespace DoremiEngine
             
             int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
                 float p_upx, float p_upy, float p_upz) override;
+
+            int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) override;
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 

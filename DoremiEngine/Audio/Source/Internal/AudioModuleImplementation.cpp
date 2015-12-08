@@ -109,11 +109,16 @@ namespace DoremiEngine
             m_fmodChannel[p_channelID]->setVolume(0.5f);
         }
 
+        int AudioModuleImplementation::SetVolumeOnChannel(const size_t& p_channelID, float p_volume)
+        {
+            m_fmodChannel[p_channelID]->setVolume(p_volume);
+        }
+
         void AudioModuleImplementation::Update()
         {
             m_fmodSystem->update();
             static float derp = 0;
-            derp = AnalyseSoundSpectrum(0);
+            derp = AnalyseSoundSpectrum(1);
             std::cout << "Freq = " << derp << std::endl;
             static float timer = 0;
             timer+= 0.01f;
@@ -123,10 +128,17 @@ namespace DoremiEngine
             if (m_recordingStarted)
             {                
                 unsigned int timeElapsedSinceRecordingStarted = 0;
-                m_fmodChannel[2]->getPosition(&timeElapsedSinceRecordingStarted, FMOD_TIMEUNIT_MS);
-                if (timeElapsedSinceRecordingStarted > 200)
+                m_fmodSystem->getRecordPosition(0, &timeElapsedSinceRecordingStarted); /*funkar bara om vi använder outputdriver 0 ...
+                kan undvikas genom att lägga in driverchoice i starten*/
+                if (timeElapsedSinceRecordingStarted > 9600)
                 {
-                    //playsound
+                    m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[1], false, &m_fmodChannel[1]);
+                    ERRCHECK(m_fmodResult);
+
+                    // Dont hear what is being recorded otherwise it will feedback. 
+                    //m_fmodResult = m_fmodChannel[1]->setVolume(0);
+                    //ERRCHECK(m_fmodResult);
+                    m_recordingStarted = false;
                 }
             }
         }
@@ -173,12 +185,12 @@ namespace DoremiEngine
             */
             //Sleep(200); ska ta in det som är under i updaten
             m_recordingStarted = true;
-            m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            ERRCHECK(m_fmodResult);
+            //m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
+            //ERRCHECK(m_fmodResult);
 
-            // Dont hear what is being recorded otherwise it will feedback. 
-            m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
-            ERRCHECK(m_fmodResult);
+            //// Dont hear what is being recorded otherwise it will feedback. 
+            //m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
+            //ERRCHECK(m_fmodResult);
             return 0;
         }
 

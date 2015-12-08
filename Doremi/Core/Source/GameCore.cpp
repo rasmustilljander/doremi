@@ -100,11 +100,11 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL ^ DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
-            /*//Lucas Testkod
+            //Lucas Testkod
             sharedContext.GetAudioModule().Startup();
             sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
             sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
@@ -124,12 +124,12 @@ namespace Doremi
             ////////////////Example only////////////////
             // Create manager
 
-            Manager* t_physicsManager = new ExampleManager(sharedContext);
+            //Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
 
 
             // Add manager to list of managers
-            m_managers.push_back(t_physicsManager);
+            //m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
 
             GenerateWorld();
