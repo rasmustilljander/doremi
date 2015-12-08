@@ -2,6 +2,7 @@
 #include <Manager/GraphicManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <EntityComponent/Components/RenderComponent.hpp>
 
 
 namespace Doremi
@@ -27,7 +28,8 @@ namespace Doremi
             {
                 if (EntityHandler::GetInstance().HasComponents(i, mask))
                 {
-                    m_sharedContext.GetGraphicModule().Draw();
+                    RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
+                    //m_sharedContext.GetGraphicModule().Draw(renderComp->meshID, renderComp->materialID,);
                 }
             }
         }

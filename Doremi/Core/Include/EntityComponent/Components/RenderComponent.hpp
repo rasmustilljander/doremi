@@ -8,12 +8,15 @@ namespace Doremi
         */
         struct RenderComponent
         {
-            int data = 0;
-            float floatData = 0;
+            size_t meshID;
+            size_t materialID;
+            RenderComponent(int p_meshID, int p_materialID) : meshID(p_meshID), materialID(p_materialID)
+            {
+            }
+            RenderComponent() : meshID(0), materialID(0)
+            {
+            }
         };
-        struct Example2Component
-        {
-            ExampleComplexStruct complexStruct;
-        };
+
     }
 }
