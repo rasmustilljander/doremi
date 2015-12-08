@@ -7,6 +7,7 @@ namespace DoremiEngine
     namespace Graphic
     {
         class GraphicMain;
+        class SubModuleManagerImpl;
         class GraphicModuleImplementation : public GraphicModule
         {
             public:
@@ -15,11 +16,13 @@ namespace DoremiEngine
             */
             GraphicModuleImplementation(const Core::SharedContext& p_sharedContext);
 
+           
             /**
             TODO docs
             */
             virtual ~GraphicModuleImplementation();
 
+            SubModuleManager* GetSubModuleManager() override;
             /**
             TODORT docs
             */
@@ -73,6 +76,7 @@ namespace DoremiEngine
         private:
             const Core::SharedContext& m_sharedContext;
             GraphicMain* m_graphicMain;
+            SubModuleManagerImpl* m_subModuleManger;
         };
     }
 }

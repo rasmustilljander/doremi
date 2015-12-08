@@ -1,6 +1,7 @@
 #include <GraphicModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <GraphicMain.hpp>
+#include <Internal/Manager/SubModuleManagerImpl.hpp>
 #include <iostream>
 
 namespace DoremiEngine
@@ -10,9 +11,15 @@ namespace DoremiEngine
         GraphicModuleImplementation::GraphicModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
             m_graphicMain = nullptr;
+            m_subModuleManger = new SubModuleManagerImpl();
         }
 
         GraphicModuleImplementation::~GraphicModuleImplementation() {}
+
+        SubModuleManager* GraphicModuleImplementation::GetSubModuleManager()
+        {
+            return m_subModuleManger;
+        }
 
         void GraphicModuleImplementation::Update() {}
 
