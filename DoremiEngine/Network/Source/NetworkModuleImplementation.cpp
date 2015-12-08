@@ -5,7 +5,6 @@
 // Standard libraries
 #ifdef WIN32
 #include <WinSock2.h>
-#pragma comment(lib, "wsock32.lib") // TODOCM remove after merge with Rasmus
 #elif
 #error Platform not supported
 #endif
