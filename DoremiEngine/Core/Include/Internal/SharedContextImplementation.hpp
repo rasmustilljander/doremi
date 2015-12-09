@@ -11,15 +11,13 @@ namespace DoremiEngine
             public:
             SharedContextImplementation()
             : m_workingDirectory(""), m_audio(nullptr), m_core(nullptr),
-              m_graphic(nullptr), m_memory(nullptr), m_network(nullptr), m_physics(nullptr),
+              m_graphic(nullptr), m_network(nullptr), m_physics(nullptr),
               m_script(nullptr), m_input(nullptr)
+
             {
             }
 
-            void SetWorkingDirectory(const std::string& p_workingDirectory)
-            {
-                m_workingDirectory = p_workingDirectory;
-            }
+            void SetWorkingDirectory(const std::string& p_workingDirectory) { m_workingDirectory = p_workingDirectory; }
 
             void SetAudioModule(Audio::AudioModule* p_audioModule)
             {
@@ -32,10 +30,6 @@ namespace DoremiEngine
             void SetGraphicModule(Graphic::GraphicModule* p_graphicModule)
             {
                 m_graphic = p_graphicModule;
-            }
-            void SetMemoryModule(Memory::MemoryModule* p_memoryModule)
-            {
-                m_memory = p_memoryModule;
             }
             void SetNetworkModule(Network::NetworkModule* p_networkModule)
             {
@@ -54,10 +48,7 @@ namespace DoremiEngine
                  m_input = p_inputModule;
             }
 
-            const std::string GetWorkingDirectory() const
-            {
-                return m_workingDirectory;
-            };
+            const std::string GetWorkingDirectory() const { return m_workingDirectory; };
 
             Audio::AudioModule& GetAudioModule() const
             {
@@ -84,15 +75,6 @@ namespace DoremiEngine
                     return *m_graphic;
                 }
                 throw std::runtime_error("Graphic module has not been initialized.");
-            };
-
-            Memory::MemoryModule& GetMemoryModule() const
-            {
-                if(m_memory != nullptr)
-                {
-                    return *m_memory;
-                }
-                throw std::runtime_error("Memory module has not been initialized.");
             };
 
             Network::NetworkModule& GetNetworkModule() const
@@ -136,7 +118,6 @@ namespace DoremiEngine
             Audio::AudioModule* m_audio;
             DoremiEngine* m_core;
             Graphic::GraphicModule* m_graphic;
-            Memory::MemoryModule* m_memory;
             Network::NetworkModule* m_network;
             Physics::PhysicsModule* m_physics;
             Script::ScriptModule* m_script;

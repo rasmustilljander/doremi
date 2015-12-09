@@ -6,8 +6,6 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
-
-
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
@@ -19,14 +17,12 @@ namespace DoremiEngine
         DoremiEngineImplementation::DoremiEngineImplementation()
             : m_audioLibrary(nullptr),
               m_graphicLibrary(nullptr),
-              m_memoryLibrary(nullptr),
               m_networkLibrary(nullptr),
               m_physicsLibrary(nullptr),
               m_scriptLibrary(nullptr),
               m_inputLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
-              m_memoryModule(nullptr),
               m_networkModule(nullptr),
               m_physicsModule(nullptr),
               m_scriptModule(nullptr),
@@ -45,11 +41,6 @@ namespace DoremiEngine
             {
                 delete m_graphicModule;
             }
-
-            //    if (m_memoryModule != nullptr)
-            //    {
-            //        delete m_memoryModule;
-            //    }
 
             // TODORT
             //    if (m_networkModule != nullptr)
@@ -75,10 +66,6 @@ namespace DoremiEngine
             if(m_graphicLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_graphicLibrary);
-            }
-            if(m_memoryLibrary != nullptr)
-            {
-                DynamicLoader::FreeSharedLibrary(m_memoryLibrary);
             }
             if(m_networkLibrary != nullptr)
             {
@@ -142,11 +129,6 @@ namespace DoremiEngine
             if(m_graphicModule != nullptr)
             {
                 m_graphicModule->Shutdown();
-            }
-
-            if(m_memoryModule != nullptr)
-            {
-                m_memoryModule->Shutdown();
             }
 
             // TODORT
@@ -228,47 +210,20 @@ namespace DoremiEngine
             }
         }
 
-        void DoremiEngineImplementation::LoadMemoryModule(SharedContextImplementation& o_sharedContext)
-        {
-            using namespace DynamicLoader;
-            m_memoryLibrary = LoadSharedLibrary("Memory.dll");
-
-            if(m_memoryLibrary != nullptr)
-            {
-                CREATE_MEMORY_MODULE functionCreateAudioModule = (CREATE_MEMORY_MODULE)LoadProcess(m_memoryLibrary, "CreateMemoryModule");
-                if(functionCreateAudioModule != nullptr)
-                {
-                    m_memoryModule = static_cast<Memory::MemoryModule*>(functionCreateAudioModule(o_sharedContext));
-                    m_memoryModule->Startup();
-                    o_sharedContext.SetMemoryModule(m_memoryModule);
-                }
-                else
-                {
-                    // TODO logger
-                }
-            }
-            else
-            {
-                // TODO logger
-            }
-        }
-
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
             m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
 
-			if (m_networkLibrary != nullptr)
-			{
-				CREATE_NETWORK_MODULE functionCreateNetworkModule =
-					(CREATE_NETWORK_MODULE)DynamicLoader::LoadProcess(m_networkLibrary,
-						"CreateNetworkModule");
-				if (functionCreateNetworkModule != nullptr)
-				{
-					m_networkModule =
-						static_cast<Network::NetworkModule*>(functionCreateNetworkModule(o_sharedContext));
-					m_networkModule->Startup();
-					o_sharedContext.SetNetworkModule(m_networkModule);
-				}
+            if(m_networkLibrary != nullptr)
+            {
+                CREATE_NETWORK_MODULE functionCreateNetworkModule =
+                    (CREATE_NETWORK_MODULE)DynamicLoader::LoadProcess(m_networkLibrary, "CreateNetworkModule");
+                if(functionCreateNetworkModule != nullptr)
+                {
+                    m_networkModule = static_cast<Network::NetworkModule*>(functionCreateNetworkModule(o_sharedContext));
+                    m_networkModule->Startup();
+                    o_sharedContext.SetNetworkModule(m_networkModule);
+                }
 				else
 				{
 					// TODO logger

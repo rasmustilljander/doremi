@@ -18,11 +18,6 @@ namespace DoremiEngine
         class GraphicModule;
     }
 
-    namespace Memory
-    {
-        class MemoryModule;
-    }
-
     namespace Network
     {
         class NetworkModule;
@@ -53,7 +48,6 @@ namespace DoremiEngine
             virtual Audio::AudioModule& GetAudioModule() const = 0;
             virtual DoremiEngine& GetCoreModule() const = 0;
             virtual Graphic::GraphicModule& GetGraphicModule() const = 0;
-            virtual Memory::MemoryModule& GetMemoryModule() const = 0;
             virtual Network::NetworkModule& GetNetworkModule() const = 0;
             virtual Physics::PhysicsModule& GetPhysicsModule() const = 0;
             virtual Script::ScriptModule& GetScriptModule() const = 0;

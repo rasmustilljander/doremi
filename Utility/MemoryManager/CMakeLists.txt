@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.2.1)
 
 # Root project settings
-set(PROJECT_NAME Memory)
+set(PROJECT_NAME MemoryManager)
 project(${PROJECT_NAME})
 
 # Set the files used in the target
@@ -13,5 +13,5 @@ create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADE
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
 
 # Add the target
-add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${HEADERS} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})

@@ -34,10 +34,7 @@ namespace DoremiEngine
             /**
                 TODO docs
             */
-            const SharedContext& GetSharedContext() const override
-            {
-                return *static_cast<SharedContext*>(m_sharedContext);
-            }
+            const SharedContext& GetSharedContext() const override { return *static_cast<SharedContext*>(m_sharedContext); }
 
             private:
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
@@ -66,7 +63,6 @@ namespace DoremiEngine
             // Pointers to the interfaces
             Audio::AudioModule* m_audioModule;
             Graphic::GraphicModule* m_graphicModule;
-            Memory::MemoryModule* m_memoryModule;
             Network::NetworkModule* m_networkModule;
             Physics::PhysicsModule* m_physicsModule;
             Script::ScriptModule* m_scriptModule;
