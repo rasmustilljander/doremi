@@ -16,6 +16,8 @@
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <EventHandler/EventHandler.hpp>
 
+#include <GameContext.hpp>
+
 #include <string>
 
 
@@ -100,7 +102,10 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
-            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            GameContext::CreateGameContext(sharedContext);
+            GameContext& derp = GameContext::GetInstance();
+            // EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
             // Lucas Testkod
@@ -122,8 +127,8 @@ namespace Doremi
             ////////////////Example only////////////////
             // Create manager
 
-            Manager* t_physicsManager = new ExampleManager(sharedContext);
-            Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
+            Manager* t_physicsManager = new ExampleManager();
+            Manager* t_clientNetworkManager = new ClientNetworkManager();
 
 
             // Add manager to list of managers
@@ -153,31 +158,32 @@ namespace Doremi
             }
 
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
+            GameContext::CreateGameContext(sharedContext);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
-            //Lucas Testkod
-            //sharedContext.GetAudioModule().Startup();
-            //sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            //sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            // Lucas Testkod
+            // sharedContext.GetAudioModule().Startup();
+            // sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
+            // sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
             ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
             ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
             ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
             ////a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
-            //size_t t = sharedContext.GetAudioModule().SetupRecording(true);
-            //sharedContext.GetAudioModule().StartRecording(t, true, 0);
-            //sharedContext.GetAudioModule().SetSoundPosAndVel(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            // size_t t = sharedContext.GetAudioModule().SetupRecording(true);
+            // sharedContext.GetAudioModule().StartRecording(t, true, 0);
+            // sharedContext.GetAudioModule().SetSoundPosAndVel(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 
-            //Manager* t_audioManager = new AudioManager(sharedContext);
-            //m_managers.push_back(t_audioManager);
-            //Lucas Testkod slut
+            // Manager* t_audioManager = new AudioManager(sharedContext);
+            // m_managers.push_back(t_audioManager);
+            // Lucas Testkod slut
 
             ////////////////Example only////////////////
             // Create manager
 
-            Manager* t_physicsManager = new ExampleManager(sharedContext);
-            Manager* t_serverNetworkManager = new ServerNetworkManager(sharedContext);
+            Manager* t_physicsManager = new ExampleManager();
+            Manager* t_serverNetworkManager = new ServerNetworkManager();
 
 
             // Add manager to list of managers
@@ -199,7 +205,8 @@ namespace Doremi
                 {
                     m_managers.at(i)->Update(0.017);
                 }
-                EventHandler::GetInstance()->DeliverEvents();
+                GameContext::GetInstance().m_eventHandler.DeliverEvents();
+                // EventHandler::GetInstance()->DeliverEvents();
             }
         }
     }

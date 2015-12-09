@@ -12,14 +12,14 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class AudioManager : public Manager, public Subscriber
         {
-        public:
-            AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            public:
+            AudioManager();
             virtual ~AudioManager();
-            void Update(double p_dt) override; 
-			// If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
-			void OnEvent(Event* p_event) override;
-		private:
+            void Update(double p_dt) override;
+            // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
+            void OnEvent(Event* p_event) override;
+
+            private:
         };
     }
 }
-

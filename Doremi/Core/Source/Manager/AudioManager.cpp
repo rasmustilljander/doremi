@@ -7,6 +7,7 @@
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
+#include <GameContext.hpp>
 
 // Third party
 
@@ -19,25 +20,19 @@ namespace Doremi
 {
     namespace Core
     {
-        AudioManager::AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            :Manager(p_sharedContext)
-        {
-			EventHandler::GetInstance()->Subscribe(Events::Example, this);
-        }
+        AudioManager::AudioManager() : Manager() { GameContext::GetInstance().m_eventHandler.Subscribe(Events::Example, this); }
 
-        AudioManager::~AudioManager()
-        {
-
-        }
+        AudioManager::~AudioManager() {}
 
 
         void AudioManager::Update(double p_dt)
-		{
-			//Example on how to create and Broadcast a event
-			ExampleEvent* myEvent = new ExampleEvent();
-			myEvent->eventType = Events::Example;
-			myEvent->myInt = 42;
-            EventHandler::GetInstance()->BroadcastEvent(myEvent);
+        {
+            // Example on how to create and Broadcast a event
+            ExampleEvent* myEvent = new ExampleEvent();
+            myEvent->eventType = Events::Example;
+            myEvent->myInt = 42;
+
+            GameContext::GetInstance().m_eventHandler.BroadcastEvent(myEvent);
 
             // Loop through all entities
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();

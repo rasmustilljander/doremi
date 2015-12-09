@@ -10,6 +10,7 @@ namespace Doremi
     {
         class Manager;
         class EntityInterface;
+        // class GameContext;
         class GameCore
         {
             public:

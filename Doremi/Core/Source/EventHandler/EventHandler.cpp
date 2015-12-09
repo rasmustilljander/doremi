@@ -6,57 +6,55 @@
 
 namespace Doremi
 {
-	namespace Core
-	{
-		EventHandler* EventHandler::m_singleton = nullptr;
+    namespace Core
+    {
+        // EventHandler* EventHandler::m_singleton = nullptr;
 
-		EventHandler* EventHandler::GetInstance()
-		{
-			if (m_singleton == nullptr)
-			{
-				m_singleton = new EventHandler();
-			}
-			return m_singleton;
-		}
+        // EventHandler* EventHandler::GetInstance()
+        //{
+        //	if (m_singleton == nullptr)
+        //	{
+        //		m_singleton = new EventHandler();
+        //	}
+        //	return m_singleton;
+        //}
 
-		EventHandler::EventHandler()
-		{
-		}
+        EventHandler::EventHandler() { m_broadcastMap.clear(); }
 
 
-		EventHandler::~EventHandler()
-		{
-		}
+        EventHandler::~EventHandler() {}
 
-		void EventHandler::BroadcastEvent(Event* p_event)
-		{
-			// Save the event for later delivery
-			m_mailBox.push_back(p_event);
-		}
+        void EventHandler::BroadcastEvent(Event* p_event)
+        {
+            // Save the event for later delivery
+            m_mailBox.push_back(p_event);
+        }
 
-		void EventHandler::Subscribe(Events p_eventType, Subscriber* p_subscriber)
-		{
-			m_broadcastMap[p_eventType].push_back(p_subscriber);
-		}
+        void EventHandler::Subscribe(Events p_eventType, Subscriber* p_subscriber)
+        {
+            vector<Subscriber*> subs = m_broadcastMap[p_eventType];
+            m_broadcastMap[p_eventType].push_back(p_subscriber);
+        }
 
-		void EventHandler::DeliverEvents()
-		{
-			// Iterate through all events
-			size_t length = m_mailBox.size();
-			for (size_t i = 0; i < length; i++)
-			{
-				// Iterate through all systems the event is to be broadcasted to
-				unordered_map<Events, vector<Subscriber*>>::iterator t_iter = m_broadcastMap.find(m_mailBox[i]->eventType); // Gets the vector of systems to call OnEvent on
-				size_t nrOfSystems = t_iter->second.size();
-				for (size_t j = 0; j < nrOfSystems; j++)
-				{
-					t_iter->second[j]->OnEvent(m_mailBox[i]);
-				}
-				// Cleanup all data in event payload
-				delete m_mailBox[i];
-			}
+        void EventHandler::DeliverEvents()
+        {
+            // Iterate through all events
+            size_t length = m_mailBox.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                // Iterate through all systems the event is to be broadcasted to
+                unordered_map<Events, vector<Subscriber*>>::iterator t_iter =
+                    m_broadcastMap.find(m_mailBox[i]->eventType); // Gets the vector of systems to call OnEvent on
+                size_t nrOfSystems = t_iter->second.size();
+                for(size_t j = 0; j < nrOfSystems; j++)
+                {
+                    t_iter->second[j]->OnEvent(m_mailBox[i]);
+                }
+                // Cleanup all data in event payload
+                delete m_mailBox[i];
+            }
 
-			m_mailBox.clear();
-		}
-	}
+            m_mailBox.clear();
+        }
+    }
 }

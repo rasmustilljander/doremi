@@ -12,6 +12,8 @@ namespace Doremi
         class EntityHandler
         {
             public:
+            EntityHandler();
+            ~EntityHandler();
             static EntityHandler& GetInstance();
 
             /** Registers a blueprint for entity creation with an ID*/
@@ -42,9 +44,8 @@ namespace Doremi
 
             /** Removes the entire entity at the specific location*/
             void RemoveEntity(int p_entityID);
-        private:
-            EntityHandler();
-            ~EntityHandler();
+
+            private:
             static EntityHandler* m_singleton;
         };
     }

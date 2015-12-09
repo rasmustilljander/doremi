@@ -18,7 +18,7 @@ namespace Doremi
             /**
             TODOCM doc
             */
-            ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            ServerNetworkManager();
 
             /**
             TODOCM doc
