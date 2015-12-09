@@ -9,7 +9,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        struct MeshInfo;
+        class MeshInfo;
         struct Vertex
         {
             float x, y, z;

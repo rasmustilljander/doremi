@@ -1,6 +1,6 @@
 #pragma once
 #include <GraphicModule.hpp>
-
+#include <GraphicModuleContext.hpp>
 
 namespace DoremiEngine
 {
@@ -8,6 +8,7 @@ namespace DoremiEngine
     {
         class GraphicMain;
         class SubModuleManagerImpl;
+        
         class GraphicModuleImplementation : public GraphicModule
         {
             public:
@@ -16,13 +17,12 @@ namespace DoremiEngine
             */
             GraphicModuleImplementation(const Core::SharedContext& p_sharedContext);
 
-           
             /**
             TODO docs
             */
             virtual ~GraphicModuleImplementation();
 
-            SubModuleManager* GetSubModuleManager() override;
+            SubModuleManager& GetSubModuleManager() override;
             /**
             TODORT docs
             */
@@ -77,6 +77,7 @@ namespace DoremiEngine
             const Core::SharedContext& m_sharedContext;
             GraphicMain* m_graphicMain;
             SubModuleManagerImpl* m_subModuleManger;
+            GraphicModuleContext m_graphicContext;
         };
     }
 }

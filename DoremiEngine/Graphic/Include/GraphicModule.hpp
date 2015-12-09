@@ -20,7 +20,7 @@ namespace DoremiEngine
         class GraphicModule : public DoremiEngine::Core::EngineModule
         {
             public:
-            virtual SubModuleManager* GetSubModuleManager() = 0;
+            virtual SubModuleManager& GetSubModuleManager() = 0;
             /**
                TODOKO docs
             */

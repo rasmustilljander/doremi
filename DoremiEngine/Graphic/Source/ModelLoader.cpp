@@ -1,5 +1,5 @@
 #include <ModelLoader.hpp>
-#include <MeshInfo.hpp>
+#include <Internal/Mesh/MeshInfoImpl.hpp>
 #include <HelpFunctions.hpp>
 #include <DDSTextureLoader.h>
 
@@ -67,7 +67,7 @@ namespace DoremiEngine
             };
             int size = sizeof(tQuad);
 
-            o_meshInfo->m_vertexCount = ARRAYSIZE(tQuad);
+            o_meshInfo->SetVerticeCount(ARRAYSIZE(tQuad));
             D3D11_BUFFER_DESC bd;
             ZeroMemory(&bd, sizeof(bd));
 
@@ -75,15 +75,15 @@ namespace DoremiEngine
             bd.ByteWidth = size;
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-           
-            HRESULT res = p_device->CreateBuffer(&bd, NULL, &o_meshInfo->m_bufferHandle);
+            ID3D11Buffer* buffer;
+            HRESULT res = p_device->CreateBuffer(&bd, NULL, &buffer);
             CheckHRESULT(res, "Error when creating mesh buffer");
-
             D3D11_MAPPED_SUBRESOURCE tMS;
-            p_deviceContext->Map(o_meshInfo->m_bufferHandle, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            p_deviceContext->Map(buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, tQuad, size);
-            p_deviceContext->Unmap(o_meshInfo->m_bufferHandle, NULL);
-
+            p_deviceContext->Unmap(buffer, NULL);
+            o_meshInfo->SetBufferHandle(buffer);
+            o_meshInfo->SetFileName(p_fileName);
             return true;
         }
 

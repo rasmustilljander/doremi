@@ -10,7 +10,7 @@
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
-
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 
 
 // Third party
@@ -78,10 +78,8 @@ namespace Doremi
             rot += 0.005f;
             DirectX::XMFLOAT4X4 world;
             DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
-            m_sharedContext.GetGraphicModule().Draw(0, 0, world);
-            m_sharedContext.GetGraphicModule().EndDraw();
 
-            m_sharedContext.GetGraphicModule().GetSubModuleManager()->GetMeshManager();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test");
         }
 		void ExampleManager::OnEvent(Event* p_event)
 		{

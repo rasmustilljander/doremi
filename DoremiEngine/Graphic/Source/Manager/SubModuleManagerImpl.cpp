@@ -4,39 +4,55 @@
 #include <Internal/Manager/ParticleSystemManagerImpl.hpp>
 #include <Internal/Manager/ShaderManagerImpl.hpp>
 #include <Internal/Manager/Texture2DManagerImpl.hpp>
+#include <Internal/Manager/DirectXManagerImpl.hpp>
+#include <GraphicModuleContext.hpp>
+//DirectX stuff
+
 namespace DoremiEngine
 {
     namespace Graphic
     {
-        SubModuleManagerImpl::SubModuleManagerImpl() 
+        SubModuleManagerImpl::SubModuleManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_meshManager = new MeshManagerImpl();
-            m_particleSystemManager = new ParticleSystemManagerImpl();
-            m_shaderManager = new ShaderManagerImpl();
-            m_texture2DManager = new Texture2DManagerImpl();
+
         }
 
         SubModuleManagerImpl::~SubModuleManagerImpl() 
         {}
 
-        MeshManager* SubModuleManagerImpl::GetMeshManager() 
+        void SubModuleManagerImpl::Initialize()
         {
-            return m_meshManager;
+            m_directXManager = new DirectXManagerImpl(m_graphicContext);
+            m_directXManager->InitializeDirectX();
+            m_meshManager = new MeshManagerImpl(m_graphicContext);
+            m_particleSystemManager = new ParticleSystemManagerImpl(m_graphicContext);
+            m_shaderManager = new ShaderManagerImpl(m_graphicContext);
+            m_texture2DManager = new Texture2DManagerImpl(m_graphicContext);
         }
 
-        ParticleSystemManager* SubModuleManagerImpl::GetParticleSystemManager() 
+        MeshManager& SubModuleManagerImpl::GetMeshManager() 
         {
-            return m_particleSystemManager;
+            return* m_meshManager;
         }
 
-        ShaderManager* SubModuleManagerImpl::GetShaderManager() 
+        ParticleSystemManager& SubModuleManagerImpl::GetParticleSystemManager() 
         {
-            return m_shaderManager;
+            return* m_particleSystemManager;
         }
 
-        Texture2DManager* SubModuleManagerImpl::GetTexuter2DManager() 
+        ShaderManager& SubModuleManagerImpl::GetShaderManager() 
         {
-            return m_texture2DManager;
+            return* m_shaderManager;
+        }
+
+        Texture2DManager& SubModuleManagerImpl::GetTexuter2DManager() 
+        {
+            return* m_texture2DManager;
+        }
+
+        DirectXManager& SubModuleManagerImpl::GetDirectXManager()
+        {
+            return* m_directXManager;
         }
     }
 }

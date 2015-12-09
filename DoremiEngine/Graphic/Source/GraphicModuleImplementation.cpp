@@ -2,6 +2,7 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <GraphicMain.hpp>
 #include <Internal/Manager/SubModuleManagerImpl.hpp>
+#include <GraphicModuleContext.hpp>
 #include <iostream>
 
 namespace DoremiEngine
@@ -11,25 +12,26 @@ namespace DoremiEngine
         GraphicModuleImplementation::GraphicModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
             m_graphicMain = nullptr;
-            m_subModuleManger = new SubModuleManagerImpl();
+            m_subModuleManger = nullptr;
         }
 
         GraphicModuleImplementation::~GraphicModuleImplementation() {}
 
-        SubModuleManager* GraphicModuleImplementation::GetSubModuleManager()
+        SubModuleManager& GraphicModuleImplementation::GetSubModuleManager()
         {
-            return m_subModuleManger;
+            return *m_subModuleManger;
         }
 
         void GraphicModuleImplementation::Update() {}
 
         void GraphicModuleImplementation::Startup()
         {
-            if(m_graphicMain == nullptr) // TODO Review if this is a good idea for avoiding multiple instanciations
+            if(m_subModuleManger == nullptr) // TODO Review if this is a good idea for avoiding multiple instanciations
             {
-                m_graphicMain = new GraphicMain(m_sharedContext);
-                m_graphicMain->CreateGraphicWindow();
-                m_graphicMain->InitializeDirectX();
+                m_graphicContext.m_graphicModule = this;
+                m_graphicContext.m_workingDirectory = m_sharedContext.GetWorkingDirectory();
+                m_subModuleManger = new SubModuleManagerImpl(m_graphicContext);
+                m_subModuleManger->Initialize();
             }
         }
 

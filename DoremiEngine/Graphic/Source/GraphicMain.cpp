@@ -4,7 +4,7 @@
 #include <GraphicMain.hpp>
 #include <Shader/VertexShader.hpp>
 #include <Shader/PixelShader.hpp>
-#include <MeshInfo.hpp>
+#include <Internal/Mesh/MeshInfoImpl.hpp>
 #include <ModelLoader.hpp>
 #include <ShaderTypeEnum.hpp>
 #include <HelpFunctions.hpp>
@@ -316,7 +316,7 @@ namespace DoremiEngine
                 return m_loadedMeshes[p_meshFileName];
             }
             ModelLoader t_loader = ModelLoader();
-            MeshInfo* tMeshInfo = new MeshInfo();
+            MeshInfo* tMeshInfo = new MeshInfoImpl();
             bool success = t_loader.LoadMesh(tMeshInfo, p_meshFileName, m_deviceContext, m_device);
             if (!success)
             {
@@ -362,12 +362,12 @@ namespace DoremiEngine
                 m_deviceContext->PSSetShaderResources(0, 1, &m_textures[p_textureID]);
             }
             
-            ID3D11Buffer* bufferPointer = m_Meshes[p_meshID]->m_bufferHandle;
+            ID3D11Buffer* bufferPointer = m_Meshes[p_meshID]->GetBufferHandle();
             unsigned int stride = sizeof(Vertex);
             unsigned int offset = 0;
             m_deviceContext->IASetVertexBuffers(0, 1, &bufferPointer, &stride, &offset);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            m_deviceContext->Draw(m_Meshes[p_meshID]->m_vertexCount, 0);
+            m_deviceContext->Draw(m_Meshes[p_meshID]->GetVerticeCount(), 0);
         }
 
         void GraphicMain::DrawInstanced(const int& p_meshID) {} //Should take a list of matrices too
