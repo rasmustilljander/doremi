@@ -102,9 +102,9 @@ namespace Doremi
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
-            
-            //Lucas Testkod
-            sharedContext.GetAudioModule().Startup();
+
+            // Lucas Testkod
+            /*sharedContext.GetAudioModule().Startup();
             sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
             sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
             //size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
