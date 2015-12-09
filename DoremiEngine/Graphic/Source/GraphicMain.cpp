@@ -2,8 +2,7 @@
 
 //Inside module
 #include <GraphicMain.hpp>
-#include <Shader/VertexShader.hpp>
-#include <Shader/PixelShader.hpp>
+
 #include <Internal/Mesh/MeshInfoImpl.hpp>
 #include <ModelLoader.hpp>
 #include <ShaderTypeEnum.hpp>
@@ -195,10 +194,6 @@ namespace DoremiEngine
                 { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             };
 
-            m_vertexShaders[vertexShaderID]->SetInputLayout(ied, ARRAYSIZE(ied), m_device);
-            m_vertexShaders[vertexShaderID]->SetActiveShader(m_deviceContext);
-            m_pixelShaders[pixelShadderID]->SetActiveShader(m_deviceContext);
-
             //Buffer for projection and view matrix in vertex shader Should still be moved
             D3D11_BUFFER_DESC bd;
             ZeroMemory(&bd, sizeof(bd));
@@ -256,57 +251,12 @@ namespace DoremiEngine
         {
             
             std::string filePath = m_sharedContext.GetWorkingDirectory() + "ShaderFiles/" + p_fileName;
-            int returnID;
-            bool success;
-            switch (p_type)
-            {
-            case ShaderType::VertexShader:
-            {
-                VertexShader* t_shader = new VertexShader();
-                success = t_shader->LoadShader(filePath, m_device);
-                if (!success)
-                {
-                    //Some kind of error, use debugg logger :)
-                    delete t_shader;
-                    return -1;
-                }
-                m_vertexShaders.push_back(t_shader);
-                returnID = m_vertexShaders.size() - 1;
-                break;
-            }
-            case ShaderType::PixelShader:
-            {
-                PixelShader* t_shader = new PixelShader();
-                success = t_shader->LoadShader(filePath, m_device);
-                if (!success)
-                {
-                    //Some kind of error, use debugg logger :)
-                    delete t_shader;
-                    return -1;
-                }
-                m_pixelShaders.push_back(t_shader);
-                returnID = m_pixelShaders.size() - 1;
-                break;
-            }
-            default:
-                break;
-            }
-            return returnID;
+            return -1;
         }
 
         void GraphicMain::BindShader(const ShaderType& p_type, const int& p_shaderID)
         {
-            switch (p_type)
-            {
-            case ShaderType::VertexShader:
-                m_vertexShaders[p_shaderID]->SetActiveShader(m_deviceContext);
-                break;
-            case ShaderType::PixelShader:
-                m_pixelShaders[p_shaderID]->SetActiveShader(m_deviceContext);
-                break;
-            default:
-                break;
-            }
+
         }
 
         int GraphicMain::LoadMesh(const std::string& p_meshFileName)

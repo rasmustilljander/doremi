@@ -11,9 +11,9 @@ namespace DoremiEngine
         class MeshInfo
         {
         public:
-            virtual size_t GetVerticeCount() = 0;
+            const virtual size_t GetVerticeCount() = 0;
             virtual ID3D11Buffer* GetBufferHandle() = 0;
-            virtual std::string GetFileName() = 0;
+            const virtual std::string GetFileName() = 0;
 
             virtual void SetVerticeCount(size_t p_verticeCount) = 0;
             virtual void SetFileName(std::string p_fileName) = 0;

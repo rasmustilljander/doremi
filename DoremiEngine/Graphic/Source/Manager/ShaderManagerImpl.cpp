@@ -43,8 +43,8 @@ namespace DoremiEngine
                 return nullptr;
             }
 
-            HRESULT res = m_directX.GetDevice()->CreateInputLayout(p_inputDescription, p_arraySize, tShader->GetBufferPointer(), tShader->GetBufferSize(), &inputLayout);
-            bool success = CheckHRESULT(res, "Error setting input layout");
+            res = m_directX.GetDevice()->CreateInputLayout(p_inputDescription, p_arraySize, tShader->GetBufferPointer(), tShader->GetBufferSize(), &inputLayout);
+            success = CheckHRESULT(res, "Error setting input layout");
             if (!success)
             {
                 return nullptr;
@@ -54,6 +54,7 @@ namespace DoremiEngine
             newShader->SetShaderHandle(shader);
             newShader->SetShaderName(p_fileName);
             newShader->SetInputLayout(inputLayout);
+            return newShader;
         }
         PixelShader* ShaderManagerImpl::BuildPixelShader(const std::string& p_fileName) 
         {
@@ -72,7 +73,17 @@ namespace DoremiEngine
             PixelShader* newShader = new PixelShaderImpl();
             newShader->SetShaderHandle(shader);
             newShader->SetShaderName(p_fileName);
+            return newShader;
         }
-
+        void ShaderManagerImpl::SetActiveVertexShader(VertexShader* p_shader)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            m_directX.GetDeviceContext()->VSSetShader(p_shader->GetShaderHandle(), 0, 0);
+        }
+        void ShaderManagerImpl::SetActivePixelShader(PixelShader* p_shader)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            m_directX.GetDeviceContext()->PSSetShader(p_shader->GetShaderHandle(), 0, 0);
+        }
     }
 }
