@@ -49,8 +49,28 @@ namespace DoremiEngine
             PxShape* shape = m_physics->createShape(PxBoxGeometry(p_dimx, p_dimy, p_dimz), *m_material);
             // Creates the actual body.
             PxRigidDynamic* body = m_physics->createRigidDynamic(transform);
+            // Attach shape to the body
+            body->attachShape(*shape);
+            // Give the body some mass
+            PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+            // Add the now fully created body to the scene
+            m_scene->addActor(*body);
 
-            // body->attachShape()
+            // We're done with the shape. Release it
+            shape->release();
+
+            /*
+            And now we have added a box to the world at the given position
+            I'm not too sure how we update the box, or the scene, or perform
+            any form of interaction however*/
+        }
+
+        void PhysXSubmodule::Update(float p_dt)
+        {
+            // Perform simulation at the specified interval
+            m_scene->simulate(p_dt);
+            // Gets the result of the simulation (?)
+            m_scene->fetchResults(true);
         }
     }
 }

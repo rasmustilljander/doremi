@@ -28,6 +28,10 @@ namespace DoremiEngine
             Will very, VERY likely be refactored. */
             void AddBox(float p_posx, float p_posy, float p_posz, float p_dimx, float p_dimy, float p_dimz);
 
+            /**
+            Simulates a step of the simulation. In essence, updates everything*/
+            void Update(float p_dt);
+
             private:
             PxDefaultAllocator m_allocator;
             PxDefaultErrorCallback m_errorCallback;

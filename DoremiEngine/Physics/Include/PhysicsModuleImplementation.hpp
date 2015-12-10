@@ -17,7 +17,8 @@ namespace DoremiEngine
             PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
             void Startup() override;
             void Shutdown() override;
-            void Update() override;
+            void Update(float p_dt) override;
+
             void StartPhysX() override;
 
             virtual ~PhysicsModuleImplementation();

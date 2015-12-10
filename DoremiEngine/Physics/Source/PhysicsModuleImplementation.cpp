@@ -19,7 +19,7 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::Shutdown() {}
 
-        void PhysicsModuleImplementation::Update() {}
+        void PhysicsModuleImplementation::Update(float p_dt) { m_physX->Update(p_dt); }
 
         // Only an example method to demonstrate how the engine is used
         float PhysicsModuleImplementation::ExampleMethod(const float& posx) { return 1; }
@@ -34,6 +34,8 @@ namespace DoremiEngine
         {
             // Create a start scene. TODOJB move somewhere else?
             m_physX->CreateTestScene();
+            float boxDims = 0.5;
+            m_physX->AddBox(0, 1, 0, boxDims, boxDims, boxDims);
         }
     }
 }

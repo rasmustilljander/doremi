@@ -15,7 +15,7 @@ namespace DoremiEngine
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
             public:
-            virtual void Update() = 0;
+            virtual void Update(float p_dt) = 0;
             virtual void StartPhysX() = 0;
 
 
