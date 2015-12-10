@@ -161,31 +161,6 @@ namespace DoremiEngine
         void AudioModuleImplementation::Update()
         {
             m_fmodSystem->update();
-            static float derp = 0;
-            derp = AnalyseSoundSpectrum(1);
-            std::cout << "Freq = " << derp << std::endl;
-            static float timer = 0;
-            timer+= 0.01f;
-            static float posX = 0;
-            SetSoundPositionAndVelocity(posX, 0.0f,0.0f , sin(timer), 0.0f, 0.0f, 0);
-            posX = sin(timer) * 100;
-            if (m_recordingStarted)
-            {                
-                unsigned int timeElapsedSinceRecordingStarted = 0;
-                m_fmodSystem->getRecordPosition(0, &timeElapsedSinceRecordingStarted); /*funkar bara om vi använder outputdriver 0 ...
-                kan undvikas genom att lägga in driverchoice i starten*/
-                if (timeElapsedSinceRecordingStarted > 9600)
-                {
-                    m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[1], false, &m_fmodChannel[1]);
-                    ERRCHECK(m_fmodResult);
-
-                    // Dont hear what is being recorded otherwise it will feedback. 
-                    //m_fmodResult = m_fmodChannel[1]->setVolume(0);
-                    //ERRCHECK(m_fmodResult);
-                    m_recordingStarted = false;
-                }
-            }
-
         }
 
         unsigned int AudioModuleImplementation::GetRecordPointer()
