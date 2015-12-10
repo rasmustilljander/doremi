@@ -115,9 +115,7 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-
-            const DoremiEngine::Core::SharedContext& sharedContext =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
