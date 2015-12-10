@@ -3,6 +3,7 @@
 // Standard Libraries
 #include <unordered_map>
 #include <vector>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 namespace Doremi
 {
@@ -11,13 +12,9 @@ namespace Doremi
 
 		class InputHandler
 		{
-		public:
-			/** Is a singleton. Use this method to get the EventManager*/
-			static InputHandler* GetInstance();
+        private:
+            enum class UserCommandPlaying
 
-			void DeliverEvents();
-		private:
-            enum class UserCommand
                 //TODOEA Lägga in detta i en textfil.
             {                   //Key       Code for it
                 Jump = 1,      //Space     32
@@ -26,18 +23,62 @@ namespace Doremi
                 Left = 8,       //A         97
                 Right = 16,      //D         100
                 Fire = 32,//LeftMouseClick   1
-                All = Jump | Forward | Backward | Left | Right | Fire,//Seen this be done so doing it here aswell! =D
+                ScrollWpnUp = 64,//MWheelUp    NULL Handled differently
+                ScrollWpnDown = 128,//MWheelDown NULL Handled differently
+                All = Jump | Forward | 
+                Backward | Left | Right | 
+                Fire| ScrollWpnUp| 
+                ScrollWpnDown,//Seen this be done so doing it here aswell! =D
             };
-            //TODOEA Ta reda på om int verkligen e så bra där va! 
-            std::unordered_map<int, UserCommand> userCmds;
-			// Private constructors because Singleton
+            enum class UserCommandMeny
+
+                //TODOEA Lägga in detta i en textfil.
+            {                   //Code
+                LeftClick = 1,  //1
+                RightClick = 2, //3
+                Enter = 4,      //13
+                Up = 8,         //1073741906     
+                Down = 16,      //1073741905
+                Left = 32,      //1073741904
+                Right = 64,     //1073741903
+            };
+		public:
+			/** Is a singleton. Use this method to get the EventManager*/
+			static InputHandler* GetInstance();
             InputHandler();
-			~InputHandler();
-            void CheckInputsFromEngine();
-            int m_maskWithInput = 0;
-            //TODOEA Fixa skiten till riktiga skiten sen när den e vettigt kopplad till Engine=O
-            std::vector<int> t_musInputFromModule;
-            std::vector<int> t_keyboardInputFromModule;
+            ~InputHandler();
+            void Initialize();
+            bool CheckBitMaskInputFromGame(int p_bitMask);
+
+            //return from InputModule with a changed value from mousesense
+            //const int GetMouseMovementX() const { return m_mouseMovementStruct.x; }
+            //const int GetMouseMovementY() const { return m_mouseMovementStruct.y; }
+
+            //void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
+            //Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
+            //på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
+            //Behöver nog ta bort old entries eller ändra dem på något sätt.
+            void Update(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void ChangeThisKeyToThat(int p_bitMask);
+		private:
+            //const DoremiEngine::Core::SharedContext& m_sharedContext;
+            void UpdateInputsFromEngine(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            std::unordered_map<int, UserCommandPlaying> userCmdsPlaying;
+            std::unordered_map<int, UserCommandMeny> userCmdsMeny;
+            int m_mouseSense = 1;
+            int m_maskWithInput = 0;//TODOEA Could be a problem with meny and game inputs I DUNNO
+            void BuildMaskFromEngineForGame();
+            void BuildMaskFromEngineForMeny();
+
+
+            //TODOEA går det att sätta pekare istället så man inte behöver get'a
+            std::vector<int> m_musInputFromModule;
+            std::vector<int> m_keyboardInputFromModule;
+            int m_mouseMoveX = 0;
+            int m_mouseMoveY = 0;
+            int m_mouseWheelInput = 0;
+            
+
 			static InputHandler* m_singleton;
 
 		};

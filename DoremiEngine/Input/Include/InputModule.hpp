@@ -32,7 +32,6 @@ namespace DoremiEngine
             TODO docs
             */
             virtual void Shutdown() = 0;
-
             virtual void Update() = 0;
             virtual int CreateWindow(int p_width, int p_height) = 0;//Returns 1 if a window is created
             virtual void PrintInputStructsDEBUG() = 0; //TODOEA Ta bort i slutet kanske
@@ -44,6 +43,9 @@ namespace DoremiEngine
             virtual const int GetMouseMovementX() const = 0;
             virtual const int GetMouseMovementY() const = 0;
             virtual const int GetMouseWheelSpins() const = 0;
+            //TODOEA Test med pekare. FInns med pekare om vi vill speeda upp allt. 
+            //Tar bort 4 gets per update. o gets från managers.
+            //int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }
             //////////////////////////
         };
     }

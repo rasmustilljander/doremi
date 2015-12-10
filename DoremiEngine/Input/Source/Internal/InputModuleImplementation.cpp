@@ -16,16 +16,26 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Startup()
         {
-            if (SDL_Init(SDL_INIT_VIDEO) != 0)
+            if (!SDL_WasInit(SDL_INIT_VIDEO))
             {
-                std::cout << "SDL_Ubut Error: " << SDL_GetError() << std::endl;
-                SDL_QUIT;
+                if (SDL_Init(SDL_INIT_VIDEO) != 0)
+                {
+                    std::cout << "SDL_Ubut Error: " << SDL_GetError() << std::endl;
+                    SDL_QUIT;
+                }
+                else
+                {
+                    //TODO logger maybe
+                }
             }
-            else
-            {
-                //TODO logger maybe
-            }
+
+
+
+
+            //TODOEA Ta bort om mkonys fungerar
             CreateWindow(500, 500);
+
+
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
@@ -50,6 +60,7 @@ namespace DoremiEngine
 
             //TODEA
             PrintInputStructsDEBUG();
+            PrintInputMouseMovement();
 
         }
         int InputModuleImplementation::CreateWindow(int p_width, int p_height)
