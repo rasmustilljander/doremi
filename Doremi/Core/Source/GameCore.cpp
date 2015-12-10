@@ -116,7 +116,7 @@ namespace Doremi
             }
 
             const DoremiEngine::Core::SharedContext& sharedContext =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL ^ DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -124,11 +124,11 @@ namespace Doremi
             ////////////////Example only////////////////
             // Create manager
 
-            // Manager* t_physicsManager = new ExampleManager(sharedContext);
+            Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
 
             // Add manager to list of managers
-            // m_managers.push_back(t_physicsManager);
+            m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
 
             GenerateWorld();
