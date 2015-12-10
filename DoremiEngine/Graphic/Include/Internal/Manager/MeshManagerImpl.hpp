@@ -7,6 +7,7 @@ namespace DirectX
 {
     struct XMFLOAT4X4;
 }
+struct ID3D11Buffer;
 namespace DoremiEngine
 {
     namespace Graphic
@@ -27,6 +28,7 @@ namespace DoremiEngine
         private:
             const GraphicModuleContext& m_graphicContext;
             ModelLoader* m_modelLoader;
+            ID3D11Buffer* m_worldMatrix;
         };
     }
 }

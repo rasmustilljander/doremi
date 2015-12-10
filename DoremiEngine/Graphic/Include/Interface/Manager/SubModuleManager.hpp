@@ -9,6 +9,7 @@ namespace DoremiEngine
         class ShaderManager;
         class Texture2DManager;
         class DirectXManager;
+        class CameraManager;
         class SubModuleManager
         {
         public:
@@ -18,6 +19,7 @@ namespace DoremiEngine
             virtual ShaderManager& GetShaderManager() = 0;
             virtual Texture2DManager& GetTexuter2DManager() = 0;
             virtual DirectXManager& GetDirectXManager() = 0;
+            virtual CameraManager& GetCameraManager() = 0;
         };
     }
 }

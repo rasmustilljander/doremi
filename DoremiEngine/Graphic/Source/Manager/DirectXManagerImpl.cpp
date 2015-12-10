@@ -147,12 +147,12 @@ namespace DoremiEngine
             //int vertexShaderID = LoadShader(ShaderType::VertexShader, "BasicVertexShader.hlsl");
             //int pixelShadderID = LoadShader(ShaderType::PixelShader, "BasicPixelShader.hlsl");
 
-            D3D11_INPUT_ELEMENT_DESC ied[] =
-            {
-                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            };
+            //D3D11_INPUT_ELEMENT_DESC ied[] =
+            //{
+            //    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //};
 
             //m_vertexShaders[vertexShaderID]->SetInputLayout(ied, ARRAYSIZE(ied), m_device);
             //m_vertexShaders[vertexShaderID]->SetActiveShader(m_deviceContext);
@@ -209,5 +209,13 @@ namespace DoremiEngine
         }
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
         ID3D11DeviceContext* DirectXManagerImpl::GetDeviceContext() { return m_deviceContext; }
+
+        void DirectXManagerImpl::EndDraw()
+        {
+            m_swapChain->Present(1, 0); //TODO Evaluate if vsync should always be active
+            float color[] = { 0.3f,0.0f,0.5f,1.0f };
+            m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
+            m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        }
     }
 }

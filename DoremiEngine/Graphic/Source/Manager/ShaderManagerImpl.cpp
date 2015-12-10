@@ -19,6 +19,7 @@ namespace DoremiEngine
         ShaderManagerImpl::~ShaderManagerImpl() {}
         VertexShader* ShaderManagerImpl::BuildVertexShader(const std::string& p_fileName, D3D11_INPUT_ELEMENT_DESC p_inputDescription[], int p_arraySize)
         {
+            std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
             ID3D11VertexShader* shader;
             ID3D11InputLayout* inputLayout;
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
@@ -28,10 +29,10 @@ namespace DoremiEngine
             shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif            
             ID3DBlob *tShader;
-            std::wstring convertedName = StringToWstring(p_fileName);
+            std::wstring convertedName = StringToWstring(filePath);
             HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "VS_main", "vs_5_0", shaderFlags, 0, &tShader, 0);
 
-            bool success = CheckHRESULT(res, "Error Compiling from file " + p_fileName);
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
             if (!success)
             {
                 return nullptr;
@@ -58,6 +59,7 @@ namespace DoremiEngine
         }
         PixelShader* ShaderManagerImpl::BuildPixelShader(const std::string& p_fileName) 
         {
+            std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
             ID3D11PixelShader* shader;
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -66,10 +68,10 @@ namespace DoremiEngine
             shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif  
             ID3DBlob *tShader;
-            std::wstring convertedName = StringToWstring(p_fileName);
+            std::wstring convertedName = StringToWstring(filePath);
             HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "PS_main", "ps_5_0", shaderFlags, 0, &tShader, 0);
             res = m_directX.GetDevice()->CreatePixelShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
-            bool success = CheckHRESULT(res, "Error Compiling from file " + p_fileName);
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
             PixelShader* newShader = new PixelShaderImpl();
             newShader->SetShaderHandle(shader);
             newShader->SetShaderName(p_fileName);
@@ -79,6 +81,7 @@ namespace DoremiEngine
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->VSSetShader(p_shader->GetShaderHandle(), 0, 0);
+            m_directX.GetDeviceContext()->IASetInputLayout(p_shader->GetInputLayout());
         }
         void ShaderManagerImpl::SetActivePixelShader(PixelShader* p_shader)
         {

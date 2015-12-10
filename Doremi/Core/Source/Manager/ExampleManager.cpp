@@ -11,6 +11,9 @@
 #include <EventHandler/Events/ExampleEvent.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 
 
 // Third party
@@ -28,6 +31,7 @@ namespace Doremi
             :Manager(p_sharedContext)
         {
 			EventHandler::GetInstance()->Subscribe(Events::Example, this);
+            
         }
 
         ExampleManager::~ExampleManager()
@@ -79,7 +83,10 @@ namespace Doremi
             DirectX::XMFLOAT4X4 world;
             DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
 
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test");
+            DoremiEngine::Graphic::MeshInfo* temp = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test"); //TODOKO Remove memory leak
+            DoremiEngine::Graphic::MaterialInfo* temp1 = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TEST");
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*temp, *temp1, world);
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         }
 		void ExampleManager::OnEvent(Event* p_event)
 		{

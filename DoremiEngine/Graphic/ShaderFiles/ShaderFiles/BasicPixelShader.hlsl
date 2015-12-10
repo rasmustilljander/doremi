@@ -6,10 +6,10 @@ struct PixelInputType
 };
 
 
-Texture2D ObjTexture : register(t0);
-SamplerState ObjSamplerState : register(s0);
+//Texture2D ObjTexture : register(t0);
+//SamplerState ObjSamplerState : register(s0);
 
 float4 PS_main(PixelInputType input) : SV_TARGET
 {
-    return ObjTexture.Sample(ObjSamplerState, input.texCoord);
+    return float4(1,0,0,1);
 }

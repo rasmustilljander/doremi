@@ -11,6 +11,7 @@ namespace DoremiEngine
         class ShaderManagerImpl;
         class Texture2DManagerImpl;
         class DirectXManagerImpl;
+        class CameraManagerImpl;
         struct GraphicModuleContext;
         class SubModuleManagerImpl : public SubModuleManager
         {
@@ -23,6 +24,7 @@ namespace DoremiEngine
             ShaderManager& GetShaderManager() override;
             Texture2DManager& GetTexuter2DManager() override;
             DirectXManager& GetDirectXManager() override;
+            CameraManager& GetCameraManager() override;
         private:
             const GraphicModuleContext& m_graphicContext;
             MeshManagerImpl* m_meshManager;
@@ -30,7 +32,7 @@ namespace DoremiEngine
             ShaderManagerImpl* m_shaderManager;
             Texture2DManagerImpl* m_texture2DManager;
             DirectXManagerImpl* m_directXManager;
-            
+            CameraManagerImpl* m_cameraManager;
         };
     }
 }
