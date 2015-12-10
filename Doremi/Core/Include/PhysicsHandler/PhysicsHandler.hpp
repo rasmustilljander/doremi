@@ -23,7 +23,16 @@ namespace Doremi
             static PhysicsHandler* GetInstance();
             /**
             Creates the singleton and ensures it has access to the engine*/
-            void StartPhysicsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static void StartPhysicsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            
+            /**
+            Intended as a test function for PhysX. Does alot of things.
+            Should be removed. TODOJB*/
+            void BigTestFunction();
+
+            /**
+            Updates the physics simulation once step*/
+            void UpdatePhysics(float p_dt);
 
             private:
             PhysicsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);

@@ -19,6 +19,7 @@
 #include <InputHandler.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
+#include <PhysicsHandler/PhysicsHandler.hpp>
 
 #include <string>
 
@@ -118,6 +119,10 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& sharedContext =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
+            /* This starts the physics handler. Should not be done here, but since this is the general
+            code dump, it'll work for now TODOJB*/
+            PhysicsHandler::StartPhysicsHandler(sharedContext);
+
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
@@ -187,6 +192,10 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
 
+            /* This starts the physics handler. Should not be done here, but since this is the general
+            code dump, it'll work for now TODOJB*/
+            PhysicsHandler::StartPhysicsHandler(sharedContext);
+
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             ////////////////Example only////////////////
@@ -225,6 +234,7 @@ namespace Doremi
                     m_managers.at(i)->Update(DeltaTime);
                 }
                 EventHandler::GetInstance()->DeliverEvents();
+                PhysicsHandler::GetInstance()->UpdatePhysics(0.017);
                 //InputHandler::GetInstance()->Update(sharedContext);
                 //TODOEA Langa update här för input
             }
