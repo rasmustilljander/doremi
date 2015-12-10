@@ -28,6 +28,7 @@ enum class Blueprints : int
 {
     ExampleEntity,
     VoiceRecordEntity,
+    RenderExampleEntity,
 };
 
 /**

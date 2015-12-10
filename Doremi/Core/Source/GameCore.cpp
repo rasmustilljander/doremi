@@ -20,6 +20,14 @@
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 #include <PhysicsHandler/PhysicsHandler.hpp>
+#include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+#include <Manager/GraphicManager.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 
 #include <string>
 
@@ -46,7 +54,7 @@ namespace Doremi
 
 
         // Only for testing, should be removed! TODO
-        void GenerateWorld()
+        void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -58,9 +66,24 @@ namespace Doremi
             AudioActiveComponent* t_audioActiveComp = new AudioActiveComponent();
             VoiceRecordingComponent* t_voiceRecordingComponent = new VoiceRecordingComponent();
 
+            // Test render component
+            RenderComponent* t_renderComp = new RenderComponent();
+            TransformComponent* t_transformComp = new TransformComponent();
+
+
+            EntityBlueprint t_renderBlueprint;
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("hej");
+            t_transformComp->position.z = 4;
+            t_renderBlueprint[ComponentType::Render] = t_renderComp;
+            t_renderBlueprint[ComponentType::Transform] = t_transformComp;
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::RenderExampleEntity, t_renderBlueprint);
+
+
             // Declare blueprint (do not reuse variables for more blueprints)
             EntityBlueprint t_entityBlueprint;
             EntityBlueprint t_recordingBlueprint;
+
 
             t_recordingBlueprint[ComponentType::VoiceRecording] = t_voiceRecordingComponent;
             // Set components of the blueprint
@@ -80,6 +103,7 @@ namespace Doremi
                 t_entityHandler.CreateEntity(Blueprints::ExampleEntity);
             }
             t_entityHandler.CreateEntity(Blueprints::VoiceRecordEntity);
+            t_entityHandler.CreateEntity(Blueprints::RenderExampleEntity);
         }
 
 
@@ -126,15 +150,16 @@ namespace Doremi
 
             ////////////////Example only////////////////
             // Create manager
-
+            Manager* t_renderManager = new GraphicManager(sharedContext);
             Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
 
             // Add manager to list of managers
+            m_managers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
 
-            GenerateWorld();
+            GenerateWorld(sharedContext);
 
             /*
             // Lucas Testkod
@@ -208,7 +233,7 @@ namespace Doremi
             m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_serverNetworkManager);
 
-            GenerateWorld();
+            GenerateWorld(sharedContext);
             ////////////////End Example////////////////
         }
 

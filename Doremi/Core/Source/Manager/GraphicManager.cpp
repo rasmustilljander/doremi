@@ -1,9 +1,14 @@
 // Project specific
 #include <Manager/GraphicManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
-#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+// Engine
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 
 namespace Doremi
 {
@@ -26,8 +31,10 @@ namespace Doremi
                     RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
                     TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
                     DirectX::XMFLOAT4X4 transMat;
-                    DirectX::XMMATRIX tempTransMat =
-                        DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z);
+                    DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+                        DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z));
+                    DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }
             }
         }

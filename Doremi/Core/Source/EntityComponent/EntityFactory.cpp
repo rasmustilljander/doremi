@@ -8,6 +8,9 @@
 #include <EntityComponent/Components/AudioComponent.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
+#include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+
 
 namespace Doremi
 {
@@ -72,6 +75,14 @@ namespace Doremi
                 else if(iter->first == ComponentType::VoiceRecording)
                 {
                     memcpy(GetComponent<VoiceRecordingComponent>(tNewEntityID), iter->second, sizeof(VoiceRecordingComponent));
+                }
+                else if(iter->first == ComponentType::Render)
+                {
+                    memcpy(GetComponent<RenderComponent>(tNewEntityID), iter->second, sizeof(RenderComponent));
+                }
+                else if(iter->first == ComponentType::Transform)
+                {
+                    memcpy(GetComponent<TransformComponent>(tNewEntityID), iter->second, sizeof(TransformComponent));
                 }
             }
 
