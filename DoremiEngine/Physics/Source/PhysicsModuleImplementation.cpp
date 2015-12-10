@@ -1,5 +1,7 @@
 #include <PhysicsModuleImplementation.hpp>
 
+#include <PhysxSubmodule.Hpp>
+
 namespace DoremiEngine
 {
     namespace Physics
@@ -7,7 +9,13 @@ namespace DoremiEngine
         PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
         PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
-        void PhysicsModuleImplementation::Startup() {}
+        void PhysicsModuleImplementation::Startup()
+        {
+            // Create submodule
+            m_physX = new PhysXSubmodule();
+            // Actually init PhysX
+            m_physX->InitPhysx();
+        }
 
         void PhysicsModuleImplementation::Shutdown() {}
 
@@ -20,6 +28,12 @@ namespace DoremiEngine
         {
             *p_posX = 5;
             *p_posY = *p_posX * 2;
+        }
+
+        void PhysicsModuleImplementation::StartPhysX()
+        {
+            // Create a start scene. TODOJB move somewhere else?
+            m_physX->CreateTestScene();
         }
     }
 }

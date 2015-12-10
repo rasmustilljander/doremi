@@ -10,6 +10,7 @@ namespace DoremiEngine
 
     namespace Physics
     {
+        class PhysXSubmodule;
         class PhysicsModuleImplementation : public PhysicsModule
         {
             public:
@@ -17,6 +18,7 @@ namespace DoremiEngine
             void Startup() override;
             void Shutdown() override;
             void Update() override;
+            void StartPhysX() override;
 
             virtual ~PhysicsModuleImplementation();
 
@@ -25,6 +27,7 @@ namespace DoremiEngine
 
             private:
             const Core::SharedContext& m_sharedContext;
+            PhysXSubmodule* m_physX;
         };
     }
 }

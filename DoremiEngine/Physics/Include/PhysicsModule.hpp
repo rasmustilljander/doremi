@@ -16,6 +16,8 @@ namespace DoremiEngine
         {
             public:
             virtual void Update() = 0;
+            virtual void StartPhysX() = 0;
+
 
             // Test function
             virtual float ExampleMethod(const float& posx) = 0;
