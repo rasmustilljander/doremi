@@ -105,14 +105,6 @@ namespace Doremi
         {
             m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
             m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
-            if(m_mouseMoveX)
-            {
-                int hej = 0;
-            }
-            if(m_mouseMoveY)
-            {
-                int hej = 0;
-            }
             m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
             m_keyboardInputFromModule = m_sharedContext.GetInputModule().GetKeyBoardInput();
             m_mouseWheelInput = m_sharedContext.GetInputModule().GetMouseWheelSpins();
