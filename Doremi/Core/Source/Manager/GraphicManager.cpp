@@ -28,7 +28,6 @@ namespace Doremi
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMMATRIX tempTransMat =
                         DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z);
-                    // DirectX::XMMATRIX tempRotMat = DirectX::XMMatrixRotationQuaternion();
                 }
             }
         }
