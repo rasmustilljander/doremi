@@ -65,6 +65,7 @@ namespace DoremiEngine
             scd.SampleDesc.Count = 4; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
 
+            // TODOKO CHECK THIS pls :)
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
 
