@@ -24,7 +24,7 @@ do
 	echo -e "Checking $file."
 	
 	# Get information about the chunks
-	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -c 2-)
+	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -d"+" -f2)
 	do
 		echo "[$date] line = $line" >> $logFile
 		startLine=$(echo $line | cut -d"," -f1)
