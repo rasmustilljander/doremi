@@ -47,6 +47,11 @@ namespace DoremiEngine
             virtual Adress* CreateAdress() = 0;
 
             /**
+                Create copy of adress
+            */
+            virtual Adress* CreateAdress(const Adress& m_adress) = 0;
+
+            /**
                 Create adress with Any input IP and set port
             */
             virtual Adress* CreateAdress(uint16_t p_port) = 0;
@@ -94,10 +99,11 @@ namespace DoremiEngine
             /**
                 Accept an incomming connection to a socket in standby(CreateReliableConnection)
             */
-            virtual size_t AcceptConnection(size_t p_socketID) = 0;
+            virtual size_t AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) = 0;
 
             /**
-                Creates a socket to use recieve/send, need to use SendUnreliableData first to be able to use RecieveUnreliableData from a specific adress
+                Creates a socket to use recieve/send, need to use SendUnreliableData first to be able to use RecieveUnreliableData from a specific
+               adress
             */
             virtual size_t CreateUnreliableSocket() = 0;
 

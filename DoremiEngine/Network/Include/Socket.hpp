@@ -47,7 +47,7 @@ namespace DoremiEngine
             /**
                 Accept a TCP connection if CreateWaitingTCPSocket is called
             */
-            Socket AcceptTCPConnection();
+            bool AcceptTCPConnection(SOCKET& p_socketHandle, AdressImplementation& p_adress);
 
             /**
                 Creates a UDP socket needed to use SendTo function first to function

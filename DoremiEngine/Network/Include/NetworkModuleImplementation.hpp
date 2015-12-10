@@ -54,6 +54,11 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
+            Adress* CreateAdress(const Adress& m_adress) override;
+
+            /**
+                TODOCM docs
+            */
             Adress* CreateAdress(uint16_t p_port);
 
             /**
@@ -99,7 +104,7 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            size_t AcceptConnection(size_t p_socketID) override;
+            size_t AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) override;
 
             /**
                 TODOCM docs

@@ -1,21 +1,32 @@
 #pragma once
+#include <cstdint>
 
 namespace Doremi
 {
     namespace Core
     {
         /**
+            MessageID used for identifying type of message
+        */
+        enum class MessageID : uint8_t
+        {
+            CONNECT_REQUEST,
+            VERSION_CHECK,
+            CONNECT,
+            DISCONNECT,
+            SNAPSHOT
+        };
+
+        /**
             A network message will contain:
-            2 byte sequence(order of messages sent)
-            2 byte for type of Message(Ping, ConRequest etc..)
-            252 byte for actual data
+            1 byte for type of Message(Ping, ConRequest etc..)
+            255 byte for actual data
             Each message a total of 256 Bytes.
         */
         struct NetMessage
         {
-            short MessageSequence; // 2 byte
-            short MessageID; // 2 byte
-            unsigned char Data[252]; // 252 byte
+            MessageID MessageID; // 1 byte
+            unsigned char Data[255]; // 255 byte
         };
     }
 }

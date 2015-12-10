@@ -93,6 +93,34 @@ namespace DoremiEngine
                 return m_IPString;
             };
 
+            /**
+                Check if adress have same IP and Port
+                TODOCM fix up this code, not the most efficiant way
+            */
+            bool AdressImplementation::operator==(const Adress& p_adress) const override
+            {
+                AdressImplementation* castedAdress = (AdressImplementation*)&p_adress;
+
+                bool SameAdress = m_Adress.sin_addr.s_addr == castedAdress->m_Adress.sin_addr.s_addr;
+
+                bool SamePort = m_Adress.sin_port == castedAdress->m_Adress.sin_port;
+
+                return SameAdress && SamePort;
+            }
+
+            /**
+                Check if adress ONLY have same IP
+                TODOCM maybe fix this code as well, not the most efficiant way
+            */
+            bool AdressImplementation::operator*=(const Adress& p_adress) const override
+            {
+                AdressImplementation* castedAdress = (AdressImplementation*)&p_adress;
+
+                bool SameAdress = m_Adress.sin_addr.s_addr == castedAdress->m_Adress.sin_addr.s_addr;
+
+                return SameAdress;
+            }
+
             private:
             /**
                 IP in form of Big Endian

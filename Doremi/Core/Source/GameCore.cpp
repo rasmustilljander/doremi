@@ -22,6 +22,8 @@
 
 #include <string>
 
+// TODOCM remove for better timer?
+#include <Windows.h>
 
 // Third party
 
@@ -204,14 +206,23 @@ namespace Doremi
 
         void GameCore::StartCore()
         {
+            // TODOCM remove for better timer
+            // GameLoop is not currently set
+            uint64_t CurrentTime = GetTickCount64();
+            uint64_t PreviousTime = CurrentTime;
+            uint64_t DeltaTime = 0;
+
             while(true)
             {
-                // Have all managers update
+                CurrentTime = GetTickCount64();
+                DeltaTime = CurrentTime - PreviousTime;
+                PreviousTime = CurrentTime;
 
+                // Have all managers update
                 size_t length = m_managers.size();
                 for(size_t i = 0; i < length; i++)
                 {
-                    m_managers.at(i)->Update(0.017);
+                    m_managers.at(i)->Update(DeltaTime);
                 }
                 EventHandler::GetInstance()->DeliverEvents();
                 //InputHandler::GetInstance()->Update(sharedContext);

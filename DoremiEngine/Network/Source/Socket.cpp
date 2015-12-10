@@ -71,16 +71,22 @@ namespace DoremiEngine
             ConnectSocket(p_connectAdress);
         }
 
-        Socket Socket::AcceptTCPConnection()
+        bool Socket::AcceptTCPConnection(SOCKET& p_socketHandle, AdressImplementation& p_adress)
         {
-            SOCKADDR_IN Adress = { 0 };
+            SOCKADDR_IN Adress = {0};
+
+            int SizeOfAdress = sizeof(Adress);
 
             // Accept a incomming connection, returns a socket used to send to later
-            SOCKET OutSocketHandle = accept(m_socketHandle, nullptr, nullptr);
+            SOCKET OutSocketHandle = accept(m_socketHandle, (SOCKADDR*)&Adress, &SizeOfAdress);
 
             // If failed, throw exception
             if(OutSocketHandle == INVALID_SOCKET)
             {
+                if(true)
+                {
+                    return false; // TODOCM check the true error check
+                }
                 throw std::runtime_error("Failed to accept connection");
             }
 
@@ -92,8 +98,14 @@ namespace DoremiEngine
                 throw std::runtime_error("Failed setting TCP to non blocking.");
             }
 
+            // Set out socket
+            p_socketHandle = OutSocketHandle;
+
+            // Set out adress
+            p_adress.SetAdress(Adress);
+
             // Return a socket used to send to later
-            return Socket(OutSocketHandle);
+            return true;
         }
 
         void Socket::CreateUDPSocket()
@@ -158,17 +170,19 @@ namespace DoremiEngine
             {
                 int a = WSAGetLastError();
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
-                if (WSAGetLastError() != WSAEWOULDBLOCK)
+                if(WSAGetLastError() != WSAEWOULDBLOCK)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send data.");
+                    throw std::runtime_error("Failed to send UDP data.");
                 }
                 return false;
             }
             // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if (Return != p_dataSize)
+            else if(Return != p_dataSize)
             {
-                throw std::runtime_error("Requested sent data and sent data was not equal, confront Christian if this problem arises."); // TODOCM Solution to sent = req data sent
+                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
+                          << std::endl; // TODOCM Solution to sent = req data sent
+                return false;
             }
 
             return true;
@@ -188,17 +202,19 @@ namespace DoremiEngine
             {
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
                 int Error = WSAGetLastError();
-                if (Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
+                if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send data.");
+                    throw std::runtime_error("Failed to send UDP data.");
                 }
                 return false;
             }
             // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if (Return != p_dataSize)
+            else if(Return != p_dataSize)
             {
-                throw std::runtime_error("Requested sent data and sent data was not equal, confront Christian if this problem arises."); // TODOCM Solutio to recv = req data recv
+                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
+                          << std::endl; // TODOCM Solution to sent = req data sent
+                return false;
             }
 
             p_Adress.SetAdress(Adress);
@@ -216,17 +232,19 @@ namespace DoremiEngine
             {
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
                 int Error = WSAGetLastError();
-                if (Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
+                if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send data.");
+                    throw std::runtime_error("Failed to recieve UDP data.");
                 }
                 return false;
             }
             // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if (Return != p_dataSize)
+            else if(Return != p_dataSize)
             {
-                throw std::runtime_error("Requested sent data and sent data was not equal, confront Christian if this problem arises."); // TODOCM Solutio to recv = req data recv
+                std::cout << "Requested recieved data and recieved data was not equal, confront Christian if this problem arises."
+                          << std::endl; // TODOCM Solution to sent = req data sent
+                return false;
             }
 
             return true;
@@ -245,46 +263,52 @@ namespace DoremiEngine
             int32_t Return = send(m_socketHandle, (char*)p_data, p_dataSize, 0);
 
             // If some error
-            if (Return == SOCKET_ERROR)
+            if(Return == SOCKET_ERROR)
             {
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
-                if (WSAGetLastError() != WSAEWOULDBLOCK)
+                int errorCode = WSAGetLastError();
+                if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send data.");
-                    
-                    return false;
+                    throw std::runtime_error("Failed to send TCP data.");
                 }
+                return false;
             }
             // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if (Return != p_dataSize)
+            else if(Return != p_dataSize)
             {
-                throw std::runtime_error("Requested sent data and sent data was not equal, confront Christian if this problem arises."); // TODOCM Solution to sent = req data sent
+                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
+                          << std::endl; // TODOCM Solution to sent = req data sent
+                return false;
             }
 
             return true;
         }
 
-        bool Socket::RecieveTCP(void* p_data, const uint32_t &p_dataSize)
+        bool Socket::RecieveTCP(void* p_data, const uint32_t& p_dataSize)
         {
             // Attempt to recieve data from socket
             int32_t Return = recv(m_socketHandle, (char*)p_data, p_dataSize, 0);
 
             // If some error or
-            if (Return == SOCKET_ERROR )
+            if(Return == SOCKET_ERROR)
             {
-                if (WSAGetLastError() != WSAEWOULDBLOCK)
+                // check towards errors
+                int errorCode = WSAGetLastError();
+                if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send data.");
-
-                    return false;
+                    throw std::runtime_error("Failed to recieve TCP data.");
                 }
+
+                return false;
             }
             // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if (Return != p_dataSize)
+            else if(Return != p_dataSize)
             {
-                throw std::runtime_error("Requested sent data and sent data was not equal, confront Christian if this problem arises."); // TODOCM Solutio to recv = req data recv
+                std::cout << "Requested recieved data and recieved data was not equal, confront Christian if this problem arises."
+                          << std::endl; // TODOCM Solution to sent = req data sent
+                return false;
             }
 
             return true;

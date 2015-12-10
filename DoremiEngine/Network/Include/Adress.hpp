@@ -39,6 +39,16 @@ namespace DoremiEngine
                 Returns the IP as a string
             */
             virtual std::string GetIPToString() const = 0;
+
+            /**
+                Check if adress have same IP and Port
+            */
+            virtual bool Adress::operator==(const Adress& p_adress) const = 0;
+
+            /**
+                Check if adress ONLY have same IP
+            */
+            virtual bool Adress::operator*=(const Adress& p_adress) const = 0;
         };
     }
 }

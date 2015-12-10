@@ -51,6 +51,13 @@ namespace DoremiEngine
             return newAdress;
         }
 
+        Adress* NetworkModuleImplementation::CreateAdress(const Adress& m_adress)
+        {
+            Adress* newAdress = new AdressImplementation(*(AdressImplementation*)&m_adress);
+
+            return newAdress;
+        }
+
         Adress* NetworkModuleImplementation::CreateAdress(uint16_t p_port)
         {
             Adress* newAdress = new AdressImplementation(p_port);
@@ -167,7 +174,7 @@ namespace DoremiEngine
             return key;
         }
 
-        size_t NetworkModuleImplementation::AcceptConnection(size_t p_socketID)
+        size_t NetworkModuleImplementation::AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut)
         {
             // TODOCM add parameters, speculate if we send adress from outside or not(on other
             // functions as well)
@@ -177,15 +184,24 @@ namespace DoremiEngine
             // Get socket from map
             Socket* socketToAcceptFrom = GetSocketFromMap(p_socketID);
 
+            // Out socket (instead of dynamically allocating every frame)
+            SOCKET newSocketHandle;
+
             // Accept an incomming connection
-            Socket* newSocket = new Socket(socketToAcceptFrom->AcceptTCPConnection());
+            if(!socketToAcceptFrom->AcceptTCPConnection(newSocketHandle, *(AdressImplementation*)p_adressOut))
+            {
+                return false;
+            }
 
             // Save socket to map
             std::hash<Socket*> HashMap;
+            Socket* newSocket = new Socket(newSocketHandle);
             size_t key = HashMap(newSocket);
             m_socketHandleMap[key] = newSocket;
+            p_outSocketID = key;
 
-            return key;
+
+            return true;
         }
 
         size_t NetworkModuleImplementation::CreateUnreliableSocket()

@@ -2,22 +2,20 @@
 
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
+#include <Doremi/Core/Include/Manager/Network/ConnectionState.hpp>
 
+namespace DoremiEngine
+{
+    namespace Network
+    {
+        class Adress;
+    }
+}
 
 namespace Doremi
 {
     namespace Core
     {
-        /**
-            TODO doc
-        */
-        enum class ConnectionState
-        {
-            DISCONNECTED,
-            STAGING,
-            CONNECTED
-        };
-
         /**
             Manager class for Client, contains the logic for the connection pattern
         */
@@ -41,24 +39,115 @@ namespace Doremi
 
             private:
             /**
-                TODOCM doc
+                Recieves reliable & unreliable messages
+            */
+            void RecieveMessages(double p_dt);
+
+            /**
+                Sends reliable & unreliable messages
+            */
+            void SendMessages(double p_dt);
+
+            /**
+                Sends a connection request message to server
+            */
+            void SendConnectRequestMessage();
+
+            /**
+                Sends a version check messag eto server
+            */
+            void SendVersionMessage();
+
+            /**
+                Sends a connected message to server
+            */
+            void SendConnectedMessage();
+
+            /**
+                Sends a disconnect message to server
+            */
+            void SendDisconnectMessage();
+
+            /**
+                Send unreliable message dependent on connectionstate
+            */
+            void RecieveUnreliable(double p_dt);
+
+            /**
+                Recieves reliable data from server
+            */
+            void RecieveReliable(double p_dt);
+
+            /**
+                Update timeout to server and disconnects if too long
+            */
+            void UpdateTimeouts(double p_dt);
+
+            /**
+                Timer for next update(send data)
             */
             double m_nextUpdateTimer;
 
             /**
-                TODOCM doc
+                Time until next update(send data)
             */
             double m_updateInterval;
 
             /**
-                TODOCM doc
+                State of connection towards master
             */
             ConnectionState m_masterConnectionState;
 
             /**
-                TODOCM doc
+                State of connection towards server (can only be connected to one server)
             */
             ConnectionState m_serverConnectionState;
+
+            /**
+                Adress to server unreliable
+            */
+            DoremiEngine::Network::Adress* m_serverAdress;
+
+            /**
+                Adress to server reliable
+            */
+            DoremiEngine::Network::Adress* m_masterServerAdress;
+
+            /**
+                Socket for unreliable data to server
+            */
+            size_t m_serverUnreliableSocketHandle;
+
+            /**
+                Socket for reliable data to server
+            */
+            size_t m_serverReliableSocketHandle;
+
+            /**
+                Socket for unreliable data to master
+            */
+            size_t m_masterUnreliableServerSocketHandle;
+
+            /**
+                Socket for reliable data to master
+                TODOCM not sure if need this, maybe for meta data?
+            */
+            size_t m_masterReliableServerSocketHandle;
+
+            /**
+                Last response time in milliseconds to master server
+            */
+            double m_masterServerLastResponse;
+
+            /**
+                Last response time in milliseconds to server
+            */
+            double m_serverLastResponse;
+
+            /**
+                Time to disconnect from server
+            */
+            double m_timeoutInterval;
         };
     }
 }
