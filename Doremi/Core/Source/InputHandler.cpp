@@ -104,7 +104,7 @@ namespace Doremi
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[998];
                 }
             }
-        }
+        } 
 
         void InputHandler::BuildMaskFromEngineForMeny()
         {
@@ -140,7 +140,7 @@ namespace Doremi
         }
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)
         {
-
+            //TODEA fixa keyconfiggen va
         }
     }
 }
