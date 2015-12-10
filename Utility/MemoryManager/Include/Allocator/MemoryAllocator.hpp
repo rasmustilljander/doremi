@@ -1,6 +1,6 @@
 #pragma once
 
-namespace DoremiEngine
+namespace Utility
 {
     namespace Memory
     {
