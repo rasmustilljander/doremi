@@ -35,28 +35,10 @@ namespace Doremi
             userCmdsMeny[1073741905] = UserCommandMeny::Down;
             userCmdsMeny[1073741904] = UserCommandMeny::Left;
             userCmdsMeny[1073741903] = UserCommandMeny::Right;
-
-            /////// TODOEA TESTSKIT!
-           //m_keyboardInputFromModule.push_back(8);
-           //m_keyboardInputFromModule.push_back(97);
-           //m_keyboardInputFromModule.push_back(119);
-           //m_keyboardInputFromModule.push_back(100);
-           //m_keyboardInputFromModule.push_back(97);
-           //m_keyboardInputFromModule.push_back(116);
-           //m_keyboardInputFromModule.push_back(116);
-           //m_musInputFromModule.push_back(1);
-           //m_musInputFromModule.push_back(2);
-           //m_musInputFromModule.push_back(3);
-           //m_mouseWheelInput = -1;
-            ChangeThisKeyToThat(2);
-
-
-            //BuildMaskFromEngine();
-            //CheckBitMaskInputFromGame((int)UserCommand::Backward|(int)UserCommand::Fire);
         }
-        bool InputHandler::CheckBitMaskInputFromGame(int p_bitMask)//Send what to check from
+        bool InputHandler::CheckBitMaskInputFromGame(int p_bitMask) // Send what to check from
         {
-            if ((m_maskWithInput & p_bitMask) == p_bitMask)
+            if((m_maskWithInput & p_bitMask) == p_bitMask)
             {
                 return true;
             }
