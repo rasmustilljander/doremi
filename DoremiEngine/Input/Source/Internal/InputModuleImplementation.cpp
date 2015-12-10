@@ -1,6 +1,7 @@
 #include <Internal/InputModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <iostream>
+#include <Windows.h>
 
 namespace DoremiEngine
 {
@@ -27,13 +28,15 @@ namespace DoremiEngine
                 {
                     //TODO logger maybe
                 }
+            }                   // the window to be used
+            if (GetActiveWindow() == nullptr)
+            {
+                CreateWindowSDL(800, 800);
             }
 
 
-
-
             //TODOEA Ta bort om mkonys fungerar
-            CreateWindow(500, 500);
+            
 
 
         }
@@ -59,11 +62,11 @@ namespace DoremiEngine
 
 
             //TODEA
-            PrintInputStructsDEBUG();
-            PrintInputMouseMovement();
+            //PrintInputStructsDEBUG();
+            //PrintInputMouseMovement();
 
         }
-        int InputModuleImplementation::CreateWindow(int p_width, int p_height)
+        int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {
             //1200,200 är plats för window
             m_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);

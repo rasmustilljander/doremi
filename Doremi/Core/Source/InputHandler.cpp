@@ -2,18 +2,23 @@
 // Project specific
 #include <InputHandler.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
-
+#include <iostream>
 namespace Doremi
 {
     namespace Core
     {
-        InputHandler::InputHandler()
+        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            :m_sharedContext(p_sharedContext)
         {
         }
 
 
         InputHandler::~InputHandler()
         {
+        }
+        void InputHandler::StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            m_singleton = new InputHandler(p_sharedContext);
         }
         void InputHandler::Initialize()
         {
@@ -52,10 +57,10 @@ namespace Doremi
 
         InputHandler* InputHandler::GetInstance()
         {
-            if (m_singleton == nullptr)
-            {
-                m_singleton = new InputHandler();
-            }
+            //if (m_singleton == nullptr)
+            //{
+            //    m_singleton = new InputHandler();
+            //}
             return m_singleton;
 
 
@@ -104,21 +109,79 @@ namespace Doremi
             }
         }
 
-        void InputHandler::UpdateInputsFromEngine(const DoremiEngine::Core::SharedContext & p_sharedContext)
+        void InputHandler::UpdateInputsFromEngine()
         {
-            m_mouseMoveX = p_sharedContext.GetInputModule().GetMouseMovementX();
-            m_mouseMoveY = p_sharedContext.GetInputModule().GetMouseMovementY();
-            m_musInputFromModule = p_sharedContext.GetInputModule().GetMouseButtonInput();
-            m_keyboardInputFromModule = p_sharedContext.GetInputModule().GetKeyBoardInput();
-            m_mouseWheelInput = p_sharedContext.GetInputModule().GetMouseWheelSpins();
+            m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
+            m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
+            if (m_mouseMoveX)
+            {
+                int hej = 0;
+            }
+            if (m_mouseMoveY)
+            {
+                int hej = 0;
+            }
+            m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
+            m_keyboardInputFromModule = m_sharedContext.GetInputModule().GetKeyBoardInput();
+            m_mouseWheelInput = m_sharedContext.GetInputModule().GetMouseWheelSpins();
         }
-
-        void InputHandler::Update(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void InputHandler::PrintInputStructsDEBUG()
         {
-            UpdateInputsFromEngine(p_sharedContext);
+            int t_forLoopSizeI = m_keyboardInputFromModule.size();
+            for (size_t i = 0; i < t_forLoopSizeI; ++i)
+            {
+                std::cout << m_keyboardInputFromModule[i] << ", ";
+            }
+            int t_forLoopSizeII = m_musInputFromModule.size();
+
+            for (size_t i = 0; i < t_forLoopSizeII; ++i)
+            {
+                std::cout << m_musInputFromModule[i] << ", ";
+            }
+            if (t_forLoopSizeII || t_forLoopSizeI)
+            {
+                std::cout << std::endl;
+            }
+            //bool t_printDebug = false;
+            //for (size_t i = 0; i < m_structArraySize; ++i)
+            //{
+            //    if (m_inputForPlaying.keys[i])
+            //    {
+            //        t_printDebug = true;
+            //    }
+
+            //}
+            //if (t_printDebug)
+            //{
+            //    for (size_t i = 0; i < m_structArraySize; ++i)
+            //    {
+            //        std::cout << m_inputForPlaying.keys[i];
+            //    }
+            //    std::cout << std::endl;
+            //}
+            //if (m_mouseWheelSpins != 0)
+            //{
+            //    std::cout << m_mouseWheelSpins << std::endl;
+            //}
+
+            //std::cout << m_keyboardButtonsDown.size() << std::endl;
+            //std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
+        }
+        void InputHandler::PrintInputMouseMovement()
+        {
+            if (m_mouseMoveX != 0 || m_mouseMoveY != 0)
+            {
+                std::cout << m_mouseMoveX << " : X, " << m_mouseMoveY << " : Y" << std::endl;
+            }
+        }
+        void InputHandler::Update()
+        {
+            UpdateInputsFromEngine();
             //Do one of them TODOEA
             BuildMaskFromEngineForGame();
             BuildMaskFromEngineForMeny();
+            PrintInputStructsDEBUG();
+            PrintInputMouseMovement();
         }
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)
         {

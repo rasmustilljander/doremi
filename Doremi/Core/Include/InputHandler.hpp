@@ -3,15 +3,22 @@
 // Standard Libraries
 #include <unordered_map>
 #include <vector>
-#include <DoremiEngine/Core/Include/SharedContext.hpp>
+
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
 
 namespace Doremi
 {
-	namespace Core
-	{
+    namespace Core
+    {
 
-		class InputHandler
-		{
+        class InputHandler
+        {
         private:
             enum class UserCommandPlaying
 
@@ -25,9 +32,9 @@ namespace Doremi
                 Fire = 32,//LeftMouseClick   1
                 ScrollWpnUp = 64,//MWheelUp    NULL Handled differently
                 ScrollWpnDown = 128,//MWheelDown NULL Handled differently
-                All = Jump | Forward | 
-                Backward | Left | Right | 
-                Fire| ScrollWpnUp| 
+                All = Jump | Forward |
+                Backward | Left | Right |
+                Fire | ScrollWpnUp |
                 ScrollWpnDown,//Seen this be done so doing it here aswell! =D
             };
             enum class UserCommandMeny
@@ -42,11 +49,12 @@ namespace Doremi
                 Left = 32,      //1073741904
                 Right = 64,     //1073741903
             };
-		public:
-			/** Is a singleton. Use this method to get the EventManager*/
-			static InputHandler* GetInstance();
-            InputHandler();
+        public:
+            /** Is a singleton. Use this method to get the EventManager*/
+            static InputHandler* GetInstance();
+            InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~InputHandler();
+            static void StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             void Initialize();
             bool CheckBitMaskInputFromGame(int p_bitMask);
 
@@ -58,18 +66,19 @@ namespace Doremi
             //Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
             //på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
             //Behöver nog ta bort old entries eller ändra dem på något sätt.
-            void Update(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void Update();
             void ChangeThisKeyToThat(int p_bitMask);
-		private:
-            //const DoremiEngine::Core::SharedContext& m_sharedContext;
-            void UpdateInputsFromEngine(const DoremiEngine::Core::SharedContext& p_sharedContext);
+        private:
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
+            void UpdateInputsFromEngine();
             std::unordered_map<int, UserCommandPlaying> userCmdsPlaying;
             std::unordered_map<int, UserCommandMeny> userCmdsMeny;
             int m_mouseSense = 1;
             int m_maskWithInput = 0;//TODOEA Could be a problem with meny and game inputs I DUNNO
             void BuildMaskFromEngineForGame();
             void BuildMaskFromEngineForMeny();
-
+            void PrintInputMouseMovement();
+            void PrintInputStructsDEBUG();
 
             //TODOEA går det att sätta pekare istället så man inte behöver get'a
             std::vector<int> m_musInputFromModule;
@@ -77,11 +86,11 @@ namespace Doremi
             int m_mouseMoveX = 0;
             int m_mouseMoveY = 0;
             int m_mouseWheelInput = 0;
-            
 
-			static InputHandler* m_singleton;
 
-		};
-	}
+            static InputHandler* m_singleton;
+
+        };
+    }
 }
 

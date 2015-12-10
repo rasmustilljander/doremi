@@ -99,7 +99,6 @@ namespace Doremi
 
         void GameCore::InitializeClient()
         {
-            InputHandler::GetInstance()->Initialize();//TODOEA NUGGET SNÄASDLS Tack som, fan.
             START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
 
             if(libInitializeEngine == nullptr)
@@ -116,14 +115,17 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
+
             const DoremiEngine::Core::SharedContext& sharedContext =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
             PhysicsHandler::StartPhysicsHandler(sharedContext);
-
+            InputHandler::StartInputHandler(sharedContext);
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+
 
 
             ////////////////Example only////////////////
@@ -191,6 +193,7 @@ namespace Doremi
             }
 
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
+            InputHandler::StartInputHandler(sharedContext);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
@@ -234,9 +237,9 @@ namespace Doremi
                     m_managers.at(i)->Update(DeltaTime);
                 }
                 EventHandler::GetInstance()->DeliverEvents();
+
                 PhysicsHandler::GetInstance()->UpdatePhysics(0.017);
-                //InputHandler::GetInstance()->Update(sharedContext);
-                //TODOEA Langa update här för input
+                InputHandler::GetInstance()->Update();
             }
         }
     }

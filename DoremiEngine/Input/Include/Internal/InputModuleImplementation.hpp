@@ -50,7 +50,7 @@ namespace DoremiEngine
             */
             void Shutdown() override;
             void Update() override;
-            int CreateWindow(int p_width, int p_height);//Returns 1 if a window is created
+            int CreateWindowSDL(int p_width, int p_height);//Returns 1 if a window is created
             void PrintInputStructsDEBUG();//TODOEA Ta bort i slutet kanske
             void PrintInputMouseMovement();//TODEA Ta bort skiten slutet
             /////GET//////////////////

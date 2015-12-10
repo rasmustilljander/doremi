@@ -33,7 +33,7 @@ namespace DoremiEngine
             */
             virtual void Shutdown() = 0;
             virtual void Update() = 0;
-            virtual int CreateWindow(int p_width, int p_height) = 0;//Returns 1 if a window is created
+            virtual int CreateWindowSDL(int p_width, int p_height) = 0;//Returns 1 if a window is created
             virtual void PrintInputStructsDEBUG() = 0; //TODOEA Ta bort i slutet kanske
             virtual void PrintInputMouseMovement() = 0;//TODEA Ta bort skiten slutet
 
