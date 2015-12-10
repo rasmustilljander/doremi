@@ -1,17 +1,29 @@
 #pragma once
+namespace DoremiEngine
+{
+    namespace Graphic
+    {
+        class MeshInfo;
+        class MaterialInfo;
+    }
+}
 namespace Doremi
 {
     namespace Core
     {
         /**
-        Should contain data on what mech and what material to use
+        Should contain data on what mech and what material to use. DO NOT DELETE THESE POINTERS
         */
+
         struct RenderComponent
         {
-            size_t meshID;
-            size_t materialID;
-            RenderComponent(int p_meshID, int p_materialID) : meshID(p_meshID), materialID(p_materialID) {}
-            RenderComponent() : meshID(0), materialID(0) {}
+            DoremiEngine::Graphic::MeshInfo* mesh;
+            DoremiEngine::Graphic::MaterialInfo* material;
+            RenderComponent(DoremiEngine::Graphic::MeshInfo* p_meshID, DoremiEngine::Graphic::MaterialInfo* p_materialID)
+                : mesh(p_meshID), material(p_materialID)
+            {
+            }
+            RenderComponent() : mesh(nullptr), material(nullptr) {}
         };
     }
 }
