@@ -6,6 +6,8 @@
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EntityComponent/Components/AudioComponent.hpp>
+#include <EntityComponent/Components/AudioActiveComponent.hpp>
+#include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 
 namespace Doremi
 {
@@ -57,20 +59,25 @@ namespace Doremi
                 tComponentTable->AddComponent(tNewEntityID, (int)iter->first);
 
                 // Check which component we copy
-                if (iter->first == ComponentType::Example)
+                if(iter->first == ComponentType::Example)
                 {
-                    memcpy(GetComponent<ExampleComponent>(tNewEntityID), iter->second,
-                        sizeof(ExampleComponent));
+                    memcpy(GetComponent<ExampleComponent>(tNewEntityID), iter->second, sizeof(ExampleComponent));
                 }
-                else if (iter->first == ComponentType::Example2)
+                else if(iter->first == ComponentType::Example2)
                 {
-                    memcpy(GetComponent<Example2Component>(tNewEntityID), iter->second,
-                        sizeof(Example2Component));
+                    memcpy(GetComponent<Example2Component>(tNewEntityID), iter->second, sizeof(Example2Component));
                 }
-                else if (iter->first == ComponentType::Audio)
+                else if(iter->first == ComponentType::Audio)
                 {
-                    memcpy(GetComponent<AudioComponent>(tNewEntityID), iter->second,
-                        sizeof(AudioComponent));
+                    memcpy(GetComponent<AudioComponent>(tNewEntityID), iter->second, sizeof(AudioComponent));
+                }
+                else if(iter->first == ComponentType::AudioActive)
+                {
+                    memcpy(GetComponent<AudioActiveComponent>(tNewEntityID), iter->second, sizeof(AudioActiveComponent));
+                }
+                else if(iter->first == ComponentType::VoiceRecording)
+                {
+                    memcpy(GetComponent<VoiceRecordingComponent>(tNewEntityID), iter->second, sizeof(VoiceRecordingComponent));
                 }
             }
 

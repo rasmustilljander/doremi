@@ -15,7 +15,8 @@ enum class ComponentType : int
     Example = 0x01,
     Example2 = 0x02,
     Audio = 0x04,
-
+    AudioActive = 0x08,
+    VoiceRecording = 0x10
 };
 
 /**
@@ -24,10 +25,11 @@ WARNING! Subject to change due to low scalability*/
 enum class Blueprints : int
 {
     ExampleEntity,
+    VoiceRecordEntity,
 };
 
-/** 
-Maps a ComponentType to a void*, where the void* is an 
+/**
+Maps a ComponentType to a void*, where the void* is an
 instance of the desired component which will later be compied
 when creating an instance of the said blueprint*/
 typedef std::map<ComponentType, void*> EntityBlueprint;

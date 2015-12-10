@@ -14,30 +14,26 @@ namespace DoremiEngine
     namespace Graphic
     {
 
-        GraphicMain::GraphicMain(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
-        {
-        }
+        GraphicMain::GraphicMain(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
-
-        GraphicMain::~GraphicMain()
-        {
-        }
-        //TODOKO Remove!
+        GraphicMain::~GraphicMain() {}
+        // TODOKO Remove!
         LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             // sort through and find what code to run for the message given
-            switch (message)
+            switch(message)
             {
                 // this message is read when the window is closed
-            case WM_KEYDOWN:
-            {
-                switch (wParam)
+                case WM_KEYDOWN:
                 {
-                case VK_ESCAPE:
-                    PostQuitMessage(0);
-                    return 0;
+                    switch(wParam)
+                    {
+                        case VK_ESCAPE:
+                            PostQuitMessage(0);
+                            return 0;
+                    }
                 }
-            }break;
+                break;
 
             case WM_DESTROY:
             {

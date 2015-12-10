@@ -40,14 +40,17 @@ namespace DoremiEngine
             /**
             TODO docs
             */
+            unsigned int GetRecordPointer() override;
 
             size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
-            void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) override;
+            void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) override;
+
+            bool GetChannelPlaying(const size_t& p_channelID) override;
 
             size_t SetupRecording(bool p_loop) override;
 
-            int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) override;
+            int StartRecording(size_t p_soundID, bool p_loopRec) override;
 
             float AnalyseSoundSpectrum(const size_t& p_channelID) override;
 

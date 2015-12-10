@@ -2,6 +2,7 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <iostream>
 #include <windows.h>
+
 namespace DoremiEngine
 {
     namespace Audio
@@ -36,9 +37,6 @@ namespace DoremiEngine
             }
             m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
             ERRCHECK(m_fmodResult);
-            m_fmodChannel.push_back(m_background);
-            m_fmodChannel.push_back(m_enemy);
-            m_fmodChannel.push_back(m_record);
         }
 
         void AudioModuleImplementation::Shutdown()
@@ -70,13 +68,10 @@ namespace DoremiEngine
                 t_soundName.erase(0, hej + 1);
                 if(t_name == t_soundName)
                 {
-
-                    return 0;
+                    delete t_name;
+                    return i;
                 }
-                return 0;
             }
-
-
             FMOD::Sound* t_fmodSound;
             m_fmodResult = m_fmodSystem->createSound(fileLocation.c_str(), FMOD_3D, 0, &t_fmodSound);
             ERRCHECK(m_fmodResult);
@@ -111,9 +106,9 @@ namespace DoremiEngine
             return 0;
         }
 
-        void AudioModuleImplementation::PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID)
+        void AudioModuleImplementation::PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID)
         {
-            if (p_loop)
+            if(p_loop)
             {
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_NORMAL);
             }
@@ -121,8 +116,40 @@ namespace DoremiEngine
             {
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_OFF);
             }
+            size_t t_lenght = m_fmodChannel.size();
+            bool t_isPlaying = false;
+            for(size_t i = 0; i < t_lenght; i++)
+            {
+                m_fmodChannel[i]->isPlaying(&t_isPlaying);
+                if(!t_isPlaying)
+                {
+                    p_channelID = i;
+                    break;
+                }
+                else
+                {
+                    // Do nothing
+                }
+            }
+            if(p_channelID == -1)
+            {
+                FMOD::Channel* t_channel = 0;
+                m_fmodChannel.push_back(t_channel);
+                p_channelID = t_lenght;
+            }
+            else
+            {
+                // Do nothing
+            }
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
             m_fmodChannel[p_channelID]->setVolume(0.5f);
+        }
+
+        bool AudioModuleImplementation::GetChannelPlaying(const size_t& p_channelID)
+        {
+            bool t_isPlaying = false;
+            m_fmodChannel[p_channelID]->isPlaying(&t_isPlaying);
+            return t_isPlaying;
         }
 
         int AudioModuleImplementation::SetVolumeOnChannel(const size_t& p_channelID, float p_volume)
@@ -158,6 +185,15 @@ namespace DoremiEngine
                     m_recordingStarted = false;
                 }
             }
+
+        }
+
+        unsigned int AudioModuleImplementation::GetRecordPointer()
+        {
+            unsigned int timeElapsedSinceRecordingStarted = 0;
+            m_fmodSystem->getRecordPosition(0, &timeElapsedSinceRecordingStarted);
+            // funkar bara om vi använder outputdriver 0 ... 0 = default by OS. kan undvikas genom att lägga in driverchoice i starten TODOLH
+            return timeElapsedSinceRecordingStarted;
         }
 
         int AudioModuleImplementation::Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale)
@@ -193,21 +229,21 @@ namespace DoremiEngine
             return r_retVal;
         }
 
-        int AudioModuleImplementation::StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID)
+        int AudioModuleImplementation::StartRecording(size_t p_soundID, bool p_loopRec)
         {
             m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec);
             ERRCHECK(m_fmodResult);
             /**
                 TODOLH Annan lösning än sleep
             */
-            //Sleep(200); ska ta in det som är under i updaten
+            // Sleep(200); ska ta in det som är under i updaten
             m_recordingStarted = true;
-            //m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            //ERRCHECK(m_fmodResult);
+            // m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
+            // ERRCHECK(m_fmodResult);
 
-            //// Dont hear what is being recorded otherwise it will feedback. 
-            //m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
-            //ERRCHECK(m_fmodResult);
+            //// Dont hear what is being recorded otherwise it will feedback.
+            // m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
+            // ERRCHECK(m_fmodResult);
             return 0;
         }
 
@@ -226,6 +262,10 @@ namespace DoremiEngine
                 {
                     max = spectrum[i];
                     highestFrequencyBand = i;
+                }
+                else
+                {
+                    // Do nothing
                 }
             }
             float dominantHz = (float)highestFrequencyBand * m_binSize;

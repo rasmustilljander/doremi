@@ -17,6 +17,8 @@
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <InputHandler.hpp>
+#include <EntityComponent/Components/AudioActiveComponent.hpp>
+#include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 
 #include <string>
 
@@ -49,22 +51,32 @@ namespace Doremi
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();
 
+            AudioComponent* t_audioComp = new AudioComponent(); /**TODOLH only for testing, should be removed!*/
+            AudioActiveComponent* t_audioActiveComp = new AudioActiveComponent();
+            VoiceRecordingComponent* t_voiceRecordingComponent = new VoiceRecordingComponent();
+
             // Declare blueprint (do not reuse variables for more blueprints)
             EntityBlueprint t_entityBlueprint;
+            EntityBlueprint t_recordingBlueprint;
 
+            t_recordingBlueprint[ComponentType::VoiceRecording] = t_voiceRecordingComponent;
             // Set components of the blueprint
             t_entityBlueprint[ComponentType::Example] = t_exampleComponent;
             t_entityBlueprint[ComponentType::Example2] = t_example2Component;
-
+            t_entityBlueprint[ComponentType::Audio] = t_audioComp;
+            t_entityBlueprint[ComponentType::AudioActive] = t_audioActiveComp;
             // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in
             // the future)
             t_entityHandler.RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
 
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::VoiceRecordEntity, t_recordingBlueprint);
+
             // Create a couple of entities using the newly created blueprint
-            for(size_t i = 0; i < 2; i++)
+            for(size_t i = 0; i < 1; i++)
             {
                 t_entityHandler.CreateEntity(Blueprints::ExampleEntity);
             }
+            t_entityHandler.CreateEntity(Blueprints::VoiceRecordEntity);
         }
 
 
@@ -107,42 +119,49 @@ namespace Doremi
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
-            // Lucas Testkod
-
-
-            sharedContext.GetAudioModule().Startup();
-            sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            sharedContext.GetAudioModule().SetListenerPos(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-
-            EntityBlueprint t_audioBlueprint;
-            AudioComponent* t_audioComponent = new AudioComponent();
-            t_audioComponent->soundID = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
-            sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            // t_audioBlueprint[ComponentType::Audio] =
-            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, 0);
-            sharedContext.GetAudioModule().SetVolumeOnChannel(0, 0);
-            size_t t = sharedContext.GetAudioModule().SetupRecording(true);
-            sharedContext.GetAudioModule().StartRecording(t, true, 1);
-            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-
-            Manager* t_audioManager = new AudioManager(sharedContext);
-            m_managers.push_back(t_audioManager);
-            // Lucas Testkod slut
             ////////////////Example only////////////////
             // Create manager
 
             // Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
 
-
             // Add manager to list of managers
             // m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
 
             GenerateWorld();
+
+            /*
+            // Lucas Testkod
+            Manager* t_audioManager = new AudioManager(sharedContext);
+            m_managers.push_back(t_audioManager);
+            sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
+            sharedContext.GetAudioModule().SetListenerPos(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+            AudioActiveComponent* t_audioActiveComponent = t_entityHandler.GetComponentFromStorage<AudioActiveComponent>(0);
+            AudioComponent* t_audioComponent = t_entityHandler.GetComponentFromStorage<AudioComponent>(0);
+
+            //AudioActiveComponent* t_recordActiveComponent = t_entityHandler.GetComponentFromStorage<AudioActiveComponent>(1);
+            //AudioComponent* t_recordComponent = t_entityHandler.GetComponentFromStorage<AudioComponent>(1);
+
+            VoiceRecordingComponent* t_voiceRecordComponent = t_entityHandler.GetComponentFromStorage<VoiceRecordingComponent>(1);
+
+            t_audioComponent->soundID = sharedContext.GetAudioModule().\
+                LoadSound("Sounds/Test sounds/1 amp som har låg frekv sen hög, Human made!372hz till 643hz.wav", 0.5f, 5000.0f);
+
+            //sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
+            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
+            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
+            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.1f);
+
+            t_voiceRecordComponent->soundID = sharedContext.GetAudioModule().SetupRecording(true);
+            sharedContext.GetAudioModule().StartRecording(t_voiceRecordComponent->soundID, true);
+            t_voiceRecordComponent->loop = true;
+            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+
+            // Lucas Testkod slut*/
+
             ////////////////End Example////////////////
         }
 
@@ -167,23 +186,6 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-
-
-            //Lucas Testkod
-            //sharedContext.GetAudioModule().Startup();
-            //sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            //sharedContext.GetAudioModule().SetListenerPos(0.0f , 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
-            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
-            ////size_t t_soundNumber = a.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            ////a.GetAudioModule().PlayASound(t_soundNumber, true, 0);
-            //size_t t = sharedContext.GetAudioModule().SetupRecording(true);
-            //sharedContext.GetAudioModule().StartRecording(t, true, 0);
-            //sharedContext.GetAudioModule().SetSoundPosAndVel(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-
-            //Manager* t_audioManager = new AudioManager(sharedContext);
-            //m_managers.push_back(t_audioManager);
-            //Lucas Testkod slut
 
             ////////////////Example only////////////////
             // Create manager

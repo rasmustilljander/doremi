@@ -30,13 +30,16 @@ namespace DoremiEngine
             /**
             Plays a sound that is already in the system
             */
-            virtual void PlayASound(size_t p_soundID, bool p_loop, size_t p_channelID) = 0;
-
+            virtual void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) = 0;
+            /**
+            Checks if the channel is playing
+            */
+            virtual bool GetChannelPlaying(const size_t& p_channelID) = 0;
             /**
             TODO DOCS
             */
             virtual void Startup() = 0;
-            
+
             /**
             Sets up the recording variables and returns the ID of the sound that will take care of the recording
             */
@@ -45,13 +48,16 @@ namespace DoremiEngine
             /**
             Starts recording to the given soundvariable
             */
-            virtual int StartRecording(size_t p_soundID, bool p_loopRec, size_t p_channelID) = 0;
+            virtual int StartRecording(size_t p_soundID, bool p_loopRec) = 0;
 
             /**
             Analyze a sound at the giving moment and returns the frequency
             */
             virtual float AnalyseSoundSpectrum(const size_t& p_channelID) = 0;
-
+            /**
+            Returns the pointer of the position in recording
+            */
+            virtual unsigned int GetRecordPointer() = 0;
             /**
             Sets up the 3D sound. parameters are the distance measurement for each parameter (1 for meters, 100 for centimeters, 3.28 for feet
             */
