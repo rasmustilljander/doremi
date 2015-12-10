@@ -33,12 +33,6 @@ namespace DoremiEngine
             {
                 CreateWindowSDL(800, 800);
             }
-
-
-            //TODOEA Ta bort om mkonys fungerar
-            
-
-
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
@@ -51,9 +45,10 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Update()
         {
+            //TODOEA COmments that maybe sohuld be removed in the end it doesnt even matter
             //ResetButtonsDown();
-            ResetMouseMovementStruct();
-            m_mouseWheelSpins = 0;
+            //ResetMouseMovementStruct();
+            //m_mouseWheelSpins = 0;
 
 
 
@@ -69,8 +64,8 @@ namespace DoremiEngine
         int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {
             //1200,200 är plats för window
-            m_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
-            if (!m_win)
+            SDL_Window *t_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
+            if (!t_win)
             {
                 std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
                 SDL_QUIT;
@@ -126,6 +121,24 @@ namespace DoremiEngine
                 std::cout << m_mouseMovementStruct.x << " : X, " << m_mouseMovementStruct.y << " : Y" << std::endl;
             }
         }
+        int InputModuleImplementation::GetMouseMovementX()
+        {
+            int t_return = m_mouseMovementStruct.x;
+            m_mouseMovementStruct.x = 0;
+            return t_return;
+        }
+        int InputModuleImplementation::GetMouseMovementY()
+        {
+            int t_return = m_mouseMovementStruct.y;
+            m_mouseMovementStruct.y = 0;
+            return t_return;
+        }
+        int InputModuleImplementation::GetMouseWheelSpins()
+        {
+            int t_return = m_mouseWheelSpins;
+            m_mouseWheelSpins = 0;
+            return t_return;
+        }
         void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event & p_eventVariable)
         {
             while (SDL_PollEvent(&p_eventVariable))
@@ -150,12 +163,12 @@ namespace DoremiEngine
                     break;
 
                 case SDL_MOUSEMOTION:
-                    m_mouseMovementStruct.x = p_eventVariable.motion.xrel;
-                    m_mouseMovementStruct.y = p_eventVariable.motion.yrel;
+                    m_mouseMovementStruct.x = m_mouseMovementStruct.x + p_eventVariable.motion.xrel;
+                    m_mouseMovementStruct.y = m_mouseMovementStruct.y + p_eventVariable.motion.yrel;
                     break;
 
                 case SDL_MOUSEWHEEL: 
-                    m_mouseWheelSpins = p_eventVariable.wheel.y;
+                    m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                     break;
 
                 defaultEvent:

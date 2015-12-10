@@ -74,7 +74,8 @@ namespace Doremi
             std::unordered_map<int, UserCommandPlaying> userCmdsPlaying;
             std::unordered_map<int, UserCommandMeny> userCmdsMeny;
             int m_mouseSense = 1;
-            int m_maskWithInput = 0;//TODOEA Could be a problem with meny and game inputs I DUNNO
+            //TODOEA Could be a problem with meny and game inputs I DUNNO To only hav one bitmask
+            int m_maskWithInput = 0;
             void BuildMaskFromEngineForGame();
             void BuildMaskFromEngineForMeny();
             void PrintInputMouseMovement();

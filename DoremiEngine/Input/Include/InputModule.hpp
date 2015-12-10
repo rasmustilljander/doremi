@@ -40,9 +40,11 @@ namespace DoremiEngine
             /////GET//////////////////
             virtual const std::vector<int> GetKeyBoardInput() const = 0;
             virtual const std::vector<int> GetMouseButtonInput() const = 0;
-            virtual const int GetMouseMovementX() const = 0;
-            virtual const int GetMouseMovementY() const = 0;
-            virtual const int GetMouseWheelSpins() const = 0;
+            //virtual const int GetMouseMovementX() const = 0;
+            //virtual const int GetMouseMovementY() const = 0;
+            virtual int GetMouseMovementX() = 0;
+            virtual int GetMouseMovementY() = 0;
+            virtual int GetMouseWheelSpins() = 0;
             //TODOEA Test med pekare. FInns med pekare om vi vill speeda upp allt. 
             //Tar bort 4 gets per update. o gets från managers.
             //int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }

@@ -177,11 +177,13 @@ namespace Doremi
         void InputHandler::Update()
         {
             UpdateInputsFromEngine();
+
             //Do one of them TODOEA
             BuildMaskFromEngineForGame();
             BuildMaskFromEngineForMeny();
-            PrintInputStructsDEBUG();
-            PrintInputMouseMovement();
+
+            //PrintInputStructsDEBUG();
+            //PrintInputMouseMovement();
         }
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)
         {

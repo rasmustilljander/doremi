@@ -56,14 +56,14 @@ namespace DoremiEngine
             /////GET//////////////////
             const std::vector<int> GetKeyBoardInput() const { return m_keyboardButtonsDown; }
             const std::vector<int> GetMouseButtonInput() const { return m_mouseButtonsDown; }
-            const int GetMouseMovementX() const { return m_mouseMovementStruct.x; }
-            const int GetMouseMovementY() const { return m_mouseMovementStruct.y; }
-            const int GetMouseWheelSpins() const { return m_mouseWheelSpins; }
+            int GetMouseMovementX();// const { return m_mouseMovementStruct.x; }
+            int GetMouseMovementY();// const { return m_mouseMovementStruct.y; }
+            int GetMouseWheelSpins(); //const { return m_mouseWheelSpins; }
             //////////////////////////
 
 
         private:
-            SDL_Window *m_win;
+            //SDL_Window *m_win;
             const Uint8* m_keyState;
             //void InputForPlayingUpdate();
             void SwitchCaseEventsForPlaying(SDL_Event &p_eventVariable);
