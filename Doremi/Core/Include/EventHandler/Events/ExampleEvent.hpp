@@ -6,15 +6,12 @@ Not needed for project. Could be removed when examples are no longer needed*/
 
 namespace Doremi
 {
-	namespace Core
-	{
-		struct ExampleEvent : public Event
-		{ 
-			ExampleEvent()
-			{
-				myInt = 0;
-			}
-			int myInt;
-		};
-	}
+    namespace Core
+    {
+        struct ExampleEvent : public Event
+        {
+            ExampleEvent() { myInt = 0; }
+            int myInt;
+        };
+    }
 }

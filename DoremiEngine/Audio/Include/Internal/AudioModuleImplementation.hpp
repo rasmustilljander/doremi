@@ -14,7 +14,7 @@ namespace DoremiEngine
     {
         class AudioModuleImplementation : public AudioModule
         {
-        public:
+            public:
             /**
                 TODO docs
             */

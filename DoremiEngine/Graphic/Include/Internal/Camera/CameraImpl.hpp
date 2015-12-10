@@ -11,14 +11,15 @@ namespace DoremiEngine
     {
         class CameraImpl : public Camera
         {
-        public:
-            //TODOKO add documents
+            public:
+            // TODOKO add documents
             CameraImpl();
             virtual ~CameraImpl();
             const CameraMatrices& GetCameraMatrices() const { return m_matrices; };
             void SetProjectionMatrix(const DirectX::XMFLOAT4X4& p_matrix);
             void SetViewMatrix(const DirectX::XMFLOAT4X4& p_matrix);
-        private:
+
+            private:
             CameraMatrices m_matrices;
         };
     }

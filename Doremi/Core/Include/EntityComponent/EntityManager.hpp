@@ -10,7 +10,7 @@ namespace Doremi
     {
         class EntityManager
         {
-        public:
+            public:
             static EntityManager* GetInstance();
 
             /** Adds entity and returns id of newly added entity*/
@@ -18,12 +18,9 @@ namespace Doremi
             /** Removes specified entity*/
             void RemoveEntity(int pEntityID);
             /** Returns last entity ID*/
-            const int GetLastEntity()
-            {
-                return mNextSlot;
-            }
+            const int GetLastEntity() { return mNextSlot; }
 
-        private:
+            private:
             EntityManager();
             ~EntityManager();
             static EntityManager* mSingleton;

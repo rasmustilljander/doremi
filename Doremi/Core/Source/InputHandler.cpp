@@ -7,22 +7,17 @@ namespace Doremi
 {
     namespace Core
     {
-        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            :m_sharedContext(p_sharedContext)
-        {
-        }
+        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
 
-        InputHandler::~InputHandler()
-        {
-        }
+        InputHandler::~InputHandler() {}
         void InputHandler::StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             m_singleton = new InputHandler(p_sharedContext);
         }
         void InputHandler::Initialize()
         {
-            //Setup the different inputmoves! (Used in the game)
+            // Setup the different inputmoves! (Used in the game)
             userCmdsPlaying[32] = UserCommandPlaying::Jump;
             userCmdsPlaying[119] = UserCommandPlaying::Forward;
             userCmdsPlaying[116] = UserCommandPlaying::Backward;
@@ -31,8 +26,8 @@ namespace Doremi
             userCmdsPlaying[1] = UserCommandPlaying::Fire;
             userCmdsPlaying[999] = UserCommandPlaying::ScrollWpnUp;
             userCmdsPlaying[998] = UserCommandPlaying::ScrollWpnDown;
-            
-            //Setup for the menyinput
+
+            // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;
             userCmdsMeny[3] = UserCommandMeny::RightClick;
             userCmdsMeny[13] = UserCommandMeny::Enter;
@@ -57,53 +52,50 @@ namespace Doremi
 
         InputHandler* InputHandler::GetInstance()
         {
-            //if (m_singleton == nullptr)
+            // if (m_singleton == nullptr)
             //{
             //    m_singleton = new InputHandler();
             //}
             return m_singleton;
-
-
         }
         void InputHandler::BuildMaskFromEngineForGame()
         {
             int t_sizeVector = m_keyboardInputFromModule.size();
 
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_keyboardInputFromModule[i]];
             }
 
             t_sizeVector = m_musInputFromModule.size();
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_musInputFromModule[i]];
             }
-            if (m_mouseWheelInput)
+            if(m_mouseWheelInput)
             {
-                if (m_mouseWheelInput>0)
+                if(m_mouseWheelInput > 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[999];
-
                 }
-                else if (m_mouseWheelInput<0)
+                else if(m_mouseWheelInput < 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[998];
                 }
             }
-        } 
+        }
 
         void InputHandler::BuildMaskFromEngineForMeny()
         {
             int t_sizeVector = m_keyboardInputFromModule.size();
 
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_keyboardInputFromModule[i]];
             }
 
             t_sizeVector = m_musInputFromModule.size();
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_musInputFromModule[i]];
             }
@@ -113,11 +105,11 @@ namespace Doremi
         {
             m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
             m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
-            if (m_mouseMoveX)
+            if(m_mouseMoveX)
             {
                 int hej = 0;
             }
-            if (m_mouseMoveY)
+            if(m_mouseMoveY)
             {
                 int hej = 0;
             }
@@ -128,22 +120,22 @@ namespace Doremi
         void InputHandler::PrintInputStructsDEBUG()
         {
             int t_forLoopSizeI = m_keyboardInputFromModule.size();
-            for (size_t i = 0; i < t_forLoopSizeI; ++i)
+            for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
                 std::cout << m_keyboardInputFromModule[i] << ", ";
             }
             int t_forLoopSizeII = m_musInputFromModule.size();
 
-            for (size_t i = 0; i < t_forLoopSizeII; ++i)
+            for(size_t i = 0; i < t_forLoopSizeII; ++i)
             {
                 std::cout << m_musInputFromModule[i] << ", ";
             }
-            if (t_forLoopSizeII || t_forLoopSizeI)
+            if(t_forLoopSizeII || t_forLoopSizeI)
             {
                 std::cout << std::endl;
             }
-            //bool t_printDebug = false;
-            //for (size_t i = 0; i < m_structArraySize; ++i)
+            // bool t_printDebug = false;
+            // for (size_t i = 0; i < m_structArraySize; ++i)
             //{
             //    if (m_inputForPlaying.keys[i])
             //    {
@@ -151,7 +143,7 @@ namespace Doremi
             //    }
 
             //}
-            //if (t_printDebug)
+            // if (t_printDebug)
             //{
             //    for (size_t i = 0; i < m_structArraySize; ++i)
             //    {
@@ -159,17 +151,17 @@ namespace Doremi
             //    }
             //    std::cout << std::endl;
             //}
-            //if (m_mouseWheelSpins != 0)
+            // if (m_mouseWheelSpins != 0)
             //{
             //    std::cout << m_mouseWheelSpins << std::endl;
             //}
 
-            //std::cout << m_keyboardButtonsDown.size() << std::endl;
-            //std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
+            // std::cout << m_keyboardButtonsDown.size() << std::endl;
+            // std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
         }
         void InputHandler::PrintInputMouseMovement()
         {
-            if (m_mouseMoveX != 0 || m_mouseMoveY != 0)
+            if(m_mouseMoveX != 0 || m_mouseMoveY != 0)
             {
                 std::cout << m_mouseMoveX << " : X, " << m_mouseMoveY << " : Y" << std::endl;
             }
@@ -178,16 +170,16 @@ namespace Doremi
         {
             UpdateInputsFromEngine();
 
-            //Do one of them TODOEA
+            // Do one of them TODOEA
             BuildMaskFromEngineForGame();
             BuildMaskFromEngineForMeny();
 
-            //PrintInputStructsDEBUG();
-            //PrintInputMouseMovement();
+            // PrintInputStructsDEBUG();
+            // PrintInputMouseMovement();
         }
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)
         {
-            //TODEA fixa keyconfiggen va
+            // TODEA fixa keyconfiggen va
         }
     }
 }

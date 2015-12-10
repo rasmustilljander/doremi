@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class Adress
         {
-        public:
+            public:
             /**
                 Returns port
             */
@@ -16,7 +16,7 @@ namespace DoremiEngine
             /**
                 Returns IP
             */
-            virtual  uint32_t GetIP() const = 0;
+            virtual uint32_t GetIP() const = 0;
 
             /**
                 Set the IP in format "p_a.p_b.p_c.p_d" as in "255.255.255.255", use ComposeAdress to

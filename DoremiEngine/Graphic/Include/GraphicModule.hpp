@@ -37,10 +37,10 @@ namespace DoremiEngine
             virtual int LoadShader(ShaderType p_shaderType, const std::string& p_fileName) = 0;
 
             /**
-            Set specified shader to active 
+            Set specified shader to active
             */
             virtual void BindShader(ShaderType p_shaderType, int p_shaderID) = 0;
-           
+
             /**
             Initializes DirectX
             */
@@ -49,7 +49,7 @@ namespace DoremiEngine
             /**
             Draw Object with the translation matrix specified (p_meshID = 0 is a unit box)
             */
-            virtual void Draw(const int& p_meshID, const int& p_textureID,const DirectX::XMFLOAT4X4& p_translationMatrix) = 0;
+            virtual void Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix) = 0;
 
             /**
             Computes after effects such as glow and lighting
@@ -61,13 +61,11 @@ namespace DoremiEngine
             */
             virtual void EndDraw() = 0;
             // TODORK add more interface functions
-           
         };
     }
 }
 
 extern "C" {
 typedef DoremiEngine::Graphic::GraphicModule* (*CREATE_GRAPHIC_MODULE)(const DoremiEngine::Core::SharedContext&);
-GRAPHIC_DLL_EXPORT DoremiEngine::Graphic::GraphicModule*
-CreateGraphicModule(const DoremiEngine::Core::SharedContext& p_context);
+GRAPHIC_DLL_EXPORT DoremiEngine::Graphic::GraphicModule* CreateGraphicModule(const DoremiEngine::Core::SharedContext& p_context);
 }

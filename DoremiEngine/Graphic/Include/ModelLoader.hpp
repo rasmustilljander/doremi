@@ -18,11 +18,12 @@ namespace DoremiEngine
         };
         class ModelLoader
         {
-        public:
+            public:
             ModelLoader();
             ~ModelLoader();
-            //Loads the mesh specified by filename and pushes vertices to device and changes given GraphicObject
-            bool LoadMesh(MeshInfo* o_meshInfo, const std::string& p_fileName, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device); //TODORK Implement load
+            // Loads the mesh specified by filename and pushes vertices to device and changes given GraphicObject
+            bool LoadMesh(MeshInfo* o_meshInfo, const std::string& p_fileName, ID3D11DeviceContext* p_deviceContext,
+                          ID3D11Device* p_device); // TODORK Implement load
             int LoadMaterial(const std::string& p_materialName);
             ID3D11ShaderResourceView* LoadTexture(const std::string& p_fileName, ID3D11Device* p_device);
         };

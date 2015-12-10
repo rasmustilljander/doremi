@@ -5,6 +5,10 @@ namespace DoremiEngine
     namespace Graphic
     {
 
-        enum class ShaderType { VertexShader, PixelShader };
+        enum class ShaderType
+        {
+            VertexShader,
+            PixelShader
+        };
     }
 }

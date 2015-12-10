@@ -8,21 +8,21 @@ namespace DoremiEngine
     {
         class MeshInfoImpl : public MeshInfo
         {
-        public:
+            public:
             MeshInfoImpl();
             virtual ~MeshInfoImpl();
 
-            //Get
+            // Get
             const size_t GetVerticeCount() { return m_verticeCount; }
-            ID3D11Buffer* GetBufferHandle() { return m_bufferHandle; } //TODOKO Might not work because of pre declaration
+            ID3D11Buffer* GetBufferHandle() { return m_bufferHandle; } // TODOKO Might not work because of pre declaration
             const std::string GetFileName() { return m_fileName; };
 
-            //Set
+            // Set
             void SetVerticeCount(size_t p_verticeCount) { m_verticeCount = p_verticeCount; }
             void SetFileName(std::string p_fileName) { m_fileName = p_fileName; }
             void SetBufferHandle(ID3D11Buffer* p_bufferHandle);
 
-        private:
+            private:
             size_t m_verticeCount;
             ID3D11Buffer* m_bufferHandle;
             std::string m_fileName;

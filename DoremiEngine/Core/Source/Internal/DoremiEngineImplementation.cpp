@@ -112,7 +112,7 @@ namespace DoremiEngine
                 LoadScriptModule(*m_sharedContext);
             }
 
-            if ((p_flags & EngineModuleEnum::INPUT) == EngineModuleEnum::INPUT)
+            if((p_flags & EngineModuleEnum::INPUT) == EngineModuleEnum::INPUT)
             {
                 LoadInputModule(*m_sharedContext);
             }
@@ -152,7 +152,7 @@ namespace DoremiEngine
         {
             char path[254];
             GetModuleFileNameA(NULL, path, 254);
-            std::string* directoryPath = new std::string(path);            
+            std::string* directoryPath = new std::string(path);
             o_sharedContext.SetWorkingDirectory(directoryPath->substr(0, directoryPath->length() - 10));
         }
 
@@ -162,13 +162,10 @@ namespace DoremiEngine
 
             if(m_audioLibrary != nullptr)
             {
-                CREATE_AUDIO_MODULE functionCreateAudioModule =
-                (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary,
-                                                                "CreateAudioModule");
+                CREATE_AUDIO_MODULE functionCreateAudioModule = (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary, "CreateAudioModule");
                 if(functionCreateAudioModule != nullptr)
                 {
-                    m_audioModule =
-                    static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
+                    m_audioModule = static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
                     m_audioModule->Startup();
                     o_sharedContext.SetAudioModule(m_audioModule);
                 }
@@ -190,12 +187,10 @@ namespace DoremiEngine
             if(m_graphicLibrary != nullptr)
             {
                 CREATE_GRAPHIC_MODULE functionCreateGraphicModule =
-                (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_graphicLibrary,
-                                                                  "CreateGraphicModule");
+                    (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_graphicLibrary, "CreateGraphicModule");
                 if(functionCreateGraphicModule != nullptr)
                 {
-                    m_graphicModule =
-                    static_cast<Graphic::GraphicModule*>(functionCreateGraphicModule(o_sharedContext));
+                    m_graphicModule = static_cast<Graphic::GraphicModule*>(functionCreateGraphicModule(o_sharedContext));
                     m_graphicModule->Startup();
                     o_sharedContext.SetGraphicModule(m_graphicModule);
                 }
@@ -224,15 +219,15 @@ namespace DoremiEngine
                     m_networkModule->Startup();
                     o_sharedContext.SetNetworkModule(m_networkModule);
                 }
-				else
-				{
-					// TODO logger
-				}
-			}
-			else
-			{
-				// TODO logger
-			}
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
         }
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
@@ -242,12 +237,10 @@ namespace DoremiEngine
             if(m_physicsLibrary != nullptr)
             {
                 CREATE_PHYSICS_MODULE functionCreatePhysicsModule =
-                (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary,
-                                                                  "CreatePhysicsModule");
+                    (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary, "CreatePhysicsModule");
                 if(functionCreatePhysicsModule != nullptr)
                 {
-                    m_physicsModule =
-                    static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
+                    m_physicsModule = static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
                     m_physicsModule->Startup();
                     o_sharedContext.SetPhysicsModule(m_physicsModule);
                 }
@@ -262,20 +255,16 @@ namespace DoremiEngine
             }
         }
 
-        void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext)
-        {
-        }
+        void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext) {}
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
             m_inputLibrary = DynamicLoader::LoadSharedLibrary("Input.dll");
 
-            if (m_inputLibrary != nullptr)
+            if(m_inputLibrary != nullptr)
             {
-                CREATE_INPUT_MODULE functionCreateInputModule =
-                    (CREATE_INPUT_MODULE)DynamicLoader::LoadProcess(m_inputLibrary,
-                        "CreateInputModule");
-                if (functionCreateInputModule != nullptr)
+                CREATE_INPUT_MODULE functionCreateInputModule = (CREATE_INPUT_MODULE)DynamicLoader::LoadProcess(m_inputLibrary, "CreateInputModule");
+                if(functionCreateInputModule != nullptr)
                 {
                     m_inputModule = static_cast<Input::InputModule*>(functionCreateInputModule(o_sharedContext));
                     m_inputModule->Startup();

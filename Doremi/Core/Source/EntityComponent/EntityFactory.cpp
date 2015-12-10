@@ -17,26 +17,20 @@ namespace Doremi
 
         EntityFactory* EntityFactory::GetInstance()
         {
-            if (mSingleton == nullptr)
+            if(mSingleton == nullptr)
             {
                 mSingleton = new EntityFactory();
             }
             return mSingleton;
         }
 
-        EntityFactory::EntityFactory()
-        {
-        }
+        EntityFactory::EntityFactory() {}
 
 
-        EntityFactory::~EntityFactory()
-        {
-        }
+        EntityFactory::~EntityFactory() {}
 
 
-        void EntityFactory::Initialize()
-        {
-        }
+        void EntityFactory::Initialize() {}
 
         void EntityFactory::RegisterEntityTemplate(Blueprints p_blueprintID, EntityBlueprint pComponents)
         {
@@ -53,7 +47,7 @@ namespace Doremi
             EntityID tNewEntityID = tEntityManager->AddEntity();
 
             // copy components
-            for (EntityBlueprint::iterator iter = tComponentMap.begin(); iter != tComponentMap.end(); ++iter)
+            for(EntityBlueprint::iterator iter = tComponentMap.begin(); iter != tComponentMap.end(); ++iter)
             {
                 // Add bitmask
                 tComponentTable->AddComponent(tNewEntityID, (int)iter->first);

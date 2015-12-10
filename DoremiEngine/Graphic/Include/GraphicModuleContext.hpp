@@ -9,10 +9,7 @@ namespace DoremiEngine
         {
             std::string m_workingDirectory;
             GraphicModuleImplementation* m_graphicModule;
-            GraphicModuleContext()
-            {
-
-            }
+            GraphicModuleContext() {}
         };
     }
 }

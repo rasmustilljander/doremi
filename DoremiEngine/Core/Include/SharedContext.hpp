@@ -32,7 +32,7 @@ namespace DoremiEngine
     {
         class ScriptModule;
     }
-    
+
     namespace Input
     {
         class InputModule;

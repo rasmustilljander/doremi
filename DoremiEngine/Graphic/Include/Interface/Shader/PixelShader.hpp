@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class PixelShader
         {
-        public:
+            public:
             virtual const std::string& GetShaderName() = 0;
             virtual ID3D11PixelShader* GetShaderHandle() = 0;
 

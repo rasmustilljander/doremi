@@ -11,16 +11,16 @@ namespace Doremi
         Each manager has its update method run once per game loop.
         Managers have to be put in the vector<Manager*> in GameCore
         for it to run*/
-		class Manager
+        class Manager
         {
-        public:
+            public:
             Manager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~Manager();
 
             /** Big update loop for every type of manager*/
             virtual void Update(double p_dt) = 0;
 
-        protected:
+            protected:
             /** Engine-context form which specific interfaces can be accessed*/
             const DoremiEngine::Core::SharedContext& m_sharedContext;
         };

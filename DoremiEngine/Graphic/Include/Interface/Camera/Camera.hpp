@@ -10,14 +10,13 @@ namespace DoremiEngine
         {
             DirectX::XMFLOAT4X4 ProjectionMatrix;
             DirectX::XMFLOAT4X4 ViewMatrix;
-            CameraMatrices()
-            {}
+            CameraMatrices() {}
         };
         class Camera
         {
-        public:
-            //TODOKO add documents
-            virtual const CameraMatrices&  GetCameraMatrices() const =0;
+            public:
+            // TODOKO add documents
+            virtual const CameraMatrices& GetCameraMatrices() const = 0;
             virtual void SetProjectionMatrix(const DirectX::XMFLOAT4X4& p_matrix) = 0;
             virtual void SetViewMatrix(const DirectX::XMFLOAT4X4& p_matrix) = 0;
         };

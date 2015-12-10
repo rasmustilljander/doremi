@@ -15,7 +15,7 @@ namespace DoremiEngine
         struct GraphicModuleContext;
         class SubModuleManagerImpl : public SubModuleManager
         {
-        public:
+            public:
             SubModuleManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~SubModuleManagerImpl();
             void Initialize() override;
@@ -25,7 +25,8 @@ namespace DoremiEngine
             Texture2DManager& GetTexuter2DManager() override;
             DirectXManager& GetDirectXManager() override;
             CameraManager& GetCameraManager() override;
-        private:
+
+            private:
             const GraphicModuleContext& m_graphicContext;
             MeshManagerImpl* m_meshManager;
             ParticleSystemManagerImpl* m_particleSystemManager;

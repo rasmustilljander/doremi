@@ -12,7 +12,7 @@ namespace DoremiEngine
         class CameraManager;
         class SubModuleManager
         {
-        public:
+            public:
             virtual void Initialize() = 0;
             virtual MeshManager& GetMeshManager() = 0;
             virtual ParticleSystemManager& GetParticleSystemManager() = 0;

@@ -23,16 +23,13 @@ namespace Doremi
             /** Checks if the entity specified has the entities in the mask. Mask has to be created manually*/
             bool HasComponents(EntityID p_id, int p_mask);
 
-            /** 
+            /**
             Creates an entity according to the provided blueprint id
             Also returns EntityID of newly created entity*/
             int CreateEntity(Blueprints p_blueprintID);
 
             /** Returns desired component. Example: GetComponentFromStorage<ComponentName>(id);*/
-            template <class T> T* GetComponentFromStorage(EntityID p_id)
-            {
-                return GetComponent<T>(p_id);
-            }
+            template <class T> T* GetComponentFromStorage(EntityID p_id) { return GetComponent<T>(p_id); }
 
             /** Adds a new component to the bit mask*/
             void AddComponent(int p_entityID, int p_mask);
@@ -42,7 +39,8 @@ namespace Doremi
 
             /** Removes the entire entity at the specific location*/
             void RemoveEntity(int p_entityID);
-        private:
+
+            private:
             EntityHandler();
             ~EntityHandler();
             static EntityHandler* m_singleton;

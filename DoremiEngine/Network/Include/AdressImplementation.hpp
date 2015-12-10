@@ -40,26 +40,17 @@ namespace DoremiEngine
             /**
                 TODOCM doct
             */
-            uint16_t GetPort() const override
-            {
-                return m_port;
-            };
+            uint16_t GetPort() const override { return m_port; };
 
             /**
                 Returns IP
             */
-            uint32_t GetIP() const override
-            {
-                return m_IP;
-            };
+            uint32_t GetIP() const override { return m_IP; };
 
             /**
                 Returns composed Adress used for socket binding
             */
-            SOCKADDR_IN GetAdress() const
-            {
-                return m_Adress;
-            };
+            SOCKADDR_IN GetAdress() const { return m_Adress; };
 
             /**
                 Set the IP in format "p_a.p_b.p_c.p_d" as in "255.255.255.255", use ComposeAdress to
@@ -88,10 +79,7 @@ namespace DoremiEngine
             /**
                 Returns the IP as a string
             */
-            std::string GetIPToString() const override
-            {
-                return m_IPString;
-            };
+            std::string GetIPToString() const override { return m_IPString; };
 
             /**
                 Check if adress have same IP and Port

@@ -14,20 +14,15 @@ namespace DoremiEngine
 {
     namespace Network
     {
-        NetworkModuleImplementation::NetworkModuleImplementation() : m_isInitialized(false)
-        {
-        }
+        NetworkModuleImplementation::NetworkModuleImplementation() : m_isInitialized(false) {}
 
-        NetworkModuleImplementation::~NetworkModuleImplementation()
-        {
-        }
+        NetworkModuleImplementation::~NetworkModuleImplementation() {}
 
         void NetworkModuleImplementation::Startup()
         {
             if(m_isInitialized)
             {
-                throw std::runtime_error(
-                "Failed to Startup Network Module, function already called.");
+                throw std::runtime_error("Failed to Startup Network Module, function already called.");
             }
 
 #ifdef WIN32
@@ -78,7 +73,7 @@ namespace DoremiEngine
             std::map<size_t, Socket*>::iterator iter = m_socketHandleMap.find(p_handle);
 
             // If none is found, error
-            if (iter == m_socketHandleMap.end())
+            if(iter == m_socketHandleMap.end())
             {
                 throw std::runtime_error("Invalid socketHandle, no such Socket exists.");
             }
@@ -97,18 +92,18 @@ namespace DoremiEngine
             return SendSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket)
+        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocket);
 
             // Attempt to recieve data, returns true if all data is sent
             bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize);
-            
+
             return RecieveSuccessful;
         }
-        
-        bool NetworkModuleImplementation::SendUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo)
+
+        bool NetworkModuleImplementation::SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo)
         {
             // Get socket from map
             Socket* socketToSendTo = GetSocketFromMap(p_sendToSocketHandle);
@@ -116,11 +111,11 @@ namespace DoremiEngine
             // Send Message ( will bind socket implicit)
             bool SendSuccessful = socketToSendTo->SendUDP(*(AdressImplementation*)p_adressToSendTo, p_data, p_dataSize);
 
-            //return SendSuccessful;
+            // return SendSuccessful;
             return true;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut)
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
@@ -131,7 +126,7 @@ namespace DoremiEngine
             return RecieveSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle)
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
@@ -235,10 +230,10 @@ namespace DoremiEngine
 
             return key;
         }
-       
+
         void NetworkModuleImplementation::Shutdown()
         {
-            // TODO move shutdown to other place
+// TODO move shutdown to other place
 #ifdef WIN32
             int Result = WSACleanup();
             if(Result == SOCKET_ERROR)

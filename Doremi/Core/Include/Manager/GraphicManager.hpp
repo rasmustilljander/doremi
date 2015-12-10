@@ -8,7 +8,7 @@ namespace Doremi
     {
         class GraphicManager : public Manager, public Subscriber
         {
-        public:
+            public:
             GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GraphicManager();
 

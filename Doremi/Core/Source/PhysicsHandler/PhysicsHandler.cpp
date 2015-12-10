@@ -9,10 +9,9 @@ namespace Doremi
     {
         PhysicsHandler* PhysicsHandler::m_singleton = nullptr;
 
-        PhysicsHandler::PhysicsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) 
-            : m_sharedContext(p_sharedContext) 
+        PhysicsHandler::PhysicsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
-            m_sharedContext.GetPhysicsModule().StartPhysX(); //TODOJB probably silly to have here
+            m_sharedContext.GetPhysicsModule().StartPhysX(); // TODOJB probably silly to have here
         }
         PhysicsHandler::~PhysicsHandler() {}
 
@@ -29,9 +28,6 @@ namespace Doremi
             m_sharedContext.GetPhysicsModule().StartPhysX();
         }
 
-        void PhysicsHandler::UpdatePhysics(float p_dt)
-        {
-            m_sharedContext.GetPhysicsModule().Update(p_dt);
-        }
+        void PhysicsHandler::UpdatePhysics(float p_dt) { m_sharedContext.GetPhysicsModule().Update(p_dt); }
     }
 }

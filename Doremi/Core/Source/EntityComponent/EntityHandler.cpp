@@ -29,34 +29,16 @@ namespace Doremi
             EntityFactory::GetInstance()->RegisterEntityTemplate(p_blueprintID, p_blueprint);
         }
 
-        int EntityHandler::GetLastEntityIndex()
-        {
-            return EntityManager::GetInstance()->GetLastEntity();
-        }
+        int EntityHandler::GetLastEntityIndex() { return EntityManager::GetInstance()->GetLastEntity(); }
 
-        bool EntityHandler::HasComponents(EntityID p_id, int p_mask)
-        {
-            return ComponentTable::GetInstance()->HasComponent(p_id, p_mask);
-        }
+        bool EntityHandler::HasComponents(EntityID p_id, int p_mask) { return ComponentTable::GetInstance()->HasComponent(p_id, p_mask); }
 
-        int EntityHandler::CreateEntity(Blueprints p_blueprintID)
-        {
-            return EntityFactory::GetInstance()->CreateEntity(p_blueprintID);
-        }
+        int EntityHandler::CreateEntity(Blueprints p_blueprintID) { return EntityFactory::GetInstance()->CreateEntity(p_blueprintID); }
 
-        void EntityHandler::AddComponent(int p_entityID, int p_mask)
-        {
-            ComponentTable::GetInstance()->AddComponent(p_entityID, p_mask);
-        }
+        void EntityHandler::AddComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->AddComponent(p_entityID, p_mask); }
 
-        void EntityHandler::RemoveComponent(int p_entityID, int p_mask)
-        {
-            ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask);
-        }
+        void EntityHandler::RemoveComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask); }
 
-        void EntityHandler::RemoveEntity(int p_entityID)
-        {
-            EntityManager::GetInstance()->RemoveEntity(p_entityID);
-        }
+        void EntityHandler::RemoveEntity(int p_entityID) { EntityManager::GetInstance()->RemoveEntity(p_entityID); }
     }
 }

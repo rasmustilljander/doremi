@@ -7,9 +7,6 @@ namespace DoremiEngine
     {
         MeshInfoImpl::MeshInfoImpl() {}
         MeshInfoImpl::~MeshInfoImpl() {}
-        void MeshInfoImpl::SetBufferHandle(ID3D11Buffer* p_bufferHandle)
-        {
-            m_bufferHandle = p_bufferHandle;
-        }
+        void MeshInfoImpl::SetBufferHandle(ID3D11Buffer* p_bufferHandle) { m_bufferHandle = p_bufferHandle; }
     }
 }

@@ -17,7 +17,7 @@ namespace DoremiEngine
         */
         class AudioModule : public DoremiEngine::Core::EngineModule
         {
-        public:
+            public:
             /**
             Updates the audiomodule
             */
@@ -66,8 +66,8 @@ namespace DoremiEngine
             /**
             Sets the position and velocity of a sound
             */
-            virtual int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz,
-                float p_velx, float p_vely, float p_velz, const size_t& p_channelID) = 0;
+            virtual int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz,
+                                                    const size_t& p_channelID) = 0;
 
             /**
             Sets the listener position
@@ -88,7 +88,6 @@ namespace DoremiEngine
 }
 
 extern "C" {
-    typedef DoremiEngine::Audio::AudioModule* (*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
-    AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule*
-        CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
+typedef DoremiEngine::Audio::AudioModule* (*CREATE_AUDIO_MODULE)(const DoremiEngine::Core::SharedContext&);
+AUDIO_DLL_EXPORT DoremiEngine::Audio::AudioModule* CreateAudioModule(const DoremiEngine::Core::SharedContext& p_context);
 }

@@ -9,7 +9,7 @@ namespace Doremi
 
         ComponentTable* ComponentTable::GetInstance()
         {
-            if (mSingleton == nullptr)
+            if(mSingleton == nullptr)
             {
                 mSingleton = new ComponentTable();
             }
@@ -24,15 +24,13 @@ namespace Doremi
         }
 
 
-        ComponentTable::~ComponentTable()
-        {
-        }
+        ComponentTable::~ComponentTable() {}
 
         bool ComponentTable::HasComponent(int pEntityID, int pMask)
         {
             int tLineToCheck = mComponentTable[pEntityID];
 
-            if ((tLineToCheck & pMask) == pMask) // then there are the components from mask
+            if((tLineToCheck & pMask) == pMask) // then there are the components from mask
             {
                 return true;
             }
@@ -61,9 +59,6 @@ namespace Doremi
             mComponentTable[pEntityID] = tLineToRemoveFrom;
         }
 
-        void ComponentTable::RemoveEntity(int pEntityID)
-        {
-            mComponentTable[pEntityID] = 0;
-        }
+        void ComponentTable::RemoveEntity(int pEntityID) { mComponentTable[pEntityID] = 0; }
     }
 }

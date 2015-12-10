@@ -27,25 +27,20 @@ namespace Doremi
 {
     namespace Core
     {
-        ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            :Manager(p_sharedContext)
+        ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
         {
-			EventHandler::GetInstance()->Subscribe(Events::Example, this);
-            
+            EventHandler::GetInstance()->Subscribe(Events::Example, this);
         }
 
-        ExampleManager::~ExampleManager()
-        {
-
-        }
+        ExampleManager::~ExampleManager() {}
 
 
         void ExampleManager::Update(double p_dt)
-		{
-			//Example on how to create and Broadcast a event
-			ExampleEvent* myEvent = new ExampleEvent();
-			myEvent->eventType = Events::Example;
-			myEvent->myInt = 42;
+        {
+            // Example on how to create and Broadcast a event
+            ExampleEvent* myEvent = new ExampleEvent();
+            myEvent->eventType = Events::Example;
+            myEvent->myInt = 42;
             EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
             // Loop through all entities
@@ -64,45 +59,47 @@ namespace Doremi
 
                     // Instruct engine
                     m_sharedContext.GetPhysicsModule().ExampleMethod(t_example->posX);
-                    //Give instructions where we want engine to alter data
+                    // Give instructions where we want engine to alter data
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example->posX, &t_example->posY);
-                    //Give instructions to engine where we want complex data to be changed
+                    // Give instructions to engine where we want complex data to be changed
                     m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
 
-                    //Test run GraphicsModule
+                    // Test run GraphicsModule
 
-                    m_sharedContext.GetInputModule().Update();//TODOEA
-
+                    m_sharedContext.GetInputModule().Update(); // TODOEA
                 }
             }
-            //Test run GraphicsModule
-            //Should obviously not be here....
-            //Creates a rotating translation matrix for putting out the unit box
-            //static float rot = 0;
-            //rot += 0.005f;
-            //DirectX::XMFLOAT4X4 world;
-            //DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
+            // Test run GraphicsModule
+            // Should obviously not be here....
+            // Creates a rotating translation matrix for putting out the unit box
+            // static float rot = 0;
+            // rot += 0.005f;
+            // DirectX::XMFLOAT4X4 world;
+            // DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0,
+            // 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
 
-            //DoremiEngine::Graphic::MeshInfo* temp = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test"); //TODOKO Remove memory leak
-            //DoremiEngine::Graphic::MaterialInfo* temp1 = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TEST");
-            //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*temp, *temp1, world);
+            // DoremiEngine::Graphic::MeshInfo* temp =
+            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test"); //TODOKO Remove memory leak
+            // DoremiEngine::Graphic::MaterialInfo* temp1 =
+            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TEST");
+            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*temp, *temp1, world);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         }
-		void ExampleManager::OnEvent(Event* p_event)
-		{
-			// Check to see what event was received and do something with it (Might be changed to callback functions instead)
-			switch (p_event->eventType)
-			{
-			case Events::Example:
-			{
-				//Cast the event to the correct format
-				ExampleEvent* t_event = (ExampleEvent*)p_event;
-				int t_intFromEvent = t_event->myInt;
-				break;
-			}
-			default:
-				break;
-			}
-		}
+        void ExampleManager::OnEvent(Event* p_event)
+        {
+            // Check to see what event was received and do something with it (Might be changed to callback functions instead)
+            switch(p_event->eventType)
+            {
+                case Events::Example:
+                {
+                    // Cast the event to the correct format
+                    ExampleEvent* t_event = (ExampleEvent*)p_event;
+                    int t_intFromEvent = t_event->myInt;
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
 }

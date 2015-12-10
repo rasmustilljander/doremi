@@ -7,21 +7,16 @@ namespace DoremiEngine
 {
     namespace Audio
     {
-        AudioModuleImplementation::AudioModuleImplementation(const Core::SharedContext& p_sharedContext)
-        : m_sharedContext(p_sharedContext)
-        {
-        }
+        AudioModuleImplementation::AudioModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
-        AudioModuleImplementation::~AudioModuleImplementation()
-        {
-        }
-        
+        AudioModuleImplementation::~AudioModuleImplementation() {}
+
         void AudioModuleImplementation::ERRCHECK(const FMOD_RESULT& p_Result)
         {
-            if (p_Result != FMOD_OK)
+            if(p_Result != FMOD_OK)
             {
                 printf("FMOD error! (%d) %s\n", p_Result, FMOD_ErrorString(p_Result));
-                //exit(5);
+                // exit(5);
             }
         }
 
@@ -30,7 +25,7 @@ namespace DoremiEngine
             m_fmodResult = FMOD::System_Create(&m_fmodSystem);
             ERRCHECK(m_fmodResult);
             m_fmodResult = m_fmodSystem->getVersion(&m_fmodVersion);
-            if (m_fmodVersion < FMOD_VERSION)
+            if(m_fmodVersion < FMOD_VERSION)
             {
                 printf("Error!  You are using an old version of FMOD %08x.  This program requires %08x\n", m_fmodVersion, FMOD_VERSION);
                 return;
@@ -42,7 +37,7 @@ namespace DoremiEngine
         void AudioModuleImplementation::Shutdown()
         {
             size_t t_soundBufferLength = m_fmodSoundBuffer.size();
-            for (size_t i = 0; i < t_soundBufferLength; i++)
+            for(size_t i = 0; i < t_soundBufferLength; i++)
             {
                 m_fmodResult = m_fmodSoundBuffer[i]->release();
                 ERRCHECK(m_fmodResult);
@@ -95,12 +90,12 @@ namespace DoremiEngine
         }
 
         int AudioModuleImplementation::SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
-            float p_upx, float p_upy, float p_upz)
+                                                      float p_upx, float p_upy, float p_upz)
         {
-            FMOD_VECTOR forward = { p_forwardx, p_forwardy, p_forwardz };
-            FMOD_VECTOR up = { p_upx, p_upy, p_upz };
-            FMOD_VECTOR listenerPos = { p_posx, p_posy, p_posz };
-            
+            FMOD_VECTOR forward = {p_forwardx, p_forwardy, p_forwardz};
+            FMOD_VECTOR up = {p_upx, p_upy, p_upz};
+            FMOD_VECTOR listenerPos = {p_posx, p_posy, p_posz};
+
             m_fmodResult = m_fmodSystem->set3DListenerAttributes(0, &listenerPos, 0, &forward, &up);
             ERRCHECK(m_fmodResult);
             return 0;
@@ -158,10 +153,7 @@ namespace DoremiEngine
             return 0;
         }
 
-        void AudioModuleImplementation::Update()
-        {
-            m_fmodSystem->update();
-        }
+        void AudioModuleImplementation::Update() { m_fmodSystem->update(); }
 
         unsigned int AudioModuleImplementation::GetRecordPointer()
         {
@@ -182,17 +174,17 @@ namespace DoremiEngine
         size_t AudioModuleImplementation::SetupRecording(bool p_loop)
         {
             FMOD::Sound* t_fmodSound;
-            FMOD_CREATESOUNDEXINFO exinfo; 
+            FMOD_CREATESOUNDEXINFO exinfo;
             memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
             exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
             exinfo.numchannels = 1;
             exinfo.format = FMOD_SOUND_FORMAT_PCM16;
             exinfo.defaultfrequency = 48000;
             exinfo.length = exinfo.defaultfrequency * sizeof(short) * exinfo.numchannels * 5;
-            
-            if (p_loop)
+
+            if(p_loop)
             {
-                m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_NORMAL  | FMOD_OPENUSER, &exinfo, &t_fmodSound);
+                m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_NORMAL | FMOD_OPENUSER, &exinfo, &t_fmodSound);
             }
             else
             {
@@ -231,9 +223,9 @@ namespace DoremiEngine
 
             float max = 0;
             size_t highestFrequencyBand = 0;
-            for (size_t i = 0; i < 8192; i++)
+            for(size_t i = 0; i < 8192; i++)
             {
-                if (spectrum[i]>0.0001f && spectrum[i] > max)
+                if(spectrum[i] > 0.0001f && spectrum[i] > max)
                 {
                     max = spectrum[i];
                     highestFrequencyBand = i;
@@ -255,7 +247,6 @@ namespace DoremiEngine
 
 DoremiEngine::Audio::AudioModule* CreateAudioModule(const DoremiEngine::Core::SharedContext& p_sharedContext)
 {
-    DoremiEngine::Audio::AudioModule* audio =
-    new DoremiEngine::Audio::AudioModuleImplementation(p_sharedContext);
+    DoremiEngine::Audio::AudioModule* audio = new DoremiEngine::Audio::AudioModuleImplementation(p_sharedContext);
     return audio;
 }

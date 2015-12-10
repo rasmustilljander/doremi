@@ -17,7 +17,7 @@ namespace DoremiEngine
         */
         class InputModule : public DoremiEngine::Core::EngineModule
         {
-        public:
+            public:
             /**
             TODO docs
             */
@@ -33,28 +33,27 @@ namespace DoremiEngine
             */
             virtual void Shutdown() = 0;
             virtual void Update() = 0;
-            virtual int CreateWindowSDL(int p_width, int p_height) = 0;//Returns 1 if a window is created
-            virtual void PrintInputStructsDEBUG() = 0; //TODOEA Ta bort i slutet kanske
-            virtual void PrintInputMouseMovement() = 0;//TODEA Ta bort skiten slutet
+            virtual int CreateWindowSDL(int p_width, int p_height) = 0; // Returns 1 if a window is created
+            virtual void PrintInputStructsDEBUG() = 0; // TODOEA Ta bort i slutet kanske
+            virtual void PrintInputMouseMovement() = 0; // TODEA Ta bort skiten slutet
 
             /////GET//////////////////
             virtual const std::vector<int> GetKeyBoardInput() const = 0;
             virtual const std::vector<int> GetMouseButtonInput() const = 0;
-            //virtual const int GetMouseMovementX() const = 0;
-            //virtual const int GetMouseMovementY() const = 0;
+            // virtual const int GetMouseMovementX() const = 0;
+            // virtual const int GetMouseMovementY() const = 0;
             virtual int GetMouseMovementX() = 0;
             virtual int GetMouseMovementY() = 0;
             virtual int GetMouseWheelSpins() = 0;
-            //TODOEA Test med pekare. FInns med pekare om vi vill speeda upp allt. 
-            //Tar bort 4 gets per update. o gets från managers.
-            //int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }
+            // TODOEA Test med pekare. FInns med pekare om vi vill speeda upp allt.
+            // Tar bort 4 gets per update. o gets från managers.
+            // int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }
             //////////////////////////
         };
     }
 }
 
 extern "C" {
-    typedef DoremiEngine::Input::InputModule* (*CREATE_INPUT_MODULE)(const DoremiEngine::Core::SharedContext&);
-    INPUT_DLL_EXPORT DoremiEngine::Input::InputModule*
-        CreateInputModule(const DoremiEngine::Core::SharedContext& p_context);
+typedef DoremiEngine::Input::InputModule* (*CREATE_INPUT_MODULE)(const DoremiEngine::Core::SharedContext&);
+INPUT_DLL_EXPORT DoremiEngine::Input::InputModule* CreateInputModule(const DoremiEngine::Core::SharedContext& p_context);
 }

@@ -33,13 +33,9 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
 }
 
 
-template <class T> StorageShelf<T>::StorageShelf()
-{
-}
+template <class T> StorageShelf<T>::StorageShelf() {}
 
-template <class T> StorageShelf<T>::~StorageShelf()
-{
-}
+template <class T> StorageShelf<T>::~StorageShelf() {}
 
 
 // This is the magic about singletons

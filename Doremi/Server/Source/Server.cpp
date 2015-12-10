@@ -10,13 +10,9 @@
 
 namespace Doremi
 {
-    ServerMain::ServerMain()
-    {
-    }
+    ServerMain::ServerMain() {}
 
-    ServerMain::~ServerMain()
-    {
-    }
+    ServerMain::~ServerMain() {}
 
     void ServerMain::Start()
     {

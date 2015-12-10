@@ -8,10 +8,7 @@ namespace Doremi
         */
         struct OrientationComponent
         {
-            OrientationComponent()
-            {
-            }
+            OrientationComponent() {}
         };
-
     }
 }

@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class GraphicMain;
         class SubModuleManagerImpl;
-        
+
         class GraphicModuleImplementation : public GraphicModule
         {
             public:
@@ -42,7 +42,7 @@ namespace DoremiEngine
             Load model from specified file. Returns modelID
             */
             int LoadObject(const std::string& p_fileName, const std::string& p_materialFileName) override;
-            
+
             /**
             Load shader from specified file. Returns shaderID
             */
@@ -73,7 +73,7 @@ namespace DoremiEngine
             */
             void EndDraw() override;
 
-        private:
+            private:
             const Core::SharedContext& m_sharedContext;
             GraphicMain* m_graphicMain;
             SubModuleManagerImpl* m_subModuleManger;

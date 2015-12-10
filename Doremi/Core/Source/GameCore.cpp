@@ -124,8 +124,6 @@ namespace Doremi
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
-
-
             ////////////////Example only////////////////
             // Create manager
 
@@ -176,7 +174,7 @@ namespace Doremi
         {
             START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
 
-            if (libInitializeEngine == nullptr)
+            if(libInitializeEngine == nullptr)
             {
                 // TODORT proper logging
                 throw std::runtime_error("Failed to load engine - please check your installation.");
@@ -184,7 +182,7 @@ namespace Doremi
 
             m_stopEngineFunction = (STOP_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StopEngine");
 
-            if (m_stopEngineFunction == nullptr)
+            if(m_stopEngineFunction == nullptr)
             {
                 // TODORT proper logging
                 throw std::runtime_error("Failed to load engine - please check your installation.");

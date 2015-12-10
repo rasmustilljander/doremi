@@ -69,22 +69,22 @@ namespace DoremiEngine
             /**
                 Recieve data from a specified socket, returns true if successful
             */
-            virtual bool RecieveReliableData(void* t_data, const uint32_t &t_dataSize, const size_t& p_recieveFromSocket) = 0;
+            virtual bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket) = 0;
 
             /**
                 Send data to a specific socket with adress, returns true if successfull
             */
-            virtual bool SendUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) = 0;
+            virtual bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) = 0;
 
             /**
                 Recieve data from a specific socket, Adress is fetched and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut) = 0;
+            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut) = 0;
 
             /**
                 Recieve data from a specific socket and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t &p_dataSize, const size_t& p_recieveFromSocketHandle) = 0;
+            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle) = 0;
 
             /**
                 Create a socket and connects to a reliable standby socket
@@ -122,6 +122,5 @@ namespace DoremiEngine
 
 extern "C" {
 typedef DoremiEngine::Network::NetworkModule* (*CREATE_NETWORK_MODULE)(const DoremiEngine::Core::SharedContext&);
-NETWORK_DLL_EXPORT DoremiEngine::Network::NetworkModule*
-CreateNetworkModule(const DoremiEngine::Core::SharedContext& p_context);
+NETWORK_DLL_EXPORT DoremiEngine::Network::NetworkModule* CreateNetworkModule(const DoremiEngine::Core::SharedContext& p_context);
 }

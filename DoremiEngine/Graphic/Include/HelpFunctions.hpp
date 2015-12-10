@@ -18,12 +18,12 @@ namespace DoremiEngine
             delete[] buf;
             return r;
         }
-        
+
         static bool CheckHRESULT(HRESULT p_result, const std::string& p_errorMessage)
         {
-            if (FAILED(p_result))
+            if(FAILED(p_result))
             {
-                //TODOKO Print error or send to debugg logger
+                // TODOKO Print error or send to debugg logger
                 std::cout << p_errorMessage << std::endl;
                 return false;
             }

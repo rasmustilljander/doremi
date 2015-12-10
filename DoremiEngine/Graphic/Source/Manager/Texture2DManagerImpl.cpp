@@ -8,10 +8,6 @@ namespace DoremiEngine
     {
         Texture2DManagerImpl::Texture2DManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext) {}
         Texture2DManagerImpl::~Texture2DManagerImpl() {}
-        Texture2D* Texture2DManagerImpl::BuildTexture2D(const std::string& m_fileName) 
-        {
-            return nullptr;
-        }
-        
+        Texture2D* Texture2DManagerImpl::BuildTexture2D(const std::string& m_fileName) { return nullptr; }
     }
 }

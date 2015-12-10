@@ -15,7 +15,7 @@ namespace Doremi
     {
         class EntityFactory
         {
-        public:
+            public:
             static EntityFactory* GetInstance();
 
             void Initialize();
@@ -25,7 +25,7 @@ namespace Doremi
             EntityID CreateEntity(Blueprints p_blueprintID);
 
 
-        private:
+            private:
             EntityFactory();
             ~EntityFactory();
             static EntityFactory* mSingleton;

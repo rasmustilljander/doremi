@@ -14,13 +14,9 @@
 
 namespace Doremi
 {
-    GameMain::GameMain()
-    {
-    }
+    GameMain::GameMain() {}
 
-    GameMain::~GameMain()
-    {
-    }
+    GameMain::~GameMain() {}
 
     void GameMain::Start()
     {

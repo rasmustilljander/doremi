@@ -6,13 +6,12 @@ namespace DoremiEngine
     {
         struct MeshInfo
         {
-        public:
-            MeshInfo() {};
-            ~MeshInfo() {};
+            public:
+            MeshInfo(){};
+            ~MeshInfo(){};
 
             int m_vertexCount;
             ID3D11Buffer* m_bufferHandle;
-            
         };
     }
 }

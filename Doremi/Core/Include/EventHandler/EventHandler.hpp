@@ -12,33 +12,33 @@ using namespace std;
 
 namespace Doremi
 {
-	namespace Core
-	{
-		struct Event;
-		enum class Events;
-		class Subscriber;
-		class EventHandler
-		{
-		public:
-			/** Is a singleton. Use this method to get the EventManager*/
-			static EventHandler* GetInstance();
-			/** Puts event in mailbox to be handled by the event handler*/
-			void BroadcastEvent(Event* p_event);
-			/** Subscribes to a certain event type*/
-			void Subscribe(Events p_eventType, Subscriber* p_subscriber);
-			/** Begin processing events by calling OnEvent in all subscribers*/
-			void DeliverEvents();
-		private:
-			// Private constructors because Singleton
-			EventHandler();
-			~EventHandler();
+    namespace Core
+    {
+        struct Event;
+        enum class Events;
+        class Subscriber;
+        class EventHandler
+        {
+            public:
+            /** Is a singleton. Use this method to get the EventManager*/
+            static EventHandler* GetInstance();
+            /** Puts event in mailbox to be handled by the event handler*/
+            void BroadcastEvent(Event* p_event);
+            /** Subscribes to a certain event type*/
+            void Subscribe(Events p_eventType, Subscriber* p_subscriber);
+            /** Begin processing events by calling OnEvent in all subscribers*/
+            void DeliverEvents();
 
-			static EventHandler* m_singleton;
-			//A map between the event type and the classes subscribing to the event
-			unordered_map<Events, vector<Subscriber*>> m_broadcastMap;
-			//Big ass mailbox for storing the events for later delivery
-			vector<Event*> m_mailBox;
-		};
-	}
+            private:
+            // Private constructors because Singleton
+            EventHandler();
+            ~EventHandler();
+
+            static EventHandler* m_singleton;
+            // A map between the event type and the classes subscribing to the event
+            unordered_map<Events, vector<Subscriber*>> m_broadcastMap;
+            // Big ass mailbox for storing the events for later delivery
+            vector<Event*> m_mailBox;
+        };
+    }
 }
-

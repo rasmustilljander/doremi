@@ -17,13 +17,9 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        CameraManagerImpl::CameraManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
-        {
-        }
+        CameraManagerImpl::CameraManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext) {}
 
-        CameraManagerImpl::~CameraManagerImpl()
-        {
-        }
+        CameraManagerImpl::~CameraManagerImpl() {}
 
         void CameraManagerImpl::Initialize()
         {
@@ -39,11 +35,9 @@ namespace DoremiEngine
             bd.StructureByteStride = 0;
             m_directX.GetDevice()->CreateBuffer(&bd, NULL, &m_cameraBuffer);
             using namespace DirectX;
-
-
         }
 
-        Camera* CameraManagerImpl::BuildNewCamera( DirectX::XMFLOAT4X4& p_projectionMatrix)
+        Camera* CameraManagerImpl::BuildNewCamera(DirectX::XMFLOAT4X4& p_projectionMatrix)
         {
             using namespace DirectX;
             Camera* newCamera = new CameraImpl();

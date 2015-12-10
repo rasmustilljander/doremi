@@ -17,10 +17,7 @@ namespace DoremiEngine
 
         GraphicModuleImplementation::~GraphicModuleImplementation() {}
 
-        SubModuleManager& GraphicModuleImplementation::GetSubModuleManager()
-        {
-            return *m_subModuleManger;
-        }
+        SubModuleManager& GraphicModuleImplementation::GetSubModuleManager() { return *m_subModuleManger; }
 
         void GraphicModuleImplementation::Update() {}
 
@@ -35,9 +32,7 @@ namespace DoremiEngine
             }
         }
 
-        void GraphicModuleImplementation::Shutdown()
-        {
-        }
+        void GraphicModuleImplementation::Shutdown() {}
 
         int GraphicModuleImplementation::LoadObject(const std::string& p_fileName, const std::string& p_materialFileName)
         {
@@ -51,28 +46,22 @@ namespace DoremiEngine
 
         void GraphicModuleImplementation::InitializeDirectX()
         {
-            //TODORK call GraphicMain metod to init directX
+            // TODORK call GraphicMain metod to init directX
         }
 
-        void GraphicModuleImplementation::BindShader(ShaderType p_shaderType, int p_shaderID)
-        {
-            m_graphicMain->BindShader(p_shaderType, p_shaderID);
-        }
+        void GraphicModuleImplementation::BindShader(ShaderType p_shaderType, int p_shaderID) { m_graphicMain->BindShader(p_shaderType, p_shaderID); }
 
         void GraphicModuleImplementation::Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix)
         {
-            m_graphicMain->Draw(p_meshID, p_textureID, p_translationMatrix); //TODO Decide if we should use direcx math
+            m_graphicMain->Draw(p_meshID, p_textureID, p_translationMatrix); // TODO Decide if we should use direcx math
         }
 
         void GraphicModuleImplementation::ComputeAfterEffects()
         {
-            //TODORK call AfterEffects method in GraphicsMain when it exists
+            // TODORK call AfterEffects method in GraphicsMain when it exists
         }
 
-        void GraphicModuleImplementation::EndDraw()
-        {
-            m_graphicMain->EndDraw();
-        }
+        void GraphicModuleImplementation::EndDraw() { m_graphicMain->EndDraw(); }
     }
 }
 

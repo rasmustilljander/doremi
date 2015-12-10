@@ -7,65 +7,55 @@ namespace DoremiEngine
 {
     namespace Input
     {
-        InputModuleImplementation::InputModuleImplementation()
-        {
-        }
+        InputModuleImplementation::InputModuleImplementation() {}
 
-        InputModuleImplementation::~InputModuleImplementation()
-        {
-        }
+        InputModuleImplementation::~InputModuleImplementation() {}
 
         void InputModuleImplementation::Startup()
         {
-            if (!SDL_WasInit(SDL_INIT_VIDEO))
+            if(!SDL_WasInit(SDL_INIT_VIDEO))
             {
-                if (SDL_Init(SDL_INIT_VIDEO) != 0)
+                if(SDL_Init(SDL_INIT_VIDEO) != 0)
                 {
                     std::cout << "SDL_Ubut Error: " << SDL_GetError() << std::endl;
                     SDL_QUIT;
                 }
                 else
                 {
-                    //TODO logger maybe
+                    // TODO logger maybe
                 }
-            }                   // the window to be used
-            if (GetActiveWindow() == nullptr)
+            } // the window to be used
+            if(GetActiveWindow() == nullptr)
             {
                 CreateWindowSDL(800, 800);
             }
         }
 
-        void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory)
-        {
-        }
+        void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
 
-        void InputModuleImplementation::Shutdown()
-        {
-        }
+        void InputModuleImplementation::Shutdown() {}
 
         void InputModuleImplementation::Update()
         {
-            //TODOEA COmments that maybe sohuld be removed in the end it doesnt even matter
-            //ResetButtonsDown();
-            //ResetMouseMovementStruct();
-            //m_mouseWheelSpins = 0;
-
+            // TODOEA COmments that maybe sohuld be removed in the end it doesnt even matter
+            // ResetButtonsDown();
+            // ResetMouseMovementStruct();
+            // m_mouseWheelSpins = 0;
 
 
             SDL_Event eventVariable;
             SwitchCaseEventsForPlaying(eventVariable);
 
 
-            //TODEA
-            //PrintInputStructsDEBUG();
-            //PrintInputMouseMovement();
-
+            // TODEA
+            // PrintInputStructsDEBUG();
+            // PrintInputMouseMovement();
         }
         int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {
-            //1200,200 är plats för window
-            SDL_Window *t_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
-            if (!t_win)
+            // 1200,200 är plats för window
+            SDL_Window* t_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
+            if(!t_win)
             {
                 std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
                 SDL_QUIT;
@@ -75,22 +65,22 @@ namespace DoremiEngine
         void InputModuleImplementation::PrintInputStructsDEBUG()
         {
             int t_forLoopSizeI = m_keyboardButtonsDown.size();
-            for (size_t i = 0; i < t_forLoopSizeI; ++i)
+            for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
                 std::cout << m_keyboardButtonsDown[i] << ", ";
             }
             int t_forLoopSizeII = m_mouseButtonsDown.size();
 
-            for (size_t i = 0; i < t_forLoopSizeII; ++i)
+            for(size_t i = 0; i < t_forLoopSizeII; ++i)
             {
                 std::cout << m_mouseButtonsDown[i] << ", ";
             }
-            if (t_forLoopSizeII || t_forLoopSizeI)
+            if(t_forLoopSizeII || t_forLoopSizeI)
             {
                 std::cout << std::endl;
             }
-            //bool t_printDebug = false;
-            //for (size_t i = 0; i < m_structArraySize; ++i)
+            // bool t_printDebug = false;
+            // for (size_t i = 0; i < m_structArraySize; ++i)
             //{
             //    if (m_inputForPlaying.keys[i])
             //    {
@@ -98,7 +88,7 @@ namespace DoremiEngine
             //    }
 
             //}
-            //if (t_printDebug)
+            // if (t_printDebug)
             //{
             //    for (size_t i = 0; i < m_structArraySize; ++i)
             //    {
@@ -106,17 +96,17 @@ namespace DoremiEngine
             //    }
             //    std::cout << std::endl;
             //}
-            //if (m_mouseWheelSpins != 0)
+            // if (m_mouseWheelSpins != 0)
             //{
             //    std::cout << m_mouseWheelSpins << std::endl;
             //}
 
-            //std::cout << m_keyboardButtonsDown.size() << std::endl;
-            //std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
+            // std::cout << m_keyboardButtonsDown.size() << std::endl;
+            // std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
         }
         void InputModuleImplementation::PrintInputMouseMovement()
         {
-            if (m_mouseMovementStruct.x != 0 || m_mouseMovementStruct.y != 0)
+            if(m_mouseMovementStruct.x != 0 || m_mouseMovementStruct.y != 0)
             {
                 std::cout << m_mouseMovementStruct.x << " : X, " << m_mouseMovementStruct.y << " : Y" << std::endl;
             }
@@ -139,74 +129,74 @@ namespace DoremiEngine
             m_mouseWheelSpins = 0;
             return t_return;
         }
-        void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event & p_eventVariable)
+        void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable)
         {
-            while (SDL_PollEvent(&p_eventVariable))
+            while(SDL_PollEvent(&p_eventVariable))
             {
-                switch (p_eventVariable.type)
+                switch(p_eventVariable.type)
                 {
 
-                case SDL_KEYDOWN:
-                    AddToList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
-                    break;
+                    case SDL_KEYDOWN:
+                        AddToList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
+                        break;
 
-                case SDL_KEYUP:
-                    RemoveFromList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
-                    break;
+                    case SDL_KEYUP:
+                        RemoveFromList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
+                        break;
 
-                case SDL_MOUSEBUTTONDOWN:
-                    AddToList(p_eventVariable.button.button, m_mouseButtonsDown);
-                    break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        AddToList(p_eventVariable.button.button, m_mouseButtonsDown);
+                        break;
 
-                case SDL_MOUSEBUTTONUP:
-                    RemoveFromList(p_eventVariable.button.button, m_mouseButtonsDown);
-                    break;
+                    case SDL_MOUSEBUTTONUP:
+                        RemoveFromList(p_eventVariable.button.button, m_mouseButtonsDown);
+                        break;
 
-                case SDL_MOUSEMOTION:
-                    m_mouseMovementStruct.x = m_mouseMovementStruct.x + p_eventVariable.motion.xrel;
-                    m_mouseMovementStruct.y = m_mouseMovementStruct.y + p_eventVariable.motion.yrel;
-                    break;
+                    case SDL_MOUSEMOTION:
+                        m_mouseMovementStruct.x = m_mouseMovementStruct.x + p_eventVariable.motion.xrel;
+                        m_mouseMovementStruct.y = m_mouseMovementStruct.y + p_eventVariable.motion.yrel;
+                        break;
 
-                case SDL_MOUSEWHEEL: 
-                    m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
-                    break;
+                    case SDL_MOUSEWHEEL:
+                        m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
+                        break;
 
-                defaultEvent:
-                    break;
+                    defaultEvent:
+                        break;
                 }
             }
         }
-        void InputModuleImplementation::SwitchCaseEventsForTyping(SDL_Event & p_eventVariable)
+        void InputModuleImplementation::SwitchCaseEventsForTyping(SDL_Event& p_eventVariable)
         {
-            while (SDL_PollEvent(&p_eventVariable))
+            while(SDL_PollEvent(&p_eventVariable))
             {
-                switch (p_eventVariable.type)
+                switch(p_eventVariable.type)
                 {
 
-                case SDL_KEYDOWN://kan va bra om vi ska skriva text!
-                                 //AddToList(eventVariable.key.keysym.sym, );
-                    break;
+                    case SDL_KEYDOWN: // kan va bra om vi ska skriva text!
+                        // AddToList(eventVariable.key.keysym.sym, );
+                        break;
 
-                case SDL_KEYUP:
-                    //RemoveFromList(eventVariable.key.keysym.sym);
-                    break;
+                    case SDL_KEYUP:
+                        // RemoveFromList(eventVariable.key.keysym.sym);
+                        break;
 
-                case SDL_MOUSEBUTTONDOWN:
-                    m_mouseButtonsDown.push_back(p_eventVariable.button.button);
-                    break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        m_mouseButtonsDown.push_back(p_eventVariable.button.button);
+                        break;
 
 
-                case SDL_MOUSEMOTION:
-                    m_mouseMovementStruct.x = p_eventVariable.motion.xrel;
-                    m_mouseMovementStruct.y = p_eventVariable.motion.yrel;
-                    break;
+                    case SDL_MOUSEMOTION:
+                        m_mouseMovementStruct.x = p_eventVariable.motion.xrel;
+                        m_mouseMovementStruct.y = p_eventVariable.motion.yrel;
+                        break;
 
-                case SDL_MOUSEWHEEL: //TODEA Fix mousewheelshit för båda eventcaseshitsen
-                    m_mouseWheelSpins = p_eventVariable.wheel.y;
-                    break;
+                    case SDL_MOUSEWHEEL: // TODEA Fix mousewheelshit för båda eventcaseshitsen
+                        m_mouseWheelSpins = p_eventVariable.wheel.y;
+                        break;
 
-                defaultEvent:
-                    break;
+                    defaultEvent:
+                        break;
                 }
             }
         }
@@ -223,9 +213,9 @@ namespace DoremiEngine
         void InputModuleImplementation::RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
         {
             int t_sizeOfVector = o_listToUse.size();
-            for (size_t i = 0; i < t_sizeOfVector; ++i)
+            for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
-                if (o_listToUse[i] == p_eventvariable)
+                if(o_listToUse[i] == p_eventvariable)
                 {
                     o_listToUse.erase(o_listToUse.begin() + i);
                     --t_sizeOfVector;
@@ -236,14 +226,14 @@ namespace DoremiEngine
         {
             int t_sizeOfVector = o_listToUse.size();
             bool t_doesItAlreadyExist = false;
-            for (size_t i = 0; i < t_sizeOfVector; ++i)
+            for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
-                if (o_listToUse[i] == p_eventvariable)
+                if(o_listToUse[i] == p_eventvariable)
                 {
                     t_doesItAlreadyExist = true;
                 }
             }
-            if (!t_doesItAlreadyExist)
+            if(!t_doesItAlreadyExist)
             {
                 o_listToUse.push_back(p_eventvariable);
             }

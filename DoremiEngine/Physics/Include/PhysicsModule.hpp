@@ -27,7 +27,6 @@ namespace DoremiEngine
 }
 
 extern "C" {
-    typedef DoremiEngine::Physics::PhysicsModule* (*CREATE_PHYSICS_MODULE)(const DoremiEngine::Core::SharedContext&);
-    PHYSICS_DLL_EXPORT DoremiEngine::Physics::PhysicsModule*
-        CreatePhysicsModule(const DoremiEngine::Core::SharedContext& p_context);
+typedef DoremiEngine::Physics::PhysicsModule* (*CREATE_PHYSICS_MODULE)(const DoremiEngine::Core::SharedContext&);
+PHYSICS_DLL_EXPORT DoremiEngine::Physics::PhysicsModule* CreatePhysicsModule(const DoremiEngine::Core::SharedContext& p_context);
 }

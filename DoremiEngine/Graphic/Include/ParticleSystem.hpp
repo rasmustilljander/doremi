@@ -5,7 +5,7 @@ namespace DoremiEngine
     {
         class ParticleSystem
         {
-        public:
+            public:
             ParticleSystem();
             ~ParticleSystem();
         };
