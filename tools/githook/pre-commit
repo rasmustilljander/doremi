@@ -34,8 +34,8 @@ do
 		echo "[$date] endLine = $endLine" >> $logFile
 		newCode=`./tools/bin/clang-format.exe -lines=$startLine:$endLine $file`
 		oldCode=`cat $file`
-		echo [$date] $newCode >> $logFile
-		echo [$date] $oldCode >> $logFile
+		#echo [$date] $newCode >> $logFile
+		#echo [$date] $oldCode >> $logFile
 		if [ "$newCode" != "$oldCode" ]; then
 			echo -e "Detected problems with formatting on rows $startLine-$endLine"
 			echo $file,$startLine,$endLine >> .formatCache
