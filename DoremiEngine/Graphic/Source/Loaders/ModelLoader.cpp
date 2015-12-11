@@ -1,7 +1,7 @@
-#include <ModelLoader.hpp>
+#include <Loaders/ModelLoader.hpp>
 #include <Internal/Mesh/MeshInfoImpl.hpp>
 #include <HelpFunctions.hpp>
-#include <DDSTextureLoader.h>
+#include <Loaders/DDSTextureLoader.h>
 
 #include <d3d11_1.h>
 

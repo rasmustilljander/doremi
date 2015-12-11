@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "DDSTextureLoader.h"
+#include <Loaders/DDSTextureLoader.h>
 
 
 #ifndef _WIN32_WINNT_WIN8

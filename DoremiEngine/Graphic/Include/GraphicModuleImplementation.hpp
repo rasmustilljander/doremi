@@ -6,7 +6,6 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        class GraphicMain;
         class SubModuleManagerImpl;
 
         class GraphicModuleImplementation : public GraphicModule
@@ -38,44 +37,8 @@ namespace DoremiEngine
             */
             void Shutdown() override;
 
-            /**
-            Load model from specified file. Returns modelID
-            */
-            int LoadObject(const std::string& p_fileName, const std::string& p_materialFileName) override;
-
-            /**
-            Load shader from specified file. Returns shaderID
-            */
-            int LoadShader(ShaderType p_shaderType, const std::string& p_fileName) override;
-
-            /**
-            Initializes DirectX
-            */
-            void InitializeDirectX() override;
-
-            /**
-            Set specified shader to active
-            */
-            void BindShader(ShaderType p_shaderType, int p_shaderID) override;
-
-            /**
-            Draw objects
-            */
-            void Draw(const int& p_meshID, const int& p_textureID, const DirectX::XMFLOAT4X4& p_translationMatrix) override;
-
-            /**
-            Computes after effects such as glow and lighting
-            */
-            void ComputeAfterEffects() override;
-
-            /**
-            Swaps buffers and clears backbuffer
-            */
-            void EndDraw() override;
-
             private:
             const Core::SharedContext& m_sharedContext;
-            GraphicMain* m_graphicMain;
             SubModuleManagerImpl* m_subModuleManger;
             GraphicModuleContext m_graphicContext;
         };

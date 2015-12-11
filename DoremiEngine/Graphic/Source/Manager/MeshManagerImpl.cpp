@@ -6,8 +6,8 @@
 #include <GraphicModuleImplementation.hpp>
 #include <Internal/Manager/SubModuleManagerImpl.hpp>
 #include <Internal/Manager/DirectXManagerImpl.hpp>
-#include <ModelLoader.hpp>
-#include <DDSTextureLoader.h>
+#include <Loaders/ModelLoader.hpp>
+#include <Loaders/DDSTextureLoader.h>
 
 #include <DirectXMath.h>
 #include <d3d11_1.h>
