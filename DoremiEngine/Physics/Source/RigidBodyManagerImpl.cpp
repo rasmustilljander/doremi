@@ -4,7 +4,11 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils) { m_nextBody = 0; }
+        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils)
+        {
+            m_nextBody = 0;
+            m_nextStaticBody = 0;
+        }
         RigidBodyManagerImpl::~RigidBodyManagerImpl() {}
 
         int RigidBodyManagerImpl::AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
@@ -61,8 +65,8 @@ namespace DoremiEngine
             shape->release();
 
             // Finally add the body to our list
-            m_bodies[m_nextBody]; // TODOJB fix this shit boi!!
-            m_nextBody++;
+            m_staticBodies[m_nextStaticBody] = body;
+            m_nextStaticBody++;
 
             /*
             And now we have added a box to the world at the given position
@@ -70,7 +74,7 @@ namespace DoremiEngine
             any form of interaction however*/
 
             // Return ID of body we just created
-            return m_nextBody - 1;
+            return m_nextStaticBody - 1;
         }
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
