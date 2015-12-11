@@ -21,7 +21,6 @@
 #include <InputHandler.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
-#include <PhysicsHandler/PhysicsHandler.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -144,7 +143,6 @@ namespace Doremi
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
-            PhysicsHandler::StartPhysicsHandler(sharedContext);
             InputHandler::StartInputHandler(sharedContext);
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -219,7 +217,6 @@ namespace Doremi
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
-            PhysicsHandler::StartPhysicsHandler(sharedContext);
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -260,7 +257,6 @@ namespace Doremi
                 }
                 EventHandler::GetInstance()->DeliverEvents();
 
-                PhysicsHandler::GetInstance()->UpdatePhysics(0.017);
                 InputHandler::GetInstance()->Update();
             }
         }

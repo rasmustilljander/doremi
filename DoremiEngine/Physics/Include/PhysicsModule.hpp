@@ -12,12 +12,15 @@ namespace DoremiEngine
 {
     namespace Physics
     {
+        class RigidBodyManager;
+        class PhysicsMaterialManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
             public:
             virtual void Update(float p_dt) = 0;
-            virtual void StartPhysX() = 0;
 
+            virtual RigidBodyManager& GetRigidBodyManager() = 0;
+            virtual PhysicsMaterialManager& GetPhysicsMaterialManager() = 0;
 
             // Test function
             virtual float ExampleMethod(const float& posx) = 0;
