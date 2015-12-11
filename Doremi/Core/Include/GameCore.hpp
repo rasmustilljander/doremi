@@ -22,8 +22,20 @@ namespace Doremi
             /** Initializes entity system and different engine DLLs for server*/
             void InitializeServer();
 
-            /** Starts the game. Game loop*/
-            void StartCore();
+            /**
+                TODOCM doc
+            */
+            void UpdateGame(uint32_t p_deltaTime);
+
+            /**
+                TODOCM doc
+            */
+            void StartClientCore();
+
+            /**
+                TODOCM doc
+            */
+            void StartServerCore();
 
             private:
             void LoadEngineLibrary();

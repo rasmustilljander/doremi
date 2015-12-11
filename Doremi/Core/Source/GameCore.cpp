@@ -298,29 +298,103 @@ namespace Doremi
             ////////////////End Example////////////////
         }
 
-        void GameCore::StartCore()
+        void GameCore::UpdateGame(uint32_t p_deltaTime)
+        {
+            EventHandler::GetInstance()->DeliverEvents();
+            // Have all managers update
+            size_t length = m_managers.size();
+            for (size_t i = 0; i < length; i++)
+            {
+                m_managers.at(i)->Update(0.017);
+            }
+
+            InputHandler::GetInstance()->Update();
+        }
+
+        void GameCore::StartClientCore()
         {
             // TODOCM remove for better timer
             // GameLoop is not currently set
-            uint64_t CurrentTime = GetTickCount64();
-            uint64_t PreviousTime = CurrentTime;
-            uint64_t DeltaTime = 0;
+            uint64_t CurrentTime;
+            uint64_t PreviousTime = GetTickCount64();
+            uint64_t FrameTime = 0;
+            uint64_t Accumulator = 0;
+            uint64_t UpdateTimeStepLength = 17;
+            uint64_t GameTime = 0;
 
             while(true)
             {
                 CurrentTime = GetTickCount64();
-                DeltaTime = CurrentTime - PreviousTime;
-                PreviousTime = CurrentTime;
+                FrameTime = CurrentTime - PreviousTime;
 
-                EventHandler::GetInstance()->DeliverEvents();
-                // Have all managers update
-                size_t length = m_managers.size();
-                for(size_t i = 0; i < length; i++)
+                // We simulate maximum 250 milliseconds each frame
+                // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
+                if(FrameTime > 250)
                 {
-                    m_managers.at(i)->Update(0.017);
+                    FrameTime = 250;
+                }
+                // Update the previous position with frametime so we can catch up if we slow down
+                PreviousTime += FrameTime;
+
+                // Update Accumulator (how much we will work this frame)
+                Accumulator += FrameTime;
+
+                // Loop as many update-steps we will take this frame
+                while(Accumulator >= UpdateTimeStepLength)
+                {
+                    // Update Game logic
+                    UpdateGame(UpdateTimeStepLength);
+
+                    // Remove time from accumulator
+                    Accumulator -= UpdateTimeStepLength;
+
+                    // Add time to start
+                    GameTime += UpdateTimeStepLength;
                 }
 
-                InputHandler::GetInstance()->Update();
+                double alpha = Accumulator / UpdateTimeStepLength;
+
+                // Interpolate the frames here
+
+
+                // Draw stuff
+            }
+        }
+
+        void GameCore::StartServerCore()
+        {
+            // TODOCM remove for better timer
+            // GameLoop is not currently set
+            uint64_t CurrentTime;
+            uint64_t PreviousTime = GetTickCount64();
+            uint64_t FrameTime = 0;
+            uint64_t Accumulator = 0;
+            uint64_t UpdateTimeStepLength = 17;
+            uint64_t GameTime = 0;
+
+            while(true)
+            {
+                CurrentTime = GetTickCount64();
+                FrameTime = CurrentTime - PreviousTime;
+
+                // Update the previous position with frametime so we can catch up if we slow down
+                PreviousTime += FrameTime;
+
+                // Update Accumulator (how much we will work this frame)
+                Accumulator += FrameTime;
+
+                // Loop as many update-steps we will take this frame
+                while(Accumulator >= UpdateTimeStepLength)
+                {
+                    // Update Game logic
+                    UpdateGame(UpdateTimeStepLength);
+
+                    // Remove time from accumulator
+                    Accumulator -= UpdateTimeStepLength;
+
+                    // Add time to start
+                    GameTime += UpdateTimeStepLength;
+                }
             }
         }
     }
