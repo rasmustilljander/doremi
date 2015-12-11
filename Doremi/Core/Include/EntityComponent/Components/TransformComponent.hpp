@@ -10,8 +10,9 @@ namespace Doremi
         struct TransformComponent
         {
             DirectX::XMFLOAT3 position;
-            DirectX::XMFLOAT4 rotation; // Dont know if there is a specific quaternion in direct x
-            TransformComponent() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 0)) {}
+            DirectX::XMFLOAT4 rotation;
+            DirectX::XMFLOAT3 scale;
+            TransformComponent() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 0)), scale(DirectX::XMFLOAT3(1, 1, 1)) {}
         };
     }
 }
