@@ -30,6 +30,7 @@ namespace DoremiEngine
 
             private:
             InternalPhysicsUtils& m_utils;
+            // TODOJB this map shouldn't be to just rigidbodies. Needs to be static too (abstract base class exists?)
             unordered_map<int, PxRigidBody*> m_bodies;
             int m_nextBody;
         };

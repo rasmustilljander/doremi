@@ -29,7 +29,7 @@ namespace DoremiEngine
             shape->release();
 
             // Finally add the body to our list
-            m_bodies[m_nextBody];
+            m_bodies[m_nextBody] = body;
             m_nextBody++;
 
             /*
@@ -61,7 +61,7 @@ namespace DoremiEngine
             shape->release();
 
             // Finally add the body to our list
-            m_bodies[m_nextBody];
+            m_bodies[m_nextBody]; // TODOJB fix this shit boi!!
             m_nextBody++;
 
             /*

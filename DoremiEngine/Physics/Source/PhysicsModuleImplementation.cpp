@@ -25,7 +25,11 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::Shutdown() {}
 
-        void PhysicsModuleImplementation::Update(float p_dt) {}
+        void PhysicsModuleImplementation::Update(float p_dt)
+        {
+            m_utils.m_worldScene->simulate(p_dt);
+            m_utils.m_worldScene->fetchResults(true);
+        }
 
         RigidBodyManager& PhysicsModuleImplementation::GetRigidBodyManager() { return *m_utils.m_rigidBodyManager; }
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
