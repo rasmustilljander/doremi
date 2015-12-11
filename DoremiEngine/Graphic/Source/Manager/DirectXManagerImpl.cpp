@@ -1,6 +1,7 @@
 #pragma once
 #include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
+#include <HelpFunctions.hpp>
 #include <d3d11_1.h>
 #include <SDL2/SDL.h>
 
@@ -182,25 +183,27 @@ namespace DoremiEngine
 
             // m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
-            ////For texture sampler
-            // D3D11_SAMPLER_DESC texSamDesc;
-            // texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-            // texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-            // texSamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-            // texSamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-            // texSamDesc.MipLODBias = 0;
-            // texSamDesc.MaxAnisotropy = 1;
-            // texSamDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-            // texSamDesc.BorderColor[0] = 0.0f;
-            // texSamDesc.BorderColor[1] = 0.0f;
-            // texSamDesc.BorderColor[2] = 0.0f;
-            // texSamDesc.BorderColor[3] = 0.0f;
-            // texSamDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
-            // texSamDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
-            //                                      //mParticleTexID = CreateTexture(L"Textures/VitPlupp.dds");
-            // res = m_device->CreateSamplerState(&texSamDesc, &m_sampler);
-            // CheckHRESULT(res, "Fault when creating sampler");
-            // m_deviceContext->PSSetSamplers(0, 1, &m_sampler);
+            // For texture sampler TODOKO Should not be here!
+            D3D11_SAMPLER_DESC texSamDesc;
+            texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+            texSamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+            texSamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+            texSamDesc.MipLODBias = 0;
+            texSamDesc.MaxAnisotropy = 1;
+            texSamDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+            texSamDesc.BorderColor[0] = 0.0f;
+            texSamDesc.BorderColor[1] = 0.0f;
+            texSamDesc.BorderColor[2] = 0.0f;
+            texSamDesc.BorderColor[3] = 0.0f;
+            texSamDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
+            texSamDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+            // mParticleTexID = CreateTexture(L"Textures/VitPlupp.dds");
+            ID3D11SamplerState* m_sampler;
+            res = m_device->CreateSamplerState(&texSamDesc, &m_sampler);
+            CheckHRESULT(res, "Fault when creating sampler");
+            m_deviceContext->PSSetSamplers(0, 1, &m_sampler);
+            m_sampler->Release();
         }
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
         ID3D11DeviceContext* DirectXManagerImpl::GetDeviceContext() { return m_deviceContext; }

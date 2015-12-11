@@ -32,12 +32,6 @@ namespace DoremiEngine
             m_cameraManager->Initialize();
 
             // TODOKO Should not be here!!
-            using namespace DirectX;
-            XMFLOAT4X4 projection;
-            XMMATRIX mat = XMMatrixTranspose(XMMatrixPerspectiveFovLH(90 * 3.14 / 180.0f, 800.0f / 600.0f, 0.1f, 1000.0f));
-            XMStoreFloat4x4(&projection, mat);
-            Camera* newCamer = m_cameraManager->BuildNewCamera(projection);
-            m_cameraManager->PushCameraToDevice(*newCamer);
 
             D3D11_INPUT_ELEMENT_DESC ied[] = {
                 {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
