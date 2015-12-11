@@ -21,6 +21,7 @@ enum class ComponentType : int
     Transform = 0x40,
     RigidBody = 0x80,
     PhysicalMaterial = 0x100,
+    Player = 0x200,
 };
 
 /**
@@ -31,6 +32,7 @@ enum class Blueprints : int
     ExampleEntity,
     VoiceRecordEntity,
     RenderExampleEntity,
+    PlayerEntity,
 };
 
 /**

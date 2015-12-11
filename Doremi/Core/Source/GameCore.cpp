@@ -25,6 +25,7 @@
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/PlayerComponent.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
@@ -71,8 +72,6 @@ namespace Doremi
             // Test render component
             RenderComponent* t_renderComp = new RenderComponent();
             TransformComponent* t_transformComp = new TransformComponent();
-
-
             EntityBlueprint t_renderBlueprint;
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
@@ -85,6 +84,20 @@ namespace Doremi
             // Declare blueprint (do not reuse variables for more blueprints)
             EntityBlueprint t_entityBlueprint;
             EntityBlueprint t_recordingBlueprint;
+
+            t_renderComp = new RenderComponent();
+            t_transformComp = new TransformComponent();
+            PlayerComponent* t_playerComp = new PlayerComponent();
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_transformComp->position.z = 4;
+
+            EntityBlueprint t_playerBlueprint;
+            t_playerBlueprint[ComponentType::Render] = t_renderComp;
+            t_playerBlueprint[ComponentType::Transform] = t_transformComp;
+            t_playerBlueprint[ComponentType::Player] = t_playerComp;
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_playerBlueprint);
+            t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
 
 
             t_recordingBlueprint[ComponentType::VoiceRecording] = t_voiceRecordingComponent;
