@@ -25,6 +25,9 @@ namespace DoremiEngine
             /**
             Gets the orientation of the body*/
             virtual XMFLOAT4 GetBodyOrientation(int p_body) = 0;
+            /**
+            Gets the velocity vector of the body*/
+            virtual XMFLOAT3 GetBodyVelocity(int p_body) = 0;
         };
     }
 }

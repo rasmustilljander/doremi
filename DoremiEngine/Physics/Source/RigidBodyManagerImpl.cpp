@@ -55,5 +55,11 @@ namespace DoremiEngine
             PxQuat q = m_bodies[p_bodyID]->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
+
+        XMFLOAT3 RigidBodyManagerImpl::GetBodyVelocity(int p_bodyID)
+        {
+            PxVec3 v = m_bodies[p_bodyID]->getLinearVelocity();
+            return XMFLOAT3(v.x, v.y, v.z);
+        }
     }
 }

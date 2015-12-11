@@ -21,6 +21,7 @@ namespace DoremiEngine
             void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) override;
             XMFLOAT3 GetBodyPosition(int p_bodyID) override;
             XMFLOAT4 GetBodyOrientation(int p_bodyID) override;
+            XMFLOAT3 GetBodyVelocity(int p_bodyID) override;
 
             private:
             InternalPhysicsUtils& m_utils;
