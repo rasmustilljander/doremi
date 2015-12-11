@@ -18,7 +18,9 @@ enum class ComponentType : int
     AudioActive = 0x08,
     VoiceRecording = 0x10,
     Render = 0x20,
-    Transform = 0x40
+    Transform = 0x40,
+    RigidBody = 0x80,
+    PhysicalMaterial = 0x100,
 };
 
 /**

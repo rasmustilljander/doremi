@@ -10,6 +10,8 @@
 #include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 
 
 namespace Doremi
@@ -83,6 +85,14 @@ namespace Doremi
                 else if(iter->first == ComponentType::Transform)
                 {
                     memcpy(GetComponent<TransformComponent>(tNewEntityID), iter->second, sizeof(TransformComponent));
+                }
+                else if(iter->first == ComponentType::RigidBody)
+                {
+                    memcpy(GetComponent<RigidBodyComponent>(tNewEntityID), iter->second, sizeof(RigidBodyComponent));
+                }
+                else if(iter->first == ComponentType::PhysicalMaterial)
+                {
+                    memcpy(GetComponent<PhysicsMaterialComponent>(tNewEntityID), iter->second, sizeof(PhysicsMaterialComponent));
                 }
             }
 
