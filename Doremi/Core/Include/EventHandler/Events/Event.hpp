@@ -7,6 +7,7 @@ namespace Doremi
         enum class Events
         {
             Example, // Only an example
+            PlayerCreation,
         };
         /**All events needs to inherit this struct*/
         struct Event
