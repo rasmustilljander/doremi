@@ -8,9 +8,7 @@
 #include <Internal/Manager/CameraManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 // DirectX stuff
-// TODOKO Should not need math...or the other shit
-#include <Interface/Camera/Camera.hpp>
-#include <DirectXMath.h>
+// TODOKO Should not need directx here
 #include <d3d11_1.h>
 namespace DoremiEngine
 {
@@ -31,7 +29,7 @@ namespace DoremiEngine
             m_cameraManager = new CameraManagerImpl(m_graphicContext);
             m_cameraManager->Initialize();
 
-            // TODOKO Should not be here!!
+            // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
 
             D3D11_INPUT_ELEMENT_DESC ied[] = {
                 {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},

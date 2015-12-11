@@ -71,7 +71,7 @@ namespace DoremiEngine
             return newMaterial;
         }
 
-        void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, DirectX::XMFLOAT4X4 p_orientationMatrix)
+        void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix)
         {
             // TODOKO This should sort the meshes to enable instanced draw
             // TODOKO Remove draw from this place and down to the acctual draw..

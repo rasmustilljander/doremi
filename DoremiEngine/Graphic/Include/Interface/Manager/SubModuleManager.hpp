@@ -13,7 +13,6 @@ namespace DoremiEngine
         class SubModuleManager
         {
             public:
-            virtual void Initialize() = 0;
             virtual MeshManager& GetMeshManager() = 0;
             virtual ParticleSystemManager& GetParticleSystemManager() = 0;
             virtual ShaderManager& GetShaderManager() = 0;

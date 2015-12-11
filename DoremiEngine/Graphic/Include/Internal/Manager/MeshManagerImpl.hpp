@@ -22,10 +22,9 @@ namespace DoremiEngine
             virtual ~MeshManagerImpl();
             MeshInfo* BuildMeshInfo(const std::string& p_fileName) override;
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;
-            void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material,
-                                 DirectX::XMFLOAT4X4 p_orientationMatrix) override; // TODOKO Might work with a const xmfloat4x4&
+            void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) override;
             void Draw() override;
-            // TODOKO should end draw be here?
+
             private:
             const GraphicModuleContext& m_graphicContext;
             ModelLoader* m_modelLoader;

@@ -13,9 +13,9 @@ namespace DoremiEngine
             virtual ~MeshInfoImpl();
 
             // Get
-            const size_t GetVerticeCount() { return m_verticeCount; }
-            ID3D11Buffer* GetBufferHandle() { return m_bufferHandle; } // TODOKO Might not work because of pre declaration
-            const std::string GetFileName() { return m_fileName; };
+            const size_t& GetVerticeCount() const override { return m_verticeCount; }
+            ID3D11Buffer* GetBufferHandle() const override { return m_bufferHandle; }
+            const std::string& GetFileName() const override { return m_fileName; };
 
             // Set
             void SetVerticeCount(size_t p_verticeCount) { m_verticeCount = p_verticeCount; }

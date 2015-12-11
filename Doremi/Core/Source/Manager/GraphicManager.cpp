@@ -6,6 +6,7 @@
 // Engine
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
@@ -34,11 +35,11 @@ namespace Doremi
                     DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z) *
                         DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z));
-
                     DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }
             }
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}

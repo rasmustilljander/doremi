@@ -69,21 +69,6 @@ namespace Doremi
                     m_sharedContext.GetInputModule().Update(); // TODOEA
                 }
             }
-            // Test run GraphicsModule
-            // Should obviously not be here....
-            // Creates a rotating translation matrix for putting out the unit box
-            // static float rot = 0;
-            // rot += 0.005f;
-            // DirectX::XMFLOAT4X4 world;
-            // DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0,
-            // 0.5, 1)), rot) * DirectX::XMMatrixTranslation(0, 0, 4.0f)));
-
-            // DoremiEngine::Graphic::MeshInfo* temp =
-            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("test"); //TODOKO Remove memory leak
-            // DoremiEngine::Graphic::MaterialInfo* temp1 =
-            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TEST");
-            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*temp, *temp1, world);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         }
         void ExampleManager::OnEvent(Event* p_event)
         {

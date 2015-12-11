@@ -15,7 +15,7 @@ namespace DoremiEngine
             Initializes important direct x thingies like device and device context.
             Until later it also contains backbuffer and som other stuff
             */
-            void InitializeDirectX() override;
+            void InitializeDirectX();
             ID3D11Device* GetDevice() override;
             ID3D11DeviceContext* GetDeviceContext() override;
             // TODOKO should end draw be here?

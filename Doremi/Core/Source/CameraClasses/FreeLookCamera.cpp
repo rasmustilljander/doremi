@@ -50,24 +50,24 @@ namespace Doremi
 
         void FreeLookCamera::HandleUserCMD(double pDT)
         {
-            float speed = 0.001f * pDT;
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(8))
+            float speed = 0.001f * pDT; // TODO Should be red from some smart place
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame(8))
             {
                 m_moveLeftRight -= speed;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(16))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame(16))
             {
                 m_moveLeftRight += speed;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(2))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame(2))
             {
                 m_moveForwardBackward += speed;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(4))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame(4))
             {
                 m_moveForwardBackward -= speed;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(32))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame(32))
             {
                 m_camYaw += InputHandler::GetInstance()->GetMouseMovementX() * 0.001f;
                 m_camPitch += InputHandler::GetInstance()->GetMouseMovementY() * 0.001f;

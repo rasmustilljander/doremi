@@ -18,7 +18,7 @@ namespace DoremiEngine
             public:
             SubModuleManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~SubModuleManagerImpl();
-            void Initialize() override;
+            void Initialize();
             MeshManager& GetMeshManager() override;
             ParticleSystemManager& GetParticleSystemManager() override;
             ShaderManager& GetShaderManager() override;

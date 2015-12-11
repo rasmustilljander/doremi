@@ -14,7 +14,6 @@ namespace DoremiEngine
         {
             public:
             // TODOKO add documents
-            virtual void InitializeDirectX() = 0;
             virtual ID3D11Device* GetDevice() = 0;
             virtual ID3D11DeviceContext* GetDeviceContext() = 0;
             // TODOKO should end draw be here?

@@ -70,10 +70,12 @@ namespace DoremiEngine
             scd.SampleDesc.Count = 4; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
 
-            // TODOKO CHECK THIS pls :)
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
-
+            if(!CheckHRESULT(res, "Error when creating device and swapchain"))
+            {
+                return; // TODO debug logger
+            }
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
             m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer);
@@ -142,50 +144,6 @@ namespace DoremiEngine
 
             // TODO add more different things like transparancy
             // TODOKO Move code to better location
-            // int vertexShaderID = LoadShader(ShaderType::VertexShader, "BasicVertexShader.hlsl");
-            // int pixelShadderID = LoadShader(ShaderType::PixelShader, "BasicPixelShader.hlsl");
-
-            // D3D11_INPUT_ELEMENT_DESC ied[] =
-            //{
-            //    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //};
-
-            // m_vertexShaders[vertexShaderID]->SetInputLayout(ied, ARRAYSIZE(ied), m_device);
-            // m_vertexShaders[vertexShaderID]->SetActiveShader(m_deviceContext);
-            // m_pixelShaders[pixelShadderID]->SetActiveShader(m_deviceContext);
-
-            // Buffer for projection and view matrix in vertex shader Should still be moved
-            // D3D11_BUFFER_DESC bd;
-            // ZeroMemory(&bd, sizeof(bd));
-
-            // bd.Usage = D3D11_USAGE_DYNAMIC;
-            // bd.ByteWidth = sizeof(MatrixBufferType);
-            // bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-            // bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            // bd.MiscFlags = 0;
-            // bd.StructureByteStride = 0;
-            // ID3D11Buffer* tBuffer;
-            // m_device->CreateBuffer(&bd, NULL, &tBuffer);
-            // using namespace DirectX;
-            // MatrixBufferType tBufferInfo;
-            // tBufferInfo.view = XMMatrixTranspose(XMMatrixLookAtLH(XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f)), XMLoadFloat3(&XMFLOAT3(0, 0, 1)),
-            // XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
-            // tBufferInfo.projection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(90 * 3.14 / 180.0f, 800.0f / 600.0f, 0.1f, 1000.0f));
-            // //XMMatrixPerspectiveFovLH(45.0f, 600.0f / 800.0f, 0.1f, 100));
-
-            // D3D11_MAPPED_SUBRESOURCE tMS;
-            // m_deviceContext->Map(tBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            // memcpy(tMS.pData, &tBufferInfo, sizeof(tBufferInfo));
-            // m_deviceContext->Unmap(tBuffer, NULL);
-            // m_deviceContext->VSSetConstantBuffers(0, 1, &tBuffer);
-
-            ////World Matrix, should perhaps be here....
-            // bd.ByteWidth = sizeof(XMFLOAT4X4);
-            // m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
-
-            // m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
 
             // For texture sampler TODOKO Should not be here!
             D3D11_SAMPLER_DESC texSamDesc;

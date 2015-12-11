@@ -14,19 +14,20 @@ namespace DoremiEngine
     namespace Graphic
     {
         /**
-        TODO docs
+        Handels every directx and graphic related things
         */
         class GraphicModule : public DoremiEngine::Core::EngineModule
         {
             public:
-            virtual SubModuleManager& GetSubModuleManager() = 0;
             /**
-               TODOKO docs
+            Returns a sub module manager which then gives access to other sub modules in the graphic module
+            */
+            virtual SubModuleManager& GetSubModuleManager() = 0;
+
+            /**
+               Doesnt do anything really...
             */
             virtual void Update() = 0;
-
-
-            // TODORK add more interface functions
         };
     }
 }
