@@ -1,9 +1,9 @@
 #pragma once
 #include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
-
+#include <cstdint>
 namespace Utility
 {
-    namespace Memory
+    namespace MemoryManager
     {
         class RawAllocator : public MemoryAllocator
         {
@@ -14,67 +14,50 @@ namespace Utility
             RawAllocator();
 
             /**
-                Constructor
+                TODORT docs
             */
-            void Initialize(const size_t& p_memorySize, const bool& p_threadShared = false);
+            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, const bool& p_threadShared) override;
+            virtual void Initialize(const size_t& p_memorySize, MemoryAllocator& p_applicationAllocator, const uint8_t& p_alignment,
+                                    const bool& p_threadShared) override;
 
             /**
                 Constructor, takes memorySize in bytes.
             */
             virtual ~RawAllocator();
 
-            /*
-            Header
-            pointerToNext
-            sizeOfCurrent
-            */
             /**
-                TODORT
+            TODORT docs
             */
-            template <typename T>
-            // std::unique_ptr<T> Allocate()
-            T* Allocate()
+            void* Allocate(const size_t& p_memorySize) override;
+
+            /**
+            TODORT docs
+            */
+            void Free(void* p_pointer);
+
+            /**
+                TODORT docs
+            */
+            template <typename T> T* Allocate(const uint8_t& p_alignment = 4)
             {
-                T* a = new T();
-                // return a;
-                std::shared_ptr<T> b = std::make_shared<T>(a);
-                return b.get();
+                return new T(); // TODORT implement
             }
 
             /**
-                TODORT
+                TODORT docs
             */
-            template <typename T> void Free(T* t) {}
+            template <typename T> void Free(T* p_pointer)
+            {
+                delete t; // TODORT implement correctly
+            }
 
-            /**
-            Get the current free memory, in bytes, of the allocator.
-            */
-            size_t GetFreeMemory() override;
+            protected:
+            void InternalInitialize();
 
-            /**
-            Get the current occupied memory, in bytes, of the allocator.
-            */
-            size_t GetOccupiedMemory() override;
-
-            /**
-            Get the total memory that the allocator has available (Free + Occupied), in bytes.
-            */
-            size_t GetTotalMemory() override;
-
-            private:
-            void* m_start;
-            void* m_end; // Not sure about this;
-
-            size_t m_totalMemory;
-            size_t m_occupiedMemory;
+            uint8_t m_headerSizeInBytes = 2;
             size_t m_numBlocks;
-
             bool m_shared;
-
-            // Not sure about
-            size_t m_alignment;
-
-            // Will probably need this
+            void* m_currentFree;
         };
     }
 }

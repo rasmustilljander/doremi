@@ -1,36 +1,36 @@
-#include <MemoryManager.hpp>
+#include <MainMemoryManager.hpp>
 #include <Allocator/Raw/RawAllocator.hpp>
 
 namespace Utility
 {
-    namespace Memory
+    namespace MemoryManager
     {
 
-        MemoryManager* MemoryManager::m_instance = nullptr;
+        MainMemoryManager* MainMemoryManager::m_instance = nullptr;
 
-        void MemoryManager::Startup(const size_t& p_preferedSize)
+        void MainMemoryManager::Startup(const size_t& p_preferedSize)
         {
-            if(m_instance != nullptr)
+            if(m_instance == nullptr)
             {
-                m_instance = new MemoryManager(p_preferedSize);
+                m_instance = new MainMemoryManager(p_preferedSize);
             }
             // TODORT logging
         }
 
-        void MemoryManager::Shutdown()
+        void MainMemoryManager::Shutdown()
         {
             delete m_instance;
             m_instance = nullptr;
         }
 
-        MemoryManager& MemoryManager::GetInstance() { return *m_instance; }
+        MainMemoryManager& MainMemoryManager::GetInstance() { return *m_instance; }
 
-        MemoryManager::MemoryManager(const size_t& p_preferedSize)
+        MainMemoryManager::MainMemoryManager(const size_t& p_preferedSize)
         {
-            m_rawAllocator = std::unique_ptr<RawAllocator>(new RawAllocator());
-            m_rawAllocator.get()->Initialize(p_preferedSize);
+            m_applicationAllocator = new RawAllocator();
+            static_cast<RawAllocator*>(m_applicationAllocator)->Initialize(p_preferedSize, 4, true); // TODORT hardcoded
         }
 
-        MemoryManager::~MemoryManager() {}
+        MainMemoryManager::~MainMemoryManager() { delete m_applicationAllocator; }
     }
 }

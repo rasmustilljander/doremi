@@ -1,34 +1,60 @@
 #include <Allocator/Raw/RawAllocator.hpp>
 #include <memory>
+#include <HeaderBuilder/AllocationHeaderBuilder.hpp>
 
 namespace Utility
 {
-    namespace Memory
+    namespace MemoryManager
     {
-        RawAllocator::RawAllocator()
-            : m_start(nullptr), m_end(nullptr), m_totalMemory(0), m_occupiedMemory(0), m_numBlocks(0), m_alignment(0), m_shared(false)
+        RawAllocator::RawAllocator() : m_numBlocks(0), m_headerSizeInBytes(2), MemoryAllocator() {}
+
+        void RawAllocator::Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, const bool& p_threadShared)
         {
+            MemoryAllocator::Initialize(p_memorySize, p_alignment, p_threadShared);
+            InternalInitialize();
         }
 
-        void RawAllocator::Initialize(const size_t& p_memorySize, const bool& p_threadShared)
+        void RawAllocator::Initialize(const size_t& p_memorySize, MemoryAllocator& p_applicationAllocator, const uint8_t& p_alignment, const bool& p_threadShared)
         {
-            m_start = (std::malloc(p_memorySize));
-
-            size_t* raw = (size_t*)malloc(p_memorySize + m_alignment);
-            size_t mask = m_alignment - 1;
-
-            size_t misalignment = (reinterpret_cast<uint32_t>(raw) & mask);
-            size_t adjustment = m_alignment - misalignment;
-
-            m_start = reinterpret_cast<uint32_t*>(reinterpret_cast<uint32_t>(raw) + adjustment);
+            MemoryAllocator::Initialize(p_memorySize, p_applicationAllocator, p_alignment, p_threadShared);
+            InternalInitialize();
         }
 
-        RawAllocator::~RawAllocator() { std::free(m_start); }
+        RawAllocator::~RawAllocator() {}
 
-        size_t RawAllocator::GetFreeMemory() { return m_totalMemory - m_occupiedMemory; }
+        void RawAllocator::InternalInitialize() { m_currentFree = m_raw; }
 
-        size_t RawAllocator::GetOccupiedMemory() { return m_occupiedMemory; }
+        void* RawAllocator::Allocate(const size_t& p_memorySize)
+        {
+            /*
+            if (m_alignment <= m_headerSizeInBytes)
+            {
+                // TODORT check for overflow ? for p_alignment
+                throw std::runtime_error("Alignment must be bigger than m_headerSizeInBytes");
+            }
 
-        size_t RawAllocator::GetTotalMemory() { return m_totalMemory; }
+            // Compute adjustment
+            const uint8_t mask = m_alignment - m_headerSizeInBytes;
+            const uint8_t misalignment = (reinterpret_cast<size_t>(m_raw) & mask);
+            const uint8_t adjustment = m_alignment - misalignment;
+
+            // Compute start
+            m_currentFree = reinterpret_cast<size_t*>(reinterpret_cast<size_t>(m_currentFree) + adjustment);
+
+
+            // Set adjustment metadata
+            size_t* adjustmentMetaData = reinterpret_cast<size_t*>(reinterpret_cast<size_t>(m_currentFree) - m_headerSizeInBytes);
+            AllocationHeaderBuilder::SetByte(adjustmentMetaData, adjustment);
+
+            // Set adjustment metadata
+            size_t* adjustmentMetaData = reinterpret_cast<size_t*>(reinterpret_cast<size_t>(m_currentFree) - m_headerSizeInBytes + 1);
+            AllocationHeaderBuilder::SetByte(adjustmentMetaData, adjustment);
+            */
+            return std::malloc(p_memorySize); // TODORT implement correctly
+        }
+        void RawAllocator::Free(void* p_pointer)
+        {
+            std::free(p_pointer); // TODORT implement correctly
+        }
     }
 }
