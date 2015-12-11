@@ -73,7 +73,7 @@ namespace Doremi
 
             EntityBlueprint t_renderBlueprint;
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
             t_transformComp->position.z = 4;
             t_renderBlueprint[ComponentType::Render] = t_renderComp;
             t_renderBlueprint[ComponentType::Transform] = t_transformComp;

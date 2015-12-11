@@ -30,6 +30,8 @@ namespace DoremiEngine
             const GraphicModuleContext& m_graphicContext;
             ModelLoader* m_modelLoader;
             ID3D11Buffer* m_worldMatrix;
+            std::map<std::string, MeshInfo*> m_meshInfo;
+            std::map<std::string, MaterialInfo*> m_materialInfo;
         };
     }
 }
