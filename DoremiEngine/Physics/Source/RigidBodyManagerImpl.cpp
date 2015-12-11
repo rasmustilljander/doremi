@@ -49,6 +49,13 @@ namespace DoremiEngine
             m_bodies[p_bodyID]->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
         }
 
+        void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)
+        {
+            PxVec3 position = PxVec3(p_v.x, p_v.y, p_v.z);
+            PxQuat orientation = PxQuat(p_o.x, p_o.y, p_o.z, p_o.w);
+            m_bodies[p_bodyID]->setGlobalPose(PxTransform(position, orientation));
+        }
+
         XMFLOAT3 RigidBodyManagerImpl::GetBodyPosition(int p_bodyID)
         {
             PxVec3 p = m_bodies[p_bodyID]->getGlobalPose().p;
