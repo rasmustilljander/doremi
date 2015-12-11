@@ -49,5 +49,11 @@ namespace DoremiEngine
             PxVec3 p = m_bodies[p_bodyID]->getGlobalPose().p;
             return XMFLOAT3(p.x, p.y, p.z);
         }
+
+        XMFLOAT4 RigidBodyManagerImpl::GetBodyOrientation(int p_bodyID)
+        {
+            PxQuat q = m_bodies[p_bodyID]->getGlobalPose().q;
+            return XMFLOAT4(q.x, q.y, q.z, q.w);
+        }
     }
 }

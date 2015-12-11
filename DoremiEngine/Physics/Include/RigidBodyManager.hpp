@@ -18,6 +18,9 @@ namespace DoremiEngine
             /**
             Gets the position of a body*/
             virtual XMFLOAT3 GetBodyPosition(int p_bodyID) = 0;
+            /**
+            Gets the orientation of the body*/
+            virtual XMFLOAT4 GetBodyOrientation(int p_body) = 0;
         };
     }
 }
