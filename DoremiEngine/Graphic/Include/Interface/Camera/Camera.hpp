@@ -8,8 +8,8 @@ namespace DoremiEngine
     {
         struct CameraMatrices
         {
-            DirectX::XMFLOAT4X4 ProjectionMatrix;
             DirectX::XMFLOAT4X4 ViewMatrix;
+            DirectX::XMFLOAT4X4 ProjectionMatrix;
             CameraMatrices() {}
         };
         class Camera

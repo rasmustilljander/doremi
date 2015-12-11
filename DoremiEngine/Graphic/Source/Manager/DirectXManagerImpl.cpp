@@ -31,10 +31,11 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::InitializeDirectX()
         {
-
+            int width = 800;
+            int height = 800;
             InitializeSDL();
 
-            SDL_Window* m_win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, 800, 800,
+            SDL_Window* m_win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, width, height,
                                                  SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
             if(!m_win)
             {
@@ -97,8 +98,8 @@ namespace DoremiEngine
             // Might want this in a class for readability and easy changing between states
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = 800; // TODOKO take height and width from a reliable source
-            dbdesc.Height = 800;
+            dbdesc.Width = width; // TODOKO take height and width from a reliable source
+            dbdesc.Height = height;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -129,8 +130,8 @@ namespace DoremiEngine
 
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
-            viewport.Width = 800;
-            viewport.Height = 600;
+            viewport.Width = width;
+            viewport.Height = height;
             viewport.MinDepth = 0.0f;
             viewport.MaxDepth = 1.0f;
 

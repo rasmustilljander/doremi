@@ -19,6 +19,8 @@ namespace Doremi
         Contains implementation for moving the camera, collision and what camera mode is active
         */
         enum class CameraType {FREELOOK, THIRDPERSON};
+        class ThirdPersonCamera;
+        class FreeLookCamera;
         class CameraManager :
             public Manager, public Subscriber
         {
@@ -39,11 +41,13 @@ namespace Doremi
             TODOKO check is we need any event and write doc
             */
             void OnEvent(Event* p_event) override;
+
+            void ChangeCamera(CameraType p_type);
         private:
             CameraType m_currentCamera;
             DoremiEngine::Graphic::CameraManager& m_graphicModuleCameraManager;
-            DoremiEngine::Graphic::Camera* m_thirdPersonCamera;
-            DoremiEngine::Graphic::Camera* m_freeLookCamera;
+            ThirdPersonCamera* m_thirdPersonCamera;
+            FreeLookCamera* m_freeLookCamera;
         };
     }
 }

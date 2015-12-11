@@ -57,8 +57,8 @@ namespace Doremi
             bool CheckBitMaskInputFromGame(int p_bitMask);
 
             // return from InputModule with a changed value from mousesense
-            // const int GetMouseMovementX() const { return m_mouseMovementStruct.x; }
-            // const int GetMouseMovementY() const { return m_mouseMovementStruct.y; }
+            const int GetMouseMovementX() const { return m_mouseMoveX; }
+            const int GetMouseMovementY() const { return m_mouseMoveY; }
 
             // void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
             // Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som

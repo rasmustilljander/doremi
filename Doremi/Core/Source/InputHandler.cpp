@@ -7,20 +7,12 @@ namespace Doremi
 {
     namespace Core
     {
-        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
-
-
-        InputHandler::~InputHandler() {}
-        void InputHandler::StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-        {
-            m_singleton = new InputHandler(p_sharedContext);
-        }
-        void InputHandler::Initialize()
+        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) 
         {
             // Setup the different inputmoves! (Used in the game)
             userCmdsPlaying[32] = UserCommandPlaying::Jump;
             userCmdsPlaying[119] = UserCommandPlaying::Forward;
-            userCmdsPlaying[116] = UserCommandPlaying::Backward;
+            userCmdsPlaying[115] = UserCommandPlaying::Backward;
             userCmdsPlaying[97] = UserCommandPlaying::Left;
             userCmdsPlaying[100] = UserCommandPlaying::Right;
             userCmdsPlaying[1] = UserCommandPlaying::Fire;
@@ -35,6 +27,17 @@ namespace Doremi
             userCmdsMeny[1073741905] = UserCommandMeny::Down;
             userCmdsMeny[1073741904] = UserCommandMeny::Left;
             userCmdsMeny[1073741903] = UserCommandMeny::Right;
+        }
+
+
+        InputHandler::~InputHandler() {}
+        void InputHandler::StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            m_singleton = new InputHandler(p_sharedContext);
+        }
+        void InputHandler::Initialize()
+        {
+
         }
         bool InputHandler::CheckBitMaskInputFromGame(int p_bitMask) // Send what to check from
         {
@@ -61,7 +64,7 @@ namespace Doremi
         void InputHandler::BuildMaskFromEngineForGame()
         {
             int t_sizeVector = m_keyboardInputFromModule.size();
-
+            m_maskWithInput = 0;
             for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_keyboardInputFromModule[i]];
@@ -164,7 +167,7 @@ namespace Doremi
 
             // Do one of them TODOEA
             BuildMaskFromEngineForGame();
-            BuildMaskFromEngineForMeny();
+            //BuildMaskFromEngineForMeny();
 
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
