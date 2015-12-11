@@ -11,6 +11,7 @@
 #include <Manager/Network/ServerNetworkManager.hpp>
 #include <Manager/GraphicManager.hpp>
 #include <Manager/CameraManager.hpp>
+#include <Manager/RigidTransformSyncManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -153,11 +154,13 @@ namespace Doremi
             Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
             Manager* t_cameraManager = new CameraManager(sharedContext);
+            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             // Add manager to list of managers
             m_managers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
+            m_managers.push_back(t_rigidTransSyndManager);
             GenerateWorld(sharedContext);
 
             /*
