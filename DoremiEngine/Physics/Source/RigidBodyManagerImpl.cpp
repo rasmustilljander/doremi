@@ -44,6 +44,11 @@ namespace DoremiEngine
             m_bodies[p_bodyID]->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
         }
 
+        void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
+        {
+            m_bodies[p_bodyID]->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+        }
+
         XMFLOAT3 RigidBodyManagerImpl::GetBodyPosition(int p_bodyID)
         {
             PxVec3 p = m_bodies[p_bodyID]->getGlobalPose().p;
