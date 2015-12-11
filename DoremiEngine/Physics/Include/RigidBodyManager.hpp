@@ -10,8 +10,14 @@ namespace DoremiEngine
             public:
             /**
             Adds a dynamic box body to the world. Returns the ID for the body.
-            Very basic method and will probably be expanded several*/
+            Dynamic boxes are basically bodies which can be tossed around the world.
+            Very basic method and will probably be expanded several.*/
             virtual int AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) = 0;
+            /**
+            Adds a static box body to the world. Returns the ID for the body.
+            Static boxes stay still and are never affected by other physical entities.
+            They can still be moved around however, just not by any other physical object.*/
+            virtual int AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) = 0;
 
             /// Manipulators
             /**

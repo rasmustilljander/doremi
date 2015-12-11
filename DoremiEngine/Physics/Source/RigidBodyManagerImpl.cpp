@@ -17,11 +17,44 @@ namespace DoremiEngine
             PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             // Creates the actual body.
             PxTransform transform = PxTransform(position, orientation);
+            // This body is dynamic
             PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
             // Attach shape to the body
             body->attachShape(*shape);
-            // Give the body some mass
+            // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
             PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+            // Add the now fully created body to the scene
+            m_utils.m_worldScene->addActor(*body);
+            // We're done with the shape. Release it
+            shape->release();
+
+            // Finally add the body to our list
+            m_bodies[m_nextBody];
+            m_nextBody++;
+
+            /*
+            And now we have added a box to the world at the given position
+            I'm not too sure how we update the box, or the scene, or perform
+            any form of interaction however*/
+
+            // Return ID of body we just created
+            return m_nextBody - 1;
+        }
+
+        int RigidBodyManagerImpl::AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
+        {
+            // Create a world matrix (only translation) i think
+            PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
+            PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
+            PxVec3 dims = PxVec3(p_dims.x, p_dims.y, p_dims.z);
+            // Creates the physics object shape thingy, which collides with stuff. Shapes are just objects. I
+            PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
+            // Creates the actual body.
+            PxTransform transform = PxTransform(position, orientation);
+            // This body is static
+            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(transform);
+            // Attach shape to the body
+            body->attachShape(*shape);
             // Add the now fully created body to the scene
             m_utils.m_worldScene->addActor(*body);
             // We're done with the shape. Release it

@@ -18,6 +18,7 @@ namespace DoremiEngine
             virtual ~RigidBodyManagerImpl();
 
             int AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
+            int AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
 
             void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) override;
             void SetBodyVelocity(int p_bodyID, XMFLOAT3 p_velocity) override;
