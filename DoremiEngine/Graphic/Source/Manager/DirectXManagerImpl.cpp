@@ -35,12 +35,15 @@ namespace DoremiEngine
             int height = 800;
             InitializeSDL();
 
-            SDL_Window* m_win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, width, height,
-                                                 SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
-            if(!m_win)
+            if(GetActiveWindow() == nullptr)
             {
-                std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-                SDL_QUIT;
+                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, width, height,
+                                                   SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
+                if(!win)
+                {
+                    std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+                    SDL_QUIT;
+                }
             }
             DXGI_SWAP_CHAIN_DESC scd;
 
