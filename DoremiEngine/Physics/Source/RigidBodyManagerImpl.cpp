@@ -86,7 +86,8 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
-            ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            /*((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));*/
+            ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
         }
 
         void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)

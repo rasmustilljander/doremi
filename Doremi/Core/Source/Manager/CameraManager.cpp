@@ -34,7 +34,7 @@ namespace Doremi
 
         void CameraManager::Update(double p_dt)
         {
-            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::Jump))
+            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::DebugButton))
             {
                 switch(m_currentCamera)
                 {

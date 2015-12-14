@@ -32,7 +32,7 @@ namespace Doremi
 
         void EventHandler::Subscribe(Events p_eventType, Subscriber* p_subscriber) { m_broadcastMap[p_eventType].push_back(p_subscriber); }
 
-        void EventHandler::DeliverEvents()
+        void EventHandler::DeliverEvents() // TODOJB fix broadcast event when no one is subscribed to them (currently crashes if you do)
         {
             // Iterate through all events
             size_t length = m_mailBox.size();

@@ -18,7 +18,7 @@ namespace Doremi
     {
         enum class UserCommandPlaying
 
-            // TODOEA Lägga in detta i en textfil.
+        // TODOEA Lägga in detta i en textfil.
         { // Key       Code for it
             Jump = 1, // Space     32
             Forward = 2, // W         119
@@ -32,18 +32,19 @@ namespace Doremi
             DebugBackward = 512, // 1073741905
             DebugLeft = 1024, // 1073741904
             DebugRight = 2048, // 1073741903
+            DebugButton = 4096,
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
         };
         enum class UserCommandMeny
 
-            // TODOEA Lägga in detta i en textfil.
+        // TODOEA Lägga in detta i en textfil.
         { // Code
             LeftClick = 1, // 1
             RightClick = 2, // 3
             Enter = 4, // 13
-            Up = 8,     // 1073741906
-            Down = 16,  // 1073741905
-            Left = 32,  // 1073741904
+            Up = 8, // 1073741906
+            Down = 16, // 1073741905
+            Left = 32, // 1073741904
             Right = 64, // 1073741903
         };
 

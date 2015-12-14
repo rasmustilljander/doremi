@@ -22,6 +22,7 @@ namespace Doremi
             userCmdsPlaying[1073741905] = UserCommandPlaying::DebugBackward;
             userCmdsPlaying[1073741904] = UserCommandPlaying::DebugLeft;
             userCmdsPlaying[1073741903] = UserCommandPlaying::DebugRight;
+            userCmdsPlaying[120] = UserCommandPlaying::DebugButton;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;

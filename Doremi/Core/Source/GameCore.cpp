@@ -12,7 +12,6 @@
 #include <Manager/GraphicManager.hpp>
 #include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
-#include <Manager/PlayerManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -31,6 +30,7 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <PlayerHandler.hpp>
 
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
@@ -140,6 +140,7 @@ namespace Doremi
 
             // Create entity
             int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
+            PlayerHandler::GetInstance()->Initialize(playerID);
             // Create the rigid body
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(playerID)->p_materialID;
             XMFLOAT3 position = XMFLOAT3(0, 10, 0);
@@ -147,12 +148,10 @@ namespace Doremi
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
             bodyComp->p_bodyID =
                 sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
-
-
             PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
             playerCreationEvent->eventType = Events::PlayerCreation;
             playerCreationEvent->playerEntityID = playerID;
-            EventHandler::GetInstance()->BroadcastEvent(playerCreationEvent);
+            // EventHandler::GetInstance()->BroadcastEvent(playerCreationEvent);
         }
 
 
@@ -193,6 +192,7 @@ namespace Doremi
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
             InputHandler::StartInputHandler(sharedContext);
+            PlayerHandler::StartPlayerHandler(sharedContext);
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
@@ -200,14 +200,14 @@ namespace Doremi
             // Create manager
             Manager* t_renderManager = new GraphicManager(sharedContext);
             Manager* t_physicsManager = new ExampleManager(sharedContext);
-            Manager* t_playerManager = new PlayerManager(sharedContext);
+            // Manager* t_playerManager = new PlayerManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
-            m_managers.push_back(t_playerManager);
+            // m_managers.push_back(t_playerManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
             m_managers.push_back(t_rigidTransSyndManager);
@@ -291,6 +291,7 @@ namespace Doremi
         void GameCore::UpdateGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
+            PlayerHandler::GetInstance()->UpdatePosition();
             // Have all managers update
             size_t length = m_managers.size();
             for(size_t i = 0; i < length; i++)
@@ -377,7 +378,7 @@ namespace Doremi
                 CurrentTime = GetTickCount64();
                 FrameTime = CurrentTime - PreviousTime;
 
-                // Update the previous position with frametime so we can catch up if we slow down
+                // Update the previous position with frametime so we can catch up if we slow down&
                 PreviousTime += FrameTime;
 
                 // Update Accumulator (how much we will work this frame)
