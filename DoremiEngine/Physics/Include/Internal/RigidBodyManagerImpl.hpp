@@ -32,8 +32,9 @@ namespace DoremiEngine
             InternalPhysicsUtils& m_utils;
 
             // Separate lists for dynamic and static bodies
-            unordered_map<int, PxRigidDynamic*> m_bodies;
-            unordered_map<int, PxRigidStatic*> m_staticBodies;
+            // unordered_map<int, PxRigidDynamic*> m_bodies;
+            // unordered_map<int, PxRigidStatic*> m_staticBodies;
+            unordered_map<int, PxRigidActor*> m_bodies;
             int m_nextBody;
             int m_nextStaticBody;
         };

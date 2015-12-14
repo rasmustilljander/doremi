@@ -52,11 +52,14 @@ namespace DoremiEngine
             PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
             PxVec3 dims = PxVec3(p_dims.x, p_dims.y, p_dims.z);
             // Creates the physics object shape thingy, which collides with stuff. Shapes are just objects. I
+            PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
             PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             // Creates the actual body.
             PxTransform transform = PxTransform(position, orientation);
             // This body is static
+            PxTransform trans = PxTransform(PxVec3(0, 0, 0), PxQuat(0, 0, 0, 1));
             PxRigidStatic* body = m_utils.m_physics->createRigidStatic(transform);
+
             // Attach shape to the body
             body->attachShape(*shape);
             // Add the now fully created body to the scene
@@ -65,8 +68,8 @@ namespace DoremiEngine
             shape->release();
 
             // Finally add the body to our list
-            m_staticBodies[m_nextStaticBody] = body;
-            m_nextStaticBody++;
+            m_bodies[m_nextBody] = body;
+            m_nextBody++;
 
             /*
             And now we have added a box to the world at the given position
@@ -74,23 +77,27 @@ namespace DoremiEngine
             any form of interaction however*/
 
             // Return ID of body we just created
-            return m_nextStaticBody - 1;
+            return m_nextBody - 1;
         }
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
-            m_bodies[p_bodyID]->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
+            if(m_bodies[p_bodyID]->isRigidDynamic()) ((PxRigidDynamic*)m_bodies[p_bodyID])->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
         }
 
         void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
-            m_bodies[p_bodyID]->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
         }
 
         void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)
         {
             PxVec3 position = PxVec3(p_v.x, p_v.y, p_v.z);
             PxQuat orientation = PxQuat(p_o.x, p_o.y, p_o.z, p_o.w);
-            m_bodies[p_bodyID]->setGlobalPose(PxTransform(position, orientation));
+            PxTransform trans;
+            trans.p = position;
+            trans.q = orientation;
+            m_bodies[p_bodyID]->setGlobalPose(trans);
+            PxVec3 pos = m_bodies[p_bodyID]->getGlobalPose().p;
         }
 
         XMFLOAT3 RigidBodyManagerImpl::GetBodyPosition(int p_bodyID)
@@ -101,13 +108,14 @@ namespace DoremiEngine
 
         XMFLOAT4 RigidBodyManagerImpl::GetBodyOrientation(int p_bodyID)
         {
+
             PxQuat q = m_bodies[p_bodyID]->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
 
         XMFLOAT3 RigidBodyManagerImpl::GetBodyVelocity(int p_bodyID)
         {
-            PxVec3 v = m_bodies[p_bodyID]->getLinearVelocity();
+            PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getLinearVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
     }

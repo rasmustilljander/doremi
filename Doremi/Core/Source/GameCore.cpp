@@ -66,22 +66,42 @@ namespace Doremi
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             // Simple debug platform
             EntityBlueprint t_platform;
+            // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            TransformComponent* t_transformComp = new TransformComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_platform[ComponentType::Render] = t_renderComp;
+            // Transform
+            TransformComponent* t_transformComp = new TransformComponent();
             t_transformComp->scale.x = 4;
             t_transformComp->scale.z = 4;
             t_transformComp->scale.y = 0.1;
-            t_platform[ComponentType::Render] = t_renderComp;
             t_platform[ComponentType::Transform] = t_transformComp;
+            // Physical material comp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
+            t_platform[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
-            for(size_t i = 0; i < 5; i++)
-            {
-                int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-                t_transformComp = t_entityHandler.GetComponentFromStorage<TransformComponent>(entityID);
-                t_transformComp->position = DirectX::XMFLOAT3(i, 1, i * 2);
-            }
+
+            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            XMFLOAT3 position = DirectX::XMFLOAT3(0, 5, 0);
+            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+            RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+            rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+
+
+            // for(size_t i = 0; i < 5; i++)
+            //{
+            //    int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            //    XMFLOAT3 position = DirectX::XMFLOAT3(0, 2, i);
+            //    XMFLOAT4  orientation = XMFLOAT4(0, 0, 1, 1);
+            //    t_rigidBodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(entityID);
+            //    sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyPosition(t_rigidBodyComp->p_bodyID, position, orientation);
+            //}
         }
         // Only for testing, should be removed! TODO
         void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -109,10 +129,10 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
             // Transform comp
             t_transformComp = new TransformComponent();
-            t_transformComp->position = XMFLOAT3(0, 4, 4);
-            XMFLOAT4 orientation = XMFLOAT4(1, 0, 1, 0);
+            // t_transformComp->position = XMFLOAT3(0, 4, 4);
+            /*XMFLOAT4 orientation = XMFLOAT4(1, 0, 1, 0);
             XMStoreFloat4(&orientation, XMVector4Normalize(XMLoadFloat4(&orientation)));
-            t_transformComp->rotation = orientation;
+            t_transformComp->rotation = orientation;*/
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -120,7 +140,6 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_rigidBodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), t_physMatComp->p_materialID);
             t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
@@ -128,9 +147,18 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Player] = t_playerComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
+
             // Create entity
             int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-            
+            // Create the rigid body
+            int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(playerID)->p_materialID;
+            XMFLOAT3 position = XMFLOAT3(0, 10, 0);
+            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
+            bodyComp->p_bodyID =
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+
+
             PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
             playerCreationEvent->eventType = Events::PlayerCreation;
             playerCreationEvent->playerEntityID = playerID;
