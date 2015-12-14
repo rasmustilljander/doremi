@@ -38,6 +38,7 @@ namespace Doremi
             void StartServerCore();
 
             private:
+            void DrawGame();
             void LoadEngineLibrary();
 
             // Engine variables
@@ -46,6 +47,7 @@ namespace Doremi
 
             // Managers
             std::vector<Manager*> m_managers;
+            std::vector<Manager*> m_graphicalManagers;
         };
     }
 }

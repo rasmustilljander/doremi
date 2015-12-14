@@ -301,6 +301,15 @@ namespace Doremi
             InputHandler::GetInstance()->Update();
         }
 
+        void GameCore::DrawGame()
+        {
+            size_t length = m_graphicalManagers.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                m_graphicalManagers.at(i)->Update(0.017);
+            }
+        }
+
         void GameCore::StartClientCore()
         {
             // TODOCM remove for better timer
@@ -348,6 +357,7 @@ namespace Doremi
 
 
                 // Draw stuff
+                DrawGame();
             }
         }
 

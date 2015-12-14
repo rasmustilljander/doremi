@@ -162,7 +162,7 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::EndDraw()
         {
-            m_swapChain->Present(1, 0); // TODO Evaluate if vsync should always be active
+            m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
