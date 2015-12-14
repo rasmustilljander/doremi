@@ -61,7 +61,28 @@ namespace Doremi
             DynamicLoader::FreeSharedLibrary(m_engineLibrary);
         }
 
-
+        void GenerateDebugPlatforms(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            // Simple debug platform
+            EntityBlueprint t_platform;
+            RenderComponent* t_renderComp = new RenderComponent();
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_transformComp->scale.x = 4;
+            t_transformComp->scale.z = 4;
+            t_transformComp->scale.y = 0.1;
+            t_platform[ComponentType::Render] = t_renderComp;
+            t_platform[ComponentType::Transform] = t_transformComp;
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
+            for(size_t i = 0; i < 5; i++)
+            {
+                int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+                t_transformComp = t_entityHandler.GetComponentFromStorage<TransformComponent>(entityID);
+                t_transformComp->position = DirectX::XMFLOAT3(i, 1, i * 2);
+            }
+        }
         // Only for testing, should be removed! TODO
         void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
         {

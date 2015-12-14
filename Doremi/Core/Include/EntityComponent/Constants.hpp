@@ -33,6 +33,7 @@ enum class Blueprints : int
     VoiceRecordEntity,
     RenderExampleEntity,
     PlayerEntity,
+    PlatformEntity,
 };
 
 /**

@@ -55,18 +55,6 @@ namespace DoremiEngine
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
-            if(scd.OutputWindow == nullptr)
-            {
-                InitializeSDL();
-                SDL_Window* m_win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, 800, 800,
-                                                     SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
-                if(!m_win)
-                {
-                    std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-                    SDL_QUIT;
-                }
-            }
-            scd.OutputWindow = GetActiveWindow();
             scd.SampleDesc.Count = 4; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
 
