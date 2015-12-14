@@ -60,7 +60,29 @@ namespace Doremi
             m_stopEngineFunction();
             DynamicLoader::FreeSharedLibrary(m_engineLibrary);
         }
+        void CreateBulletBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            /// Create Components
+            // Transform
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+            // Render
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            blueprint[ComponentType::Render] = renderComp;
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            blueprint[ComponentType::RigidBody] = rigidBodyComp;
 
+            /// Register blueprint
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
+        }
         void GenerateDebugPlatforms(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
@@ -102,6 +124,7 @@ namespace Doremi
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             GenerateDebugPlatforms(sharedContext);
+            CreateBulletBlueprint(sharedContext);
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();

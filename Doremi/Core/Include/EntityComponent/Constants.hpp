@@ -34,6 +34,7 @@ enum class Blueprints : int
     RenderExampleEntity,
     PlayerEntity,
     PlatformEntity,
+    BulletEntity,
 };
 
 /**
