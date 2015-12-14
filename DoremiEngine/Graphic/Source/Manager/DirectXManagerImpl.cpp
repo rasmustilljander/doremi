@@ -58,11 +58,13 @@ namespace DoremiEngine
             scd.SampleDesc.Count = 4; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
 
-            HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd, &m_swapChain,
-                                                        &m_device, NULL, &m_deviceContext);
-            if(!CheckHRESULT(res, "Error when creating device and swapchain"))
+            HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL,
+                                                        D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
+            if(!CheckHRESULT(res, "Error when creating device and swapchain, trying withour debug flag"))
             {
-                return; // TODO debug logger
+                HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd,
+                                                            &m_swapChain, &m_device, NULL, &m_deviceContext);
+                CheckHRESULT(res, "Error when creating device and swapchain");
             }
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);

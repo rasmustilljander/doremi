@@ -87,7 +87,7 @@ namespace Doremi
         void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-
+            GenerateDebugPlatforms(sharedContext);
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();
