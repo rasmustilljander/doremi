@@ -96,7 +96,8 @@ namespace Utility
             T* Free(T* t)
             {
                 delete t;
-                ++m_numberOfOccupiedBlocks;
+                --m_numberOfOccupiedBlocks;
+
             }
 
             private:
