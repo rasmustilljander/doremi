@@ -14,17 +14,25 @@
 #endif
 #include <exception>
 #include <iostream>
-
+#include <Utility\MemoryManager\Include\MainMemoryManager.hpp>
+#include <Utility/DebugLog/Include/VirtualConsole.hpp>
 #ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+// int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int main(int argc, const char* argv[])
 #else
 #error Platform not supported
 #endif
 {
-    // Might not be the best way of doing console writing
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONIN$", "r", stdin);
+    // while(true)
+    {
+        //       Utility::MemoryManager::MainMemoryManager::Startup();
+        //      auto& a = Utility::MemoryManager::MainMemoryManager::GetInstance();
+        //    Utility::MemoryManager::MainMemoryManager::Shutdown();
+    }
+    FreeConsole();
+    Utility::DebugLog::VirtualConsole a("ConsoleApplication.exe", 15);
+    std::string b = "hrj";
+    a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %s", 5);
 
     try
     {

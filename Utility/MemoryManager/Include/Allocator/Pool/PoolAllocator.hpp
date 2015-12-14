@@ -97,7 +97,6 @@ namespace Utility
             {
                 delete t;
                 --m_numberOfOccupiedBlocks;
-
             }
 
             private:
