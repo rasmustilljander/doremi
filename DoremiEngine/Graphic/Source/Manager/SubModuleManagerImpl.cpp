@@ -6,6 +6,7 @@
 #include <Internal/Manager/Texture2DManagerImpl.hpp>
 #include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <Internal/Manager/CameraManagerImpl.hpp>
+#include <Internal/Manager/LightManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 // DirectX stuff
 // TODOKO Should not need directx here
@@ -27,6 +28,7 @@ namespace DoremiEngine
             m_shaderManager = new ShaderManagerImpl(m_graphicContext);
             m_texture2DManager = new Texture2DManagerImpl(m_graphicContext);
             m_cameraManager = new CameraManagerImpl(m_graphicContext);
+            m_lightManager = new LightManagerImpl(m_graphicContext);
             m_cameraManager->Initialize();
 
             // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
@@ -53,5 +55,7 @@ namespace DoremiEngine
         DirectXManager& SubModuleManagerImpl::GetDirectXManager() { return *m_directXManager; }
 
         CameraManager& SubModuleManagerImpl::GetCameraManager() { return *m_cameraManager; }
+
+        LightManager& SubModuleManagerImpl::GetLightManager() { return *m_lightManager; }
     }
 }

@@ -10,6 +10,7 @@ namespace DoremiEngine
         class Texture2DManager;
         class DirectXManager;
         class CameraManager;
+        class LightManager;
         class SubModuleManager
         {
             public:
@@ -19,6 +20,7 @@ namespace DoremiEngine
             virtual Texture2DManager& GetTexuter2DManager() = 0;
             virtual DirectXManager& GetDirectXManager() = 0;
             virtual CameraManager& GetCameraManager() = 0;
+            virtual LightManager& GetLightManager() = 0;
         };
     }
 }
