@@ -86,22 +86,16 @@ namespace Doremi
             t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
-            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(0, -1, 0);
-            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
-            RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-            rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
-
-
-            // for(size_t i = 0; i < 5; i++)
-            //{
-            //    int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-            //    XMFLOAT3 position = DirectX::XMFLOAT3(0, 2, i);
-            //    XMFLOAT4  orientation = XMFLOAT4(0, 0, 1, 1);
-            //    t_rigidBodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(entityID);
-            //    sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyPosition(t_rigidBodyComp->p_bodyID, position, orientation);
-            //}
+            for(size_t i = 0; i < 5; i++)
+            {
+                int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+                XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
+                XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+                int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                rigidComp->p_bodyID =
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+            }
         }
         // Only for testing, should be removed! TODO
         void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -129,10 +123,6 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
             // Transform comp
             t_transformComp = new TransformComponent();
-            // t_transformComp->position = XMFLOAT3(0, 4, 4);
-            /*XMFLOAT4 orientation = XMFLOAT4(1, 0, 1, 0);
-            XMStoreFloat4(&orientation, XMVector4Normalize(XMLoadFloat4(&orientation)));
-            t_transformComp->rotation = orientation;*/
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();

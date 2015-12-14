@@ -18,7 +18,8 @@ namespace Doremi
             virtual ~ThirdPersonCamera();
             void Update(double p_dt);
             DoremiEngine::Graphic::Camera& GetCamera() const { return *m_camera; }
-        private:
+            private:
+            int m_playerID;
             DoremiEngine::Graphic::Camera* m_camera;
         };
     }
