@@ -205,7 +205,7 @@ namespace Doremi
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             // Add manager to list of managers
-            m_managers.push_back(t_renderManager);
+            m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_playerManager);
             m_managers.push_back(t_clientNetworkManager);
@@ -288,25 +288,25 @@ namespace Doremi
             ////////////////End Example////////////////
         }
 
-        void GameCore::UpdateGame(uint32_t p_deltaTime)
+        void GameCore::UpdateGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
             // Have all managers update
             size_t length = m_managers.size();
-            for (size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < length; i++)
             {
-                m_managers.at(i)->Update(0.017);
+                m_managers.at(i)->Update(p_deltaTime);
             }
 
             InputHandler::GetInstance()->Update();
         }
 
-        void GameCore::DrawGame()
+        void GameCore::DrawGame(double p_deltaTime)
         {
             size_t length = m_graphicalManagers.size();
             for(size_t i = 0; i < length; i++)
             {
-                m_graphicalManagers.at(i)->Update(0.017);
+                m_graphicalManagers.at(i)->Update(p_deltaTime);
             }
         }
 
@@ -342,7 +342,7 @@ namespace Doremi
                 while(Accumulator >= UpdateTimeStepLength)
                 {
                     // Update Game logic
-                    UpdateGame(UpdateTimeStepLength);
+                    UpdateGame(UpdateTimeStepLength / 1000.0f);
 
                     // Remove time from accumulator
                     Accumulator -= UpdateTimeStepLength;
@@ -357,7 +357,7 @@ namespace Doremi
 
 
                 // Draw stuff
-                DrawGame();
+                DrawGame(UpdateTimeStepLength / 1000.0f);
             }
         }
 

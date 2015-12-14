@@ -11,7 +11,7 @@ namespace Doremi
     namespace Core
     {
         ServerNetworkManager::ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(17.0f), m_timeoutInterval(5000), m_maxConnection(16)
+            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(0.017f), m_timeoutInterval(5.0f), m_maxConnection(16)
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = p_sharedContext.GetNetworkModule();
 

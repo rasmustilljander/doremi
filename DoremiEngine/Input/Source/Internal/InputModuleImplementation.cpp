@@ -47,8 +47,8 @@ namespace DoremiEngine
             SwitchCaseEventsForPlaying(eventVariable);
 
             // TODEA
-            PrintInputStructsDEBUG();
-            PrintInputMouseMovement();
+            // PrintInputStructsDEBUG();
+            // PrintInputMouseMovement();
         }
         int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {

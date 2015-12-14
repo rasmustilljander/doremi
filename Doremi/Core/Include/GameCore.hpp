@@ -25,11 +25,6 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void UpdateGame(uint32_t p_deltaTime);
-
-            /**
-                TODOCM doc
-            */
             void StartClientCore();
 
             /**
@@ -38,7 +33,19 @@ namespace Doremi
             void StartServerCore();
 
             private:
-            void DrawGame();
+            /**
+                TODOCM doc
+            */
+            void UpdateGame(double p_deltaTime);
+
+            /**
+                TODOCM doc
+            */
+            void DrawGame(double p_deltaTime);
+
+            /**
+                TODO doc
+            */
             void LoadEngineLibrary();
 
             // Engine variables

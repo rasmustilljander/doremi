@@ -14,8 +14,8 @@ namespace Doremi
               m_masterConnectionState(ConnectionState::DISCONNECTED),
               m_serverConnectionState(ConnectionState::DISCONNECTED),
               m_nextUpdateTimer(0.0f),
-              m_updateInterval(1000.0f),
-              m_timeoutInterval(5000)
+              m_updateInterval(1.0f),
+              m_timeoutInterval(5.0f)
         {
             m_serverAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
