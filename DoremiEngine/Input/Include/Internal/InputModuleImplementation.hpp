@@ -60,6 +60,7 @@ namespace DoremiEngine
             int GetMouseMovementY(); // const { return m_mouseMovementStruct.y; }
             int GetMouseWheelSpins(); // const { return m_mouseWheelSpins; }
             //////////////////////////
+            void SetCursorInvisibleAndMiddle(bool p_bool);
 
 
             private:

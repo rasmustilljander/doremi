@@ -76,6 +76,10 @@ namespace Doremi
 
             return false;
         }
+        void InputHandler::SetCursorInvisibleAndMiddle(bool p_bool)
+        {
+            m_sharedContext.GetInputModule().SetCursorInvisibleAndMiddle(p_bool);
+        }
         InputHandler* InputHandler::m_singleton = nullptr;
 
         InputHandler* InputHandler::GetInstance()

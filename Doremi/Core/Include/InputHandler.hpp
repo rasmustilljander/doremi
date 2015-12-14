@@ -61,7 +61,8 @@ namespace Doremi
             // return from InputModule with a changed value from mousesense
             const int GetMouseMovementX() const { return m_mouseMoveX; }
             const int GetMouseMovementY() const { return m_mouseMoveY; }
-
+            //
+            void SetCursorInvisibleAndMiddle(bool p_bool);
             // void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
             // Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
             // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)

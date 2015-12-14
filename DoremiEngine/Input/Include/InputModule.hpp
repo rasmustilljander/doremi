@@ -45,6 +45,7 @@ namespace DoremiEngine
             virtual int GetMouseMovementX() = 0;
             virtual int GetMouseMovementY() = 0;
             virtual int GetMouseWheelSpins() = 0;
+            virtual void SetCursorInvisibleAndMiddle(bool p_bool) = 0;
             // TODOEA Test med pekare. FInns med pekare om vi vill speeda upp allt.
             // Tar bort 4 gets per update. o gets från managers.
             // int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }

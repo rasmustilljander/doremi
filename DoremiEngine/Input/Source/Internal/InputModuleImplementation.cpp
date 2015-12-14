@@ -29,8 +29,6 @@ namespace DoremiEngine
             {
                 CreateWindowSDL(800, 800);
             }
-
-            // SDL_SetRelativeMouseMode(SDL_TRUE);
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
@@ -47,7 +45,6 @@ namespace DoremiEngine
 
             SDL_Event eventVariable;
             SwitchCaseEventsForPlaying(eventVariable);
-
 
             // TODEA
             PrintInputStructsDEBUG();
@@ -130,6 +127,17 @@ namespace DoremiEngine
             int t_return = m_mouseWheelSpins;
             m_mouseWheelSpins = 0;
             return t_return;
+        }
+        void InputModuleImplementation::SetCursorInvisibleAndMiddle(bool p_bool)
+        {
+            if (p_bool)
+            {
+                SDL_SetRelativeMouseMode(SDL_TRUE);//SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
+            }
+            else
+            {
+                SDL_SetRelativeMouseMode(SDL_FALSE);//Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
+            }
         }
         void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable)
         {
