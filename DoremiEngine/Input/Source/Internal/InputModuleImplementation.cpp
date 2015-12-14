@@ -29,6 +29,8 @@ namespace DoremiEngine
             {
                 CreateWindowSDL(800, 800);
             }
+
+            // SDL_SetRelativeMouseMode(SDL_TRUE);
         }
 
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
@@ -37,7 +39,7 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Update()
         {
-            // TODOEA COmments that maybe sohuld be removed in the end it doesnt even matter
+            // TODOEA COmments that maybe sohuld be removed in the end, it doesnt even matter
             // ResetButtonsDown();
             // ResetMouseMovementStruct();
             // m_mouseWheelSpins = 0;

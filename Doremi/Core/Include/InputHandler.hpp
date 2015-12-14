@@ -57,7 +57,7 @@ namespace Doremi
             static void StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             void Initialize();
             bool CheckBitMaskInputFromGame(int p_bitMask);
-
+            bool CheckForOnePress(int p_bitMask);
             // return from InputModule with a changed value from mousesense
             const int GetMouseMovementX() const { return m_mouseMoveX; }
             const int GetMouseMovementY() const { return m_mouseMoveY; }
@@ -77,6 +77,7 @@ namespace Doremi
             int m_mouseSense = 1;
             // TODOEA Could be a problem with meny and game inputs I DUNNO To only hav one bitmask
             int m_maskWithInput = 0;
+            int m_lastUpdateMaskWithInput = 0;
             void BuildMaskFromEngineForGame();
             void BuildMaskFromEngineForMeny();
             void PrintInputMouseMovement();

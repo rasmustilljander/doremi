@@ -34,18 +34,18 @@ namespace Doremi
 
         void CameraManager::Update(double p_dt)
         {
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame(1))
+            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::Jump))
             {
-                switch (m_currentCamera)
+                switch(m_currentCamera)
                 {
-                case CameraType::FREELOOK:
-                    ChangeCamera(CameraType::THIRDPERSON);
-                    break;
-                case CameraType::THIRDPERSON:
-                    ChangeCamera(CameraType::FREELOOK);
-                    break;
-                default:
-                    break;
+                    case CameraType::FREELOOK:
+                        ChangeCamera(CameraType::THIRDPERSON);
+                        break;
+                    case CameraType::THIRDPERSON:
+                        ChangeCamera(CameraType::FREELOOK);
+                        break;
+                    default:
+                        break;
                 }
             }
             switch(m_currentCamera)

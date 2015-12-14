@@ -55,6 +55,27 @@ namespace Doremi
             }
             return false;
         }
+        bool InputHandler::CheckForOnePress(int p_bitMask)
+        {
+
+            if(CheckBitMaskInputFromGame(p_bitMask))
+            {
+                if((m_lastUpdateMaskWithInput & p_bitMask) == p_bitMask)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
         InputHandler* InputHandler::m_singleton = nullptr;
 
         InputHandler* InputHandler::GetInstance()
@@ -168,10 +189,10 @@ namespace Doremi
         void InputHandler::Update()
         {
             UpdateInputsFromEngine();
-
+            m_lastUpdateMaskWithInput = m_maskWithInput;
             // Do one of them TODOEA
             BuildMaskFromEngineForGame();
-            //BuildMaskFromEngineForMeny();
+            // BuildMaskFromEngineForMeny();
 
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
