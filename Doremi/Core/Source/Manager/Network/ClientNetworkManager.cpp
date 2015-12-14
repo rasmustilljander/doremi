@@ -2,6 +2,7 @@
 #include <Manager/Network/ClientNetworkManager.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <Manager/Network/NetMessage.hpp>
+#include <Manager/Network/BitWriter.h>
 #include <iostream> // TODOCM remove after test
 
 namespace Doremi
