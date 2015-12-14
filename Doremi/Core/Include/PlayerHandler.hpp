@@ -38,6 +38,7 @@ namespace Doremi
 
             static PlayerHandler* m_singleton;
 
+            int m_playerEntityID;
             int m_bodyID;
             int m_materialID;
         };

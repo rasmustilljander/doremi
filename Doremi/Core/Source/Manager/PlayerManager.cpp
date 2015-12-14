@@ -43,10 +43,6 @@ namespace Doremi
         void PlayerManager::Update(double p_dt)
         {
             // Example on how to create and Broadcast a event
-            ExampleEvent* myEvent = new ExampleEvent();
-            myEvent->eventType = Events::Example;
-            myEvent->myInt = 42;
-            EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
             // Loop through all entities
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
@@ -56,14 +52,11 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
                 {
 
-                    // Get component
-                    ExampleComponent* t_example = EntityHandler::GetInstance().GetComponentFromStorage<ExampleComponent>(i);
-                    Example2Component* t_example2 = EntityHandler::GetInstance().GetComponentFromStorage<Example2Component>(i);
                 }
             }
 
-            TransformComponent* t_trans = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerComponentID);
-            // t_trans->position = m_playerHandler->UpdatePosition();
+            //TransformComponent* t_trans = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerComponentID);
+            m_playerHandler->UpdatePosition();
         }
         void PlayerManager::OnEvent(Event* p_event)
         {

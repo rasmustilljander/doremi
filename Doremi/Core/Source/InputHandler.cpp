@@ -18,6 +18,10 @@ namespace Doremi
             userCmdsPlaying[1] = UserCommandPlaying::Fire;
             userCmdsPlaying[999] = UserCommandPlaying::ScrollWpnUp;
             userCmdsPlaying[998] = UserCommandPlaying::ScrollWpnDown;
+            userCmdsPlaying[1073741906] = UserCommandPlaying::DebugForward;
+            userCmdsPlaying[1073741905] = UserCommandPlaying::DebugBackward;
+            userCmdsPlaying[1073741904] = UserCommandPlaying::DebugLeft;
+            userCmdsPlaying[1073741903] = UserCommandPlaying::DebugRight;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;

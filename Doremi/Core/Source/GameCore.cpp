@@ -32,6 +32,12 @@
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
+#include <EventHandler/Events/PlayerCreationEvent.hpp>
+
 #include <string>
 
 // TODOCM remove for better timer?
@@ -69,56 +75,45 @@ namespace Doremi
             AudioActiveComponent* t_audioActiveComp = new AudioActiveComponent();
             VoiceRecordingComponent* t_voiceRecordingComponent = new VoiceRecordingComponent();
 
-            // Test render component
             RenderComponent* t_renderComp = new RenderComponent();
             TransformComponent* t_transformComp = new TransformComponent();
-            EntityBlueprint t_renderBlueprint;
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
-            t_transformComp->position.z = 4;
-            t_renderBlueprint[ComponentType::Render] = t_renderComp;
-            t_renderBlueprint[ComponentType::Transform] = t_transformComp;
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::RenderExampleEntity, t_renderBlueprint);
 
+            EntityBlueprint t_avatarBlueprint;
 
-            // Declare blueprint (do not reuse variables for more blueprints)
-            EntityBlueprint t_entityBlueprint;
-            EntityBlueprint t_recordingBlueprint;
-
+            /// Fill with components
+            // Render
             t_renderComp = new RenderComponent();
-            t_transformComp = new TransformComponent();
-            PlayerComponent* t_playerComp = new PlayerComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
-            t_transformComp->position.z = 4;
-
-            EntityBlueprint t_playerBlueprint;
-            t_playerBlueprint[ComponentType::Render] = t_renderComp;
-            t_playerBlueprint[ComponentType::Transform] = t_transformComp;
-            t_playerBlueprint[ComponentType::Player] = t_playerComp;
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_playerBlueprint);
-            t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-
-
-            t_recordingBlueprint[ComponentType::VoiceRecording] = t_voiceRecordingComponent;
-            // Set components of the blueprint
-            t_entityBlueprint[ComponentType::Example] = t_exampleComponent;
-            t_entityBlueprint[ComponentType::Example2] = t_example2Component;
-            t_entityBlueprint[ComponentType::Audio] = t_audioComp;
-            t_entityBlueprint[ComponentType::AudioActive] = t_audioActiveComp;
-            // Register blueprint to the appropriate bit mask (WARNING! Key will possibly change in
-            // the future)
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::ExampleEntity, t_entityBlueprint);
-
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::VoiceRecordEntity, t_recordingBlueprint);
-
-            // Create a couple of entities using the newly created blueprint
-            for(size_t i = 0; i < 1; i++)
-            {
-                t_entityHandler.CreateEntity(Blueprints::ExampleEntity);
-            }
-            t_entityHandler.CreateEntity(Blueprints::VoiceRecordEntity);
-            t_entityHandler.CreateEntity(Blueprints::RenderExampleEntity);
+            t_avatarBlueprint[ComponentType::Render] = t_renderComp;
+            // Transform comp
+            t_transformComp = new TransformComponent();
+            t_transformComp->position = XMFLOAT3(0, 4, 4);
+            XMFLOAT4 orientation = XMFLOAT4(1, 0, 1, 0);
+            XMStoreFloat4(&orientation, XMVector4Normalize(XMLoadFloat4(&orientation)));
+            t_transformComp->rotation = orientation;
+            t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+            // Physical material comp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
+            t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            t_rigidBodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), t_physMatComp->p_materialID);
+            t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+            // Player component
+            PlayerComponent* t_playerComp = new PlayerComponent();
+            t_playerComp->isControllable = true;
+            t_avatarBlueprint[ComponentType::Player] = t_playerComp;
+            // Register blueprint
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
+            // Create entity
+            int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
+            
+            PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
+            playerCreationEvent->eventType = Events::PlayerCreation;
+            playerCreationEvent->playerEntityID = playerID;
+            EventHandler::GetInstance()->BroadcastEvent(playerCreationEvent);
         }
 
 
@@ -268,13 +263,13 @@ namespace Doremi
                 DeltaTime = CurrentTime - PreviousTime;
                 PreviousTime = CurrentTime;
 
+                EventHandler::GetInstance()->DeliverEvents();
                 // Have all managers update
                 size_t length = m_managers.size();
                 for(size_t i = 0; i < length; i++)
                 {
-                    m_managers.at(i)->Update(DeltaTime);
+                    m_managers.at(i)->Update(0.017);
                 }
-                EventHandler::GetInstance()->DeliverEvents();
 
                 InputHandler::GetInstance()->Update();
             }
