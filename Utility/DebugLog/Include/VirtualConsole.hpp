@@ -2,76 +2,19 @@
 #include <Windows.h>
 #include <string>
 #include <map>
+#include <Utility/DebugLog/Include/LogLevel.hpp>
+#include <Utility/DebugLog/Include/LogTag.hpp>
+#include <Utility/DebugLog/Include/ConsoleColor.hpp>
+
+namespace ctpl
+{
+    class thread_pool;
+}
 
 namespace Utility
 {
     namespace DebugLog
     {
-        enum class LogLevel // TODORT move to hpp
-        {
-            FATAL_ERROR,
-            NON_FATAL_ERROR,
-            WARNING,
-            SUCCESS,
-            DEBUG_PRINT,
-            INIT_PRINT,
-            START_PRINT,
-            PINK_PRINT,
-            PACKET_PRINT,
-            MASS_DATA_PRINT,
-            NOLEVEL,
-            HELP_PRINT,
-            IDENTIFY_PRINT,
-        };
-
-        enum class ConsoleColor // TODORT move to hpp
-        {
-            BLACK = 0,
-            DARK_BLUE = 1,
-            DARK_GREEN = 2,
-            DARK_AQUA = 3,
-            DARK_CYAN = 3,
-            DARK_RED = 4,
-            DARK_PURPLE = 5,
-            DARK_PINK = 5,
-            DARK_MANGENTA = 5,
-            DARK_YELLOW = 6,
-            DARK_WHITE = 7,
-            GRAY = 8,
-            BLUE = 9,
-            GREEN = 10,
-            AQUA = 11,
-            CYAN = 11,
-            RED = 12,
-            PURPLE = 13,
-            PINK = 13,
-            MANGENTA = 13,
-            YELLOW = 14,
-            WHITE = 15
-        };
-
-        enum class LogTag // TODORT move to hpp
-        {
-            RENDER,
-            NETWORK,
-            CLIENT,
-            SERVER,
-            GENERAL,
-            NOTAG,
-            PHYSICS,
-            TOOLS,
-            SOUND,
-            GAME,
-            COMPONENT,
-            GUI,
-            INPUT,
-            RESOURCE,
-            SCRIPT,
-            ANIMATION,
-            WATER,
-            PARTICLE
-        };
-
         struct TagLevelInfo // TODORT move to hpp
         {
             TagLevelInfo(std::string p_name, bool p_enabled) : Name(p_name), Enabled(p_enabled) {}
@@ -79,12 +22,15 @@ namespace Utility
             std::string Name;
             bool Enabled;
         };
+        struct LoggingData;
 
         class VirtualConsole
         {
             public:
-            VirtualConsole(const std::string& p_applicationName, const size_t& p_color);
+            VirtualConsole();
             virtual ~VirtualConsole();
+            void Initialize(const std::string& p_pipeName = "standard", bool p_writeToConsole = true, bool p_writeToFile = true,
+                            const ConsoleColor& p_textColor = ConsoleColorEnum::WHITE, const ConsoleColor& p_backgroundColor = ConsoleColorEnum::BLACK);
 
             /**
                 The actual method called when calling LogText
@@ -103,7 +49,7 @@ namespace Utility
             bool CheckTag(LogTag p_tag) { return m_tagInfo[p_tag].Enabled; }
             bool CheckLevel(LogLevel p_level) { return m_levelInfo[p_level].Enabled; }
             public:
-            void WriteToConsole(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const std::string& p_VAListAsString);
+            void WriteToConsole(const LoggingData& p_loggingData);
 
             std::map<LogTag, TagLevelInfo> m_tagInfo;
             std::map<LogLevel, TagLevelInfo> m_levelInfo;
@@ -111,6 +57,7 @@ namespace Utility
             HANDLE m_nearEnd;
             HANDLE m_farEnd;
             HANDLE m_process;
+            ctpl::thread_pool& m_threadPool;
         };
     }
 }

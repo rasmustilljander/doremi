@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
+
+#include <thread> // std::this_thread::sleep_for
+#include <chrono> // std::chrono::seconds
 #else
 #error Platform not supported
 #endif
@@ -23,16 +26,22 @@ int main(int argc, const char* argv[])
 #error Platform not supported
 #endif
 {
-    // while(true)
+    FreeConsole();
+    Utility::DebugLog::VirtualConsole a;
+    a.Initialize();
+    int i = 0;
+    int j = 0;
+    while(true)
     {
-        //       Utility::MemoryManager::MainMemoryManager::Startup();
+        a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %d", ++i);
+        a.LogText(Utility::DebugLog::LogTag::WATER, Utility::DebugLog::LogLevel::FATAL_ERROR, "T3st %d", ++j);
+
+
+        //      Utility::MemoryManager::MainMemoryManager::Startup();
         //      auto& a = Utility::MemoryManager::MainMemoryManager::GetInstance();
         //    Utility::MemoryManager::MainMemoryManager::Shutdown();
+        if(i == 10) break;
     }
-    FreeConsole();
-    Utility::DebugLog::VirtualConsole a("ConsoleApplication.exe", 15);
-    std::string b = "hrj";
-    a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %d", 5);
 
     try
     {
