@@ -40,7 +40,12 @@ namespace Doremi
 
             static PlayerHandler* m_singleton;
 
+
             int m_playerEntityID;
+
+            float m_moveSpeed = 100;
+            float m_autoRetardation = 0.001;
+
             // int m_bodyID;
             // int m_materialID;
         };
