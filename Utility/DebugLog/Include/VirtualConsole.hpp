@@ -86,25 +86,35 @@ namespace Utility
             VirtualConsole(const std::string& p_applicationName, const size_t& p_color);
             virtual ~VirtualConsole();
 
-
+            /**
+                The actual method called when calling LogText
+            */
             void LT(std::string p_func, int p_line, LogTag p_tag, LogLevel p_vLevel, const char* p_format, ...);
+
+            /**
+                Dummy method for the intellisense to recognize the method
+            */
             void LogText(LogTag p_tag, LogLevel p_vLevel, const char* p_format, ...){};
 
             private:
+            //    void AsynchronousLogText(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char*
+            //    p_format,
+            //       va_list p_args, const bool& writeFileLine = false);
             bool CheckTag(LogTag p_tag) { return m_tagInfo[p_tag].Enabled; }
-
             bool CheckLevel(LogLevel p_level) { return m_levelInfo[p_level].Enabled; }
-
-            void WriteToConsole(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format,
-                                va_list& p_args, const bool& writeFileLine = false);
+            public:
+            void WriteToConsole(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const std::string& p_VAListAsString);
 
             std::map<LogTag, TagLevelInfo> m_tagInfo;
             std::map<LogLevel, TagLevelInfo> m_levelInfo;
+
             HANDLE m_nearEnd;
             HANDLE m_farEnd;
             HANDLE m_process;
-            bool m_good;
         };
     }
 }
+/*
+A bit of a hack
+*/
 #define LogText(...) LT(__FUNCTION__, __LINE__, ##__VA_ARGS__)

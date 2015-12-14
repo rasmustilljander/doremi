@@ -32,7 +32,7 @@ int main(int argc, const char* argv[])
     FreeConsole();
     Utility::DebugLog::VirtualConsole a("ConsoleApplication.exe", 15);
     std::string b = "hrj";
-    a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %s", 5);
+    a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %d", 5);
 
     try
     {

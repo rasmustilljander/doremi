@@ -1,13 +1,14 @@
 #include <VirtualConsole.hpp>
 #include <Windows.h>
 #include <string>
+#include <thread>
+#include <Internal\VA_LISTHelper.hpp>
 namespace Utility
 {
     namespace DebugLog
     {
         VirtualConsole::VirtualConsole(const std::string& name, const size_t& color)
         {
-            m_good = 0;
             SECURITY_ATTRIBUTES sa;
             sa.nLength = sizeof(SECURITY_ATTRIBUTES);
             sa.bInheritHandle = 1;
@@ -36,11 +37,10 @@ namespace Utility
 #endif
             if(!CreateProcess(program, arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
-                throw std::runtime_error("Creating VirtualConsole failed.");
+                throw std::runtime_error("Creating virtualConsole failed.");
             }
             m_process = pi.hProcess;
             CloseHandle(pi.hThread);
-            m_good = true;
         }
 
         VirtualConsole::~VirtualConsole()
@@ -57,30 +57,35 @@ namespace Utility
             }
         }
 
+        void AsynchronousLogText(VirtualConsole& p_console, const std::string& p_func, const size_t& p_line, const LogTag& p_tag,
+                                 const LogLevel& p_vLevel, const std::string& p_VAListAsString)
+        {
+            p_console.WriteToConsole(p_func, p_line, p_tag, p_vLevel, p_VAListAsString);
+        }
+
+
         void VirtualConsole::LT(std::string p_func, int p_line, LogTag p_tag, LogLevel p_vLevel, const char* p_format, ...)
         {
             va_list args;
             va_start(args, p_format);
-            //   if (CheckLevel(p_vLevel) && CheckTag(p_tag))
-            {
-                WriteToConsole(p_func, p_line, p_tag, p_vLevel, p_format, args);
-                //         WriteToFile(p_func, p_line, p_tag, p_vLevel, p_format, args);
-            }
-            va_end(args);
-        }
-        void VirtualConsole::WriteToConsole(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel,
-                                            const char* p_format, va_list& p_args, const bool& writeFileLine)
-        {
-            va_start(p_args, p_format);
+            std::string vaListAsString;
+            toString(vaListAsString, p_format, args);
+            // TODORT use a struct to pass info instead
 
-            char buffer[1024];
-            vsnprintf(buffer, 1023, p_format, p_args);
+            std::thread([=]()
+                        {
+                            AsynchronousLogText(*this, p_func, p_line, p_tag, p_vLevel, vaListAsString);
+                        })
+                .detach();
+        }
+
+        void VirtualConsole::WriteToConsole(const std::string& p_func, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel,
+                                            const std::string& p_VAListAsString)
+        {
             DWORD l;
-            WriteFile(m_nearEnd, buffer, 1023, &l, 0);
+            std::string out = std::string("[" + p_func + ":" + std::to_string(p_line) + "]" + "\t" + p_VAListAsString);
+            WriteFile(m_nearEnd, out.c_str(), out.size(), &l, 0);
             return;
-            std::string output;
-            output = "p_format \n";
-            vprintf(output.c_str(), p_args);
         }
     }
 }
