@@ -9,6 +9,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <iostream>
 namespace Doremi
 {
@@ -83,6 +84,42 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 2000, 0));
                     moving = true;
                 }
+            }
+            // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
+            if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
+            {
+
+                /// Calculate where we want the shot to appear
+                // Get position and orientation of player
+                XMFLOAT4 orientation = GetComponent<TransformComponent>(m_playerEntityID)->rotation;
+                XMFLOAT3 playerPos = GetComponent<TransformComponent>(m_playerEntityID)->position;
+                XMFLOAT3 bulletPos = playerPos;
+
+                // Get direction of player
+                XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&orientation));
+                XMVECTOR dirVec = XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), rotMat);
+
+                // Add some distance
+                float offsetDist = 2.5;
+                XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPos);
+                bulletPosVec += dirVec * offsetDist;
+                XMStoreFloat3(&bulletPos, bulletPosVec);
+
+                // create the bullet
+                int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity);
+                // Get the material id
+                int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
+                // Create rigid body for the bullet
+                RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
+                rigidComp->p_bodyID =
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletPos, orientation, XMFLOAT3(0.5, 0.5, 0.5), physMatID);
+
+                // Set start velocity
+                float fireVelocity = 50;
+                XMVECTOR bulletVelVec = dirVec * fireVelocity;
+                XMFLOAT3 bulletVel;
+                XMStoreFloat3(&bulletVel, bulletVelVec);
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
             }
             if(!moving)
             {
