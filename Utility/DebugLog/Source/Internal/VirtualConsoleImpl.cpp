@@ -31,6 +31,11 @@ namespace Utility
 
         void VirtualConsoleImpl::Initialize(bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor)
         {
+            if(!p_writeToConsole && !p_writeToFile)
+            {
+                throw std::runtime_error("Not both outputs can be offline."); // TODORT better message ?
+            }
+
             SECURITY_ATTRIBUTES sa;
             sa.nLength = sizeof(SECURITY_ATTRIBUTES);
             sa.bInheritHandle = 1;
@@ -56,7 +61,7 @@ namespace Utility
 #else
             std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end()); // I fucking hate windows
             DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue; // I fucking hate windows
-            swprintf(arguments, L"0, %s %d", wPipeName.c_str(), color); // I fucking hate windows
+            swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, p_writeToConsole, p_writeToFile); // I fucking hate windows
 #endif
             if(!CreateProcess(program, arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
@@ -72,7 +77,7 @@ namespace Utility
             {
                 if(m_nearEnd != INVALID_HANDLE_VALUE)
                 {
-                    TerminateProcess(m_process, 0);
+                    TerminateProcess(m_process, 0); // TODORT Graceful shutdown may be ok?
                     CloseHandle(m_process);
                 }
                 CloseHandle(m_nearEnd);
