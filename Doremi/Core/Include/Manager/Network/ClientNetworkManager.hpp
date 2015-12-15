@@ -79,6 +79,11 @@ namespace Doremi
             void RecieveReliable(double p_dt);
 
             /**
+                TODOCM doc
+            */
+            void RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize);
+
+            /**
                 Update timeout to server and disconnects if too long
             */
             void UpdateTimeouts(double p_dt);

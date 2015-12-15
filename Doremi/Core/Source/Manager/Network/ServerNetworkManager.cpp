@@ -3,6 +3,10 @@
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <Manager/Network/NetMessage.hpp>
 #include <Manager/Network/Connection.hpp>
+#include <Manager/Network/BitStreamer.h>
+#include <EntityComponent/EntityHandler.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+
 #include <iostream> // TODOCM remove after test
 #include <vector>
 
@@ -94,6 +98,8 @@ namespace Doremi
                     default:
                         break;
                 }
+
+                Message = NetMessage();
             }
 
             delete IncommingAdress;
@@ -234,6 +240,45 @@ namespace Doremi
             }
         }
 
+        // TODOCM maybe move to somewhere else
+        void ServerNetworkManager::CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize)
+        {
+            // For all objects
+            // That have a position component
+            // That has a flag that it is active
+            // We put info to render
+            BitStreamer Streamer = BitStreamer();
+            Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
+
+            // Move forward for header
+            Streamer.SetReadWritePosition(sizeof(uint8_t));
+
+            EntityHandler& EntityHandler = EntityHandler::GetInstance();
+
+            // Mask is if we have transform and network
+            int MaskToCheck = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
+
+            uint32_t NumberOfEntitiesToSend = 0;
+
+            // Loop over entities
+            // TODOCM put them in some kind of priority so we can send them cross many snapshots
+            uint32_t NumOfComponents = EntityHandler.GetLastEntityIndex();
+            for(size_t EntityID = 0; EntityID < NumOfComponents && NumberOfEntitiesToSend < 100; EntityID++)
+            {
+                if(EntityHandler.HasComponents(EntityID, MaskToCheck))
+                {
+                    TransformComponent* TransComponent = EntityHandler.GetComponentFromStorage<TransformComponent>(EntityID);
+                    Streamer.WriteUnsignedInt32(EntityID);
+                    Streamer.WriteFloat3(TransComponent->position);
+                    Streamer.WriteRotationQuaternion(TransComponent->rotation);
+                    NumberOfEntitiesToSend++;
+                }
+            }
+
+            Streamer.SetReadWritePosition(0);
+            Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
+        }
+
         void ServerNetworkManager::SendMessages(double p_dt)
         {
             // Update timer to send
@@ -245,6 +290,13 @@ namespace Doremi
                 // Remove time
                 m_nextUpdateTimer -= m_updateInterval;
 
+                // Create global message
+                NetMessage Message = NetMessage();
+                Message.MessageID = MessageID::SNAPSHOT;
+
+                // TODOCM add snapshot info here
+                CreateSnapshot(Message.Data, sizeof(Message.Data));
+
                 DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
 
                 // For all connected clients we send messages
@@ -252,14 +304,7 @@ namespace Doremi
                 {
                     if(iter->second->ConnectionState == ConnectionState::CONNECTED)
                     {
-                        std::cout << "Sending snapshot." << std::endl;
-                        ; // TODOCM logg instead
-
-                        // Create message
-                        NetMessage Message = NetMessage();
-                        Message.MessageID = MessageID::SNAPSHOT;
-
-                        // TODOCM add snapshot info here
+                        std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
 
                         // Send message
                         NetworkModule.SendReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle);

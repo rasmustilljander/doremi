@@ -109,6 +109,11 @@ namespace Doremi
             void UpdateTimeouts(double t_dt);
 
             /**
+                TODOCM doc
+            */
+            void CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize);
+
+            /**
                 Timer for next send
             */
             double m_nextUpdateTimer;

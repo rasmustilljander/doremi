@@ -46,6 +46,8 @@
 #include <EventHandler/Events/PlayerCreationEvent.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <InterpolationHandler.hpp>
+
 #include <string>
 
 // TODOCM remove for better timer?
@@ -268,7 +270,39 @@ namespace Doremi
             PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
             playerCreationEvent->eventType = Events::PlayerCreation;
             playerCreationEvent->playerEntityID = playerID;
+
             // EventHandler::GetInstance()->BroadcastEvent(playerCreationEvent);
+
+
+            // TODOCM remove, Jaws interpolation test
+            EntityBlueprint t_jawsDebugBlueprint;
+            RenderComponent* t_renderComp2 = new RenderComponent();
+            t_renderComp2->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp2->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_jawsDebugBlueprint[ComponentType::Render] = t_renderComp2;
+
+            t_transformComp = new TransformComponent();
+            t_transformComp->position = XMFLOAT3(0, 0, 0);
+            t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
+
+            int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+
+            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+            TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
+            TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
+
+            tPrev->position = XMFLOAT3(0, 0, 0);
+            tPrev->rotation = XMFLOAT4(0, 0, 0, 1);
+
+            tNext->position = XMFLOAT3(100, 0, 0);
+            XMStoreFloat4(&tNext->rotation, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(1, 0, 0)), XM_PI));
+
+            XMFLOAT4 test;
+            XMStoreFloat4(&test, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(1, 0, 0)), XM_PIDIV2));
+            int a = 3;
         }
 
 
@@ -362,7 +396,8 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
+            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(
+                DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
             InputHandler::StartInputHandler(sharedContext);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
@@ -375,10 +410,12 @@ namespace Doremi
 
             Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_serverNetworkManager = new ServerNetworkManager(sharedContext);
-
+            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
 
             // Add manager to list of managers
+            // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
             m_managers.push_back(t_physicsManager);
+            m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_serverNetworkManager);
 
             GenerateWorld(sharedContext);
@@ -453,7 +490,7 @@ namespace Doremi
                 double alpha = Accumulator / UpdateTimeStepLength;
 
                 // Interpolate the frames here
-
+                InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
                 // Draw stuff
                 DrawGame(UpdateTimeStepLength / 1000.0f);
@@ -486,7 +523,7 @@ namespace Doremi
                 while(Accumulator >= UpdateTimeStepLength)
                 {
                     // Update Game logic
-                    UpdateGame(UpdateTimeStepLength);
+                    UpdateGame(UpdateTimeStepLength / 1000.0f);
 
                     // Remove time from accumulator
                     Accumulator -= UpdateTimeStepLength;

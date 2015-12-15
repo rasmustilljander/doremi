@@ -29,7 +29,13 @@ namespace Doremi
             /**
                 Load a buffer into the streamer, makes it aviable to use
             */
-            void SetTargetBuffer(unsigned char*& p_buffer, uint32_t p_bufferSize);   
+            void SetTargetBuffer(unsigned char*& p_buffer, uint32_t p_bufferSize);
+
+            /**
+                TODOCM doc
+            */
+            void SetReadWritePosition(uint32_t p_bytePosition);
+
 
             /**
                 Write 8-bit integer

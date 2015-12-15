@@ -11,6 +11,8 @@ template <class T> class StorageShelf
     static StorageShelf<T>* GetInstance();
     T mItems[MAX_NUM_ENTITIES];
 
+    // TODOCM bad solution to swap pointers of singleton, fix when there's time
+    void SetSingleton(void* p_pointer);
 
     private:
     StorageShelf();
@@ -32,6 +34,7 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
     return mSingleton;
 }
 
+template <class T> void StorageShelf<T>::SetSingleton(void* p_pointer) { mSingleton = p_pointer; }
 
 template <class T> StorageShelf<T>::StorageShelf() {}
 
@@ -45,4 +48,20 @@ template <class T> static T* GetComponent(EntityID pEntityID)
     StorageShelf<T>* tNeededShelf = tNeededShelf->GetInstance();
 
     return &tNeededShelf->mItems[pEntityID];
+}
+
+template <class T, class U> static void SwapShelf()
+{
+    if(sizeof(T) != sizeof(U))
+    {
+        std::runtime_error("Attempting to swap two different sized shelfs!");
+    }
+
+    // Get Pointers
+    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
+    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
+
+    // Set pointers
+    tFirstShelf->SetPointer(tSecondShelf);
+    tSecondShelf->SetPointer(tFirstShelf);
 }

@@ -2,7 +2,9 @@
 #include <Manager/Network/ClientNetworkManager.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <Manager/Network/NetMessage.hpp>
-#include <Manager/Network/BitWriter.h>
+#include <Manager/Network/BitStreamer.h>
+#include <EntityComponent/EntityHandler.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
 #include <iostream> // TODOCM remove after test
 
 namespace Doremi
@@ -121,6 +123,27 @@ namespace Doremi
             }
         }
 
+        void ClientNetworkManager::RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize)
+        {
+            // Read and translate message, for each position we update buffer array?
+            BitStreamer Streamer = BitStreamer();
+            Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
+
+            EntityHandler& EntityHandler = EntityHandler::GetInstance();
+
+            uint32_t NumberOfComponents = Streamer.ReadUnsignedInt8();
+
+            for(size_t i = 0; i < NumberOfComponents; i++)
+            {
+                uint32_t EntityID = Streamer.ReadUnsignedInt32();
+                TransformComponentBufferSecond* TransComp = EntityHandler.GetComponentFromStorage<TransformComponentBufferSecond>(EntityID);
+                TransComp->position = Streamer.ReadFloat3();
+                TransComp->rotation = Streamer.ReadRotationQuaternion();
+            }
+
+            // TODOCM notify a handler or something that new buffer exists
+        }
+
         void ClientNetworkManager::RecieveReliable(double p_dt)
         {
             if(m_serverConnectionState == ConnectionState::CONNECTED)
@@ -133,8 +156,12 @@ namespace Doremi
                 {
                     std::cout << "Recieved snapshot." << std::endl; // TODOCM logg instead
 
+                    RecieveSnapshot(Message.Data, sizeof(Message.Data));
+
                     // Update last response
                     m_serverLastResponse = 0;
+
+                    Message = NetMessage();
                 }
             }
         }

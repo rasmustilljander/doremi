@@ -1,5 +1,5 @@
 // Project specific
-#include <Doremi/Core/Include/Manager/Network/BitWriter.h>
+#include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
 
 // Third party
 #include <DirectXMath.h>
@@ -34,6 +34,13 @@ namespace Doremi
             // Set mode to none
             m_IsReading = false;
             m_IsWriting = false;
+        }
+
+        void BitStreamer::SetReadWritePosition(uint32_t p_bytePosition)
+        {
+            m_writtenBits = 0;
+            m_currentByte = p_bytePosition;
+            m_readBits = 0;
         }
 
         uint32_t BitStreamer::WriteBits(void* p_buffer, uint32_t p_numberOfBitsToWrite)

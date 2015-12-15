@@ -20,13 +20,14 @@ namespace Doremi
         /**
             A network message will contain:
             1 byte for type of Message(Ping, ConRequest etc..)
-            255 byte for actual data
-            Each message a total of 256 Bytes.
+            1023 byte for actual data
+            Each message a total of 1024 Bytes.
+            60 messages a second will give 0.5 Mbit/s usage
         */
         struct NetMessage
         {
             MessageID MessageID; // 1 byte
-            unsigned char Data[255]; // 255 byte
+            unsigned char Data[1023]; // 1023 byte
         };
     }
 }

@@ -28,6 +28,7 @@ enum class ComponentType : int
     Range = 0x2000,
     PotentialField = 0x4000,
     CharacterController = 0x8000,
+    NetworkObject = 0x10000
 };
 
 /**
@@ -42,6 +43,7 @@ enum class Blueprints : int
     PlatformEntity,
     BulletEntity,
     EnemyEntity,
+    JawsDebugEntity, // TODOCM remove
 };
 
 /**
