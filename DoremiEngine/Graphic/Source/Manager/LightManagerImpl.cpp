@@ -1,5 +1,9 @@
 #include <Internal/Manager/LightManagerImpl.hpp>
 #include <Internal/Light/LightInfoImpl.hpp>
+#include <Internal/Manager/SubModuleManagerImpl.hpp>
+#include <GraphicModuleContext.hpp>
+#include <GraphicModuleImplementation.hpp>
+#include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <d3d11_1.h>
 
 
@@ -7,7 +11,11 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        LightManagerImpl::LightManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext) {}
+        LightManagerImpl::LightManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
+        {
+            m_device = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDevice();
+            m_deviceContext = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
+        }
 
 
         LightManagerImpl::~LightManagerImpl() {}
@@ -23,29 +31,13 @@ namespace DoremiEngine
             lightBufferDesc.MiscFlags = 0;
             lightBufferDesc.StructureByteStride = 0;
             ID3D11Buffer* lBuffer;
-            // m_device->CreateBuffer(&lightBufferDesc, NULL, &lBuffer);
-            // for (int i = 0; i < 1000; i++)
-            //{
-            //    float x = (float)(rand() % 100) / 100;
-            //    float y = (float)(rand() % 100) / 100;
-            //    float z = (float)(rand() % 100) / 100;
-            //    m_lightList[i].lightColor = DirectX::XMFLOAT3(x, y, z);
-            //    //lBufferInfo.light[i].lightPosition = DirectX::XMFLOAT3(0, 0, 2);
-            //    //lBufferInfo.light[i].lightColor = DirectX::XMFLOAT3(214.0f/255.0f, 174.0f/255.0f, 81.0f/255.0f);
-            //    m_lightList[i].lightPosition = DirectX::XMFLOAT3((x * 10) - 5, (y * 14) - 5, (z * 7) - 2);
-            //    m_lightList[i].cameraPos = DirectX::XMFLOAT3(0, 0, 0);
-            //    m_lightList[i].constantAttenuation = 1;
-            //    m_lightList[i].linearAttenuation = 1;
-            //    m_lightList[i].quadricAttenuation = 1;
-            //    lBufferInfo.light[i].shininess = 1;
-            //    lBufferInfo.light[i].strength = 1;
-            //}
+            m_device->CreateBuffer(&lightBufferDesc, NULL, &lBuffer);
 
-            // D3D11_MAPPED_SUBRESOURCE tMS;
-            // m_deviceContext->Map(lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            // memcpy(tMS.pData, &lBufferInfo, sizeof(lBufferInfo));
-            // m_deviceContext->Unmap(lBuffer, NULL);
-            // m_deviceContext->PSSetConstantBuffers(0, 1, &lBuffer);
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &lBufferInfo, sizeof(lBufferInfo));
+            m_deviceContext->Unmap(lBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(0, 1, &lBuffer);
         }
 
         int LightManagerImpl::AddLight(LightInfo light)

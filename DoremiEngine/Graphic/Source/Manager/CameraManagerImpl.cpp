@@ -26,7 +26,6 @@ namespace DoremiEngine
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             D3D11_BUFFER_DESC bd;
             ZeroMemory(&bd, sizeof(bd));
-
             bd.Usage = D3D11_USAGE_DYNAMIC;
             bd.ByteWidth = sizeof(CameraMatrices);
             bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
