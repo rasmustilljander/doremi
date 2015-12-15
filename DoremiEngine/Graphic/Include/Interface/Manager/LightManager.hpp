@@ -6,14 +6,15 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        class LightInfo;
+        class LightInfoImpl;
+        struct Light;
         class LightManager
         {
             // TODORK revise structure
             public:
-            virtual int AddLight(LightInfo light) = 0;
-            virtual LightInfo GetLight(int index) = 0;
-            virtual std::vector<LightInfo> GetLightList() = 0;
+            virtual int AddLight(Light light) = 0;
+            virtual Light GetLight(int index) = 0;
+            // virtual std::vector<Light> GetLightList() = 0;
             virtual void InitLightManager() = 0;
         };
     }

@@ -19,6 +19,7 @@ struct VertexInputType
 struct VOut
 {
     float4 position : SV_POSITION;
+    float4 worldPos : WORLDPOS;
     float2 texCoord : TEXCOORD;
     float3 normal: NORMAL;
 };
@@ -32,8 +33,8 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
 
 
 
-    //output.position = float4(input.position,1.0f);
-    output.normal = input.normal;
+    output.worldPos = mul(float4(input.position, 0.0f), worldMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), worldMatrix);
     output.texCoord = input.texCoord;
     return output;
 }
