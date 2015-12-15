@@ -5,6 +5,7 @@
 #include <Internal/VA_LISTHelper.hpp>
 #include <iostream>
 #include <Utility/DebugLog/Include/Internal/ThreadPool.hpp>
+#include <string>
 
 namespace Utility
 {
@@ -54,8 +55,15 @@ namespace Utility
             si.cb = sizeof(STARTUPINFO);
             si.hStdInput = this->m_farEnd;
             si.dwFlags |= STARTF_USESTDHANDLES;
-            TCHAR program[] = TEXT("C:\\build\\build\\x86\\Debug\\ConsoleApplication.exe"); // TODORT
-            TCHAR arguments[100];
+
+            HMODULE hModule = GetModuleHandleW(NULL);
+            WCHAR path[MAX_PATH];
+            GetModuleFileNameW(hModule, path, MAX_PATH);
+            std::wstring tmpPath = std::wstring(path);
+            tmpPath = std::wstring(tmpPath.begin(), tmpPath.end() - 10); // TODORT, better solution
+            tmpPath.append(L"ConsoleApplication.exe");
+
+            WCHAR arguments[100];
 #ifndef UNICODE
             sprintf(arguments, "%d", color);
 #else
@@ -63,7 +71,7 @@ namespace Utility
             DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue; // I fucking hate windows
             swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, p_writeToConsole, p_writeToFile); // I fucking hate windows
 #endif
-            if(!CreateProcess(program, arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
+            if(!CreateProcess(tmpPath.c_str(), arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
                 throw std::runtime_error("Creating virtualConsole failed.");
             }
