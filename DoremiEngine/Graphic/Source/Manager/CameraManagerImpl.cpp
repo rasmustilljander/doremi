@@ -48,6 +48,7 @@ namespace DoremiEngine
             XMMATRIX matrix = XMMatrixLookAtLH(XMLoadFloat3(&position), XMLoadFloat3(&direction), XMLoadFloat3(&up));
             XMStoreFloat4x4(&viewMatrix, matrix);
             newCamera->SetViewMatrix(viewMatrix);
+            newCamera->SetCameraPosition(position);
             return newCamera;
         }
 

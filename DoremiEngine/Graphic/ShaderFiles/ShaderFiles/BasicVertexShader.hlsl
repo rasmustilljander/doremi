@@ -2,6 +2,8 @@ cbuffer CameraMatrixBuffer : register(b0)
 {
     matrix viewMatrix;
     matrix projectionMatrix;
+    //float3 cameraPosition;
+    //float pad;
 };
 
 cbuffer ModelMatrixBuffer : register(b1)

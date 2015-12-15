@@ -22,6 +22,7 @@ namespace DoremiEngine
             virtual const CameraMatrices& GetCameraMatrices() const = 0;
             virtual void SetProjectionMatrix(const DirectX::XMFLOAT4X4& p_matrix) = 0;
             virtual void SetViewMatrix(const DirectX::XMFLOAT4X4& p_matrix) = 0;
+            virtual void SetCameraPosition(const DirectX::XMFLOAT3& p_position) = 0;
         };
     }
 }
