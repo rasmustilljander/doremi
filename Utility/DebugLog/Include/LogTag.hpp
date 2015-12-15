@@ -6,7 +6,7 @@ namespace Utility
     {
         enum class LogTag
         {
-            RENDER,
+            GRAPHIC,
             NETWORK,
             CLIENT,
             SERVER,
