@@ -68,7 +68,7 @@ namespace Utility
             sprintf(arguments, "%d", color);
 #else
             std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end()); // I fucking hate windows
-            DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue; // I fucking hate windows
+            DWORD color = p_textColor.stateValue + p_backgroundColor.stateValue; // I fucking hate windows
             swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, p_writeToConsole, p_writeToFile); // I fucking hate windows
 #endif
             if(!CreateProcess(tmpPath.c_str(), arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
