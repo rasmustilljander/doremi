@@ -16,10 +16,11 @@ namespace DoremiEngine
             int AddLight(LightInfo light) override;
             LightInfo GetLight(int index) override;
             std::vector<LightInfo> GetLightList() override;
+            void InitLightManager() override;
 
             private:
             const GraphicModuleContext& m_graphicContext;
-            std::vector<LightInfo> lightList;
+            std::vector<LightInfo> m_lightList;
         };
     }
 }
