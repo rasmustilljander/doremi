@@ -25,11 +25,13 @@ namespace DoremiEngine
             void SetBodyVelocity(int p_bodyID, XMFLOAT3 p_velocity) override;
             void SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_angleVeloctiy) override;
             void SetBodyPosition(int p_bodyID, XMFLOAT3 p_position, XMFLOAT4 p_orientation) override;
+            void SetLinearDampening(int p_bodyID, float p_dampening) override;
 
             XMFLOAT3 GetBodyPosition(int p_bodyID) override;
             XMFLOAT4 GetBodyOrientation(int p_bodyID) override;
             XMFLOAT3 GetBodyVelocity(int p_bodyID) override;
             XMFLOAT3 GetBodyAngularVelocity(int p_bodyID) override;
+            float GetLinearDampening(int p_bodyID) override;
 
             bool IsSleeping(int p_bodyID) override;
 

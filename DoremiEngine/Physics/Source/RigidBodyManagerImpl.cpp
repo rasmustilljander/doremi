@@ -23,6 +23,7 @@ namespace DoremiEngine
             PxTransform transform = PxTransform(position, orientation);
             // This body is dynamic
             PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
+
             // Attach shape to the body
             body->attachShape(*shape);
             // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
@@ -62,6 +63,7 @@ namespace DoremiEngine
 
             // Attach shape to the body
             body->attachShape(*shape);
+
             // Add the now fully created body to the scene
             m_utils.m_worldScene->addActor(*body);
             // We're done with the shape. Release it
@@ -111,6 +113,11 @@ namespace DoremiEngine
             PxVec3 pos = m_bodies[p_bodyID]->getGlobalPose().p;
         }
 
+        void RigidBodyManagerImpl::SetLinearDampening(int p_bodyID, float p_dampening)
+        {
+            ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearDamping(p_dampening);
+        }
+
         XMFLOAT3 RigidBodyManagerImpl::GetBodyPosition(int p_bodyID)
         {
             PxVec3 p = m_bodies[p_bodyID]->getGlobalPose().p;
@@ -135,6 +142,8 @@ namespace DoremiEngine
             PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getAngularVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
+
+        float RigidBodyManagerImpl::GetLinearDampening(int p_bodyID) { return ((PxRigidDynamic*)m_bodies[p_bodyID])->getLinearDamping(); }
 
         bool RigidBodyManagerImpl::IsSleeping(int p_bodyID)
         {

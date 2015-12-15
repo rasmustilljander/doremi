@@ -36,6 +36,9 @@ namespace DoremiEngine
             Sets the position and orientation of a body
             WARNING! Can cause strange behaviour. Better to use force and/or velocity*/
             virtual void SetBodyPosition(int p_bodyID, XMFLOAT3 p_position, XMFLOAT4 p_orientation) = 0;
+            /**
+            Sets linear dampening of object. Not sure what this is though*/
+            virtual void SetLinearDampening(int p_bodyID, float p_dampeningCoef) = 0;
 
             /// Getters
             /**
@@ -51,6 +54,9 @@ namespace DoremiEngine
             /**
             Gets angular velocity of the body*/
             virtual XMFLOAT3 GetBodyAngularVelocity(int p_body) = 0;
+            /**
+            Gets linear dampening*/
+            virtual float GetLinearDampening(int p_bodyID) = 0;
 
             /**
             Checks if a body is sleeping*/
