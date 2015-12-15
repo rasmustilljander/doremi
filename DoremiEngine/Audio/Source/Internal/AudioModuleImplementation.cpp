@@ -56,9 +56,9 @@ namespace DoremiEngine
                 {
                     int derp = 0;
                 }
+                m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+                ERRCHECK(m_fmodResult);
             }
-            m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
-            ERRCHECK(m_fmodResult);
         }
 
         bool AudioModuleImplementation::GetInitializationStatus() { return m_initOK; }
@@ -225,7 +225,7 @@ namespace DoremiEngine
 
         int AudioModuleImplementation::StartRecording(size_t p_soundID, bool p_loopRec)
         {
-            m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec);
+            m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec); /**0an kan stå för driver TODOLH*/
             ERRCHECK(m_fmodResult);
             return 0;
         }

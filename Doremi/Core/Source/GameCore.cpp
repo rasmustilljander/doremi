@@ -96,8 +96,8 @@ namespace Doremi
             t_platform[ComponentType::Render] = t_renderComp;
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 400;
-            t_transformComp->scale.z = 400;
+            t_transformComp->scale.x = 4;
+            t_transformComp->scale.z = 4;
             t_transformComp->scale.y = 0.1;
             t_platform[ComponentType::Transform] = t_transformComp;
             // Physical material comp
@@ -127,17 +127,27 @@ namespace Doremi
             t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
-            for(size_t i = 0; i < 1; i++)
+            // for(size_t i = 0; i < 1; i++)
+            //{
+            //    int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            //    XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
+            //    XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            //    int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+            //    RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);/*
+            //    rigidComp->p_bodyID =
+            //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);*/
+            //    rigidComp->p_bodyID =
+            //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
+            //}
+            for(size_t i = 0; i < 5; i++)
             {
                 int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-                XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
+                XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
-                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);/*
+                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
                 rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);*/
-                rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
             }
         }
         // Only for testing, should be removed! TODO
