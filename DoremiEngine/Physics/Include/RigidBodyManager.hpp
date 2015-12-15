@@ -24,6 +24,9 @@ namespace DoremiEngine
             Adds a force to a body*/
             virtual void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) = 0;
             /**
+            Adds torque (angular force) to a body*/
+            virtual void AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque) = 0;
+            /**
             Sets the velocity of a body*/
             virtual void SetBodyVelocity(int p_bodyID, XMFLOAT3 p_velocity) = 0;
             /**
