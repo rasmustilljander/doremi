@@ -42,7 +42,7 @@ namespace DoremiEngine
             Camera* newCamera = new CameraImpl();
             newCamera->SetProjectionMatrix(p_projectionMatrix);
             XMFLOAT4X4 viewMatrix;
-            XMFLOAT3 position = XMFLOAT3(0, 0, 0);
+            XMFLOAT3 position = XMFLOAT3(0, 1, 0);
             XMFLOAT3 direction = XMFLOAT3(0, 0, 1);
             XMFLOAT3 up = XMFLOAT3(0, 1, 0);
             XMMATRIX matrix = XMMatrixLookAtLH(XMLoadFloat3(&position), XMLoadFloat3(&direction), XMLoadFloat3(&up));

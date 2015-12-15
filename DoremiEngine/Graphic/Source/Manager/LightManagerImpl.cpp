@@ -22,20 +22,53 @@ namespace DoremiEngine
 
         void LightManagerImpl::InitLightManager()
         {
+            //////////TODORK move to other place/////////////
             Light light = Light();
-            light.attenuation = DirectX::XMFLOAT3(1, 1, 1);
-            light.color = DirectX::XMFLOAT3(0.5, 0.5, 1);
+            light.attenuation = DirectX::XMFLOAT3(2, 2, 2);
+            light.color = DirectX::XMFLOAT3(0.5, 0.2, 0.7);
             light.coneAngle = 0;
             light.direction = DirectX::XMFLOAT3(1, 1, 1);
-            light.intensity = 1;
+            light.intensity = 2;
             light.penumAgle = 0;
-            light.position = DirectX::XMFLOAT3(0, 5, 0);
+            light.position = DirectX::XMFLOAT3(1.5, -2, -1.5);
             light.type = 3;
+
+            Light light2 = Light();
+            light2.attenuation = DirectX::XMFLOAT3(2, 2, 2);
+            light2.color = DirectX::XMFLOAT3(0.2, 0.2, 0.7);
+            light2.coneAngle = 0;
+            light2.direction = DirectX::XMFLOAT3(1, 1, 1);
+            light2.intensity = 2;
+            light2.penumAgle = 0;
+            light2.position = DirectX::XMFLOAT3(-1.5, -2, 1.5);
+            light2.type = 3;
+
+            Light light3 = Light();
+            light3.attenuation = DirectX::XMFLOAT3(2, 2, 2);
+            light3.color = DirectX::XMFLOAT3(0.2, 0.7, 0.1);
+            light3.coneAngle = 0;
+            light3.direction = DirectX::XMFLOAT3(1, 1, 1);
+            light3.intensity = 2;
+            light3.penumAgle = 0;
+            light3.position = DirectX::XMFLOAT3(-1.5, -2, -1.5);
+            light3.type = 3;
+
+            Light light4 = Light();
+            light4.attenuation = DirectX::XMFLOAT3(2, 2, 2);
+            light4.color = DirectX::XMFLOAT3(0.7, 0.7, 0.2);
+            light4.coneAngle = 0;
+            light4.direction = DirectX::XMFLOAT3(1, 1, 1);
+            light4.intensity = 2;
+            light4.penumAgle = 0;
+            light4.position = DirectX::XMFLOAT3(1.5, -2, 1.5);
+            light4.type = 3;
 
 
             m_lightBuffer.lightList[0] = light;
-            m_lightBuffer.lightList[1] = light;
-            m_lightBuffer.lightList[2] = light;
+            m_lightBuffer.lightList[1] = light2;
+            m_lightBuffer.lightList[2] = light3;
+            m_lightBuffer.lightList[3] = light4;
+            ////////////////////////////////////////////////
 
             D3D11_BUFFER_DESC lightBufferDesc;
             ZeroMemory(&lightBufferDesc, sizeof(lightBufferDesc));
@@ -57,13 +90,11 @@ namespace DoremiEngine
 
         int LightManagerImpl::AddLight(Light light)
         {
-            // m_lightBuffer.lightList.push_back(light);
-            // return m_lightBuffer.lightList.size() - 1;
-            return 1;
+            int index = sizeof(m_lightBuffer.lightList) / sizeof(Light);
+            m_lightBuffer.lightList[index] = light;
+            return index;
         }
 
         Light LightManagerImpl::GetLight(int index) { return m_lightBuffer.lightList[index]; }
-
-        // std::vector<LightInfoImpl> LightManagerImpl::GetLightList() { return m_lightBuffer.lightList; }
     }
 }

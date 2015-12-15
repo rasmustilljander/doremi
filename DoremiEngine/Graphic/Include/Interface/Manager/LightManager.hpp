@@ -14,7 +14,6 @@ namespace DoremiEngine
             public:
             virtual int AddLight(Light light) = 0;
             virtual Light GetLight(int index) = 0;
-            // virtual std::vector<Light> GetLightList() = 0;
             virtual void InitLightManager() = 0;
         };
     }

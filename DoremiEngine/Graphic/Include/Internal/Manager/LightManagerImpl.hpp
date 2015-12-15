@@ -10,11 +10,9 @@ namespace DoremiEngine
     namespace Graphic
     {
         struct GraphicModuleContext;
-        // struct Light;
         struct LightBuffer
         {
-            // std::vector<LightInfoImpl> lightList;
-            Light lightList[3];
+            Light lightList[4];
         };
 
         class LightManagerImpl : public LightManager
@@ -24,7 +22,6 @@ namespace DoremiEngine
             virtual ~LightManagerImpl();
             int AddLight(Light light) override;
             Light GetLight(int index) override;
-            // std::vector<Light> GetLightList() override;
             void InitLightManager() override;
 
             private:
