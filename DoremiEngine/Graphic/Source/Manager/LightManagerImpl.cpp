@@ -30,17 +30,17 @@ namespace DoremiEngine
             light.direction = DirectX::XMFLOAT3(1, 1, 1);
             light.intensity = 2;
             light.penumAgle = 0;
-            light.position = DirectX::XMFLOAT3(1.5, -2, -1.5);
+            light.position = DirectX::XMFLOAT3(1.5, -10, 6);
             light.type = 3;
 
             Light light2 = Light();
             light2.attenuation = DirectX::XMFLOAT3(2, 2, 2);
-            light2.color = DirectX::XMFLOAT3(0.2, 0.2, 0.7);
+            light2.color = DirectX::XMFLOAT3(0.2, 0.3, 0.9);
             light2.coneAngle = 0;
             light2.direction = DirectX::XMFLOAT3(1, 1, 1);
             light2.intensity = 2;
             light2.penumAgle = 0;
-            light2.position = DirectX::XMFLOAT3(-1.5, -2, 1.5);
+            light2.position = DirectX::XMFLOAT3(-1.5, -10, 4);
             light2.type = 3;
 
             Light light3 = Light();
@@ -50,7 +50,7 @@ namespace DoremiEngine
             light3.direction = DirectX::XMFLOAT3(1, 1, 1);
             light3.intensity = 2;
             light3.penumAgle = 0;
-            light3.position = DirectX::XMFLOAT3(-1.5, -2, -1.5);
+            light3.position = DirectX::XMFLOAT3(-1.5, -10, 6);
             light3.type = 3;
 
             Light light4 = Light();
@@ -60,7 +60,7 @@ namespace DoremiEngine
             light4.direction = DirectX::XMFLOAT3(1, 1, 1);
             light4.intensity = 2;
             light4.penumAgle = 0;
-            light4.position = DirectX::XMFLOAT3(1.5, -2, 1.5);
+            light4.position = DirectX::XMFLOAT3(1.5, -10, 4);
             light4.type = 3;
 
 
