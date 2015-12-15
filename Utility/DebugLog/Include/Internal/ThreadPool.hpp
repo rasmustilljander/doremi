@@ -39,7 +39,6 @@
 
 namespace ctpl
 {
-
     namespace detail
     {
         template <typename T> class Queue

@@ -1,35 +1,35 @@
-#include <VirtualConsole.hpp>
+#include <Internal/VirtualConsoleImpl.hpp>
 #include <Windows.h>
 #include <string>
 #include <thread>
 #include <Internal/VA_LISTHelper.hpp>
 #include <iostream>
-#include <Utility/DebugLog/Include/Internal/ThreadPool.hpp> // It did like the effect of being forward declared
-
-namespace
-{
-    static ctpl::thread_pool g_threadPool(8); // TODORT this needs an manager
-}
+#include <Utility/DebugLog/Include/Internal/ThreadPool.hpp>
 
 namespace Utility
 {
     namespace DebugLog
     {
 
-        struct LoggingData
+        struct LoggingData // TODORT, maybe move to .cpp?
         {
             std::string function;
             size_t line;
             LogTag tag;
             LogLevel vLevel;
-            std::string format;
-            va_list args;
+            std::string p_message;
+            // TODORT Ideally I would like the conversion to happen on the threads, however,
+            // I did not manage to fully use the VA_LIST correctly thus some values were copied between threads.
+            //    std::string format;
+            //    va_list args;
         };
 
-        VirtualConsole::VirtualConsole() {}
+        VirtualConsoleImpl::VirtualConsoleImpl(const std::string& p_pipeName, ctpl::thread_pool& p_threadPool)
+            : m_pipeName(p_pipeName), m_threadPool(p_threadPool)
+        {
+        }
 
-        void VirtualConsole::Initialize(const std::string& p_pipeName, bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor,
-                                        const ConsoleColor& p_backgroundColor)
+        void VirtualConsoleImpl::Initialize(bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor)
         {
             SECURITY_ATTRIBUTES sa;
             sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -38,8 +38,7 @@ namespace Utility
 
             if(!CreatePipe(&m_farEnd, &m_nearEnd, &sa, 0))
             {
-                throw std::runtime_error("Creating pipe failed.");
-                // assert(this->near_end == INVALID_HANDLE_VALUE); // TODORT remove asserts
+                throw std::runtime_error("Creating shared memory failed.");
                 return;
             }
             SetHandleInformation(m_nearEnd, HANDLE_FLAG_INHERIT, 0);
@@ -50,14 +49,14 @@ namespace Utility
             si.cb = sizeof(STARTUPINFO);
             si.hStdInput = this->m_farEnd;
             si.dwFlags |= STARTF_USESTDHANDLES;
-            TCHAR program[] = TEXT("C:\\build\\build\\x86\\Debug\\ConsoleApplication.exe");
+            TCHAR program[] = TEXT("C:\\build\\build\\x86\\Debug\\ConsoleApplication.exe"); // TODORT
             TCHAR arguments[100];
 #ifndef UNICODE
             sprintf(arguments, "%d", color);
 #else
-            std::wstring p_wPipeName(p_pipeName.begin(), p_pipeName.end()); // I fucking hate windows
+            std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end()); // I fucking hate windows
             DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue; // I fucking hate windows
-            swprintf(arguments, L"0, %s %d", p_wPipeName.c_str(), color); // I fucking hate windows
+            swprintf(arguments, L"0, %s %d", wPipeName.c_str(), color); // I fucking hate windows
 #endif
             if(!CreateProcess(program, arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
@@ -67,7 +66,7 @@ namespace Utility
             CloseHandle(pi.hThread);
         }
 
-        VirtualConsole::~VirtualConsole()
+        VirtualConsoleImpl::~VirtualConsoleImpl()
         {
             if(m_nearEnd != INVALID_HANDLE_VALUE)
             {
@@ -81,15 +80,13 @@ namespace Utility
             }
         }
 
-        void AsynchronousLogText(int id, VirtualConsole* const p_console, LoggingData* p_data)
+        void AsynchronousLogText(int id, VirtualConsoleImpl* const p_console, LoggingData* p_data)
         {
-            int a = id;
-            p_console->WriteToConsole(*p_data);
-            //   va_end(p_data->args);
+            p_console->WriteToSharedMemory(*p_data);
             delete p_data;
         }
 
-        void VirtualConsole::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...)
+        void VirtualConsoleImpl::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...)
         {
             va_list args;
             va_start(args, p_format);
@@ -98,21 +95,17 @@ namespace Utility
             threadData->line = p_line;
             threadData->tag = p_tag;
             threadData->vLevel = p_vLevel;
-            //      threadData->format = string(p_format);
-            std::string vaListAsString;
-            toString(vaListAsString, p_format, args);
-            threadData->format = vaListAsString;
-            g_threadPool.push(AsynchronousLogText, this, threadData);
+            toString(threadData->p_message, p_format, args);
+            m_threadPool.push(AsynchronousLogText, this, threadData);
             va_end(args);
         }
 
-        void VirtualConsole::WriteToConsole(const LoggingData& p_loggingData)
+        void VirtualConsoleImpl::WriteToSharedMemory(const LoggingData& p_loggingData)
         {
             DWORD l;
-
-            std::string out = std::string("[" + p_loggingData.function + ":" + std::to_string(p_loggingData.line) + "]" + "\t" + p_loggingData.format + "\n");
+            // TODORT better format
+            std::string out = std::string("[" + p_loggingData.function + ":" + std::to_string(p_loggingData.line) + "]" + "\t" + p_loggingData.p_message + "\n");
             WriteFile(m_nearEnd, out.c_str(), out.size(), &l, 0);
-            return;
         }
     }
 }
