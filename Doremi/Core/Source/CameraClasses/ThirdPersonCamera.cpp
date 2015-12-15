@@ -32,7 +32,7 @@ namespace Doremi
             XMVECTOR dir = XMLoadFloat3(&direction);
             XMMATRIX t = XMMatrixRotationQuaternion(quater);
             dir = XMVector3Transform(dir, t);
-            vup = XMVector3Transform(vup, t);
+            // vup = XMVector3Transform(vup, t);
             XMVECTOR pos = XMLoadFloat3(&playerTransform->position);
 
 
@@ -46,8 +46,8 @@ namespace Doremi
             XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight);
             XMVECTOR camDir = XMVector3Transform(dir, projMat);
             camDir = XMVector3Normalize(camDir);
-            XMVECTOR finalDir = (pos - camDir * 1.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 0.3;
-            XMMATRIX mat = XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos, vup));
+            XMVECTOR finalDir = (pos - camDir * 2.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
+            XMMATRIX mat = XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup));
             XMStoreFloat4x4(&viewMat, mat);
             m_camera->SetViewMatrix(viewMat);
         }
