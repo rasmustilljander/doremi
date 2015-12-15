@@ -32,7 +32,7 @@
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <PlayerHandler.hpp>
-
+#include <Manager/MovementManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
@@ -232,6 +232,7 @@ namespace Doremi
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
+            Manager* t_movementManager = new MovementManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
@@ -239,6 +240,7 @@ namespace Doremi
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
             m_managers.push_back(t_rigidTransSyndManager);
+            m_managers.push_back(t_movementManager);
             GenerateWorld(sharedContext);
 
             /*

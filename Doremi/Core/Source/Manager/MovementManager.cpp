@@ -28,7 +28,7 @@ namespace Doremi
                     RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     XMVECTOR forward = XMLoadFloat3(&movement->direction);
                     XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
-                    XMVECTOR right = XMVector3Cross(forward, up);
+                    XMVECTOR right = XMVector3Cross(up, forward);
                     right *= movement->rightAcceleration;
                     forward *= movement->forwardAcceleration;
                     XMFLOAT3 force;
