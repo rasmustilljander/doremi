@@ -30,7 +30,8 @@ namespace Doremi
             static void StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             void Initialize(int m_playerEntityID);
             void UpdatePosition();
-            int m_playerEntityID;
+            const int& GetPlayerEntityID() const { return m_playerEntityID; }
+
 
             private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
@@ -39,7 +40,7 @@ namespace Doremi
 
             static PlayerHandler* m_singleton;
 
-
+            int m_playerEntityID;
             // int m_bodyID;
             // int m_materialID;
         };
