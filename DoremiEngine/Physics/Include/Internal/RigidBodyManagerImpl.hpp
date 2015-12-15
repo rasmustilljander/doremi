@@ -31,6 +31,8 @@ namespace DoremiEngine
             XMFLOAT3 GetBodyVelocity(int p_bodyID) override;
             XMFLOAT3 GetBodyAngularVelocity(int p_bodyID) override;
 
+            bool IsSleeping(int p_bodyID) override;
+
             private:
             InternalPhysicsUtils& m_utils;
 

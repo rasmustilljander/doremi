@@ -135,5 +135,11 @@ namespace DoremiEngine
             PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getAngularVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
+
+        bool RigidBodyManagerImpl::IsSleeping(int p_bodyID)
+        {
+            bool isSleeping = ((PxRigidDynamic*)m_bodies[p_bodyID])->isSleeping();
+            return isSleeping;
+        }
     }
 }

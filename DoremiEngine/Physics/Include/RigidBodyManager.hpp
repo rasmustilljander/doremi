@@ -48,7 +48,13 @@ namespace DoremiEngine
             Gets the velocity vector of the body*/
             virtual XMFLOAT3 GetBodyVelocity(int p_body) = 0;
 
+            /**
+            Gets angular velocity of the body*/
             virtual XMFLOAT3 GetBodyAngularVelocity(int p_body) = 0;
+
+            /**
+            Checks if a body is sleeping*/
+            virtual bool IsSleeping(int p_body) = 0;
         };
     }
 }
