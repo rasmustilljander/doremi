@@ -47,6 +47,7 @@ namespace Doremi
             float m_autoRetardation = 0.8;
             float m_maxSpeed = 10;
 
+
             // int m_bodyID;
             // int m_materialID;
         };

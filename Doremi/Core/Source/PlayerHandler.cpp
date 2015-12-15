@@ -185,9 +185,19 @@ namespace Doremi
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
             }
             if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            {
-                XMFLOAT3 t_torqueParameter = XMFLOAT3(0, m_inputHandler->GetMouseMovementX() * 1000, 0);
-                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddTorqueToBody(t_rigidComp->p_bodyID, t_torqueParameter);
+            {   
+                int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
+                XMFLOAT3 t_torqueParameter;
+                if (t_mouseMovementX)
+                {
+                    t_torqueParameter = XMFLOAT3(0, m_inputHandler->GetMouseMovementX() * 400, 0);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddTorqueToBody(t_rigidComp->p_bodyID, t_torqueParameter);
+                }
+                else 
+                {
+                    t_torqueParameter = XMFLOAT3(0, 0, 0);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID,t_torqueParameter);
+                }
             }
         }
     }

@@ -60,8 +60,8 @@ namespace Doremi
             bool CheckBitMaskInputFromGame(int p_bitMask);
             bool CheckForOnePress(int p_bitMask);
             // return from InputModule with a changed value from mousesense
-            const int GetMouseMovementX() const { return m_mouseMoveX; }
-            const int GetMouseMovementY() const { return m_mouseMoveY; }
+            const int GetMouseMovementX() const { return m_mouseMoveX * m_mouseSense; }
+            const int GetMouseMovementY() const { return m_mouseMoveY * m_mouseSense; }
             //
             void SetCursorInvisibleAndMiddle(bool p_bool);
             // void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
