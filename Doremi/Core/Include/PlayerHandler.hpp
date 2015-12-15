@@ -43,8 +43,9 @@ namespace Doremi
 
             int m_playerEntityID;
 
-            float m_moveSpeed = 100;
-            float m_autoRetardation = 0.001;
+            float m_moveSpeed = 3;
+            float m_autoRetardation = 0.8;
+            float m_maxSpeed = 10;
 
             // int m_bodyID;
             // int m_materialID;
