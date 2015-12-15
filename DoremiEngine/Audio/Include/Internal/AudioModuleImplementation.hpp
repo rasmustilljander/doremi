@@ -3,6 +3,7 @@
 #include <FMod\fmod.hpp>
 #include <FMod\fmod_errors.h>
 #include <vector>
+#include <DirectXMath.h>
 
 namespace DoremiEngine
 {
@@ -56,12 +57,13 @@ namespace DoremiEngine
 
             int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
 
-            int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz, const size_t& p_channelID) override;
+            int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID) override;
 
-            int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz, float p_upx,
-                               float p_upy, float p_upz) override;
+            int SetListenerPos(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_forward, DirectX::XMFLOAT3 p_up) override;
 
             int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) override;
+
+            bool GetInitializationStatus() override;
 
             private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
@@ -78,6 +80,7 @@ namespace DoremiEngine
             int m_fmodKey;
             unsigned int m_fmodVersion;
             int time = 0;
+            bool m_initOK = false;
 
             const Core::SharedContext& m_sharedContext;
             float m_distanceFactor = 0;

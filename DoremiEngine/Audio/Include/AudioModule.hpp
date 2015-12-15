@@ -1,6 +1,7 @@
 #pragma once
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DirectXMath.h>
 
 #if defined(_WINDLL)
 #define AUDIO_DLL_EXPORT __declspec(dllexport)
@@ -66,14 +67,12 @@ namespace DoremiEngine
             /**
             Sets the position and velocity of a sound
             */
-            virtual int SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz,
-                                                    const size_t& p_channelID) = 0;
+            virtual int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID) = 0;
 
             /**
             Sets the listener position
             */
-            virtual int SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz, float p_upx,
-                                       float p_upy, float p_upz) = 0;
+            virtual int SetListenerPos(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_forward, DirectX::XMFLOAT3 p_up) = 0;
             /**
             Sets the channels volume volume is 0 - 1, where  is loudest
             */
@@ -83,6 +82,11 @@ namespace DoremiEngine
             TODO docs
             */
             virtual void Shutdown() = 0;
+
+            /**
+            Returns true if Initialization was OK
+            */
+            virtual bool GetInitializationStatus() = 0;
         };
     }
 }

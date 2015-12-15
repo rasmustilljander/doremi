@@ -10,7 +10,7 @@ namespace Doremi
         {
             size_t channelID;
             AudioActiveComponent(size_t p_channelID) { channelID = p_channelID; }
-            AudioActiveComponent() : channelID(1) {}
+            AudioActiveComponent() : channelID(99999) {}
         };
     }
 }

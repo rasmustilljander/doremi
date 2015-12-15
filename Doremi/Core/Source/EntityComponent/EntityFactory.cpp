@@ -7,7 +7,6 @@
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EntityComponent/Components/AudioComponent.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
-#include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
@@ -73,10 +72,6 @@ namespace Doremi
                 else if(iter->first == ComponentType::AudioActive)
                 {
                     memcpy(GetComponent<AudioActiveComponent>(tNewEntityID), iter->second, sizeof(AudioActiveComponent));
-                }
-                else if(iter->first == ComponentType::VoiceRecording)
-                {
-                    memcpy(GetComponent<VoiceRecordingComponent>(tNewEntityID), iter->second, sizeof(VoiceRecordingComponent));
                 }
                 else if(iter->first == ComponentType::Render)
                 {

@@ -6,10 +6,14 @@
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
-#include <EntityComponent/Components/VoiceRecordingComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
+#include <Doremi/Core/Include/AudioHandler.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 
+#include <DirectXMath.h>
 // Third party
 
 // Standard
@@ -48,25 +52,30 @@ namespace Doremi
                     {
                         EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
                     }
+
+                    /**
+                    TODOLH Test the functions below
+                    */
+                    /*if (EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Transform) && t_isPlaying)
+                    {
+                        TransformComponent* t_trans = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
+                        t_audioModule.SetSoundPositionAndVelocity(t_trans->position.x, t_trans->position.y, t_trans->position.z, 0, 0, 0, t_audio->channelID);
+                    }*/
+                    /*if (EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Player) && t_isPlaying)
+                    {
+                        TransformComponent* t_trans = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
+                        t_audioModule.SetListenerPos(t_trans->position.x, t_trans->position.y, t_trans->position.z)
+                    }*/
                 }
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::VoiceRecording))
+                if (EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::FrequencyAffected))
                 {
-                    VoiceRecordingComponent* t_voice = EntityHandler::GetInstance().GetComponentFromStorage<VoiceRecordingComponent>(i);
-                    if(t_voice->active)
-                    {
-                        m_dominantFrequency = t_audioModule.AnalyseSoundSpectrum(t_voice->channelID);
-                    }
-                    else
-                    {
-                        unsigned int recordPointer = t_audioModule.GetRecordPointer();
-                        if(recordPointer > 9600)
-                        {
-                            t_voice->active = true;
-                            t_audioModule.PlayASound(t_voice->soundID, t_voice->loop, t_voice->channelID);
-                        }
-                    }
+                    RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
+                    float t_freq = AudioHandler::GetInstance()->GetFrequency();
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq*3, 0)); /**Far from complete TODOLH*/
                 }
+                
             }
+            m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
             // std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
             t_audioModule.Update();
         }

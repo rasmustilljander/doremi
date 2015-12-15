@@ -22,7 +22,6 @@
 #include <EventHandler/EventHandler.hpp>
 #include <InputHandler.hpp>
 #include <EntityComponent/Components/AudioActiveComponent.hpp>
-#include <EntityComponent/Components/VoiceRecordingComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/PlayerComponent.hpp>
@@ -33,6 +32,7 @@
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <PlayerHandler.hpp>
 #include <Manager/MovementManager.hpp>
+#include <AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
@@ -107,6 +107,24 @@ namespace Doremi
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
             t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
+            // Audio comp
+            AudioComponent* t_audioComponent = new AudioComponent();
+            t_audioComponent->soundID = sharedContext.GetAudioModule().\
+                LoadSound("Sounds/Test sounds/1 amp som har låg frekv sen hög, Human made!372hz till 643hz.wav", 0.5f, 5000.0f);
+            t_platform[ComponentType::Audio] = t_audioComponent;
+            // ActiveAudiocomp
+            AudioActiveComponent* t_audioActiveComponent = new AudioActiveComponent();
+            AudioHandler::GetInstance()->Initialize();
+            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
+            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.1f);
+            t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
+            size_t t_soundIDForRecord = sharedContext.GetAudioModule().SetupRecording(true);
+            sharedContext.GetAudioModule().StartRecording(t_soundIDForRecord, true);
+            AudioHandler::GetInstance()->SetFrequencyAnalyserSoundID(t_soundIDForRecord);
+            AudioHandler::GetInstance()->SetLoopForFrequencyAnalyser(true);
+            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0) , 0);
+            // Add label for frequency Check
+            t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
             for(size_t i = 0; i < 1; i++)
@@ -115,7 +133,9 @@ namespace Doremi
                 XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
-                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);/*
+                rigidComp->p_bodyID =
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);*/
                 rigidComp->p_bodyID =
                     sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
             }
@@ -132,7 +152,6 @@ namespace Doremi
 
             AudioComponent* t_audioComp = new AudioComponent(); /**TODOLH only for testing, should be removed!*/
             AudioActiveComponent* t_audioActiveComp = new AudioActiveComponent();
-            VoiceRecordingComponent* t_voiceRecordingComponent = new VoiceRecordingComponent();
 
             RenderComponent* t_renderComp = new RenderComponent();
             TransformComponent* t_transformComp = new TransformComponent();
@@ -221,6 +240,7 @@ namespace Doremi
             code dump, it'll work for now TODOJB*/
             InputHandler::StartInputHandler(sharedContext);
             PlayerHandler::StartPlayerHandler(sharedContext);
+            AudioHandler::StartAudioHandler(sharedContext);
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
 
@@ -233,46 +253,17 @@ namespace Doremi
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             Manager* t_movementManager = new MovementManager(sharedContext);
+            Manager* t_audioManager = new AudioManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
             // m_managers.push_back(t_playerManager);
+            m_managers.push_back(t_audioManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
             m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_movementManager);
             GenerateWorld(sharedContext);
-
-            /*
-            // Lucas Testkod
-            Manager* t_audioManager = new AudioManager(sharedContext);
-            m_managers.push_back(t_audioManager);
-            sharedContext.GetAudioModule().Setup3DSound(1.0f, 1.0f, 0.1f);
-            sharedContext.GetAudioModule().SetListenerPos(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-            AudioActiveComponent* t_audioActiveComponent = t_entityHandler.GetComponentFromStorage<AudioActiveComponent>(0);
-            AudioComponent* t_audioComponent = t_entityHandler.GetComponentFromStorage<AudioComponent>(0);
-
-            //AudioActiveComponent* t_recordActiveComponent = t_entityHandler.GetComponentFromStorage<AudioActiveComponent>(1);
-            //AudioComponent* t_recordComponent = t_entityHandler.GetComponentFromStorage<AudioComponent>(1);
-
-            VoiceRecordingComponent* t_voiceRecordComponent = t_entityHandler.GetComponentFromStorage<VoiceRecordingComponent>(1);
-
-            t_audioComponent->soundID = sharedContext.GetAudioModule().\
-                LoadSound("Sounds/Test sounds/1 amp som har låg frekv sen hög, Human made!372hz till 643hz.wav", 0.5f, 5000.0f);
-
-            //sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/2000hz 10 amp  db.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/329842__zagi2__smooth-latin-loop.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/High to low pitch.wav", 0.5f, 5000.0f);
-            // size_t t_soundNumber = sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1000hz.wav", 0.5f, 5000.0f);
-            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
-            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.1f);
-
-            t_voiceRecordComponent->soundID = sharedContext.GetAudioModule().SetupRecording(true);
-            sharedContext.GetAudioModule().StartRecording(t_voiceRecordComponent->soundID, true);
-            t_voiceRecordComponent->loop = true;
-            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-
-            // Lucas Testkod slut*/
 
             ////////////////End Example////////////////
         }
@@ -322,6 +313,7 @@ namespace Doremi
         {
             EventHandler::GetInstance()->DeliverEvents();
             PlayerHandler::GetInstance()->UpdatePosition();
+            AudioHandler::GetInstance()->Update();
             // Have all managers update
             size_t length = m_managers.size();
             for(size_t i = 0; i < length; i++)

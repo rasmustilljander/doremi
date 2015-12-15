@@ -32,6 +32,20 @@ namespace DoremiEngine
             }
             m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
             ERRCHECK(m_fmodResult);
+            if (m_fmodResult == 0)
+            {
+                m_initOK = true;
+            }
+            else
+            {
+                m_initOK = false;
+            }
+            
+        }
+
+        bool AudioModuleImplementation::GetInitializationStatus()
+        {
+            return m_initOK;
         }
 
         void AudioModuleImplementation::Shutdown()
@@ -79,22 +93,20 @@ namespace DoremiEngine
             return returnVal;
         }
 
-        int AudioModuleImplementation::SetSoundPositionAndVelocity(float p_posx, float p_posy, float p_posz, float p_velx, float p_vely, float p_velz,
-                                                                   const size_t& p_channelID)
+        int AudioModuleImplementation::SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID)
         {
-            FMOD_VECTOR pos = {p_posx * m_distanceFactor, p_posy * m_distanceFactor, p_posz * m_distanceFactor};
-            FMOD_VECTOR vel = {p_velx * m_distanceFactor, p_vely * m_distanceFactor, p_velz * m_distanceFactor};
+            FMOD_VECTOR pos = {p_position.x * m_distanceFactor, p_position.y * m_distanceFactor, p_position.z * m_distanceFactor};
+            FMOD_VECTOR vel = { p_velocity.x * m_distanceFactor, p_velocity.y * m_distanceFactor, p_velocity.z * m_distanceFactor};
             m_fmodResult = m_fmodChannel[p_channelID]->set3DAttributes(&pos, &vel);
             ERRCHECK(m_fmodResult);
             return 0;
         }
 
-        int AudioModuleImplementation::SetListenerPos(float p_posx, float p_posy, float p_posz, float p_forwardx, float p_forwardy, float p_forwardz,
-                                                      float p_upx, float p_upy, float p_upz)
+        int AudioModuleImplementation::SetListenerPos(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_forward, DirectX::XMFLOAT3 p_up)
         {
-            FMOD_VECTOR forward = {p_forwardx, p_forwardy, p_forwardz};
-            FMOD_VECTOR up = {p_upx, p_upy, p_upz};
-            FMOD_VECTOR listenerPos = {p_posx, p_posy, p_posz};
+            FMOD_VECTOR forward = {p_forward.x, p_forward.y, p_forward.z};
+            FMOD_VECTOR up = {p_up.x, p_up.y, p_up.z};
+            FMOD_VECTOR listenerPos = {p_position.x, p_position.y, p_position.z};
 
             m_fmodResult = m_fmodSystem->set3DListenerAttributes(0, &listenerPos, 0, &forward, &up);
             ERRCHECK(m_fmodResult);
@@ -126,7 +138,7 @@ namespace DoremiEngine
                     // Do nothing
                 }
             }
-            if(p_channelID == -1)
+            if(p_channelID == 99999) /**Not the best coding standards but size_t isnt defined for -1 and might bug. This value is initialized in component TODOLH*/
             {
                 FMOD::Channel* t_channel = 0;
                 m_fmodChannel.push_back(t_channel);
@@ -200,17 +212,6 @@ namespace DoremiEngine
         {
             m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec);
             ERRCHECK(m_fmodResult);
-            /**
-                TODOLH Annan lösning än sleep
-            */
-            // Sleep(200); ska ta in det som är under i updaten
-            m_recordingStarted = true;
-            // m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            // ERRCHECK(m_fmodResult);
-
-            //// Dont hear what is being recorded otherwise it will feedback.
-            // m_fmodResult = m_fmodChannel[p_channelID]->setVolume(0);
-            // ERRCHECK(m_fmodResult);
             return 0;
         }
 
