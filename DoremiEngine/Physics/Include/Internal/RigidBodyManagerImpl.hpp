@@ -23,11 +23,13 @@ namespace DoremiEngine
             void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) override;
             void AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque) override;
             void SetBodyVelocity(int p_bodyID, XMFLOAT3 p_velocity) override;
+            void SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_angleVeloctiy) override;
             void SetBodyPosition(int p_bodyID, XMFLOAT3 p_position, XMFLOAT4 p_orientation) override;
 
             XMFLOAT3 GetBodyPosition(int p_bodyID) override;
             XMFLOAT4 GetBodyOrientation(int p_bodyID) override;
             XMFLOAT3 GetBodyVelocity(int p_bodyID) override;
+            XMFLOAT3 GetBodyAngularVelocity(int p_bodyID) override;
 
             private:
             InternalPhysicsUtils& m_utils;

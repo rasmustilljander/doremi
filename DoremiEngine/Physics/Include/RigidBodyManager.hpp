@@ -30,6 +30,9 @@ namespace DoremiEngine
             Sets the velocity of a body*/
             virtual void SetBodyVelocity(int p_bodyID, XMFLOAT3 p_velocity) = 0;
             /**
+            Sets angular velocity of the body*/
+            virtual void SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_angleVeloctiy) = 0;
+            /**
             Sets the position and orientation of a body
             WARNING! Can cause strange behaviour. Better to use force and/or velocity*/
             virtual void SetBodyPosition(int p_bodyID, XMFLOAT3 p_position, XMFLOAT4 p_orientation) = 0;
@@ -44,6 +47,8 @@ namespace DoremiEngine
             /**
             Gets the velocity vector of the body*/
             virtual XMFLOAT3 GetBodyVelocity(int p_body) = 0;
+
+            virtual XMFLOAT3 GetBodyAngularVelocity(int p_body) = 0;
         };
     }
 }

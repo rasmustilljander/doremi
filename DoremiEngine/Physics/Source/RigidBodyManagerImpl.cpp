@@ -95,6 +95,11 @@ namespace DoremiEngine
             ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
         }
 
+        void RigidBodyManagerImpl::SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_v)
+        {
+            ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+        }
+
         void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)
         {
             PxVec3 position = PxVec3(p_v.x, p_v.y, p_v.z);
@@ -122,6 +127,12 @@ namespace DoremiEngine
         XMFLOAT3 RigidBodyManagerImpl::GetBodyVelocity(int p_bodyID)
         {
             PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getLinearVelocity();
+            return XMFLOAT3(v.x, v.y, v.z);
+        }
+
+        XMFLOAT3 RigidBodyManagerImpl::GetBodyAngularVelocity(int p_bodyID)
+        {
+            PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getAngularVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
     }
