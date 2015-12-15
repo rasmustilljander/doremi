@@ -30,124 +30,142 @@ namespace Doremi
         PlayerHandler* PlayerHandler::GetInstance() { return m_singleton; }
         void PlayerHandler::UpdatePosition()
         {
+            XMFLOAT3 t_entityVelocity = XMFLOAT3(0, 0, 0);
+            // if (/*m_playerEntityID != -842150451 &&*/ /*m_inputHandler == nullptr*/)
+            // {
 
-            RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(m_playerEntityID);
-            XMFLOAT3 t_entityVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(t_rigidComp->p_bodyID);
-
-            t_entityVelocity.x = t_entityVelocity.x * m_autoRetardation;
-            t_entityVelocity.z = t_entityVelocity.z * m_autoRetardation;
-            // XMFLOAT3 t_veloctiyToAdd = XMFLOAT3(0, 0, 0);
-            bool moving = false;
-            if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
-            {
-                t_entityVelocity.z = t_entityVelocity.z + m_moveSpeed;
-            }
-            else
-            {
-                // Nothing
-            }
-            if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
-            {
-                t_entityVelocity.z = t_entityVelocity.z - m_moveSpeed;
-            }
-            else
-            {
-                // Nothing
-            }
-            if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
-            {
-                t_entityVelocity.x = t_entityVelocity.x - m_moveSpeed;
-            }
-            else
-            {
-                // Nothing
-            }
-            if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
-            {
-                t_entityVelocity.x = t_entityVelocity.x + m_moveSpeed;
-            }
-            else
-            {
-                // Nothing
-            }
             if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
             {
+                RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(m_playerEntityID);
+                t_entityVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(t_rigidComp->p_bodyID);
+                t_entityVelocity.x = t_entityVelocity.x * m_autoRetardation;
+                t_entityVelocity.z = t_entityVelocity.z * m_autoRetardation;
+
+                // XMFLOAT3 t_veloctiyToAdd = XMFLOAT3(0, 0, 0);
+                bool moving = false;
+                if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                {
+                    t_entityVelocity.z = t_entityVelocity.z + m_moveSpeed;
+                }
+                else
+                {
+                    // Nothing
+                }
+                if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                {
+                    t_entityVelocity.z = t_entityVelocity.z - m_moveSpeed;
+                }
+                else
+                {
+                    // Nothing
+                }
+                if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                {
+                    t_entityVelocity.x = t_entityVelocity.x - m_moveSpeed;
+                }
+                else
+                {
+                    // Nothing
+                }
+                if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                {
+                    t_entityVelocity.x = t_entityVelocity.x + m_moveSpeed;
+                }
+                else
+                {
+                    // Nothing
+                }
                 // t_entityVelocity.y = t_entityVelocity.y + 6;
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, t_entityVelocity);
                 // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 2000, 0));
                 moving = true;
-            }
-            else
-            {
-                // Nothing
-            }
 
-
-            // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
-            //{
-            //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            //    {
-            //        // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0, 1));
-            //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed) // TODOEA CHECK IF THIS IS NEEDED
-            //        {
-            //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
-            //            m_moveSpeed));
-            //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 0, m_moveSpeed));
-            //            moving = true;
-            //        }
-            //    }
-            //}
-            // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
-            //{
-            //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            //    {
-            //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
-            //        {
-            //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
-            //            -m_moveSpeed));
-            //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
-            //            -m_moveSpeed));
-            //            moving = true;
-            //        }
-            //    }
-            //}
-            // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
-            //{
-            //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            //    {
-            //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
-            //        {
-            //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(-m_moveSpeed, 0,
-            //            0));
-            //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(-m_moveSpeed, 0,
-            //            0));
-            //            moving = true;
-            //        }
-            //    }
-            //}
-            // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
-            //{
-            //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            //    {
-            //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
-            //        {
-            //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(m_moveSpeed, 0,
-            //            0));
-            //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(m_moveSpeed, 0, 0));
-            //            moving = true;
-            //        }
-            //    }
-            //}
-            if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
-            {
-                if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                //{
+                //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                //    {
+                //        // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0, 1));
+                //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed) // TODOEA CHECK IF THIS IS NEEDED
+                //        {
+                //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
+                //            m_moveSpeed));
+                //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
+                //            m_moveSpeed));
+                //            moving = true;
+                //        }
+                //    }
+                //}
+                // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                //{
+                //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                //    {
+                //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
+                //        {
+                //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
+                //            -m_moveSpeed));
+                //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 0,
+                //            -m_moveSpeed));
+                //            moving = true;
+                //        }
+                //    }
+                //}
+                // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                //{
+                //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                //    {
+                //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
+                //        {
+                //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(-m_moveSpeed,
+                //            0,
+                //            0));
+                //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(-m_moveSpeed, 0,
+                //            0));
+                //            moving = true;
+                //        }
+                //    }
+                //}
+                // if (m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                //{
+                //    if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                //    {
+                //        if (abs(t_entityVelocity.x) + abs(t_entityVelocity.z) < m_maxSpeed)
+                //        {
+                //            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(m_moveSpeed,
+                //            0,
+                //            0));
+                //            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(m_moveSpeed, 0,
+                //            0));
+                //            moving = true;
+                //        }
+                //    }
+                //}
+                if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                 {
+                    // if (EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
+                    // {
                     // t_entityVelocity.y = t_entityVelocity.y + 6;
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(t_rigidComp->p_bodyID, XMFLOAT3(0,2000,0));
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 2000, 0));
                     moving = true;
+                    // }
+                }
+
+
+                int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
+                XMFLOAT3 t_torqueParameter;
+                if(t_mouseMovementX)
+                {
+                    t_torqueParameter = XMFLOAT3(0, m_inputHandler->GetMouseMovementX() * 400, 0);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddTorqueToBody(t_rigidComp->p_bodyID, t_torqueParameter);
+                }
+                else
+                {
+                    t_torqueParameter = XMFLOAT3(0, 0, 0);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID, t_torqueParameter);
                 }
             }
+
+            //}
             // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
             if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
             {
@@ -183,21 +201,6 @@ namespace Doremi
                 XMFLOAT3 bulletVel;
                 XMStoreFloat3(&bulletVel, bulletVelVec);
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
-            }
-            if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-            {   
-                int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
-                XMFLOAT3 t_torqueParameter;
-                if (t_mouseMovementX)
-                {
-                    t_torqueParameter = XMFLOAT3(0, m_inputHandler->GetMouseMovementX() * 400, 0);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddTorqueToBody(t_rigidComp->p_bodyID, t_torqueParameter);
-                }
-                else 
-                {
-                    t_torqueParameter = XMFLOAT3(0, 0, 0);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID,t_torqueParameter);
-                }
             }
         }
     }
