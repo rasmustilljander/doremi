@@ -28,19 +28,24 @@ int main(int argc, const char* argv[])
 {
     FreeConsole();
     Utility::DebugLog::VirtualConsole a;
+    Utility::DebugLog::VirtualConsole b;
     a.Initialize();
+    b.Initialize("physics", true, true, Utility::DebugLog::ConsoleColorEnum::YELLOW);
     int i = 0;
     int j = 0;
     while(true)
     {
         a.LogText(Utility::DebugLog::LogTag::NETWORK, Utility::DebugLog::LogLevel::INIT_PRINT, "Test %d", ++i);
-        a.LogText(Utility::DebugLog::LogTag::WATER, Utility::DebugLog::LogLevel::FATAL_ERROR, "T3st %d", ++j);
+        b.LogText(Utility::DebugLog::LogTag::WATER, Utility::DebugLog::LogLevel::FATAL_ERROR, "T3st %d", ++j);
 
 
         //      Utility::MemoryManager::MainMemoryManager::Startup();
         //      auto& a = Utility::MemoryManager::MainMemoryManager::GetInstance();
         //    Utility::MemoryManager::MainMemoryManager::Shutdown();
-        if(i == 10) break;
+        if(i == 10)
+        {
+            break;
+        }
     }
 
     try

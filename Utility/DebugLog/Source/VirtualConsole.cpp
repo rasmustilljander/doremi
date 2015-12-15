@@ -4,7 +4,12 @@
 #include <thread>
 #include <Internal/VA_LISTHelper.hpp>
 #include <iostream>
-#include <Utility/DebugLog/Include/Internal/ThreadPool.hpp>
+#include <Utility/DebugLog/Include/Internal/ThreadPool.hpp> // It did like the effect of being forward declared
+
+namespace
+{
+    static ctpl::thread_pool g_threadPool(8); // TODORT this needs an manager
+}
 
 namespace Utility
 {
@@ -13,7 +18,7 @@ namespace Utility
 
         struct LoggingData
         {
-            std::string func;
+            std::string function;
             size_t line;
             LogTag tag;
             LogLevel vLevel;
@@ -21,7 +26,7 @@ namespace Utility
             va_list args;
         };
 
-        VirtualConsole::VirtualConsole() : m_threadPool(ctpl::thread_pool(8)) {}
+        VirtualConsole::VirtualConsole() {}
 
         void VirtualConsole::Initialize(const std::string& p_pipeName, bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor,
                                         const ConsoleColor& p_backgroundColor)
@@ -75,32 +80,36 @@ namespace Utility
             }
         }
 
-        void AsynchronousLogText(int id, VirtualConsole& p_console, LoggingData* p_loggingData)
+        void AsynchronousLogText(int id, VirtualConsole* const p_console, LoggingData* p_data)
         {
-            p_console.WriteToConsole(*p_loggingData);
-            delete p_loggingData;
+            int a = id;
+            p_console->WriteToConsole(*p_data);
+            //   va_end(p_data->args);
+            delete p_data;
         }
 
-        void VirtualConsole::LT(std::string p_func, int p_line, LogTag p_tag, LogLevel p_vLevel, const char* p_format, ...)
+        void VirtualConsole::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...)
         {
             va_list args;
             va_start(args, p_format);
             LoggingData* threadData = new LoggingData();
-            threadData->func = p_func;
+            threadData->function = p_function;
             threadData->line = p_line;
             threadData->tag = p_tag;
             threadData->vLevel = p_vLevel;
-            threadData->format = string(p_format);
-            va_copy(threadData->args, args);
-            m_threadPool.push(AsynchronousLogText, *this, threadData);
+            //      threadData->format = string(p_format);
+            std::string vaListAsString;
+            toString(vaListAsString, p_format, args);
+            threadData->format = vaListAsString;
+            g_threadPool.push(AsynchronousLogText, this, threadData);
+            va_end(args);
         }
 
         void VirtualConsole::WriteToConsole(const LoggingData& p_loggingData)
         {
             DWORD l;
-            std::string vaListAsString;
-            toString(vaListAsString, p_loggingData.format.c_str(), p_loggingData.format);
-            std::string out = std::string("[" + p_loggingData.func + ":" + std::to_string(p_loggingData.line) + "]" + "\t" + vaListAsString + "\n");
+
+            std::string out = std::string("[" + p_loggingData.function + ":" + std::to_string(p_loggingData.line) + "]" + "\t" + p_loggingData.format + "\n");
             WriteFile(m_nearEnd, out.c_str(), out.size(), &l, 0);
             return;
         }
