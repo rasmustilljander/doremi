@@ -40,13 +40,28 @@ namespace DoremiEngine
             {
                 m_initOK = false;
             }
-            
+            int numDrivers;
+            m_fmodResult = m_fmodSystem->getNumDrivers(&numDrivers);
+            if(m_fmodResult != 0)
+            {
+                // return false;
+                int derp = 0;
+            }
+
+            // No sound cards (disable sound)
+            if(numDrivers == 0)
+            {
+                m_fmodResult = m_fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+                if(m_fmodResult != 0)
+                {
+                    int derp = 0;
+                }
+            }
+            m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+            ERRCHECK(m_fmodResult);
         }
 
-        bool AudioModuleImplementation::GetInitializationStatus()
-        {
-            return m_initOK;
-        }
+        bool AudioModuleImplementation::GetInitializationStatus() { return m_initOK; }
 
         void AudioModuleImplementation::Shutdown()
         {

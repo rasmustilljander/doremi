@@ -122,7 +122,7 @@ namespace Doremi
             sharedContext.GetAudioModule().StartRecording(t_soundIDForRecord, true);
             AudioHandler::GetInstance()->SetFrequencyAnalyserSoundID(t_soundIDForRecord);
             AudioHandler::GetInstance()->SetLoopForFrequencyAnalyser(true);
-            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0) , 0);
+            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), 0);
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
@@ -250,10 +250,10 @@ namespace Doremi
             Manager* t_physicsManager = new ExampleManager(sharedContext);
             // Manager* t_playerManager = new PlayerManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
-            Manager* t_cameraManager = new CameraManager(sharedContext);
-            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             Manager* t_movementManager = new MovementManager(sharedContext);
             Manager* t_audioManager = new AudioManager(sharedContext);
+            Manager* t_cameraManager = new CameraManager(sharedContext);
+            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
