@@ -4,6 +4,7 @@
 #include <EntityComponent/Components/ExampleComponent.hpp>
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EntityComponent/Components/AudioComponent.hpp>
+#include <EntityComponent/Components/MovementComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
@@ -158,6 +159,10 @@ namespace Doremi
             PlayerComponent* t_playerComp = new PlayerComponent();
             t_playerComp->isControllable = true;
             t_avatarBlueprint[ComponentType::Player] = t_playerComp;
+            // Movement Component
+            MovementComponent* t_movementComp = new MovementComponent();
+            t_movementComp->maxSpeed = 5;
+            t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
 

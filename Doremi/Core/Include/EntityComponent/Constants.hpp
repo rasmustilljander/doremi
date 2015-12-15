@@ -22,6 +22,7 @@ enum class ComponentType : int
     RigidBody = 0x80,
     PhysicalMaterial = 0x100,
     Player = 0x200,
+    Movement = 0x400,
 };
 
 /**
