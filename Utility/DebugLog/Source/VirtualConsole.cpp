@@ -55,8 +55,9 @@ namespace Utility
 #ifndef UNICODE
             sprintf(arguments, "%d", color);
 #else
-            DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue;
-            swprintf(arguments, L"0, %s %d", p_pipeName, color);
+            std::wstring p_wPipeName(p_pipeName.begin(), p_pipeName.end()); // I fucking hate windows
+            DWORD color = p_textColor.stateValue | p_backgroundColor.stateValue; // I fucking hate windows
+            swprintf(arguments, L"0, %s %d", p_wPipeName.c_str(), color); // I fucking hate windows
 #endif
             if(!CreateProcess(program, arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
