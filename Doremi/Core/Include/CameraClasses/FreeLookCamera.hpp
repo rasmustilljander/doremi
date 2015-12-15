@@ -36,6 +36,7 @@ namespace Doremi
             float m_camPitch;
             float m_moveLeftRight;
             float m_moveForwardBackward;
+            float m_speed;
         };
     }
 }

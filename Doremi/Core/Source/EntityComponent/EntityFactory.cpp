@@ -12,7 +12,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
-
+#include <EntityComponent/Components/MovementComponent.hpp>
 
 namespace Doremi
 {
@@ -93,6 +93,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::PhysicalMaterial)
                 {
                     memcpy(GetComponent<PhysicsMaterialComponent>(tNewEntityID), iter->second, sizeof(PhysicsMaterialComponent));
+                }
+                else if(iter->first == ComponentType::Movement)
+                {
+                    memcpy(GetComponent<MovementComponent>(tNewEntityID), iter->second, sizeof(MovementComponent));
                 }
             }
 

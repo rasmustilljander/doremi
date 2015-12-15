@@ -7,12 +7,22 @@ namespace Doremi
 {
     namespace Core
     {
-        FreeLookCamera::FreeLookCamera(DoremiEngine::Graphic::Camera* p_camera) : m_camera(p_camera), m_camUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)), m_camTarget(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f))
-            , m_camPos(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), m_defaultForward(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
-            m_defaultRight(DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)), m_camForward(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)), m_camRight(DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)), m_camPitch(0.0f), m_camYaw(0.0f), 
-            m_moveLeftRight(0.0f), m_moveForwardBackward(0.0f)
+        FreeLookCamera::FreeLookCamera(DoremiEngine::Graphic::Camera* p_camera)
+            : m_camera(p_camera),
+              m_camUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)),
+              m_camTarget(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
+              m_camPos(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+              m_defaultForward(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
+              m_defaultRight(DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
+              m_camForward(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
+              m_camRight(DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
+              m_camPitch(0.0f),
+              m_camYaw(0.0f),
+              m_moveLeftRight(0.0f),
+              m_moveForwardBackward(0.0f),
+              m_speed(10)
         {
-            using namespace DirectX;           
+            using namespace DirectX;
         }
 
         FreeLookCamera::~FreeLookCamera() {}
@@ -42,7 +52,7 @@ namespace Doremi
 
             XMStoreFloat3(&m_camTarget, XMLoadFloat3(&m_camPos) + XMLoadFloat3(&m_camTarget));
             XMFLOAT4X4 viewMatrix;
-            XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose( XMMatrixLookAtLH(XMLoadFloat3(&m_camPos), XMLoadFloat3(&m_camTarget), XMLoadFloat3(&m_camUp))));
+            XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(XMMatrixLookAtLH(XMLoadFloat3(&m_camPos), XMLoadFloat3(&m_camTarget), XMLoadFloat3(&m_camUp))));
             XMStoreFloat3(&m_camRight, XMVector3Normalize(XMLoadFloat3(&m_camRight)));
 
             m_camera->SetViewMatrix(viewMatrix);
@@ -50,24 +60,23 @@ namespace Doremi
 
         void FreeLookCamera::HandleUserCMD(double pDT)
         {
-            float speed = pDT;
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
             {
-                m_moveLeftRight -= speed;
+                m_moveLeftRight -= m_speed * pDT;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
             {
-                m_moveLeftRight += speed;
+                m_moveLeftRight += m_speed * pDT;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
             {
-                m_moveForwardBackward += speed;
+                m_moveForwardBackward += m_speed * pDT;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
             {
-                m_moveForwardBackward -= speed;
+                m_moveForwardBackward -= m_speed * pDT;
             }
-            if (InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire))
+            if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire))
             {
                 m_camYaw += InputHandler::GetInstance()->GetMouseMovementX() * 0.001f;
                 m_camPitch += InputHandler::GetInstance()->GetMouseMovementY() * 0.001f;

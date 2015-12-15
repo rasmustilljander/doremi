@@ -51,12 +51,12 @@ namespace Doremi
             switch(m_currentCamera)
             {
                 case CameraType::FREELOOK:
-                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(true);
+                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(false);
                     m_freeLookCamera->Update(p_dt);
                     m_graphicModuleCameraManager.PushCameraToDevice(m_freeLookCamera->GetCamera());
                     break;
                 case CameraType::THIRDPERSON:
-                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(false);
+                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(true);
                     m_thirdPersonCamera->Update(p_dt);
                     m_graphicModuleCameraManager.PushCameraToDevice(m_thirdPersonCamera->GetCamera());
                     break;
