@@ -36,7 +36,12 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void UpdateGame(double p_deltaTime);
+            void UpdateServerGame(double p_deltaTime);
+
+            /**
+                TODOCM doc
+            */
+            void UpdateClientGame(double p_deltaTime);
 
             /**
                 TODOCM doc

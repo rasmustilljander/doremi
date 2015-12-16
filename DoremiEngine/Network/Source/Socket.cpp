@@ -163,7 +163,6 @@ namespace DoremiEngine
             int32_t Return = sendto(m_socketHandle, (char*)p_data, p_dataSize, 0, (SOCKADDR*)&p_adress.GetAdress(), sizeof(SOCKADDR));
             if(Return == SOCKET_ERROR)
             {
-                int a = WSAGetLastError();
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
                 if(WSAGetLastError() != WSAEWOULDBLOCK)
                 {

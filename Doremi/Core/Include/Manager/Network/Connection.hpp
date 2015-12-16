@@ -13,6 +13,7 @@ namespace Doremi
             ConnectionState ConnectionState;
             size_t ReliableSocketHandle;
             double LastResponse;
+            bool NewConnection;
         };
     }
 }

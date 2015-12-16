@@ -5,7 +5,9 @@
 #include <Manager/Network/BitStreamer.h>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <InterpolationHandler.hpp>
 #include <iostream> // TODOCM remove after test
+
 
 namespace Doremi
 {
@@ -14,10 +16,10 @@ namespace Doremi
         ClientNetworkManager::ClientNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext),
               m_masterConnectionState(ConnectionState::DISCONNECTED),
-              m_serverConnectionState(ConnectionState::DISCONNECTED),
+              m_serverConnectionState(ConnectionState::CONNECTING),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
-              m_timeoutInterval(5.0f)
+              m_timeoutInterval(1.0f)
         {
             m_serverAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
@@ -89,7 +91,7 @@ namespace Doremi
                                 m_serverConnectionState = ConnectionState::CONNECTED;
 
                                 // Increase the rate of which we send messages
-                                m_updateInterval = 17.0f;
+                                m_updateInterval = 0.017f;
 
                                 m_serverLastResponse = 0;
 
@@ -113,7 +115,7 @@ namespace Doremi
                             // Something went wrong or we disconnected
                             m_serverConnectionState = ConnectionState::CONNECTING;
                             m_serverLastResponse = 0;
-                            m_updateInterval = 1000.0f;
+                            m_updateInterval = 1.0f;
 
                             break;
                         default:
@@ -123,7 +125,7 @@ namespace Doremi
             }
         }
 
-        void ClientNetworkManager::RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize)
+        void ClientNetworkManager::RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, bool p_initial)
         {
             // Read and translate message, for each position we update buffer array?
             BitStreamer Streamer = BitStreamer();
@@ -131,15 +133,25 @@ namespace Doremi
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
-            uint32_t NumberOfComponents = Streamer.ReadUnsignedInt8();
+            Snapshot* NewSnapshot = new Snapshot();
 
-            for(size_t i = 0; i < NumberOfComponents; i++)
+
+            NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
+            if(p_initial)
             {
-                uint32_t EntityID = Streamer.ReadUnsignedInt32();
-                TransformComponentBufferSecond* TransComp = EntityHandler.GetComponentFromStorage<TransformComponentBufferSecond>(EntityID);
-                TransComp->position = Streamer.ReadFloat3();
-                TransComp->rotation = Streamer.ReadRotationQuaternion();
+                InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
             }
+
+            NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
+
+            for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
+            {
+                NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
+                NewSnapshot->Objects[i].Component.position = Streamer.ReadFloat3();
+                NewSnapshot->Objects[i].Component.rotation = Streamer.ReadRotationQuaternion();
+            }
+
+            InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
 
             // TODOCM notify a handler or something that new buffer exists
         }
@@ -154,9 +166,24 @@ namespace Doremi
                 // Attempt recieve reliable message
                 while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle))
                 {
-                    std::cout << "Recieved snapshot." << std::endl; // TODOCM logg instead
+                    // std::cout << "Recieved snapshot." << std::endl; // TODOCM logg instead
 
-                    RecieveSnapshot(Message.Data, sizeof(Message.Data));
+                    switch(Message.MessageID)
+                    {
+                        case MessageID::SNAPSHOT:
+
+                            RecieveSnapshot(Message.Data, sizeof(Message.Data));
+
+                            break;
+                        case MessageID::INIT_SNAPSHOT:
+
+                            RecieveSnapshot(Message.Data, sizeof(Message.Data), true);
+
+                            break;
+                        default:
+                            break;
+                    }
+
 
                     // Update last response
                     m_serverLastResponse = 0;
@@ -246,7 +273,7 @@ namespace Doremi
 
             // TODOCM write bits for stuff
 
-            std::cout << "Sending connected message" << std::endl; // TODOCM logg instead
+            // std::cout << "Sending connected message" << std::endl; // TODOCM logg instead
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);

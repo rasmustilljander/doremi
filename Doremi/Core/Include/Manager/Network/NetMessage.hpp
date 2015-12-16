@@ -14,7 +14,8 @@ namespace Doremi
             VERSION_CHECK,
             CONNECT,
             DISCONNECT,
-            SNAPSHOT
+            INIT_SNAPSHOT,
+            SNAPSHOT,
         };
 
         /**

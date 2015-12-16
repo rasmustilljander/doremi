@@ -15,7 +15,7 @@ namespace Doremi
     namespace Core
     {
         ServerNetworkManager::ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(0.017f), m_timeoutInterval(5.0f), m_maxConnection(16)
+            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(0.017f), m_timeoutInterval(1.0f), m_maxConnection(16), m_nextSnapshotSequence(0)
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = p_sharedContext.GetNetworkModule();
 
@@ -120,7 +120,7 @@ namespace Doremi
                     // TODOCM maybe we want to loop to get all data? or not..
                     if(NetworkModule.RecieveReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle))
                     {
-                        std::cout << "Recieved reliable messsage." << std::endl;
+                        // std::cout << "Recieved reliable messsage." << std::endl;
                         ; // TODOCM logg instead
 
                         // TODOCM interpet data
@@ -177,6 +177,7 @@ namespace Doremi
                 Connection* newConnection = new Connection();
                 newConnection->LastResponse = 0;
                 newConnection->ConnectionState = ConnectionState::CONNECTING;
+                newConnection->NewConnection = false;
 
                 // Create a copy of the adress and save it with connection to our map
                 DoremiEngine::Network::Adress* NewAdress = NetworkModule.CreateAdress(m_adress);
@@ -250,8 +251,12 @@ namespace Doremi
             BitStreamer Streamer = BitStreamer();
             Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
 
+            // Write snapshot ID
+            Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
+            m_nextSnapshotSequence++;
+
             // Move forward for header
-            Streamer.SetReadWritePosition(sizeof(uint8_t));
+            Streamer.SetReadWritePosition(sizeof(uint8_t) * 2);
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
@@ -275,7 +280,7 @@ namespace Doremi
                 }
             }
 
-            Streamer.SetReadWritePosition(0);
+            Streamer.SetReadWritePosition(sizeof(uint8_t));
             Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
         }
 
@@ -289,6 +294,14 @@ namespace Doremi
             {
                 // Remove time
                 m_nextUpdateTimer -= m_updateInterval;
+
+                // TODOCM remove, packet loss experiment
+                int a = rand() % 100;
+                if(a < 25)
+                {
+                    std::cout << "Dropping packages..." << std::endl;
+                    return;
+                }
 
                 // Create global message
                 NetMessage Message = NetMessage();
@@ -304,7 +317,13 @@ namespace Doremi
                 {
                     if(iter->second->ConnectionState == ConnectionState::CONNECTED)
                     {
-                        std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
+                        // std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
+                        // If we're a new connection we send a initialise snapshot, might need this later
+                        if(iter->second->NewConnection)
+                        {
+                            Message.MessageID = MessageID::INIT_SNAPSHOT;
+                            iter->second->NewConnection = false;
+                        }
 
                         // Send message
                         NetworkModule.SendReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle);
@@ -386,6 +405,8 @@ namespace Doremi
 
                             // Add socketID
                             iter->second->ReliableSocketHandle = OutSocketID;
+
+                            iter->second->NewConnection = true;
                         }
                         else // If not, either wrong stage or something happened, or bot..
                         {
@@ -394,6 +415,8 @@ namespace Doremi
 
                             // Set their state to disconnected
                             iter->second->ConnectionState = ConnectionState::DISCONNECTED;
+
+                            iter->second->NewConnection = false;
                         }
                         // Break loop
                         // TODOCM maybe send disconnect even if we dont have him in list?

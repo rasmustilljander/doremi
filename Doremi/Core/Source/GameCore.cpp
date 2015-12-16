@@ -286,7 +286,7 @@ namespace Doremi
             t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
             t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
 
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
 
             int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
 
@@ -302,7 +302,6 @@ namespace Doremi
 
             XMFLOAT4 test;
             XMStoreFloat4(&test, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(1, 0, 0)), XM_PIDIV2));
-            int a = 3;
         }
 
 
@@ -319,6 +318,48 @@ namespace Doremi
             }
         }
 
+        void GenerateWorldServerJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            EntityBlueprint t_jawsDebugBlueprint;
+
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_transformComp->position = XMFLOAT3(0, 0, 5);
+            t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
+
+            int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+
+            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+            TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
+            TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
+        }
+
+        void GenerateWorldClientJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            EntityBlueprint t_jawsDebugBlueprint;
+            RenderComponent* t_renderComp2 = new RenderComponent();
+            t_renderComp2->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp2->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_jawsDebugBlueprint[ComponentType::Render] = t_renderComp2;
+
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_transformComp->position = XMFLOAT3(0, 0, 5);
+            t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
+
+            int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+
+            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+            TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
+            TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
+        }
 
         void GameCore::InitializeClient()
         {
@@ -338,7 +379,9 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+            const DoremiEngine::Core::SharedContext& sharedContext =
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::GRAPHIC |
+                                    DoremiEngine::Core::EngineModuleEnum::INPUT | DoremiEngine::Core::EngineModuleEnum::AUDIO);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
@@ -351,7 +394,7 @@ namespace Doremi
             ////////////////Example only////////////////
             // Create manager
             Manager* t_renderManager = new GraphicManager(sharedContext);
-            Manager* t_physicsManager = new ExampleManager(sharedContext);
+            // Manager* t_physicsManager = new ExampleManager(sharedContext);
             // Manager* t_playerManager = new PlayerManager(sharedContext);
             Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
             Manager* t_movementManager = new MovementManager(sharedContext);
@@ -362,16 +405,22 @@ namespace Doremi
             Manager* t_charSyncManager = new CharacterControlSyncManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
-            m_managers.push_back(t_physicsManager);
+            // m_managers.push_back(t_physicsManager);
             // m_managers.push_back(t_playerManager);
             m_managers.push_back(t_audioManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
-            m_managers.push_back(t_rigidTransSyndManager);
+            //m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_movementManager);
+
             m_managers.push_back(t_aiManager);
             m_managers.push_back(t_charSyncManager);
-            GenerateWorld(sharedContext);
+
+
+            //GenerateWorld(sharedContext);
+
+            GenerateWorldClientJawsTest(sharedContext);
+
 
             AudioHandler::GetInstance()->SetupRepeatableRecording();
 
@@ -396,8 +445,8 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext = libInitializeEngine(
-                DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
+            const DoremiEngine::Core::SharedContext& sharedContext =
+                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS);
             InputHandler::StartInputHandler(sharedContext);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
@@ -408,24 +457,40 @@ namespace Doremi
             ////////////////Example only////////////////
             // Create manager
 
-            Manager* t_physicsManager = new ExampleManager(sharedContext);
+            // Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_serverNetworkManager = new ServerNetworkManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
 
             // Add manager to list of managers
             // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
-            m_managers.push_back(t_physicsManager);
+            // m_managers.push_back(t_physicsManager);
             m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_serverNetworkManager);
 
-            GenerateWorld(sharedContext);
+            // GenerateWorld(sharedContext);
+            GenerateWorldServerJawsTest(sharedContext);
             ////////////////End Example////////////////
         }
 
-        void GameCore::UpdateGame(double p_deltaTime)
+        void GameCore::UpdateServerGame(double p_deltaTime)
+        {
+            EventHandler::GetInstance()->DeliverEvents();
+
+            // Have all managers update
+            size_t length = m_managers.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                m_managers.at(i)->Update(p_deltaTime);
+            }
+        }
+
+        void GameCore::UpdateClientGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
             PlayerHandler::GetInstance()->UpdatePosition();
+
+            AudioHandler::GetInstance()->Update();
+
             // Have all managers update
             size_t length = m_managers.size();
             for(size_t i = 0; i < length; i++)
@@ -454,8 +519,9 @@ namespace Doremi
             uint64_t PreviousTime = GetTickCount64();
             uint64_t FrameTime = 0;
             uint64_t Accumulator = 0;
-            uint64_t UpdateTimeStepLength = 17;
+            uint64_t UpdateTimeStepLength = 34;
             uint64_t GameTime = 0;
+
 
             while(true)
             {
@@ -478,7 +544,10 @@ namespace Doremi
                 while(Accumulator >= UpdateTimeStepLength)
                 {
                     // Update Game logic
-                    UpdateGame(UpdateTimeStepLength / 1000.0f);
+                    UpdateClientGame((double)UpdateTimeStepLength / 1000.0f);
+
+                    // Update interpolation transforms from snapshots
+                    InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
                     // Remove time from accumulator
                     Accumulator -= UpdateTimeStepLength;
@@ -487,14 +556,37 @@ namespace Doremi
                     GameTime += UpdateTimeStepLength;
                 }
 
-                double alpha = Accumulator / UpdateTimeStepLength;
+                double alpha = (double)Accumulator / (double)UpdateTimeStepLength;
 
                 // Interpolate the frames here
                 InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
                 // Draw stuff
-                DrawGame(UpdateTimeStepLength / 1000.0f);
+                DrawGame((double)UpdateTimeStepLength / 1000.0f);
             }
+        }
+
+        void JawsSimulatePhysicsDebug(double deltaTime)
+        {
+            TransformComponent* trans = GetComponent<TransformComponent>(0);
+
+            if(trans->position.x == 1)
+            {
+                trans->position.y += deltaTime;
+                if(trans->position.y > 5)
+                {
+                    trans->position.x = -1;
+                }
+            }
+            else
+            {
+                trans->position.y -= deltaTime;
+                if(trans->position.y < -5)
+                {
+                    trans->position.x = 1;
+                }
+            }
+            XMStoreFloat4(&trans->rotation, XMQuaternionRotationRollPitchYaw(0, 0, trans->position.y * 1.0f));
         }
 
         void GameCore::StartServerCore()
@@ -505,7 +597,7 @@ namespace Doremi
             uint64_t PreviousTime = GetTickCount64();
             uint64_t FrameTime = 0;
             uint64_t Accumulator = 0;
-            uint64_t UpdateTimeStepLength = 17;
+            uint64_t UpdateTimeStepLength = 34;
             uint64_t GameTime = 0;
 
             while(true)
@@ -522,8 +614,9 @@ namespace Doremi
                 // Loop as many update-steps we will take this frame
                 while(Accumulator >= UpdateTimeStepLength)
                 {
+                    JawsSimulatePhysicsDebug(UpdateTimeStepLength / 1000.0f); // TODOCM remove
                     // Update Game logic
-                    UpdateGame(UpdateTimeStepLength / 1000.0f);
+                    UpdateServerGame((double)UpdateTimeStepLength / 1000.0f);
 
                     // Remove time from accumulator
                     Accumulator -= UpdateTimeStepLength;

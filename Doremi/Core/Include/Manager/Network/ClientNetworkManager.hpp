@@ -81,7 +81,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize);
+            void RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, bool p_initial = false);
 
             /**
                 Update timeout to server and disconnects if too long

@@ -34,7 +34,7 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
     return mSingleton;
 }
 
-template <class T> void StorageShelf<T>::SetSingleton(void* p_pointer) { mSingleton = p_pointer; }
+template <class T> void StorageShelf<T>::SetSingleton(void* p_pointer) { mSingleton = (StorageShelf<T>*)p_pointer; }
 
 template <class T> StorageShelf<T>::StorageShelf() {}
 
@@ -62,6 +62,24 @@ template <class T, class U> static void SwapShelf()
     StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
 
     // Set pointers
-    tFirstShelf->SetPointer(tSecondShelf);
-    tSecondShelf->SetPointer(tFirstShelf);
+    tFirstShelf->SetSingleton(tSecondShelf);
+    tSecondShelf->SetSingleton(tFirstShelf);
+}
+
+/**
+    Fist paremeter is from, second parameter is to
+*/
+template <class T, class U> static void CloneShelf()
+{
+    if(sizeof(T) != sizeof(U))
+    {
+        std::runtime_error("Attempting to memcpy two different sized shelfs!");
+    }
+
+    // Get Pointers
+    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
+    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
+
+    // Memcpy
+    memcpy(tSecondShelf, tFirstShelf, sizeof(T) * MAX_NUM_ENTITIES);
 }

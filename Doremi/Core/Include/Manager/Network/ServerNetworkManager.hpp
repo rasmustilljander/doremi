@@ -144,6 +144,11 @@ namespace Doremi
             uint8_t m_maxConnection;
 
             /**
+                TODOCM doc
+            */
+            uint8_t m_nextSnapshotSequence;
+
+            /**
                 All the client connections mapped to adresses
             */
             std::map<DoremiEngine::Network::Adress*, Connection*> m_connections;

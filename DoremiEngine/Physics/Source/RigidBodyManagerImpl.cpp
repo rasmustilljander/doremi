@@ -164,7 +164,11 @@ namespace DoremiEngine
 
         bool RigidBodyManagerImpl::IsSleeping(int p_bodyID)
         {
-            bool isSleeping = ((PxRigidDynamic*)m_bodies[p_bodyID])->isSleeping();
+            bool isSleeping = true;
+            if(m_bodies[p_bodyID]->isRigidDynamic())
+            {
+                isSleeping = ((PxRigidDynamic*)m_bodies[p_bodyID])->isSleeping();
+            }
             return isSleeping;
         }
 
