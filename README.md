@@ -1,6 +1,9 @@
 PA2526 Large Game Project @ Blekinge Institute of Technology
 ==
 
+A project spanning 20 weeks in where the goal is to design and build a game and a gameengine from scratch using C++.
+
+
 Team members
 ------------
 |	Name				|	Nickname	|	TODO acronym	|
