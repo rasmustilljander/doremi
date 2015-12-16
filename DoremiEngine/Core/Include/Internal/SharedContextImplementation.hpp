@@ -24,6 +24,7 @@ namespace DoremiEngine
             void SetPhysicsModule(Physics::PhysicsModule* p_physicsModule) { m_physics = p_physicsModule; }
             void SetScriptModule(Script::ScriptModule* p_scriptModule) { m_script = p_scriptModule; }
             void SetInputModule(Input::InputModule* p_inputModule) { m_input = p_inputModule; }
+            void SetAIModule(AI::AIModule* p_AIModule) { m_ai = p_AIModule; }
 
             const std::string GetWorkingDirectory() const { return m_workingDirectory; };
 
@@ -90,6 +91,15 @@ namespace DoremiEngine
                 throw std::runtime_error("Input module has not been initialized.");
             };
 
+            AI::AIModule& GetAIModule() const
+            {
+                if(m_ai != nullptr)
+                {
+                    return *m_ai;
+                }
+                throw std::runtime_error("AI module has not been initialized.");
+            }
+
             private:
             std::string m_workingDirectory;
             Audio::AudioModule* m_audio;
@@ -99,6 +109,7 @@ namespace DoremiEngine
             Physics::PhysicsModule* m_physics;
             Script::ScriptModule* m_script;
             Input::InputModule* m_input;
+            AI::AIModule* m_ai;
         };
     }
 }

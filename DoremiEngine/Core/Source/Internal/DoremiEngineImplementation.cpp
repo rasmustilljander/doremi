@@ -6,6 +6,7 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
+#include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
@@ -26,7 +27,8 @@ namespace DoremiEngine
               m_networkModule(nullptr),
               m_physicsModule(nullptr),
               m_scriptModule(nullptr),
-              m_inputModule(nullptr)
+              m_inputModule(nullptr),
+              m_aiModule(nullptr)
         {
         }
 
@@ -79,6 +81,10 @@ namespace DoremiEngine
             {
                 DynamicLoader::FreeSharedLibrary(m_scriptLibrary);
             }
+            if(m_aiLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_aiLibrary);
+            }
         }
 
         SharedContext& DoremiEngineImplementation::Start(const size_t& p_flags)
@@ -116,6 +122,11 @@ namespace DoremiEngine
             {
                 LoadInputModule(*m_sharedContext);
             }
+
+            if((p_flags & EngineModuleEnum::AI) == EngineModuleEnum::AI)
+            {
+                LoadAIModule(*m_sharedContext);
+            }
             return *m_sharedContext;
         }
 
@@ -146,6 +157,11 @@ namespace DoremiEngine
             //    {
             //        m_scriptModule->Shutdown();
             //    }
+
+            if(m_aiModule != nullptr)
+            {
+                m_aiModule->Shutdown();
+            }
         }
 
         void DoremiEngineImplementation::BuildWorkingDirectory(SharedContextImplementation& o_sharedContext)
@@ -269,6 +285,30 @@ namespace DoremiEngine
                     m_inputModule = static_cast<Input::InputModule*>(functionCreateInputModule(o_sharedContext));
                     m_inputModule->Startup();
                     o_sharedContext.SetInputModule(m_inputModule);
+                }
+                else
+                {
+                    // TODO logger
+                }
+            }
+            else
+            {
+                // TODO logger
+            }
+        }
+
+        void DoremiEngineImplementation::LoadAIModule(SharedContextImplementation& o_sharedContext)
+        {
+            m_aiLibrary = DynamicLoader::LoadSharedLibrary("AI.dll");
+
+            if(m_aiLibrary != nullptr)
+            {
+                CREATE_AI_MODULE functionCreateAIModule = (CREATE_AI_MODULE)DynamicLoader::LoadProcess(m_aiLibrary, "CreateAIModule");
+                if(functionCreateAIModule != nullptr)
+                {
+                    m_aiModule = static_cast<AI::AIModule*>(functionCreateAIModule(o_sharedContext));
+                    m_aiModule->Startup();
+                    o_sharedContext.SetAIModule(m_aiModule);
                 }
                 else
                 {

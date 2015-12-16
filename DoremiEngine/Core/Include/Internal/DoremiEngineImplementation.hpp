@@ -47,6 +47,7 @@ namespace DoremiEngine
             void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
             void LoadScriptModule(SharedContextImplementation& o_sharedContext);
             void LoadInputModule(SharedContextImplementation& o_sharedContext);
+            void LoadAIModule(SharedContextImplementation& o_sharedContext);
 
             // Shared context
             SharedContextImplementation* m_sharedContext;
@@ -59,6 +60,7 @@ namespace DoremiEngine
             void* m_physicsLibrary;
             void* m_scriptLibrary;
             void* m_inputLibrary;
+            void* m_aiLibrary;
 
             // Pointers to the interfaces
             Audio::AudioModule* m_audioModule;
@@ -67,6 +69,7 @@ namespace DoremiEngine
             Physics::PhysicsModule* m_physicsModule;
             Script::ScriptModule* m_scriptModule;
             Input::InputModule* m_inputModule;
+            AI::AIModule* m_aiModule;
         };
     }
 }

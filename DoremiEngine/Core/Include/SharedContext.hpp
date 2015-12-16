@@ -38,6 +38,11 @@ namespace DoremiEngine
         class InputModule;
     }
 
+    namespace AI
+    {
+        class AIModule;
+    }
+
     namespace Core
     {
         class SharedContext
@@ -52,6 +57,7 @@ namespace DoremiEngine
             virtual Physics::PhysicsModule& GetPhysicsModule() const = 0;
             virtual Script::ScriptModule& GetScriptModule() const = 0;
             virtual Input::InputModule& GetInputModule() const = 0;
+            virtual AI::AIModule& GetAIModule() const = 0;
         };
     }
 }
