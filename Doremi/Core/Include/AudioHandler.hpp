@@ -32,7 +32,7 @@ namespace Doremi
             void SetFrequencyAnalyserSoundID(const size_t& p_soundID);
             void SetLoopForFrequencyAnalyser(bool p_loop);
             void Update();
-            float GetFrequency();
+            float GetFrequency() const { return m_currentFrequency; };
 
             private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;

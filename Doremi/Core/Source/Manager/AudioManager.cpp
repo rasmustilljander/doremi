@@ -71,7 +71,7 @@ namespace Doremi
                 {
                     RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     float t_freq = AudioHandler::GetInstance()->GetFrequency();
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq*3, 0)); /**Far from complete TODOLH*/
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq*3, 0)); /**Far from complete TODOLH bör inte liogga i audio manager heller*/
                 }
                 
             }

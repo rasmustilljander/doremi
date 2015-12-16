@@ -116,7 +116,7 @@ namespace Doremi
             AudioActiveComponent* t_audioActiveComponent = new AudioActiveComponent();
             AudioHandler::GetInstance()->Initialize();
             sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
-            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.1f);
+            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
             t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
             size_t t_soundIDForRecord = sharedContext.GetAudioModule().SetupRecording(true);
             sharedContext.GetAudioModule().StartRecording(t_soundIDForRecord, true);

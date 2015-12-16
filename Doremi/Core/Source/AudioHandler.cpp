@@ -47,6 +47,5 @@ namespace Doremi
                 }
             }
         }
-        float AudioHandler::GetFrequency() { return m_currentFrequency; }
     }
 }
