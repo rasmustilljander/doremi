@@ -2,7 +2,7 @@
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
-#include <DirectXMath.h> //TODO Review if we should use Direct x math
+#include <DirectXMath.h>
 #if defined(_WINDLL)
 #define GRAPHIC_DLL_EXPORT __declspec(dllexport)
 #else
