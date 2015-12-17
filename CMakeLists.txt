@@ -85,6 +85,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(Doremi)
 add_subdirectory(DoremiEngine)
 add_subdirectory(Utility)
+add_subdirectory(UnitTest)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL
