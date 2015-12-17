@@ -4,21 +4,15 @@ namespace Utility
 {
     namespace DebugLog
     {
-        enum class LogLevel // TODORT move to hpp
+        enum class LogLevel
         {
-            FATAL_ERROR,
-            NON_FATAL_ERROR,
-            WARNING,
-            SUCCESS,
-            DEBUG_PRINT,
-            INIT_PRINT,
-            START_PRINT,
-            PINK_PRINT,
-            PACKET_PRINT,
-            MASS_DATA_PRINT,
-            NOLEVEL,
-            HELP_PRINT,
-            IDENTIFY_PRINT,
+            FATAL_ERROR, // Error in which the game is not expected to return from.
+            NON_FATAL_ERROR, // Error which the game can return from
+            WARNING, // Warns for potential problems
+            DEBUG, // Debug level
+            INFO, // Info level, everything from init, startup and delete
+            MASS_DATA_PRINT, // Indicate large amounts of data, can be handles differently
+            NOLEVEL // No level
         };
     }
 }
