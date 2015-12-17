@@ -10,6 +10,7 @@ namespace DoremiEngine
         {
             DirectX::XMFLOAT4X4 ViewMatrix;
             DirectX::XMFLOAT4X4 ProjectionMatrix;
+            DirectX::XMFLOAT4X4 InverseProjection;
             DirectX::XMFLOAT3 CameraPosition;
             float pad;
             CameraMatrices() {}

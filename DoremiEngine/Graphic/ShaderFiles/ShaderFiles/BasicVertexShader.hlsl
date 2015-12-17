@@ -1,12 +1,13 @@
-cbuffer CameraMatrixBuffer : register(b0)
+cbuffer CameraMatrixBuffer : register(b1)
 {
     matrix viewMatrix;
     matrix projectionMatrix;
+    matrix inverseProjection;
     float3 cameraPosition;
     float pad;
 };
 
-cbuffer ModelMatrixBuffer : register(b1)
+cbuffer ModelMatrixBuffer : register(b0)
 {
     matrix worldMatrix;
 };

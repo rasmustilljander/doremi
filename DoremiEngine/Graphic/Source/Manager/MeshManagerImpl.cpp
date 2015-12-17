@@ -64,6 +64,7 @@ namespace DoremiEngine
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
             MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount());
             m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
+
         }
         void MeshManagerImpl::Draw() {}
     }

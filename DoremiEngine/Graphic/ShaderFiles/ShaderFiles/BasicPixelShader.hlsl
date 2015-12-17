@@ -21,7 +21,7 @@ struct Light
     float3 position;
 };
 
-cbuffer LightInfo
+cbuffer LightInfo : register(b0)
 {
     Light light[NUM_LIGHTS];
 };
@@ -88,5 +88,5 @@ float4 PS_main(PixelInputType input) : SV_TARGET
        
     }
 
-    return float4(rgb, 1) + texcolor * 0.25;
+    return float4(rgb, 1) + texcolor * 0.15;
 }

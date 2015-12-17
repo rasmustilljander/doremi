@@ -1,6 +1,8 @@
 #pragma once
 #include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
+#include <GraphicModuleImplementation.hpp>
+#include <Internal/Manager/ComputeShaderManagerImpl.hpp>
 #include <HelpFunctions.hpp>
 #include <SDL2/SDL.h>
 #include <Internal/Mesh/Vertex.hpp>
@@ -238,6 +240,16 @@ namespace DoremiEngine
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+            // TODORK Move to right place
+            // dispatch compute shader
+
+            ID3D11UnorderedAccessView* uav = m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().GetUAV();
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, 0);
+
+            m_deviceContext->Dispatch(50, 50, 1);
+
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().CopyData();
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

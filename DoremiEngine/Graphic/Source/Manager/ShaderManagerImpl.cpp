@@ -5,6 +5,8 @@
 #include <GraphicModuleImplementation.hpp>
 #include <Internal/Shader/PixelShaderImpl.hpp>
 #include <Internal/Shader/VertexShaderImpl.hpp>
+#include <Internal/Shader/ComputeShaderImpl.hpp>
+#include <Internal/Manager/ComputeShaderManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 #include <string>
 #include <HelpFunctions.hpp>
@@ -77,6 +79,30 @@ namespace DoremiEngine
             newShader->SetShaderName(p_fileName);
             return newShader;
         }
+        ComputeShader* ShaderManagerImpl::BuildComputeShader(const std::string& p_fileName)
+        {
+            std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
+            ID3D11ComputeShader* shader;
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_IEEE_STRICTNESS | D3DCOMPILE_PREFER_FLOW_CONTROL;
+#if defined(DEBUG) || defined(_DEBUG)
+            shaderFlags |= D3DCOMPILE_DEBUG;
+            shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+            ID3DBlob* tShader;
+            std::wstring convertedName = StringToWstring(filePath);
+            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_main", "cs_5_0", shaderFlags, 0, &tShader, 0);
+            res = m_directX.GetDevice()->CreateComputeShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            m_directX.GetDeviceContext()->CSSetShader(shader, nullptr, 0);
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().SetUAV();
+
+            ComputeShader* newShader = new ComputeShaderImpl();
+            newShader->SetShaderHandle(shader);
+            newShader->SetShaderName(p_fileName);
+            return newShader;
+        }
+
         void ShaderManagerImpl::SetActiveVertexShader(VertexShader* p_shader)
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();

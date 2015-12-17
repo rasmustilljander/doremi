@@ -60,7 +60,8 @@ namespace DoremiEngine
             m_directX.GetDeviceContext()->Map(m_cameraBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, &bufferInfo, sizeof(CameraMatrices));
             m_directX.GetDeviceContext()->Unmap(m_cameraBuffer, NULL);
-            m_directX.GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_cameraBuffer);
+            m_directX.GetDeviceContext()->VSSetConstantBuffers(1, 1, &m_cameraBuffer);
+            m_directX.GetDeviceContext()->CSSetConstantBuffers(0, 1, &m_cameraBuffer);
         }
     }
 }

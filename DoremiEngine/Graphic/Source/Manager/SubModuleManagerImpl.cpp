@@ -7,6 +7,7 @@
 #include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <Internal/Manager/CameraManagerImpl.hpp>
 #include <Internal/Manager/LightManagerImpl.hpp>
+#include <Internal/Manager/ComputeShaderManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 // DirectX stuff
 // TODOKO Should not need directx here
@@ -29,6 +30,7 @@ namespace DoremiEngine
             m_texture2DManager = new Texture2DManagerImpl(m_graphicContext);
             m_cameraManager = new CameraManagerImpl(m_graphicContext);
             m_lightManager = new LightManagerImpl(m_graphicContext);
+            m_computeShaderManager = new ComputeShaderManagerImpl(m_graphicContext);
             m_cameraManager->Initialize();
 
             // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
@@ -40,6 +42,7 @@ namespace DoremiEngine
             };
             VertexShader* shader = m_shaderManager->BuildVertexShader("BasicVertexShader.hlsl", ied, ARRAYSIZE(ied));
             PixelShader* pshader = m_shaderManager->BuildPixelShader("BasicPixelShader.hlsl");
+            ComputeShader* cshader = m_shaderManager->BuildComputeShader("FrustumComputeShader.hlsl");
             m_shaderManager->SetActivePixelShader(pshader);
             m_shaderManager->SetActiveVertexShader(shader);
         }
@@ -58,7 +61,6 @@ namespace DoremiEngine
 
         LightManager& SubModuleManagerImpl::GetLightManager() { return *m_lightManager; }
 
-
         MeshManagerImpl& SubModuleManagerImpl::GetMeshManagerImpl() { return *m_meshManager; }
 
         ParticleSystemManagerImpl& SubModuleManagerImpl::GetParticleSystemManagerImpl() { return *m_particleSystemManager; }
@@ -72,5 +74,8 @@ namespace DoremiEngine
         CameraManagerImpl& SubModuleManagerImpl::GetCameraManagerImpl() { return *m_cameraManager; }
 
         LightManagerImpl& SubModuleManagerImpl::GetLightManagerImpl() { return *m_lightManager; }
+
+        ComputeShaderManager& SubModuleManagerImpl::GetComputeShaderManager() { return *m_computeShaderManager; }
+
     }
 }

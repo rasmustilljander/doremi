@@ -31,6 +31,7 @@ namespace DoremiEngine
             light.intensity = 2.0f;
             light.penumAgle = 0.0f;
             light.position = DirectX::XMFLOAT3(1.5f, -10.0f, 6.0f);
+
             light.type = 3;
 
             Light light2 = Light();
@@ -61,13 +62,14 @@ namespace DoremiEngine
             light4.intensity = 2.0f;
             light4.penumAgle = 0.0f;
             light4.position = DirectX::XMFLOAT3(1.5f, -10.0f, 4.0f);
+
             light4.type = 3;
 
 
             m_lightBuffer.lightList[0] = light;
-            m_lightBuffer.lightList[1] = light2;
+            m_lightBuffer.lightList[1] = light4;
             m_lightBuffer.lightList[2] = light3;
-            m_lightBuffer.lightList[3] = light4;
+            m_lightBuffer.lightList[3] = light2;
             ////////////////////////////////////////////////
 
             D3D11_BUFFER_DESC lightBufferDesc;
