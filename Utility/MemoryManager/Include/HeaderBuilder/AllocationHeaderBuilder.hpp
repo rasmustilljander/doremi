@@ -126,7 +126,7 @@ namespace Utility
             }
 
             // TODORT move to .cpp file
-            static std::array<bool, 8>& FetchAllFlagsFromByte(const void const* p_pointerToByte)
+            static std::array<bool, 8>& FetchAllFlagsFromByte(const void* const p_pointerToByte)
             {
                 const uint8_t& value = *(uint8_t*)p_pointerToByte;
                 std::array<bool, 8> returnValue; // All false at the beginning
