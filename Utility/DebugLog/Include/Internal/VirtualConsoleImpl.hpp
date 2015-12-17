@@ -13,13 +13,11 @@ namespace Utility
 {
     namespace DebugLog
     {
-        // TODORT this is not used
         struct TagLevelInfo // TODORT move to hpp
         {
-            TagLevelInfo(std::string p_name, bool p_enabled) : Name(p_name), Enabled(p_enabled) {}
+            TagLevelInfo(const std::string& p_name) : name(p_name) {}
             TagLevelInfo() {}
-            std::string Name;
-            bool Enabled;
+            std::string name;
         };
         struct LoggingData;
 
@@ -47,10 +45,6 @@ namespace Utility
             void WriteToSharedMemory(const LoggingData& p_loggingData);
 
             private:
-            bool CheckTag(LogTag p_tag) { return m_tagInfo[p_tag].Enabled; } // TODORT this is not used
-            bool CheckLevel(LogLevel p_level) { return m_levelInfo[p_level].Enabled; } // TODORT this is not used
-
-            private:
             void BuildConsoleApplicationPath();
             void SetupSharedMemory();
             void CreateConsoleProcess();
@@ -60,8 +54,8 @@ namespace Utility
             ConsoleColor m_textColor, m_backgroundColor;
 
             // Logging
-            std::map<LogTag, TagLevelInfo> m_tagInfo; // TODORT this is not used
-            std::map<LogLevel, TagLevelInfo> m_levelInfo; // TODORT this is not used
+            std::map<LogTag, TagLevelInfo> m_tagInfo;
+            std::map<LogLevel, TagLevelInfo> m_levelInfo;
 
             // Consoleprocess stuff
             HANDLE m_nearEnd;

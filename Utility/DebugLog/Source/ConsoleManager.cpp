@@ -4,7 +4,7 @@
 
 namespace
 {
-    // TODORT This method should be totally removed
+    // TODORT This method of working with threads should be removed later.
     ctpl::thread_pool* g_threadPool;
 }
 
@@ -20,7 +20,6 @@ namespace Utility
             {
                 m_instance = new ConsoleManager();
             }
-            // TODORT logging
         }
 
         void ConsoleManager::Shutdown()

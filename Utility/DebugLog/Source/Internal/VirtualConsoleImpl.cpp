@@ -16,8 +16,8 @@ namespace Utility
         {
             std::string function;
             size_t line;
-            LogTag tag;
-            LogLevel vLevel;
+            LogTag logTag;
+            LogLevel logLevel;
             std::string p_message;
             // TODORT Ideally I would like the conversion to happen on the threads, however,
             // I did not manage to fully use the VA_LIST correctly thus some values were copied between threads.
@@ -34,6 +34,38 @@ namespace Utility
               m_textColor(p_textColor),
               m_backgroundColor(p_backgroundColor)
         {
+            m_tagInfo[LogTag::GRAPHIC] = TagLevelInfo("GRAPHIC");
+            m_tagInfo[LogTag::NETWORK] = TagLevelInfo("NETWORK");
+            m_tagInfo[LogTag::CLIENT] = TagLevelInfo("CLIENT");
+            m_tagInfo[LogTag::SERVER] = TagLevelInfo("SERVER");
+            m_tagInfo[LogTag::GENERAL] = TagLevelInfo("GENERAL");
+            m_tagInfo[LogTag::NOTAG] = TagLevelInfo("NOTAG");
+            m_tagInfo[LogTag::PHYSICS] = TagLevelInfo("PHYSICS");
+            m_tagInfo[LogTag::TOOLS] = TagLevelInfo("TOOLS");
+            m_tagInfo[LogTag::SOUND] = TagLevelInfo("SOUND");
+            m_tagInfo[LogTag::GAME] = TagLevelInfo("GAME");
+            m_tagInfo[LogTag::COMPONENT] = TagLevelInfo("COMPONENT");
+            m_tagInfo[LogTag::GUI] = TagLevelInfo("GUI");
+            m_tagInfo[LogTag::INPUT] = TagLevelInfo("INPUT");
+            m_tagInfo[LogTag::RESOURCE] = TagLevelInfo("RESOURCE");
+            m_tagInfo[LogTag::SCRIPT] = TagLevelInfo("SCRIPT");
+            m_tagInfo[LogTag::ANIMATION] = TagLevelInfo("ANIMATION");
+            m_tagInfo[LogTag::WATER] = TagLevelInfo("WATER");
+            m_tagInfo[LogTag::PARTICLE] = TagLevelInfo("PARTICLE");
+
+            m_levelInfo[LogLevel::FATAL_ERROR] = TagLevelInfo("FATAL_ERROR");
+            m_levelInfo[LogLevel::NON_FATAL_ERROR] = TagLevelInfo("NON_FATAL_ERROR");
+            m_levelInfo[LogLevel::WARNING] = TagLevelInfo("WARNING");
+            m_levelInfo[LogLevel::SUCCESS] = TagLevelInfo("SUCCESS");
+            m_levelInfo[LogLevel::DEBUG_PRINT] = TagLevelInfo("DEBUG_PRINT");
+            m_levelInfo[LogLevel::INIT_PRINT] = TagLevelInfo("INIT_PRINT");
+            m_levelInfo[LogLevel::START_PRINT] = TagLevelInfo("START_PRINT");
+            m_levelInfo[LogLevel::PINK_PRINT] = TagLevelInfo("PINK_PRINT");
+            m_levelInfo[LogLevel::PACKET_PRINT] = TagLevelInfo("PACKET_PRINT");
+            m_levelInfo[LogLevel::MASS_DATA_PRINT] = TagLevelInfo("MASS_DATA_PRINT");
+            m_levelInfo[LogLevel::NOLEVEL] = TagLevelInfo("NOLEVEL");
+            m_levelInfo[LogLevel::HELP_PRINT] = TagLevelInfo("HELP_PRINT");
+            m_levelInfo[LogLevel::IDENTIFY_PRINT] = TagLevelInfo("IDENTIFY_PRINT");
         }
 
         void VirtualConsoleImpl::Initialize()
@@ -88,8 +120,9 @@ namespace Utility
 // sprintf(arguments, "%d", color);
 #error Non-unicode not supported
 #else
-            std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end()); // I fucking hate windows
-            swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, m_writeToConsole, m_writeToFile); // I fucking hate windows
+            std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end());
+            // TODORT add argument for client or server
+            swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, m_writeToConsole, m_writeToFile);
 #endif
             if(!CreateProcess(m_consoleApplicationPath.c_str(), arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
@@ -126,8 +159,8 @@ namespace Utility
             LoggingData* threadData = new LoggingData();
             threadData->function = p_function;
             threadData->line = p_line;
-            threadData->tag = p_tag;
-            threadData->vLevel = p_vLevel;
+            threadData->logTag = p_tag;
+            threadData->logLevel = p_vLevel;
             toString(threadData->p_message, p_format, args);
             m_threadPool.push(AsynchronousLogText, this, threadData);
             va_end(args);
@@ -135,9 +168,13 @@ namespace Utility
 
         void VirtualConsoleImpl::WriteToSharedMemory(const LoggingData& p_loggingData)
         {
+            // TODORT Remember to check if oneliner can increase performance
             DWORD l;
-            // TODORT better format
-            std::string out = std::string("[" + p_loggingData.function + ":" + std::to_string(p_loggingData.line) + "]" + "\t" + p_loggingData.p_message + "\n");
+            std::string out;
+            out.append("[" + m_levelInfo[p_loggingData.logLevel].name + "]" + " ");
+            out.append("[" + m_tagInfo[p_loggingData.logTag].name + "]" + " ");
+            out.append("[" + p_loggingData.function + ":" + std::to_string(p_loggingData.line) + "]" + " ");
+            out.append(p_loggingData.p_message + "\n");
             WriteFile(m_nearEnd, out.c_str(), out.size(), &l, 0);
         }
     }
