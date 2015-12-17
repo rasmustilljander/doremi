@@ -13,17 +13,15 @@ namespace Utility
             GENERAL,
             NOTAG,
             PHYSICS,
-            TOOLS,
-            SOUND,
+            AUDIO,
             GAME,
             COMPONENT,
             GUI,
             INPUT,
             RESOURCE,
-            SCRIPT,
             ANIMATION,
-            WATER,
-            PARTICLE
+            PARTICLE,
+            MEMORY
         };
     }
 }
