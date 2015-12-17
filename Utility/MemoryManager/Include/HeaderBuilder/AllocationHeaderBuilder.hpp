@@ -130,35 +130,35 @@ namespace Utility
             {
                 const uint8_t& value = *(uint8_t*)p_pointerToByte;
                 std::array<bool, 8> returnValue; // All false at the beginning
-                if(value & 1 == 1)
+                if((value & 1) == 1)
                 {
                     returnValue[0] = true;
                 }
-                if(value & 2 == 2)
+                if((value & 2) == 2)
                 {
                     returnValue[1] = true;
                 }
-                if(value & 4 == 4)
+                if((value & 4) == 4)
                 {
                     returnValue[2] = true;
                 }
-                if(value & 8 == 8)
+                if((value & 8) == 8)
                 {
                     returnValue[3] = true;
                 }
-                if(value & 16 == 16)
+                if((value & 16) == 16)
                 {
                     returnValue[4] = true;
                 }
-                if(value & 32 == 32)
+                if((value & 32) == 32)
                 {
                     returnValue[5] = true;
                 }
-                if(value & 64 == 64)
+                if((value & 64) == 64)
                 {
                     returnValue[6] = true;
                 }
-                if(value & 128 == 128)
+                if((value & 128) == 128)
                 {
                     returnValue[7] = true;
                 }
