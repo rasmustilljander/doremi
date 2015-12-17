@@ -96,9 +96,9 @@ namespace Doremi
             t_platform[ComponentType::Render] = t_renderComp;
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 4;
-            t_transformComp->scale.z = 4;
-            t_transformComp->scale.y = 0.1;
+            t_transformComp->scale.x = 4.0f;
+            t_transformComp->scale.z = 4.0f;
+            t_transformComp->scale.y = 0.1f;
             t_platform[ComponentType::Transform] = t_transformComp;
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -142,12 +142,12 @@ namespace Doremi
             for(size_t i = 0; i < 5; i++)
             {
                 int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-                XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
+                XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 10.0f - (float)i, i * 5.0f);
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
                 RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
                 rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
             }
         }
         // Only for testing, should be removed! TODO
