@@ -2,6 +2,7 @@
 
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
+#include <EntityComponent/Constants.hpp>
 
 // Standard libraries
 #include <map>
@@ -114,6 +115,11 @@ namespace Doremi
             void CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize);
 
             /**
+                TODOCM doc
+            */
+            void InterpetInputMessage(NetMessage  &p_message, const EntityID &p_entityID);
+
+            /**
                 Timer for next send
             */
             double m_nextUpdateTimer;
@@ -147,6 +153,11 @@ namespace Doremi
                 TODOCM doc
             */
             uint8_t m_nextSnapshotSequence;
+            /**
+            
+                test
+            */
+            uint32_t counter;
 
             /**
                 All the client connections mapped to adresses

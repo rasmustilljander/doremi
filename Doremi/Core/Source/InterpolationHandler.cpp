@@ -18,7 +18,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        InterpolationHandler::InterpolationHandler() : m_snapshotSequenceReal(0), m_snapshotDelay(2) {}
+        InterpolationHandler::InterpolationHandler() : m_snapshotSequenceReal(0), m_snapshotDelay(4) {}
 
         InterpolationHandler::~InterpolationHandler() {}
 
@@ -30,6 +30,9 @@ namespace Doremi
             uint32_t Mask = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
 
             uint32_t NumberOfEntities = EntityHandler.GetLastEntityIndex();
+
+            // Compute real alpha
+            double realAlpha = (p_alpha + (double)m_SequenceInterpolationOffset) / (double)m_NumOfSequencesToInterpolate;
 
             if(m_NumOfSequencesToInterpolate <= 0)
             {
@@ -56,18 +59,20 @@ namespace Doremi
 
                     // Calculate interpolation for position
                     FinalPositionVector =
-                        DirectX::XMVectorAdd(DirectX::XMVectorScale(PreviousPositionVector, (1.0f - (p_alpha / (double)m_NumOfSequencesToInterpolate))),
-                                             DirectX::XMVectorScale(NextPositionVector, p_alpha / (double)m_NumOfSequencesToInterpolate));
+                        DirectX::XMVectorAdd(DirectX::XMVectorScale(PreviousPositionVector, (1.0f - realAlpha)),
+                                             DirectX::XMVectorScale(NextPositionVector, realAlpha));
 
                     // Calculate interpolation for orientation
                     FinalOrientationVector =
-                        DirectX::XMQuaternionSlerp(PrevOrientationVector, NextOrientationVector, p_alpha / (double)m_NumOfSequencesToInterpolate);
+                        DirectX::XMQuaternionSlerp(PrevOrientationVector, NextOrientationVector, realAlpha);
                     // FinalOrientationVector = DirectX::XMVectorAdd(DirectX::XMVectorScale(PrevOrientationVector, (1.0f - p_alpha)),
                     // DirectX::XMVectorScale(NewOrientationVector, p_alpha));
 
                     // Set values for position and orientation
                     DirectX::XMStoreFloat3(&DrawTransform->position, FinalPositionVector);
                     DirectX::XMStoreFloat4(&DrawTransform->rotation, FinalOrientationVector);
+
+                    //cout << DrawTransform->position.y << endl; TODOCM remove
                 }
             }
         }
@@ -111,33 +116,76 @@ namespace Doremi
 
         void InterpolationHandler::UpdateInterpolationTransforms()
         {
-            // Clone so that the changed values are saved
-            // TODOCM maybe change method how to update saved snapshot positions here
-            CloneShelf<TransformComponentNext, TransformComponentPrevious>();
-
-
             // If the snapshot we're currently interpolating towards is more recent
             // then the one that we should be interpolating towards, we skip
             if(sequence_more_recent(m_snapshotSequenceReal, m_snapshotSequenceUsed, 255))
             {
-                if(m_DelayedSnapshots.size())
+                // Clone so that the changed values are saved
+                // TODOCM maybe change method how to update saved snapshot positions here
+                CloneShelf<TransformComponentNext, TransformComponentPrevious>();
+
+                m_SequenceInterpolationOffset = 0;
+
+                // If we have any snapshots
+                if (m_DelayedSnapshots.size())
                 {
-                    // Pick the snapshot to update with
+                    // Loop through from back to check which one is newest
+                    std::list<Snapshot*>::reverse_iterator iter;
+                    std::list<Snapshot*>::reverse_iterator iterEnd = m_DelayedSnapshots.rend();
+                    if (m_DelayedSnapshots.size() == 1)
+                    {
+                        int a = 3;
+                    }
+
+                    // Loop to the last item (excluding it in the loop because we want to use it if it's the oldest
+                    for (iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
+                    {
+                        if (sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
+                        {
+                            // If we find somone that is the same or infront of us
+                            break;
+                        }
+                        else if(m_DelayedSnapshots.size() > 1)
+                        {
+                            // If older, we remove it
+                            std::list<Snapshot*>::iterator tempIter = m_DelayedSnapshots.erase(--iter.base());
+                            iter = std::list<Snapshot*>::reverse_iterator(tempIter);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // We somehow need to check if it's the last anyway because of the alpha?
                     Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
 
+                    std::cout << "New snapshot put" << std::endl;
 
-                    // Get the number of sequences to interpolate, will only be more then 1 if we lost any snapshots
-                    m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
+                    // If the snapshot we are to use is ahead, we check how far ahead it is, else we just interpolate it one frame
+                    if (sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
+                    {
+                        m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
+                    }
+                    else
+                    {
+                        m_NumOfSequencesToInterpolate = 1;
+                    }
+                    
+                    if (m_NumOfSequencesToInterpolate > 150)
+                    {
+                        int a = 3;
+                    }
 
                     // Update the new Next transform array
                     // TODOCM we assume the client and server have the same entities
                     // TODOCM we need in some way be sure that if we remove something we remove it befor adding something, example sending rendudant
                     // data many frames or something
-                    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
+                    for (size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
                     {
                         *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
                     }
-
+                    // We set the sequence we're using and remove it from the list
                     m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
                     m_DelayedSnapshots.pop_back();
                     delete SnapshotToUse;
@@ -147,12 +195,47 @@ namespace Doremi
                     std::cout << "Lost more then two snapshots?" << std::endl;
                     m_NumOfSequencesToInterpolate = 1;
                 }
+
+                //if(m_DelayedSnapshots.size())
+                //{
+                //    // Pick the snapshot to update with
+                //    Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
+
+                //    uint8_t last = m_NumOfSequencesToInterpolate;
+                //    // Get the number of sequences to interpolate, will only be more then 1 if we lost any snapshots
+                //    m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
+
+                //    if (m_NumOfSequencesToInterpolate > 150)
+                //    {
+                //        int a = 3;
+                //    }
+
+                //    // Update the new Next transform array
+                //    // TODOCM we assume the client and server have the same entities
+                //    // TODOCM we need in some way be sure that if we remove something we remove it befor adding something, example sending rendudant
+                //    // data many frames or something
+                //    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
+                //    {
+                //        *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
+                //    }
+
+                //    m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
+                //    m_DelayedSnapshots.pop_back();
+                //    delete SnapshotToUse;
+                //}
+                //else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change
+                //{
+                //    std::cout << "Lost more then two snapshots?" << std::endl;
+                //    m_NumOfSequencesToInterpolate = 1;
+                //}
             }
             else
             {
+                m_SequenceInterpolationOffset++;
                 std::cout << "Doing a long interpolation..." << std::endl;
             }
             m_snapshotSequenceReal++;
+            std::cout << "NumOfBufferedSnapshots: " << m_DelayedSnapshots.size() << std::endl;
         }
 
         void InterpolationHandler::SetSequence(uint8_t p_sequence)

@@ -7,6 +7,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <InterpolationHandler.hpp>
 #include <iostream> // TODOCM remove after test
+#include <InputHandler.hpp>
 
 
 namespace Doremi
@@ -19,7 +20,7 @@ namespace Doremi
               m_serverConnectionState(ConnectionState::CONNECTING),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
-              m_timeoutInterval(1.0f)
+              m_timeoutInterval(3.0f)
         {
             m_serverAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
@@ -111,6 +112,8 @@ namespace Doremi
 
                             std::cout << "Disconnect." << std::endl;
                             ; // TODOCM logg instead
+
+                            // TODOCM add if we're disconnected already we skip connecting back
 
                             // Something went wrong or we disconnected
                             m_serverConnectionState = ConnectionState::CONNECTING;
@@ -266,14 +269,44 @@ namespace Doremi
             m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);
         }
 
+        void ClientNetworkManager::CreateInputMessage(NetMessage &p_message)
+        {
+            InputHandler* inputHandler = InputHandler::GetInstance();
+
+            // Create a stream
+            BitStreamer Streamer = BitStreamer();
+
+            // Set message buffer to stream
+            unsigned char* BufferPointer = p_message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
+
+            // Write input to stream
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward));
+
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward));
+            
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left));
+
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right));
+
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire));
+
+            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump));
+
+            
+
+        }
+
         void ClientNetworkManager::SendConnectedMessage()
         {
             // Create a message
             NetMessage Message = NetMessage();
 
-            // TODOCM write bits for stuff
 
             // std::cout << "Sending connected message" << std::endl; // TODOCM logg instead
+            // Createing input message
+            CreateInputMessage(Message);
+
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);

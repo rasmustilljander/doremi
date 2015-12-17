@@ -16,6 +16,7 @@ namespace Doremi
 {
     namespace Core
     {
+        struct NetMessage;
         /**
             Manager class for Client, contains the logic for the connection pattern
         */
@@ -87,6 +88,11 @@ namespace Doremi
                 Update timeout to server and disconnects if too long
             */
             void UpdateTimeouts(double p_dt);
+
+            /**
+                TODOCM doc
+            */
+            void CreateInputMessage(NetMessage &p_message);
 
             /**
                 Timer for next update(send data)

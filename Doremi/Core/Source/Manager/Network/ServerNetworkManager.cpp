@@ -6,6 +6,7 @@
 #include <Manager/Network/BitStreamer.h>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <InputHandler.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -15,7 +16,7 @@ namespace Doremi
     namespace Core
     {
         ServerNetworkManager::ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(0.017f), m_timeoutInterval(1.0f), m_maxConnection(16), m_nextSnapshotSequence(0)
+            : Manager(p_sharedContext), m_nextUpdateTimer(0.0f), m_updateInterval(0.017f), m_timeoutInterval(3.0f), m_maxConnection(16), m_nextSnapshotSequence(0)
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = p_sharedContext.GetNetworkModule();
 
@@ -30,6 +31,8 @@ namespace Doremi
 
             // Create socket for relialbe
             m_reliableSocketHandle = NetworkModule.CreateReliableConnection(ReliableAdress, m_maxConnection);
+
+            counter = 0;
         }
 
         ServerNetworkManager::~ServerNetworkManager() {}
@@ -105,6 +108,36 @@ namespace Doremi
             delete IncommingAdress;
         }
 
+        void ServerNetworkManager::InterpetInputMessage(NetMessage  &p_message, const EntityID &p_entityID)
+        {
+            InputHandler* inputHandler = InputHandler::GetInstance();
+
+            // Create a stream
+            BitStreamer Streamer = BitStreamer();
+
+            // Set message buffer to stream
+            unsigned char* BufferPointer = p_message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
+
+            uint32_t InputMask = 0;
+
+            // Write input to stream
+            InputMask |= Streamer.ReadBool();
+
+            InputMask |= Streamer.ReadBool();
+
+            InputMask |= Streamer.ReadBool();
+
+            InputMask |= Streamer.ReadBool();
+
+            InputMask |= Streamer.ReadBool();
+
+            InputMask |= Streamer.ReadBool();
+
+            
+
+        }
+
         void ServerNetworkManager::RecieveReliableMessages()
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
@@ -121,7 +154,10 @@ namespace Doremi
                     if(NetworkModule.RecieveReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle))
                     {
                         // std::cout << "Recieved reliable messsage." << std::endl;
-                        ; // TODOCM logg instead
+                        // TODOCM logg instead
+                        
+                        // Interpet n' input message
+                        //InterpetInputMessage(Message);
 
                         // TODOCM interpet data
                         iter->second->LastResponse = 0;
@@ -253,7 +289,6 @@ namespace Doremi
 
             // Write snapshot ID
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
-            m_nextSnapshotSequence++;
 
             // Move forward for header
             Streamer.SetReadWritePosition(sizeof(uint8_t) * 2);
@@ -295,13 +330,8 @@ namespace Doremi
                 // Remove time
                 m_nextUpdateTimer -= m_updateInterval;
 
-                // TODOCM remove, packet loss experiment
-                int a = rand() % 100;
-                if(a < 25)
-                {
-                    std::cout << "Dropping packages..." << std::endl;
-                    return;
-                }
+                // Update sequence here because of the error checking..
+                m_nextSnapshotSequence++;
 
                 // Create global message
                 NetMessage Message = NetMessage();
@@ -323,6 +353,29 @@ namespace Doremi
                         {
                             Message.MessageID = MessageID::INIT_SNAPSHOT;
                             iter->second->NewConnection = false;
+                        }
+                        else
+                        {
+                            counter++; //TODOCM remove test
+                            int checkValue;
+
+                            if (counter < 2)
+                            {
+                                checkValue = 100;
+                            }
+                            else
+                            {
+                                counter = - 1;
+                                checkValue = -1;
+                            }
+
+                            // TODOCM remove, packet loss experiment
+                            int a = rand() % 100;
+                            if (a < checkValue)
+                            {
+                                std::cout << "Dropping packages..." << std::endl;
+                                return;
+                            }
                         }
 
                         // Send message

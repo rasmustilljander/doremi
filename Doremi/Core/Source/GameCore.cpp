@@ -52,6 +52,7 @@
 
 // TODOCM remove for better timer?
 #include <Windows.h>
+#include <chrono>
 
 // Third party
 
@@ -407,7 +408,7 @@ namespace Doremi
             m_graphicalManagers.push_back(t_renderManager);
             // m_managers.push_back(t_physicsManager);
             // m_managers.push_back(t_playerManager);
-            m_managers.push_back(t_audioManager);
+            //m_managers.push_back(t_audioManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
             //m_managers.push_back(t_rigidTransSyndManager);
@@ -475,6 +476,7 @@ namespace Doremi
         void GameCore::UpdateServerGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
+            PlayerHandler::GetInstance()->UpdatePosition();
 
             // Have all managers update
             size_t length = m_managers.size();
@@ -515,54 +517,61 @@ namespace Doremi
         {
             // TODOCM remove for better timer
             // GameLoop is not currently set
-            uint64_t CurrentTime;
-            uint64_t PreviousTime = GetTickCount64();
-            uint64_t FrameTime = 0;
-            uint64_t Accumulator = 0;
-            uint64_t UpdateTimeStepLength = 34;
-            uint64_t GameTime = 0;
 
+            std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
+            PreviousClock = std::chrono::high_resolution_clock::now();
+
+            double Frame = 0;
+            double Offset = 0;
+            double Accum = 0;
+            double GameTime = 0;
+            double UpdateStepLen = 0.017;
 
             while(true)
             {
-                CurrentTime = GetTickCount64();
-                FrameTime = CurrentTime - PreviousTime;
+                CurrentClock = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
+                Frame = duration.count();
+                
 
                 // We simulate maximum 250 milliseconds each frame
                 // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-                if(FrameTime > 250)
+                if (Frame > 0.25f)
                 {
-                    FrameTime = 250;
+                    Offset = Frame - 0.25f;
+                    Frame = 0.25f;
                 }
                 // Update the previous position with frametime so we can catch up if we slow down
-                PreviousTime += FrameTime;
+                PreviousClock = CurrentClock;
 
                 // Update Accumulator (how much we will work this frame)
-                Accumulator += FrameTime;
+                Accum += Frame;
 
                 // Loop as many update-steps we will take this frame
-                while(Accumulator >= UpdateTimeStepLength)
+                while(Accum >= UpdateStepLen)
                 {
                     // Update Game logic
-                    UpdateClientGame((double)UpdateTimeStepLength / 1000.0f);
+                    UpdateClientGame(UpdateStepLen);
 
                     // Update interpolation transforms from snapshots
                     InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
                     // Remove time from accumulator
-                    Accumulator -= UpdateTimeStepLength;
+                    //Accumulator -= UpdateTimeStepLength;
+                    Accum -= UpdateStepLen;
 
                     // Add time to start
-                    GameTime += UpdateTimeStepLength;
+                    GameTime += UpdateStepLen;
                 }
 
-                double alpha = (double)Accumulator / (double)UpdateTimeStepLength;
+                // Update alpha usd for inteprolation
+                double alpha = Accum / UpdateStepLen;
 
                 // Interpolate the frames here
                 InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
                 // Draw stuff
-                DrawGame((double)UpdateTimeStepLength / 1000.0f);
+                DrawGame((double)UpdateStepLen / 1000.0f);
             }
         }
 
@@ -597,7 +606,7 @@ namespace Doremi
             uint64_t PreviousTime = GetTickCount64();
             uint64_t FrameTime = 0;
             uint64_t Accumulator = 0;
-            uint64_t UpdateTimeStepLength = 34;
+            uint64_t UpdateTimeStepLength = 17;
             uint64_t GameTime = 0;
 
             while(true)

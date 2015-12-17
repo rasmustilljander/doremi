@@ -38,10 +38,7 @@ namespace Doremi
 
 
         InputHandler::~InputHandler() {}
-        void InputHandler::StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-        {
-            m_singleton = new InputHandler(p_sharedContext);
-        }
+
         void InputHandler::Initialize()
         {
 
@@ -107,7 +104,7 @@ namespace Doremi
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_musInputFromModule[i]];
             }
-            if(m_mouseWheelInput)
+            if(m_mouseWheelInput) // TODOEA move to different function that wont update each frame
             {
                 if(m_mouseWheelInput > 0)
                 {
@@ -204,6 +201,7 @@ namespace Doremi
             //PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
         }
+
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)
         {
             // TODEA fixa keyconfiggen va

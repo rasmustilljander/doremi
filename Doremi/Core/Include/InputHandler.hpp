@@ -1,5 +1,7 @@
 #pragma once
 // Project specific
+#include <EntityComponent/Constants.hpp>
+
 // Standard Libraries
 #include <unordered_map>
 #include <vector>
@@ -54,13 +56,14 @@ namespace Doremi
         {
             public:
             /** Is a singleton. Use this method to get the EventManager*/
-            static InputHandler* GetInstance();
+
             InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~InputHandler();
-            static void StartInputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             void Initialize();
             bool CheckBitMaskInputFromGame(int p_bitMask);
             bool CheckForOnePress(int p_bitMask);
+
             // return from InputModule with a changed value from mousesense
             const int GetMouseMovementX() const { return m_mouseMoveX * m_mouseSense; }
             const int GetMouseMovementY() const { return m_mouseMoveY * m_mouseSense; }
@@ -71,6 +74,7 @@ namespace Doremi
             // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
             // Behöver nog ta bort old entries eller ändra dem på något sätt.
             void Update();
+
             void ChangeThisKeyToThat(int p_bitMask);
 
             private:
@@ -82,6 +86,7 @@ namespace Doremi
             // TODOEA Could be a problem with meny and game inputs I DUNNO To only hav one bitmask
             int m_maskWithInput = 0;
             int m_lastUpdateMaskWithInput = 0;
+
             void BuildMaskFromEngineForGame();
             void BuildMaskFromEngineForMeny();
             void PrintInputMouseMovement();
@@ -93,9 +98,6 @@ namespace Doremi
             int m_mouseMoveX = 0;
             int m_mouseMoveY = 0;
             int m_mouseWheelInput = 0;
-
-
-            static InputHandler* m_singleton;
         };
     }
 }
