@@ -1,8 +1,12 @@
 #pragma once
 
+#include <Utility/DebugLog/Include/VirtualConsole.hpp>
+#include <Utility/DebugLog/Include/LogLevel.hpp>
+#include <Utility/DebugLog/Include/LogTag.hpp>
+#include <Utility/DebugLog/Include/ConsoleColor.hpp>
+
 #include <unordered_map>
 #include <string>
-#include <Utility/DebugLog/Include/VirtualConsole.hpp>
 namespace Utility
 {
     namespace DebugLog
@@ -35,7 +39,17 @@ namespace Utility
             */
             void operator=(ConsoleManager const&) = delete;
 
-            VirtualConsole& CreateNewConsole(const std::string& p_consoleName = "standard");
+            /**
+                TODORT docs
+            */
+            VirtualConsole& CreateNewConsole(const std::string& p_consoleName = "standard", bool p_writeToConsole = true, bool p_writeToFile = true,
+                                             const ConsoleColor& p_textColor = ConsoleColorEnum::WHITE,
+                                             const ConsoleColor& p_backgroundColor = ConsoleColorEnum::BLACK);
+
+            /**
+                Returns an already existing console, throws exception if no console exists.
+            */
+            VirtualConsole& GetConsole(const std::string& p_consoleName = "standard");
 
             private:
             // Static

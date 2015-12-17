@@ -13,13 +13,6 @@ namespace Utility
         {
             public:
             /**
-                The initialize method, can be called with no arguments
-                // TODORT I'll need an manager for creating consoles, atm it's possible to create multiple identical
-            */
-            virtual void Initialize(bool p_writeToConsole = true, bool p_writeToFile = true, const ConsoleColor& p_textColor = ConsoleColorEnum::WHITE,
-                                    const ConsoleColor& p_backgroundColor = ConsoleColorEnum::BLACK) = 0;
-
-            /**
             The actual method called when calling LogText
             */
             virtual void LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...) = 0;

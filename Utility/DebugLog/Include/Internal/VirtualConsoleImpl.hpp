@@ -26,13 +26,15 @@ namespace Utility
         class VirtualConsoleImpl : public VirtualConsole
         {
             public:
-            VirtualConsoleImpl(const std::string& p_pipeName, ctpl::thread_pool& p_threadPool);
+            VirtualConsoleImpl(ctpl::thread_pool& p_threadPool, const std::string& p_pipeName, const bool& p_writeToConsole,
+                               const bool& p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor);
+
             virtual ~VirtualConsoleImpl();
 
             /**
-                The initialize method, can be called with no arguments
+                Actually building the console
             */
-            void Initialize(bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor) override;
+            void Initialize();
 
             /**
                 The actual method called when calling LogText
@@ -49,12 +51,28 @@ namespace Utility
             bool CheckLevel(LogLevel p_level) { return m_levelInfo[p_level].Enabled; } // TODORT this is not used
 
             private:
+            void BuildConsoleApplicationPath();
+            void SetupSharedMemory();
+            void CreateConsoleProcess();
+
+            // Settings parameters
+            bool m_writeToConsole, m_writeToFile;
+            ConsoleColor m_textColor, m_backgroundColor;
+
+            // Logging
             std::map<LogTag, TagLevelInfo> m_tagInfo; // TODORT this is not used
             std::map<LogLevel, TagLevelInfo> m_levelInfo; // TODORT this is not used
+
+            // Consoleprocess stuff
             HANDLE m_nearEnd;
             HANDLE m_farEnd;
             HANDLE m_process;
+
+            // Shared memory
             std::string m_pipeName;
+            std::wstring m_consoleApplicationPath;
+
+            // Threading
             ctpl::thread_pool& m_threadPool;
         };
     }

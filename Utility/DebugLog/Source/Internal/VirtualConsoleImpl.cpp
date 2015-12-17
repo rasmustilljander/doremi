@@ -25,18 +25,40 @@ namespace Utility
             //    va_list args;
         };
 
-        VirtualConsoleImpl::VirtualConsoleImpl(const std::string& p_pipeName, ctpl::thread_pool& p_threadPool)
-            : m_pipeName(p_pipeName), m_threadPool(p_threadPool)
+        VirtualConsoleImpl::VirtualConsoleImpl(ctpl::thread_pool& p_threadPool, const std::string& p_pipeName, const bool& p_writeToConsole,
+                                               const bool& p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor)
+            : m_threadPool(p_threadPool),
+              m_pipeName(p_pipeName),
+              m_writeToConsole(p_writeToConsole),
+              m_writeToFile(p_writeToFile),
+              m_textColor(p_textColor),
+              m_backgroundColor(p_backgroundColor)
         {
         }
 
-        void VirtualConsoleImpl::Initialize(bool p_writeToConsole, bool p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor)
+        void VirtualConsoleImpl::Initialize()
         {
-            if(!p_writeToConsole && !p_writeToFile)
-            {
-                throw std::runtime_error("Not both outputs can be offline."); // TODORT better message ?
-            }
+            BuildConsoleApplicationPath();
+            SetupSharedMemory();
+            CreateConsoleProcess();
+        }
 
+        void VirtualConsoleImpl::BuildConsoleApplicationPath()
+        {
+            HMODULE hModule = GetModuleHandleW(NULL);
+            WCHAR applicationPath[MAX_PATH]; // TODORT Remove WCHAR
+            GetModuleFileNameW(hModule, applicationPath, MAX_PATH); // Get the path to this executable.
+
+            std::wstring path = std::wstring(applicationPath); // Put the path into a string
+            path = std::wstring(path.begin(), path.end() - 10); // TODORT, This only works for server.exe and client.exe as it's 10 characters.
+            path.append(L"ConsoleApplication.exe"); // Add the name of the desired application instead
+            m_consoleApplicationPath = path;
+        }
+
+        void VirtualConsoleImpl::SetupSharedMemory()
+        {
+            // TODORT The memory should be owned by another process
+            // TODORT Verify comment; Nowdays the shared memory is a named pipe.
             SECURITY_ATTRIBUTES sa;
             sa.nLength = sizeof(SECURITY_ATTRIBUTES);
             sa.bInheritHandle = 1;
@@ -48,6 +70,10 @@ namespace Utility
                 return;
             }
             SetHandleInformation(m_nearEnd, HANDLE_FLAG_INHERIT, 0);
+        }
+
+        void VirtualConsoleImpl::CreateConsoleProcess()
+        {
             PROCESS_INFORMATION pi;
             STARTUPINFO si;
             ZeroMemory(&pi, sizeof(pi));
@@ -56,22 +82,16 @@ namespace Utility
             si.hStdInput = this->m_farEnd;
             si.dwFlags |= STARTF_USESTDHANDLES;
 
-            HMODULE hModule = GetModuleHandleW(NULL);
-            WCHAR path[MAX_PATH];
-            GetModuleFileNameW(hModule, path, MAX_PATH);
-            std::wstring tmpPath = std::wstring(path);
-            tmpPath = std::wstring(tmpPath.begin(), tmpPath.end() - 10); // TODORT, better solution
-            tmpPath.append(L"ConsoleApplication.exe");
-
-            WCHAR arguments[100];
+            WCHAR arguments[100]; // TODORT Remove WCHAR
+            DWORD color = m_textColor.stateValue + m_backgroundColor.stateValue;
 #ifndef UNICODE
-            sprintf(arguments, "%d", color);
+// sprintf(arguments, "%d", color);
+#error Non-unicode not supported
 #else
             std::wstring wPipeName(m_pipeName.begin(), m_pipeName.end()); // I fucking hate windows
-            DWORD color = p_textColor.stateValue + p_backgroundColor.stateValue; // I fucking hate windows
-            swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, p_writeToConsole, p_writeToFile); // I fucking hate windows
+            swprintf(arguments, L"0, %s %d %d %d", wPipeName.c_str(), color, m_writeToConsole, m_writeToFile); // I fucking hate windows
 #endif
-            if(!CreateProcess(tmpPath.c_str(), arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
+            if(!CreateProcess(m_consoleApplicationPath.c_str(), arguments, 0, 0, 1, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &si, &pi))
             {
                 throw std::runtime_error("Creating virtualConsole failed.");
             }
