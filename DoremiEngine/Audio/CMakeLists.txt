@@ -14,5 +14,5 @@ create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCE
 set(LIBRARIES ${EXTERNAL_LIBRARIES_AUDIO} DebugLog)
 
 # Add the target
-add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
+add_library(${PROJECT_NAME} ${ENGINE_LINK_TYPE} ${HEADERS} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})

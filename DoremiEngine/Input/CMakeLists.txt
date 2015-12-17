@@ -15,5 +15,5 @@ set(LIBRARIES ${EXTERNAL_LIBRARIES_INPUT} DebugLog)
 
 
 # Add the target
-add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
+add_library(${PROJECT_NAME} ${ENGINE_LINK_TYPE} ${HEADERS} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})

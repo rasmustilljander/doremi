@@ -183,6 +183,16 @@ namespace Doremi
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
                 RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
                 rigidComp->p_bodyID =
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
+            }
+            for(size_t i = 0; i < 1; i++)
+            {
+                int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+                XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 10.0f - (float)i - 5, (i + 5) * 5.0f);
+                XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+                int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                rigidComp->p_bodyID =
                     sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
             }
         }

@@ -7,6 +7,13 @@ project(${SOLUTION_NAME})
 # Add options
 option(LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
 option(LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
+option(UNIT_TEST_BUILD "Unchecked is no testing" OFF)
+
+if(UNIT_TEST_BUILD)
+	set(ENGINE_LINK_TYPE STATIC)
+else()
+	set(ENGINE_LINK_TYPE SHARED)
+endif()
 
 # Fetch environment variable
 set(CODE_REPOSITORY_ROOT $ENV{SSP_CODE_HOME})
@@ -55,6 +62,9 @@ find_package(DirectX11 REQUIRED)
 find_package(WinSock2 REQUIRED)
 find_package(PhysX REQUIRED)
 find_package(SDL2 REQUIRED)
+if(UNIT_TEST_BUILD)
+	find_package(Gtest REQUIRED)
+endif()
 
 # Set includepaths for external dependencies
 set(EXTERNAL_INCLUDE_DIRECTORY
@@ -62,6 +72,7 @@ set(EXTERNAL_INCLUDE_DIRECTORY
 	${WINSOCK2_INCLUDE_DIRECTORY}
 	${PHYSX_INCLUDE_DIRECTORY}
 	${SDL2_INCLUDE_DIRECTORY}
+	${GTEST_INCLUDE_DIRECTORY}
 )
 
 # Combine all for debugging
@@ -71,6 +82,7 @@ set(EXTERNAL_LIBRARIES_ALL
 	${EXTERNAL_LIBRARIES_NETWORK}
 	${EXTERNAL_LIBRARY_PHYSICS}
 	${EXTERNAL_LIBRARIES_INPUT}
+	${EXTERNAL_LIBRARIES_GTEST}
 )
 
 # Set global compiler options
@@ -85,7 +97,10 @@ include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(Doremi)
 add_subdirectory(DoremiEngine)
 add_subdirectory(Utility)
-add_subdirectory(UnitTest)
+if(UNIT_TEST_BUILD)
+	add_subdirectory(UnitTest)
+endif()
+
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL
