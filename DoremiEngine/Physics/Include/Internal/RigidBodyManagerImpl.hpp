@@ -35,6 +35,8 @@ namespace DoremiEngine
 
             bool IsSleeping(int p_bodyID) override;
 
+            void RemoveBody(int p_bodyID) override;
+
             private:
             InternalPhysicsUtils& m_utils;
 

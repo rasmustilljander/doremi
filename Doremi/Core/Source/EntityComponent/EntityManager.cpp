@@ -42,8 +42,8 @@ namespace Doremi
 
         void EntityManager::RemoveEntity(int pEntityID)
         {
-            // Remove bitmask
             ComponentTable* tCompTable = tCompTable->GetInstance();
+            // Remove bitmask
             tCompTable->RemoveEntity(pEntityID);
 
             // Checks if the entity id have been put in the free entity slots list

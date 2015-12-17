@@ -5,6 +5,8 @@
 #include <EntityComponent/Components/Example2Component.hpp>
 #include <EntityComponent/Components/AudioComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+#include <EntityComponent/Components/HealthComponent.hpp>
+#include <EntityComponent/Components/RangeComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
@@ -13,6 +15,7 @@
 #include <Manager/GraphicManager.hpp>
 #include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
+#include <Manager/AIManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -60,6 +63,51 @@ namespace Doremi
         {
             m_stopEngineFunction();
             DynamicLoader::FreeSharedLibrary(m_engineLibrary);
+        }
+        void CreateEnemyBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+            // Render
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            blueprint[ComponentType::Render] = renderComp;
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID =
+                sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5); // TODOJB remove p_
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            // Health comp
+            HealthComponent* healthComponent = new HealthComponent();
+            healthComponent->maxHealth = 100;
+            healthComponent->currentHealth = healthComponent->maxHealth;
+            blueprint[ComponentType::Health] = healthComponent;
+            // Enemy ai agent comp
+            blueprint[ComponentType::AIAgent];
+            // Range comp
+            RangeComponent* rangeComp = new RangeComponent();
+            rangeComp->range = 4;
+            blueprint[ComponentType::Range] = rangeComp;
+            /// Register blueprint
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
+
+            // Create some enemies
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            for(size_t i = 0; i < 5; i++)
+            {
+                int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
+                XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
+                XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+                int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+                RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                rigidComp->p_bodyID =
+                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(0.5, 0.5, 0.5), matID);
+            }
         }
         void CreateBulletBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
         {
@@ -127,18 +175,6 @@ namespace Doremi
             t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
-            // for(size_t i = 0; i < 1; i++)
-            //{
-            //    int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-            //    XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
-            //    XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            //    int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
-            //    RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);/*
-            //    rigidComp->p_bodyID =
-            //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);*/
-            //    rigidComp->p_bodyID =
-            //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
-            //}
             for(size_t i = 0; i < 5; i++)
             {
                 int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
@@ -156,6 +192,7 @@ namespace Doremi
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             GenerateDebugPlatforms(sharedContext);
             CreateBulletBlueprint(sharedContext);
+            CreateEnemyBlueprint(sharedContext);
             // Create components
             ExampleComponent* t_exampleComponent = new ExampleComponent(5, 5);
             Example2Component* t_example2Component = new Example2Component();
@@ -264,6 +301,7 @@ namespace Doremi
             Manager* t_audioManager = new AudioManager(sharedContext);
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
+            Manager* t_aiManager = new AIManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
@@ -273,6 +311,7 @@ namespace Doremi
             m_managers.push_back(t_cameraManager);
             m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_movementManager);
+            m_managers.push_back(t_aiManager);
             GenerateWorld(sharedContext);
 
             ////////////////End Example////////////////

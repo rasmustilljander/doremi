@@ -12,6 +12,8 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+#include <EntityComponent/Components/HealthComponent.hpp>
+#include <EntityComponent/Components/RangeComponent.hpp>
 
 namespace Doremi
 {
@@ -92,6 +94,14 @@ namespace Doremi
                 else if(iter->first == ComponentType::Movement)
                 {
                     memcpy(GetComponent<MovementComponent>(tNewEntityID), iter->second, sizeof(MovementComponent));
+                }
+                else if(iter->first == ComponentType::Health)
+                {
+                    memcpy(GetComponent<HealthComponent>(tNewEntityID), iter->second, sizeof(HealthComponent));
+                }
+                else if(iter->first == ComponentType::Range)
+                {
+                    memcpy(GetComponent<RangeComponent>(tNewEntityID), iter->second, sizeof(RangeComponent));
                 }
             }
 

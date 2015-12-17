@@ -112,7 +112,7 @@ namespace Doremi
                         XMStoreFloat3(&bulletPos, bulletPosVec);
 
                         // create the bullet
-                        int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity);
+                        int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::EnemyEntity);
                         // Get the material id
                         int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
                         // Create rigid body for the bullet

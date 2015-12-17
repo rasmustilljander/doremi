@@ -61,6 +61,11 @@ namespace DoremiEngine
             /**
             Checks if a body is sleeping*/
             virtual bool IsSleeping(int p_body) = 0;
+
+            /**
+            Releases the actor
+            */
+            virtual void RemoveBody(int p_bodyID) = 0;
         };
     }
 }

@@ -23,6 +23,9 @@ enum class ComponentType : int
     PhysicalMaterial = 0x100,
     Player = 0x200,
     Movement = 0x400,
+    AIAgent = 0x800,
+    Health = 0x1000,
+    Range = 0x2000,
 };
 
 /**
@@ -36,6 +39,7 @@ enum class Blueprints : int
     PlayerEntity,
     PlatformEntity,
     BulletEntity,
+    EnemyEntity,
 };
 
 /**

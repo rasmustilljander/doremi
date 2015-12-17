@@ -36,7 +36,6 @@ namespace DoremiEngine
             // Finally add the body to our list
             m_bodies[m_nextBody] = body;
             m_nextBody++;
-
             /*
             And now we have added a box to the world at the given position
             I'm not too sure how we update the box, or the scene, or perform
@@ -149,6 +148,12 @@ namespace DoremiEngine
         {
             bool isSleeping = ((PxRigidDynamic*)m_bodies[p_bodyID])->isSleeping();
             return isSleeping;
+        }
+
+        void RigidBodyManagerImpl::RemoveBody(int p_bodyID)
+        {
+            m_bodies[p_bodyID]->release();
+            m_bodies.erase(p_bodyID);
         }
     }
 }
