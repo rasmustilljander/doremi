@@ -16,7 +16,6 @@ namespace DoremiEngine
 
         void AIModuleImplementation::Startup()
         {
-            std::cout << "AI FOUND YOU!!!";
             m_aStarSubModuleImpl = new AStarSubModuleImpl();
             m_potentialFieldSubModuleImpl = new PotentialFieldSubModuleImpl();
         }
