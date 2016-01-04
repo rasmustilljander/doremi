@@ -8,7 +8,6 @@
 #include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 // Standard
-#include <DirectXMath.h>
 
 namespace Doremi
 {
@@ -45,10 +44,21 @@ namespace Doremi
             RangeComponent* rangeComp = EntityHandler::GetInstance().GetComponentFromStorage<RangeComponent>(p_entityID);
             TransformComponent* firstTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityID);
             TransformComponent* secondTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityToCheckID);
-            XMVECTOR vecBetweenEntities = XMLoadFloat3(&firstTransform->position) - XMLoadFloat3(&secondTransform->position);
+            return IsInProximity(firstTransform->position, secondTransform->position, rangeComp->range);
+        }
+        std::vector<size_t> ProximityChecker::GetAllEntitysInProximity(size_t p_entityID)
+        {
+            std::vector<size_t> retVector;
+            return retVector;
+        }
+
+        bool ProximityChecker::IsInProximity(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2, const float& p_range)
+        {
+            using namespace DirectX;
+            XMVECTOR vecBetweenEntities = XMLoadFloat3(&p_position2) - XMLoadFloat3(&p_position1);
             XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
             float distance = *distanceVec.m128_f32;
-            if(distance < rangeComp->range)
+            if(distance <= p_range)
             {
                 return true;
             }
@@ -56,11 +66,6 @@ namespace Doremi
             {
                 return false;
             }
-        }
-        std::vector<size_t> ProximityChecker::GetAllEntitysInProximity(size_t p_entityID)
-        {
-            std::vector<size_t> retVector;
-            return retVector;
         }
     }
 }

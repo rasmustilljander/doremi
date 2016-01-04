@@ -3,7 +3,7 @@
 
 // Standard
 #include <vector>
-
+#include <DirectXMath.h>
 namespace Doremi
 {
     namespace Core
@@ -25,9 +25,12 @@ namespace Doremi
             */
             std::vector<size_t> GetAllEntitysInProximity(size_t p_entityID);
 
-            private:
+            protected:
             static ProximityChecker* m_singleton;
             ProximityChecker();
+
+            // Help functions
+            bool IsInProximity(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2, const float& p_range);
         };
     }
 }
