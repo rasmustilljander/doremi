@@ -30,6 +30,7 @@ namespace DoremiEngine
 
             // Finally add the body to our list
             m_bodies[m_nextBody] = body;
+            m_IDsByBodies[body] = m_nextBody;
             m_nextBody++;
             /*
             And now we have added a box to the world at the given position
@@ -65,6 +66,7 @@ namespace DoremiEngine
 
             // Finally add the body to our list
             m_bodies[m_nextBody] = body;
+            m_IDsByBodies[body] = m_nextBody;
             m_nextBody++;
 
             /*
@@ -173,5 +175,7 @@ namespace DoremiEngine
             m_bodies[p_bodyID]->release();
             m_bodies.erase(p_bodyID);
         }
+
+        unordered_map<PxRigidActor*, int>& RigidBodyManagerImpl::GetIDsByBodies() { return m_IDsByBodies; }
     }
 }

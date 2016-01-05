@@ -54,6 +54,8 @@ namespace DoremiEngine
             RigidBodyManager& GetRigidBodyManager() override;
             PhysicsMaterialManager& GetPhysicsMaterialManager() override;
 
+            vector<CollisionPair> GetCollisionPairs() override;
+
             /**
             Example methods used to display how the engine can be used.
             TODOJB remove*/
@@ -82,6 +84,9 @@ namespace DoremiEngine
 
             // Struct for shared physics thingies within the module
             InternalPhysicsUtils m_utils;
+
+            // Vector over IDs of bodies that collided
+            vector<CollisionPair> m_collisionPairs;
         };
     }
 }

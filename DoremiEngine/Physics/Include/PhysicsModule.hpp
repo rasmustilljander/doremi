@@ -2,6 +2,8 @@
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 
+#include <vector>
+
 #if defined(_WINDLL)
 #define PHYSICS_DLL_EXPORT __declspec(dllexport)
 #else
@@ -12,6 +14,12 @@ namespace DoremiEngine
 {
     namespace Physics
     {
+        struct CollisionPair
+        {
+            int firstID = -1;
+            int secondID = -1;
+        };
+
         class RigidBodyManager;
         class PhysicsMaterialManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
@@ -21,6 +29,8 @@ namespace DoremiEngine
 
             virtual RigidBodyManager& GetRigidBodyManager() = 0;
             virtual PhysicsMaterialManager& GetPhysicsMaterialManager() = 0;
+
+            virtual std::vector<CollisionPair> GetCollisionPairs() = 0;
 
             // Test function
             virtual float ExampleMethod(const float& posx) = 0;

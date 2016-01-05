@@ -27,12 +27,16 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::Update(float p_dt)
         {
+            // Start by clearing the list of collision pairs (WARNING potentially bad idea)
+            m_collisionPairs.clear();
             m_utils.m_worldScene->simulate(p_dt);
             m_utils.m_worldScene->fetchResults(true);
         }
 
         RigidBodyManager& PhysicsModuleImplementation::GetRigidBodyManager() { return *m_utils.m_rigidBodyManager; }
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
+
+        vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
 
         // Only an example method to demonstrate how the engine is used
         float PhysicsModuleImplementation::ExampleMethod(const float& posx) { return 1; }
@@ -93,7 +97,22 @@ namespace DoremiEngine
             And we now have a simple scene with gravity and the ground as a plane*/
         }
 
-        void PhysicsModuleImplementation::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
+        void PhysicsModuleImplementation::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
+        {
+            m_utils.m_rigidBodyManager->GetIDsByBodies();
+            for(size_t i = 0; i < nbPairs; i++)
+            {
+                const PxContactPair& cp = pairs[i];
+
+                if(cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+                {
+                    CollisionPair collisionPair;
+                    collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
+                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
+                    m_collisionPairs.push_back(collisionPair);
+                }
+            }
+        }
 
         void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count) {}
     }

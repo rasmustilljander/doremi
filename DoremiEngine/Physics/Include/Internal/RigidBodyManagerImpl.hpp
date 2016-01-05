@@ -39,6 +39,9 @@ namespace DoremiEngine
 
             void RemoveBody(int p_bodyID) override;
 
+            // Internal methods not used via interface (only used in module)
+            unordered_map<PxRigidActor*, int>& GetIDsByBodies();
+
             private:
             InternalPhysicsUtils& m_utils;
 
@@ -46,6 +49,7 @@ namespace DoremiEngine
             // unordered_map<int, PxRigidDynamic*> m_bodies;
             // unordered_map<int, PxRigidStatic*> m_staticBodies;
             unordered_map<int, PxRigidActor*> m_bodies;
+            unordered_map<PxRigidActor*, int> m_IDsByBodies;
             int m_nextBody;
             int m_nextStaticBody;
         };
