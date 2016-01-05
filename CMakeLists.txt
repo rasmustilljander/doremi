@@ -8,6 +8,7 @@ project(${SOLUTION_NAME})
 option(BUILD_LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
 option(BUILD_LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
 option(BUILD_BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
+option(BUILD_BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 
 if(BUILD_UNIT_TEST_BUILD)
@@ -90,9 +91,11 @@ set(EXTERNAL_LIBRARIES_ALL
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
 
+if(BUILD_BUILD_WITH_EXTENDED_WARNINGS)
+	add_definitions(/W4)
+endif()
 if (BUILD_TREAT_WARNINGS_AS_ERROR)
 	add_definitions(/WX)
-	add_definitions(/W4)
 endif()
 
 
