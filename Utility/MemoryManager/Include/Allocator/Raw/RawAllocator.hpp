@@ -21,7 +21,7 @@ namespace Utility
                                     const bool& p_threadShared) override;
 
             /**
-                Constructor, takes memorySize in bytes.
+                Destructor
             */
             virtual ~RawAllocator();
 
