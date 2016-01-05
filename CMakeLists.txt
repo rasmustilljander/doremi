@@ -7,7 +7,7 @@ project(${SOLUTION_NAME})
 # Add options
 option(BUILD_LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
 option(BUILD_LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
-option(BUILD_BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
+option(BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
 option(BUILD_BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 
