@@ -8,6 +8,7 @@ project(${SOLUTION_NAME})
 option(LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
 option(LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
 option(UNIT_TEST_BUILD "Unchecked is no testing" OFF)
+option(LINK_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 
 if(UNIT_TEST_BUILD)
 	set(ENGINE_LINK_TYPE STATIC)
@@ -88,6 +89,10 @@ set(EXTERNAL_LIBRARIES_ALL
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
+if (LINK_TREAT_WARNINGS_AS_ERROR)
+	add_definitions(/WX)
+	add_definitions(/W4)
+endif()
 
 # Add default include directories
 include_directories(${EXTERNAL_INCLUDE_DIRECTORY})
