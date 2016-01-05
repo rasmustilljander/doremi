@@ -5,12 +5,12 @@ set(SOLUTION_NAME Doremi)
 project(${SOLUTION_NAME})
 
 # Add options
-option(LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
-option(LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
-option(UNIT_TEST_BUILD "Unchecked is no testing" OFF)
-option(LINK_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
+option(BUILD_LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
+option(BUILD_LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
+option(BUILD_BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
+option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 
-if(UNIT_TEST_BUILD)
+if(BUILD_UNIT_TEST_BUILD)
 	set(ENGINE_LINK_TYPE STATIC)
 else()
 	set(ENGINE_LINK_TYPE SHARED)
@@ -25,7 +25,7 @@ STRING(REGEX REPLACE "\\\\" "/" CODE_REPOSITORY_ROOT ${CODE_REPOSITORY_ROOT})
 STRING(REGEX REPLACE "\\\\" "/" RESOURCE_REPOSITORY_ROOT ${RESOURCE_REPOSITORY_ROOT})
 
 # Check if 32 or 64 bit
-if(LINK_64_BIT_BUILD)
+if(BUILD_LINK_64_BIT_BUILD)
 	set(ARCHITECTURE_BIT_VALUE x64)
 	else()
 	set(ARCHITECTURE_BIT_VALUE x86)
@@ -40,7 +40,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 
 # Path for copying .dll to correct folder
-if(LINK_AND_COMPILE_RELEASE_BUILD)
+if(BUILD_LINK_AND_COMPILE_RELEASE_BUILD)
 	set(COMPILE_RELEASE_BUILD_VALUE "release") # Atm this wont work on non-windows systems
 else()
 	set(COMPILE_RELEASE_BUILD_VALUE "debug") # Atm this wont work on non-windows systems
@@ -63,7 +63,7 @@ find_package(DirectX11 REQUIRED)
 find_package(WinSock2 REQUIRED)
 find_package(PhysX REQUIRED)
 find_package(SDL2 REQUIRED)
-if(UNIT_TEST_BUILD)
+if(BUILD_UNIT_TEST_BUILD)
 	find_package(Gtest REQUIRED)
 endif()
 
@@ -89,10 +89,12 @@ set(EXTERNAL_LIBRARIES_ALL
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
-if (LINK_TREAT_WARNINGS_AS_ERROR)
+
+if (BUILD_TREAT_WARNINGS_AS_ERROR)
 	add_definitions(/WX)
 	add_definitions(/W4)
 endif()
+
 
 # Add default include directories
 include_directories(${EXTERNAL_INCLUDE_DIRECTORY})
@@ -102,7 +104,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(Doremi)
 add_subdirectory(DoremiEngine)
 add_subdirectory(Utility)
-if(UNIT_TEST_BUILD)
+if(BUILD_UNIT_TEST_BUILD)
 	add_subdirectory(UnitTest)
 endif()
 
@@ -119,7 +121,7 @@ add_custom_target(_resourceCopy ALL
 add_custom_target(_dependencies ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS} ${OUTPUT_FOLDER})
 
 # Set the default configuration
-if (LINK_AND_COMPILE_RELEASE_BUILD)
+if (BUILD_LINK_AND_COMPILE_RELEASE_BUILD)
     set(CMAKE_BUILD_TYPE "Release")
 else()
     set(CMAKE_BUILD_TYPE "Debug")
