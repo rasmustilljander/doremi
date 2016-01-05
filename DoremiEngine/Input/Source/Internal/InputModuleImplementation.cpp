@@ -171,7 +171,7 @@ namespace DoremiEngine
                         m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                         break;
 
-                    defaultEvent:
+                    default:
                         break;
                 }
             }
@@ -205,7 +205,7 @@ namespace DoremiEngine
                         m_mouseWheelSpins = p_eventVariable.wheel.y;
                         break;
 
-                    defaultEvent:
+                    default:
                         break;
                 }
             }
