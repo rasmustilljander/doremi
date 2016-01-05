@@ -17,21 +17,16 @@ namespace DoremiEngine
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
             PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
             PxVec3 dims = PxVec3(p_dims.x, p_dims.y, p_dims.z);
-            // Creates the physics object shape thingy, which collides with stuff. Shapes are just objects. I
-            PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             // Creates the actual body.
             PxTransform transform = PxTransform(position, orientation);
             // This body is dynamic
             PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
-
-            // Attach shape to the body
-            body->attachShape(*shape);
+            // Create a shape for the body
+            body->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
             PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
             // Add the now fully created body to the scene
             m_utils.m_worldScene->addActor(*body);
-            // We're done with the shape. Release it
-            shape->release();
 
             // Finally add the body to our list
             m_bodies[m_nextBody] = body;
