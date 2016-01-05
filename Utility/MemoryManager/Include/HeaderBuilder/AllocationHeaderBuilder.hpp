@@ -10,8 +10,17 @@ namespace Utility
         class AllocationHeaderBuilder
         {
             private:
-            AllocationHeaderBuilder();
-            virtual ~AllocationHeaderBuilder();
+            AllocationHeaderBuilder() {}
+            public:
+            /**
+                Delete copy constructor
+            */
+            AllocationHeaderBuilder(AllocationHeaderBuilder const&) = delete;
+
+            /**
+            Delete copy constructor
+            */
+            void operator=(AllocationHeaderBuilder const&) = delete;
 
             public:
             /**
@@ -27,6 +36,9 @@ namespace Utility
             static void SetByte(void* p_pointerToByte, const uint8_t& value) { *(uint8_t*)p_pointerToByte = value; }
 
             // TODORT move to .cpp file
+            /**
+                Set a byte value based on multiple flags represented as multiple bools
+            */
             static void BuildCustomByteBasedOnFlags(void* p_pointerToByte, const bool& f0, const bool& f1, const bool& f2, const bool& f3,
                                                     const bool& f4, const bool& f5, const bool& f6, const bool& f7)
             {
@@ -66,10 +78,13 @@ namespace Utility
                 *(uint8_t*)p_pointerToByte = flagValue;
             }
 
+            // TODORT Docs
             // TODORT move to .cpp file
             static void MarkByteBasedOnFlags(void* p_pointerToByte, const std::array<bool, 8>& flags)
             {
                 uint8_t flagValue = 0;
+
+                // TODORT Could rewrite this as an for loop
                 if(flags[0])
                 {
                     flagValue |= 1;
@@ -105,6 +120,7 @@ namespace Utility
                 *(uint8_t*)p_pointerToByte = flagValue;
             }
 
+            // TODORT Docs
             // TODORT move to .cpp file
             static void MarkByteAsOccupied(void* p_pointerToByte)
             {
@@ -115,6 +131,7 @@ namespace Utility
                 *(uint8_t*)p_pointerToByte |= 1;
             }
 
+            // TODORT Docs
             // TODORT move to .cpp file
             static void MarkByteAsFree(void* p_pointerToByte)
             {
@@ -125,6 +142,17 @@ namespace Utility
                 *(uint8_t*)p_pointerToByte &= 254;
             }
 
+            // TODORT Docs
+            // TODORT move to .cpp file
+            static uint8_t GetAdjustment(void* p_adress) { return *reinterpret_cast<uint8_t*>(reinterpret_cast<size_t>(p_adress) - 1); }
+
+            static void SetAdjustment(void* p_adress, const uint8_t& p_adjustment)
+            {
+                void* adjustmentMetaData = reinterpret_cast<void*>(reinterpret_cast<size_t>(p_adress) - 1);
+                AllocationHeaderBuilder::SetByte(adjustmentMetaData, p_adjustment);
+            }
+
+            // TODORT Docs
             // TODORT move to .cpp file
             static std::array<bool, 8>& FetchAllFlagsFromByte(const void* const p_pointerToByte)
             {
