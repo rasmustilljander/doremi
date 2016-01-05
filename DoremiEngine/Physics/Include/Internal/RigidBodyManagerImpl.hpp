@@ -17,8 +17,8 @@ namespace DoremiEngine
             RigidBodyManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~RigidBodyManagerImpl();
 
-            int AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
-            int AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
+            int AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
+            int AddBoxBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
 
 
@@ -50,8 +50,6 @@ namespace DoremiEngine
             // unordered_map<int, PxRigidStatic*> m_staticBodies;
             unordered_map<int, PxRigidActor*> m_bodies;
             unordered_map<PxRigidActor*, int> m_IDsByBodies;
-            int m_nextBody;
-            int m_nextStaticBody;
         };
     }
 }

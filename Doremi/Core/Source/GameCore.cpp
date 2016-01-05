@@ -105,8 +105,8 @@ namespace Doremi
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
                 RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-                rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(0.5, 0.5, 0.5), matID);
+                rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
+                                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
             }
         }
         void CreateBulletBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -182,8 +182,8 @@ namespace Doremi
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
                 RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-                rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
+                rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation,
+                                                                                                              XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
             }
             for(size_t i = 0; i < 1; i++)
             {
@@ -192,8 +192,8 @@ namespace Doremi
                 XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
                 int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
                 RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-                rigidComp->p_bodyID =
-                    sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
+                rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
+                                                                                                               XMFLOAT3(2.0f, 0.05f, 2.0f), matID);
             }
         }
         // Only for testing, should be removed! TODO
@@ -250,8 +250,8 @@ namespace Doremi
             XMFLOAT3 position = XMFLOAT3(0, 10, 0);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
-            bodyComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
+                                                                                                          XMFLOAT3(0.5, 0.5, 0.5), materialID);
             PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
             playerCreationEvent->eventType = Events::PlayerCreation;
             playerCreationEvent->playerEntityID = playerID;

@@ -117,8 +117,8 @@ namespace Doremi
                         int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
                         // Create rigid body for the bullet
                         RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
-                        rigidComp->p_bodyID =
-                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletPos, orientation, XMFLOAT3(0.5, 0.5, 0.5), physMatID);
+                        rigidComp->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletID, bulletPos, orientation,
+                                                                                                                         XMFLOAT3(0.5, 0.5, 0.5), physMatID);
 
                         // Set start velocity
                         float fireVelocity = 50;

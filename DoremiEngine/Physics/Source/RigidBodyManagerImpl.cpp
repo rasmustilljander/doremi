@@ -4,14 +4,10 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils)
-        {
-            m_nextBody = 0;
-            m_nextStaticBody = 0;
-        }
+        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils) {}
         RigidBodyManagerImpl::~RigidBodyManagerImpl() {}
 
-        int RigidBodyManagerImpl::AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
+        int RigidBodyManagerImpl::AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
         {
             // Create a world matrix (only translation) i think
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
@@ -29,19 +25,22 @@ namespace DoremiEngine
             m_utils.m_worldScene->addActor(*body);
 
             // Finally add the body to our list
-            m_bodies[m_nextBody] = body;
-            m_IDsByBodies[body] = m_nextBody;
-            m_nextBody++;
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
             /*
             And now we have added a box to the world at the given position
             I'm not too sure how we update the box, or the scene, or perform
             any form of interaction however*/
 
-            // Return ID of body we just created
-            return m_nextBody - 1;
+
+            // Hax to get callbacks to work (Set a common flag on every object)
+            SetCallback(p_id, (1 << 0), (1 << 0));
+
+            // Kinda redundant return...
+            return p_id;
         }
 
-        int RigidBodyManagerImpl::AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
+        int RigidBodyManagerImpl::AddBoxBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
         {
             // Create a world matrix (only translation) i think
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
@@ -65,17 +64,16 @@ namespace DoremiEngine
             shape->release();
 
             // Finally add the body to our list
-            m_bodies[m_nextBody] = body;
-            m_IDsByBodies[body] = m_nextBody;
-            m_nextBody++;
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
 
             /*
             And now we have added a box to the world at the given position
             I'm not too sure how we update the box, or the scene, or perform
             any form of interaction however*/
 
-            // Return ID of body we just created
-            return m_nextBody - 1;
+            // Kinda redundant return...
+            return p_id;
         }
 
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
