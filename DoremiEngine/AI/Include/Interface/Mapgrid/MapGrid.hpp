@@ -1,13 +1,12 @@
 #pragma once
 #include <DirectXMath.h>
 
-
 namespace DoremiEngine
 {
     namespace AI
     {
         /**
-        TODOKO docs
+        Contains information on a mapgrid of positions
         */
         class MapGrid
         {

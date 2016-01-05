@@ -7,6 +7,7 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
@@ -76,8 +77,7 @@ namespace Doremi
             blueprint[ComponentType::Render] = renderComp;
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID =
-                sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5); // TODOJB remove p_
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
@@ -93,9 +93,16 @@ namespace Doremi
             RangeComponent* rangeComp = new RangeComponent();
             rangeComp->range = 4;
             blueprint[ComponentType::Range] = rangeComp;
-            /// Register blueprint
+            // PotentialField component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->Power = -3;
+            potentialComp->Area = 5;
+            blueprint[ComponentType::PotentialField] = potentialComp;
+            // Movement comp
+            MovementComponent* movementcomp = new MovementComponent();
+            blueprint[ComponentType::Movement] = movementcomp;
+            // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
-
             // Create some enemies
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             for(size_t i = 0; i < 5; i++)
@@ -150,7 +157,7 @@ namespace Doremi
             t_platform[ComponentType::Transform] = t_transformComp;
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
             t_platform[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
@@ -239,6 +246,11 @@ namespace Doremi
             MovementComponent* t_movementComp = new MovementComponent();
             t_movementComp->maxSpeed = 5;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
+            // Potential field comp
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->Power = 6;
+            potentialComp->Area = 200;
+            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
 

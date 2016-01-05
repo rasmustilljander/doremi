@@ -5,6 +5,9 @@
 #include <Helper/ProximityChecker.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/MovementComponent.hpp>
 
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -12,6 +15,7 @@
 
 // Standard
 #include <iostream>
+#include <DirectXMath.h>
 
 using namespace std;
 
@@ -29,6 +33,7 @@ namespace Doremi
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
             size_t playerID = PlayerHandler::GetInstance()->GetPlayerEntityID();
+            vector<int> t_fieldActors;
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
@@ -36,19 +41,62 @@ namespace Doremi
                     bool inProx = ProximityChecker::GetInstance().CheckProximityToEntity(i, playerID);
                     if(inProx)
                     {
-                        HealthComponent* myHealth = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(i);
-                        myHealth->currentHealth--;
-                        if(myHealth->currentHealth < 0)
+                        // HealthComponent* myHealth = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(i);
+                        // myHealth->currentHealth--;
+                        // if(myHealth->currentHealth < 0)
+                        //{
+                        //    // TODO This should be placed in a better location, like remove entity
+                        //    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::RigidBody))
+                        //    {
+                        //        RigidBodyComponent* rb = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
+                        //        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(rb->p_bodyID);
+                        //    }
+                        //    EntityHandler::GetInstance().RemoveEntity(i);
+                        //}
+                    }
+                }
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
+                {
+                    t_fieldActors.push_back(i);
+                }
+            }
+            // TODOKO remove from this place
+            mask |= (int)ComponentType::Movement;
+            for(size_t i = 0; i < length; i++)
+            {
+                if(EntityHandler::GetInstance().HasComponents(i, mask))
+                {
+                    XMFLOAT3 forceDirection = XMFLOAT3(0, 0, 0);
+                    size_t nrofFieldActors = t_fieldActors.size();
+                    for(size_t j = 0; j < nrofFieldActors; j++)
+                    {
+                        if(i != t_fieldActors[j])
                         {
-                            // TODO This should be placed in a better location, like remove entity
-                            if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::RigidBody))
+                            float power = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->Power;
+                            float area = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->Area;
+                            XMVECTOR fieldPos =
+                                XMLoadFloat3(&EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(t_fieldActors[j])->position);
+                            XMVECTOR addedForce = XMLoadFloat3(&forceDirection);
+                            XMVECTOR myPos = XMLoadFloat3(&EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position);
+
+                            XMVECTOR distance = fieldPos - myPos;
+                            float dist = *XMVector3Length(distance).m128_f32;
+                            if(dist < area)
                             {
-                                RigidBodyComponent* rb = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
-                                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(rb->p_bodyID);
+                                float force = power / dist;
+                                // force = XMMax(force, 0.0f);
+                                distance *= force;
+
+                                addedForce += distance;
+                                XMStoreFloat3(&forceDirection, addedForce);
                             }
-                            EntityHandler::GetInstance().RemoveEntity(i);
                         }
                     }
+                    XMVECTOR normalDirection = XMLoadFloat3(&forceDirection);
+                    normalDirection = XMVector3Normalize(normalDirection);
+                    XMStoreFloat3(&forceDirection, normalDirection);
+                    EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->direction = forceDirection;
+                    EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->forwardAcceleration = 100;
                 }
             }
         }

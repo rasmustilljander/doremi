@@ -1,7 +1,10 @@
 #include <Internal/AIModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+// Sub Modules
 #include <Internal/SubModule/AStarSubModuleImpl.hpp>
 #include <Internal/SubModule/PotentialFieldSubModuleImpl.hpp>
+
+// Standard
 #include <iostream>
 #include <windows.h>
 

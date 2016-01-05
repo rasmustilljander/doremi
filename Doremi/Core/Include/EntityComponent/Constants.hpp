@@ -26,6 +26,7 @@ enum class ComponentType : int
     AIAgent = 0x800,
     Health = 0x1000,
     Range = 0x2000,
+    PotentialField = 0x4000,
 };
 
 /**

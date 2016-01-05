@@ -43,10 +43,8 @@ namespace DoremiEngine
 
             PotentialFieldSubModule& GetPotentialFieldSubModule() override;
 
-            /**
-            Returns a pointer to the AStarSubModule
-            */
             AStarSubModule& GetAstarSubModule() override;
+
 
             private:
             const Core::SharedContext& m_sharedContext;

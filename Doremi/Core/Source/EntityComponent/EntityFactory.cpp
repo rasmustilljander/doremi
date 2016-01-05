@@ -14,6 +14,7 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
 
 namespace Doremi
 {
@@ -102,6 +103,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::Range)
                 {
                     memcpy(GetComponent<RangeComponent>(tNewEntityID), iter->second, sizeof(RangeComponent));
+                }
+                else if(iter->first == ComponentType::PotentialField)
+                {
+                    memcpy(GetComponent<PotentialFieldComponent>(tNewEntityID), iter->second, sizeof(PotentialFieldComponent));
                 }
             }
 
