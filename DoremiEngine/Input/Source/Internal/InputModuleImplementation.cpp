@@ -63,12 +63,12 @@ namespace DoremiEngine
         }
         void InputModuleImplementation::PrintInputStructsDEBUG()
         {
-            int t_forLoopSizeI = m_keyboardButtonsDown.size();
+            const size_t t_forLoopSizeI = m_keyboardButtonsDown.size();
             for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
                 std::cout << m_keyboardButtonsDown[i] << ", ";
             }
-            int t_forLoopSizeII = m_mouseButtonsDown.size();
+            const size_t t_forLoopSizeII = m_mouseButtonsDown.size();
 
             for(size_t i = 0; i < t_forLoopSizeII; ++i)
             {
@@ -222,7 +222,7 @@ namespace DoremiEngine
         }
         void InputModuleImplementation::RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
         {
-            int t_sizeOfVector = o_listToUse.size();
+            size_t t_sizeOfVector = o_listToUse.size();
             for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
                 if(o_listToUse[i] == p_eventvariable)
@@ -234,7 +234,7 @@ namespace DoremiEngine
         }
         void InputModuleImplementation::AddToList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
         {
-            int t_sizeOfVector = o_listToUse.size();
+            const size_t t_sizeOfVector = o_listToUse.size();
             bool t_doesItAlreadyExist = false;
             for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
