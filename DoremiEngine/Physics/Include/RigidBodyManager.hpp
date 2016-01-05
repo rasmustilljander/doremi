@@ -19,6 +19,11 @@ namespace DoremiEngine
             They can still be moved around however, just not by any other physical object.*/
             virtual int AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) = 0;
 
+            /**
+            TODOJB figure out what to do, and how to describe it in a comment
+            */
+            virtual void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) = 0;
+
             /// Manipulators
             /**
             Adds a force to a body*/

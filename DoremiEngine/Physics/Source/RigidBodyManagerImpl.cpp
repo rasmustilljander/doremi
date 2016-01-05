@@ -80,6 +80,29 @@ namespace DoremiEngine
             // Return ID of body we just created
             return m_nextBody - 1;
         }
+
+        void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
+        {
+            PxFilterData filterData;
+            filterData.word0 = p_filterGroup; // Own ID
+            filterData.word1 = p_filterMask; // ID mask to filter pairs that trigger contact callback
+            PxRigidActor* actor = m_bodies[p_bodyID];
+            int numShapes = actor->getNbShapes();
+            // Magic allocation of memory (i think)
+            PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
+            actor->getShapes(shapes, numShapes);
+            for(size_t i = 0; i < numShapes; i++)
+            {
+                PxShape* shape = shapes[i];
+                shape->setSimulationFilterData(filterData);
+            }
+            if(shapes)
+            {
+                m_utils.m_allocator.deallocate(shapes);
+                shapes = NULL;
+            }
+        }
+
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
             if(m_bodies[p_bodyID]->isRigidDynamic()) ((PxRigidDynamic*)m_bodies[p_bodyID])->addForce(PxVec3(p_force.x, p_force.y, p_force.z));

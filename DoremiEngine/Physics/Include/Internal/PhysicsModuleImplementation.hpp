@@ -35,7 +35,7 @@ namespace DoremiEngine
             // The basic world. TODOJB add to some sort of scene manager?
             PxScene* m_worldScene;
         };
-        class PhysicsModuleImplementation : public PhysicsModule
+        class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback
         {
             public:
             PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
@@ -63,6 +63,19 @@ namespace DoremiEngine
             private:
             // Creates the world as a scene. TODOJB create SceneManager somehow
             void CreateWorldScene();
+
+            /// Implements PxSimulationEventCallback
+            // Called when contact between two bodies (i think)
+            virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
+            // NOT USED
+            virtual void onTrigger(PxTriggerPair* pairs, PxU32 count);
+            // NOT USED
+            virtual void onConstraintBreak(PxConstraintInfo*, PxU32) {}
+            // NOT USED
+            virtual void onWake(PxActor**, PxU32) {}
+            // NOT USED
+            virtual void onSleep(PxActor**, PxU32) {}
+            /// End PxSimulationEventCallback
 
             // Has shared context for some reason. Shouldn't be here
             const Core::SharedContext& m_sharedContext;

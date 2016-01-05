@@ -69,6 +69,10 @@ namespace DoremiEngine
             /*
             And we now have a simple scene with gravity and the ground as a plane*/
         }
+
+        void PhysicsModuleImplementation::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
+
+        void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count) {}
     }
 }
 

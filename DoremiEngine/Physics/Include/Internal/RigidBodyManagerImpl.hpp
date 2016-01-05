@@ -19,6 +19,8 @@ namespace DoremiEngine
 
             int AddBoxBodyDynamic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
             int AddBoxBodyStatic(XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
+            void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
+
 
             void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) override;
             void AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque) override;
