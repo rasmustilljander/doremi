@@ -39,6 +39,7 @@
 #include <AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EventHandler/Events/PlayerCreationEvent.hpp>
@@ -255,7 +256,7 @@ namespace Doremi
             PlayerHandler::GetInstance()->Initialize(playerID);
             // Create the rigid body
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(playerID)->p_materialID;
-            XMFLOAT3 position = XMFLOAT3(0, 10, 0);
+            XMFLOAT3 position = XMFLOAT3(0, 10, -5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
             bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
