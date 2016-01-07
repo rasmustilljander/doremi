@@ -121,7 +121,10 @@ namespace Doremi
             unsigned char* BufferPointer = p_message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
-            uint32_t InputMask = Streamer.ReadUnsignedInt32();;
+            uint32_t InputMask = Streamer.ReadUnsignedInt32();
+            ;
+
+            cout << InputMask << endl;
 
             // Read Input from Stream
             inputHandler->SetInputBitMask(InputMask);
@@ -143,7 +146,7 @@ namespace Doremi
             // For each connection
             for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
             {
-                if(iter->second->ConnectionState == ConnectionState::CONNECTED)
+                if(iter->second->ConnectionState >= ConnectionState::CONNECTED)
                 {
                     NetMessage Message = NetMessage();
 
@@ -153,22 +156,27 @@ namespace Doremi
                     {
                         // std::cout << "Recieved reliable messsage." << std::endl;
                         // TODOCM logg instead
-                        switch (Message.MessageID)
+                        switch(Message.MessageID)
                         {
-                        case MessageID::SNAPSHOT:
+                            case MessageID::CONNECTED:
 
+                                // Add code here
+                                break;
 
-                            break;
-                        case MessageID::INIT_SNAPSHOT:
+                            case MessageID::LOAD_WORLD:
 
+                                // Add code here
+                                break;
 
-                            break;
-                        default:
-                            break;
+                            case MessageID::INPUT:
+
+                                // Interpet n' input message
+                                InterpetInputMessage(Message, iter->second->PlayerID);
+                                break;
+
+                            default:
+                                break;
                         }
-                        
-                        // Interpet n' input message
-                        InterpetInputMessage(Message, iter->second->PlayerID);
 
                         // TODOCM interpet data
                         iter->second->LastResponse = 0;
@@ -272,9 +280,15 @@ namespace Doremi
                         // Create a playerID
                         // TODOCM need to change this to some other method to get a unique ID, like gametime
                         PlayerID = rand();
+
+                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext);
+
+                        // Create player
+                        PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
                     }
-                    
+
                     connection->PlayerID = PlayerID;
+
 
                     // Send Connected Message
                     SendConnect(connection, m_adress);
@@ -373,49 +387,34 @@ namespace Doremi
                 NetMessage Message = NetMessage();
                 Message.MessageID = MessageID::SNAPSHOT;
 
+
                 // TODOCM add snapshot info here
+                // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
                 CreateSnapshot(Message.Data, sizeof(Message.Data));
 
-                DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
 
                 // For all connected clients we send messages
                 for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
                 {
-                    if(iter->second->ConnectionState == ConnectionState::CONNECTED)
+                    switch(iter->second->ConnectionState)
                     {
-                        // std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
-                        // If we're a new connection we send a initialise snapshot, might need this later
-                        if(iter->second->NewConnection)
-                        {
-                            Message.MessageID = MessageID::INIT_SNAPSHOT;
-                            iter->second->NewConnection = false;
-                        }
-                        else
-                        {
-                            counter++; //TODOCM remove test
-                            int checkValue;
+                        case ConnectionState::CONNECTED:
 
-                            if (counter < 2)
-                            {
-                                checkValue = 100;
-                            }
-                            else
-                            {
-                                counter = - 1;
-                                checkValue = -1;
-                            }
+                            SendConnected(iter->second);
+                            break;
 
-                            // TODOCM remove, packet loss experiment
-                            int a = rand() % 100;
-                            if (a < checkValue)
-                            {
-                                std::cout << "Dropping packages..." << std::endl;
-                                return;
-                            }
-                        }
+                        case ConnectionState::MAP_LOADING:
 
-                        // Send message
-                        NetworkModule.SendReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle);
+                            SendMapLoading(iter->second);
+                            break;
+
+                        case ConnectionState::IN_GAME:
+
+                            SendInGame(Message, iter->second);
+                            break;
+
+                        default:
+                            break;
                     }
                 }
             }
@@ -424,7 +423,7 @@ namespace Doremi
         void ServerNetworkManager::SendDisconnect(const DoremiEngine::Network::Adress& m_adress)
         {
             std::cout << "Sending disconnect." << std::endl;
-            ; // TODOCM logg instead
+            // TODOCM logg instead
 
             // Create disconnection message
             NetMessage NewMessage = NetMessage();
@@ -466,6 +465,79 @@ namespace Doremi
 
             // Send connect message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_unreliableSocketHandle, &m_adress);
+        }
+
+        void ServerNetworkManager::SendConnected(Connection* p_connection)
+        {
+            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
+
+            NetMessage Message = NetMessage();
+
+            Message.MessageID = MessageID::CONNECTED;
+
+            BitStreamer Streamer = BitStreamer();
+            unsigned char* BufferPointer = Message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
+
+            Streamer.WriteBool(true);
+
+            p_connection->ConnectionState = ConnectionState::MAP_LOADING;
+
+            // Send message
+            NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);
+        }
+
+        void ServerNetworkManager::SendMapLoading(Connection* p_connection)
+        {
+            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
+
+            NetMessage Message = NetMessage();
+
+            Message.MessageID = MessageID::LOAD_WORLD;
+
+            p_connection->ConnectionState = ConnectionState::IN_GAME;
+
+            // Send message
+            NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);
+        }
+
+        void ServerNetworkManager::SendInGame(NetMessage& p_message, Connection* p_connection)
+        {
+            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
+
+            // std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
+            // If we're a new connection we send a initialise snapshot, might need this later
+            if(p_connection->NewConnection)
+            {
+                p_message.MessageID = MessageID::INIT_SNAPSHOT;
+                p_connection->NewConnection = false;
+            }
+            else
+            {
+                counter++; // TODOCM remove test
+                int checkValue;
+
+                if(counter < 2)
+                {
+                    checkValue = 100;
+                }
+                else
+                {
+                    counter = -1;
+                    checkValue = -1;
+                }
+
+                // TODOCM remove, packet loss experiment
+                int a = rand() % 100;
+                if(a < checkValue)
+                {
+                    /*std::cout << "Dropping packages..." << std::endl;
+                    return;*/
+                }
+            }
+
+            // Send message
+            NetworkModule.SendReliableData(&p_message, sizeof(p_message), p_connection->ReliableSocketHandle);
         }
 
         void ServerNetworkManager::CheckForConnections()

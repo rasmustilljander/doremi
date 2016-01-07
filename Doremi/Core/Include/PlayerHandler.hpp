@@ -111,6 +111,13 @@ namespace Doremi
 
             /**
                 TODOCM doc
+                TODOCM maybe change the way a player is created due to the need of external creation of inputHandler cause of difference in client and
+               server
+            */
+            void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler);
+
+            /**
+                TODOCM doc
             */
             void UpdatePlayerInputs();
 

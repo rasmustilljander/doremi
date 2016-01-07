@@ -8,7 +8,7 @@
 #include <InterpolationHandler.hpp>
 #include <iostream> // TODOCM remove after test
 #include <PlayerHandler.hpp>
-#include <InputHandler.hpp>
+#include <InputHandlerClient.hpp>
 
 
 namespace Doremi
@@ -136,40 +136,86 @@ namespace Doremi
             }
         }
 
-        void ClientNetworkManager::RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, bool p_initial)
+
+        void ClientNetworkManager::RecieveConnected(NetMessage& Message)
         {
-            // Read and translate message, for each position we update buffer array?
             BitStreamer Streamer = BitStreamer();
-            Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
+            unsigned char* BufferPointer = Message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
-            EntityHandler& EntityHandler = EntityHandler::GetInstance();
+            bool GameStarts = Streamer.ReadBool();
 
-            Snapshot* NewSnapshot = new Snapshot();
-
-
-            NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
-            if(p_initial)
+            if(GameStarts)
             {
-                InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
+                m_serverConnectionState = ConnectionState::MAP_LOADING;
             }
+        }
 
-            NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
-
-            for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
+        void ClientNetworkManager::RecieveLoadWorld(NetMessage& p_message)
+        {
+            if(m_serverConnectionState == ConnectionState::MAP_LOADING)
             {
-                NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
-                NewSnapshot->Objects[i].Component.position = Streamer.ReadFloat3();
-                NewSnapshot->Objects[i].Component.rotation = Streamer.ReadRotationQuaternion();
+                // TODOCM add real loadworld code here
+                InputHandlerClient* NewInputHandler = new InputHandlerClient(m_sharedContext);
+
+                PlayerHandler::GetInstance()->CreateNewPlayer(m_playerID, NewInputHandler);
+
+                m_serverConnectionState = ConnectionState::IN_GAME;
+
+                // Update last response
+                m_serverLastResponse = 0;
             }
+            else
+            {
+                // TODOCM If reliable messge is wrong?
+            }
+        }
 
-            InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
+        void ClientNetworkManager::RecieveSnapshot(NetMessage& p_message, bool p_initial = false)
+        {
+            if(m_serverConnectionState == ConnectionState::IN_GAME)
+            {
+                // Read and translate message, for each position we update buffer array?
+                BitStreamer Streamer = BitStreamer();
+                unsigned char* BufferPointer = p_message.Data;
+                Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
 
-            // TODOCM notify a handler or something that new buffer exists
+                EntityHandler& EntityHandler = EntityHandler::GetInstance();
+
+                Snapshot* NewSnapshot = new Snapshot();
+
+
+                NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
+                if(p_initial)
+                {
+                    InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
+                }
+
+                NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
+
+                for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
+                {
+                    NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
+                    NewSnapshot->Objects[i].Component.position = Streamer.ReadFloat3();
+                    NewSnapshot->Objects[i].Component.rotation = Streamer.ReadRotationQuaternion();
+                }
+
+                InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
+
+                // Update last response
+                m_serverLastResponse = 0;
+
+                // TODOCM notify a handler or something that new buffer exists
+            }
+            else
+            {
+                // TODOCM If reliable messge is wrong?
+            }
         }
 
         void ClientNetworkManager::RecieveReliable(double p_dt)
         {
-            if(m_serverConnectionState == ConnectionState::CONNECTED)
+            if(m_serverConnectionState >= ConnectionState::CONNECTED)
             {
                 DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
                 NetMessage Message = NetMessage();
@@ -181,23 +227,30 @@ namespace Doremi
 
                     switch(Message.MessageID)
                     {
-                        case MessageID::SNAPSHOT:
+                        case MessageID::CONNECTED:
 
-                            RecieveSnapshot(Message.Data, sizeof(Message.Data));
-
+                            RecieveConnected(Message);
                             break;
+
+                        case MessageID::LOAD_WORLD:
+
+                            RecieveLoadWorld(Message);
+                            break;
+
                         case MessageID::INIT_SNAPSHOT:
 
-                            RecieveSnapshot(Message.Data, sizeof(Message.Data), true);
-
+                            RecieveSnapshot(Message, true);
                             break;
+
+                        case MessageID::SNAPSHOT:
+
+                            RecieveSnapshot(Message);
+                            break;
+
                         default:
                             break;
                     }
 
-
-                    // Update last response
-                    m_serverLastResponse = 0;
 
                     Message = NetMessage();
                 }
@@ -219,26 +272,36 @@ namespace Doremi
                     case ConnectionState::DISCONNECTED:
 
                         // Nothing yet
-
                         break;
+
                     case ConnectionState::CONNECTING:
 
                         // Send a connecting message
                         SendConnectRequestMessage();
-
                         break;
+
                     case ConnectionState::VERSION_CHECK:
 
                         // Send a version message
                         SendVersionMessage();
-
                         break;
+
                     case ConnectionState::CONNECTED:
 
                         // TODOCM Send ping to keep an update with server?
                         SendConnectedMessage();
-
                         break;
+
+                    case ConnectionState::MAP_LOADING:
+
+                        SendMapLoadingMessage();
+                        break;
+
+                    case ConnectionState::IN_GAME:
+
+                        SendInGameMessage();
+                        break;
+
                     default:
                         break;
                 }
@@ -311,13 +374,31 @@ namespace Doremi
             // Create a message
             NetMessage Message = NetMessage();
 
+            Message.MessageID = MessageID::CONNECT;
 
-            // std::cout << "Sending connected message" << std::endl; // TODOCM logg instead
+            // Send Message
+            m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
+        }
+
+        void ClientNetworkManager::SendMapLoadingMessage()
+        {
+            NetMessage Message = NetMessage();
+            Message.MessageID = MessageID::LOAD_WORLD;
+
+            // Send Message
+            m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
+        }
+
+        void ClientNetworkManager::SendInGameMessage()
+        {
+            NetMessage Message = NetMessage();
+            Message.MessageID = MessageID::INPUT;
+
+            std::cout << "Sending input message" << std::endl; // TODOCM logg instead
             // Createing input message
 
-            
-            CreateInputMessage(Message);
 
+            CreateInputMessage(Message);
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);

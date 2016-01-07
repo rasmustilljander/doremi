@@ -98,7 +98,22 @@ namespace Doremi
             /**
                 Send connect message
             */
-            void SendConnect(const Connection *connection, const DoremiEngine::Network::Adress& m_adress);
+            void SendConnect(const Connection* connection, const DoremiEngine::Network::Adress& m_adress);
+
+            /**
+                TODOCM doc
+            */
+            void SendConnected(Connection* p_connection);
+
+            /**
+                TODOCM doc
+            */
+            void SendMapLoading(Connection* p_connection);
+
+            /**
+                TODOCM doc
+            */
+            void SendInGame(NetMessage& p_message, Connection* p_connection);
 
             /**
                 Check for reliable connections to accept

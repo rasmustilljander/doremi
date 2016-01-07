@@ -12,8 +12,9 @@ namespace Doremi
             DISCONNECTED,
             CONNECTING,
             VERSION_CHECK,
+            CONNECTED,
             MAP_LOADING,
-            CONNECTED
+            IN_GAME
         };
     }
 }

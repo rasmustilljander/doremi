@@ -160,10 +160,10 @@ namespace Doremi
                     // We somehow need to check if it's the last anyway because of the alpha?
                     Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
 
-                    std::cout << "New snapshot put" << std::endl;
+                    // std::cout << "New snapshot put" << std::endl;
 
                     // If the snapshot we are to use is ahead, we check how far ahead it is, else we just interpolate it one frame
-                    if (sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
+                    if(sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
                     {
                         m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
                     }

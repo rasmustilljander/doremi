@@ -65,6 +65,16 @@ namespace Doremi
             void SendConnectedMessage();
 
             /**
+                TODOCM doc
+            */
+            void SendMapLoadingMessage();
+
+            /**
+                TODOCM doc
+            */
+            void SendInGameMessage();
+
+            /**
                 Sends a disconnect message to server
             */
             void SendDisconnectMessage();
@@ -82,7 +92,17 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void RecieveSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, bool p_initial = false);
+            void RecieveConnected(NetMessage& p_message);
+
+            /**
+                TODOCM doc
+            */
+            void RecieveLoadWorld(NetMessage& p_message);
+
+            /**
+                TODOCM doc
+            */
+            void RecieveSnapshot(NetMessage& p_message, bool p_initial);
 
             /**
                 Update timeout to server and disconnects if too long

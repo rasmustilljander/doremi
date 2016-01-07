@@ -13,9 +13,12 @@ namespace Doremi
             CONNECT_REQUEST,
             VERSION_CHECK,
             CONNECT,
+            CONNECTED,
             DISCONNECT,
+            LOAD_WORLD,
             INIT_SNAPSHOT,
             SNAPSHOT,
+            INPUT,
         };
 
         /**

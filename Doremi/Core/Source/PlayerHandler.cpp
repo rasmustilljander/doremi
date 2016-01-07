@@ -13,7 +13,7 @@
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <InputHandlerClient.hpp>
-
+#include <DoremiEngine/Input/Include/InputModule.hpp>
 
 #include <iostream>
 
@@ -86,11 +86,10 @@ namespace Doremi
             {
                 std::runtime_error("GetDefaultPlayerEntityID called without any players aviable.");
             }
-
             return m_playerMap.begin()->second->m_playerEntityID;
         }
 
-        bool PlayerHandler::GetEntityIDForPlayer(uint32_t p_playerID, EntityID &outID)
+        bool PlayerHandler::GetEntityIDForPlayer(uint32_t p_playerID, EntityID& outID)
         {
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
 
@@ -106,11 +105,31 @@ namespace Doremi
             }
         }
 
+        void PlayerHandler::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+
+            if(iter != m_playerMap.end())
+            {
+                std::runtime_error("Creating player twice with same ID.");
+            }
+
+            Player* NewPlayer = new Player(p_inputHandler);
+
+            // TODOCM hard coded entityID for new players
+            NewPlayer->m_playerEntityID = 0;
+
+            m_playerMap[p_playerID] = NewPlayer;
+        }
+
         void PlayerHandler::UpdatePlayerInputs()
         {
+            m_sharedContext.GetInputModule().Update();
+
             std::map<uint32_t, Player*>::iterator iter;
 
-            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
             }
