@@ -4,6 +4,7 @@
 #include <Doremi/Core/Include/InputHandler.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 //#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
@@ -17,7 +18,7 @@ namespace Doremi
     namespace Core
     {
         PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_moveSpeed(100), m_autoRetardation(50)
+            : m_sharedContext(p_sharedContext), m_moveSpeed(0.2), m_autoRetardation(50), m_turnSpeed(0.01)
         {
         }
         PlayerHandler::~PlayerHandler() {}
@@ -39,6 +40,94 @@ namespace Doremi
             m_inputHandler = InputHandler::GetInstance();
             if(m_playerEntityID >= 0 && m_playerEntityID <= t_checkIfWeHavePlayer && m_inputHandler != nullptr)
             {
+                if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                {
+                    // Get transform component
+                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerEntityID);
+                    // Get direction
+                    XMFLOAT4 orientation = transComp->rotation;
+                    // Start with standard direction
+                    XMFLOAT3 dir = XMFLOAT3(0, 0, 1);
+                    XMVECTOR dirVec = XMLoadFloat3(&dir);
+                    // Create rotation matrix with orientation quaternion
+                    XMVECTOR orientationVec = XMLoadFloat4(&orientation);
+                    XMMATRIX rotMat = XMMatrixRotationQuaternion(orientationVec);
+                    // Rotate "start vector" with rotation matrix, giving us the target vector
+                    dirVec = XMVector3Transform(dirVec, rotMat);
+                    // Create right vector the same way
+                    XMFLOAT3 right = XMFLOAT3(1, 0, 0);
+                    XMVECTOR rightVec = XMLoadFloat3(&right);
+                    rightVec = XMVector3Transform(rightVec, rotMat);
+                    // WARNING! Might be necessary to consider up-vector (project into XZ-plane or something?)
+
+                    /// Handle keyboard input
+                    // Start by creating a movement vector
+                    XMFLOAT3 movement = XMFLOAT3(0, 0, 0);
+                    XMVECTOR movementVec = XMLoadFloat3(&movement);
+                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                    {
+                        movementVec += dirVec * m_moveSpeed;
+                    }
+
+                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                    {
+                        movementVec -= dirVec * m_moveSpeed;
+                    }
+                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                    {
+                        movementVec -= rightVec * m_moveSpeed;
+                    }
+                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                    {
+                        movementVec += rightVec * m_moveSpeed;
+                    }
+
+                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump))
+                    {
+                        movementVec += XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1;
+                    }
+                    else
+                    {
+                        movementVec -= XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 0.1;
+                    }
+                    // Store finished movement vec
+                    XMStoreFloat3(&movement, movementVec);
+                    // Directly tell controller to move. TODOJB should be handled with components
+                    if(movement.x != 0 || movement.y != 0 || movement.z != 0)
+                    {
+                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(m_playerEntityID, movement,
+                                                                                                       0.017); // TODOJB no hardcoded dt...
+                    }
+                    /// Handle mouse input
+                    // Get mouse input
+                    int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
+                    if(t_mouseMovementX)
+                    {
+                        // Get current angle
+                        float angle;
+                        XMVECTOR oldDir; // This really is only needed for the parameter below...
+                        XMQuaternionToAxisAngle(&oldDir, &angle, orientationVec);
+                        // Change the angle
+                        angle += t_mouseMovementX * m_turnSpeed;
+                        // Single quaternions don't really like angles over 2*pi, we do this
+                        if(angle > 2 * 3.1415)
+                        {
+                            angle -= 2 * 3.1415;
+                        }
+                        else if(angle < 0)
+                        {
+                            angle += 2 * 3.1415;
+                        }
+                        // Create a new quaternion with the new angle
+                        orientationVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angle);
+                        // Store results
+                        XMStoreFloat4(&transComp->rotation, orientationVec);
+                    }
+                }
+
+                //////////////////////////////////////////////////////////////////////
+                // WILL NOT BE CALLED SINCE RIGID BODY COMP IS REMOVED FROM PLAYER!!//
+                //////////////////////////////////////////////////////////////////////
                 if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
                 {
                     RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(m_playerEntityID);
@@ -89,7 +178,6 @@ namespace Doremi
                         t_torqueParameter = XMFLOAT3(0, 0, 0);
                         m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID, t_torqueParameter);
                     }
-
 
                     // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
                     if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))

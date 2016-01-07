@@ -46,6 +46,7 @@ namespace Doremi
             float m_moveSpeed;
             float m_autoRetardation;
             float m_maxSpeed;
+            float m_turnSpeed;
 
 
             // int m_bodyID;
