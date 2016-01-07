@@ -49,6 +49,8 @@ namespace DoremiEngine
 
             double GetSoundTimePointer(const size_t& p_channelID) override;
 
+            double GetSoundLength(const size_t& p_soundID) override;
+
             size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
             void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) override;

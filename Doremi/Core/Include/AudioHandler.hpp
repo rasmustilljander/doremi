@@ -29,8 +29,7 @@ namespace Doremi
             ~AudioHandler();
             static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             void Initialize();
-            void SetContinuousFrequencyAnalyserSoundID(const size_t& p_soundID);
-            void SetRepeatableFrequencyAnalyserSoundID(const size_t& p_soundID);
+            void SetGunButtonDownTime(double p_time);
             void StartContinuousRecording();
             void StartRepeatableRecording();
             void SetupContinuousRecording();
@@ -61,6 +60,18 @@ namespace Doremi
             bool m_analyseActive;
             bool m_repeatableAnalysisActive;
             bool m_continuousRecording;
+            double m_timeGunReloadButtonWasPressed;
+
+
+            enum SoundState
+            {
+                ANALYSECONTINUOUS,
+                HOLDCONTINUOUSANALYSIS,
+                ANALYSEREPEATABLE,
+                HOLDREPEATABLEANALYSIS,
+
+            };
+            SoundState m_SoundState;
         };
     }
 }

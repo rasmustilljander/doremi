@@ -85,6 +85,14 @@ namespace DoremiEngine
             return returnVal;
         }
 
+        double AudioModuleImplementation::GetSoundLength(const size_t& p_soundID)
+        {
+            unsigned int t_length;
+            m_fmodSoundBuffer[p_soundID]->getLength(&t_length, FMOD_TIMEUNIT_MS);
+            double returnVal = (double)t_length / 1000.0f;
+            return returnVal;
+        }
+
         bool AudioModuleImplementation::IsRecording()
         {
             bool t_isRecording;
@@ -105,7 +113,7 @@ namespace DoremiEngine
             void* buffer;
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->getFormat(&derp, &format, &chans, &bits);
             ERRCHECK(m_fmodResult);
-            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0,  48000 * p_length * chans, &testStart, &testest, &testLength, 0);
+            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 48000 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
 
             FMOD::Sound* t_fmodSound;
             FMOD_CREATESOUNDEXINFO exinfo;
@@ -114,17 +122,17 @@ namespace DoremiEngine
             exinfo.numchannels = 1;
             exinfo.format = FMOD_SOUND_FORMAT_PCM16;
             exinfo.defaultfrequency = 48000;
-            exinfo.length = exinfo.defaultfrequency *  exinfo.numchannels * p_length;
-            exinfo.length = 48000 * chans *  p_length * 2;
+            exinfo.length = exinfo.defaultfrequency * exinfo.numchannels * p_length;
+            exinfo.length = 48000 * chans * p_length * sizeof(short);
 
             unsigned int testLength2;
             void* testStart2;
             m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_OFF | FMOD_OPENUSER, &exinfo, &t_fmodSound);
-            
+
             m_fmodResult = t_fmodSound->lock(0, 48000 * p_length, &testStart2, 0, &testLength2, 0);
             signed short* testArray = (signed short*)testStart;
             signed short* testArray2 = (signed short*)testStart2;
-            for (int i = 0; i < 48000; i++)
+            for(int i = 0; i < 48000 * p_length * chans; i++)
             {
                 testArray2[i] = testArray[i];
             }

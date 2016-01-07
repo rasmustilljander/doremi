@@ -41,6 +41,10 @@ namespace DoremiEngine
             */
             virtual double GetSoundTimePointer(const size_t& p_channelID) = 0;
             /**
+            Gets the length of a sound
+            */
+            virtual double GetSoundLength(const size_t& p_soundID) = 0;
+            /**
             Plays a sound that is already in the system
             */
             virtual void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) = 0;

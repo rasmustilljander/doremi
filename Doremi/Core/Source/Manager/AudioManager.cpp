@@ -80,16 +80,23 @@ namespace Doremi
             m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
             std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
 
-            //Check Input
-            if (InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording))
+            // Check Input
+            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording) && !m_gunReloadButtonDown)
             {
                 AudioHandler::GetInstance()->StartRepeatableRecording();
+                m_gunReloadButtonDown = true;
+                m_timeThatGunButtonIsDown = 0;
             }
-            else
+            else if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
             {
-                //Do Nothing
+                m_timeThatGunButtonIsDown += p_dt;
             }
-            if (InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
+            else if(!InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
+            {
+                m_gunReloadButtonDown = false;
+                AudioHandler::GetInstance()->SetGunButtonDownTime(m_timeThatGunButtonIsDown);
+            }
+            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
             {
                 AudioHandler::GetInstance()->PlayRepeatableRecordedSound();
             }

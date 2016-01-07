@@ -20,6 +20,8 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
             float m_dominantFrequency;
+            bool m_gunReloadButtonDown;
+            double m_timeThatGunButtonIsDown;
 
             private:
         };
