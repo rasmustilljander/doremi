@@ -12,6 +12,8 @@
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialField.hpp>
 
 // Standard
 #include <iostream>
@@ -72,8 +74,10 @@ namespace Doremi
                     {
                         if(i != t_fieldActors[j])
                         {
-                            float power = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->Power;
-                            float area = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->Area;
+                            float power =
+                                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->ChargedActor->GetCharge();
+                            float area =
+                                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(t_fieldActors[j])->ChargedActor->GetRange();
                             XMVECTOR fieldPos =
                                 XMLoadFloat3(&EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(t_fieldActors[j])->position);
                             XMVECTOR addedForce = XMLoadFloat3(&forceDirection);

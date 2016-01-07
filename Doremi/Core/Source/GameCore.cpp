@@ -42,7 +42,8 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EventHandler/Events/PlayerCreationEvent.hpp>
-
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <string>
 
 // TODOCM remove for better timer?
@@ -95,8 +96,7 @@ namespace Doremi
             blueprint[ComponentType::Range] = rangeComp;
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->Power = -3;
-            potentialComp->Area = 5;
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -3, 5);
             blueprint[ComponentType::PotentialField] = potentialComp;
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
@@ -248,8 +248,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
             // Potential field comp
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->Power = 6;
-            potentialComp->Area = 200;
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 6, 200);
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);

@@ -1,5 +1,12 @@
 #pragma once
 #include <DirectXMath.h>
+namespace DoremiEngine
+{
+    namespace AI
+    {
+        class PotentialFieldActor;
+    }
+}
 namespace Doremi
 {
     namespace Core
@@ -12,11 +19,10 @@ namespace Doremi
             /**
             decides both (-)repulsive and (+)atracting force
             */
-            float Power;
-            float Area;
+            DoremiEngine::AI::PotentialFieldActor* ChargedActor;
 
-            PotentialFieldComponent(const float& p_power, const float& p_area) : Power(p_power), Area(p_area) {}
-            PotentialFieldComponent() : Power(0), Area(0) {}
+            PotentialFieldComponent(DoremiEngine::AI::PotentialFieldActor* p_actor) : ChargedActor(p_actor) {}
+            PotentialFieldComponent() : ChargedActor(nullptr) {}
         };
     }
 }
