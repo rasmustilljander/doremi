@@ -33,6 +33,8 @@ namespace Doremi
             DebugLeft = 1024, // 1073741904
             DebugRight = 2048, // 1073741903
             DebugButton = 4096,
+            StartRepeatableAudioRecording = 8192,
+            PlayRepeatableAudioRecording = 16384,
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
         };
         enum class UserCommandMeny

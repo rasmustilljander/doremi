@@ -29,13 +29,37 @@ namespace DoremiEngine
             */
             virtual size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) = 0;
             /**
+            TestFunction TODOLH Remove
+            */
+            virtual size_t TestCopy(int p_soundIDToCopy, float p_length) = 0;
+            /**
+            Returns true if currently recording
+            */
+            virtual bool IsRecording() = 0;
+            /**
+            Returns the elapsed time of a sound in milliseconds
+            */
+            virtual double GetSoundTimePointer(const size_t& p_channelID) = 0;
+            /**
             Plays a sound that is already in the system
             */
             virtual void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) = 0;
             /**
+            Plays a sound on a specific channel
+            */
+            virtual void PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID) = 0;
+            /**
             Checks if the channel is playing
             */
             virtual bool GetChannelPlaying(const size_t& p_channelID) = 0;
+            /**
+            Stops recording from default recording driver
+            */
+            virtual void StopRecording() = 0;
+            /**
+            Sets the priority of the channel. 0 is highest 256 is lowest and 128 is default
+            */
+            virtual void SetPriority(const size_t& p_chanelID, const int& p_priority) = 0;
             /**
             TODO DOCS
             */

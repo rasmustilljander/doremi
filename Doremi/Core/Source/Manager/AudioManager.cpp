@@ -12,6 +12,7 @@
 #include <EventHandler/Events/ExampleEvent.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <Doremi/Core/Include/InputHandler.hpp>
 
 #include <DirectXMath.h>
 // Third party
@@ -75,8 +76,28 @@ namespace Doremi
                 }
                 
             }
-            m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
-            // std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
+            //m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
+            m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
+            std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
+
+            //Check Input
+            if (InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording))
+            {
+                AudioHandler::GetInstance()->StartRepeatableRecording();
+            }
+            else
+            {
+                //Do Nothing
+            }
+            if (InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
+            {
+                AudioHandler::GetInstance()->PlayRepeatableRecordedSound();
+            }
+            else
+            {
+                //Do Nothing
+            }
+
             t_audioModule.Update();
         }
         void AudioManager::OnEvent(Event* p_event)

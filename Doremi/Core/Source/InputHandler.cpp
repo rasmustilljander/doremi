@@ -23,6 +23,8 @@ namespace Doremi
             userCmdsPlaying[1073741904] = UserCommandPlaying::DebugLeft;
             userCmdsPlaying[1073741903] = UserCommandPlaying::DebugRight;
             userCmdsPlaying[120] = UserCommandPlaying::DebugButton;
+            userCmdsPlaying[228] = UserCommandPlaying::StartRepeatableAudioRecording;
+            userCmdsPlaying[246] = UserCommandPlaying::PlayRepeatableAudioRecording;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;
@@ -199,7 +201,7 @@ namespace Doremi
             BuildMaskFromEngineForGame();
             // BuildMaskFromEngineForMeny();
 
-            // PrintInputStructsDEBUG();
+            //PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
         }
         void InputHandler::ChangeThisKeyToThat(int p_bitMask)

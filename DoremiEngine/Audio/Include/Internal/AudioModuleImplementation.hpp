@@ -43,6 +43,12 @@ namespace DoremiEngine
             */
             unsigned int GetRecordPointer() override;
 
+            size_t TestCopy(int p_soundIDToCopy, float p_length) override;
+
+            bool IsRecording() override;
+
+            double GetSoundTimePointer(const size_t& p_channelID) override;
+
             size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
             void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) override;
@@ -64,6 +70,12 @@ namespace DoremiEngine
             int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) override;
 
             bool GetInitializationStatus() override;
+
+            void StopRecording() override;
+
+            void SetPriority(const size_t& p_chanelID, const int& p_priority) override;
+
+            void PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID) override;
 
             private:
             void ERRCHECK(const FMOD_RESULT& p_Result);

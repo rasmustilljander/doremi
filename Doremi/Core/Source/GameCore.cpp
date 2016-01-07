@@ -173,11 +173,8 @@ namespace Doremi
             sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
             sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
             t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
-            size_t t_soundIDForRecord = sharedContext.GetAudioModule().SetupRecording(true);
-            sharedContext.GetAudioModule().StartRecording(t_soundIDForRecord, true);
-            AudioHandler::GetInstance()->SetFrequencyAnalyserSoundID(t_soundIDForRecord);
-            AudioHandler::GetInstance()->SetLoopForFrequencyAnalyser(true);
-            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), 0);
+            AudioHandler::GetInstance()->SetupContinuousRecording();
+            AudioHandler::GetInstance()->StartContinuousRecording();
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
@@ -335,6 +332,8 @@ namespace Doremi
             m_managers.push_back(t_aiManager);
             GenerateWorld(sharedContext);
 
+            AudioHandler::GetInstance()->SetupRepeatableRecording();
+
             ////////////////End Example////////////////
         }
 
@@ -383,7 +382,6 @@ namespace Doremi
         {
             EventHandler::GetInstance()->DeliverEvents();
             PlayerHandler::GetInstance()->UpdatePosition();
-            AudioHandler::GetInstance()->Update();
             // Have all managers update
             size_t length = m_managers.size();
             for(size_t i = 0; i < length; i++)
@@ -391,6 +389,7 @@ namespace Doremi
                 m_managers.at(i)->Update(p_deltaTime);
             }
 
+            AudioHandler::GetInstance()->Update(p_deltaTime);
             InputHandler::GetInstance()->Update();
         }
 
