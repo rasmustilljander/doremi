@@ -178,72 +178,41 @@ namespace Doremi
                         t_torqueParameter = XMFLOAT3(0, 0, 0);
                         m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID, t_torqueParameter);
                     }
+                }
 
-                    // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
-                    if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
-                    {
+                // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
+                if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
+                {
+                    /// Calculate where we want the shot to appear
+                    // Get position and orientation of player
+                    XMFLOAT4 orientation = GetComponent<TransformComponent>(m_playerEntityID)->rotation;
+                    XMFLOAT3 playerPos = GetComponent<TransformComponent>(m_playerEntityID)->position;
+                    XMFLOAT3 bulletPos = playerPos;
 
-                        /// Calculate where we want the shot to appear
-                        // Get position and orientation of player
-                        XMFLOAT4 orientation = GetComponent<TransformComponent>(m_playerEntityID)->rotation;
-                        XMFLOAT3 playerPos = GetComponent<TransformComponent>(m_playerEntityID)->position;
-                        XMFLOAT3 bulletPos = playerPos;
+                    // Get direction of player
+                    XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&orientation));
+                    XMVECTOR dirVec = XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), rotMat);
 
-                        // Get direction of player
-                        XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&orientation));
-                        XMVECTOR dirVec = XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), rotMat);
+                    // Add some distance
+                    float offsetDist = 2.5;
+                    XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPos);
+                    bulletPosVec += dirVec * offsetDist;
+                    XMStoreFloat3(&bulletPos, bulletPosVec);
 
-                        // Add some distance
-                        float offsetDist = 2.5;
-                        XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPos);
-                        bulletPosVec += dirVec * offsetDist;
-                        XMStoreFloat3(&bulletPos, bulletPosVec);
-
-                        // create the bullet
-                        int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::EnemyEntity);
-                        // Get the material id
-                        int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
-                        // Create rigid body for the bullet
-                        RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
-                        rigidComp->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletID, bulletPos, orientation,
-                                                                                                                         XMFLOAT3(0.5, 0.5, 0.5), physMatID);
-
-                        // Set start velocity
-                        float fireVelocity = 50;
-                        XMVECTOR bulletVelVec = dirVec * fireVelocity;
-                        XMFLOAT3 bulletVel;
-                        XMStoreFloat3(&bulletVel, bulletVelVec);
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
-                    }
-
-                    // TODOKO Remove from this place?
-                    TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerEntityID);
-                    XMFLOAT4 orientation = playerTransform->rotation;
-                    XMVECTOR quater = XMLoadFloat4(&orientation);
-                    XMFLOAT3 direction = XMFLOAT3(0, 0, 1);
-                    XMFLOAT3 up = XMFLOAT3(0, 1, 0);
-                    XMVECTOR vup = XMLoadFloat3(&up);
-                    XMVECTOR dir = XMLoadFloat3(&direction);
-                    XMMATRIX t = XMMatrixRotationQuaternion(quater);
-                    dir = XMVector3Transform(dir, t);
-                    // vup = XMVector3Transform(vup, t);
-                    XMVECTOR pos = XMLoadFloat3(&playerTransform->position);
-
-
-                    // mat = XMMatrixInverse(&XMMatrixDeterminant(mat), mat);
-                    XMFLOAT4X4 viewMat;
-
-                    XMFLOAT4 plane = XMFLOAT4(0, 1, 0, 0);
-                    XMFLOAT4 light = XMFLOAT4(0, 1, 0, 0);
-                    XMVECTOR vecPlane = XMLoadFloat4(&plane);
-                    XMVECTOR veclight = XMLoadFloat4(&light);
-                    XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight);
-                    XMVECTOR camDir = XMVector3Transform(dir, projMat);
-                    camDir = XMVector3Normalize(camDir);
-                    XMStoreFloat3(&playerMovement->direction, camDir);
-                    if(!moving)
-                    {
-                    }
+                    // create the bullet
+                    int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::EnemyEntity);
+                    // Get the material id
+                    int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
+                    // Create rigid body for the bullet
+                    RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
+                    rigidComp->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletID, bulletPos, orientation,
+                                                                                                                     XMFLOAT3(0.5, 0.5, 0.5), physMatID);
+                    // Set start velocity
+                    float fireVelocity = 50;
+                    XMVECTOR bulletVelVec = dirVec * fireVelocity;
+                    XMFLOAT3 bulletVel;
+                    XMStoreFloat3(&bulletVel, bulletVelVec);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
                 }
             }
         }
