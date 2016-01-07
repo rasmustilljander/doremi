@@ -17,6 +17,7 @@
 #include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
 #include <Manager/AIManager.hpp>
+#include <Manager/CharacterControlSyncManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -234,8 +235,8 @@ namespace Doremi
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+            // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
             t_playerComp->isControllable = true;
@@ -258,9 +259,11 @@ namespace Doremi
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(playerID)->p_materialID;
             XMFLOAT3 position = XMFLOAT3(0, 10, -5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
-            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
-                                                                                                          XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            // RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(playerID);
+            // bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
+            //                                                                                              XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, position, XMFLOAT2(1, 1));
+            EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
             PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
             playerCreationEvent->eventType = Events::PlayerCreation;
             playerCreationEvent->playerEntityID = playerID;
@@ -321,6 +324,7 @@ namespace Doremi
             Manager* t_cameraManager = new CameraManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
             Manager* t_aiManager = new AIManager(sharedContext);
+            Manager* t_charSyncManager = new CharacterControlSyncManager(sharedContext);
             // Add manager to list of managers
             m_graphicalManagers.push_back(t_renderManager);
             m_managers.push_back(t_physicsManager);
@@ -331,6 +335,7 @@ namespace Doremi
             m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_movementManager);
             m_managers.push_back(t_aiManager);
+            m_managers.push_back(t_charSyncManager);
             GenerateWorld(sharedContext);
 
             AudioHandler::GetInstance()->SetupRepeatableRecording();

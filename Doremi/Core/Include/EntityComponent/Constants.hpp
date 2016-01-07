@@ -27,6 +27,7 @@ enum class ComponentType : int
     Health = 0x1000,
     Range = 0x2000,
     PotentialField = 0x4000,
+    CharacterController = 0x8000,
 };
 
 /**
