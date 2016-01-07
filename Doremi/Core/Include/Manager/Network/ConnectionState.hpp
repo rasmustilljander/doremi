@@ -12,6 +12,7 @@ namespace Doremi
             DISCONNECTED,
             CONNECTING,
             VERSION_CHECK,
+            MAP_LOADING,
             CONNECTED
         };
     }

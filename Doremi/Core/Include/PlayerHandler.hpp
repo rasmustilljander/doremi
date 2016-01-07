@@ -3,7 +3,9 @@
 // Standard Libraries
 #include <unordered_map>
 #include <vector>
+#include <map>
 #include <DirectXMath.h>
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
 
 namespace DoremiEngine
@@ -18,37 +20,132 @@ namespace Doremi
 {
     namespace Core
     {
-
         class InputHandler;
+
+        /**
+            TODOCM doc
+        */
+        struct Player
+        {
+            Player(InputHandler* p_inputHandler) : m_moveSpeed(0.2), m_autoRetardation(50), m_inputHandler(p_inputHandler), m_turnSpeed(0.01)
+            {
+                
+            }
+
+            /**
+                TODOEA doc
+            */
+            int m_playerEntityID;
+
+            /**
+                TODOEA doc
+            */
+            float m_moveSpeed;
+
+            /**
+                TODOEA doc
+            */
+            float m_autoRetardation;
+
+            /**
+                TODOEA doc
+            */
+            float m_maxSpeed;
+
+            /**
+                TODOEA doc
+            */
+            float m_turnSpeed;
+
+            /**
+                TODOEA doc
+            */
+            InputHandler* m_inputHandler;
+        };
+
+        /**
+            TODOEA doc
+        */
         class PlayerHandler
         {
             public:
-            /** Is a singleton. Use this method to get the EventManager*/
+            /** 
+                Is a singleton. Use this method to get the EventManager
+            */
             static PlayerHandler* GetInstance();
-            PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            ~PlayerHandler();
-            static void StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            void Initialize(int m_playerEntityID);
-            void UpdatePosition();
-            const int& GetPlayerEntityID() const { return m_playerEntityID; }
 
+            /**
+                TODOEA doc
+            */
+            PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            /**
+                TODOEA doc
+            */
+            ~PlayerHandler();
+
+            /**
+                TODOEA doc
+            */
+            static void StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            /**
+                TODOEA doc
+            */
+            InputHandler* GetDefaultInputHandler();
+
+            /**
+                TODOCM doc
+            */
+            EntityID GetDefaultPlayerEntityID();
+
+            /**
+                TODOCM doc
+            */
+            bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID &p_entityID);
+
+            /**
+                TODOCM doc
+            */
+            InputHandler* GetInputHandlerForPlayer(uint32_t p_playerID);
+
+            /**
+                TODOCM doc
+            */
+            void UpdatePlayerInputs();
+
+            /**
+                TODOEA doc
+            */
+            void UpdatePlayerPositions();
+
+            /**
+                TODOCM doc
+            */
+            void UpdatePlayerRotationsClient();
+
+            /**
+                TODOCM doc
+            */
+            void UpdatePlayerRotationsServer();
 
             private:
+
+            /**
+                TODOEA doc
+            */
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
-            InputHandler* m_inputHandler;
+            /**
+                TODOEA doc
+            */
 
-            static PlayerHandler* m_singleton;
+            /**
+                Map from playerID to player struct, playerID != EntityID
+            */
+            std::map<uint32_t, Player*> m_playerMap;
 
-
-            int m_playerEntityID;
-
-            float m_moveSpeed;
-            float m_autoRetardation;
-            float m_maxSpeed;
-            float m_turnSpeed;
-
-
+            // TODOEA add these attributes?
             // int m_bodyID;
             // int m_materialID;
         };

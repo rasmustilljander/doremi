@@ -6,10 +6,12 @@
 #include <Manager/Network/BitStreamer.h>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
-#include <InputHandler.hpp>
+#include <PlayerHandler.hpp>
+#include <InputHandlerServer.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
+#include <algorithm>
 
 namespace Doremi
 {
@@ -108,9 +110,9 @@ namespace Doremi
             delete IncommingAdress;
         }
 
-        void ServerNetworkManager::InterpetInputMessage(NetMessage  &p_message, const EntityID &p_entityID)
+        void ServerNetworkManager::InterpetInputMessage(NetMessage  &p_message, const uint32_t &p_playerID)
         {
-            InputHandler* inputHandler = InputHandler::GetInstance();
+            InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_playerID);
 
             // Create a stream
             BitStreamer Streamer = BitStreamer();
@@ -119,23 +121,19 @@ namespace Doremi
             unsigned char* BufferPointer = p_message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
-            uint32_t InputMask = 0;
+            uint32_t InputMask = Streamer.ReadUnsignedInt32();;
 
-            // Write input to stream
-            InputMask |= Streamer.ReadBool();
+            // Read Input from Stream
+            inputHandler->SetInputBitMask(InputMask);
 
-            InputMask |= Streamer.ReadBool();
+            // Set orientation
+            EntityID entityID = 0;
 
-            InputMask |= Streamer.ReadBool();
-
-            InputMask |= Streamer.ReadBool();
-
-            InputMask |= Streamer.ReadBool();
-
-            InputMask |= Streamer.ReadBool();
-
-            
-
+            // If we have a player with the ID
+            if (PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, entityID))
+            {
+                inputHandler->SetOrientationFromInput(Streamer.ReadRotationQuaternion());
+            }
         }
 
         void ServerNetworkManager::RecieveReliableMessages()
@@ -155,9 +153,22 @@ namespace Doremi
                     {
                         // std::cout << "Recieved reliable messsage." << std::endl;
                         // TODOCM logg instead
+                        switch (Message.MessageID)
+                        {
+                        case MessageID::SNAPSHOT:
+
+
+                            break;
+                        case MessageID::INIT_SNAPSHOT:
+
+
+                            break;
+                        default:
+                            break;
+                        }
                         
                         // Interpet n' input message
-                        //InterpetInputMessage(Message);
+                        InterpetInputMessage(Message, iter->second->PlayerID);
 
                         // TODOCM interpet data
                         iter->second->LastResponse = 0;
@@ -224,7 +235,7 @@ namespace Doremi
             }
         }
 
-        void ServerNetworkManager::RecieveVersionCheck(const NetMessage& m_message, const DoremiEngine::Network::Adress& m_adress)
+        void ServerNetworkManager::RecieveVersionCheck(NetMessage& m_message, const DoremiEngine::Network::Adress& m_adress)
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
             Connection* connection = nullptr;
@@ -240,8 +251,33 @@ namespace Doremi
                     connection->ConnectionState = ConnectionState::VERSION_CHECK;
                     connection->LastResponse = 0;
 
+                    BitStreamer Streamer = BitStreamer();
+                    unsigned char* DataPOinter = m_message.Data;
+                    Streamer.SetTargetBuffer(DataPOinter, sizeof(m_message.Data));
+                    uint32_t PlayerID = Streamer.ReadUnsignedInt32();
+
+
+                    // Check if player is saved
+                    //TODOCM change the way its saved
+                    std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
+
+                    // If we found one we remoe it from list and use it
+                    if (iter != m_SavedPlayerIDs.end())
+                    {
+                        m_SavedPlayerIDs.erase(iter);
+                    }
+                    else
+                    {
+
+                        // Create a playerID
+                        // TODOCM need to change this to some other method to get a unique ID, like gametime
+                        PlayerID = rand();
+                    }
+                    
+                    connection->PlayerID = PlayerID;
+
                     // Send Connected Message
-                    SendConnect(m_adress);
+                    SendConnect(connection, m_adress);
                 }
             }
             else
@@ -415,7 +451,7 @@ namespace Doremi
             m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_unreliableSocketHandle, &m_adress);
         }
 
-        void ServerNetworkManager::SendConnect(const DoremiEngine::Network::Adress& m_adress)
+        void ServerNetworkManager::SendConnect(const Connection *connection, const DoremiEngine::Network::Adress& m_adress)
         {
             std::cout << "Sending connect." << std::endl;
             ; // TODOCM logg instead
@@ -425,6 +461,8 @@ namespace Doremi
             NewMessage.MessageID = MessageID::CONNECT;
 
             // TODOCM add info - like port etc...
+            BitStreamer Streamer = BitStreamer();
+            Streamer.WriteUnsignedInt32(connection->PlayerID);
 
             // Send connect message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_unreliableSocketHandle, &m_adress);

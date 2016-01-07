@@ -12,38 +12,129 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+#include <InputHandlerClient.hpp>
+
+
 #include <iostream>
+
+
 namespace Doremi
 {
     namespace Core
     {
         PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_moveSpeed(0.2), m_autoRetardation(50), m_turnSpeed(0.01)
+            : m_sharedContext(p_sharedContext)
         {
+
         }
-        PlayerHandler::~PlayerHandler() {}
+
+        PlayerHandler::~PlayerHandler() 
+        {
+
+        }
+
         void PlayerHandler::StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
+            if (m_singleton != nullptr)
+            {
+                std::runtime_error("PlayerHandler StartPlayerHandler called multiple times.");
+            }
             m_singleton = new PlayerHandler(p_sharedContext);
         }
-        void PlayerHandler::Initialize(int p_playerEntityID)
-        {
-            m_playerEntityID = p_playerEntityID;
-            // m_inputHandler = InputHandler::GetInstance();
-        }
+
         PlayerHandler* PlayerHandler::m_singleton = nullptr;
-        PlayerHandler* PlayerHandler::GetInstance() { return m_singleton; }
-        void PlayerHandler::UpdatePosition()
-        {
-            int t_checkIfWeHavePlayer = EntityHandler::GetInstance().GetLastEntityIndex();
-            XMFLOAT3 t_entityVelocity = XMFLOAT3(0, 0, 0);
-            m_inputHandler = InputHandler::GetInstance();
-            if(m_playerEntityID >= 0 && m_playerEntityID <= t_checkIfWeHavePlayer && m_inputHandler != nullptr)
+
+        PlayerHandler* PlayerHandler::GetInstance() 
+        { 
+            if (m_singleton == nullptr)
             {
-                if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                std::runtime_error("PlayerHandler not initialized, GetInstance called.");
+            }
+
+            return m_singleton; 
+        }
+
+        InputHandler* PlayerHandler::GetDefaultInputHandler()
+        {
+            InputHandler* OutPointer = nullptr;
+
+            if (m_playerMap.size())
+            {
+                OutPointer = m_playerMap.begin()->second->m_inputHandler;
+            }
+            
+            return OutPointer;
+        }
+
+        InputHandler* PlayerHandler::GetInputHandlerForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            InputHandler* outPointer = nullptr;
+
+            if (iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_inputHandler;
+            }
+
+            return outPointer;
+        }
+
+        EntityID PlayerHandler::GetDefaultPlayerEntityID()
+        {
+            if (m_playerMap.size() == 0)
+            {
+                std::runtime_error("GetDefaultPlayerEntityID called without any players aviable.");
+            }
+
+            return m_playerMap.begin()->second->m_playerEntityID;
+        }
+
+        bool PlayerHandler::GetEntityIDForPlayer(uint32_t p_playerID, EntityID &outID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+
+            if (iter != m_playerMap.end())
+            {
+                outID = iter->second->m_playerEntityID;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        void PlayerHandler::UpdatePlayerInputs()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+
+            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
+            }
+        }
+
+        // TODOEA fix this code up with comments
+        // TODO fix code with comments
+        void PlayerHandler::UpdatePlayerPositions()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                int t_checkIfWeHavePlayer = EntityHandler::GetInstance().GetLastEntityIndex();
+
+                XMFLOAT3 t_entityVelocity = XMFLOAT3(0, 0, 0);
+
+                InputHandler* inputHandler = iter->second->m_inputHandler;
+
+                EntityID entityID = iter->second->m_playerEntityID;
+
+                if (EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
                 {
                     // Get transform component
-                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerEntityID);
+                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                     // Get direction
                     XMFLOAT4 orientation = transComp->rotation;
                     // Start with standard direction
@@ -64,25 +155,25 @@ namespace Doremi
                     // Start by creating a movement vector
                     XMFLOAT3 movement = XMFLOAT3(0, 0, 0);
                     XMVECTOR movementVec = XMLoadFloat3(&movement);
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
                     {
-                        movementVec += dirVec * m_moveSpeed;
+                        movementVec += dirVec * iter->second->m_moveSpeed;
                     }
 
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
                     {
-                        movementVec -= dirVec * m_moveSpeed;
+                        movementVec -= dirVec * iter->second->m_moveSpeed;
                     }
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
                     {
-                        movementVec -= rightVec * m_moveSpeed;
+                        movementVec -= rightVec * iter->second->m_moveSpeed;
                     }
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
                     {
-                        movementVec += rightVec * m_moveSpeed;
+                        movementVec += rightVec * iter->second->m_moveSpeed;
                     }
 
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump))
+                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump))
                     {
                         movementVec += XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1;
                     }
@@ -93,28 +184,53 @@ namespace Doremi
                     // Store finished movement vec
                     XMStoreFloat3(&movement, movementVec);
                     // Directly tell controller to move. TODOJB should be handled with components
-                    if(movement.x != 0 || movement.y != 0 || movement.z != 0)
+                    if (movement.x != 0 || movement.y != 0 || movement.z != 0)
                     {
-                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(m_playerEntityID, movement,
-                                                                                                       0.017); // TODOJB no hardcoded dt...
+                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(entityID, movement,
+                            0.017); // TODOJB no hardcoded dt...
                     }
+
+
+                    
+                }
+            }
+        }
+
+        void PlayerHandler::UpdatePlayerRotationsClient()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                InputHandlerClient* inputHandler = (InputHandlerClient*)iter->second->m_inputHandler;
+
+                EntityID entityID = iter->second->m_playerEntityID;
+
+                if (EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                {
                     /// Handle mouse input
                     // Get mouse input
-                    int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
-                    if(t_mouseMovementX)
+                    int t_mouseMovementX = inputHandler->GetMouseMovementX();
+                    if (t_mouseMovementX)
                     {
+                        TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
+                        // Get direction
+                        XMFLOAT4 orientation = transComp->rotation;
+
+                        // Create rotation matrix with orientation quaternion
+                        XMVECTOR orientationVec = XMLoadFloat4(&orientation);
+
                         // Get current angle
                         float angle;
                         XMVECTOR oldDir; // This really is only needed for the parameter below...
                         XMQuaternionToAxisAngle(&oldDir, &angle, orientationVec);
                         // Change the angle
-                        angle += t_mouseMovementX * m_turnSpeed;
+                        angle += t_mouseMovementX * iter->second->m_turnSpeed;
                         // Single quaternions don't really like angles over 2*pi, we do this
-                        if(angle > 2 * 3.1415)
+                        if (angle > 2 * 3.1415)
                         {
                             angle -= 2 * 3.1415;
                         }
-                        else if(angle < 0)
+                        else if (angle < 0)
                         {
                             angle += 2 * 3.1415;
                         }
@@ -125,68 +241,13 @@ namespace Doremi
                     }
                 }
 
-                //////////////////////////////////////////////////////////////////////
-                // WILL NOT BE CALLED SINCE RIGID BODY COMP IS REMOVED FROM PLAYER!!//
-                //////////////////////////////////////////////////////////////////////
-                if(EntityHandler::GetInstance().HasComponents(m_playerEntityID, (int)ComponentType::RigidBody))
-                {
-                    RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(m_playerEntityID);
-                    t_entityVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(t_rigidComp->p_bodyID);
-                    t_entityVelocity.x = t_entityVelocity.x * m_autoRetardation;
-                    t_entityVelocity.z = t_entityVelocity.z * m_autoRetardation;
-
-                    MovementComponent* playerMovement = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(m_playerEntityID);
-                    playerMovement->forwardAcceleration = 0;
-                    playerMovement->rightAcceleration = 0;
-                    bool moving = false;
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
-                    {
-                        playerMovement->forwardAcceleration += m_moveSpeed;
-                        moving = true;
-                    }
-
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
-                    {
-                        playerMovement->forwardAcceleration += -m_moveSpeed;
-                        moving = true;
-                    }
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
-                    {
-                        playerMovement->rightAcceleration += -m_moveSpeed;
-                        moving = true;
-                    }
-                    if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
-                    {
-                        playerMovement->rightAcceleration += m_moveSpeed;
-                        moving = true;
-                    }
-
-                    if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
-                    {
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, 2000, 0));
-                        moving = true;
-                    }
-                    int t_mouseMovementX = m_inputHandler->GetMouseMovementX();
-                    XMFLOAT3 t_torqueParameter;
-                    if(t_mouseMovementX)
-                    {
-                        t_torqueParameter = XMFLOAT3(0, m_inputHandler->GetMouseMovementX() * 400, 0);
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddTorqueToBody(t_rigidComp->p_bodyID, t_torqueParameter);
-                    }
-                    else
-                    {
-                        t_torqueParameter = XMFLOAT3(0, 0, 0);
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(t_rigidComp->p_bodyID, t_torqueParameter);
-                    }
-                }
-
                 // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
-                if(m_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
                 {
                     /// Calculate where we want the shot to appear
                     // Get position and orientation of player
-                    XMFLOAT4 orientation = GetComponent<TransformComponent>(m_playerEntityID)->rotation;
-                    XMFLOAT3 playerPos = GetComponent<TransformComponent>(m_playerEntityID)->position;
+                    XMFLOAT4 orientation = GetComponent<TransformComponent>(entityID)->rotation;
+                    XMFLOAT3 playerPos = GetComponent<TransformComponent>(entityID)->position;
                     XMFLOAT3 bulletPos = playerPos;
 
                     // Get direction of player
@@ -215,6 +276,11 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
                 }
             }
+        }
+
+        void PlayerHandler::UpdatePlayerRotationsServer()
+        {
+
         }
     }
 }

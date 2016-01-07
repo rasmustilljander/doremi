@@ -6,6 +6,7 @@
 
 // Standard libraries
 #include <map>
+#include <list>
 
 namespace DoremiEngine
 {
@@ -72,7 +73,7 @@ namespace Doremi
             /**
                 Recieves a version check message
             */
-            void RecieveVersionCheck(const NetMessage& m_message, const DoremiEngine::Network::Adress& m_Adress);
+            void RecieveVersionCheck(NetMessage& m_message, const DoremiEngine::Network::Adress& m_Adress);
 
             /**
                 Recieves a disconnect message
@@ -97,7 +98,7 @@ namespace Doremi
             /**
                 Send connect message
             */
-            void SendConnect(const DoremiEngine::Network::Adress& m_adress);
+            void SendConnect(const Connection *connection, const DoremiEngine::Network::Adress& m_adress);
 
             /**
                 Check for reliable connections to accept
@@ -117,7 +118,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void InterpetInputMessage(NetMessage  &p_message, const EntityID &p_entityID);
+            void InterpetInputMessage(NetMessage  &p_message, const uint32_t &p_playerID);
 
             /**
                 Timer for next send
@@ -163,6 +164,12 @@ namespace Doremi
                 All the client connections mapped to adresses
             */
             std::map<DoremiEngine::Network::Adress*, Connection*> m_connections;
+
+            /**
+                TODOCM doc
+                TODOCM move to external place?
+            */
+            std::list<uint32_t> m_SavedPlayerIDs;
         };
     }
 }

@@ -159,6 +159,11 @@ namespace Doremi
                 Time to disconnect from server
             */
             double m_timeoutInterval;
+
+            /**
+                TODOCM doc
+            */
+            uint32_t m_playerID;
         };
     }
 }

@@ -2,6 +2,8 @@
 #include <InputHandler.hpp>
 #include <CameraClasses/ThirdPersonCamera.hpp>
 #include <CameraClasses/FreeLookCamera.hpp>
+#include <PlayerHandler.hpp>
+#include <InputHandlerClient.hpp>
 // Engine
 #include <DoremiEngine/Graphic/Include/Interface/Camera/Camera.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/CameraManager.hpp>
@@ -34,10 +36,13 @@ namespace Doremi
 
         void CameraManager::Update(double p_dt)
         {
-            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::DebugButton))
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            if (inputHandler != nullptr)
             {
-                switch(m_currentCamera)
+                if (inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugButton))
                 {
+                    switch (m_currentCamera)
+                    {
                     case CameraType::FREELOOK:
                         ChangeCamera(CameraType::THIRDPERSON);
                         break;
@@ -46,22 +51,23 @@ namespace Doremi
                         break;
                     default:
                         break;
+                    }
                 }
-            }
-            switch(m_currentCamera)
-            {
+                switch (m_currentCamera)
+                {
                 case CameraType::FREELOOK:
-                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(false);
+                    inputHandler->SetCursorInvisibleAndMiddle(false);
                     m_freeLookCamera->Update(p_dt);
                     m_graphicModuleCameraManager.PushCameraToDevice(m_freeLookCamera->GetCamera());
                     break;
                 case CameraType::THIRDPERSON:
-                    InputHandler::GetInstance()->SetCursorInvisibleAndMiddle(true);
+                    inputHandler->SetCursorInvisibleAndMiddle(true);
                     m_thirdPersonCamera->Update(p_dt);
                     m_graphicModuleCameraManager.PushCameraToDevice(m_thirdPersonCamera->GetCamera());
                     break;
                 default:
                     break;
+                }
             }
         }
         void CameraManager::ChangeCamera(CameraType p_type)

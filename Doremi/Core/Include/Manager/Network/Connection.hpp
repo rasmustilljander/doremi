@@ -14,6 +14,7 @@ namespace Doremi
             size_t ReliableSocketHandle;
             double LastResponse;
             bool NewConnection;
+            uint32_t PlayerID;
         };
     }
 }

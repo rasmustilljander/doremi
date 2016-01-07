@@ -21,7 +21,8 @@ namespace Doremi
         void ThirdPersonCamera::Update(double p_dt)
         {
             using namespace DirectX;
-            int playerID = PlayerHandler::GetInstance()->GetPlayerEntityID();
+
+            int playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
 
             TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
             XMFLOAT4 orientation = playerTransform->rotation;

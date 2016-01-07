@@ -258,7 +258,7 @@ namespace Doremi
 
             // Create entity
             int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-            PlayerHandler::GetInstance()->Initialize(playerID);
+
             // Create the rigid body
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(playerID)->p_materialID;
             XMFLOAT3 position = XMFLOAT3(0, 10, -5);
@@ -386,7 +386,6 @@ namespace Doremi
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
-            InputHandler::StartInputHandler(sharedContext);
             PlayerHandler::StartPlayerHandler(sharedContext);
             AudioHandler::StartAudioHandler(sharedContext);
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
@@ -448,12 +447,12 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& sharedContext =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS);
-            InputHandler::StartInputHandler(sharedContext);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            PlayerHandler::StartPlayerHandler(sharedContext);
 
             ////////////////Example only////////////////
             // Create manager
@@ -476,7 +475,8 @@ namespace Doremi
         void GameCore::UpdateServerGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
-            PlayerHandler::GetInstance()->UpdatePosition();
+            PlayerHandler::GetInstance()->UpdatePlayerPositions();
+            PlayerHandler::GetInstance()->UpdatePlayerRotationsServer();
 
             // Have all managers update
             size_t length = m_managers.size();
@@ -489,9 +489,11 @@ namespace Doremi
         void GameCore::UpdateClientGame(double p_deltaTime)
         {
             EventHandler::GetInstance()->DeliverEvents();
-            PlayerHandler::GetInstance()->UpdatePosition();
 
-            AudioHandler::GetInstance()->Update();
+            PlayerHandler::GetInstance()->UpdatePlayerInputs();
+            PlayerHandler::GetInstance()->UpdatePlayerPositions();
+            PlayerHandler::GetInstance()->UpdatePlayerRotationsClient();
+
 
             // Have all managers update
             size_t length = m_managers.size();
@@ -499,9 +501,7 @@ namespace Doremi
             {
                 m_managers.at(i)->Update(p_deltaTime);
             }
-
             AudioHandler::GetInstance()->Update(p_deltaTime);
-            InputHandler::GetInstance()->Update();
         }
 
         void GameCore::DrawGame(double p_deltaTime)

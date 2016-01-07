@@ -7,6 +7,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <InterpolationHandler.hpp>
 #include <iostream> // TODOCM remove after test
+#include <PlayerHandler.hpp>
 #include <InputHandler.hpp>
 
 
@@ -20,7 +21,8 @@ namespace Doremi
               m_serverConnectionState(ConnectionState::CONNECTING),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
-              m_timeoutInterval(3.0f)
+              m_timeoutInterval(3.0f),
+              m_playerID(0)
         {
             m_serverAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
@@ -90,6 +92,12 @@ namespace Doremi
                             if(m_serverConnectionState == ConnectionState::VERSION_CHECK)
                             {
                                 m_serverConnectionState = ConnectionState::CONNECTED;
+
+                                // Get the player ID
+                                BitStreamer Streamer = BitStreamer();
+                                unsigned char* DataPointer = Message.Data;
+                                Streamer.SetTargetBuffer(DataPointer, sizeof(Message.Data));
+                                m_playerID = Streamer.ReadUnsignedInt32();
 
                                 // Increase the rate of which we send messages
                                 m_updateInterval = 0.017f;
@@ -262,6 +270,11 @@ namespace Doremi
             Message.MessageID = MessageID::VERSION_CHECK;
 
             // TODOCM Write bits for stuff
+            BitStreamer Streamer = BitStreamer();
+            unsigned char* BufferPointer = Message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
+
+            Streamer.WriteUnsignedInt32(m_playerID);
 
             std::cout << "Sending version message." << std::endl; // TODOCM logg instead
 
@@ -271,7 +284,7 @@ namespace Doremi
 
         void ClientNetworkManager::CreateInputMessage(NetMessage &p_message)
         {
-            InputHandler* inputHandler = InputHandler::GetInstance();
+            InputHandler* inputHandler = PlayerHandler::GetInstance()->GetDefaultInputHandler();
 
             // Create a stream
             BitStreamer Streamer = BitStreamer();
@@ -280,21 +293,17 @@ namespace Doremi
             unsigned char* BufferPointer = p_message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
-            // Write input to stream
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward));
+            // Write input(position directions) to stream
+            Streamer.WriteInt32(inputHandler->GetInputBitMask());
 
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward));
-            
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left));
+            // Get orientation
+            EntityID id = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
 
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right));
-
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire));
-
-            Streamer.WriteBool(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump));
-
-            
-
+            if (EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
+            {
+                // Write orientation
+                Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
+            }
         }
 
         void ClientNetworkManager::SendConnectedMessage()
@@ -305,6 +314,8 @@ namespace Doremi
 
             // std::cout << "Sending connected message" << std::endl; // TODOCM logg instead
             // Createing input message
+
+            
             CreateInputMessage(Message);
 
 
