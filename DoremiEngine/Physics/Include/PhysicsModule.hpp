@@ -22,6 +22,7 @@ namespace DoremiEngine
 
         class RigidBodyManager;
         class PhysicsMaterialManager;
+        class CharacterControlManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
             public:
@@ -42,6 +43,12 @@ namespace DoremiEngine
             not be used all that much. Its functionality is exapnded as necessary
             */
             virtual PhysicsMaterialManager& GetPhysicsMaterialManager() = 0;
+            /**
+            Gets the character control manager. This manager handles all character
+            controllers, used to govern more specific movements where ordinary physics
+            on rigid bodies is too complex to handle
+            */
+            virtual CharacterControlManager& GetCharacterControlManager() = 0;
             /**
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is

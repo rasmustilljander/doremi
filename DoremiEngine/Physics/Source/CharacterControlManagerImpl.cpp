@@ -14,12 +14,20 @@ namespace DoremiEngine
         {
             // Set start attributes of the controller
             PxCapsuleControllerDesc desc;
+            desc.setToDefault();
             desc.position = PxExtendedVec3(p_position.x, p_position.y, p_position.z);
             desc.height = p_dimensions.x;
             desc.radius = p_dimensions.y;
+            desc.material = m_utils.m_physicsMaterialManager->GetMaterial(m_utils.m_physicsMaterialManager->CreateMaterial(0.5, 0.5, 0.5));
 
             // Hard coded up vector
             desc.upDirection = PxVec3(0, 1, 0);
+
+
+            bool derp = desc.isValid();
+
+            PxController* controller = m_manager->createController(desc);
+
 
             m_controllers[p_id] = m_manager->createController(desc);
 
@@ -36,9 +44,20 @@ namespace DoremiEngine
             // EMPTY FILTERS!
             PxControllerFilters filters;
             m_controllers[p_id]->move(PxVec3(p_discplacement.x, p_discplacement.y, p_discplacement.z), 0, p_dt, filters);
-
             // Redundant return?
             return p_id;
+        }
+
+        XMFLOAT3 CharacterControlManagerImpl::GetPosition(int p_id)
+        {
+            PxExtendedVec3 p = m_controllers[p_id]->getPosition();
+            return XMFLOAT3(p.x, p.y, p.z);
+        }
+
+        XMFLOAT4 CharacterControlManagerImpl::GetOrientation(int p_id)
+        {
+            PxQuat q = m_controllers[p_id]->getActor()->getGlobalPose().q;
+            return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
     }
 }

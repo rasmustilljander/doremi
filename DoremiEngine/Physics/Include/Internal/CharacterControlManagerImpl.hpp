@@ -19,6 +19,9 @@ namespace DoremiEngine
             int AddController(int p_id, XMFLOAT3 p_position, XMFLOAT2 p_dimensions) override;
             int MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) override;
 
+            XMFLOAT3 GetPosition(int p_id) override;
+            XMFLOAT4 GetOrientation(int p_id) override;
+
             private:
             InternalPhysicsUtils& m_utils;
 

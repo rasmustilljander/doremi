@@ -3,6 +3,7 @@
 #include <Internal/RigidBodyManagerImpl.hpp>
 #include <Internal/PhysicsMaterialManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
+#include <Internal/CharacterControlManagerImpl.hpp>
 
 #include <PhysX/PxPhysicsAPI.h>
 
@@ -22,6 +23,7 @@ namespace DoremiEngine
             // Sub modules managers thingies
             RigidBodyManagerImpl* m_rigidBodyManager;
             PhysicsMaterialManagerImpl* m_physicsMaterialManager;
+            CharacterControlManagerImpl* m_characterControlManager;
 
             // PhysX stuff
             PxDefaultAllocator m_allocator;
@@ -35,6 +37,7 @@ namespace DoremiEngine
             // The basic world. TODOJB add to some sort of scene manager?
             PxScene* m_worldScene;
         };
+
         class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback
         {
             public:
@@ -53,6 +56,7 @@ namespace DoremiEngine
             Get methods for sub modules*/
             RigidBodyManager& GetRigidBodyManager() override;
             PhysicsMaterialManager& GetPhysicsMaterialManager() override;
+            CharacterControlManager& GetCharacterControlManager() override;
 
             vector<CollisionPair> GetCollisionPairs() override;
 

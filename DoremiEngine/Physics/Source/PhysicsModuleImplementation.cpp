@@ -15,12 +15,13 @@ namespace DoremiEngine
             PxProfileZoneManager* profileZoneManager = &PxProfileZoneManager::createProfileZoneManager(m_utils.m_foundation);
             m_utils.m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_utils.m_foundation, PxTolerancesScale(), true, profileZoneManager);
 
+            // Create world scene TODOJB create scene handler for this kind of job
+            CreateWorldScene();
+
             // Create sub modules
             m_utils.m_rigidBodyManager = new RigidBodyManagerImpl(m_utils);
             m_utils.m_physicsMaterialManager = new PhysicsMaterialManagerImpl(m_utils);
-
-            // Create world scene TODOJB create scene handler for this kind of job
-            CreateWorldScene();
+            m_utils.m_characterControlManager = new CharacterControlManagerImpl(m_utils);
         }
 
         void PhysicsModuleImplementation::Shutdown() {}
@@ -35,6 +36,7 @@ namespace DoremiEngine
 
         RigidBodyManager& PhysicsModuleImplementation::GetRigidBodyManager() { return *m_utils.m_rigidBodyManager; }
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
+        CharacterControlManager& PhysicsModuleImplementation::GetCharacterControlManager() { return *m_utils.m_characterControlManager; }
 
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
 
