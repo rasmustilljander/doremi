@@ -19,32 +19,31 @@ namespace DoremiEngine
             size_t nrOfActors = m_actors.size();
             size_t nrOfQuadsX = m_grid.size();
             size_t nrOfQuadsY = m_grid[0].size();
-            for
-                each(PotentialFieldActor * actor in m_actors)
+            for(auto actor : m_actors)
+            {
+                XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+                XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                float actorCharge = actor->GetCharge();
+                float actorRange = actor->GetRange();
+                for(size_t x = 0; x < nrOfQuadsX; x++)
                 {
-                    XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
-                    XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
-                    float actorCharge = actor->GetCharge();
-                    float actorRange = actor->GetRange();
-                    for(size_t x = 0; x < nrOfQuadsX; x++)
+                    for(size_t y = 0; y < nrOfQuadsY; y++)
                     {
-                        for(size_t y = 0; y < nrOfQuadsY; y++)
-                        {
-                            XMFLOAT2 quadPos = m_grid[x][y].position;
-                            // Calculate charge
-                            XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
-                            XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
+                        XMFLOAT2 quadPos = m_grid[x][y].position;
+                        // Calculate charge
+                        XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+                        XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 
-                            XMVECTOR distance = actorPosVec - quadPosVec;
-                            float dist = *XMVector3Length(distance).m128_f32;
-                            if(dist < actorRange)
-                            {
-                                float force = actorCharge / dist;
-                                m_grid[x][y].charge += force;
-                            }
+                        XMVECTOR distance = actorPosVec - quadPosVec;
+                        float dist = *XMVector3Length(distance).m128_f32;
+                        if(dist < actorRange)
+                        {
+                            float force = actorCharge / dist;
+                            m_grid[x][y].charge += force;
                         }
                     }
                 }
+            }
         }
         void PotentialFieldImpl::AddActor(PotentialFieldActor* p_newActor)
         {
