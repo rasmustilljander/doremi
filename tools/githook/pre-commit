@@ -24,12 +24,12 @@ do
 	echo -e "Checking $file."
 	
 	# Get information about the chunks
-	for line in $(git diff --cached -p $file | grep @@ | cut -d" " -f3 | cut -d"+" -f2)
+	for line in $(git diff --cached -p $file | grep -a @@ | cut -d" " -f3 | cut -d"+" -f2)
 	do
 		echo "[$date] line = $line" >> $logFile
 		startLine=$(echo $line | cut -d"," -f1)
 		endLine=$(echo $line | cut -d"," -f2)
-		endLine=$((startLine + endLine))
+		endLine=$((startLine + endLine))		
 		echo "[$date] startLine = $startLine" >> $logFile
 		echo "[$date] endLine = $endLine" >> $logFile
 		newCode=`./tools/bin/clang-format.exe -lines=$startLine:$endLine $file`
