@@ -5,8 +5,6 @@ set(SOLUTION_NAME Doremi)
 project(${SOLUTION_NAME})
 
 # Add options
-option(BUILD_LINK_AND_COMPILE_RELEASE_BUILD "Unchecked is debug" OFF)
-option(BUILD_LINK_64_BIT_BUILD "Unchecked is 32 bit" OFF)
 option(BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
 option(BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
@@ -25,31 +23,26 @@ set(RESOURCE_REPOSITORY_ROOT $ENV{SSP_RESOURCE_HOME})
 STRING(REGEX REPLACE "\\\\" "/" CODE_REPOSITORY_ROOT ${CODE_REPOSITORY_ROOT})
 STRING(REGEX REPLACE "\\\\" "/" RESOURCE_REPOSITORY_ROOT ${RESOURCE_REPOSITORY_ROOT})
 
-# Check if 32 or 64 bit
-if(BUILD_LINK_64_BIT_BUILD)
-	set(ARCHITECTURE_BIT_VALUE x64)
-	else()
-	set(ARCHITECTURE_BIT_VALUE x86)
+
+# Check if 32 or 64 bit, not a perfect solution. However, it works for fine for this project.
+if(CMAKE_SIZEOF_VOID_P MATCHES "8")
+	set(ARCHITECTURE x64)
+	set(ARCHITECTURE_x64 ON)
+else()
+	set(ARCHITECTURE x86)
+	set(ARCHITECTURE_x64 OFF)
 endif()
 
 # Set output folders
-set(OUTPUT_FOLDER ${CMAKE_BINARY_DIR}/build/${ARCHITECTURE_BIT_VALUE})
+set(OUTPUT_FOLDER ${CMAKE_BINARY_DIR}/build/${ARCHITECTURE})
 
 # Visual studio adds their own folder onto this, notice uppercase Debug/Release, thus do not add them manually.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_FOLDER})
 
-# Path for copying .dll to correct folder
-if(BUILD_LINK_AND_COMPILE_RELEASE_BUILD)
-	set(COMPILE_RELEASE_BUILD_VALUE "release") # Atm this wont work on non-windows systems
-else()
-	set(COMPILE_RELEASE_BUILD_VALUE "debug") # Atm this wont work on non-windows systems
-endif()
-
-# Set the final
-set(OUTPUT_FOLDER ${OUTPUT_FOLDER}/${COMPILE_RELEASE_BUILD_VALUE})
-set(EXTERNAL_DLLS ${RESOURCE_REPOSITORY_ROOT}/External/dll/${ARCHITECTURE_BIT_VALUE}/${COMPILE_RELEASE_BUILD_VALUE})
+# Find external dlls
+set(EXTERNAL_DLLS ${RESOURCE_REPOSITORY_ROOT}/External/dll/${ARCHITECTURE}/)
 
 # Find external libraries and modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RESOURCE_REPOSITORY_ROOT}/CMake/Modules/")
@@ -77,16 +70,6 @@ set(EXTERNAL_INCLUDE_DIRECTORY
 	${GTEST_INCLUDE_DIRECTORY}
 )
 
-# Combine all for debugging
-set(EXTERNAL_LIBRARIES_ALL
-	${EXTERNAL_LIBRARIES_AUDIO}
-	${EXTERNAL_LIBRARIES_GRAPHICS}
-	${EXTERNAL_LIBRARIES_NETWORK}
-	${EXTERNAL_LIBRARY_PHYSICS}
-	${EXTERNAL_LIBRARIES_INPUT}
-	${EXTERNAL_LIBRARIES_GTEST}
-)
-
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
@@ -111,24 +94,21 @@ if(BUILD_UNIT_TEST_BUILD)
 	add_subdirectory(UnitTest)
 endif()
 
-
 # Copy game resources
 add_custom_target(_resourceCopy ALL
- COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${OUTPUT_FOLDER}
- COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
- COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${OUTPUT_FOLDER}
- COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${OUTPUT_FOLDER}/Debug
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${OUTPUT_FOLDER}/Release
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${OUTPUT_FOLDER}/RelWithDebInfo
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources/ ${OUTPUT_FOLDER}/Debug
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources/ ${OUTPUT_FOLDER}/Release
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources/ ${OUTPUT_FOLDER}/RelWithDebInfo
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/DoremiEngine/Graphic/ShaderFiles ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCE_REPOSITORY_ROOT}/Resources ${CMAKE_BINARY_DIR}/${SOLUTION_NAME} # This row is only required for debugging from visual studio GUI
 )
 
 # Move external dlls to executing folder
-add_custom_target(_dependencies ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS} ${OUTPUT_FOLDER})
-
-# Set the default configuration
-if (BUILD_LINK_AND_COMPILE_RELEASE_BUILD)
-    set(CMAKE_BUILD_TYPE "Release")
-else()
-    set(CMAKE_BUILD_TYPE "Debug")
-endif()
-
-# Required as cmake does not rebuild correctly
-set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
+add_custom_target(_dependencies ALL 
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS}/Debug ${OUTPUT_FOLDER}/Debug
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS}/Release ${OUTPUT_FOLDER}/Release
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS}/Release ${OUTPUT_FOLDER}/RelWithDebInfo
+)

@@ -11,7 +11,7 @@ file(GLOB_RECURSE SOURCES Source/ *.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include)
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
-set(LIBRARIES ${EXTERNAL_LIBRARIES_INPUT} DebugLog)
+set(LIBRARIES DebugLog)
 
 # Set preprocessor definitions
 SET(DEFINITIONS 
@@ -20,5 +20,7 @@ SET(DEFINITIONS
 
 # Add the target
 add_library(${PROJECT_NAME} ${ENGINE_LINK_TYPE} ${HEADERS} ${SOURCES})
+target_compile_definitions(${PROJECT_NAME} PRIVATE "${DEFINITIONS}")
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS "${DEFINITIONS}")
+target_link_libraries(${PROJECT_NAME} optimized "${EXTERNAL_LIBRARIES_INPUT_x86_release}")
+target_link_libraries(${PROJECT_NAME} debug "${EXTERNAL_LIBRARIES_INPUT_x86_debug}")
