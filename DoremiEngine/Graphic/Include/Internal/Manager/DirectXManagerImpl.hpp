@@ -43,6 +43,8 @@ namespace DoremiEngine
             ID3D11Texture2D* m_depthBuffer;
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
+
+            int i = 0;
         };
     }
 }

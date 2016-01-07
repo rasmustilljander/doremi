@@ -33,7 +33,9 @@ namespace DoremiEngine
             ~ComputeShaderManagerImpl();
             void SetUAV() override;
             ID3D11UnorderedAccessView* GetUAV() override;
-            void ComputeShaderManagerImpl::CopyData() override;
+            void ComputeShaderManagerImpl::CopyFrustumData() override;
+            void ComputeShaderManagerImpl::UnmapBuffer() override;
+
 
             private:
             const GraphicModuleContext& m_graphicContext;

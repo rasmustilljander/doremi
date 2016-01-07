@@ -50,7 +50,7 @@ namespace DoremiEngine
 
         ID3D11UnorderedAccessView* ComputeShaderManagerImpl::GetUAV() { return m_uav; }
 
-        void ComputeShaderManagerImpl::CopyData()
+        void ComputeShaderManagerImpl::CopyFrustumData()
         {
 
             ID3D11UnorderedAccessView* nullUAV[] = {NULL};
@@ -73,6 +73,12 @@ namespace DoremiEngine
 
                 m_context->Unmap(m_frustumArrayBufferResult, 0);
             }
+        }
+
+        void ComputeShaderManagerImpl::UnmapBuffer()
+        {
+            ID3D11DeviceContext* m_context = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
+            m_context->Unmap(m_frustumArrayBufferResult, 0);
         }
     }
 }

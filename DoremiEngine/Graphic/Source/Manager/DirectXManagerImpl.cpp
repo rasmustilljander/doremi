@@ -242,14 +242,18 @@ namespace DoremiEngine
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
             // TODORK Move to right place
+            // only runs on second frame beacause reasons
             // dispatch compute shader
+            if(i == 1)
+            {
+                ID3D11UnorderedAccessView* uav = m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().GetUAV();
+                m_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, 0);
 
-            ID3D11UnorderedAccessView* uav = m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().GetUAV();
-            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, 0);
-
-            m_deviceContext->Dispatch(50, 50, 1);
-
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().CopyData();
+                m_deviceContext->Dispatch(50, 50, 1);
+                // m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().UnmapBuffer();
+            }
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().CopyFrustumData();
+            i++;
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

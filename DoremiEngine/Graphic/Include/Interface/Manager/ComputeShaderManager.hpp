@@ -13,7 +13,8 @@ namespace DoremiEngine
             // TODORK add functions
             virtual void SetUAV() = 0;
             virtual ID3D11UnorderedAccessView* GetUAV() = 0;
-            virtual void CopyData() = 0;
+            virtual void CopyFrustumData() = 0;
+            virtual void UnmapBuffer() = 0;
         };
     }
 }
