@@ -326,9 +326,21 @@ namespace Doremi
             EntityBlueprint t_jawsDebugBlueprint;
 
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->position = XMFLOAT3(0, 0, 5);
+            t_transformComp->position = XMFLOAT3(0, 0, -10);
             t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
             t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
+
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_jawsDebugBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            t_jawsDebugBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+
+            // Movement Component
+            MovementComponent* t_movementComp = new MovementComponent();
+            t_movementComp->maxSpeed = 5;
+            t_jawsDebugBlueprint[ComponentType::Movement] = t_movementComp;
 
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
 
@@ -337,6 +349,27 @@ namespace Doremi
             t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
             TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
             TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
+
+            int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
+
+            RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
+            bodyComp->p_bodyID =
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+
+            EntityBlueprint t_jawsDebugBlueprint2;
+
+            TransformComponent* t_transformComp2 = new TransformComponent();
+            t_transformComp2->position = XMFLOAT3(0, 0, -5);
+            t_transformComp2->rotation = XMFLOAT4(0, 0, 0, 1);
+            t_jawsDebugBlueprint2[ComponentType::Transform] = t_transformComp2;
+
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity2, t_jawsDebugBlueprint2);
+
+            NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity2);
+
+            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+
         }
 
         void GenerateWorldClientJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -348,8 +381,19 @@ namespace Doremi
             t_renderComp2->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
             t_jawsDebugBlueprint[ComponentType::Render] = t_renderComp2;
 
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_jawsDebugBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            t_jawsDebugBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+
+            MovementComponent* t_movementComp = new MovementComponent();
+            t_movementComp->maxSpeed = 5;
+            t_jawsDebugBlueprint[ComponentType::Movement] = t_movementComp;
+
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->position = XMFLOAT3(0, 0, 5);
+            t_transformComp->position = XMFLOAT3(0, 0, -10);
             t_transformComp->rotation = XMFLOAT4(0, 0, 0, 1);
             t_jawsDebugBlueprint[ComponentType::Transform] = t_transformComp;
 
@@ -357,9 +401,35 @@ namespace Doremi
 
             int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
 
-            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+            //t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
             TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
             TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
+
+
+            int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
+
+            RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
+            bodyComp->p_bodyID =
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+
+
+            EntityBlueprint t_jawsDebugBlueprint2;
+
+            TransformComponent* t_transformComp2 = new TransformComponent();
+            t_transformComp2->position = XMFLOAT3(0, 0, -5);
+            t_transformComp2->rotation = XMFLOAT4(0, 0, 0, 1);
+            t_jawsDebugBlueprint2[ComponentType::Transform] = t_transformComp2;
+
+            RenderComponent* t_renderComp3 = new RenderComponent();
+            t_renderComp3->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp3->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_jawsDebugBlueprint2[ComponentType::Render] = t_renderComp3;
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity2, t_jawsDebugBlueprint2);
+
+            NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity2);
+
+            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
         }
 
         void GameCore::InitializeClient()
@@ -382,7 +452,8 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& sharedContext =
                 libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::GRAPHIC |
-                                    DoremiEngine::Core::EngineModuleEnum::INPUT | DoremiEngine::Core::EngineModuleEnum::AUDIO);
+                                    DoremiEngine::Core::EngineModuleEnum::INPUT | DoremiEngine::Core::EngineModuleEnum::AUDIO |
+                                    DoremiEngine::Core::EngineModuleEnum::PHYSICS);
 
             /* This starts the physics handler. Should not be done here, but since this is the general
             code dump, it'll work for now TODOJB*/
@@ -410,7 +481,7 @@ namespace Doremi
             //m_managers.push_back(t_audioManager);
             m_managers.push_back(t_clientNetworkManager);
             m_managers.push_back(t_cameraManager);
-            //m_managers.push_back(t_rigidTransSyndManager);
+            m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_movementManager);
 
             m_managers.push_back(t_aiManager);
@@ -459,13 +530,16 @@ namespace Doremi
 
             // Manager* t_physicsManager = new ExampleManager(sharedContext);
             Manager* t_serverNetworkManager = new ServerNetworkManager(sharedContext);
+            Manager* t_movementManager = new MovementManager(sharedContext);
             Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
 
             // Add manager to list of managers
             // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
             // m_managers.push_back(t_physicsManager);
-            m_managers.push_back(t_rigidTransSyndManager);
             m_managers.push_back(t_serverNetworkManager);
+            m_managers.push_back(t_rigidTransSyndManager);
+            
+            m_managers.push_back(t_movementManager);
 
             // GenerateWorld(sharedContext);
             GenerateWorldServerJawsTest(sharedContext);
@@ -531,7 +605,8 @@ namespace Doremi
             {
                 CurrentClock = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
-                Frame = duration.count();
+                Frame = duration.count() + Offset;
+                Offset = 0;
                 
 
                 // We simulate maximum 250 milliseconds each frame
@@ -540,7 +615,10 @@ namespace Doremi
                 {
                     Offset = Frame - 0.25f;
                     Frame = 0.25f;
+                    cout << Frame << endl;
                 }
+                
+                
                 // Update the previous position with frametime so we can catch up if we slow down
                 PreviousClock = CurrentClock;
 
@@ -577,7 +655,7 @@ namespace Doremi
 
         void JawsSimulatePhysicsDebug(double deltaTime)
         {
-            TransformComponent* trans = GetComponent<TransformComponent>(0);
+            TransformComponent* trans = GetComponent<TransformComponent>(1);
 
             if(trans->position.x == 1)
             {
@@ -600,38 +678,51 @@ namespace Doremi
 
         void GameCore::StartServerCore()
         {
-            // TODOCM remove for better timer
-            // GameLoop is not currently set
-            uint64_t CurrentTime;
-            uint64_t PreviousTime = GetTickCount64();
-            uint64_t FrameTime = 0;
-            uint64_t Accumulator = 0;
-            uint64_t UpdateTimeStepLength = 17;
-            uint64_t GameTime = 0;
+            std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
+            PreviousClock = std::chrono::high_resolution_clock::now();
 
-            while(true)
+            double Frame = 0;
+            double Offset = 0;
+            double Accum = 0;
+            double GameTime = 0;
+            double UpdateStepLen = 0.017;
+
+            while (true)
             {
-                CurrentTime = GetTickCount64();
-                FrameTime = CurrentTime - PreviousTime;
+                CurrentClock = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
+                Frame = duration.count() + Offset;
+                Offset = 0;
 
-                // Update the previous position with frametime so we can catch up if we slow down&
-                PreviousTime += FrameTime;
+
+                // We simulate maximum 250 milliseconds each frame
+                // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
+                if (Frame > 0.25f)
+                {
+                    Offset = Frame - 0.25f;
+                    Frame = 0.25f;
+                }
+
+                // Update the previous position with frametime so we can catch up if we slow down
+                PreviousClock = CurrentClock;
 
                 // Update Accumulator (how much we will work this frame)
-                Accumulator += FrameTime;
+                Accum += Frame;
 
                 // Loop as many update-steps we will take this frame
-                while(Accumulator >= UpdateTimeStepLength)
+                while (Accum >= UpdateStepLen)
                 {
-                    JawsSimulatePhysicsDebug(UpdateTimeStepLength / 1000.0f); // TODOCM remove
                     // Update Game logic
-                    UpdateServerGame((double)UpdateTimeStepLength / 1000.0f);
+                    JawsSimulatePhysicsDebug(UpdateStepLen); // TODOCM remove
+                                                                              // Update Game logic
+                    UpdateServerGame(UpdateStepLen);
 
                     // Remove time from accumulator
-                    Accumulator -= UpdateTimeStepLength;
+                    //Accumulator -= UpdateTimeStepLength;
+                    Accum -= UpdateStepLen;
 
                     // Add time to start
-                    GameTime += UpdateTimeStepLength;
+                    GameTime += UpdateStepLen;
                 }
             }
         }

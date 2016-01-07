@@ -122,9 +122,6 @@ namespace Doremi
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
             uint32_t InputMask = Streamer.ReadUnsignedInt32();
-            ;
-
-            cout << InputMask << endl;
 
             // Read Input from Stream
             inputHandler->SetInputBitMask(InputMask);
@@ -371,17 +368,18 @@ namespace Doremi
 
         void ServerNetworkManager::SendMessages(double p_dt)
         {
-            // Update timer to send
+            // If we exceed timer
             m_nextUpdateTimer += p_dt;
 
-            // If we exceed timer
-            if(m_nextUpdateTimer >= m_updateInterval)
+            if (m_nextUpdateTimer >= m_updateInterval)
             {
                 // Remove time
                 m_nextUpdateTimer -= m_updateInterval;
 
                 // Update sequence here because of the error checking..
                 m_nextSnapshotSequence++;
+
+                cout << (int)m_nextSnapshotSequence << endl;
 
                 // Create global message
                 NetMessage Message = NetMessage();
@@ -394,27 +392,27 @@ namespace Doremi
 
 
                 // For all connected clients we send messages
-                for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
+                for (std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
                 {
-                    switch(iter->second->ConnectionState)
+                    switch (iter->second->ConnectionState)
                     {
-                        case ConnectionState::CONNECTED:
+                    case ConnectionState::CONNECTED:
 
-                            SendConnected(iter->second);
-                            break;
+                        SendConnected(iter->second);
+                        break;
 
-                        case ConnectionState::MAP_LOADING:
+                    case ConnectionState::MAP_LOADING:
 
-                            SendMapLoading(iter->second);
-                            break;
+                        SendMapLoading(iter->second);
+                        break;
 
-                        case ConnectionState::IN_GAME:
+                    case ConnectionState::IN_GAME:
 
-                            SendInGame(Message, iter->second);
-                            break;
+                        SendInGame(Message, iter->second);
+                        break;
 
-                        default:
-                            break;
+                    default:
+                        break;
                     }
                 }
             }

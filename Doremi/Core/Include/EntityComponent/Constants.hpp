@@ -44,6 +44,7 @@ enum class Blueprints : int
     BulletEntity,
     EnemyEntity,
     JawsDebugEntity, // TODOCM remove
+    JawsDebugEntity2, // TODOCM remove
 };
 
 /**

@@ -89,8 +89,6 @@ namespace Doremi
             m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
             m_keyboardInputFromModule = m_sharedContext.GetInputModule().GetKeyBoardInput();
             m_mouseWheelInput = m_sharedContext.GetInputModule().GetMouseWheelSpins();
-
-            std::cout << m_musInputFromModule.size() << m_keyboardInputFromModule.size() << std::endl;
         }
 
         void InputHandlerClient::PrintInputStructsDEBUG()
