@@ -118,7 +118,7 @@ int main(int argc, char** argv)
         }
     }
 
-    if(!writeToFile || !writeToConsole)
+    if(!writeToFile && !writeToConsole)
     {
 #ifdef _DEBUG
         system("pause");
