@@ -53,6 +53,8 @@ namespace DoremiEngine
         PxFilterFlags TestFilter(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
                                  PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
         {
+            // pairFlags = PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eCONTACT_DEFAULT;
+            // return PxFilterFlag::eDEFAULT;
             // let triggers through
             if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
             {
@@ -83,6 +85,7 @@ namespace DoremiEngine
             sceneDesc.filterShader = TestFilter;
             // Notify PhysX that we want callbacks to be called here
             sceneDesc.simulationEventCallback = this;
+
             // Create the scene
             m_utils.m_worldScene = m_utils.m_physics->createScene(sceneDesc);
 
@@ -94,6 +97,9 @@ namespace DoremiEngine
             PxRigidStatic* worldGround = PxCreatePlane(*m_utils.m_physics, groundPlane, *groundMaterial);
             // Add the ground plane to the scene. Apparently it's this easy
             m_utils.m_worldScene->addActor(*worldGround);
+            // Not sure what this does... Desperate try maybe?
+            m_utils.m_worldScene->setFlag(PxSceneFlag::eENABLE_KINEMATIC_PAIRS, true);
+            // m_utils.m_worldScene->setFlag(PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS, true);
 
             /*
             And we now have a simple scene with gravity and the ground as a plane*/
@@ -116,7 +122,10 @@ namespace DoremiEngine
             }
         }
 
+
         void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count) {}
+
+        void PhysicsModuleImplementation::onShapeHit(const PxControllerShapeHit& hit) { int derp = 5; }
     }
 }
 

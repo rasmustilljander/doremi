@@ -21,6 +21,10 @@ namespace DoremiEngine
             virtual int MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) = 0;
 
             /**
+            TODOJB docs*/
+            virtual void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) = 0;
+
+            /**
             Gets the position of the character controller*/
             virtual XMFLOAT3 GetPosition(int p_id) = 0;
 

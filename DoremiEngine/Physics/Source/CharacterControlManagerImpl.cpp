@@ -29,6 +29,8 @@ namespace DoremiEngine
 
             m_controllers[p_id] = m_manager->createController(desc);
 
+            SetCallback(p_id, (1 << 0), (1 << 0));
+
             // Redundant return?
             return p_id;
         }
@@ -56,6 +58,28 @@ namespace DoremiEngine
         {
             PxQuat q = m_controllers[p_id]->getActor()->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
+        }
+
+        void CharacterControlManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
+        {
+            PxFilterData filterData;
+            filterData.word0 = p_filterGroup; // Own ID
+            filterData.word1 = p_filterMask; // ID mask to filter pairs that trigger contact callback
+            PxRigidActor* actor = m_controllers[p_bodyID]->getActor();
+            int numShapes = actor->getNbShapes();
+            // Magic allocation of memory (i think)
+            PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
+            actor->getShapes(shapes, numShapes);
+            for(size_t i = 0; i < numShapes; i++)
+            {
+                PxShape* shape = shapes[i];
+                shape->setSimulationFilterData(filterData);
+            }
+            if(shapes)
+            {
+                m_utils.m_allocator.deallocate(shapes);
+                shapes = NULL;
+            }
         }
     }
 }

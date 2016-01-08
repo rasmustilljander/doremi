@@ -38,7 +38,7 @@ namespace DoremiEngine
             PxScene* m_worldScene;
         };
 
-        class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback
+        class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback, public PxUserControllerHitReport
         {
             public:
             PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
@@ -82,6 +82,11 @@ namespace DoremiEngine
             // NOT USED
             virtual void onSleep(PxActor**, PxU32) {}
             /// End PxSimulationEventCallback
+
+            /// Implements PxUserCharacterControlCallback
+            virtual void onShapeHit(const PxControllerShapeHit& hit);
+            virtual void onControllerHit(const PxControllersHit& hit) {}
+            virtual void onObstacleHit(const PxControllerObstacleHit& hit) {}
 
             // Has shared context for some reason. Shouldn't be here
             const Core::SharedContext& m_sharedContext;
