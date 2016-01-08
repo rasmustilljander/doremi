@@ -15,7 +15,6 @@ namespace Doremi
         {
             public:
             Manager(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            ~Manager();
 
             /** Big update loop for every type of manager*/
             virtual void Update(double p_dt) = 0;
