@@ -15,6 +15,7 @@
 #include <EntityComponent/Components/HealthComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/AIGroupComponent.hpp>
 
 namespace Doremi
 {
@@ -112,6 +113,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::PotentialField)
                 {
                     memcpy(GetComponent<PotentialFieldComponent>(tNewEntityID), iter->second, sizeof(PotentialFieldComponent));
+                }
+                else if(iter->first == ComponentType::AIGroup)
+                {
+                    memcpy(GetComponent<AIGroupComponent>(tNewEntityID), iter->second, sizeof(AIGroupComponent));
                 }
             }
             return tNewEntityID;

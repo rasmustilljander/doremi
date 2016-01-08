@@ -48,23 +48,13 @@ namespace DoremiEngine
                     m_grid[x][y].charge = totalCharge;
                 }
             }
-
-            for(auto actor : m_actors)
-            {
-
-                for(size_t x = 0; x < nrOfQuadsX; x++)
-                {
-                    for(size_t y = 0; y < nrOfQuadsY; y++)
-                    {
-                    }
-                }
-            }
         }
         void PotentialFieldImpl::AddActor(PotentialFieldActor* p_newActor)
         {
             m_actors.push_back(p_newActor);
         } // TODOKO check if actor is already in the field
-        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor)
+        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
+                                                                    const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
             // TODOKO Test!
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
@@ -95,7 +85,7 @@ namespace DoremiEngine
             float highestCharge = 0;
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
-                // take the quad the unit is in as the highest charge. If all the wauds have the same charge the unit shouldnt move
+                // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
                 highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
                 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             }
@@ -105,10 +95,16 @@ namespace DoremiEngine
                 int y = quadsToCheck[i].y;
                 if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size())
                 {
+                    float quadCharge;
                     // The quad exists!
-
-                    float quadCharge = CalculateCharge(x, y, p_currentActor);
-
+                    if(p_staticCheck)
+                    {
+                        quadCharge = m_grid[x][y].charge;
+                    }
+                    else
+                    {
+                        quadCharge = CalculateCharge(x, y, p_currentActor);
+                    }
                     if(quadCharge > highestCharge)
                     {
                         highestCharge = quadCharge;
@@ -117,8 +113,6 @@ namespace DoremiEngine
                 }
             }
             // If now charge was found we are probably outside the field... in which case we should start walking towards the field
-            // std::cout << "Wants to get to " << highestChargedPos.x <<" " << highestChargedPos.y << std::endl;
-            // std::cout << "is at " << p_unitPosition.x << " " << p_unitPosition.z << std::endl;
             if(highestCharge <= -9000)
             {
             }
@@ -152,7 +146,7 @@ namespace DoremiEngine
                 }
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
-            return totalCharge;
+            return totalCharge + m_grid[p_quadX][p_quadY].charge;
         }
     }
 }

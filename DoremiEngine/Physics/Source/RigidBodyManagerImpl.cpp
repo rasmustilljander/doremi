@@ -27,6 +27,7 @@ namespace DoremiEngine
             // Finally add the body to our list
             m_bodies[p_id] = body;
             m_IDsByBodies[body] = p_id;
+
             /*
             And now we have added a box to the world at the given position
             I'm not too sure how we update the box, or the scene, or perform

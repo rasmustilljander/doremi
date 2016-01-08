@@ -8,6 +8,7 @@
 #include <EntityComponent/Components/HealthComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/AIGroupComponent.hpp>
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
@@ -16,8 +17,12 @@
 #include <Manager/GraphicManager.hpp>
 #include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
+<<<<<<< 92f6b60ad72a7bf130319c962ab44b85f3b2c1f0
 #include <Manager/AIManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>
+=======
+#include <Manager/AI/AIPathManager.hpp>
+>>>>>>> Potential field for static obj and group for dynam
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -104,8 +109,11 @@ namespace Doremi
             blueprint[ComponentType::Range] = rangeComp;
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-
             blueprint[ComponentType::PotentialField] = potentialComp;
+            // AI group component
+            AIGroupComponent* group = new AIGroupComponent();
+            group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+            blueprint[ComponentType::AIGroup] = group;
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
             blueprint[ComponentType::Movement] = movementcomp;
@@ -113,7 +121,7 @@ namespace Doremi
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
             // Create some enemies
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-            for(size_t i = 0; i < 4; i++)
+            for(size_t i = 0; i < 8; i++)
             {
                 int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
                 XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
@@ -257,7 +265,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
             // Potential field comp
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 8, 200); // TODOKO should be done after the entity is created
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
@@ -349,6 +357,32 @@ namespace Doremi
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
 
             int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+
+            ////////////////Example only////////////////
+            // Create manager
+            Manager* t_renderManager = new GraphicManager(sharedContext);
+            Manager* t_physicsManager = new ExampleManager(sharedContext);
+            // Manager* t_playerManager = new PlayerManager(sharedContext);
+            Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
+            Manager* t_movementManager = new MovementManager(sharedContext);
+            Manager* t_audioManager = new AudioManager(sharedContext);
+            Manager* t_cameraManager = new CameraManager(sharedContext);
+            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
+            Manager* t_aiPathManager = new AIPathManager(sharedContext);
+            // Add manager to list of managers
+            m_graphicalManagers.push_back(t_renderManager);
+            m_managers.push_back(t_physicsManager);
+            // m_managers.push_back(t_playerManager);
+            m_managers.push_back(t_audioManager);
+            m_managers.push_back(t_clientNetworkManager);
+            m_managers.push_back(t_cameraManager);
+            m_managers.push_back(t_rigidTransSyndManager);
+            m_managers.push_back(t_movementManager);
+            m_managers.push_back(t_aiPathManager);
+            GenerateWorld(sharedContext);
+
+            ////////////////End Example////////////////
+        }
 
             t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
             TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);

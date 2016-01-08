@@ -37,9 +37,12 @@ namespace DoremiEngine
             virtual void AddActor(PotentialFieldActor* p_newActor) = 0;
             /**
             Returns the position of the gridpoint the given units position is most attracted to. If a actor is given the charge given by that actor
-            will be ignored.
+            will be ignored. If the static check flag is set to true the function will use the stored value in the potential field, if set to false
+            the function will calculate the charges of the surrounding quads on the fly. This is usale if the field is dynamic since the whole field
+            never needs updating.
             */
-            virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr) = 0;
+            virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
+                                                            const PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) = 0;
         };
     }
 }
