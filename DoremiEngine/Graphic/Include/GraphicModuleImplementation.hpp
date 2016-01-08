@@ -22,6 +22,8 @@ namespace DoremiEngine
             virtual ~GraphicModuleImplementation();
 
             SubModuleManager& GetSubModuleManager() override;
+            SubModuleManagerImpl& GetSubModuleManagerImpl();
+
             /**
             TODORT docs
             */

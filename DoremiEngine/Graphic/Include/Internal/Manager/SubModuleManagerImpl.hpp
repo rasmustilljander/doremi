@@ -28,6 +28,14 @@ namespace DoremiEngine
             CameraManager& GetCameraManager() override;
             LightManager& GetLightManager() override;
 
+            MeshManagerImpl& GetMeshManagerImpl();
+            ParticleSystemManagerImpl& GetParticleSystemManagerImpl();
+            ShaderManagerImpl& GetShaderManagerImpl();
+            Texture2DManagerImpl& GetTexuter2DManagerImpl();
+            DirectXManagerImpl& GetDirectXManagerImpl();
+            CameraManagerImpl& GetCameraManagerImpl();
+            LightManagerImpl& GetLightManagerImpl();
+
             private:
             const GraphicModuleContext& m_graphicContext;
             MeshManagerImpl* m_meshManager;

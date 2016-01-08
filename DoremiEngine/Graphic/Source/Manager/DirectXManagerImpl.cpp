@@ -2,10 +2,12 @@
 #include <Internal/Manager/DirectXManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 #include <HelpFunctions.hpp>
-#include <d3d11_1.h>
 #include <SDL2/SDL.h>
+#include <Internal/Mesh/Vertex.hpp>
 
 #include <iostream>
+#include <algorithm> // std::sort
+
 namespace DoremiEngine
 {
     namespace Graphic
@@ -156,16 +158,91 @@ namespace DoremiEngine
             CheckHRESULT(res, "Fault when creating sampler");
             m_deviceContext->PSSetSamplers(0, 1, &m_sampler);
             m_sampler->Release();
+
+            BuildWorldMatrix();
         }
+
+        void DirectXManagerImpl::BuildWorldMatrix()
+        {
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            bd.MiscFlags = 0;
+            bd.StructureByteStride = 0;
+            bd.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+            m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
+        }
+
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
         ID3D11DeviceContext* DirectXManagerImpl::GetDeviceContext() { return m_deviceContext; }
 
+        void DirectXManagerImpl::RenderAllMeshs()
+        {
+            // Sort the data according after mesh then texture
+            std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
+            // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
+
+            // Setup required variables
+            const size_t stride = sizeof(Vertex);
+            const size_t offset = 0;
+            ID3D11Buffer* vertexData = renderData[0].vertexData;
+            ID3D11ShaderResourceView* texture = renderData[0].texture;
+
+            // Iterate all the entries and do the smallest amount of changes to the GPU
+            // Render the first entry outside of the loop because it's a specialcase
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
+            m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+            m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+            m_deviceContext->Draw(renderData[0].vertexCount, 0);
+
+            // TODO Can be upgraded with instanced drawing
+            const size_t vectorSize = renderData.size();
+            for(size_t i = 1; i < vectorSize; ++i)
+            {
+                if(renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                {
+                    vertexData = renderData[i].vertexData;
+                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+                }
+                if(renderData[i].texture != renderData[i - 1].texture) // Check if texture has been changed
+                {
+                    texture = renderData[i].texture;
+                    if(texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(0, 1, &texture);
+                    }
+                }
+                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                memcpy(tMS.pData, &renderData[i].worldMatrix, sizeof(DirectX::XMFLOAT4X4)); // Copy matrix to buffer
+                m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+                m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
+                m_deviceContext->Draw(renderData[i].vertexCount, 0);
+            }
+            renderData.clear(); // Empty the vector
+        }
+
         void DirectXManagerImpl::EndDraw()
         {
+            RenderAllMeshs();
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        }
+
+        void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)
+        {
+            // TODORT Could be redesigned so that this class asks MeshManager for it's data instead
+            renderData.push_back(std::move(p_renderData));
         }
     }
 }

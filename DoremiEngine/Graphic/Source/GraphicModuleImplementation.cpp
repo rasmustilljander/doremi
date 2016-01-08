@@ -17,6 +17,8 @@ namespace DoremiEngine
 
         SubModuleManager& GraphicModuleImplementation::GetSubModuleManager() { return *m_subModuleManger; }
 
+        SubModuleManagerImpl& GraphicModuleImplementation::GetSubModuleManagerImpl() { return *m_subModuleManger; }
+
         void GraphicModuleImplementation::Update() {}
 
         void GraphicModuleImplementation::Startup()

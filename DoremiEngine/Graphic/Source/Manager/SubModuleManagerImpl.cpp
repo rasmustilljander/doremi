@@ -57,5 +57,20 @@ namespace DoremiEngine
         CameraManager& SubModuleManagerImpl::GetCameraManager() { return *m_cameraManager; }
 
         LightManager& SubModuleManagerImpl::GetLightManager() { return *m_lightManager; }
+
+
+        MeshManagerImpl& SubModuleManagerImpl::GetMeshManagerImpl() { return *m_meshManager; }
+
+        ParticleSystemManagerImpl& SubModuleManagerImpl::GetParticleSystemManagerImpl() { return *m_particleSystemManager; }
+
+        ShaderManagerImpl& SubModuleManagerImpl::GetShaderManagerImpl() { return *m_shaderManager; }
+
+        Texture2DManagerImpl& SubModuleManagerImpl::GetTexuter2DManagerImpl() { return *m_texture2DManager; }
+
+        DirectXManagerImpl& SubModuleManagerImpl::GetDirectXManagerImpl() { return *m_directXManager; }
+
+        CameraManagerImpl& SubModuleManagerImpl::GetCameraManagerImpl() { return *m_cameraManager; }
+
+        LightManagerImpl& SubModuleManagerImpl::GetLightManagerImpl() { return *m_lightManager; }
     }
 }
