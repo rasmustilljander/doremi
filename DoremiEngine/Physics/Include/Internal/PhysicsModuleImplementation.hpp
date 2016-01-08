@@ -84,8 +84,11 @@ namespace DoremiEngine
             /// End PxSimulationEventCallback
 
             /// Implements PxUserCharacterControlCallback
+            // Called when controller hits a body
             virtual void onShapeHit(const PxControllerShapeHit& hit);
-            virtual void onControllerHit(const PxControllersHit& hit) {}
+            // Called when controller hits another controller
+            virtual void onControllerHit(const PxControllersHit& hit);
+            // NOT USED
             virtual void onObstacleHit(const PxControllerObstacleHit& hit) {}
 
             // Has shared context for some reason. Shouldn't be here

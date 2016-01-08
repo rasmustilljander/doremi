@@ -20,14 +20,15 @@ namespace DoremiEngine
             desc.radius = p_dimensions.y;
             desc.material = m_utils.m_physicsMaterialManager->GetMaterial(p_matID); // DANGER! Assumes it already has material
             desc.stepOffset = 0.1;
+            desc.reportCallback = m_controllerCallback;
+
             // Hard coded up vector
             desc.upDirection = PxVec3(0, 1, 0);
 
             bool derp = desc.isValid();
 
-            PxController* controller = m_manager->createController(desc);
-
             m_controllers[p_id] = m_manager->createController(desc);
+            m_IDsByControllers[m_controllers[p_id]] = p_id;
 
             SetCallback(p_id, (1 << 0), (1 << 0));
 
@@ -81,5 +82,9 @@ namespace DoremiEngine
                 shapes = NULL;
             }
         }
+
+        void CharacterControlManagerImpl::SetCallbackClass(PxUserControllerHitReport* p_callback) { m_controllerCallback = p_callback; }
+
+        unordered_map<PxController*, int> CharacterControlManagerImpl::GetIdsByControllers() { return m_IDsByControllers; }
     }
 }

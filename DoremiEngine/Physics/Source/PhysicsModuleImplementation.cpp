@@ -22,6 +22,9 @@ namespace DoremiEngine
             m_utils.m_rigidBodyManager = new RigidBodyManagerImpl(m_utils);
             m_utils.m_physicsMaterialManager = new PhysicsMaterialManagerImpl(m_utils);
             m_utils.m_characterControlManager = new CharacterControlManagerImpl(m_utils);
+
+            // Make some other important thingies
+            m_utils.m_characterControlManager->SetCallbackClass(this);
         }
 
         void PhysicsModuleImplementation::Shutdown() {}
@@ -99,6 +102,7 @@ namespace DoremiEngine
             m_utils.m_worldScene->addActor(*worldGround);
             // Not sure what this does... Desperate try maybe?
             m_utils.m_worldScene->setFlag(PxSceneFlag::eENABLE_KINEMATIC_PAIRS, true);
+
             // m_utils.m_worldScene->setFlag(PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS, true);
 
             /*
@@ -125,7 +129,25 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count) {}
 
-        void PhysicsModuleImplementation::onShapeHit(const PxControllerShapeHit& hit) { int derp = 5; }
+        void PhysicsModuleImplementation::onShapeHit(const PxControllerShapeHit& hit)
+        {
+            // TODOJB implement
+        }
+        PxUserControllerHitReport* derp;
+
+        void PhysicsModuleImplementation::onControllerHit(const PxControllersHit& hit)
+        {
+            CollisionPair collisionPair;
+            unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+            PxController* firstActor = hit.controller;
+            PxController* secondActor = hit.other;
+            int first = idsByControllers[firstActor];
+            int second = idsByControllers[secondActor];
+
+            collisionPair.firstID = m_utils.m_characterControlManager->GetIdsByControllers()[hit.controller];
+            collisionPair.secondID = m_utils.m_characterControlManager->GetIdsByControllers()[hit.other];
+            m_collisionPairs.push_back(collisionPair);
+        }
     }
 }
 

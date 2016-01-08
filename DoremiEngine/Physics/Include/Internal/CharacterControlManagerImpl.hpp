@@ -23,12 +23,24 @@ namespace DoremiEngine
             XMFLOAT3 GetPosition(int p_id) override;
             XMFLOAT4 GetOrientation(int p_id) override;
 
+            /**
+            Set callback method.
+            Only used internally*/
+            void SetCallbackClass(PxUserControllerHitReport* p_callback);
+
+            /**
+            */
+            unordered_map<PxController*, int> GetIdsByControllers();
+
             private:
             InternalPhysicsUtils& m_utils;
 
             unordered_map<int, PxController*> m_controllers;
+            unordered_map<PxController*, int> m_IDsByControllers;
 
             PxControllerManager* m_manager;
+
+            PxUserControllerHitReport* m_controllerCallback;
         };
     }
 }
