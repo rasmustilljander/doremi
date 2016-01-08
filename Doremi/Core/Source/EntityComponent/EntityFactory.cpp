@@ -31,11 +31,16 @@ namespace Doremi
             return mSingleton;
         }
 
+        // TODORT Make sure this is called.
+        void EntityFactory::ReleaseInstance()
+        {
+            delete mSingleton;
+            mSingleton = nullptr;
+        }
+
         EntityFactory::EntityFactory() {}
 
-
         EntityFactory::~EntityFactory() {}
-
 
         void EntityFactory::Initialize() {}
 
@@ -109,7 +114,6 @@ namespace Doremi
                     memcpy(GetComponent<PotentialFieldComponent>(tNewEntityID), iter->second, sizeof(PotentialFieldComponent));
                 }
             }
-
             return tNewEntityID;
         }
     }
