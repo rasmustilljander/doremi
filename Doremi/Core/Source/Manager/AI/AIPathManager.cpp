@@ -40,7 +40,7 @@ namespace Doremi
 
         void AIPathManager::Update(double p_dt)
         {
-            size_t playerID = PlayerHandler::GetInstance()->GetPlayerEntityID();
+            size_t playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 
@@ -48,7 +48,7 @@ namespace Doremi
 
             if(firstUpdate)
             {
-                int enemyID;
+                int enemyID = -1;
                 firstUpdate = false;
                 // creating a invisible "wall", for testing only
                 DoremiEngine::AI::PotentialFieldActor* actorwall =
@@ -72,9 +72,13 @@ namespace Doremi
                         group->AddActor(actor);
                     }
                 }
-                DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(playerID)->ChargedActor;
-                DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(enemyID)->Group;
-                group->AddActor(actor);
+                if(enemyID != -1)
+                {
+                    DoremiEngine::AI::PotentialFieldActor* actor =
+                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(playerID)->ChargedActor;
+                    DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(enemyID)->Group;
+                    group->AddActor(actor);
+                }
             }
 
             // TO HERE
@@ -115,8 +119,7 @@ namespace Doremi
                     XMFLOAT3 direction;
                     XMStoreFloat3(&direction, dirVec);
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
-                    moveComp->direction = direction;
-                    moveComp->forwardAcceleration = 100;
+                    moveComp->movement = direction;
                 }
             }
         }

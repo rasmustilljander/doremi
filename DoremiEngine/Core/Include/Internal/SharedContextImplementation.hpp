@@ -10,7 +10,15 @@ namespace DoremiEngine
         {
             public:
             SharedContextImplementation()
-                : m_workingDirectory(""), m_audio(nullptr), m_core(nullptr), m_graphic(nullptr), m_network(nullptr), m_physics(nullptr), m_script(nullptr), m_input(nullptr)
+                : m_workingDirectory(""),
+                  m_audio(nullptr),
+                  m_core(nullptr),
+                  m_graphic(nullptr),
+                  m_network(nullptr),
+                  m_physics(nullptr),
+                  m_script(nullptr),
+                  m_input(nullptr),
+                  m_ai(nullptr)
 
             {
             }

@@ -14,7 +14,7 @@
 #include <Doremi/Core/Include/Manager/MovementManager.hpp>
 #include <Doremi/Core/Include/Manager/AudioManager.hpp>
 #include <Doremi/Core/Include/Manager/CameraManager.hpp>
-#include <Doremi/Core/Include/Manager/AIManager.hpp>
+#include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
@@ -40,9 +40,7 @@ namespace Doremi
 
     void GameMain::Initialize()
     {
-        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(
-            DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::GRAPHIC |
-            DoremiEngine::Core::EngineModuleEnum::INPUT | DoremiEngine::Core::EngineModuleEnum::AUDIO | DoremiEngine::Core::EngineModuleEnum::PHYSICS);
+        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
@@ -61,7 +59,7 @@ namespace Doremi
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
         Core::Manager* t_cameraManager = new Core::CameraManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        Core::Manager* t_aiManager = new Core::AIManager(sharedContext);
+        Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
 
         // Add manager to list of managers
@@ -74,7 +72,7 @@ namespace Doremi
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
 
-        m_managers.push_back(t_aiManager);
+        m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
 
         // GenerateWorld(sharedContext);

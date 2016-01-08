@@ -17,12 +17,8 @@
 #include <Manager/GraphicManager.hpp>
 #include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
-<<<<<<< 92f6b60ad72a7bf130319c962ab44b85f3b2c1f0
-#include <Manager/AIManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>
-=======
 #include <Manager/AI/AIPathManager.hpp>
->>>>>>> Potential field for static obj and group for dynam
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -384,31 +380,6 @@ namespace Doremi
             ////////////////End Example////////////////
         }
 
-            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
-            TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
-            TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
-
-            int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
-
-            RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
-            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(NewEntityID, t_transformComp->position,
-                                                                                                          t_transformComp->rotation,
-                                                                                                          DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
-
-            EntityBlueprint t_jawsDebugBlueprint2;
-
-            TransformComponent* t_transformComp2 = new TransformComponent();
-            t_transformComp2->position = XMFLOAT3(0, 0, -5);
-            t_transformComp2->rotation = XMFLOAT4(0, 0, 0, 1);
-            t_jawsDebugBlueprint2[ComponentType::Transform] = t_transformComp2;
-
-
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity2, t_jawsDebugBlueprint2);
-
-            NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity2);
-
-            t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
-        }
 
         void GameCore::GenerateWorldClientJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
         {
