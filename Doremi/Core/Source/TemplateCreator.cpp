@@ -203,8 +203,11 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+            // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+
+            // Character Controller
+            t_avatarBlueprint[ComponentType::CharacterController];
 
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
@@ -213,7 +216,6 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->maxSpeed = 5;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Register blueprint
@@ -243,8 +245,11 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+            // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+
+            // Controller component
+            t_avatarBlueprint[ComponentType::CharacterController];
 
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
@@ -253,7 +258,6 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->maxSpeed = 5;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Register blueprint

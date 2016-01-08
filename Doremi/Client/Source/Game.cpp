@@ -103,7 +103,7 @@ namespace Doremi
         bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
                                                                                                       DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
 
-        sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, position, XMFLOAT2(1, 1));
+        sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));
         Core::EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
 
         // TODO Not using this event atm, because of refac, will need to find some solution

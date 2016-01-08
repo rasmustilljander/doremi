@@ -340,7 +340,6 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->maxSpeed = 5;
             t_jawsDebugBlueprint[ComponentType::Movement] = t_movementComp;
 
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_jawsDebugBlueprint);
@@ -390,7 +389,6 @@ namespace Doremi
             t_jawsDebugBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
 
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->maxSpeed = 5;
             t_jawsDebugBlueprint[ComponentType::Movement] = t_movementComp;
 
             TransformComponent* t_transformComp = new TransformComponent();
