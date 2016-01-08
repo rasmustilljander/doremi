@@ -84,8 +84,10 @@ namespace Doremi
                             XMVECTOR myPos = XMLoadFloat3(&EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position);
 
                             XMVECTOR distance = fieldPos - myPos;
+
                             float dist = *XMVector3Length(distance).m128_f32;
-                            if(dist < area)
+
+                            if(dist < area && dist != 0)
                             {
                                 float force = power / dist;
                                 // force = XMMax(force, 0.0f);
@@ -96,11 +98,12 @@ namespace Doremi
                             }
                         }
                     }
+                    float moveSpeed = 0.04;
                     XMVECTOR normalDirection = XMLoadFloat3(&forceDirection);
-                    normalDirection = XMVector3Normalize(normalDirection);
+                    normalDirection = XMVector3Normalize(normalDirection) * moveSpeed;
                     XMStoreFloat3(&forceDirection, normalDirection);
-                    EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->direction = forceDirection;
-                    EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->forwardAcceleration = 100;
+                    EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->movement = forceDirection;
+                    // EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i)->movement = XMFLOAT3(0, 0, 1);
                 }
             }
         }

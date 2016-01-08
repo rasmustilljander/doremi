@@ -205,8 +205,7 @@ namespace Doremi
                     // Directly tell controller to move. TODOJB should be handled with components
                     if(movement.x != 0 || movement.y != 0 || movement.z != 0)
                     {
-                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(entityID, movement,
-                                                                                                       0.017); // TODOJB no hardcoded dt...
+                        EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(entityID)->movement = movement;
                     }
                 }
             }
