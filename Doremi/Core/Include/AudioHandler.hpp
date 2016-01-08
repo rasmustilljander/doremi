@@ -25,9 +25,10 @@ namespace Doremi
             public:
             /** Is a singleton. Use this method to get the EventManager*/
             static AudioHandler* GetInstance();
+            static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static void StopAudioHandler();
             AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~AudioHandler();
-            static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             void Initialize();
             void SetGunButtonDownTime(double p_time);
             void StartContinuousRecording();

@@ -67,6 +67,7 @@ namespace Doremi
         {
             m_stopEngineFunction();
             DynamicLoader::FreeSharedLibrary(m_engineLibrary);
+            // TODORT Release the Managers... Waiting for refactor.
         }
         void CreateEnemyBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
         {

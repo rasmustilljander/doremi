@@ -17,8 +17,18 @@ namespace Doremi
         AudioHandler::~AudioHandler() {}
         void AudioHandler::StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            m_singleton = new AudioHandler(p_sharedContext);
+            if(m_singleton == nullptr)
+            {
+                m_singleton = new AudioHandler(p_sharedContext);
+            }
         }
+
+        void AudioHandler::StopAudioHandler()
+        {
+            delete m_singleton;
+            m_singleton = nullptr;
+        }
+
         void AudioHandler::Initialize()
         {
             m_currentFrequency = 0;
