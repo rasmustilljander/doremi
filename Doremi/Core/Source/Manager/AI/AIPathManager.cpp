@@ -52,8 +52,9 @@ namespace Doremi
                 firstUpdate = false;
                 // creating a invisible "wall", for testing only
                 DoremiEngine::AI::PotentialFieldActor* actorwall =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 0), -10, 5);
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 25), -10, 5);
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AttachActor(*m_field, actorwall);
+                m_field->Update();
                 for(size_t i = 0; i < length; i++)
                 {
                     if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
@@ -96,11 +97,11 @@ namespace Doremi
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
                     {
-                        desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, false);
+                        desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, true);
                     }
                     else
                     {
-                        desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, false);
+                        desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, true);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y);
                     XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor);
@@ -109,7 +110,7 @@ namespace Doremi
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
                     XMVECTOR dirVec = desiredPosVec - unitPosVec;
                     dirVec = XMVector3Normalize(dirVec);
-                    dirVec += groupImpactVec;
+                    dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
                     dirVec = XMVector3Normalize(dirVec);
                     XMFLOAT3 direction;
                     XMStoreFloat3(&direction, dirVec);
