@@ -16,7 +16,7 @@ namespace DoremiEngine
             size_t length = m_group.size();
             for(auto actor : m_group) // Walk through every actor in group
             {
-                if(p_actor != actor)
+                if(actor != nullptr && p_actor != actor)
                 {
                     float power = actor->GetCharge(); // Get important data
                     float area = actor->GetRange();

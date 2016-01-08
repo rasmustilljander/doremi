@@ -10,15 +10,21 @@
 #include <Doremi/Core/Include/EntityComponent/Components/Example2Component.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PlayerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/MovementComponent.hpp>
-
+#include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/AIGroupComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/RangeComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/AIModule.hpp>
 
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
@@ -43,6 +49,50 @@ namespace Doremi
         TemplateCreator::TemplateCreator() {}
 
         TemplateCreator::~TemplateCreator() {}
+
+        void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+            // Render
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            blueprint[ComponentType::Render] = renderComp;
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            // blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            // Character control comp label
+            blueprint[ComponentType::CharacterController];
+            // Health comp
+            HealthComponent* healthComponent = new HealthComponent();
+            healthComponent->maxHealth = 100;
+            healthComponent->currentHealth = healthComponent->maxHealth;
+            blueprint[ComponentType::Health] = healthComponent;
+            // Enemy ai agent comp
+            blueprint[ComponentType::AIAgent];
+            // Range comp
+            RangeComponent* rangeComp = new RangeComponent();
+            rangeComp->range = 4;
+            blueprint[ComponentType::Range] = rangeComp;
+            // PotentialField component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            blueprint[ComponentType::PotentialField] = potentialComp;
+            // AI group component
+            AIGroupComponent* group = new AIGroupComponent();
+            group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+            blueprint[ComponentType::AIGroup] = group;
+            // Movement comp
+            MovementComponent* movementcomp = new MovementComponent();
+            blueprint[ComponentType::Movement] = movementcomp;
+            // Register blueprint
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
+        }
 
         void CreateBulletBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
@@ -260,6 +310,11 @@ namespace Doremi
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
+            // Potential field component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
+            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
         }
@@ -269,6 +324,7 @@ namespace Doremi
             CreateDebugPlatformsClient(sharedContext);
             CreateBulletBlueprintClient(sharedContext);
             CreatePlayerClient(sharedContext);
+            CreateEnemyBlueprintClient(sharedContext);
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -276,6 +332,7 @@ namespace Doremi
             CreateDebugPlatformsServer(sharedContext);
             CreateBulletBlueprintServer(sharedContext);
             CreatePlayerServer(sharedContext);
+            CreateEnemyBlueprintClient(sharedContext);
         }
     }
 }

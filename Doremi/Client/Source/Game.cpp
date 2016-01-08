@@ -1,14 +1,29 @@
 // Project specific
 #include <Game.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
+/// Engine
+// Core
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+// Physics
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+// AI
+#include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+
+/// Game
+// handlers
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
+// Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
 #include <Doremi/Core/Include/Manager/MovementManager.hpp>
@@ -17,13 +32,12 @@
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
+// Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
-#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
-#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
+// Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
-#include <Doremi/Core/Include/InputHandlerClient.hpp>
-#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 // Third party
 
@@ -34,6 +48,7 @@
 
 namespace Doremi
 {
+    using namespace Core;
     GameMain::GameMain() {}
 
     GameMain::~GameMain() {}
@@ -90,19 +105,46 @@ namespace Doremi
     {
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
-        // Create entity
+        // Create Avatar entity
         int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-
-        // Create the rigid body
         int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;
         DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 0);
-        DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
-        Core::RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<Core::RigidBodyComponent>(playerID);
-        bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
-                                                                                                      DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
-
         sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));
-        Core::EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
+
+        // Create platforms
+        for(size_t i = 0; i < 5; i++)
+        {
+            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
+            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
+            Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
+            rigidComp->p_bodyID =
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+        }
+
+        // Create some enemies
+        for(size_t i = 0; i < 8; i++)
+        {
+            int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
+            XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
+            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+            // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+            // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
+            //                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
+            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1, 0.5));
+
+            PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
+            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3);
+        }
+
+        /////// TONS OF OLD CODE//////
+        // Create the rigid body
+        // Core::RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<Core::RigidBodyComponent>(playerID);
+        // bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
+        //                                                                                              DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
+
 
         // TODO Not using this event atm, because of refac, will need to find some solution
         /*PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
@@ -124,16 +166,6 @@ namespace Doremi
         //    rigidComp->p_bodyID =
         //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
         //}
-        for(size_t i = 0; i < 5; i++)
-        {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
-        }
     }
 
     void GameMain::Run()
