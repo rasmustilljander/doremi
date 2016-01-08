@@ -44,9 +44,9 @@ namespace Doremi
 
         void InputHandlerClient::BuildMaskFromEngineForGame()
         {
-            int t_sizeVector = m_keyboardInputFromModule.size();
+            size_t t_sizeVector = m_keyboardInputFromModule.size();
             m_maskWithInput = 0;
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_keyboardInputFromModule[i]];
             }
@@ -71,9 +71,9 @@ namespace Doremi
 
         void InputHandlerClient::BuildMaskFromEngineForMeny()
         {
-            int t_sizeVector = m_keyboardInputFromModule.size();
+            size_t t_sizeVector = m_keyboardInputFromModule.size();
 
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_keyboardInputFromModule[i]];
             }
@@ -96,18 +96,18 @@ namespace Doremi
 
         void InputHandlerClient::PrintInputStructsDEBUG()
         {
-            int t_forLoopSizeI = m_keyboardInputFromModule.size();
-            for (size_t i = 0; i < t_forLoopSizeI; ++i)
+            const size_t t_forLoopSizeI = m_keyboardInputFromModule.size();
+            for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
                 std::cout << m_keyboardInputFromModule[i] << ", ";
             }
-            int t_forLoopSizeII = m_musInputFromModule.size();
+            const size_t t_forLoopSizeII = m_musInputFromModule.size();
 
-            for (size_t i = 0; i < t_forLoopSizeII; ++i)
+            for(size_t i = 0; i < t_forLoopSizeII; ++i)
             {
                 std::cout << m_musInputFromModule[i] << ", ";
             }
-            if (t_forLoopSizeII || t_forLoopSizeI)
+            if(t_forLoopSizeII || t_forLoopSizeI)
             {
                 std::cout << std::endl;
             }
