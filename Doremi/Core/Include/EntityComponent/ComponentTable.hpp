@@ -1,6 +1,6 @@
 #pragma once
 // Project specific
-#include <EntityComponent/Constants.hpp>
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
 // Standard libraries
 #include <string>

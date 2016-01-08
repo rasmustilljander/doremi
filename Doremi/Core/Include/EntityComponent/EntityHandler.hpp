@@ -1,9 +1,9 @@
 #pragma once
 
 // Project specific
-#include <EntityComponent/Constants.hpp>
-#include <EntityComponent/ComponentTable.hpp>
-#include <EntityComponent/StorageShelf.hpp>
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
+#include <Doremi/Core/Include/EntityComponent //ComponentTable.hpp>
+#include <Doremi/Core/Include/EntityComponent //StorageShelf.hpp>
 
 namespace Doremi
 {

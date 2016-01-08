@@ -18,7 +18,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        InterpolationHandler::InterpolationHandler() : m_snapshotSequenceReal(0), m_snapshotDelay(4) {}
+        InterpolationHandler::InterpolationHandler() : m_snapshotSequenceReal(0), m_snapshotDelay(10) {}
 
         InterpolationHandler::~InterpolationHandler() {}
 
@@ -118,7 +118,8 @@ namespace Doremi
         {
             // If the snapshot we're currently interpolating towards is more recent
             // then the one that we should be interpolating towards, we skip
-            cout <<  (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " " << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) <<endl;
+            cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
+                 << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) << endl;
             if(sequence_more_recent(m_snapshotSequenceReal, m_snapshotSequenceUsed, 255))
             {
                 // Clone so that the changed values are saved
@@ -139,19 +140,19 @@ namespace Doremi
 
                     int AmountOfSnapshots = m_DelayedSnapshots.size();
 
-                    for (iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
+                    for(iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
                     {
-                        if (sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
+                        if(sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
                         {
                             // If we find somone that is the same or infront of us
                             break;
                         }
-                        else if (m_DelayedSnapshots.size() > 1)
+                        else if(m_DelayedSnapshots.size() > 1)
                         {
                             // Remove it
                             iterRemoveStart = --iter.base();
                             AmountOfSnapshots--;
-                            if (AmountOfSnapshots == 1)
+                            if(AmountOfSnapshots == 1)
                             {
                                 break;
                             }
@@ -165,7 +166,7 @@ namespace Doremi
                     m_DelayedSnapshots.erase(iterRemoveStart, iterRemoveEnd);
 
                     // Loop to the last item (excluding it in the loop because we want to use it if it's the oldest
-                    //for (iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
+                    // for (iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
                     //{
                     //    if (sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
                     //    {
@@ -205,11 +206,6 @@ namespace Doremi
                     else
                     {
                         m_NumOfSequencesToInterpolate = 1;
-                    }
-                    
-                    if (m_NumOfSequencesToInterpolate > 150)
-                    {
-                        int a = 3;
                     }
 
                     // Update the new Next transform array

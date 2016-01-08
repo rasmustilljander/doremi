@@ -394,7 +394,7 @@ namespace Doremi
             NetMessage Message = NetMessage();
             Message.MessageID = MessageID::INPUT;
 
-            //std::cout << "Sending input message" << std::endl; // TODOCM logg instead
+            // std::cout << "Sending input message" << std::endl; // TODOCM logg instead
             // Createing input message
 
 

@@ -368,34 +368,29 @@ namespace Doremi
 
         void ServerNetworkManager::SendMessages(double p_dt)
         {
-            // If we exceed timer
-            m_nextUpdateTimer += p_dt;
+            // Remove time
+            m_nextUpdateTimer -= m_updateInterval;
 
-            if (m_nextUpdateTimer >= m_updateInterval)
+            // Update sequence here because of the error checking..
+            m_nextSnapshotSequence++;
+
+            cout << (int)m_nextSnapshotSequence << endl;
+
+            // Create global message
+            NetMessage Message = NetMessage();
+            Message.MessageID = MessageID::SNAPSHOT;
+
+
+            // TODOCM add snapshot info here
+            // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
+            CreateSnapshot(Message.Data, sizeof(Message.Data));
+
+
+            // For all connected clients we send messages
+            for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
             {
-                // Remove time
-                m_nextUpdateTimer -= m_updateInterval;
-
-                // Update sequence here because of the error checking..
-                m_nextSnapshotSequence++;
-
-                cout << (int)m_nextSnapshotSequence << endl;
-
-                // Create global message
-                NetMessage Message = NetMessage();
-                Message.MessageID = MessageID::SNAPSHOT;
-
-
-                // TODOCM add snapshot info here
-                // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
-                CreateSnapshot(Message.Data, sizeof(Message.Data));
-
-
-                // For all connected clients we send messages
-                for (std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
+                switch(iter->second->ConnectionState)
                 {
-                    switch (iter->second->ConnectionState)
-                    {
                     case ConnectionState::CONNECTED:
 
                         SendConnected(iter->second);
@@ -413,7 +408,6 @@ namespace Doremi
 
                     default:
                         break;
-                    }
                 }
             }
         }

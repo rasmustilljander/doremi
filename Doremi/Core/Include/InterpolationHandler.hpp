@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include <EntityComponent/Components/TransformComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 
 #define MAX_OBJECTS_IN_SNAPSHOT 100
 

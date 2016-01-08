@@ -207,7 +207,7 @@ namespace Doremi
             }
         }
         // Only for testing, should be removed! TODO
-        void GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
+        void GameCore::GenerateWorld(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             GenerateDebugPlatforms(sharedContext);
@@ -305,7 +305,6 @@ namespace Doremi
             XMStoreFloat4(&test, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(1, 0, 0)), XM_PIDIV2));
         }
 
-
         void GameCore::LoadEngineLibrary()
         {
             // Load engine DLL
@@ -319,7 +318,7 @@ namespace Doremi
             }
         }
 
-        void GenerateWorldServerJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
+        void GameCore::GenerateWorldServerJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -353,8 +352,8 @@ namespace Doremi
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
 
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
-            bodyComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation,
+                                                                                                          XMFLOAT3(0.5, 0.5, 0.5), materialID);
 
             EntityBlueprint t_jawsDebugBlueprint2;
 
@@ -369,10 +368,9 @@ namespace Doremi
             NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity2);
 
             t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
-
         }
 
-        void GenerateWorldClientJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
+        void GameCore::GenerateWorldClientJawsTest(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             EntityBlueprint t_jawsDebugBlueprint;
@@ -401,7 +399,7 @@ namespace Doremi
 
             int NewEntityID = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
 
-            //t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
+            // t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
             TransformComponentPrevious* tPrev = GetComponent<TransformComponentPrevious>(NewEntityID);
             TransformComponentNext* tNext = GetComponent<TransformComponentNext>(NewEntityID);
 
@@ -409,8 +407,8 @@ namespace Doremi
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
 
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
-            bodyComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation, XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation,
+                                                                                                          XMFLOAT3(0.5, 0.5, 0.5), materialID);
 
 
             EntityBlueprint t_jawsDebugBlueprint2;
@@ -432,7 +430,8 @@ namespace Doremi
             t_entityHandler.AddComponent(NewEntityID, (int)ComponentType::NetworkObject);
         }
 
-        void GameCore::InitializeClient()
+
+        const DoremiEngine::Core::SharedContext& GameCore::InitializeEngine(const size_t& p_engineModulesToStart)
         {
             START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
 
@@ -450,281 +449,7 @@ namespace Doremi
                 throw std::runtime_error("Failed to load engine - please check your installation.");
             }
 
-            const DoremiEngine::Core::SharedContext& sharedContext =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::GRAPHIC |
-                                    DoremiEngine::Core::EngineModuleEnum::INPUT | DoremiEngine::Core::EngineModuleEnum::AUDIO |
-                                    DoremiEngine::Core::EngineModuleEnum::PHYSICS);
-
-            /* This starts the physics handler. Should not be done here, but since this is the general
-            code dump, it'll work for now TODOJB*/
-            PlayerHandler::StartPlayerHandler(sharedContext);
-            AudioHandler::StartAudioHandler(sharedContext);
-            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-
-
-            ////////////////Example only////////////////
-            // Create manager
-            Manager* t_renderManager = new GraphicManager(sharedContext);
-            // Manager* t_physicsManager = new ExampleManager(sharedContext);
-            // Manager* t_playerManager = new PlayerManager(sharedContext);
-            Manager* t_clientNetworkManager = new ClientNetworkManager(sharedContext);
-            Manager* t_movementManager = new MovementManager(sharedContext);
-            Manager* t_audioManager = new AudioManager(sharedContext);
-            Manager* t_cameraManager = new CameraManager(sharedContext);
-            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
-            Manager* t_aiManager = new AIManager(sharedContext);
-            Manager* t_charSyncManager = new CharacterControlSyncManager(sharedContext);
-            // Add manager to list of managers
-            m_graphicalManagers.push_back(t_renderManager);
-            // m_managers.push_back(t_physicsManager);
-            // m_managers.push_back(t_playerManager);
-            //m_managers.push_back(t_audioManager);
-            m_managers.push_back(t_clientNetworkManager);
-            m_managers.push_back(t_cameraManager);
-            m_managers.push_back(t_rigidTransSyndManager);
-            m_managers.push_back(t_movementManager);
-
-            m_managers.push_back(t_aiManager);
-            m_managers.push_back(t_charSyncManager);
-
-
-            //GenerateWorld(sharedContext);
-
-            GenerateWorldClientJawsTest(sharedContext);
-
-
-            AudioHandler::GetInstance()->SetupRepeatableRecording();
-
-            ////////////////End Example////////////////
-        }
-
-        void GameCore::InitializeServer()
-        {
-            START_ENGINE libInitializeEngine = (START_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StartEngine");
-
-            if(libInitializeEngine == nullptr)
-            {
-                // TODORT proper logging
-                throw std::runtime_error("Failed to load engine - please check your installation.");
-            }
-
-            m_stopEngineFunction = (STOP_ENGINE)DynamicLoader::LoadProcess(m_engineLibrary, "StopEngine");
-
-            if(m_stopEngineFunction == nullptr)
-            {
-                // TODORT proper logging
-                throw std::runtime_error("Failed to load engine - please check your installation.");
-            }
-
-            const DoremiEngine::Core::SharedContext& sharedContext =
-                libInitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS);
-
-            /* This starts the physics handler. Should not be done here, but since this is the general
-            code dump, it'll work for now TODOJB*/
-
-            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-            PlayerHandler::StartPlayerHandler(sharedContext);
-
-            ////////////////Example only////////////////
-            // Create manager
-
-            // Manager* t_physicsManager = new ExampleManager(sharedContext);
-            Manager* t_serverNetworkManager = new ServerNetworkManager(sharedContext);
-            Manager* t_movementManager = new MovementManager(sharedContext);
-            Manager* t_rigidTransSyndManager = new RigidTransformSyncManager(sharedContext);
-
-            // Add manager to list of managers
-            // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
-            // m_managers.push_back(t_physicsManager);
-            m_managers.push_back(t_serverNetworkManager);
-            m_managers.push_back(t_rigidTransSyndManager);
-            
-            m_managers.push_back(t_movementManager);
-
-            // GenerateWorld(sharedContext);
-            GenerateWorldServerJawsTest(sharedContext);
-            ////////////////End Example////////////////
-        }
-
-        void GameCore::UpdateServerGame(double p_deltaTime)
-        {
-            EventHandler::GetInstance()->DeliverEvents();
-            PlayerHandler::GetInstance()->UpdatePlayerPositions();
-            PlayerHandler::GetInstance()->UpdatePlayerRotationsServer();
-
-            // Have all managers update
-            size_t length = m_managers.size();
-            for(size_t i = 0; i < length; i++)
-            {
-                m_managers.at(i)->Update(p_deltaTime);
-            }
-        }
-
-        void GameCore::UpdateClientGame(double p_deltaTime)
-        {
-            EventHandler::GetInstance()->DeliverEvents();
-
-            PlayerHandler::GetInstance()->UpdatePlayerInputs();
-            PlayerHandler::GetInstance()->UpdatePlayerPositions();
-            PlayerHandler::GetInstance()->UpdatePlayerRotationsClient();
-
-
-            // Have all managers update
-            size_t length = m_managers.size();
-            for(size_t i = 0; i < length; i++)
-            {
-                m_managers.at(i)->Update(p_deltaTime);
-            }
-            AudioHandler::GetInstance()->Update(p_deltaTime);
-        }
-
-        void GameCore::DrawGame(double p_deltaTime)
-        {
-            size_t length = m_graphicalManagers.size();
-            for(size_t i = 0; i < length; i++)
-            {
-                m_graphicalManagers.at(i)->Update(p_deltaTime);
-            }
-        }
-
-        void GameCore::StartClientCore()
-        {
-            // TODOCM remove for better timer
-            // GameLoop is not currently set
-
-            std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
-            PreviousClock = std::chrono::high_resolution_clock::now();
-
-            double Frame = 0;
-            double Offset = 0;
-            double Accum = 0;
-            double GameTime = 0;
-            double UpdateStepLen = 0.017;
-
-            while(true)
-            {
-                CurrentClock = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
-                Frame = duration.count() + Offset;
-                Offset = 0;
-                
-
-                // We simulate maximum 250 milliseconds each frame
-                // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-                if (Frame > 0.25f)
-                {
-                    Offset = Frame - 0.25f;
-                    Frame = 0.25f;
-                    cout << Frame << endl;
-                }
-                
-                
-                // Update the previous position with frametime so we can catch up if we slow down
-                PreviousClock = CurrentClock;
-
-                // Update Accumulator (how much we will work this frame)
-                Accum += Frame;
-
-                // Loop as many update-steps we will take this frame
-                while(Accum >= UpdateStepLen)
-                {
-                    // Update Game logic
-                    UpdateClientGame(UpdateStepLen);
-
-                    // Update interpolation transforms from snapshots
-                    InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
-
-                    // Remove time from accumulator
-                    //Accumulator -= UpdateTimeStepLength;
-                    Accum -= UpdateStepLen;
-
-                    // Add time to start
-                    GameTime += UpdateStepLen;
-                }
-
-                // Update alpha usd for inteprolation
-                double alpha = Accum / UpdateStepLen;
-
-                // Interpolate the frames here
-                InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
-
-                // Draw stuff
-                DrawGame((double)UpdateStepLen / 1000.0f);
-            }
-        }
-
-        void JawsSimulatePhysicsDebug(double deltaTime)
-        {
-            TransformComponent* trans = GetComponent<TransformComponent>(1);
-
-            if(trans->position.x == 1)
-            {
-                trans->position.y += deltaTime;
-                if(trans->position.y > 5)
-                {
-                    trans->position.x = -1;
-                }
-            }
-            else
-            {
-                trans->position.y -= deltaTime;
-                if(trans->position.y < -5)
-                {
-                    trans->position.x = 1;
-                }
-            }
-            XMStoreFloat4(&trans->rotation, XMQuaternionRotationRollPitchYaw(0, 0, trans->position.y * 1.0f));
-        }
-
-        void GameCore::StartServerCore()
-        {
-            std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
-            PreviousClock = std::chrono::high_resolution_clock::now();
-
-            double Frame = 0;
-            double Offset = 0;
-            double Accum = 0;
-            double GameTime = 0;
-            double UpdateStepLen = 0.017;
-
-            while (true)
-            {
-                CurrentClock = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
-                Frame = duration.count() + Offset;
-                Offset = 0;
-
-
-                // We simulate maximum 250 milliseconds each frame
-                // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-                if (Frame > 0.25f)
-                {
-                    Offset = Frame - 0.25f;
-                    Frame = 0.25f;
-                }
-
-                // Update the previous position with frametime so we can catch up if we slow down
-                PreviousClock = CurrentClock;
-
-                // Update Accumulator (how much we will work this frame)
-                Accum += Frame;
-
-                // Loop as many update-steps we will take this frame
-                while (Accum >= UpdateStepLen)
-                {
-                    // Update Game logic
-                    JawsSimulatePhysicsDebug(UpdateStepLen); // TODOCM remove
-                                                                              // Update Game logic
-                    UpdateServerGame(UpdateStepLen);
-
-                    // Remove time from accumulator
-                    //Accumulator -= UpdateTimeStepLength;
-                    Accum -= UpdateStepLen;
-
-                    // Add time to start
-                    GameTime += UpdateStepLen;
-                }
-            }
+            return libInitializeEngine(p_engineModulesToStart);
         }
     }
 }

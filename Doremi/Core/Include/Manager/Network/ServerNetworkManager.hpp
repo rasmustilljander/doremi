@@ -2,7 +2,7 @@
 
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
-#include <EntityComponent/Constants.hpp>
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
 // Standard libraries
 #include <map>
