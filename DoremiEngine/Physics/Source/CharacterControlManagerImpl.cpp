@@ -10,7 +10,7 @@ namespace DoremiEngine
         }
         CharacterControlManagerImpl::~CharacterControlManagerImpl() {}
 
-        int CharacterControlManagerImpl::AddController(int p_id, XMFLOAT3 p_position, XMFLOAT2 p_dimensions)
+        int CharacterControlManagerImpl::AddController(int p_id, int p_matID, XMFLOAT3 p_position, XMFLOAT2 p_dimensions)
         {
             // Set start attributes of the controller
             PxCapsuleControllerDesc desc;
@@ -18,16 +18,14 @@ namespace DoremiEngine
             desc.position = PxExtendedVec3(p_position.x, p_position.y, p_position.z);
             desc.height = p_dimensions.x;
             desc.radius = p_dimensions.y;
-            desc.material = m_utils.m_physicsMaterialManager->GetMaterial(m_utils.m_physicsMaterialManager->CreateMaterial(0.5, 0.5, 0.5));
-
+            desc.material = m_utils.m_physicsMaterialManager->GetMaterial(p_matID); // DANGER! Assumes it already has material
+            desc.stepOffset = 0.1;
             // Hard coded up vector
             desc.upDirection = PxVec3(0, 1, 0);
-
 
             bool derp = desc.isValid();
 
             PxController* controller = m_manager->createController(desc);
-
 
             m_controllers[p_id] = m_manager->createController(desc);
 
