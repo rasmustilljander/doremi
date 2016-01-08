@@ -173,14 +173,12 @@ namespace Doremi
             sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
             sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
             t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
-            size_t t_soundIDForRecord = sharedContext.GetAudioModule().SetupRecording(true);
-            sharedContext.GetAudioModule().StartRecording(t_soundIDForRecord, true);
-            AudioHandler::GetInstance()->SetFrequencyAnalyserSoundID(t_soundIDForRecord);
-            AudioHandler::GetInstance()->SetLoopForFrequencyAnalyser(true);
-            sharedContext.GetAudioModule().SetSoundPositionAndVelocity(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), 0);
+            AudioHandler::GetInstance()->SetupContinuousRecording();
+            AudioHandler::GetInstance()->StartContinuousRecording();
 
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);

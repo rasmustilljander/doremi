@@ -352,8 +352,9 @@ namespace Doremi
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
 
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
-            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation,
-                                                                                                          XMFLOAT3(0.5, 0.5, 0.5), materialID);
+            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(NewEntityID, t_transformComp->position,
+                                                                                                          t_transformComp->rotation,
+                                                                                                          DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
 
             EntityBlueprint t_jawsDebugBlueprint2;
 
@@ -407,7 +408,8 @@ namespace Doremi
             int materialID = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(NewEntityID)->p_materialID;
 
             RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(NewEntityID);
-            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(t_transformComp->position, t_transformComp->rotation,
+            bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(NewEntityID, t_transformComp->position,
+                                                                                                          t_transformComp->rotation,
                                                                                                           XMFLOAT3(0.5, 0.5, 0.5), materialID);
 
 

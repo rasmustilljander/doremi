@@ -23,6 +23,7 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 // Third party
 
@@ -60,8 +61,8 @@ namespace Doremi
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
         Core::Manager* t_cameraManager = new Core::CameraManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        Manager* t_aiManager = new AIManager(sharedContext);
-        Manager* t_charSyncManager = new CharacterControlSyncManager(sharedContext);
+        Core::Manager* t_aiManager = new Core::AIManager(sharedContext);
+        Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
 
         // Add manager to list of managers
         m_graphicalManagers.push_back(t_renderManager);
@@ -99,8 +100,11 @@ namespace Doremi
         DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 0);
         DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
         Core::RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<Core::RigidBodyComponent>(playerID);
-        bodyComp->p_bodyID =
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
+        bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
+                                                                                                      DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);
+
+        sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, position, XMFLOAT2(1, 1));
+        Core::EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
 
         // TODO Not using this event atm, because of refac, will need to find some solution
         /*PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
@@ -129,7 +133,8 @@ namespace Doremi
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+            rigidComp->p_bodyID =
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
         }
     }
 

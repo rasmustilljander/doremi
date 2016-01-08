@@ -2,8 +2,8 @@
 
 // Project specific
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
-#include <Doremi/Core/Include/EntityComponent //ComponentTable.hpp>
-#include <Doremi/Core/Include/EntityComponent //StorageShelf.hpp>
+#include <Doremi/Core/Include/EntityComponent/ComponentTable.hpp>
+#include <Doremi/Core/Include/EntityComponent/StorageShelf.hpp>
 
 namespace Doremi
 {

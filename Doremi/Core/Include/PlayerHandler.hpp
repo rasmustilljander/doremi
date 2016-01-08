@@ -137,6 +137,10 @@ namespace Doremi
             void UpdatePlayerRotationsServer();
 
             private:
+            /**
+                TODOCM doc
+            */
+            static PlayerHandler* m_singleton;
 
             /**
                 TODOEA doc

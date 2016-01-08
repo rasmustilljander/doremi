@@ -12,7 +12,8 @@
 #include <EventHandler/Events/ExampleEvent.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-#include <Doremi/Core/Include/InputHandler.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <Doremi/Core/Include/PlayerHandler.hpp>
 
 #include <DirectXMath.h>
 // Third party
@@ -72,38 +73,44 @@ namespace Doremi
                 {
                     RigidBodyComponent* t_rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     float t_freq = AudioHandler::GetInstance()->GetFrequency();
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq*3, 0)); /**Far from complete TODOLH bör inte liogga i audio manager heller*/
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(
+                        t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq * 3, 0)); /**Far from complete TODOLH bör inte liogga i audio manager heller*/
                 }
-                
             }
-            //m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
+            // m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
             m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
-            //std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
+            // std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
 
-            // Check Input
-            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording) && !m_gunReloadButtonDown)
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+
+            if(inputHandler != nullptr)
             {
-                AudioHandler::GetInstance()->StartRepeatableRecording();
-                m_gunReloadButtonDown = true;
-                m_timeThatGunButtonIsDown = 0;
+                // Check Input
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording) && !m_gunReloadButtonDown)
+                {
+                    AudioHandler::GetInstance()->StartRepeatableRecording();
+                    m_gunReloadButtonDown = true;
+                    m_timeThatGunButtonIsDown = 0;
+                }
+                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
+                {
+                    m_timeThatGunButtonIsDown += p_dt;
+                }
+                else if(!inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
+                {
+                    m_gunReloadButtonDown = false;
+                    AudioHandler::GetInstance()->SetGunButtonDownTime(m_timeThatGunButtonIsDown);
+                }
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
+                {
+                    AudioHandler::GetInstance()->PlayRepeatableRecordedSound();
+                }
+                else
+                {
+                    // Do Nothing
+                }
             }
-            else if(InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
-            {
-                m_timeThatGunButtonIsDown += p_dt;
-            }
-            else if(!InputHandler::GetInstance()->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
-            {
-                m_gunReloadButtonDown = false;
-                AudioHandler::GetInstance()->SetGunButtonDownTime(m_timeThatGunButtonIsDown);
-            }
-            if(InputHandler::GetInstance()->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
-            {
-                AudioHandler::GetInstance()->PlayRepeatableRecordedSound();
-            }
-            else
-            {
-                //Do Nothing
-            }
+
 
             t_audioModule.Update();
         }

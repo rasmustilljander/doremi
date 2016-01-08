@@ -34,7 +34,7 @@ namespace Doremi
         {
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
-            size_t playerID = PlayerHandler::GetInstance()->GetPlayerEntityID();
+            size_t playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
             vector<int> t_fieldActors;
             for(size_t i = 0; i < length; i++)
             {

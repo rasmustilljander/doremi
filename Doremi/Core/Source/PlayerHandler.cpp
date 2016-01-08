@@ -33,25 +33,25 @@ namespace Doremi
 
         }
 
+        PlayerHandler* PlayerHandler::m_singleton = nullptr;
+
         void PlayerHandler::StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            if (m_singleton != nullptr)
+            if(m_singleton != nullptr)
             {
                 std::runtime_error("PlayerHandler StartPlayerHandler called multiple times.");
             }
             m_singleton = new PlayerHandler(p_sharedContext);
         }
 
-        PlayerHandler* PlayerHandler::m_singleton = nullptr;
-
-        PlayerHandler* PlayerHandler::GetInstance() 
-        { 
-            if (m_singleton == nullptr)
+        PlayerHandler* PlayerHandler::GetInstance()
+        {
+            if(m_singleton == nullptr)
             {
                 std::runtime_error("PlayerHandler not initialized, GetInstance called.");
             }
 
-            return m_singleton; 
+            return m_singleton;
         }
 
         InputHandler* PlayerHandler::GetDefaultInputHandler()
@@ -203,14 +203,11 @@ namespace Doremi
                     // Store finished movement vec
                     XMStoreFloat3(&movement, movementVec);
                     // Directly tell controller to move. TODOJB should be handled with components
-                    if (movement.x != 0 || movement.y != 0 || movement.z != 0)
+                    if(movement.x != 0 || movement.y != 0 || movement.z != 0)
                     {
                         m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(entityID, movement,
-                            0.017); // TODOJB no hardcoded dt...
+                                                                                                       0.017); // TODOJB no hardcoded dt...
                     }
-
-
-                    
                 }
             }
         }

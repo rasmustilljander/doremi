@@ -7,16 +7,9 @@ namespace Doremi
 {
     namespace Core
     {
-        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) 
-        {
-            userCmdsPlaying[228] = UserCommandPlaying::StartRepeatableAudioRecording;
-            userCmdsPlaying[246] = UserCommandPlaying::PlayRepeatableAudioRecording;
-        }
+        InputHandler::InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
-        InputHandler::~InputHandler() 
-        {
-
-        }
+        InputHandler::~InputHandler() {}
 
         bool InputHandler::CheckBitMaskInputFromGame(int p_bitMask)
         {
