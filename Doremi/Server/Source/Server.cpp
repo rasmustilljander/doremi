@@ -34,8 +34,8 @@ namespace Doremi
 
     void ServerMain::Initialize()
     {
-        const DoremiEngine::Core::SharedContext& sharedContext =
-            InitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS);
+        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(
+            DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::AI);
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/

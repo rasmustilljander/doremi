@@ -332,7 +332,7 @@ namespace Doremi
             CreateDebugPlatformsServer(sharedContext);
             CreateBulletBlueprintServer(sharedContext);
             CreatePlayerServer(sharedContext);
-            CreateEnemyBlueprintClient(sharedContext);
+            // CreateEnemyBlueprintClient(sharedContext);
         }
     }
 }
