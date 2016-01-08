@@ -1,5 +1,6 @@
 #include <Internal/PotentialField/PotentialFieldImpl.hpp>
 
+#include <iostream>
 namespace DoremiEngine
 {
     namespace AI
@@ -19,17 +20,19 @@ namespace DoremiEngine
             size_t nrOfActors = m_actors.size();
             size_t nrOfQuadsX = m_grid.size();
             size_t nrOfQuadsY = m_grid[0].size();
-            for(auto actor : m_actors)
+
+            for(size_t x = 0; x < nrOfQuadsX; x++)
             {
-                XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
-                XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
-                float actorCharge = actor->GetCharge();
-                float actorRange = actor->GetRange();
-                for(size_t x = 0; x < nrOfQuadsX; x++)
+                for(size_t y = 0; y < nrOfQuadsY; y++)
                 {
-                    for(size_t y = 0; y < nrOfQuadsY; y++)
+                    XMFLOAT2 quadPos = m_grid[x][y].position;
+                    float totalCharge = 0;
+                    for(auto actor : m_actors)
                     {
-                        XMFLOAT2 quadPos = m_grid[x][y].position;
+                        XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+                        XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                        float actorCharge = actor->GetCharge();
+                        float actorRange = actor->GetRange();
                         // Calculate charge
                         XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
                         XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
@@ -39,8 +42,20 @@ namespace DoremiEngine
                         if(dist < actorRange)
                         {
                             float force = actorCharge / dist;
-                            m_grid[x][y].charge += force;
+                            totalCharge += force;
                         }
+                    }
+                    m_grid[x][y].charge = totalCharge;
+                }
+            }
+
+            for(auto actor : m_actors)
+            {
+
+                for(size_t x = 0; x < nrOfQuadsX; x++)
+                {
+                    for(size_t y = 0; y < nrOfQuadsY; y++)
+                    {
                     }
                 }
             }
@@ -49,21 +64,20 @@ namespace DoremiEngine
         {
             m_actors.push_back(p_newActor);
         } // TODOKO check if actor is already in the field
-        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition)
+        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor)
         {
             // TODOKO Test!
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             using namespace DirectX;
-            XMFLOAT3 unitPos = p_unitPosition; // Needs to be modifiable
-            XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+            XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
             float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
             float gridQuadHeight = m_height / (float)m_grid[0].size();
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.y - m_height / 2.0f);
-            unitPos.x -= bottomLeft.x;
-            unitPos.y -= bottomLeft.y;
-            int quadNrX = std::floor(unitPos.x / gridQuadWidth); // What quad in x and y
-            int quadNrY = std::floor(unitPos.y / gridQuadHeight);
+            position2D.x -= bottomLeft.x - 0.5;
+            position2D.y -= bottomLeft.y - 0.5;
+            int quadNrX = std::floor(position2D.x / gridQuadWidth); // What quad in x and y
+            int quadNrY = std::floor(position2D.y / gridQuadHeight);
             // Add quads that needs checking, 3x3 square around the unit
 
             std::vector<XMINT2> quadsToCheck;
@@ -77,8 +91,14 @@ namespace DoremiEngine
             }
             // Check for special cases
             size_t length = quadsToCheck.size();
-            XMFLOAT2 highestChargedPos;
-            float highestCharge = -100000;
+            XMFLOAT2 highestChargedPos = m_center;
+            float highestCharge = 0;
+            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
+            {
+                // take the quad the unit is in as the highest charge. If all the wauds have the same charge the unit shouldnt move
+                highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
+                highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+            }
             for(size_t i = 0; i < length; i++)
             {
                 int x = quadsToCheck[i].x;
@@ -86,7 +106,9 @@ namespace DoremiEngine
                 if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size())
                 {
                     // The quad exists!
-                    float quadCharge = m_grid[x][y].charge;
+
+                    float quadCharge = CalculateCharge(x, y, p_currentActor);
+
                     if(quadCharge > highestCharge)
                     {
                         highestCharge = quadCharge;
@@ -95,11 +117,42 @@ namespace DoremiEngine
                 }
             }
             // If now charge was found we are probably outside the field... in which case we should start walking towards the field
-            if(highestCharge <= -100000)
+            // std::cout << "Wants to get to " << highestChargedPos.x <<" " << highestChargedPos.y << std::endl;
+            // std::cout << "is at " << p_unitPosition.x << " " << p_unitPosition.z << std::endl;
+            if(highestCharge <= -9000)
             {
-                // TODOKO Find out which quad is closest
             }
-            return XMFLOAT2(0, 0);
+            return highestChargedPos;
+        }
+
+        float PotentialFieldImpl::CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor)
+        {
+            using namespace DirectX;
+            XMFLOAT2 quadPos = m_grid[p_quadX][p_quadY].position;
+            float totalCharge = 0;
+            for(auto actor : m_actors)
+            {
+                if(actor != p_currentActor) // this should mean that the current actor is skipped when calculating charge... still doesnt work...
+                {
+                    XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+                    XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                    float actorCharge = actor->GetCharge();
+                    float actorRange = actor->GetRange();
+                    // Calculate charge
+                    XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+                    XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
+
+                    XMVECTOR distance = actorPosVec - quadPosVec;
+                    float dist = *XMVector3Length(distance).m128_f32;
+                    if(dist < actorRange)
+                    {
+                        float force = actorCharge / dist;
+                        totalCharge += force;
+                    }
+                }
+            }
+            // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
+            return totalCharge;
         }
     }
 }

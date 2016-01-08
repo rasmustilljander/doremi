@@ -39,16 +39,17 @@ namespace Doremi
 
             // mat = XMMatrixInverse(&XMMatrixDeterminant(mat), mat);
             XMFLOAT4X4 viewMat;
-
+            // creates a projection matrix which makes vectors into the ordinary plane. this is made so it wont flip when you rotate
             XMFLOAT4 plane = XMFLOAT4(0, 1, 0, 0);
             XMFLOAT4 light = XMFLOAT4(0, 1, 0, 0);
             XMVECTOR vecPlane = XMLoadFloat4(&plane);
             XMVECTOR veclight = XMLoadFloat4(&light);
-            XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight);
+            XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight); // creates a projection matrix
             XMVECTOR camDir = XMVector3Transform(dir, projMat);
             camDir = XMVector3Normalize(camDir);
             XMVECTOR finalDir = (pos - camDir * 2.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
-            XMMATRIX mat = XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup));
+            XMMATRIX mat =
+                XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup)); // vup is added to position so you look abit above the player
             XMStoreFloat4x4(&viewMat, mat);
             m_camera->SetViewMatrix(viewMat);
         }

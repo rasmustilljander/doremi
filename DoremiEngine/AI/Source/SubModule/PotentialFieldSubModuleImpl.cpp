@@ -37,7 +37,7 @@ namespace DoremiEngine
             newField->SetWidth(p_width);
             return newField;
         }
-        PotentialFieldActor* PotentialFieldSubModuleImpl::CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range) // TODOKO position should possibly be float2
+        PotentialFieldActor* PotentialFieldSubModuleImpl::CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range) // TODOKO position should possibly be float2. Pointer so we dont need to send pos every frame?
         {
             PotentialFieldActor* newActor = new PotentialFieldActorImpl();
             newActor->SetPosition(p_position);

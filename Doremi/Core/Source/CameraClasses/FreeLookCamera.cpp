@@ -33,22 +33,26 @@ namespace Doremi
         {
             HandleUserCMD(p_dt);
             using namespace DirectX;
+            // creates a rotation matrix from jaw and pitch
             XMStoreFloat4x4(&m_camRotationMatrix, XMMatrixRotationRollPitchYaw(m_camPitch, m_camYaw, 0));
+            // sets the cameras target vector and normalizes it, Done by using the default forward vector
             XMStoreFloat3(&m_camTarget, XMVector3TransformCoord(XMLoadFloat3(&m_defaultForward), XMLoadFloat4x4(&m_camRotationMatrix)));
             XMStoreFloat3(&m_camTarget, XMVector3Normalize(XMLoadFloat3(&m_camTarget)));
 
+            // takes out camera forward, right and up vector
             XMStoreFloat3(&m_camRight, XMVector3TransformCoord(XMLoadFloat3(&m_defaultRight), XMLoadFloat4x4(&m_camRotationMatrix)));
             XMStoreFloat3(&m_camForward, XMVector3TransformCoord(XMLoadFloat3(&m_defaultForward), XMLoadFloat4x4(&m_camRotationMatrix)));
             XMStoreFloat3(&m_camUp, XMVector3Cross(XMLoadFloat3(&m_camForward), XMLoadFloat3(&m_camRight)));
 
-            XMVECTOR tempCam;
-            tempCam = XMLoadFloat3(&m_camPos);
+            XMVECTOR cameraPositionVec;
+            cameraPositionVec = XMLoadFloat3(&m_camPos);
+            // Moves the camera
+            cameraPositionVec += m_moveLeftRight * XMLoadFloat3(&m_camRight);
+            cameraPositionVec += m_moveForwardBackward * XMLoadFloat3(&m_camForward);
 
-            tempCam += m_moveLeftRight * XMLoadFloat3(&m_camRight);
-            tempCam += m_moveForwardBackward * XMLoadFloat3(&m_camForward);
+            XMStoreFloat3(&m_camPos, cameraPositionVec);
 
-            XMStoreFloat3(&m_camPos, tempCam);
-
+            // Reset the movement values for the next update
             m_moveLeftRight = 0.0f;
             m_moveForwardBackward = 0.0f;
 
@@ -56,7 +60,7 @@ namespace Doremi
             XMFLOAT4X4 viewMatrix;
             XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(XMMatrixLookAtLH(XMLoadFloat3(&m_camPos), XMLoadFloat3(&m_camTarget), XMLoadFloat3(&m_camUp))));
             XMStoreFloat3(&m_camRight, XMVector3Normalize(XMLoadFloat3(&m_camRight)));
-
+            // setst the cameras view matrix
             m_camera->SetViewMatrix(viewMatrix);
         }
 

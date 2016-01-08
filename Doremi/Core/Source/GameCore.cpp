@@ -104,7 +104,7 @@ namespace Doremi
             blueprint[ComponentType::Range] = rangeComp;
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -3, 5);
+
             blueprint[ComponentType::PotentialField] = potentialComp;
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
@@ -113,7 +113,7 @@ namespace Doremi
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
             // Create some enemies
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-            for(size_t i = 0; i < 5; i++)
+            for(size_t i = 0; i < 4; i++)
             {
                 int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
                 XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
@@ -123,6 +123,10 @@ namespace Doremi
                 // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
                 //                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
                 sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1, 0.5));
+
+                PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
+                potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3);
+
             }
         }
         void CreateBulletBlueprint(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -253,7 +257,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
             // Potential field comp
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 6, 200);
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 8, 200); // TODOKO should be done after the entity is created
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);

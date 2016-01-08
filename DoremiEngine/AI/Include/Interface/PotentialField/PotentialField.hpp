@@ -36,9 +36,10 @@ namespace DoremiEngine
             */
             virtual void AddActor(PotentialFieldActor* p_newActor) = 0;
             /**
-            Returns the position of the gridpoint the given units position is most attracted to
+            Returns the position of the gridpoint the given units position is most attracted to. If a actor is given the charge given by that actor
+            will be ignored.
             */
-            virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition) = 0;
+            virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr) = 0;
         };
     }
 }

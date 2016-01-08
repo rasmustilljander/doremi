@@ -15,9 +15,11 @@ namespace DoremiEngine
             void SetCenter(const DirectX::XMFLOAT2& p_center) override { m_center = p_center; };
             void Update() override;
             void AddActor(PotentialFieldActor* p_newActor) override;
-            DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition) override;
+            DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr) override;
 
             private:
+            // Help functions
+            float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
             std::vector<std::vector<PotentialFieldGridPoint>> m_grid; // [width][height]
             std::vector<PotentialFieldActor*> m_actors;
             float m_width;

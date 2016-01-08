@@ -3,6 +3,15 @@
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
+
+namespace DoremiEngine
+{
+    namespace AI
+    {
+        class PotentialField;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -18,6 +27,10 @@ namespace Doremi
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
             void OnEvent(Event* p_event) override;
+
+            private:
+            DoremiEngine::AI::PotentialField* m_field;
+            bool firstUpdate;
         };
     }
 }

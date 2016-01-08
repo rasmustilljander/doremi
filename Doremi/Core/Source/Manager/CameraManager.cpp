@@ -23,8 +23,10 @@ namespace Doremi
             // TODOKO Rename cameramanager on graphic module
             using namespace DirectX;
             XMFLOAT4X4 projection;
-            XMMATRIX mat = XMMatrixTranspose(XMMatrixPerspectiveFovLH(90 * 3.14 / 180.0f, 800.0f / 600.0f, 0.1f, 1000.0f));
+            XMMATRIX mat =
+                XMMatrixTranspose(XMMatrixPerspectiveFovLH(90 * 3.14 / 180.0f, 800.0f / 600.0f, 0.1f, 1000.0f)); // TODOKO use config values
             XMStoreFloat4x4(&projection, mat);
+
             DoremiEngine::Graphic::Camera* freecamera = m_graphicModuleCameraManager.BuildNewCamera(projection);
             DoremiEngine::Graphic::Camera* thirdPersonCamera = m_graphicModuleCameraManager.BuildNewCamera(projection);
             m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera);
