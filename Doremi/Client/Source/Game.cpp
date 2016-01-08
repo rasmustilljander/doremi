@@ -229,6 +229,13 @@ namespace Doremi
 
             // Draw stuff
             DrawGame((double)UpdateStepLen / 1000.0f);
+
+            // Escape
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ExitGame))
+            {
+                return;
+            }
         }
     }
 

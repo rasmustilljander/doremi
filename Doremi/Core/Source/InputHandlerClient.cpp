@@ -25,6 +25,7 @@ namespace Doremi
             userCmdsPlaying[120] = UserCommandPlaying::DebugButton;
             userCmdsPlaying[228] = UserCommandPlaying::StartRepeatableAudioRecording;
             userCmdsPlaying[246] = UserCommandPlaying::PlayRepeatableAudioRecording;
+            userCmdsPlaying[27] = UserCommandPlaying::ExitGame;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;

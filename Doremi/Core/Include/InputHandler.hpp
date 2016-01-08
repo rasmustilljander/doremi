@@ -39,6 +39,7 @@ namespace Doremi
             DebugButton = 4096,
             StartRepeatableAudioRecording = 8192,
             PlayRepeatableAudioRecording = 16384,
+            ExitGame = 32768,
             // TODOEA add all here or set the 1111111... bit number to ALL
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
         };
