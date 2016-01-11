@@ -19,13 +19,15 @@ namespace DoremiEngine
             desc.height = p_dimensions.x;
             desc.radius = p_dimensions.y;
             desc.material = m_utils.m_physicsMaterialManager->GetMaterial(p_matID); // DANGER! Assumes it already has material
+            if(desc.material == NULL)
+            {
+                throw std::runtime_error("No physics material exists with that ID");
+            }
             desc.stepOffset = 0.1;
             desc.reportCallback = m_controllerCallback;
 
             // Hard coded up vector
             desc.upDirection = PxVec3(0, 1, 0);
-
-            bool derp = desc.isValid();
 
             m_controllers[p_id] = m_manager->createController(desc);
             m_IDsByControllers[m_controllers[p_id]] = p_id;
@@ -44,6 +46,12 @@ namespace DoremiEngine
             float m_minDistTraveled = 0;
             // EMPTY FILTERS!
             PxControllerFilters filters;
+            // Check if controller exists
+            if(m_controllers.find(p_id) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("No controller exists with id: " + p_id);
+            }
             m_controllers[p_id]->move(PxVec3(p_discplacement.x, p_discplacement.y, p_discplacement.z), 0, p_dt, filters);
             // Redundant return?
             return p_id;
@@ -51,18 +59,36 @@ namespace DoremiEngine
 
         XMFLOAT3 CharacterControlManagerImpl::GetPosition(int p_id)
         {
+            // Check if controller exists
+            if(m_controllers.find(p_id) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("No controller exists with id: " + p_id);
+            }
             PxExtendedVec3 p = m_controllers[p_id]->getPosition();
             return XMFLOAT3(p.x, p.y, p.z);
         }
 
         XMFLOAT4 CharacterControlManagerImpl::GetOrientation(int p_id)
         {
+            // Check if controller exists
+            if(m_controllers.find(p_id) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("No controller exists with id: " + p_id);
+            }
             PxQuat q = m_controllers[p_id]->getActor()->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
 
         void CharacterControlManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
         {
+            // Check if controller exists
+            if(m_controllers.find(p_bodyID) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("No controller exists with id: " + p_bodyID);
+            }
             PxFilterData filterData;
             filterData.word0 = p_filterGroup; // Own ID
             filterData.word1 = p_filterMask; // ID mask to filter pairs that trigger contact callback
