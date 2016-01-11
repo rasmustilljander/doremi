@@ -102,23 +102,50 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
-            if(m_bodies[p_bodyID]->isRigidDynamic()) ((PxRigidDynamic*)m_bodies[p_bodyID])->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
+            if (m_bodies[p_bodyID]->isRigidDynamic())
+            {
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
+            }
+            else
+            {
+                throw std::runtime_error("Body is not dynamic and cannot apply force. ID: " + p_bodyID);
+            }
         }
 
         void RigidBodyManagerImpl::AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque)
         {
-            if(m_bodies[p_bodyID]->isRigidDynamic()) ((PxRigidDynamic*)m_bodies[p_bodyID])->addTorque(PxVec3(p_torque.x, p_torque.y, p_torque.z));
+            if (m_bodies[p_bodyID]->isRigidDynamic())
+            {
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->addTorque(PxVec3(p_torque.x, p_torque.y, p_torque.z));
+            }
+            else
+            {
+                throw std::runtime_error("Body is not dynamic and cannot apply torque. ID: " + p_bodyID);
+            }
         }
 
         void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
-            /*((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));*/
-            ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            if (m_bodies[p_bodyID]->isRigidDynamic())
+            {
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            }
+            else
+            {
+                throw std::runtime_error("Body is not dynamic and cannot set velocity. ID: " + p_bodyID);
+            }
         }
 
         void RigidBodyManagerImpl::SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
-            ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            if (m_bodies[p_bodyID]->isRigidDynamic())
+            {
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
+            }
+            else
+            {
+                throw std::runtime_error("Body is not dynamic and set anglular velicity. ID: " + p_bodyID);
+            }
         }
 
         void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)
