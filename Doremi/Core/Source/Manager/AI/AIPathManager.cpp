@@ -117,7 +117,7 @@ namespace Doremi
                     dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
                     dirVec = XMVector3Normalize(dirVec);
                     XMFLOAT3 direction;
-                    XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
+                    XMStoreFloat3(&direction, dirVec * 0.02f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
                 }
