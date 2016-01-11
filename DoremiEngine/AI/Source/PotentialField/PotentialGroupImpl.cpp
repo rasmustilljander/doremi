@@ -35,6 +35,7 @@ namespace DoremiEngine
                     }
                 }
             }
+            // forceDirection.y = 0; // TODOKO Only 2d for now, review
             XMVECTOR normalDirection = XMLoadFloat3(&forceDirection); // Normalize
             normalDirection = XMVector3Normalize(normalDirection);
             XMStoreFloat3(&forceDirection, normalDirection);

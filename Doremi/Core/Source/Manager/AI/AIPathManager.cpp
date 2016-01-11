@@ -112,8 +112,8 @@ namespace Doremi
                     {
                         desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, true);
                     }
-                    XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y);
-                    XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor);
+                    XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
+                    XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
                     XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
