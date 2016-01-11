@@ -264,7 +264,9 @@ namespace DoremiEngine
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send TCP data.");
+                    // throw std::runtime_error("Failed to send TCP data.");
+                    std::cout << "Failed to send TCP data." << std::endl;
+                    return false;
                 }
                 return false;
             }
@@ -292,7 +294,9 @@ namespace DoremiEngine
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Fix better message
-                    throw std::runtime_error("Failed to recieve TCP data.");
+                    // throw std::runtime_error("Failed to recieve TCP data.");
+                    std::cout << "Failed to recieve TCP data." << std::endl;
+                    return false;
                 }
 
                 return false;
