@@ -130,7 +130,7 @@ namespace Doremi
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3);
+            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3, false);
         }
 
         // TODO Not using this event atm, because of refac, will need to find some solution
