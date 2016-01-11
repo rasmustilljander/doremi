@@ -8,14 +8,12 @@ namespace Utility
     namespace MemoryManager
     {
 
-        StackAllocator::StackAllocator() : m_allocated(0) {}
+        StackAllocator::StackAllocator() : m_top(nullptr) {}
 
         void StackAllocator::Initialize(const size_t& p_memorySize)
         {
-            m_memorySize = p_memorySize;
             // Allocate the memory to use
-            m_raw = std::malloc(m_memorySize); // TODORT Add the possibility to alloc from another container.
-            memset(m_raw, 0, p_memorySize); // TODORT could be removed in the future
+            MemoryAllocator::Initialize(p_memorySize, 0);
             Clear();
         }
 
@@ -72,9 +70,9 @@ namespace Utility
 
         void* StackAllocator::AllocateUnaligned(const size_t& p_newMemorySize)
         {
-            if(m_allocated + p_newMemorySize < m_memorySize)
+            if(m_occupiedMemory + p_newMemorySize < m_totalMemory)
             {
-                m_allocated += p_newMemorySize;
+                m_occupiedMemory += p_newMemorySize;
                 void* returnAdress = m_top;
                 m_top = reinterpret_cast<void*>(reinterpret_cast<size_t>(m_top) + p_newMemorySize);
                 return returnAdress;
@@ -91,7 +89,7 @@ namespace Utility
         void StackAllocator::Clear()
         {
             m_top = m_raw;
-            m_allocated = 0;
+            m_occupiedMemory = 0;
         }
 
         void StackAllocator::FreeToMarker(const MemoryMarker& p_marker)
@@ -103,7 +101,7 @@ namespace Utility
                 {
                     const uint8_t adjustment = AllocationHeaderBuilder::GetAdjustment(adress);
                     m_top = reinterpret_cast<void*>(reinterpret_cast<size_t>(adress) - adjustment);
-                    m_allocated = reinterpret_cast<size_t>(m_top) - reinterpret_cast<size_t>(m_raw);
+                    m_occupiedMemory = reinterpret_cast<size_t>(m_top) - reinterpret_cast<size_t>(m_raw);
                 }
                 else
                 { /* The marker is no longer valid, it points to memory that has already been released. */
@@ -114,11 +112,6 @@ namespace Utility
                 // TODO logging
                 throw std::runtime_error("Wrong marker used.");
             }
-        }
-
-        MemorySpecification StackAllocator::GetMemorySpecification()
-        {
-            return MemorySpecification(m_memorySize - m_allocated, m_memorySize, m_allocated);
         }
 
         MemoryMarker StackAllocator::GetMarker() { return MemoryMarker(m_top, this); }

@@ -16,9 +16,8 @@ namespace Utility
             /**
                 TODORT docs
             */
-            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, const bool& p_threadShared) override;
-            virtual void Initialize(const size_t& p_memorySize, MemoryAllocator& p_applicationAllocator, const uint8_t& p_alignment,
-                                    const bool& p_threadShared) override;
+            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment) override;
+            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, MemoryAllocator& p_applicationAllocator) override;
 
             /**
                 Destructor
@@ -28,7 +27,7 @@ namespace Utility
             /**
             TODORT docs
             */
-            void* Allocate(const size_t& p_memorySize) override;
+            //    void* Allocate(const size_t& p_memorySize) override;
 
             /**
             TODORT docs

@@ -27,8 +27,8 @@ namespace Utility
 
         MainMemoryManager::MainMemoryManager(const size_t& p_preferedSize)
         {
-            m_applicationAllocator = new RawAllocator();
-            static_cast<RawAllocator*>(m_applicationAllocator)->Initialize(p_preferedSize, 4, true); // TODORT hardcoded
+            //            m_applicationAllocator = new RawAllocator();
+            // static_cast<RawAllocator*>(m_applicationAllocator)->Initialize(p_preferedSize, 4, true); // TODORT hardcoded
         }
 
         MainMemoryManager::~MainMemoryManager() { delete m_applicationAllocator; }

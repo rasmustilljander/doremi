@@ -1,14 +1,14 @@
 #pragma once
 #include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
 #include <Utility/MemoryManager/Include/Allocator/Stack/MemoryMarker.hpp>
-#include <Utility/MemoryManager/Include/MemorySpecification.hpp>
+#include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
 #include <cstdint>
 
 namespace Utility
 {
     namespace MemoryManager
     {
-        class StackAllocator
+        class StackAllocator : public MemoryAllocator
         {
             public:
             /**
@@ -51,19 +51,11 @@ namespace Utility
             */
             void FreeToMarker(const MemoryMarker& p_marker);
 
-            /**
-                Gets the some specifications about this memorystack.
-            */
-            MemorySpecification GetMemorySpecification();
-
             protected:
-            void* m_raw;
             void* m_top;
-            size_t m_memorySize;
-            size_t m_allocated;
 
             void* Allocate(const size_t& p_memorySize, const uint8_t& p_alignment);
-            void* AllocateUnaligned(const size_t& p_newMemorySize);
+            void* AllocateUnaligned(const size_t& p_newMemorySize) override;
             uint8_t ComputeAdjustment(void* p_adress, const uint8_t& p_alignment);
         };
     }
