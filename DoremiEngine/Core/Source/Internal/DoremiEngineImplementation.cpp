@@ -334,9 +334,8 @@ const DoremiEngine::Core::SharedContext& StartEngine(const size_t& p_flags)
     {
         engine = new DoremiEngine::Core::DoremiEngineImplementation();
         engine->Start(p_flags);
-        return engine->GetSharedContext();
     }
-    throw std::exception("Engine has already been started, it must be stopped before it can be started again.");
+    return engine->GetSharedContext();
 }
 
 void StopEngine()
