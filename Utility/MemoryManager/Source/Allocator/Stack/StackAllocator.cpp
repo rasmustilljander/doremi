@@ -35,9 +35,9 @@ namespace Utility
             return adjustment;
         }
 
-        StackAllocator::~StackAllocator() { delete m_raw; }
+        StackAllocator::~StackAllocator() {}
 
-        void* StackAllocator::Allocate(const size_t& p_memorySize, const uint8_t& p_alignment)
+        void* StackAllocator::AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment)
         {
             if(p_alignment % 2 != 0)
             {

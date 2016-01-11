@@ -31,7 +31,7 @@ namespace Utility
             */
             template <typename T> T* Allocate(const uint8_t& p_alignment = 4)
             {
-                T* object = static_cast<T*>(Allocate(sizeof(T), p_alignment));
+                T* object = static_cast<T*>(AllocateAligned(sizeof(T), p_alignment));
                 *object = T();
                 return object;
             }
@@ -54,7 +54,7 @@ namespace Utility
             protected:
             void* m_top;
 
-            void* Allocate(const size_t& p_memorySize, const uint8_t& p_alignment);
+            void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment) override;
             void* AllocateUnaligned(const size_t& p_newMemorySize) override;
             uint8_t ComputeAdjustment(void* p_adress, const uint8_t& p_alignment);
         };
