@@ -20,8 +20,8 @@ namespace Doremi
 {
     namespace Core
     {
-        class Connection;
-        class NetMessage;
+        struct Connection;
+        struct NetMessage;
 
         /**
             Manager class for Server, contains the logic for the connection pattern
