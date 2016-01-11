@@ -227,7 +227,7 @@ namespace DoremiEngine
                 memcpy(tMS.pData, &renderData[i].worldMatrix, sizeof(DirectX::XMFLOAT4X4)); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
-                m_deviceContext->VSSetConstantBuffers(1, 1, &m_worldMatrix);
+                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
                 m_deviceContext->Draw(renderData[i].vertexCount, 0);
             }
             renderData.clear(); // Empty the vector
