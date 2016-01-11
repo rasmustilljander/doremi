@@ -56,20 +56,35 @@ namespace DoremiEngine
         PxFilterFlags TestFilter(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
                                  PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
         {
-            // pairFlags = PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eCONTACT_DEFAULT;
-            // return PxFilterFlag::eDEFAULT;
-            // let triggers through
+            // Rigid bodies collisions
             if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+            {
+                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
+                return PxFilterFlag::eDEFAULT;
+            }
+
+            // controller vs. controller collisions
+            bool kinematic0 = PxFilterObjectIsKinematic(attributes0);
+            bool kinematic1 = PxFilterObjectIsKinematic(attributes1);
+
+            if(kinematic0 && kinematic1)
             {
                 pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
                 return PxFilterFlag::eDEFAULT;
             }
+
             // generate contacts for all that were not filtered above
             pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
             // trigger the contact callback for pairs (A,B) where
             // the filtermask of A contains the ID of B and vice versa.
-            if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1)) pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+            if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+            {
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+            }
 
             return PxFilterFlag::eDEFAULT;
         }
@@ -115,14 +130,10 @@ namespace DoremiEngine
             for(size_t i = 0; i < nbPairs; i++)
             {
                 const PxContactPair& cp = pairs[i];
-
-                if(cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-                {
-                    CollisionPair collisionPair;
-                    collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
-                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
-                    m_collisionPairs.push_back(collisionPair);
-                }
+                CollisionPair collisionPair;
+                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
+                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
+                m_collisionPairs.push_back(collisionPair);
             }
         }
 
