@@ -110,7 +110,6 @@ namespace DoremiEngine
             FMOD_SOUND_FORMAT format;
             int chans;
             int bits;
-            void* buffer;
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->getFormat(&derp, &format, &chans, &bits);
             ERRCHECK(m_fmodResult);
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 48000 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
