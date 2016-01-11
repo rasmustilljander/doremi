@@ -318,7 +318,7 @@ namespace Doremi
 
             // TODOCM Write bits for stuff
 
-            std::cout << "Sending Connect request message." << std::endl; // TODOCM logg instead
+            // std::cout << "Sending Connect request message." << std::endl; // TODOCM logg instead
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);

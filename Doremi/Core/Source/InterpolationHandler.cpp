@@ -36,7 +36,7 @@ namespace Doremi
 
             if(m_NumOfSequencesToInterpolate <= 0)
             {
-                std::cout << "SOMETHING WRONG: " << m_NumOfSequencesToInterpolate << std::endl;
+                // std::cout << "SOMETHING WRONG: " << m_NumOfSequencesToInterpolate << std::endl;
             }
 
             for(size_t EntityID = 0; EntityID < NumberOfEntities; EntityID++)
@@ -94,7 +94,7 @@ namespace Doremi
             }
             else
             {
-                std::cout << "Snapshot sequence is same, something is wrong" << std::endl; // TODOCM remove maybe
+                // std::cout << "Snapshot sequence is same, something is wrong" << std::endl; // TODOCM remove maybe
                 return 1;
             }
         }
@@ -118,8 +118,8 @@ namespace Doremi
         {
             // If the snapshot we're currently interpolating towards is more recent
             // then the one that we should be interpolating towards, we skip
-            cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
-                 << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) << endl;
+            // cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
+            //     << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) << endl;
             if(sequence_more_recent(m_snapshotSequenceReal, m_snapshotSequenceUsed, 255))
             {
                 // Clone so that the changed values are saved
@@ -223,11 +223,11 @@ namespace Doremi
                 }
                 else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change
                 {
-                    std::cout << "Lost more then two snapshots?" << std::endl;
+                    // std::cout << "Lost more then two snapshots?" << std::endl;
                     m_NumOfSequencesToInterpolate = 1;
                 }
 
-                //if(m_DelayedSnapshots.size())
+                // if(m_DelayedSnapshots.size())
                 //{
                 //    // Pick the snapshot to update with
                 //    Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
@@ -263,15 +263,15 @@ namespace Doremi
             else
             {
                 m_SequenceInterpolationOffset++;
-                std::cout << "Doing a long interpolation..." << std::endl;
+                // std::cout << "Doing a long interpolation..." << std::endl;
             }
             m_snapshotSequenceReal++;
-            std::cout << "NumOfBufferedSnapshots: " << m_DelayedSnapshots.size() << std::endl;
+            // std::cout << "NumOfBufferedSnapshots: " << m_DelayedSnapshots.size() << std::endl;
         }
 
         void InterpolationHandler::SetSequence(uint8_t p_sequence)
         {
-            std::cout << "Setting new snapshotsequence" << std::endl;
+            // std::cout << "Setting new snapshotsequence" << std::endl;
             m_snapshotSequenceReal = p_sequence - m_snapshotDelay;
             m_snapshotSequenceUsed = p_sequence - m_snapshotDelay;
         }
@@ -282,7 +282,7 @@ namespace Doremi
             // If we get n' old snapshot
             if(sequence_more_recent(m_snapshotSequenceUsed, p_newSnapshot->SnapshotSequence, 255)) // TODOCM check if it should be equal less
             {
-                std::cout << "Throwing snapshot" << std::endl;
+                // std::cout << "Throwing snapshot" << std::endl;
                 delete p_newSnapshot;
                 return;
             }
