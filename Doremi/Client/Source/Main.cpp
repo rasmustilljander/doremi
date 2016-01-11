@@ -33,9 +33,13 @@ int main(int argc, const char* argv[])
     }
     catch(const std::exception& e)
     {
-        // TODORT more information
-        std::cout << "Unknown exception: " << e.what() << std::endl;
-        std::cin.get();
+        std::cout << "Unhandled exception: " << e.what() << std::endl;
+        // TODORT log
+    }
+    catch(...)
+    {
+        std::cout << "Unhandled unknown exception" << std::endl;
+        // TODORT log
     }
 
 #ifdef _DEBUG

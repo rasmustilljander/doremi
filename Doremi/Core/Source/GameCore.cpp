@@ -65,12 +65,18 @@ namespace Doremi
 {
     namespace Core
     {
-        GameCore::GameCore() { LoadEngineLibrary(); }
+        GameCore::GameCore() : m_stopEngineFunction(nullptr), m_engineLibrary(nullptr) { LoadEngineLibrary(); }
 
         GameCore::~GameCore()
         {
-            m_stopEngineFunction();
-            DynamicLoader::FreeSharedLibrary(m_engineLibrary);
+            if(m_stopEngineFunction != nullptr)
+            {
+                m_stopEngineFunction();
+            }
+            if(m_engineLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_engineLibrary);
+            }
             // TODORT Release the Managers... Waiting for refactor.
         }
 
