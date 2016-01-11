@@ -9,9 +9,6 @@ namespace Doremi
         class Manager;
         class EntityInterface;
     }
-}
-namespace Doremi
-{
     class GameMain : public Core::GameCore
     {
         public:
@@ -49,7 +46,17 @@ namespace Doremi
         /**
             TODOCM doc
         */
-        void UpdatetGame(double p_deltaTime);
+        void Update(double p_deltaTime);
+
+        /**
+        TODOCM doc
+        */
+        void UpdateGame(double p_deltaTime);
+
+        /**
+        TODOCM doc
+        */
+        void UpdateMenu(double p_deltaTime);
         /**
             TODOCM doc
         */
@@ -64,5 +71,15 @@ namespace Doremi
             TODOCM doc
         */
         std::vector<Core::Manager*> m_graphicalManagers;
+
+        private:
+        enum MenuState
+        {
+            MAINMENU,
+            RUNGAME,
+            EXIT,
+            PAUSE,
+        };
+        MenuState m_menuState;
     };
 }

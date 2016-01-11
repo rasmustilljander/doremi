@@ -43,7 +43,7 @@ int main(int argc, const char* argv[])
     }
 
 #ifdef _DEBUG
-    system("pause");
+// system("pause"); TODOLH removed to enable fast program shutdown with esc this calls forces you to cin in console window to shut down after esc
 #endif
     return 0;
 }

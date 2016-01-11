@@ -115,6 +115,7 @@ namespace Doremi
         // Remove later, needed to see something when we play solo cause of camera interactions with input
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
+        m_menuState = MenuState::RUNGAME;
     }
 
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -231,9 +232,7 @@ namespace Doremi
             // Loop as many update-steps we will take this frame
             while(Accum >= UpdateStepLen)
             {
-                // Update Game logic
-                UpdatetGame(UpdateStepLen);
-
+                Update(UpdateStepLen);
                 // Update interpolation transforms from snapshots
                 Core::InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
@@ -251,8 +250,21 @@ namespace Doremi
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
-            // Draw stuff
-            DrawGame((double)UpdateStepLen / 1000.0f);
+            switch(m_menuState)
+            {
+                case Doremi::GameMain::MAINMENU:
+                    // Draw mainMenu
+                    break;
+                case Doremi::GameMain::RUNGAME:
+                    // Draw Game
+                    DrawGame((double)UpdateStepLen / 1000.0f);
+                    break;
+                case Doremi::GameMain::PAUSE:
+                    // Draw PauseSCreen
+                    break;
+                default:
+                    break;
+            }
 
             // Escape
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
@@ -266,17 +278,48 @@ namespace Doremi
         }
     }
 
-    void GameMain::UpdatetGame(double p_deltaTime)
+    void GameMain::UpdateGame(double p_deltaTime)
     {
+        size_t length = m_managers.size();
         Core::EventHandler::GetInstance()->DeliverEvents();
+<<<<<<< HEAD
         PlayerHandler::GetInstance()->UpdateClient();
         // AudioHandler::GetInstance()->Update();
+=======
+        Core::PlayerHandler::GetInstance()->UpdatePlayerPositions();
+        Core::PlayerHandler::GetInstance()->UpdatePlayerRotationsClient();
+        Core::AudioHandler::GetInstance()->Update(p_deltaTime);
+>>>>>>> Started working on menu system
 
         // Have all managers update
-        size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
             m_managers.at(i)->Update(p_deltaTime);
+        }
+    }
+
+    void GameMain::UpdateMenu(double p_deltaTime) {}
+    void GameMain::Update(double p_deltaTime)
+    {
+        Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
+        switch(m_menuState)
+        {
+            case Doremi::GameMain::MAINMENU:
+                // Update Menu Logic
+                UpdateMenu(p_deltaTime);
+                break;
+            case Doremi::GameMain::RUNGAME:
+                // Update Game logic
+                UpdateGame(p_deltaTime);
+                break;
+            case Doremi::GameMain::EXIT:
+                return;
+                break;
+            case Doremi::GameMain::PAUSE:
+                // Update Pause Screen
+                break;
+            default:
+                break;
         }
     }
 
