@@ -16,11 +16,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(${DOREMIENGINE_LOCATION}/Graphic/Include)
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
-set(LIBRARIES ${EXTERNAL_LIBRARIES_GTEST} Graphic GameCore)
-
+set(LIBRARIES Graphic GameCore MemoryManager)
 
 # Add the target
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
+target_link_libraries(${PROJECT_NAME} optimized "${EXTERNAL_LIBRARIES_GTEST_RELEASE}")
+target_link_libraries(${PROJECT_NAME} debug "${EXTERNAL_LIBRARIES_GTEST_DEBUG}")
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 
 # Set SUBSYSTEM
