@@ -27,10 +27,7 @@ namespace Doremi
         */
         struct Player
         {
-            Player(InputHandler* p_inputHandler) : m_moveSpeed(0.2), m_autoRetardation(50), m_inputHandler(p_inputHandler), m_turnSpeed(0.01)
-            {
-                
-            }
+            Player(InputHandler* p_inputHandler) : m_moveSpeed(0.2f), m_autoRetardation(50.0f), m_inputHandler(p_inputHandler), m_turnSpeed(0.01f) {}
 
             /**
                 TODOEA doc

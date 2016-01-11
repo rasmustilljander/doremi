@@ -64,8 +64,8 @@ namespace DoremiEngine
             float gridQuadHeight = m_height / (float)m_grid[0].size();
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.y - m_height / 2.0f);
-            position2D.x -= bottomLeft.x - 0.5;
-            position2D.y -= bottomLeft.y - 0.5;
+            position2D.x -= bottomLeft.x - 0.5f;
+            position2D.y -= bottomLeft.y - 0.5f;
             int quadNrX = std::floor(position2D.x / gridQuadWidth); // What quad in x and y
             int quadNrY = std::floor(position2D.y / gridQuadHeight);
             // Add quads that needs checking, 3x3 square around the unit

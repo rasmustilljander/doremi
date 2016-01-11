@@ -241,13 +241,13 @@ namespace Doremi
                         // Change the angle
                         angle += t_mouseMovementX * iter->second->m_turnSpeed;
                         // Single quaternions don't really like angles over 2*pi, we do this
-                        if (angle > 2 * 3.1415)
+                        if (angle > 2.0f * 3.1415f)
                         {
-                            angle -= 2 * 3.1415;
+                            angle -= 2.0f * 3.1415f;
                         }
                         else if (angle < 0)
                         {
-                            angle += 2 * 3.1415;
+                            angle += 2.0f * 3.1415f;
                         }
                         // Create a new quaternion with the new angle
                         orientationVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angle);

@@ -159,9 +159,9 @@ namespace Doremi
 
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 4;
-            t_transformComp->scale.z = 4;
-            t_transformComp->scale.y = 0.1;
+            t_transformComp->scale.x = 4.0f;
+            t_transformComp->scale.z = 4.0f;
+            t_transformComp->scale.y = 0.1f;
             t_platform[ComponentType::Transform] = t_transformComp;
 
             // Physical material comp
@@ -197,9 +197,9 @@ namespace Doremi
 
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 4;
-            t_transformComp->scale.z = 4;
-            t_transformComp->scale.y = 0.1;
+            t_transformComp->scale.x = 4.0f;
+            t_transformComp->scale.z = 4.0f;
+            t_transformComp->scale.y = 0.1f;
             t_platform[ComponentType::Transform] = t_transformComp;
 
             // Physical material comp
