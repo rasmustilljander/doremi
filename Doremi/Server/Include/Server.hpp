@@ -1,8 +1,18 @@
 #pragma once
 #include <Doremi/Core/Include/GameCore.hpp>
+#include <vector>
 
 namespace Doremi
 {
+    namespace Core
+    {
+        class Manager;
+        class EntityInterface;
+    }
+}
+namespace Doremi
+{
+
     class ServerMain : public Core::GameCore
     {
         public:

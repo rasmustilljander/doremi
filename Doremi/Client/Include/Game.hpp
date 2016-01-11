@@ -4,6 +4,14 @@
 
 namespace Doremi
 {
+    namespace Core
+    {
+        class Manager;
+        class EntityInterface;
+    }
+}
+namespace Doremi
+{
     class GameMain : public Core::GameCore
     {
         public:

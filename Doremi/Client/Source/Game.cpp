@@ -43,9 +43,18 @@
 // Third party
 
 // Standard libraries
-#include <stdexcept>
 #include <exception>
 #include <chrono>
+#include <vector>
+
+namespace Doremi
+{
+    namespace Core
+    {
+        class Manager;
+        class EntityInterface;
+    }
+}
 
 namespace Doremi
 {
