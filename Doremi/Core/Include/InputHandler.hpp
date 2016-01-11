@@ -23,23 +23,24 @@ namespace Doremi
             TODOEA doc
         */
         enum class UserCommandPlaying
-        {   // Key                  Code for it
-            Jump = 1,               // Space     32
-            Forward = 2,            // W         119
-            Backward = 4,           // S         115
-            Left = 8,               // A         97
-            Right = 16,             // D         100
-            Fire = 32,              // LeftMouseClick   1
-            ScrollWpnUp = 64,       // MWheelUp    NULL Handled differently
-            ScrollWpnDown = 128,    // MWheelDown NULL Handled differently
-            DebugForward = 256,     // 1073741906
-            DebugBackward = 512,    // 1073741905
-            DebugLeft = 1024,       // 1073741904
-            DebugRight = 2048,      // 1073741903
+        { // Key                  Code for it
+            Jump = 1, // Space     32
+            Forward = 2, // W         119
+            Backward = 4, // S         115
+            Left = 8, // A         97
+            Right = 16, // D         100
+            Fire = 32, // LeftMouseClick   1
+            ScrollWpnUp = 64, // MWheelUp    NULL Handled differently
+            ScrollWpnDown = 128, // MWheelDown NULL Handled differently
+            DebugForward = 256, // 1073741906
+            DebugBackward = 512, // 1073741905
+            DebugLeft = 1024, // 1073741904
+            DebugRight = 2048, // 1073741903
             DebugButton = 4096,
             StartRepeatableAudioRecording = 8192,
             PlayRepeatableAudioRecording = 16384,
             ExitGame = 32768,
+            LeftClick = 65536,
             // TODOEA add all here or set the 1111111... bit number to ALL
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
         };

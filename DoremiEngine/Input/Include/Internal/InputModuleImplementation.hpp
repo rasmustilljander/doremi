@@ -36,6 +36,16 @@ namespace DoremiEngine
             virtual ~InputModuleImplementation();
 
             /**
+                Returns the X position of mouse
+            */
+            int GetMousePosX() override;
+
+            /**
+                Returns the Y position of mouse
+            */
+            int GetMousePosY() override;
+
+            /**
                 TODO docs
             */
             void Startup() override;
@@ -74,6 +84,9 @@ namespace DoremiEngine
             // void ResetInputForPlayingStruct();
             void AddToList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse);
             void RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse);
+
+            int m_mousePosX;
+            int m_mousePosY;
         };
     }
 }

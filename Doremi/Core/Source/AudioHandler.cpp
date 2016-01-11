@@ -32,6 +32,9 @@ namespace Doremi
         void AudioHandler::Initialize()
         {
             m_currentFrequency = 0;
+            /* 99999 is a default "error" value. It is used to create a new channel in module. We send the channelID to the module and if it is 99999
+            it is treated as uninitialized
+            and starts a new channel that is returned to the variable.*/
             m_continuousFrequencyAnalyserChannelID = 99999;
             m_continuousFrequencyAnalyserSoundID = 0;
             m_repeatableFrequencyAnalyserChannelID = 99999;
@@ -79,16 +82,22 @@ namespace Doremi
 
         float AudioHandler::GetRepeatableSoundFrequency()
         {
+            // Make sure that the analysis is complete otherwise m_frequencies wont be filled and we can get index out of range
             if(m_repeatableAnalysisComplete)
             {
+                // Get the audiomodule
                 DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                // check how far into the sound that the repeatable sound is in milliseconds
                 double t_timeElapsed = t_audioModule.GetSoundTimePointer(m_outputRepeatableSoundChannelID);
+                // Get the full lenght of the sound in milliseconds
                 double t_soundLength = t_audioModule.GetSoundLength(m_outputRepeatableSoundID);
+                // Calculate how far into the sound that the pointer is. Percentual
                 double t_percentualPosition = t_timeElapsed / t_soundLength;
+                // Get the full range of the vector
                 double t_size = m_frequencies.size() - 1;
-
+                // Calculate where in the array we should access the frequency
                 int arrayPosition = (int)t_size * t_percentualPosition;
-
+                // Get the frequency
                 float retValue = m_frequencies[arrayPosition];
                 return retValue;
             }
@@ -100,11 +109,9 @@ namespace Doremi
 
         void AudioHandler::PlayRepeatableRecordedSound()
         {
-            if (m_outputRepeatableSoundID < 1000)
-            {
-                DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
-                t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
-            }
+            // This is a dangerous function since soundID starts at 0. If there is no sound on 0 we will crash
+            DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+            t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
         }
         void AudioHandler::Update(double p_deltaTime)
         {
@@ -119,6 +126,7 @@ namespace Doremi
 
                 case Doremi::Core::AudioHandler::HOLDCONTINUOUSANALYSIS:
                     recordPointer = t_audioModule.GetRecordPointer();
+                    // kollar så att vi har spelat in en bit innan vi startar analysen. Om man startar analysen Dirr buggar det ut.
                     if(recordPointer > 9600)
                     {
                         m_SoundState = ANALYSECONTINUOUS;
@@ -175,6 +183,8 @@ namespace Doremi
                     break;
                 case Doremi::Core::AudioHandler::HOLDREPEATABLEANALYSIS:
                     recordPointer = t_audioModule.GetRecordPointer();
+                    // kollar så att vi har spelat in en bit innan vi startar analysen. Om man startar analysen Dirr buggar det ut. TODOLH Definea
+                    // 9600 kanske?
                     if(recordPointer > 9600)
                     {
                         m_SoundState = ANALYSEREPEATABLE;

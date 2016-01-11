@@ -1,6 +1,7 @@
 #pragma once
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <vector>
+#include <Doremi/Core/Include/Helper/MenuStates.hpp>
 
 namespace Doremi
 {
@@ -73,13 +74,6 @@ namespace Doremi
         std::vector<Core::Manager*> m_graphicalManagers;
 
         private:
-        enum MenuState
-        {
-            MAINMENU,
-            RUNGAME,
-            EXIT,
-            PAUSE,
-        };
-        MenuState m_menuState;
+        Doremi::MenuStates::MenuState m_menuState;
     };
 }

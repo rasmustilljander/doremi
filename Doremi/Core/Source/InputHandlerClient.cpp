@@ -26,6 +26,7 @@ namespace Doremi
             userCmdsPlaying[228] = UserCommandPlaying::StartRepeatableAudioRecording;
             userCmdsPlaying[246] = UserCommandPlaying::PlayRepeatableAudioRecording;
             userCmdsPlaying[27] = UserCommandPlaying::ExitGame;
+            userCmdsPlaying[1] = UserCommandPlaying::LeftClick;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;
@@ -40,6 +41,12 @@ namespace Doremi
         void InputHandlerClient::SetCursorInvisibleAndMiddle(bool p_bool)
         {
             m_sharedContext.GetInputModule().SetCursorInvisibleAndMiddle(p_bool);
+        }
+
+        void InputHandlerClient::GetMousePos(int& p_positionX, int& p_positionY)
+        {
+            p_positionX = m_sharedContext.GetInputModule().GetMousePosX();
+            p_positionY = m_sharedContext.GetInputModule().GetMousePosY();
         }
 
         void InputHandlerClient::BuildMaskFromEngineForGame()
@@ -152,7 +159,6 @@ namespace Doremi
             // Do one of them TODOEA
             BuildMaskFromEngineForGame();
             // BuildMaskFromEngineForMeny();
-
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
         }

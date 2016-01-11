@@ -38,7 +38,10 @@ namespace Doremi
             */
             const int GetMouseMovementY() const { return m_mouseMoveY * m_mouseSense; }
 
-        private:
+            void GetMousePos(int& p_positionX, int& p_positionY);
+
+
+            private:
             /**
                 TODOEA doc
             */

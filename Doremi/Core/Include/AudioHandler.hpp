@@ -29,15 +29,25 @@ namespace Doremi
             static void StopAudioHandler();
             AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~AudioHandler();
+            // Initializes the handler. Mostly sets values to 0 or channelID to 99999 (used as a "error" value)
             void Initialize();
+            // Sets the variable for how long the reloadbutton was pressed and therefore how long the sound should be
             void SetGunButtonDownTime(double p_time);
+            // Starts the recording that streams open mic
             void StartContinuousRecording();
+            // Starts the recording that records while the button is pressed to be able to replay that sound
             void StartRepeatableRecording();
+            // Sets up the streaming open mic recoreder
             void SetupContinuousRecording();
+            // Sets up the repeatable recorder
             void SetupRepeatableRecording();
+            // Plays the sound that we recorded
             void PlayRepeatableRecordedSound();
+            // Update to analyse sound. Contains switch case to control what sound is supposed to be analysed and when.
             void Update(double p_deltaTime);
             float GetFrequency() const { return m_currentFrequency; };
+            // Returns the current frequency from the repeatable sound. It is fetched from an array with the help of the recordpointer from the
+            // playing sound.
             float GetRepeatableSoundFrequency();
 
             private:
@@ -46,24 +56,26 @@ namespace Doremi
             InputHandler* m_inputHandler;
 
             double m_accumulatedDeltaTime;
-            std::vector<float>m_frequencies;
+            // Vector of the frequencies from the repeatable sound
+            std::vector<float> m_frequencies;
 
             float m_frequencyVectorPrecision;
             static AudioHandler* m_singleton;
+            // Sound IDs and ChannelIDs
             size_t m_continuousFrequencyAnalyserChannelID;
             size_t m_continuousFrequencyAnalyserSoundID;
             size_t m_repeatableFrequencyAnalyserChannelID;
             size_t m_repeatableFrequencyAnalyserSoundID;
             size_t m_outputRepeatableSoundChannelID;
             size_t m_outputRepeatableSoundID;
+            // The current frequency that just got analysed
             float m_currentFrequency;
+            // Used to control the flow of pdate function. Cant use the function until the array is filled with values
             bool m_repeatableAnalysisComplete;
-            bool m_analyseActive;
-            bool m_repeatableAnalysisActive;
-            bool m_continuousRecording;
+            // Keeps the time that the gunreloadbutton was pressed down
             double m_timeGunReloadButtonWasPressed;
 
-
+            // Used to control the flow of the update function
             enum SoundState
             {
                 ANALYSECONTINUOUS,

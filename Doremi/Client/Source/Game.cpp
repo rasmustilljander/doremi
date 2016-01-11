@@ -23,6 +23,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
@@ -104,6 +105,13 @@ namespace Doremi
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
+        // Initialize menu
+        std::vector<string> t_textureNamesForMenuButtons;
+        t_textureNamesForMenuButtons.push_back("Angryface.dds");
+        t_textureNamesForMenuButtons.push_back("Angryface.dds");
+        t_textureNamesForMenuButtons.push_back("Angryface.dds");
+        MenuHandler::StartMenuHandler(sharedContext, DirectX::XMFLOAT2(800.0f, 800.0f));
+        MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
 
 
         // GenerateWorld(sharedContext);
@@ -249,17 +257,17 @@ namespace Doremi
 
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
-
+            /** TODOLH Detta ska flyttas till en function som i updaten*/
             switch(m_menuState)
             {
-                case Doremi::GameMain::MAINMENU:
+                case MenuStates::MAINMENU:
                     // Draw mainMenu
                     break;
-                case Doremi::GameMain::RUNGAME:
+                case MenuStates::RUNGAME:
                     // Draw Game
                     DrawGame((double)UpdateStepLen / 1000.0f);
                     break;
-                case Doremi::GameMain::PAUSE:
+                case MenuStates::PAUSE:
                     // Draw PauseSCreen
                     break;
                 default:
@@ -298,26 +306,32 @@ namespace Doremi
         }
     }
 
-    void GameMain::UpdateMenu(double p_deltaTime) {}
+    void GameMain::UpdateMenu(double p_deltaTime) { m_menuState = (MenuStates::MenuState)MenuHandler::GetInstance()->Update(p_deltaTime); }
     void GameMain::Update(double p_deltaTime)
     {
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
+        int hej = 0;
         switch(m_menuState)
         {
-            case Doremi::GameMain::MAINMENU:
+            case MenuStates::MAINMENU:
                 // Update Menu Logic
                 UpdateMenu(p_deltaTime);
                 break;
-            case Doremi::GameMain::RUNGAME:
+            case MenuStates::RUNGAME:
                 // Update Game logic
                 UpdateGame(p_deltaTime);
                 break;
-            case Doremi::GameMain::EXIT:
+            case MenuStates::EXIT:
+                hej = 6;
                 return;
                 break;
-            case Doremi::GameMain::PAUSE:
+            case MenuStates::PAUSE:
+                hej = 6;
                 // Update Pause Screen
                 break;
+            case MenuStates::OPTIONS:
+                hej = 6;
+            // Update Options
             default:
                 break;
         }

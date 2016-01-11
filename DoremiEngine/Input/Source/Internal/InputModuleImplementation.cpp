@@ -31,6 +31,10 @@ namespace DoremiEngine
             }
         }
 
+        int InputModuleImplementation::GetMousePosX() { return m_mousePosX; }
+
+        int InputModuleImplementation::GetMousePosY() { return m_mousePosY; }
+
         void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
 
         void InputModuleImplementation::Shutdown() {}
@@ -42,9 +46,9 @@ namespace DoremiEngine
             // ResetMouseMovementStruct();
             // m_mouseWheelSpins = 0;
 
-
             SDL_Event eventVariable;
             SwitchCaseEventsForPlaying(eventVariable);
+            SDL_GetMouseState(&m_mousePosX, &m_mousePosY);
 
             // TODEA
             // PrintInputStructsDEBUG();

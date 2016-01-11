@@ -50,6 +50,8 @@ namespace DoremiEngine
             // Tar bort 4 gets per update. o gets från managers.
             // int* GetMouseWheelSpins() { return &m_mouseWheelSpins; }
             //////////////////////////
+            virtual int GetMousePosX() = 0;
+            virtual int GetMousePosY() = 0;
         };
     }
 }

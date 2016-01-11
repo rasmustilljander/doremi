@@ -19,8 +19,11 @@ namespace Doremi
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
             void OnEvent(Event* p_event) override;
 
+            // The current dominant frequency from the analyser
             float m_dominantFrequency;
+            // Is the reloadbutton pressed?
             bool m_gunReloadButtonDown;
+            // The ammount of time that the gunbutton has been pressed down
             double m_timeThatGunButtonIsDown;
 
             private:

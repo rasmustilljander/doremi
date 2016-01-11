@@ -1,20 +1,7 @@
 // Project specific
-#include <Manager/ExampleManager.hpp>
-#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <Doremi/Core/Include/MenuClasses/Button.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-#include <DoremiEngine/Audio/Include/AudioModule.hpp>
-#include <DoremiEngine/Input/Include/InputModule.hpp>
-#include <EntityComponent/EntityHandler.hpp>
-#include <EntityComponent/Components/ExampleComponent.hpp>
-#include <EntityComponent/Components/Example2Component.hpp>
-#include <EventHandler/EventHandler.hpp>
-#include <EventHandler/Events/ExampleEvent.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
-
+#include <Doremi/Core/Include/Helper/MenuStates.hpp>
 
 // Third party
 
@@ -27,63 +14,42 @@ namespace Doremi
 {
     namespace Core
     {
-        ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        using namespace DirectX;
+        Button::Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, DoremiEngine::Graphic::MaterialInfo* p_materialInfo,
+                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, MenuStates::MenuState p_menuState)
+            : m_position(p_position), m_size(p_size), m_materialInfo(p_materialInfo), m_meshInfo(p_meshInfo), m_menuState(p_menuState)
         {
-            EventHandler::GetInstance()->Subscribe(Events::Example, this);
         }
-
-        ExampleManager::~ExampleManager() {}
-
-
-        void ExampleManager::Update(double p_dt)
+        Button::Button() {}
+        Button::~Button() {}
+        bool Button::CheckIfInside(int p_mousePosX, int p_mousePosY)
         {
-            // Example on how to create and Broadcast a event
-            ExampleEvent* myEvent = new ExampleEvent();
-            myEvent->eventType = Events::Example;
-            myEvent->myInt = 42;
-            EventHandler::GetInstance()->BroadcastEvent(myEvent);
-
-            // Loop through all entities
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            for(size_t i = 0; i < length; i++)
+            m_mousePos.x = p_mousePosX;
+            m_mousePos.y = p_mousePosY;
+            // Check if to the right of the button
+            if(p_mousePosX > m_position.x + m_size.x)
             {
-                // Check that the current entity has the relevant components
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
-                {
-                    // Get component
-                    ExampleComponent* t_example = EntityHandler::GetInstance().GetComponentFromStorage<ExampleComponent>(i);
-                    Example2Component* t_example2 = EntityHandler::GetInstance().GetComponentFromStorage<Example2Component>(i);
-
-                    // Perform desired operation
-                    t_example->posX++;
-
-                    // Instruct engine
-                    m_sharedContext.GetPhysicsModule().ExampleMethod(t_example->posX);
-                    // Give instructions where we want engine to alter data
-                    m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example->posX, &t_example->posY);
-                    // Give instructions to engine where we want complex data to be changed
-                    m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
-
-                    // Test run GraphicsModule
-
-                    m_sharedContext.GetInputModule().Update(); // TODOEA
-                }
+                return false;
             }
-        }
-        void ExampleManager::OnEvent(Event* p_event)
-        {
-            // Check to see what event was received and do something with it (Might be changed to callback functions instead)
-            switch(p_event->eventType)
+            // Check if mouse is to the left of the button
+            else if(p_mousePosX < m_position.x)
             {
-                case Events::Example:
-                {
-                    // Cast the event to the correct format
-                    ExampleEvent* t_event = (ExampleEvent*)p_event;
-                    int t_intFromEvent = t_event->myInt;
-                    break;
-                }
-                default:
-                    break;
+                return false;
+            }
+            // Check if mouse is over the button
+            else if(p_mousePosY < m_position.y)
+            {
+                return false;
+            }
+            // Check if mouse is under the button
+            else if(p_mousePosY > m_position.y + m_size.y)
+            {
+                return false;
+            }
+            // Otherwise we are on top of this button
+            else
+            {
+                return true;
             }
         }
     }
