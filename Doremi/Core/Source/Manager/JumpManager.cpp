@@ -24,20 +24,20 @@ namespace Doremi
         void JumpManager::Update(double p_dt)
         {
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::Jump| (int)ComponentType::CharacterController;
-            for (size_t i = 0; i < length; i++)
+            int mask = (int)ComponentType::Jump | (int)ComponentType::CharacterController;
+            for(size_t i = 0; i < length; i++)
             {
-                if (EntityHandler::GetInstance().HasComponents(i, mask))
+                if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
                     JumpComponent* jumpComp = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i);
-                    if (jumpComp->active)
+                    if(jumpComp->active)
                     {
                         // Check if a jump in progress is finished
-                        if (jumpComp->jumpTimeProgress >= jumpComp->jumpTime)
+                        if(jumpComp->jumpTimeProgress >= jumpComp->jumpTime)
                         {
                             jumpComp->active = false;
                         }
-                        
+
                         else
                         {
                             // Update progress with p_dt
@@ -49,16 +49,13 @@ namespace Doremi
                             jumpFactor -= 0.5;
                             jumpFactor *= -2;
                             float moveDistance = jumpComp->jumpIntensity * jumpFactor;
-                            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, moveDistance, 0),p_dt);
+                            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, moveDistance, 0), p_dt);
                         }
                     }
                 }
             }
         }
 
-        void JumpManager::OnEvent(Event* p_event)
-        {
-
-        }
+        void JumpManager::OnEvent(Event* p_event) {}
     }
 }

@@ -30,6 +30,7 @@ enum class ComponentType : int
     CharacterController = 0x8000,
     NetworkObject = 0x10000,
     AIGroup = 0x20000,
+    Jump = 0x40000,
 };
 
 /**

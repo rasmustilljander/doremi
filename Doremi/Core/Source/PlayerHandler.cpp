@@ -12,6 +12,7 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+#include <EntityComponent/Components/JumpComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -208,9 +209,9 @@ namespace Doremi
                         movementVec += rightVec * iter->second->m_moveSpeed;
                     }
 
-                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Jump))
+                    if(inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                     {
-                        movementVec += XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1;
+                        EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
                     }
                     else
                     {

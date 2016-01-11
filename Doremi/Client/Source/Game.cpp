@@ -32,6 +32,7 @@
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
+#include <Doremi/Core/Include/Manager/JumpManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -76,6 +77,7 @@ namespace Doremi
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
+        Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
 
         // Add manager to list of managers
         m_graphicalManagers.push_back(t_renderManager);
@@ -86,6 +88,7 @@ namespace Doremi
         m_managers.push_back(t_cameraManager);
         // m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
+        m_managers.push_back(t_jumpManager);
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);

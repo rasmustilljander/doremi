@@ -14,6 +14,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/AIGroupComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RangeComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/JumpComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -365,6 +366,17 @@ namespace Doremi
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
+
+            // Potential field component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
+            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
+
+            // Jump component
+            JumpComponent* jumpComp = new JumpComponent();
+            jumpComp->jumpIntensity = 1;
+            jumpComp->jumpTime = 0.5;
+            t_avatarBlueprint[ComponentType::Jump] = jumpComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
