@@ -19,7 +19,12 @@ namespace Doremi
             */
             void SetOrientationFromInput(DirectX::XMFLOAT4 p_orienation);
 
-        private:
+            /**
+                TODOCM doc
+            */
+            DirectX::XMFLOAT4 GetOrientationFromInput();
+
+            private:
             DirectX::XMFLOAT4 m_orientationQuaternion;
         };
     }

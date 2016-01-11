@@ -16,6 +16,7 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
+#include <Doremi/Core/Include/InputHandlerServer.hpp>
 
 #include <iostream>
 
@@ -310,7 +311,19 @@ namespace Doremi
 
         void PlayerHandler::UpdatePlayerRotationsServer()
         {
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                InputHandlerServer* inputHandler = (InputHandlerServer*)iter->second->m_inputHandler;
 
+                EntityID entityID = iter->second->m_playerEntityID;
+
+                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                {
+                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
+                    transComp->rotation = inputHandler->GetOrientationFromInput();
+                }
+            }
         }
     }
 }
