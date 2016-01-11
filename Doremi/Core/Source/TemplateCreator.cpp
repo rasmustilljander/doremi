@@ -61,14 +61,57 @@ namespace Doremi
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
             blueprint[ComponentType::Render] = renderComp;
             // PhysicsMaterialComp
-            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
-            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            // t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            // blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             // blueprint[ComponentType::RigidBody] = rigidBodyComp;
             // Character control comp label
+            // blueprint[ComponentType::CharacterController];
+            // Health comp
+            HealthComponent* healthComponent = new HealthComponent();
+            healthComponent->maxHealth = 100;
+            healthComponent->currentHealth = healthComponent->maxHealth;
+            blueprint[ComponentType::Health] = healthComponent;
+            // Enemy ai agent comp
+            // blueprint[ComponentType::AIAgent];
+            // Range comp
+            /*RangeComponent* rangeComp = new RangeComponent();
+            rangeComp->range = 4;
+            blueprint[ComponentType::Range] = rangeComp;*/
+            // PotentialField component
+            /*PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            blueprint[ComponentType::PotentialField] = potentialComp;*/
+            // AI group component
+            /* AIGroupComponent* group = new AIGroupComponent();
+             group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+             blueprint[ComponentType::AIGroup] = group;*/
+            // Movement comp
+            /* MovementComponent* movementcomp = new MovementComponent();
+             blueprint[ComponentType::Movement] = movementcomp;*/
+            // Register blueprint
+
+            // Network object
+            blueprint[ComponentType::NetworkObject];
+
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
+        }
+
+        void CreateEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            // Character control comp label
             blueprint[ComponentType::CharacterController];
+
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
             healthComponent->maxHealth = 100;
@@ -76,20 +119,28 @@ namespace Doremi
             blueprint[ComponentType::Health] = healthComponent;
             // Enemy ai agent comp
             blueprint[ComponentType::AIAgent];
+
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
             rangeComp->range = 4;
             blueprint[ComponentType::Range] = rangeComp;
+
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
             blueprint[ComponentType::PotentialField] = potentialComp;
+
             // AI group component
             AIGroupComponent* group = new AIGroupComponent();
             group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
             blueprint[ComponentType::AIGroup] = group;
+
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
             blueprint[ComponentType::Movement] = movementcomp;
+
+            // Network object
+            blueprint[ComponentType::NetworkObject];
+
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
         }
@@ -268,6 +319,11 @@ namespace Doremi
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
+            // Potential field component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
+            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
         }
@@ -310,13 +366,49 @@ namespace Doremi
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
-            // Potential field component
-            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
-            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
-
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
+        }
+
+        void CreateJawsDebugObjectServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            // Create blueprint
+            EntityBlueprint t_avatarBlueprint;
+
+            // Transform comp
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_avatarBlueprint[ComponentType::NetworkObject];
+
+            // Register blueprint
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
+        }
+
+        void CreateJawsDebugObjectClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            EntityBlueprint t_avatarBlueprint;
+
+            /// Fill with components
+            // Render
+            RenderComponent* t_renderComp = new RenderComponent();
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_avatarBlueprint[ComponentType::Render] = t_renderComp;
+
+            // Transform comp
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_avatarBlueprint[ComponentType::NetworkObject];
+
+
+            // Register blueprint
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
         }
 
         void TemplateCreator::CreateTemplatesForClient(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -325,6 +417,7 @@ namespace Doremi
             CreateBulletBlueprintClient(sharedContext);
             CreatePlayerClient(sharedContext);
             CreateEnemyBlueprintClient(sharedContext);
+            CreateJawsDebugObjectClient(sharedContext);
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -332,7 +425,8 @@ namespace Doremi
             CreateDebugPlatformsServer(sharedContext);
             CreateBulletBlueprintServer(sharedContext);
             CreatePlayerServer(sharedContext);
-            // CreateEnemyBlueprintClient(sharedContext);
+            CreateEnemyBlueprintServer(sharedContext);
+            CreateJawsDebugObjectServer(sharedContext);
         }
     }
 }

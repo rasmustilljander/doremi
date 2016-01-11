@@ -29,7 +29,7 @@ namespace Doremi
     {
         ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
         {
-            EventHandler::GetInstance()->Subscribe(Events::Example, this);
+            EventHandler::GetInstance()->Subscribe(EventType::Example, this);
         }
 
         ExampleManager::~ExampleManager() {}
@@ -39,7 +39,7 @@ namespace Doremi
         {
             // Example on how to create and Broadcast a event
             ExampleEvent* myEvent = new ExampleEvent();
-            myEvent->eventType = Events::Example;
+            myEvent->eventType = EventType::Example;
             myEvent->myInt = 42;
             EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
@@ -75,7 +75,7 @@ namespace Doremi
             // Check to see what event was received and do something with it (Might be changed to callback functions instead)
             switch(p_event->eventType)
             {
-                case Events::Example:
+                case EventType::Example:
                 {
                     // Cast the event to the correct format
                     ExampleEvent* t_event = (ExampleEvent*)p_event;

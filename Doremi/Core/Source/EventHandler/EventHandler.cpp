@@ -30,7 +30,7 @@ namespace Doremi
             m_mailBox.push_back(p_event);
         }
 
-        void EventHandler::Subscribe(Events p_eventType, Subscriber* p_subscriber) { m_broadcastMap[p_eventType].push_back(p_subscriber); }
+        void EventHandler::Subscribe(EventType p_eventType, Subscriber* p_subscriber) { m_broadcastMap[p_eventType].push_back(p_subscriber); }
 
         void EventHandler::DeliverEvents() // TODOJB fix broadcast event when no one is subscribed to them (currently crashes if you do)
         {
@@ -39,14 +39,19 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
                 // Iterate through all systems the event is to be broadcasted to
-                unordered_map<Events, vector<Subscriber*>>::iterator t_iter =
+                unordered_map<EventType, vector<Subscriber*>>::iterator t_iter =
                     m_broadcastMap.find(m_mailBox[i]->eventType); // Gets the vector of systems to call OnEvent on
-                size_t nrOfSystems = t_iter->second.size();
-                for(size_t j = 0; j < nrOfSystems; j++)
+
+                if(t_iter != m_broadcastMap.end())
                 {
-                    t_iter->second[j]->OnEvent(m_mailBox[i]);
+                    size_t nrOfSystems = t_iter->second.size();
+                    for(size_t j = 0; j < nrOfSystems; j++)
+                    {
+                        t_iter->second[j]->OnEvent(m_mailBox[i]);
+                    }
+                    // Cleanup all data in event payload
                 }
-                // Cleanup all data in event payload
+
                 delete m_mailBox[i];
             }
 

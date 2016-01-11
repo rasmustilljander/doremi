@@ -41,6 +41,11 @@ namespace Doremi
         void AIPathManager::Update(double p_dt)
         {
             size_t playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
+            if(playerID == -1)
+            {
+                return;
+            }
+
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 

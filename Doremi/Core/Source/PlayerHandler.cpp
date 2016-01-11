@@ -14,6 +14,8 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 
 #include <iostream>
 
@@ -82,9 +84,10 @@ namespace Doremi
 
         EntityID PlayerHandler::GetDefaultPlayerEntityID()
         {
-            if (m_playerMap.size() == 0)
+            if(m_playerMap.size() == 0)
             {
                 std::runtime_error("GetDefaultPlayerEntityID called without any players aviable.");
+                return -1;
             }
             return m_playerMap.begin()->second->m_playerEntityID;
         }
@@ -118,9 +121,21 @@ namespace Doremi
             Player* NewPlayer = new Player(p_inputHandler);
 
             // TODOCM hard coded entityID for new players
-            NewPlayer->m_playerEntityID = 0;
+            NewPlayer->m_playerEntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
 
             m_playerMap[p_playerID] = NewPlayer;
+
+
+            int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5, 15, 0);
+            DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
+            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1, 1));
+
+            // Create event
+            PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
+
+            // Broadcast event
+            EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
         void PlayerHandler::UpdatePlayerInputs()

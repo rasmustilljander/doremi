@@ -84,10 +84,10 @@ namespace Doremi
         // m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_cameraManager);
-        m_managers.push_back(t_rigidTransSyndManager);
+        // m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
 
-        m_managers.push_back(t_aiPathManager);
+        // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
 
         // GenerateWorld(sharedContext);
@@ -97,8 +97,8 @@ namespace Doremi
         SpawnDebugWorld(sharedContext);
 
         // Remove later, needed to see something when we play solo cause of camera interactions with input
-        Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
-        Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
+        // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
+        // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
     }
 
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -106,10 +106,16 @@ namespace Doremi
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
         // Create Avatar entity
-        int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-        int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;
-        DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 0);
-        sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));
+        /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
+          int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;
+          DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 0);
+          DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
+          sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));*/
+
+        int entityDebugJaws = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+        Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
+        trans->position = DirectX::XMFLOAT3(-10, 5, 0);
+
 
         // Create platforms
         for(size_t i = 0; i < 5; i++)
@@ -129,14 +135,15 @@ namespace Doremi
             int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
             XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
+            // int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
             // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
             //                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
-            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1, 0.5));
+            // sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1, 0.5));
 
-            PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
-            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3);
+            // PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
+            // potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0),
+            // -1, 3);
         }
 
         /////// TONS OF OLD CODE//////
@@ -232,9 +239,12 @@ namespace Doremi
 
             // Escape
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
-            if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ExitGame))
+            if(inputHandler != nullptr)
             {
-                return;
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ExitGame))
+                {
+                    return;
+                }
             }
         }
     }

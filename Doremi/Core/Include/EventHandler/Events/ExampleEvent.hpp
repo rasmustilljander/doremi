@@ -10,7 +10,7 @@ namespace Doremi
     {
         struct ExampleEvent : public Event
         {
-            ExampleEvent() { myInt = 0; }
+            ExampleEvent() : Event(EventType::Example) { myInt = 0; }
             int myInt;
         };
     }

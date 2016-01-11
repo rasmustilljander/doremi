@@ -270,9 +270,11 @@ namespace Doremi
                     std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
 
                     // If we found one we remoe it from list and use it
-                    if (iter != m_SavedPlayerIDs.end())
+                    if(iter != m_SavedPlayerIDs.end())
                     {
                         m_SavedPlayerIDs.erase(iter);
+
+                        // TODOCM maybe crete player again
                     }
                     else
                     {
@@ -358,9 +360,10 @@ namespace Doremi
                 if(EntityHandler.HasComponents(EntityID, MaskToCheck))
                 {
                     TransformComponent* TransComponent = EntityHandler.GetComponentFromStorage<TransformComponent>(EntityID);
-                    Streamer.WriteUnsignedInt32(EntityID);
-                    Streamer.WriteFloat3(TransComponent->position);
-                    Streamer.WriteRotationQuaternion(TransComponent->rotation);
+                    Streamer.WriteUnsignedInt32(EntityID); // 4 byte
+                    Streamer.WriteFloat3(TransComponent->position); // 4x3 = 12 byte
+                    Streamer.WriteRotationQuaternion(TransComponent->rotation); // 4x4 = 16 byte
+                    // all = 32 byte
                     NumberOfEntitiesToSend++;
                 }
             }

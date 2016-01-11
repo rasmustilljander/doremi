@@ -15,7 +15,7 @@ namespace Doremi
     namespace Core
     {
         struct Event;
-        enum class Events;
+        enum class EventType;
         class Subscriber;
         class EventHandler
         {
@@ -25,7 +25,7 @@ namespace Doremi
             /** Puts event in mailbox to be handled by the event handler*/
             void BroadcastEvent(Event* p_event);
             /** Subscribes to a certain event type*/
-            void Subscribe(Events p_eventType, Subscriber* p_subscriber);
+            void Subscribe(EventType p_eventType, Subscriber* p_subscriber);
             /** Begin processing events by calling OnEvent in all subscribers*/
             void DeliverEvents();
 
@@ -36,7 +36,7 @@ namespace Doremi
 
             static EventHandler* m_singleton;
             // A map between the event type and the classes subscribing to the event
-            unordered_map<Events, vector<Subscriber*>> m_broadcastMap;
+            unordered_map<EventType, vector<Subscriber*>> m_broadcastMap;
             // Big ass mailbox for storing the events for later delivery
             vector<Event*> m_mailBox;
         };
