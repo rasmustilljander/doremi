@@ -367,11 +367,6 @@ namespace Doremi
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
-            // Potential field component
-            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200); // TODOKO should be done after the entity is created
-            t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
-
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
             jumpComp->jumpIntensity = 1;
