@@ -22,5 +22,5 @@ SET(DEFINITIONS
 add_library(${PROJECT_NAME} ${ENGINE_LINK_TYPE} ${HEADERS} ${SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "${DEFINITIONS}")
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
-target_link_libraries(${PROJECT_NAME} optimized "${EXTERNAL_LIBRARIES_INPUT_x86_release}")
-target_link_libraries(${PROJECT_NAME} debug "${EXTERNAL_LIBRARIES_INPUT_x86_debug}")
+target_link_libraries(${PROJECT_NAME} optimized "${EXTERNAL_LIBRARIES_INPUT_RELEASE}")
+target_link_libraries(${PROJECT_NAME} debug "${EXTERNAL_LIBRARIES_INPUT_DEBUG}")

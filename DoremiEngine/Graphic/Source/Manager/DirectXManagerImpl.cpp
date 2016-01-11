@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <Internal/Mesh/Vertex.hpp>
 
+#include <cstdint>
 #include <iostream>
 #include <algorithm> // std::sort
 
@@ -185,8 +186,8 @@ namespace DoremiEngine
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
             // Setup required variables
-            const size_t stride = sizeof(Vertex);
-            const size_t offset = 0;
+            const uint32_t stride = sizeof(Vertex);
+            const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
             ID3D11ShaderResourceView* texture = renderData[0].texture;
 
