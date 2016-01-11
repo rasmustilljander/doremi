@@ -10,7 +10,7 @@ namespace DoremiEngine
     namespace Physics
     {
         struct InternalPhysicsUtils;
-        class CharacterControlManagerImpl : public CharacterControlManager
+        class CharacterControlManagerImpl : public CharacterControlManager, public PxControllerBehaviorCallback
         {
             public:
             CharacterControlManagerImpl(InternalPhysicsUtils& p_utils);
@@ -27,6 +27,11 @@ namespace DoremiEngine
             Set callback method.
             Only used internally*/
             void SetCallbackClass(PxUserControllerHitReport* p_callback);
+
+            // Implements PxControllerBehaviorCallback
+            virtual PxControllerBehaviorFlags getBehaviorFlags(const PxShape& shape, const PxActor& actor);
+            virtual PxControllerBehaviorFlags getBehaviorFlags(const PxController& controller);
+            virtual PxControllerBehaviorFlags getBehaviorFlags(const PxObstacle& obstacle);
 
             /**
             */

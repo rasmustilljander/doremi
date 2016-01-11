@@ -26,6 +26,7 @@ namespace DoremiEngine
             }
             desc.stepOffset = 0.1;
             desc.reportCallback = m_controllerCallback;
+            desc.behaviorCallback = this;
 
             // Hard coded up vector
             desc.upDirection = PxVec3(0, 1, 0);
@@ -113,5 +114,15 @@ namespace DoremiEngine
         void CharacterControlManagerImpl::SetCallbackClass(PxUserControllerHitReport* p_callback) { m_controllerCallback = p_callback; }
 
         unordered_map<PxController*, int> CharacterControlManagerImpl::GetIdsByControllers() { return m_IDsByControllers; }
+
+        PxControllerBehaviorFlags CharacterControlManagerImpl::getBehaviorFlags(const PxShape& shape, const PxActor& actor)
+        {
+            return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+        }
+        PxControllerBehaviorFlags CharacterControlManagerImpl::getBehaviorFlags(const PxController& controller)
+        {
+            return PxControllerBehaviorFlags(0);
+        }
+        PxControllerBehaviorFlags CharacterControlManagerImpl::getBehaviorFlags(const PxObstacle& obstacle) { return PxControllerBehaviorFlags(0); }
     }
 }
