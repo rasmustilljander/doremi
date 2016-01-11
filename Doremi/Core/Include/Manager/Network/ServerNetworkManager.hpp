@@ -88,7 +88,7 @@ namespace Doremi
             /**
                 Send disconnect message to adress
             */
-            void SendDisconnect(const DoremiEngine::Network::Adress& m_adress);
+            void SendDisconnect(const DoremiEngine::Network::Adress& m_adress, std::string p_outString);
 
             /**
                 Send version check message

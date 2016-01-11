@@ -140,6 +140,7 @@ namespace Doremi
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
 
+            // TODOCM make some break on the inner while, because if we're overflowed we will never get out
             // For each connection
             for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
             {
@@ -149,7 +150,7 @@ namespace Doremi
 
                     // Check if we got any data
                     // TODOCM maybe we want to loop to get all data? or not..
-                    if(NetworkModule.RecieveReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle))
+                    while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle))
                     {
                         // std::cout << "Recieved reliable messsage." << std::endl;
                         // TODOCM logg instead
@@ -177,6 +178,8 @@ namespace Doremi
 
                         // TODOCM interpet data
                         iter->second->LastResponse = 0;
+
+                        Message = NetMessage();
                     }
                 }
             }
@@ -220,7 +223,7 @@ namespace Doremi
                     connection->ConnectionState = ConnectionState::DISCONNECTED;
 
                     // Send disconnect message
-                    SendDisconnect(m_adress);
+                    SendDisconnect(m_adress, "Bad pattern");
                 }
             }
             else // If connection is new, we create a new connection
@@ -295,7 +298,7 @@ namespace Doremi
             {
                 // Don't have adress, send disconnect?
                 // TODOCM maybe dont send anything, because of DDOS
-                SendDisconnect(m_adress);
+                SendDisconnect(m_adress, "Bad adress/pattern in recv version check");
             }
         }
 
@@ -374,21 +377,22 @@ namespace Doremi
             // Update sequence here because of the error checking..
             m_nextSnapshotSequence++;
 
-            cout << (int)m_nextSnapshotSequence << endl;
-
-            // Create global message
-            NetMessage Message = NetMessage();
-            Message.MessageID = MessageID::SNAPSHOT;
-
-
-            // TODOCM add snapshot info here
-            // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
-            CreateSnapshot(Message.Data, sizeof(Message.Data));
+            // cout << (int)m_nextSnapshotSequence << endl;
 
 
             // For all connected clients we send messages
             for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
             {
+
+                // Create global message
+                NetMessage Message = NetMessage();
+                Message.MessageID = MessageID::SNAPSHOT;
+
+
+                // TODOCM add snapshot info here
+                // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
+                CreateSnapshot(Message.Data, sizeof(Message.Data));
+
                 switch(iter->second->ConnectionState)
                 {
                     case ConnectionState::CONNECTED:
@@ -412,9 +416,17 @@ namespace Doremi
             }
         }
 
-        void ServerNetworkManager::SendDisconnect(const DoremiEngine::Network::Adress& m_adress)
+        void ServerNetworkManager::SendDisconnect(const DoremiEngine::Network::Adress& m_adress, std::string p_outString = "")
         {
-            std::cout << "Sending disconnect." << std::endl;
+            if(p_outString != "")
+            {
+                std::cout << "Sending disconnect: " << p_outString << std::endl;
+            }
+            else
+            {
+                std::cout << "Sending disconnect." << std::endl;
+            }
+
             // TODOCM logg instead
 
             // Create disconnection message
@@ -529,7 +541,10 @@ namespace Doremi
             }
 
             // Send message
-            NetworkModule.SendReliableData(&p_message, sizeof(p_message), p_connection->ReliableSocketHandle);
+            if(!NetworkModule.SendReliableData(&p_message, sizeof(p_message), p_connection->ReliableSocketHandle))
+            {
+                cout << "Failed to send" << endl;
+            }
         }
 
         void ServerNetworkManager::CheckForConnections()
@@ -542,6 +557,8 @@ namespace Doremi
             // Check if anyone is attempting to accept on our channel
             if(NetworkModule.AcceptConnection(m_reliableSocketHandle, OutSocketID, OutAdress))
             {
+                bool foundConnection = false;
+
                 // Check if we have any connection like that
                 std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter;
                 for(iter = m_connections.begin(); iter != m_connections.end(); ++iter)
@@ -562,21 +579,30 @@ namespace Doremi
                             iter->second->ReliableSocketHandle = OutSocketID;
 
                             iter->second->NewConnection = true;
-                        }
-                        else // If not, either wrong stage or something happened, or bot..
-                        {
-                            // Send disconnect message
-                            SendDisconnect(*OutAdress);
 
-                            // Set their state to disconnected
-                            iter->second->ConnectionState = ConnectionState::DISCONNECTED;
-
-                            iter->second->NewConnection = false;
+                            foundConnection = true;
+                            break;
                         }
-                        // Break loop
-                        // TODOCM maybe send disconnect even if we dont have him in list?
-                        break;
+                        // else // If not, either wrong stage or something happened, or bot.. problem here is that if we play from 2 clients.. if
+                        // wrong stage it will
+                        //{
+                        //    // Send disconnect message
+                        //    SendDisconnect(*OutAdress, "Bad adress/pattern in check for connections");
+
+                        //    // Set their state to disconnected
+                        //    iter->second->ConnectionState = ConnectionState::DISCONNECTED;
+
+                        //    iter->second->NewConnection = false;
+                        //}
+                        //// Break loop
+                        //// TODOCM maybe send disconnect even if we dont have him in list?
                     }
+                }
+
+                // If we didn't find connection, close socket
+                if(!foundConnection)
+                {
+                    // TODOCM remove socket
                 }
             }
 
@@ -597,7 +623,7 @@ namespace Doremi
                 if(iter->second->LastResponse >= m_timeoutInterval)
                 {
                     // Send disconnection message
-                    SendDisconnect(*iter->first);
+                    SendDisconnect(*iter->first, "Timeout");
 
                     // Delete the memory here
                     delete iter->first;
