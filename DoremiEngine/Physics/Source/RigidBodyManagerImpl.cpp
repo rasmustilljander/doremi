@@ -1,5 +1,6 @@
 #include <Internal/RigidBodyManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
+#include <cstdint>
 namespace DoremiEngine
 {
     namespace Physics
@@ -83,11 +84,11 @@ namespace DoremiEngine
             filterData.word0 = p_filterGroup; // Own ID
             filterData.word1 = p_filterMask; // ID mask to filter pairs that trigger contact callback
             PxRigidActor* actor = m_bodies[p_bodyID];
-            int numShapes = actor->getNbShapes();
+            uint32_t numShapes = actor->getNbShapes();
             // Magic allocation of memory (i think)
             PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
             actor->getShapes(shapes, numShapes);
-            for(size_t i = 0; i < numShapes; i++)
+            for(uint32_t i = 0; i < numShapes; i++)
             {
                 PxShape* shape = shapes[i];
                 shape->setSimulationFilterData(filterData);
