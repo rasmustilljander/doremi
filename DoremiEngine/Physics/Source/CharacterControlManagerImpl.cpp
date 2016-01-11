@@ -52,7 +52,7 @@ namespace DoremiEngine
             if(m_controllers.find(p_id) == m_controllers.end())
             {
                 // Controller did not exist
-                throw std::runtime_error("No controller exists with id: " + p_id);
+                throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
             m_controllers[p_id]->move(PxVec3(p_discplacement.x, p_discplacement.y, p_discplacement.z), 0, p_dt, filters);
             // Redundant return?
@@ -65,7 +65,7 @@ namespace DoremiEngine
             if(m_controllers.find(p_id) == m_controllers.end())
             {
                 // Controller did not exist
-                throw std::runtime_error("No controller exists with id: " + p_id);
+                throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
             PxExtendedVec3 p = m_controllers[p_id]->getPosition();
             return XMFLOAT3(p.x, p.y, p.z);
@@ -77,7 +77,7 @@ namespace DoremiEngine
             if(m_controllers.find(p_id) == m_controllers.end())
             {
                 // Controller did not exist
-                throw std::runtime_error("No controller exists with id: " + p_id);
+                throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
             PxQuat q = m_controllers[p_id]->getActor()->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
@@ -89,7 +89,7 @@ namespace DoremiEngine
             if(m_controllers.find(p_bodyID) == m_controllers.end())
             {
                 // Controller did not exist
-                throw std::runtime_error("No controller exists with id: " + p_bodyID);
+                throw std::runtime_error("No controller exists with id: " + to_string(p_bodyID));
             }
             PxFilterData filterData;
             filterData.word0 = p_filterGroup; // Own ID
