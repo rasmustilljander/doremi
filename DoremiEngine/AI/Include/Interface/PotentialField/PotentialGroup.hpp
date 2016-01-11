@@ -5,11 +5,11 @@ namespace DoremiEngine
 {
     namespace AI
     {
+        class PotentialFieldActor;
         /**
         Contains a group of actors that will effect eachother with charges. This implementation does not use a field and is suitable
         for fully dynamic groups of units.
         */
-        class PotentialFieldActor;
         class PotentialGroup
         {
             public:

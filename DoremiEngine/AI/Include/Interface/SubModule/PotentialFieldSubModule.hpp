@@ -26,7 +26,7 @@ namespace DoremiEngine
             /**
             Creates a new actor
             */
-            virtual PotentialFieldActor* CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range) = 0;
+            virtual PotentialFieldActor* CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range, const bool& p_static) = 0;
             /**
             Attaches a actor to the given potentialfield. This can be done by going straight to the potential field to
             TODOKO review if it should be doable in this class or only in the field

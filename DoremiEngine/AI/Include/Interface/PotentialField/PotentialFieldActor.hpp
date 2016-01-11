@@ -5,6 +5,9 @@ namespace DoremiEngine
 {
     namespace AI
     {
+        /**
+        TODOKO docs
+        */
         class PotentialFieldActor
         {
             public:
@@ -20,6 +23,10 @@ namespace DoremiEngine
             Sets the range of the actor
             */
             virtual void SetRange(const float& p_range) = 0;
+            /**
+            Sets if the actor is static or dynamic
+            */
+            virtual void SetStatic(const bool& p_static) = 0;
             /**
             Gets the actor position
             */

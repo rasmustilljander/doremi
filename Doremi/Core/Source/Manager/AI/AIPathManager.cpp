@@ -57,7 +57,7 @@ namespace Doremi
                 firstUpdate = false;
                 // creating a invisible "wall", for testing only
                 DoremiEngine::AI::PotentialFieldActor* actorwall =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 25), -10, 5);
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 25), -10, 5, true);
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AttachActor(*m_field, actorwall);
                 m_field->Update();
                 for(size_t i = 0; i < length; i++)
@@ -102,10 +102,10 @@ namespace Doremi
                     XMFLOAT2 desiredPos;
                     XMFLOAT3 unitPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
                     DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
-                    DoremiEngine::AI::PotentialFieldActor* currentActor =
-                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
+                    DoremiEngine::AI::PotentialFieldActor* currentActor = nullptr;
                     if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
                     {
+                        currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                         desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, true);
                     }
                     else

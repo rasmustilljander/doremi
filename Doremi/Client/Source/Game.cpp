@@ -147,6 +147,7 @@ namespace Doremi
             // PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
             // potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0),
             // -1, 3);
+
         }
 
         /////// TONS OF OLD CODE//////

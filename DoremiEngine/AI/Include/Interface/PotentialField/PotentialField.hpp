@@ -13,7 +13,7 @@ namespace DoremiEngine
             PotentialFieldGridPoint() {}
         };
         /**
-        Contains information on a mapgrid of positions, only works for squares
+        TODOKO docs
         */
         class PotentialFieldActor;
         class PotentialField

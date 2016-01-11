@@ -13,10 +13,9 @@ namespace DoremiEngine
         {
             using namespace DirectX;
             XMFLOAT3 forceDirection = XMFLOAT3(0, 0, 0); // Start with 0
-            size_t length = m_group.size();
             for(auto actor : m_group) // Walk through every actor in group
             {
-                if(actor != nullptr && p_actor != actor)
+                if(actor != nullptr && p_actor != actor) // TODOKO check if pactor is nullptr?
                 {
                     float power = actor->GetCharge(); // Get important data
                     float area = actor->GetRange();
@@ -33,6 +32,14 @@ namespace DoremiEngine
                         addedForce += direction; // Adds the vector with the force from the current actor to the total force
                         XMStoreFloat3(&forceDirection, addedForce);
                     }
+                    else
+                    {
+                        // Dont know, maybe something
+                    }
+                }
+                else
+                {
+                    // Nothing
                 }
             }
             // forceDirection.y = 0; // TODOKO Only 2d for now, review
