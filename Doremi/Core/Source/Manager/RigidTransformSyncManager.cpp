@@ -42,8 +42,8 @@ namespace Doremi
                     DoremiEngine::Physics::RigidBodyManager& rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
                     // Get position and orientation of rigid body
-                    XMFLOAT3 position = rigidManager.GetBodyPosition(rigidComp->p_bodyID);
-                    XMFLOAT4 orientation = rigidManager.GetBodyOrientation(rigidComp->p_bodyID);
+                    XMFLOAT3 position = rigidManager.GetBodyPosition(i);
+                    XMFLOAT4 orientation = rigidManager.GetBodyOrientation(i);
 
                     // Write position and orientation to transform component
                     transComp->position = position;
