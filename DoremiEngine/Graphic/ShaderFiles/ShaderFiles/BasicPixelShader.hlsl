@@ -47,7 +47,7 @@ float3 CalcPointLight(PixelInputType input, int i)
     float3 scatteredLight, reflectedLight;
     float attenuation;
 
-    float3 lightDirection = light[i].position - input.worldPos;
+    float3 lightDirection = light[i].position - input.worldPos.xyz;
     float lightDistance = length(lightDirection);
 
     if (lightDistance < 50.0f)

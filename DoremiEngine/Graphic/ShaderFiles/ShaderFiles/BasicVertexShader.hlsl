@@ -37,7 +37,7 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
 
 
     output.worldPos = mul(float4(input.position, 1.0f), worldMatrix);
-    output.normal = mul(float4(input.normal, 0.0f), worldMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), worldMatrix).xyz;
     output.texCoord = input.texCoord;
     output.cameraPos = cameraPosition;
     return output;
