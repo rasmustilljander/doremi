@@ -41,31 +41,19 @@ namespace Utility
             m_tagInfo[LogTag::GENERAL] = TagLevelInfo("GENERAL");
             m_tagInfo[LogTag::NOTAG] = TagLevelInfo("NOTAG");
             m_tagInfo[LogTag::PHYSICS] = TagLevelInfo("PHYSICS");
-            m_tagInfo[LogTag::TOOLS] = TagLevelInfo("TOOLS");
-            m_tagInfo[LogTag::SOUND] = TagLevelInfo("SOUND");
             m_tagInfo[LogTag::GAME] = TagLevelInfo("GAME");
             m_tagInfo[LogTag::COMPONENT] = TagLevelInfo("COMPONENT");
             m_tagInfo[LogTag::GUI] = TagLevelInfo("GUI");
             m_tagInfo[LogTag::INPUT] = TagLevelInfo("INPUT");
             m_tagInfo[LogTag::RESOURCE] = TagLevelInfo("RESOURCE");
-            m_tagInfo[LogTag::SCRIPT] = TagLevelInfo("SCRIPT");
             m_tagInfo[LogTag::ANIMATION] = TagLevelInfo("ANIMATION");
-            m_tagInfo[LogTag::WATER] = TagLevelInfo("WATER");
             m_tagInfo[LogTag::PARTICLE] = TagLevelInfo("PARTICLE");
 
             m_levelInfo[LogLevel::FATAL_ERROR] = TagLevelInfo("FATAL_ERROR");
             m_levelInfo[LogLevel::NON_FATAL_ERROR] = TagLevelInfo("NON_FATAL_ERROR");
             m_levelInfo[LogLevel::WARNING] = TagLevelInfo("WARNING");
-            m_levelInfo[LogLevel::SUCCESS] = TagLevelInfo("SUCCESS");
-            m_levelInfo[LogLevel::DEBUG_PRINT] = TagLevelInfo("DEBUG_PRINT");
-            m_levelInfo[LogLevel::INIT_PRINT] = TagLevelInfo("INIT_PRINT");
-            m_levelInfo[LogLevel::START_PRINT] = TagLevelInfo("START_PRINT");
-            m_levelInfo[LogLevel::PINK_PRINT] = TagLevelInfo("PINK_PRINT");
-            m_levelInfo[LogLevel::PACKET_PRINT] = TagLevelInfo("PACKET_PRINT");
             m_levelInfo[LogLevel::MASS_DATA_PRINT] = TagLevelInfo("MASS_DATA_PRINT");
             m_levelInfo[LogLevel::NOLEVEL] = TagLevelInfo("NOLEVEL");
-            m_levelInfo[LogLevel::HELP_PRINT] = TagLevelInfo("HELP_PRINT");
-            m_levelInfo[LogLevel::IDENTIFY_PRINT] = TagLevelInfo("IDENTIFY_PRINT");
         }
 
         void VirtualConsoleImpl::Initialize()

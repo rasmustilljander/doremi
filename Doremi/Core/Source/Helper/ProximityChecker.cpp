@@ -36,7 +36,7 @@ namespace Doremi
 
                 // Default settings requires no parameters, will be named "standard"
                 Utility::DebugLog::VirtualConsole& defaultConsole = manager.GetConsole();
-                defaultConsole.LogText(Utility::DebugLog::LogTag::GAME, Utility::DebugLog::LogLevel::DEBUG_PRINT,
+                defaultConsole.LogText(Utility::DebugLog::LogTag::GAME, Utility::DebugLog::LogLevel::DEBUG,
                                        "One of the entities provided did not have the needed component. ID1: %d ID2: %d", p_entityID, p_entityToCheckID);
                 return false;
             }
