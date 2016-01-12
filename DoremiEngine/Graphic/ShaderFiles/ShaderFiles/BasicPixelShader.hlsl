@@ -15,7 +15,7 @@ struct Light
     float3 attenuation;
     float intensity;
     float3 color;
-    float coneAngle;
+    float coneAngle;   
     float3 direction;
     float penumAgle;
     float3 position;

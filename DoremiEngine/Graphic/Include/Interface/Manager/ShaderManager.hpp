@@ -17,6 +17,7 @@ namespace DoremiEngine
             virtual ComputeShader* BuildComputeShader(const std::string& p_filename) = 0;
             virtual void SetActiveVertexShader(VertexShader* p_shader) = 0;
             virtual void SetActivePixelShader(PixelShader* p_shader) = 0;
+            virtual void SetActiveComputeShader(ComputeShader* p_shader) = 0;
         };
     }
 }

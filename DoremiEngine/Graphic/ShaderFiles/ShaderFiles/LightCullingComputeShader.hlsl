@@ -3,6 +3,12 @@
 // The depth from the screen space texture.
 Texture2D DepthTextureVS : register(t3);
 // Precomputed frustums for the grid.
+struct LightGridInfo
+{
+    uint offset;
+    uint value;
+};
+
 StructuredBuffer<Frustum> in_Frustums : register(t9);
 
 // Global counter for current index into the light index list.
@@ -13,8 +19,10 @@ RWStructuredBuffer<uint> t_LightIndexCounter : register(u2);
 
 RWStructuredBuffer<uint> o_LightIndexList : register(u3);
 RWStructuredBuffer<uint> t_LightIndexList : register(u4);
-RWTexture2D<uint2> o_LightGrid : register(u5);
-RWTexture2D<uint2> t_LightGrid : register(u6);
+//RWTexture2D<uint2> o_LightGrid : register(u5);
+//RWTexture2D<uint2> t_LightGrid : register(u6);
+RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u5);
+RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u6);
 
 groupshared uint uMinDepth;
 groupshared uint uMaxDepth;
@@ -29,6 +37,7 @@ groupshared uint o_LightList[1024];     //Max 1024 lights per thread group. Shou
 groupshared uint t_LightCount;
 groupshared uint t_LightIndexStartOffset;
 groupshared uint t_LightList[1024];
+
 
 // Add the light to the visible light list for opaque geometry.
 //Change to pass group-shared variabes if possible
@@ -157,11 +166,20 @@ void CS_main(ComputeShaderInput input)
     {
         // Update light grid for opaque geometry.
         InterlockedAdd(o_LightIndexCounter[0], o_LightCount, o_LightIndexStartOffset);
-        o_LightGrid[input.groupID.xy] = uint2(o_LightIndexStartOffset, o_LightCount);
+        LightGridInfo lightGridInfo;
+        lightGridInfo.offset = o_LightIndexStartOffset;
+        lightGridInfo.value = o_LightCount;
+        //o_LightGrid[input.groupID.xy] = uint2(o_LightIndexStartOffset, o_LightCount);
+        uint index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
+        o_LightGrid[index] = lightGridInfo;
 
         // Update light grid for transparent geometry.
         InterlockedAdd(t_LightIndexCounter[0], t_LightCount, t_LightIndexStartOffset);
-        t_LightGrid[input.groupID.xy] = uint2(t_LightIndexStartOffset, t_LightCount);
+        lightGridInfo.offset = t_LightIndexStartOffset;
+        lightGridInfo.value = t_LightCount;
+        //t_LightGrid[input.groupID.xy] = uint2(t_LightIndexStartOffset, t_LightCount);
+        index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
+        t_LightGrid[index] = lightGridInfo;
     }
 
     GroupMemoryBarrierWithGroupSync();

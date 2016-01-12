@@ -1,41 +1,6 @@
 #include "CommonInclude.hlsl"
 
 
-//cbuffer CameraMatrixBuffer : register(b0)
-//{
-//    matrix viewMatrix;
-//    matrix projectionMatrix;
-//    matrix inverseProjection;
-//    float3 cameraPosition;
-//    float pad;
-//};
-
-//struct FrustumArray
-//{
-//    Frustum frustum[2500];
-//};
-
-//float4 ClipToView(float4 clip)
-//{
-//    // View space position.
-//    float4 view = mul(inverseProjection, clip);
-//    // Perspecitive projection.
-//    view = view / view.w;
-//
-//    return view;
-//}
-//
-//float4 ScreenToView(float4 screen)
-//{
-//    float2 ScreenDimensions = float2(800, 800);
-//    // Convert to normalized texture coordinates
-//    float2 texCoord = screen.xy / ScreenDimensions;
-//
-//    // Convert to clip space
-//    float4 clip = float4(float2(texCoord.x, 1.0f - texCoord.y) * 2.0f - 1.0f, screen.z, screen.w);
-//
-//    return ClipToView(clip);
-//}
 
 // View space frustums for the grid cells.
 RWStructuredBuffer<Frustum> out_Frustums : register(u0);

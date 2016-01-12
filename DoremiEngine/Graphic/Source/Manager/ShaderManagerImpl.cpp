@@ -95,7 +95,6 @@ namespace DoremiEngine
             res = m_directX.GetDevice()->CreateComputeShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
             bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
             m_directX.GetDeviceContext()->CSSetShader(shader, nullptr, 0);
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().SetUAV();
 
             ComputeShader* newShader = new ComputeShaderImpl();
             newShader->SetShaderHandle(shader);
@@ -113,6 +112,11 @@ namespace DoremiEngine
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->PSSetShader(p_shader->GetShaderHandle(), 0, 0);
+        }
+        void ShaderManagerImpl::SetActiveComputeShader(ComputeShader* p_shader)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            m_directX.GetDeviceContext()->CSSetShader(p_shader->GetShaderHandle(), 0, 0);
         }
     }
 }

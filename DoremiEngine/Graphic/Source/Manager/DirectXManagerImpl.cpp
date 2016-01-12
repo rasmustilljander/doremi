@@ -17,7 +17,10 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext) {}
+        DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
+        {
+            m_screenResolution = DirectX::XMFLOAT2(800, 800);
+        }
         DirectXManagerImpl::~DirectXManagerImpl() {}
 
         void InitializeSDL()
@@ -38,13 +41,11 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::InitializeDirectX()
         {
-            int width = 800;
-            int height = 800;
             InitializeSDL();
 
             if(GetActiveWindow() == nullptr)
             {
-                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, width, height,
+                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 1200, 200, m_screenResolution.x, m_screenResolution.y,
                                                    SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
                 if(!win)
                 {
@@ -81,8 +82,8 @@ namespace DoremiEngine
             // Might want this in a class for readability and easy changing between states
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = width; // TODOKO take height and width from a reliable source
-            dbdesc.Height = height;
+            dbdesc.Width = m_screenResolution.x; // TODOKO take height and width from a reliable source
+            dbdesc.Height = m_screenResolution.y;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -113,8 +114,8 @@ namespace DoremiEngine
 
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
-            viewport.Width = width;
-            viewport.Height = height;
+            viewport.Width = m_screenResolution.x;
+            viewport.Height = m_screenResolution.y;
             viewport.MinDepth = 0.0f;
             viewport.MaxDepth = 1.0f;
 
@@ -145,6 +146,10 @@ namespace DoremiEngine
 
             BuildWorldMatrix();
         }
+
+        void DirectXManagerImpl::SetScreenResolution(DirectX::XMFLOAT2 p_res) { m_screenResolution = p_res; }
+
+        DirectX::XMFLOAT2 DirectXManagerImpl::GetScreenResolution() { return m_screenResolution; }
 
         void DirectXManagerImpl::BuildWorldMatrix()
         {
@@ -290,24 +295,20 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::EndDraw()
         {
+<<<<<<< HEAD
+=======
+
+            // dispatch frustum shader
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
+
+            // render meshes
+            RenderAllMeshs();
+>>>>>>> Light culling compute shader almost done
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-            // TODORK Move to right place
-            // only runs on second frame beacause reasons
-            // dispatch compute shader
-            if(i == 1)
-            {
-                ID3D11UnorderedAccessView* uav = m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().GetUAV();
-                m_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, 0);
-
-                m_deviceContext->Dispatch(50, 50, 1);
-                // m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().UnmapBuffer();
-            }
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().CopyFrustumData();
-            i++;
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

@@ -19,6 +19,7 @@ namespace DoremiEngine
 
             void SetActiveVertexShader(VertexShader* p_shader) override;
             void SetActivePixelShader(PixelShader* p_shader) override;
+            void SetActiveComputeShader(ComputeShader* p_shader) override;
 
             private:
             const GraphicModuleContext& m_graphicContext;

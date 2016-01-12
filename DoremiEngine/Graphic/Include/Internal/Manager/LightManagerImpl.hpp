@@ -10,6 +10,7 @@ namespace DoremiEngine
     namespace Graphic
     {
         struct GraphicModuleContext;
+        // Global light list
         struct LightBuffer
         {
             Light lightList[4];

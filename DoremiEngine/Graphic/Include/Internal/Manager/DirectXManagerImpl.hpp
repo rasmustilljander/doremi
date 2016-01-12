@@ -22,6 +22,8 @@ namespace DoremiEngine
             */
             void InitializeDirectX();
             ID3D11Device* GetDevice() override;
+            void SetScreenResolution(DirectX::XMFLOAT2) override;
+            DirectX::XMFLOAT2 GetScreenResolution() override;
             ID3D11DeviceContext* GetDeviceContext() override;
             // TODOKO should end draw be here?
             void EndDraw() override;
@@ -52,9 +54,13 @@ namespace DoremiEngine
             ID3D11Texture2D* m_depthBuffer;
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
+<<<<<<< HEAD
             ID3D11SamplerState* m_defaultSamplerState;
 
             int i = 0;
+=======
+            DirectX::XMFLOAT2 m_screenResolution;
+>>>>>>> Light culling compute shader almost done
         };
     }
 }
