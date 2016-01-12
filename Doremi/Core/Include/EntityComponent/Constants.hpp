@@ -31,6 +31,7 @@ enum class ComponentType : int
     NetworkObject = 0x10000,
     AIGroup = 0x20000,
     Jump = 0x40000,
+    Gravity = 0x80000,
 };
 
 /**

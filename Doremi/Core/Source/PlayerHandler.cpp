@@ -13,6 +13,7 @@
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/JumpComponent.hpp>
+#include <EntityComponent/Components/GravityComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -215,7 +216,7 @@ namespace Doremi
                     }
                     else
                     {
-                        movementVec -= XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 0.1;
+                        // movementVec -= XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 0.1;
                     }
                     // Store finished movement vec
                     XMStoreFloat3(&movement, movementVec);

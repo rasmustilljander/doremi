@@ -15,6 +15,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/RangeComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/JumpComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/GravityComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -369,9 +370,13 @@ namespace Doremi
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->jumpIntensity = 1;
-            jumpComp->jumpTime = 0.5;
+            jumpComp->intensity = 1;
+            // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;
+
+            // Gravity component
+            GravityComponent* t_gravComp = new GravityComponent();
+            t_avatarBlueprint[ComponentType::Gravity] = t_gravComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);

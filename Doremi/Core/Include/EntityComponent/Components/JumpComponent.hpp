@@ -11,18 +11,15 @@ namespace Doremi
         {
             // States whether a jump is currently under way
             bool active = false;
-            // The total time a jump takes (constant across a jump)
-            float jumpTime = 0;
-            // How intense a jump is. That is the power behind it (constant across a jump)
-            float jumpIntensity = 0;
-            // Progress of the current jump (updates each frame until jumpTime is reached)
-            float jumpTimeProgress = 0;
+            // Remaining movement upwards of the jump. This is updated during the jump
+            float movementRemaining = 0;
+            // Intensity of the jump. This is constant across the jump
+            float intensity = 0;
 
-            // Starts a jump by setting active to true, and resetting jumpProgress
             void StartJump()
             {
                 active = true;
-                jumpTimeProgress = 0;
+                movementRemaining = intensity;
             }
         };
     }

@@ -30,6 +30,7 @@ namespace Doremi
                 {
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, movementComp->movement, p_dt);
+                    movementComp->movement = XMFLOAT3(0, 0, 0);
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     // XMFLOAT3 currentVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(rigidBody->p_bodyID);
                     // XMVECTOR forward = XMLoadFloat3(&movement->direction);

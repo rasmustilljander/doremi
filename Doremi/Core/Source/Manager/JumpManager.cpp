@@ -32,25 +32,12 @@ namespace Doremi
                     JumpComponent* jumpComp = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i);
                     if(jumpComp->active)
                     {
-                        // Check if a jump in progress is finished
-                        if(jumpComp->jumpTimeProgress >= jumpComp->jumpTime)
+                        jumpComp->movementRemaining -= p_dt;
+                        if(jumpComp->movementRemaining <= 0)
                         {
                             jumpComp->active = false;
                         }
-
-                        else
-                        {
-                            // Update progress with p_dt
-                            jumpComp->jumpTimeProgress += p_dt;
-                            // WARNING! Problem when we go "beneath" the landing surface?
-                            // Calculate how far we've come in our jump
-                            float jumpFactor = jumpComp->jumpTimeProgress / jumpComp->jumpTime;
-                            // We want a value from 1 to -1
-                            jumpFactor -= 0.5;
-                            jumpFactor *= -2;
-                            float moveDistance = jumpComp->jumpIntensity * jumpFactor;
-                            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, moveDistance, 0), p_dt);
-                        }
+                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, jumpComp->movementRemaining, 0), p_dt);
                     }
                 }
             }

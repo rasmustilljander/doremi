@@ -33,6 +33,7 @@
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
+#include <Doremi/Core/Include/Manager/GravityManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -87,6 +88,7 @@ namespace Doremi
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
+        Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
 
         // Add manager to list of managers
         m_graphicalManagers.push_back(t_renderManager);
@@ -98,9 +100,11 @@ namespace Doremi
         // m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
         m_managers.push_back(t_jumpManager);
+        m_managers.push_back(t_gravManager);
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
+
 
         // GenerateWorld(sharedContext);
 

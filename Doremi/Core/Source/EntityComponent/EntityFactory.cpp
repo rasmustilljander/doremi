@@ -17,6 +17,7 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/AIGroupComponent.hpp>
 #include <EntityComponent/Components/JumpComponent.hpp>
+#include <EntityComponent/Components/GravityComponent.hpp>
 
 namespace Doremi
 {
@@ -122,6 +123,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::Jump)
                 {
                     memcpy(GetComponent<JumpComponent>(tNewEntityID), iter->second, sizeof(JumpComponent));
+                }
+                else if(iter->first == ComponentType::Gravity)
+                {
+                    memcpy(GetComponent<GravityComponent>(tNewEntityID), iter->second, sizeof(GravityComponent));
                 }
             }
             return tNewEntityID;
