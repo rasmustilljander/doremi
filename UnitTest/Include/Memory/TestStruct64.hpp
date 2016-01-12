@@ -1,4 +1,17 @@
 #pragma once
+#include <gtest/gtest.h>
+
+class TestStruct64Test : public testing::Test
+{
+    public:
+    TestStruct64Test() {}
+    virtual ~TestStruct64Test() {}
+
+    void SetUp() override {}
+
+    void TearDown() override {}
+};
+
 struct TestStruct64
 {
     float f1 = 1;
