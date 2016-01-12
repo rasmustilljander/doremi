@@ -69,7 +69,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void CheckPositionFromServer(DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
+            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
 
             private:
             /**

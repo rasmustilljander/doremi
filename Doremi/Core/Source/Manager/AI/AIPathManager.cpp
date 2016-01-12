@@ -40,8 +40,9 @@ namespace Doremi
 
         void AIPathManager::Update(double p_dt)
         {
-            size_t playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
-            if(playerID == -1)
+            EntityID playerID = -1;
+
+            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerID))
             {
                 return;
             }

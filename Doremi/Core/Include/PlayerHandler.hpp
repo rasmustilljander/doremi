@@ -66,7 +66,8 @@ namespace Doremi
         class PlayerHandler
         {
             public:
-            /** 
+            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
+            /**
                 Is a singleton. Use this method to get the EventManager
             */
             static PlayerHandler* GetInstance();
@@ -94,7 +95,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            EntityID GetDefaultPlayerEntityID();
+            bool GetDefaultPlayerEntityID(EntityID& o_outID);
 
             /**
                 TODOCM doc
@@ -123,16 +124,6 @@ namespace Doremi
             */
             void UpdateServer();
 
-            /**
-                TODOCM doc
-            */
-            void QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position);
-
-            /**
-                TODOCM doc
-            */
-            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
-
             private:
             /**
                 TODOCM doc
@@ -154,7 +145,7 @@ namespace Doremi
             */
             void UpdatePlayerRotationsServer();
 
-
+            void UpdateFiring();
             /**
                 TODOCM doc
             */
@@ -165,11 +156,11 @@ namespace Doremi
             */
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
-            GunController m_gunController;
 
             /**
                 TODOEA doc
             */
+            GunController m_gunController;
 
             /**
                 Map from playerID to player struct, playerID != EntityID

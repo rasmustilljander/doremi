@@ -22,6 +22,8 @@
 #include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <Doremi/Core/Include/Manager/JumpManager.hpp>
+#include <Doremi/Core/Include/Manager/GravityManager.hpp>
 
 // Third party
 #include <DirectXMath.h>
@@ -58,6 +60,8 @@ namespace Doremi
 
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext); // TODO check if needed
+        Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
+        Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -67,6 +71,8 @@ namespace Doremi
         m_managers.push_back(t_movementManager);
         m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
+        m_managers.push_back(t_jumpManager);
+        m_managers.push_back(t_gravManager);
 
 
         // GenerateWorld(sharedContext);

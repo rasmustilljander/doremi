@@ -22,7 +22,8 @@ namespace Doremi
         {
             using namespace DirectX;
 
-            int playerID = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
+            int playerID = 0;
+            PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerID);
 
             TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
             XMFLOAT4 orientation = playerTransform->rotation;

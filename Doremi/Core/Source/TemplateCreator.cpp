@@ -172,6 +172,8 @@ namespace Doremi
             EntityTypeComponent* typeComp = new EntityTypeComponent();
             blueprint[ComponentType::EntityType] = typeComp;
 
+            blueprint[ComponentType::NetworkObject];
+
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
         }
@@ -193,14 +195,7 @@ namespace Doremi
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
             blueprint[ComponentType::Render] = renderComp;
 
-            // PhysicsMaterialComp
-            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
-            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
-
-            // Rigid body comp
-            RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
-            blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            blueprint[ComponentType::NetworkObject];
 
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
@@ -325,6 +320,12 @@ namespace Doremi
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
+
+            // Jump component
+            JumpComponent* jumpComp = new JumpComponent();
+            jumpComp->intensity = 1;
+            // jumpComp->jumpTime = 0.5;
+            t_avatarBlueprint[ComponentType::Jump] = jumpComp;
 
             // Potential field component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();

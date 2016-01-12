@@ -376,7 +376,8 @@ namespace Doremi
             Streamer.WriteInt32(inputHandler->GetInputBitMask());
 
             // Get orientation
-            EntityID id = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
+            EntityID id = 0;
+            PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(id);
 
             if(EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
             {

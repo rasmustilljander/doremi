@@ -85,14 +85,16 @@ namespace Doremi
             return outPointer;
         }
 
-        EntityID PlayerHandler::GetDefaultPlayerEntityID()
+        bool PlayerHandler::GetDefaultPlayerEntityID(EntityID& o_outID)
         {
             if(m_playerMap.size() == 0)
             {
                 std::runtime_error("GetDefaultPlayerEntityID called without any players aviable.");
-                return -1;
+                return false;
             }
-            return m_playerMap.begin()->second->m_playerEntityID;
+            o_outID = m_playerMap.begin()->second->m_playerEntityID;
+
+            return true;
         }
 
         bool PlayerHandler::GetEntityIDForPlayer(uint32_t p_playerID, EntityID& outID)
@@ -152,6 +154,7 @@ namespace Doremi
         {
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
+            UpdateFiring();
         }
 
         void PlayerHandler::UpdatePlayerInputs()
@@ -337,8 +340,17 @@ namespace Doremi
                     TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                     transComp->rotation = inputHandler->GetOrientationFromInput();
                 }
+            }
+        }
 
+        void PlayerHandler::UpdateFiring()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                InputHandlerServer* inputHandler = (InputHandlerServer*)iter->second->m_inputHandler;
 
+                EntityID entityID = iter->second->m_playerEntityID;
                 // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnDown))
                 {
@@ -347,14 +359,16 @@ namespace Doremi
             }
         }
 
-        void PlayerHandler::QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position)
-        {
-            // m_PositionStamps.push_front(PositionStamp(m_snapshotSequenceReal, p_position));
-        }
-
         void PlayerHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            /**
+            Notes:
+            We need to interpolate the players position to a new position => hence why it should be in Interpolation handler.
+            We need to store the playerID to set the position of the player
+
+            */
 
             // TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
             // Check if we find the playerID
