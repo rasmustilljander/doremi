@@ -6,6 +6,7 @@
 namespace DirectX
 {
     struct XMFLOAT4X4;
+    struct XMFLOAT2;
 }
 struct ID3D11Buffer;
 namespace DoremiEngine
@@ -21,6 +22,7 @@ namespace DoremiEngine
             MeshManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~MeshManagerImpl();
             MeshInfo* BuildMeshInfo(const std::string& p_fileName) override;
+            MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName);
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;
             void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) override;
             void Draw() override;

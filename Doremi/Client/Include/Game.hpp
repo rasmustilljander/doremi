@@ -50,6 +50,11 @@ namespace Doremi
         void Update(double p_deltaTime);
 
         /**
+            A method to send the draw to the correct path using the menustate
+        */
+        void Draw(double p_deltaTime);
+
+        /**
         TODOCM doc
         */
         void UpdateGame(double p_deltaTime);
@@ -63,6 +68,10 @@ namespace Doremi
         */
         void DrawGame(double p_deltaTime);
 
+        /**
+            Draws the menu screen
+        */
+        void DrawMenu(double p_deltaTime);
         /**
             TOODCM doc
         */

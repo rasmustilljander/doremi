@@ -19,6 +19,14 @@ namespace Doremi
                        DoremiEngine::Graphic::MeshInfo* p_meshInfo, MenuStates::MenuState p_menuState)
             : m_position(p_position), m_size(p_size), m_materialInfo(p_materialInfo), m_meshInfo(p_meshInfo), m_menuState(p_menuState)
         {
+            // Building a transform matrix. needs no rotation or scaling orientation the variable can be reused. Scaling origin is 0,0,0 for the quad
+            XMVECTOR t_origin = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f));
+            XMVECTOR t_quater = XMLoadFloat4(&XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+            XMVECTOR t_scaling = XMLoadFloat3(&XMFLOAT3(m_size.x * 2, m_size.y * 2, 0.0f));
+            XMVECTOR t_translation = XMLoadFloat3(&XMFLOAT3(m_position.x, m_position.y, 1.0f));
+            XMStoreFloat4x4(&m_transformMatrix, XMMatrixTransformation(t_origin, t_quater, t_scaling, t_origin, t_quater, t_translation));
+            XMMATRIX t_matrix = XMMatrixTranspose(XMLoadFloat4x4(&m_transformMatrix));
+            XMStoreFloat4x4(&m_transformMatrix, t_matrix);
         }
         Button::Button() {}
         Button::~Button() {}
@@ -32,12 +40,12 @@ namespace Doremi
                 return false;
             }
             // Check if mouse is to the left of the button
-            else if(p_mousePosX < m_position.x)
+            else if(p_mousePosX < m_position.x - m_size.x)
             {
                 return false;
             }
             // Check if mouse is over the button
-            else if(p_mousePosY < m_position.y)
+            else if(p_mousePosY < m_position.y - m_size.y)
             {
                 return false;
             }

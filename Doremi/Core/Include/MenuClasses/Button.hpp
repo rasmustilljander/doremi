@@ -32,6 +32,7 @@ namespace Doremi
             // Checks if mouse is inside this button
             bool CheckIfInside(int p_mousePosX, int p_mousePosY);
             MenuStates::MenuState m_menuState;
+            XMFLOAT4X4 m_transformMatrix;
 
             private:
             MousePos m_mousePos;

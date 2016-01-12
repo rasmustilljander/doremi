@@ -29,6 +29,7 @@ namespace DoremiEngine
 
         MeshInfo* MeshManagerImpl::BuildMeshInfo(const std::string& p_fileName)
         {
+
             if(m_meshInfo.find(p_fileName) != m_meshInfo.end())
             {
                 return m_meshInfo[p_fileName];
@@ -38,6 +39,21 @@ namespace DoremiEngine
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             std::string filePath = m_graphicContext.m_workingDirectory + p_fileName; // TODOKO should add complete filepath
             m_modelLoader->LoadMesh(newMesh, filePath, m_directX.GetDeviceContext(), m_directX.GetDevice());
+            m_meshInfo[p_fileName] = newMesh;
+            return newMesh;
+        }
+
+        MeshInfo* MeshManagerImpl::BuildQuadMeshInfo(const std::string& p_fileName)
+        {
+            if(m_meshInfo.find(p_fileName) != m_meshInfo.end())
+            {
+                return m_meshInfo[p_fileName];
+            }
+            MeshInfo* newMesh = new MeshInfoImpl();
+            newMesh->SetFileName(p_fileName);
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            std::string filePath = m_graphicContext.m_workingDirectory + p_fileName; // TODOKO should add complete filepath
+            m_modelLoader->LoadQuad(newMesh, m_directX.GetDeviceContext(), m_directX.GetDevice());
             m_meshInfo[p_fileName] = newMesh;
             return newMesh;
         }

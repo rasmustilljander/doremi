@@ -14,6 +14,36 @@ namespace DoremiEngine
 
         ModelLoader::~ModelLoader() {}
 
+        bool ModelLoader::LoadQuad(MeshInfo* o_meshInfo, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device)
+        {
+            Vertex tQuad[] = {{-0.5f, 0.5f, 0.0f, 0.0f}, // 1 //Lilla boxen
+                              {-0.5f, -0.5, 0.0f, 1.0f}, // 2//Framsidan
+                              {0.5f, -0.5f, 1.0f, 1.0f}, // 3
+                              {-0.5f, 0.5, 0.0f, 0.0f}, // 1//Framsidan
+                              {0.5f, 0.5f, 1.0f, 0.0f}, // 4
+                              {0.5f, -0.5f, 1.0f, 1.0f}}; // 3
+
+            int size = sizeof(tQuad);
+
+            o_meshInfo->SetVerticeCount(ARRAYSIZE(tQuad));
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
+
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.ByteWidth = size;
+            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            ID3D11Buffer* buffer;
+            HRESULT res = p_device->CreateBuffer(&bd, NULL, &buffer);
+            CheckHRESULT(res, "Error when creating mesh buffer");
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            p_deviceContext->Map(buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, tQuad, size);
+            p_deviceContext->Unmap(buffer, NULL);
+            o_meshInfo->SetBufferHandle(buffer);
+            o_meshInfo->SetFileName("Quad");
+            return true;
+        }
         bool ModelLoader::LoadMesh(MeshInfo* o_meshInfo, const std::string& p_fileName, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device)
         {
             Vertex tQuad[] = {

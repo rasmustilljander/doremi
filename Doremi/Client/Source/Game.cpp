@@ -24,6 +24,7 @@
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
@@ -48,6 +49,7 @@
 #include <exception>
 #include <chrono>
 #include <vector>
+#include <iostream> //TODOLH remove once all the functionality is implemented in the menusystem
 
 namespace Doremi
 {
@@ -107,11 +109,13 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
-        t_textureNamesForMenuButtons.push_back("Angryface.dds");
-        t_textureNamesForMenuButtons.push_back("Angryface.dds");
-        t_textureNamesForMenuButtons.push_back("Angryface.dds");
+        t_textureNamesForMenuButtons.push_back("Playbutton.dds");
+        t_textureNamesForMenuButtons.push_back("Optionsbutton.dds");
+        t_textureNamesForMenuButtons.push_back("Exitbutton.dds");
         MenuHandler::StartMenuHandler(sharedContext, DirectX::XMFLOAT2(800.0f, 800.0f));
         MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
+        // initialize menudraw
+        MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
 
 
         // GenerateWorld(sharedContext);
@@ -257,23 +261,7 @@ namespace Doremi
 
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
-            /** TODOLH Detta ska flyttas till en function som i updaten*/
-            switch(m_menuState)
-            {
-                case MenuStates::MAINMENU:
-                    // Draw mainMenu
-                    break;
-                case MenuStates::RUNGAME:
-                    // Draw Game
-                    DrawGame((double)UpdateStepLen / 1000.0f);
-                    break;
-                case MenuStates::PAUSE:
-                    // Draw PauseSCreen
-                    break;
-                default:
-                    break;
-            }
-
+            Draw(UpdateStepLen);
             // Escape
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
             if(inputHandler != nullptr)
@@ -322,7 +310,8 @@ namespace Doremi
                 UpdateGame(p_deltaTime);
                 break;
             case MenuStates::EXIT:
-                hej = 6;
+                std::cout << "You clicked exit its not ver effective state changed back to mainmenu" << std::endl;
+                m_menuState = MenuStates::MAINMENU;
                 return;
                 break;
             case MenuStates::PAUSE:
@@ -330,11 +319,17 @@ namespace Doremi
                 // Update Pause Screen
                 break;
             case MenuStates::OPTIONS:
-                hej = 6;
+                std::cout << "You clicked options button. It has no effect. State changed back to MAINMENU" << std::endl;
+                m_menuState = MenuStates::MAINMENU;
             // Update Options
             default:
                 break;
         }
+    }
+
+    void GameMain::DrawMenu(double p_deltaTime)
+    {
+        MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, MenuHandler::GetInstance()->GetButtons());
     }
 
     void GameMain::DrawGame(double p_deltaTime)
@@ -343,6 +338,27 @@ namespace Doremi
         for(size_t i = 0; i < length; i++)
         {
             m_graphicalManagers.at(i)->Update(p_deltaTime);
+        }
+    }
+
+    void GameMain::Draw(double p_deltaTime)
+    {
+        /** TODOLH Detta ska flyttas till en function som i updaten*/
+        switch(m_menuState)
+        {
+            case MenuStates::MAINMENU:
+                // Draw mainMenu
+                DrawMenu(p_deltaTime);
+                break;
+            case MenuStates::RUNGAME:
+                // Draw Game
+                DrawGame(p_deltaTime);
+                break;
+            case MenuStates::PAUSE:
+                // Draw PauseSCreen
+                break;
+            default:
+                break;
         }
     }
 

@@ -29,7 +29,7 @@ namespace Doremi
         {
             if(m_singleton != nullptr)
             {
-                std::runtime_error("MenuHandler StartPlayerHandler called multiple times.");
+                std::runtime_error("MenuHandler StartMenuHandler called multiple times.");
             }
             m_singleton = new MenuHandler(p_sharedContext, p_resolution);
         }
@@ -51,23 +51,29 @@ namespace Doremi
             size_t length = p_buttonTextureNames.size();
             int offset = 5;
             // Gör höjden på varje knapp bero på upplösningen
-            float t_buttonHeight = (m_resolution.y - offset * 2) / length;
-            // En knapp täcker halva skärmen. Det kommer finnas 1/4 på varje sida av knapparna
-            float t_buttonWidth = m_resolution.x / 2;
-            // Positionera till vänster om mitten
-            float t_buttonXPosition = m_resolution.x / 4;
+
+            // Ändrar till att vara orienterad efter origin
+            float t_buttonHeight = ((m_resolution.y - offset * 2) / length) / 2;
+            // En knapp täcker halva skärmen. Extents åt båda hållen ger halva skärmen. Extentsen blir då en 4dedel
+            float t_buttonWidth = m_resolution.x / 4;
+            // Positionera I mitten av skärmen
+            float t_buttonXPosition = m_resolution.x / 2;
             for(size_t i = 0; i < length; i++)
             {
                 // Lägg in materialinfo å meshinfo för varje knapp i dess klass instantiering. Lägg till i listan för knappar
+                XMFLOAT2 t_position = XMFLOAT2(t_buttonXPosition, m_resolution.y - t_buttonHeight * i * 2 - t_buttonHeight + 5);
+                XMFLOAT2 t_size = XMFLOAT2(t_buttonWidth, t_buttonHeight - offset);
                 DoremiEngine::Graphic::MaterialInfo* t_materialInfo =
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(p_buttonTextureNames[i]);
-                DoremiEngine::Graphic::MeshInfo* t_meshInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+                DoremiEngine::Graphic::MeshInfo* t_meshInfo =
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
                 // Göra offset på den första knappen resten löses av size adjustment
-                m_buttonList.push_back(Button(XMFLOAT2(t_buttonXPosition, t_buttonHeight * i + offset),
-                                              XMFLOAT2(t_buttonWidth, t_buttonHeight - offset), t_materialInfo, t_meshInfo, (MenuStates::MenuState)i));
+                m_buttonList.push_back(Button(t_position, t_size, t_materialInfo, t_meshInfo, (MenuStates::MenuState)i));
             }
             m_inputHandler = new InputHandlerClient(m_sharedContext);
         }
+
+        std::vector<Button> MenuHandler::GetButtons() { return m_buttonList; }
 
         int MenuHandler::Update(double p_dt)
         {
@@ -79,7 +85,7 @@ namespace Doremi
             // Check if cursor is inside one of the buttons if it is then save that buttons index
             for(size_t i = 0; i < length; i++)
             {
-                if(m_buttonList[i].CheckIfInside(mouseX, mouseY))
+                if(m_buttonList[i].CheckIfInside(mouseX, m_resolution.y - mouseY))
                 {
                     m_currentButton = i;
                     break;
