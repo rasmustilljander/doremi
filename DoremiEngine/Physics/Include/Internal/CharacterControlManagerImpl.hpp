@@ -23,6 +23,8 @@ namespace DoremiEngine
             XMFLOAT3 GetPosition(int p_id) override;
             XMFLOAT4 GetOrientation(int p_id) override;
 
+            void SetPosition(int p_id, XMFLOAT3 p_position) override;
+
             /**
             Set callback method.
             Only used internally*/

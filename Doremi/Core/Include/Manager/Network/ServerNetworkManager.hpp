@@ -128,12 +128,12 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize);
+            void CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, Connection* p_connection);
 
             /**
                 TODOCM doc
             */
-            void InterpetInputMessage(NetMessage  &p_message, const uint32_t &p_playerID);
+            void RecieveInputMessage(NetMessage& p_message, Connection* p_connection);
 
             /**
                 Timer for next send

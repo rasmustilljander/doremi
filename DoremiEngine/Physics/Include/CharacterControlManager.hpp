@@ -29,6 +29,11 @@ namespace DoremiEngine
             virtual XMFLOAT3 GetPosition(int p_id) = 0;
 
             /**
+                Set the position of the character controller, warning is teleport and doesn't check for collisions
+            */
+            virtual void SetPosition(int p_id, XMFLOAT3 p_position) = 0;
+
+            /**
             Gets the orientation of the character controller, as a quaternion*/
             virtual XMFLOAT4 GetOrientation(int p_id) = 0;
         };

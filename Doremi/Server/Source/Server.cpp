@@ -232,8 +232,7 @@ namespace Doremi
     void ServerMain::UpdateGame(double p_deltaTime)
     {
         Core::EventHandler::GetInstance()->DeliverEvents();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerPositions();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerRotationsServer();
+        Core::PlayerHandler::GetInstance()->UpdateServer();
 
         // Have all managers update
         size_t length = m_managers.size();

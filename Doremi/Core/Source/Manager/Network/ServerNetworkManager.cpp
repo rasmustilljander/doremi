@@ -110,9 +110,9 @@ namespace Doremi
             delete IncommingAdress;
         }
 
-        void ServerNetworkManager::InterpetInputMessage(NetMessage  &p_message, const uint32_t &p_playerID)
+        void ServerNetworkManager::RecieveInputMessage(NetMessage& p_message, Connection* p_connection)
         {
-            InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_playerID);
+            InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
 
             // Create a stream
             BitStreamer Streamer = BitStreamer();
@@ -121,18 +121,26 @@ namespace Doremi
             unsigned char* BufferPointer = p_message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
+            // Read sequence
+            p_connection->LastSequence = Streamer.ReadUnsignedInt8();
+
+            // Read input from Stream
             uint32_t InputMask = Streamer.ReadUnsignedInt32();
 
-            // Read Input from Stream
+            // Set Input to handler
             inputHandler->SetInputBitMask(InputMask);
 
             // Set orientation
             EntityID entityID = 0;
 
             // If we have a player with the ID
-            if (PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, entityID))
+            if(PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_connection->PlayerID, entityID))
             {
+                // Set orientation to be updated
                 inputHandler->SetOrientationFromInput(Streamer.ReadRotationQuaternion());
+
+                // Save position to send it on next message
+                p_connection->PositionOnLastSequence = GetComponent<TransformComponent>(entityID)->position;
             }
         }
 
@@ -169,7 +177,7 @@ namespace Doremi
                             case MessageID::INPUT:
 
                                 // Interpet n' input message
-                                InterpetInputMessage(Message, iter->second->PlayerID);
+                                RecieveInputMessage(Message, iter->second);
                                 break;
 
                             default:
@@ -231,6 +239,7 @@ namespace Doremi
                 // Create a new connection
                 Connection* newConnection = new Connection();
                 newConnection->LastResponse = 0;
+                newConnection->LastSequence = m_nextSnapshotSequence;
                 newConnection->ConnectionState = ConnectionState::CONNECTING;
                 newConnection->NewConnection = false;
 
@@ -330,7 +339,7 @@ namespace Doremi
         }
 
         // TODOCM maybe move to somewhere else
-        void ServerNetworkManager::CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize)
+        void ServerNetworkManager::CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, Connection* p_connection)
         {
             // For all objects
             // That have a position component
@@ -339,11 +348,17 @@ namespace Doremi
             BitStreamer Streamer = BitStreamer();
             Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
 
-            // Write snapshot ID
+            // Write snapshot ID (1 byte
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
 
-            // Move forward for header
-            Streamer.SetReadWritePosition(sizeof(uint8_t) * 2);
+            // Write client last sequence (1 byte
+            Streamer.WriteUnsignedInt8(p_connection->LastSequence);
+
+            // Write position of that sequence ( 12 byte
+            Streamer.WriteFloat3(p_connection->PositionOnLastSequence);
+
+            // Move forward for header (14 byte + numOfObjects to be written later
+            Streamer.SetReadWritePosition(14 + sizeof(uint8_t));
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
@@ -368,7 +383,7 @@ namespace Doremi
                 }
             }
 
-            Streamer.SetReadWritePosition(sizeof(uint8_t));
+            Streamer.SetReadWritePosition(14);
             Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
         }
 
@@ -394,7 +409,7 @@ namespace Doremi
 
                 // TODOCM add snapshot info here
                 // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
-                CreateSnapshot(Message.Data, sizeof(Message.Data));
+                CreateSnapshot(Message.Data, sizeof(Message.Data), iter->second);
 
                 switch(iter->second->ConnectionState)
                 {

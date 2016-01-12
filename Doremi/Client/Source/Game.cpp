@@ -269,9 +269,7 @@ namespace Doremi
     void GameMain::UpdatetGame(double p_deltaTime)
     {
         Core::EventHandler::GetInstance()->DeliverEvents();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerPositions();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerRotationsClient();
+        PlayerHandler::GetInstance()->UpdateClient();
         // AudioHandler::GetInstance()->Update();
 
         // Have all managers update

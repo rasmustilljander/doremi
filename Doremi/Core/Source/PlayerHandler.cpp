@@ -141,6 +141,19 @@ namespace Doremi
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
+        void PlayerHandler::UpdateClient()
+        {
+            UpdatePlayerInputs();
+            UpdatePlayerPositions();
+            UpdatePlayerRotationsClient();
+        }
+
+        void PlayerHandler::UpdateServer()
+        {
+            UpdatePlayerPositions();
+            UpdatePlayerRotationsServer();
+        }
+
         void PlayerHandler::UpdatePlayerInputs()
         {
             m_sharedContext.GetInputModule().Update();
@@ -332,6 +345,58 @@ namespace Doremi
                     m_gunController.FireGun(entityID, m_sharedContext);
                 }
             }
+        }
+
+        void PlayerHandler::QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position)
+        {
+            // m_PositionStamps.push_front(PositionStamp(m_snapshotSequenceReal, p_position));
+        }
+
+        void PlayerHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            // TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
+            // Check if we find the playerID
+            if(iter != m_playerMap.end())
+            {
+                // If we have character controller
+                if(Core::EntityHandler::GetInstance().HasComponents(iter->second->m_playerEntityID, (int)ComponentType::CharacterController))
+                {
+                    // Set position
+                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(iter->second->m_playerEntityID, p_positionToCheck);
+                    cout << "set position" << endl;
+                }
+            }
+
+            // std::list<PositionStamp>::iterator removeStart = m_PositionStamps.begin();
+            // std::list<PositionStamp>::iterator removeEnd;
+
+            // std::list<PositionStamp>::iterator iterPos = m_PositionStamps.begin();
+
+            // while (iterPos != m_PositionStamps.end())
+            //{
+            //    if (p_sequenceOfPosition == iterPos->Sequence)
+            //    {
+            //        // If we find the one, we compare positions
+            //        if (p_positionToCheck.x == iterPos->Position.x &&
+            //            p_positionToCheck.y == iterPos->Position.y &&
+            //            p_positionToCheck.z == iterPos->Position.z)
+            //        {
+            //            // Woo same
+            //            cout << "same same!" << endl;
+            //        }
+            //        else
+            //        {
+            //            // buu nooo
+            //            cout << "No same" << endl;
+            //        }
+            //    }
+            //    else if (sequence_more_recent(p_sequenceOfPosition, iterPos->Sequence, 255))
+            //    {
+            //        // If we're more recent we move forward
+            //    }
+            //}
         }
     }
 }

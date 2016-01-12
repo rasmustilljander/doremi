@@ -1,5 +1,6 @@
 #pragma once
 #include <Manager/Network/ConnectionState.hpp>
+#include <DirectXMath.h>
 
 namespace Doremi
 {
@@ -14,6 +15,8 @@ namespace Doremi
             size_t ReliableSocketHandle;
             double LastResponse;
             bool NewConnection;
+            uint8_t LastSequence;
+            DirectX::XMFLOAT3 PositionOnLastSequence;
             uint32_t PlayerID;
         };
     }

@@ -182,17 +182,26 @@ namespace Doremi
 
                 EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
+                // Create new snapshot
                 Snapshot* NewSnapshot = new Snapshot();
 
-
+                // Read sequence of snapshot
                 NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
                 if(p_initial)
                 {
                     InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
                 }
 
+                // Read sequence of incomming position
+                uint8_t PositionCheckSequence = Streamer.ReadUnsignedInt8();
+
+                // Read position to check against
+                DirectX::XMFLOAT3 PositionToCheck = Streamer.ReadFloat3();
+
+                // Read how many objects we got in the message
                 NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
 
+                // Add objects to snapshot
                 for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
                 {
                     NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
@@ -200,12 +209,16 @@ namespace Doremi
                     NewSnapshot->Objects[i].Component.rotation = Streamer.ReadRotationQuaternion();
                 }
 
+                // Queue snapshot
                 InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
 
                 // Update last response
                 m_serverLastResponse = 0;
 
                 // TODOCM notify a handler or something that new buffer exists
+
+                // Check the position we got from server
+                PlayerHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
             }
             else
             {
@@ -356,16 +369,21 @@ namespace Doremi
             unsigned char* BufferPointer = p_message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
 
+            // Write sequence
+            Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
+
             // Write input(position directions) to stream
             Streamer.WriteInt32(inputHandler->GetInputBitMask());
 
             // Get orientation
             EntityID id = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID();
 
-            if (EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
+            if(EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
             {
-                // Write orientation
-                Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
+                TransformComponent* transformComponent = GetComponent<TransformComponent>(id);
+
+                // Write orientation and translation
+                Streamer.WriteRotationQuaternion(transformComponent->rotation);
             }
         }
 

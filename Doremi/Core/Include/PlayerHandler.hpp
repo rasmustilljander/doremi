@@ -37,6 +37,11 @@ namespace Doremi
             /**
                 TODOEA doc
             */
+            InputHandler* m_inputHandler;
+
+            /**
+                TODOEA doc
+            */
             float m_moveSpeed;
 
             /**
@@ -53,11 +58,6 @@ namespace Doremi
                 TODOEA doc
             */
             float m_turnSpeed;
-
-            /**
-                TODOEA doc
-            */
-            InputHandler* m_inputHandler;
         };
 
         /**
@@ -116,6 +116,27 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void UpdateClient();
+
+            /**
+                TODOCM doc
+            */
+            void UpdateServer();
+
+            /**
+                TODOCM doc
+            */
+            void QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position);
+
+            /**
+                TODOCM doc
+            */
+            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
+
+            private:
+            /**
+                TODOCM doc
+            */
             void UpdatePlayerInputs();
 
             /**
@@ -133,7 +154,7 @@ namespace Doremi
             */
             void UpdatePlayerRotationsServer();
 
-            private:
+
             /**
                 TODOCM doc
             */

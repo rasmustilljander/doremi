@@ -83,6 +83,18 @@ namespace DoremiEngine
             return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
 
+        void CharacterControlManagerImpl::SetPosition(int p_id, XMFLOAT3 p_position)
+        {
+            // Check if controller exists
+            if(m_controllers.find(p_id) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("No controller exists with id: " + to_string(p_id));
+            }
+
+            m_controllers[p_id]->setPosition(PxExtendedVec3(p_position.x, p_position.y, p_position.z));
+        }
+
         void CharacterControlManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
         {
             // Check if controller exists
