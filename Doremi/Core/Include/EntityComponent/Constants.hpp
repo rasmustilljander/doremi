@@ -32,6 +32,7 @@ enum class ComponentType : int
     AIGroup = 0x20000,
     Jump = 0x40000,
     Gravity = 0x80000,
+    EntityType = 0x100000,
 };
 
 /**

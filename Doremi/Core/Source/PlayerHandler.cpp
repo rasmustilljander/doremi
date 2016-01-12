@@ -214,13 +214,9 @@ namespace Doremi
                     {
                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
                     }
-                    else
-                    {
-                        // movementVec -= XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 0.1;
-                    }
+
                     // Store finished movement vec
                     XMStoreFloat3(&movement, movementVec);
-                    // Directly tell controller to move. TODOJB should be handled with components
                     if(movement.x != 0 || movement.y != 0 || movement.z != 0)
                     {
                         EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(entityID)->movement = movement;
@@ -277,36 +273,39 @@ namespace Doremi
                 // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
                 {
-                    /// Calculate where we want the shot to appear
-                    // Get position and orientation of player
-                    XMFLOAT4 orientation = GetComponent<TransformComponent>(entityID)->rotation;
-                    XMFLOAT3 playerPos = GetComponent<TransformComponent>(entityID)->position;
-                    XMFLOAT3 bulletPos = playerPos;
 
-                    // Get direction of player
-                    XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&orientation));
-                    XMVECTOR dirVec = XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), rotMat);
+                    ///// Calculate where we want the shot to appear
+                    //// Get position and orientation of player
+                    // XMFLOAT4 orientation = GetComponent<TransformComponent>(entityID)->rotation;
+                    // XMFLOAT3 playerPos = GetComponent<TransformComponent>(entityID)->position;
+                    // XMFLOAT3 bulletPos = playerPos;
 
-                    // Add some distance
-                    float offsetDist = 2.5;
-                    XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPos);
-                    bulletPosVec += dirVec * offsetDist;
-                    XMStoreFloat3(&bulletPos, bulletPosVec);
+                    //// Get direction of player
+                    // XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&orientation));
+                    // XMVECTOR dirVec = XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), rotMat);
 
-                    // create the bullet
-                    int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity);
-                    // Get the material id
-                    int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
-                    // Create rigid body for the bullet
-                    RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
-                    rigidComp->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletID, bulletPos, orientation,
-                                                                                                                     XMFLOAT3(0.5, 0.5, 0.5), physMatID);
-                    // Set start velocity
-                    float fireVelocity = 50;
-                    XMVECTOR bulletVelVec = dirVec * fireVelocity;
-                    XMFLOAT3 bulletVel;
-                    XMStoreFloat3(&bulletVel, bulletVelVec);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
+                    //// Add some distance
+                    // float offsetDist = 2.5;
+                    // XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPos);
+                    // bulletPosVec += dirVec * offsetDist;
+                    // XMStoreFloat3(&bulletPos, bulletPosVec);
+
+                    //// create the bullet
+                    // int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity);
+                    //// Get the material id
+                    // int physMatID = GetComponent<PhysicsMaterialComponent>(bulletID)->p_materialID;
+                    //// Create rigid body for the bullet
+                    // RigidBodyComponent* rigidComp = GetComponent<RigidBodyComponent>(bulletID);
+                    // rigidComp->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(bulletID, bulletPos,
+                    // orientation,
+                    //                                                                                                 XMFLOAT3(0.5, 0.5, 0.5),
+                    //                                                                                                 physMatID);
+                    //// Set start velocity
+                    // float fireVelocity = 50;
+                    // XMVECTOR bulletVelVec = dirVec * fireVelocity;
+                    // XMFLOAT3 bulletVel;
+                    // XMStoreFloat3(&bulletVel, bulletVelVec);
+                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
                 }
             }
         }
@@ -324,6 +323,13 @@ namespace Doremi
                 {
                     TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                     transComp->rotation = inputHandler->GetOrientationFromInput();
+                }
+
+
+                // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnDown))
+                {
+                    m_gunController.FireGun(entityID, m_sharedContext);
                 }
             }
         }

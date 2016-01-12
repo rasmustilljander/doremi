@@ -6,7 +6,7 @@
 #include <map>
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
-
+#include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
 
 namespace DoremiEngine
 {
@@ -143,6 +143,8 @@ namespace Doremi
                 TODOEA doc
             */
             const DoremiEngine::Core::SharedContext& m_sharedContext;
+
+            GunController m_gunController;
 
             /**
                 TODOEA doc

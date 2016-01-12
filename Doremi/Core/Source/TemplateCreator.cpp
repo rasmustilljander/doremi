@@ -16,6 +16,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/JumpComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/GravityComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/EntityTypeComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -166,6 +167,10 @@ namespace Doremi
             // Rigid body comp
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
+
+            // Entity type comp
+            EntityTypeComponent* typeComp = new EntityTypeComponent();
+            blueprint[ComponentType::EntityType] = typeComp;
 
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
@@ -325,6 +330,10 @@ namespace Doremi
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
             potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 4, 200, false); // TODOKO should be done after the entity is created
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
+
+            // Gravity component
+            GravityComponent* gravComp = new GravityComponent();
+            t_avatarBlueprint[ComponentType::Gravity] = gravComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
