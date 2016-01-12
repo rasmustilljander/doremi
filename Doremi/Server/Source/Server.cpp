@@ -4,6 +4,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ServerNetworkManager.hpp>
@@ -137,6 +138,9 @@ namespace Doremi
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
             potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3, false);
+
+            Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
+            Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
 
         // TODO Not using this event atm, because of refac, will need to find some solution

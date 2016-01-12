@@ -1,4 +1,4 @@
-// Project specific
+/// Project specific
 #include <Manager/AI/AIPathManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <PlayerHandler.hpp>
@@ -9,6 +9,10 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/AIGroupComponent.hpp>
+// Events
+#include <EventHandler/EventHandler.hpp>
+#include <EventHandler/Events/EntityCreatedEvent.hpp>
+#include <EventHandler/Events/PlayerCreationEvent.hpp>
 
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -33,6 +37,9 @@ namespace Doremi
         {
             // TODOKO do this in a better place, might not work to have here in the future
             m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT2(0, 0));
+            EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
+            EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
+            EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
         }
 
         AIPathManager::~AIPathManager() {}
@@ -40,54 +47,19 @@ namespace Doremi
 
         void AIPathManager::Update(double p_dt)
         {
-            EntityID playerID = -1;
-
-            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerID))
-            {
-                return;
-            }
-
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 
-            // TODOKO Should be done in a better way...
-
+            // TODOKO Test wall
             if(firstUpdate)
             {
-                int enemyID = -1;
                 firstUpdate = false;
                 // creating a invisible "wall", for testing only
                 DoremiEngine::AI::PotentialFieldActor* actorwall =
                     m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 25), -10, 5, true);
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AttachActor(*m_field, actorwall);
                 m_field->Update();
-                for(size_t i = 0; i < length; i++)
-                {
-                    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
-                    {
-                        // adding actors to field
-                        // DoremiEngine::AI::PotentialFieldActor* actor =
-                        // EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                        // m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AttachActor(*m_field, actor);
-                    }
-                    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
-                    {
-                        enemyID = i;
-                        DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                        DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
-                        group->AddActor(actor);
-                    }
-                }
-                if(enemyID != -1)
-                {
-                    DoremiEngine::AI::PotentialFieldActor* actor =
-                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(playerID)->ChargedActor;
-                    DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(enemyID)->Group;
-                    group->AddActor(actor);
-                }
             }
-
-            // TO HERE
 
             for(size_t i = 0; i < length; i++)
             {
@@ -107,11 +79,11 @@ namespace Doremi
                     if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
                     {
                         currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                        desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, true);
+                        desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, false);
                     }
                     else
                     {
-                        desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, true);
+                        desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, false);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
                     XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
@@ -129,6 +101,69 @@ namespace Doremi
                 }
             }
         }
-        void AIPathManager::OnEvent(Event* p_event) {}
+        void AIPathManager::OnEvent(Event* p_event)
+        {
+            switch(p_event->eventType)
+            {
+                case Doremi::Core::EventType::PotentialFieldActorCreation:
+                {
+                    EntityCreatedEvent* realEvent = static_cast<EntityCreatedEvent*>(p_event);
+                    if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField)) // Make sure the entity
+                    // contains the needed
+                    // stuff
+                    {
+                        DoremiEngine::AI::PotentialFieldActor* actor =
+                            EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
+                        m_field->AddActor(actor);
+                    }
+                    else
+                    {
+                        // TODOKO Log error
+                    }
+                    break;
+                }
+                case Doremi::Core::EventType::AiGroupActorCreation:
+                {
+                    EntityCreatedEvent* realEvent = static_cast<EntityCreatedEvent*>(p_event);
+                    if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField | (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
+                    {
+                        DoremiEngine::AI::PotentialFieldActor* actor =
+                            EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
+                        DoremiEngine::AI::PotentialGroup* group =
+                            EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(realEvent->entityID)->Group;
+                        if(group == nullptr)
+                        {
+                            // TODOKO Log error and what happens
+                            group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+                        }
+                        group->AddActor(actor);
+                    }
+                    else
+                    {
+                        // TODOKO Log error
+                    }
+                    break;
+                }
+                case Doremi::Core::EventType::PlayerCreation:
+                {
+                    PlayerCreationEvent* realEvent = static_cast<PlayerCreationEvent*>(p_event);
+                    if(EntityHandler::GetInstance().HasComponents(realEvent->playerEntityID, (int)ComponentType::PotentialField)) // Make sure the
+                    // entity contains
+                    // the needed stuff
+                    {
+                        DoremiEngine::AI::PotentialFieldActor* actor =
+                            EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->playerEntityID)->ChargedActor;
+                        m_field->AddActor(actor);
+                    }
+                    else
+                    {
+                        // TODOKO log error
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
 }

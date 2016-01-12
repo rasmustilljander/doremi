@@ -25,7 +25,10 @@ namespace Doremi
             AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AIPathManager();
             void Update(double p_dt) override;
-            // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
+            /**
+            Subscribed to events: AIGroupActorCreation and PotentialFieldActorCreation
+            This is subscribed enable adding actors to group or field
+            */
             void OnEvent(Event* p_event) override;
 
             private:

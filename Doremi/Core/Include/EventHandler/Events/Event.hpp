@@ -8,8 +8,11 @@ namespace Doremi
         */
         enum class EventType
         {
+            Undefined,
             Example, // Only an example
             PlayerCreation,
+            PotentialFieldActorCreation,
+            AiGroupActorCreation,
         };
         /**All events needs to inherit this struct*/
         struct Event
