@@ -20,7 +20,8 @@ namespace Doremi
 {
     namespace Core
     {
-        CharacterControlSyncManager::CharacterControlSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        CharacterControlSyncManager::CharacterControlSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : Manager(p_sharedContext, "CharacterControlSyncManager")
         {
         }
         CharacterControlSyncManager::~CharacterControlSyncManager() {}

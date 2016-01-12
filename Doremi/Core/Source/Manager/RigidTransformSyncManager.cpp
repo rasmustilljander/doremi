@@ -20,7 +20,10 @@ namespace Doremi
 {
     namespace Core
     {
-        RigidTransformSyncManager::RigidTransformSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext) {}
+        RigidTransformSyncManager::RigidTransformSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : Manager(p_sharedContext, "RigidTransformSyncManager")
+        {
+        }
 
         RigidTransformSyncManager::~RigidTransformSyncManager() {}
 

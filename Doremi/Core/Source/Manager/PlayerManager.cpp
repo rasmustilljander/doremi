@@ -31,7 +31,7 @@ namespace Doremi
 {
     namespace Core
     {
-        PlayerManager::PlayerManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        PlayerManager::PlayerManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "PlayerManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);

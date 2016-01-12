@@ -19,7 +19,7 @@ namespace Doremi
     namespace Core
     {
 
-        GravityManager::GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        GravityManager::GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "GravityManager")
         {
             m_gravityCoefficient = 1;
         }

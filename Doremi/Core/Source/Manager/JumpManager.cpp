@@ -16,8 +16,7 @@ namespace Doremi
     namespace Core
     {
 
-        JumpManager::JumpManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext) {}
-
+        JumpManager::JumpManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "JumpManager") {}
 
         JumpManager::~JumpManager() {}
 

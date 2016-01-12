@@ -16,7 +16,7 @@ namespace Doremi
     namespace Core
     {
         ClientNetworkManager::ClientNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext),
+            : Manager(p_sharedContext, "ClientNetworkManager"),
               m_masterConnectionState(ConnectionState::DISCONNECTED),
               m_serverConnectionState(ConnectionState::CONNECTING),
               m_nextUpdateTimer(0.0f),

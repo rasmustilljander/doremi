@@ -27,7 +27,7 @@ namespace Doremi
 {
     namespace Core
     {
-        ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        ExampleManager::ExampleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "ExampleManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
         }

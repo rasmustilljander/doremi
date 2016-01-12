@@ -17,7 +17,8 @@ namespace Doremi
     namespace Core
     {
         CameraManager::CameraManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext), m_graphicModuleCameraManager(m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager())
+            : Manager(p_sharedContext, "CameraManager"),
+              m_graphicModuleCameraManager(m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager())
         {
 
             // TODOKO Rename cameramanager on graphic module

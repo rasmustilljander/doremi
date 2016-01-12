@@ -16,7 +16,7 @@ namespace Doremi
 {
     namespace Core
     {
-        MovementManager::MovementManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext) {}
+        MovementManager::MovementManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "MovementManager") {}
 
         MovementManager::~MovementManager() {}
 

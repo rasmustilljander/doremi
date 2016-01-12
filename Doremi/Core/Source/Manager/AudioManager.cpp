@@ -27,7 +27,7 @@ namespace Doremi
 {
     namespace Core
     {
-        AudioManager::AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        AudioManager::AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AudioManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
         }

@@ -18,8 +18,7 @@ namespace Doremi
 {
     namespace Core
     {
-
-        GraphicManager::GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        GraphicManager::GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "GraphicManager")
         {
             // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
             // TODOLH Maybe shouldnt be here either. Moved it from shadermodulemanagerImplementation cos this guy needs to be able to switch shader
@@ -33,7 +32,6 @@ namespace Doremi
                                                                                                                            ied, ARRAYSIZE(ied));
             m_pixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("BasicPixelShader.hlsl");
         }
-
 
         GraphicManager::~GraphicManager() {}
 

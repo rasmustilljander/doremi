@@ -33,7 +33,7 @@ namespace Doremi
 {
     namespace Core
     {
-        AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext)
+        AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
             m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT2(0, 0));
