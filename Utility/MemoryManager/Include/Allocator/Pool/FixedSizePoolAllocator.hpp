@@ -97,12 +97,12 @@ namespace Utility
 
             void* AllocateUnaligned(const size_t& p_memorySize)
             {
-                throw std::runtime_error("Cannot allocate arbitrairy within a FixedSizedPoolAllocator.");
+                throw std::runtime_error("Cannot allocate arbitrary sized chunks within a FixedSizedPoolAllocator.");
             }
 
             void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment)
             {
-                throw std::runtime_error("Cannot allocate arbitrairy within a FixedSizedPoolAllocator.");
+                throw std::runtime_error("Cannot allocate arbitrary sized chunks within a FixedSizedPoolAllocator.");
             }
 
             size_t m_maxOjectCount;
