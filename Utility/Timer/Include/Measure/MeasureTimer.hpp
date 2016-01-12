@@ -1,70 +1,43 @@
 #pragma once
-#include <time.h>
 #include <string>
 #include <unordered_map>
+#include <Utility/Timer/Include/Measure/MeasureInfo.hpp>
 
 namespace Utility
 {
     namespace Timer
     {
-        struct MeasureInfo
-        {
-            MeasureInfo() : startSeconds(0.0f), stopSeconds(0.0f), accumulatedTime(0.0f) {}
-
-            MeasureInfo(const std::string& p_name) : name(p_name), startSeconds(0.0f), stopSeconds(0.0f), accumulatedTime(0.0f) {}
-
-            void Reset() { startSeconds = stopSeconds = accumulatedTime = 0.0f; }
-            std::string name;
-            clock_t startSeconds;
-            clock_t stopSeconds;
-            float accumulatedTime;
-        };
 
         class MeasureTimer
         {
             public:
             /**
-            TODORT docs
+                Gets an instance of this object, if no instance exists, it creates one.
             */
-            static MeasureTimer& GetInstance()
-            {
-                static MeasureTimer instance;
-                return instance;
-            }
+            static MeasureTimer& GetInstance();
 
             /**
-            TODORT docs
+                Gets a timer with a given name
             */
+            MeasureInfo& GetTimer(const std::string& p_name);
+
+            /**
+            */
+            void MeasureTimer::AddChildToParent(const std::string& p_parent, const std::string& p_child);
+
+            /**
+                TODORT docs
+            */
+            void DumpData(const std::string& p_origin);
+
+            protected:
+            MeasureTimer();
             MeasureTimer(MeasureTimer const&) = delete;
-
-            /**
-            TODORT docs
-            */
             void operator=(MeasureTimer const&) = delete;
 
-            /**
-            TODORT docs
-            */
-            MeasureTimer& Reset(const std::string& p_name);
+            void DumpChildrenData(const std::string& p_origin, const MeasureInfo& p_parent, const size_t& p_index);
 
-            /**
-            TODORT docs
-            */
-            MeasureTimer& Start(const std::string& p_name);
-            MeasureTimer& Stop(const std::string& p_name);
 
-            /**
-            TODORT docs
-            */
-            float GetSeconds(const std::string& p_name);
-
-            /**
-            TODORT docs
-            */
-            void DumpData();
-
-            private:
-            MeasureTimer();
             std::unordered_map<std::string, MeasureInfo> m_timers;
         };
     }
