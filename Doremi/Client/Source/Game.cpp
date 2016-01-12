@@ -127,7 +127,8 @@ namespace Doremi
         // Remove later, needed to see something when we play solo cause of camera interactions with input
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
-        m_menuState = MenuState::RUNGAME;
+        Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
+        m_menuState = MenuStates::MenuState::RUNGAME; // byt denna till MAINMENU om du vill se menyn!! TODOLH
     }
 
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -278,14 +279,8 @@ namespace Doremi
     {
         size_t length = m_managers.size();
         Core::EventHandler::GetInstance()->DeliverEvents();
-<<<<<<< HEAD
         PlayerHandler::GetInstance()->UpdateClient();
-        // AudioHandler::GetInstance()->Update();
-=======
-        Core::PlayerHandler::GetInstance()->UpdatePlayerPositions();
-        Core::PlayerHandler::GetInstance()->UpdatePlayerRotationsClient();
-        Core::AudioHandler::GetInstance()->Update(p_deltaTime);
->>>>>>> Started working on menu system
+        AudioHandler::GetInstance()->Update(p_deltaTime);
 
         // Have all managers update
         for(size_t i = 0; i < length; i++)

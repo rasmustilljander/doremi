@@ -123,12 +123,12 @@ namespace Doremi
                 TODOCM doc
             */
             void UpdateServer();
-
-            private:
             /**
-                TODOCM doc
+            TODOCM doc
             */
             void UpdatePlayerInputs();
+
+            private:
 
             /**
                 TODOEA doc
