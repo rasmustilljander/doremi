@@ -44,6 +44,9 @@
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/LevelLoader.hpp>
 
+// Timer
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 // Third party
 
 // Standard libraries
@@ -289,10 +292,14 @@ namespace Doremi
         PlayerHandler::GetInstance()->UpdateClient();
         AudioHandler::GetInstance()->Update(p_deltaTime);
 
+        Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
         for(size_t i = 0; i < length; i++)
         {
+            Utility::Timer::MeasureInfo& info = timer.GetTimer(m_managers.at(i)->GetName());
+            info.Reset().Start();
             m_managers.at(i)->Update(p_deltaTime);
+            info.Stop();
         }
     }
 

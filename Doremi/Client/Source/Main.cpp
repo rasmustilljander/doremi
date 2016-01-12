@@ -1,5 +1,7 @@
 // Project specific
 #include <Game.hpp>
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 // Third party
 
@@ -28,8 +30,18 @@ int main(int argc, const char* argv[])
 
     try
     {
+        using namespace Utility::Timer;
+        using namespace Utility::DebugLog;
+        ConsoleManager::Startup();
+        MeasureTimer& measureTimer = MeasureTimer::GetInstance();
+        measureTimer.GetTimer("client").Reset().Start();
+
         Doremi::GameMain gameMain = Doremi::GameMain();
         gameMain.Start();
+
+        measureTimer.GetTimer("client").Stop();
+        measureTimer.DumpData("client");
+        ConsoleManager::Shutdown();
     }
     catch(const std::exception& e)
     {
