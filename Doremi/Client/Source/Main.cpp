@@ -14,6 +14,22 @@
 #endif
 #include <exception>
 #include <iostream>
+#include <Utility/MemoryManager/Include/Allocator/Pool/FixedSizePoolAllocator.hpp>
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <vector>
+
+struct SomeThing
+{
+    SomeThing()
+    {
+        a = 3;
+        b = a * a;
+        c = b * b;
+    }
+    float a;
+    float b;
+    float c;
+};
 
 #ifdef _WIN32
 int main(int argc, const char* argv[])
@@ -25,6 +41,42 @@ int main(int argc, const char* argv[])
     // This row is required later as it disables the standard output terminal, we do now want that.
     // However, as people are currently using cout for debugging we'll need this for the moment.
     // FreeConsole();
+
+    using namespace Utility::MemoryManager;
+    using namespace Utility::Timer;
+    FixedSizePoolAllocator<SomeThing> a = FixedSizePoolAllocator<SomeThing>();
+    a.Initialize(100000, 0);
+    int i = 0;
+
+
+    // Crude test, do not push on git
+    MeasureTimer& mt = MeasureTimer::GetInstance();
+    mt.Reset("ca").Start("ca");
+    using namespace std;
+    vector<SomeThing*> b;
+    vector<SomeThing*> c;
+
+    for(size_t i = 0; i < 100000; ++i)
+    {
+        b.push_back(a.Allocate());
+    }
+    a.Clear();
+    b.clear();
+    float caf = mt.Stop("ca").GetSeconds("ca");
+
+    // Crude test, do not push on git
+
+    mt.Reset("ra").Start("ra");
+    for(size_t i = 0; i < 100000; ++i)
+    {
+        c.push_back(new SomeThing());
+    }
+    for(auto item : c)
+        delete item;
+    c.clear();
+    float raf = mt.Stop("ra").GetSeconds("ra");
+    // Crude test, do not push on git
+
 
     try
     {
