@@ -365,7 +365,7 @@ namespace Doremi
                 {
                     // Set position
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(iter->second->m_playerEntityID, p_positionToCheck);
-                    cout << "set position" << endl;
+                    // cout << "set position" << endl;
                 }
             }
 
