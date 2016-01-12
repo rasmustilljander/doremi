@@ -109,9 +109,14 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
+        // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted
+        // textures under in the same order
         t_textureNamesForMenuButtons.push_back("Playbutton.dds");
         t_textureNamesForMenuButtons.push_back("Optionsbutton.dds");
         t_textureNamesForMenuButtons.push_back("Exitbutton.dds");
+        t_textureNamesForMenuButtons.push_back("PlaybuttonHighlighted.dds");
+        t_textureNamesForMenuButtons.push_back("OptionsbuttonHighlighted.dds");
+        t_textureNamesForMenuButtons.push_back("ExitbuttonHighlighted.dds");
         MenuHandler::StartMenuHandler(sharedContext, DirectX::XMFLOAT2(800.0f, 800.0f));
         MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
         // initialize menudraw
@@ -324,7 +329,8 @@ namespace Doremi
 
     void GameMain::DrawMenu(double p_deltaTime)
     {
-        MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, MenuHandler::GetInstance()->GetButtons());
+        MenuHandler* t_menuHandler = MenuHandler::GetInstance();
+        MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, t_menuHandler->GetButtons(), t_menuHandler->GetCurrentButton());
     }
 
     void GameMain::DrawGame(double p_deltaTime)

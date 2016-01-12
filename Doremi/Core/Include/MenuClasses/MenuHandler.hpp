@@ -9,6 +9,7 @@ namespace Doremi
 {
     namespace Core
     {
+
         /**
         Only an example of what a manager might look like
         Doesn't do anything, and could be removed once examples are no longer necessary*/
@@ -23,6 +24,7 @@ namespace Doremi
             // Use this order: 0 = Play, 1 = Options, 2 = Exit, (3 = Reserved, 4 = Reserved)
             void Initialize(std::vector<std::string> p_buttonTextureNames);
             std::vector<Button> GetButtons();
+            int GetCurrentButton();
 
             private:
             static MenuHandler* m_singleton;

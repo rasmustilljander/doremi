@@ -8,6 +8,11 @@ namespace Doremi
 {
     namespace Core
     {
+        struct ButtonMaterials
+        {
+            DoremiEngine::Graphic::MaterialInfo* m_vanillaMaterial;
+            DoremiEngine::Graphic::MaterialInfo* m_highLightedMaterial;
+        };
         struct MousePos
         {
             int x;
@@ -20,8 +25,8 @@ namespace Doremi
         class Button
         {
             public:
-            Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, DoremiEngine::Graphic::MaterialInfo* p_materialInfo,
-                   DoremiEngine::Graphic::MeshInfo* p_meshInfo, Doremi::MenuStates::MenuState p_menuState);
+            Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
+                   Doremi::MenuStates::MenuState p_menuState);
             Button();
             virtual ~Button();
             XMFLOAT2 m_position;
@@ -36,6 +41,7 @@ namespace Doremi
 
             private:
             MousePos m_mousePos;
+            ButtonMaterials m_buttonMaterials;
         };
     }
 }

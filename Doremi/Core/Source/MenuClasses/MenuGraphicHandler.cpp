@@ -50,7 +50,7 @@ namespace Doremi
         }
 
 
-        void MenuGraphicHandler::DrawButtons(double p_dt, std::vector<Button> p_buttonsToDraw)
+        void MenuGraphicHandler::DrawButtons(double p_dt, std::vector<Button> p_buttonsToDraw, int p_currentButton)
         {
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_menuPixelShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);

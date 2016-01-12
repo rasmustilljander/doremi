@@ -19,7 +19,7 @@ namespace Doremi
             /**
             Walks thorugh every button and tells the engine to render them using their translationmatrix matinfo and meshinfo
             */
-            void DrawButtons(double p_dt, std::vector<Button> p_buttonsToDraw);
+            void DrawButtons(double p_dt, std::vector<Button> p_buttonsToDraw, int p_currentbutton);
 
 
             private:
