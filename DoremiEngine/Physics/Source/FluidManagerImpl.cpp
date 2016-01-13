@@ -47,7 +47,12 @@ namespace DoremiEngine
         vector<XMFLOAT3> FluidManagerImpl::GetParticlePositions(int p_id)
         {
             PxParticleFluidReadData* readData = m_fluids[p_id]->lockParticleFluidReadData();
-            return vector<XMFLOAT3>();
+            PxStrideIterator<const PxVec3> positions = readData->positionBuffer;
+            const XMFLOAT3* positionsXM = reinterpret_cast<const XMFLOAT3*>(positions.ptr());
+            int numParticles = readData->nbValidParticles;
+            vector<const XMFLOAT3> positionsXMVector;
+            positionsXMVector.reserve(numParticles);
+            positionsXMVector.data = positionsXMVector;
         }
     }
 }
