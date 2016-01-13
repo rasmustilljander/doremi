@@ -19,10 +19,10 @@
 
 int main(int argc, char** argv)
 {
-    // Might not be the best way of doing console writing
+    // TODORT
+    // This row is required later as it disables the standard output terminal, we do now want that.
+    // However, as people are currently using cout for debugging we'll need this for the moment.
     AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONIN$", "r", stdin);
 
     try
     {
@@ -42,15 +42,19 @@ int main(int argc, char** argv)
     }
     catch(std::exception e)
     {
-        // TODO more information
-        std::cout << "Unknown exception: " << e.what() << std::endl;
-        std::cin.get();
-    }
-
-#ifdef _WIN32
+        // TODORT more information
+        std::cout << "Unhandled exception: " << e.what() << std::endl;
 #ifdef _DEBUG
-    system("pause");
+        std::cin.get();
 #endif
+    }
+    catch(...)
+    {
+        // TODORT more information
+        std::cout << "Unhandled unknown exception" << std::endl;
+#ifdef _DEBUG
+        std::cin.get();
 #endif
+    }
     return 0;
 }
