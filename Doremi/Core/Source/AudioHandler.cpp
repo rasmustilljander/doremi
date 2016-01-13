@@ -14,7 +14,9 @@ namespace Doremi
     namespace Core
     {
         AudioHandler::AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+
         AudioHandler::~AudioHandler() {}
+
         void AudioHandler::StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             if(m_singleton == nullptr)
@@ -46,7 +48,9 @@ namespace Doremi
             m_frequencyVectorPrecision = 0.01f;
             m_timeGunReloadButtonWasPressed = 0.0f;
         }
+
         AudioHandler* AudioHandler::m_singleton = nullptr;
+
         AudioHandler* AudioHandler::GetInstance() { return m_singleton; }
 
         void AudioHandler::SetGunButtonDownTime(double p_time) { m_timeGunReloadButtonWasPressed = p_time; }
@@ -56,11 +60,13 @@ namespace Doremi
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             m_continuousFrequencyAnalyserSoundID = t_audioModule.SetupRecording(true);
         }
+
         void AudioHandler::SetupRepeatableRecording()
         {
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             m_repeatableFrequencyAnalyserSoundID = t_audioModule.SetupRecording(false);
         }
+
         void AudioHandler::StartContinuousRecording()
         {
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
@@ -68,6 +74,7 @@ namespace Doremi
             t_audioModule.StartRecording(m_continuousFrequencyAnalyserSoundID, true);
             m_SoundState = HOLDCONTINUOUSANALYSIS;
         }
+
         void AudioHandler::StartRepeatableRecording()
         {
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
@@ -113,9 +120,9 @@ namespace Doremi
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
         }
+
         void AudioHandler::Update(double p_deltaTime)
         {
-
             unsigned int recordPointer;
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             switch(m_SoundState)
