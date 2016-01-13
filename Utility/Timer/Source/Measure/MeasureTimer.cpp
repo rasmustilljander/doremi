@@ -24,33 +24,16 @@ namespace Utility
             return m_timers[p_name];
         }
 
-        void MeasureTimer::AddChildToParent(const std::string& p_parent, const std::string& p_child)
-        {
-            GetTimer(p_parent).SetChild(GetTimer(p_child));
-        }
-
         void MeasureTimer::DumpData(const std::string& p_origin)
         {
+            using namespace Utility::DebugLog;
+            VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole(p_origin, false);
 
             for(auto current : m_timers)
             {
-                DumpChildrenData(p_origin, current.second, 0);
-            }
-
-            //      myConsole.LogText(LogTag::NOTAG, LogLevel::INFO, );
-        }
-
-        void MeasureTimer::DumpChildrenData(const std::string& p_origin, const MeasureInfo& p_parent, const size_t& p_index)
-        {
-            using namespace Utility::DebugLog;
-            static VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole(p_origin, false);
-
-            const float parentTime = p_parent.GetSeconds();
-            console.LogText(LogTag::GENERAL, LogLevel::INFO, "%s: %f", p_parent.GetName().c_str(), parentTime);
-            const std::vector<MeasureInfo> m_children = p_parent.GetAllChildren();
-            for(auto child : m_children)
-            {
-                DumpChildrenData(p_origin, child, p_index + 1);
+                auto a = current.second;
+                console.LogText(LogTag::GENERAL, LogLevel::INFO, "Totaltime: %f, StartCount: %u, StopCount: %u, Location: %s: ", a.GetSeconds(),
+                                a.GetStartCount(), a.GetStopCount(), a.GetName().c_str());
             }
         }
     }

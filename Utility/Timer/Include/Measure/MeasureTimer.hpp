@@ -33,10 +33,6 @@ namespace Utility
             MeasureInfo& GetTimer(const std::string& p_name);
 
             /**
-            */
-            void MeasureTimer::AddChildToParent(const std::string& p_parent, const std::string& p_child);
-
-            /**
                 TODORT docs
             */
             void DumpData(const std::string& p_origin);
@@ -45,10 +41,6 @@ namespace Utility
             MeasureTimer();
             MeasureTimer(MeasureTimer const&) = delete;
             void operator=(MeasureTimer const&) = delete;
-
-            void DumpChildrenData(const std::string& p_origin, const MeasureInfo& p_parent, const size_t& p_index);
-
-
             std::unordered_map<std::string, MeasureInfo> m_timers;
         };
     }

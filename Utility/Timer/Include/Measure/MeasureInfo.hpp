@@ -41,14 +41,9 @@ namespace Utility
             */
             double GetSeconds() const;
 
-            /**
-            Set a child timer.
-            */
-            void SetChild(const MeasureInfo& p_measureInfo);
-
-            const std::vector<MeasureInfo>& GetAllChildren() const { return m_children; }
-
             const std::string& GetName() const { return name; }
+            const size_t& GetStartCount() const { return m_startCount; }
+            const size_t& GetStopCount() const { return m_stopCount; }
 
             protected:
             // TOODRT As it were an struct earlier the names are incorrect.
@@ -56,7 +51,7 @@ namespace Utility
             std::chrono::time_point<std::chrono::high_resolution_clock> startSeconds, stopSeconds;
             std::chrono::duration<double> accumulatedTime;
             //  double accumulatedTime;
-            std::vector<MeasureInfo> m_children;
+            size_t m_startCount, m_stopCount;
         };
     }
 }
