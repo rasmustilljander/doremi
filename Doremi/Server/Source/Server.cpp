@@ -254,13 +254,7 @@ namespace Doremi
 
     void ServerMain::Start()
     {
-        // Start the game
-        /*Core::GameCore* gameCore = new Core::GameCore();
-        gameCore->InitializeServer();
-        gameCore->StartServerCore();*/
-
         Initialize();
-
         Run();
     }
 }
