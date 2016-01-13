@@ -40,6 +40,7 @@ Lists all available types of entities, as blueprints.
 WARNING! Subject to change due to low scalability*/
 enum class Blueprints : int
 {
+    EmptyEntity,
     ExampleEntity,
     VoiceRecordEntity,
     RenderExampleEntity,
@@ -49,6 +50,7 @@ enum class Blueprints : int
     EnemyEntity,
     JawsDebugEntity, // TODOCM remove
     JawsDebugEntity2, // TODOCM remove
+    StaticEnviromentEntity,
 };
 
 /**

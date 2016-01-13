@@ -1,5 +1,5 @@
 #pragma once
-
+#include <VertexStruct.hpp>
 #include <string>
 #include <DirectXMath.h>
 struct ID3D11DeviceContext;
@@ -11,12 +11,7 @@ namespace DoremiEngine
     namespace Graphic
     {
         class MeshInfo;
-        struct Vertex
-        {
-            float x, y, z;
-            float texcoord[2];
-            float nx, ny, nz;
-        };
+
         class ModelLoader
         {
             public:

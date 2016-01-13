@@ -42,6 +42,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
 // Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
+#include <Doremi/Core/Include/LevelLoader.hpp>
 
 // Third party
 
@@ -139,7 +140,8 @@ namespace Doremi
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
-
+        Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
+        t_levelLoader->LoadLevel("Levels/test.drm");
         // Create Avatar entity
         /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
           int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;

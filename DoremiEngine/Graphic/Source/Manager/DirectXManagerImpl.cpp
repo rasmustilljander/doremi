@@ -6,7 +6,7 @@
 #include <HelpFunctions.hpp>
 #include <SDL2/SDL.h>
 #include <Internal/Mesh/Vertex.hpp>
-
+#include <VertexStruct.hpp>
 #include <cstdint>
 #include <iostream>
 #include <algorithm> // std::sort

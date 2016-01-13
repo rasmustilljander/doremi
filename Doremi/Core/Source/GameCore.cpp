@@ -48,6 +48,7 @@
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <InterpolationHandler.hpp>
+#include <LevelLoader.hpp>
 
 #include <string>
 

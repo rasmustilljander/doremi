@@ -23,6 +23,8 @@ namespace DoremiEngine
             virtual ~MeshManagerImpl();
             MeshInfo* BuildMeshInfo(const std::string& p_fileName) override;
             MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName);
+            MeshInfo* BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName) override;
+            MeshInfo* GetMeshInfo(const std::string& p_meshName) override;
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;
             void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) override;
             void Draw() override;

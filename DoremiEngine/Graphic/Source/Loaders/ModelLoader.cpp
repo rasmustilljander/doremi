@@ -46,7 +46,7 @@ namespace DoremiEngine
         }
         bool ModelLoader::LoadMesh(MeshInfo* o_meshInfo, const std::string& p_fileName, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device)
         {
-            Vertex tQuad[] = {
+            VertexBasic tQuad[] = {
                 {-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f}, // 1 //Lilla boxen
                 {-0.5f, -0.5, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f}, // 2//Framsidan
                 {0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f}, // 3

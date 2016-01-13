@@ -53,6 +53,11 @@ namespace Doremi
 
         TemplateCreator::~TemplateCreator() {}
 
+        void CreateEmpty()
+        {
+            EntityBlueprint blueprint;
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EmptyEntity, blueprint);
+        }
         void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityBlueprint blueprint;
@@ -440,6 +445,7 @@ namespace Doremi
             CreatePlayerClient(sharedContext);
             CreateEnemyBlueprintClient(sharedContext);
             CreateJawsDebugObjectClient(sharedContext);
+            CreateEmpty();
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -449,6 +455,7 @@ namespace Doremi
             CreatePlayerServer(sharedContext);
             CreateEnemyBlueprintServer(sharedContext);
             CreateJawsDebugObjectServer(sharedContext);
+            CreateEmpty();
         }
     }
 }
