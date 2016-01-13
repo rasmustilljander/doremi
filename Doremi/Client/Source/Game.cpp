@@ -306,7 +306,6 @@ namespace Doremi
     void GameMain::Update(double p_deltaTime)
     {
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
-        int hej = 0;
         switch(m_menuState)
         {
             case MenuStates::MAINMENU:
@@ -323,7 +322,6 @@ namespace Doremi
                 return;
                 break;
             case MenuStates::PAUSE:
-                hej = 6;
                 // Update Pause Screen
                 break;
             case MenuStates::OPTIONS:
