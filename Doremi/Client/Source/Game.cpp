@@ -283,7 +283,7 @@ namespace Doremi
             {
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ExitGame))
                 {
-                    return;
+                    break;
                 }
             }
         }
