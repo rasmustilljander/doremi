@@ -3,6 +3,7 @@
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 #include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
+
 // Third party
 
 // Standard libraries
@@ -33,14 +34,16 @@ int main(int argc, const char* argv[])
         using namespace Utility::Timer;
         using namespace Utility::DebugLog;
         ConsoleManager::Startup();
-        MeasureTimer& measureTimer = MeasureTimer::GetInstance();
-        measureTimer.GetTimer("client").Reset().Start();
+
+        MeasureTimer& measure = MeasureTimer::GetInstance();
+        measure.GetTimer(FILE_AND_FUNC).Start();
 
         Doremi::GameMain gameMain = Doremi::GameMain();
         gameMain.Start();
 
-        measureTimer.GetTimer("client").Stop();
-        measureTimer.DumpData("client");
+
+        measure.GetTimer(FILE_AND_FUNC).Stop();
+        MeasureTimer::GetInstance().DumpData("clientTiming");
         ConsoleManager::Shutdown();
     }
     catch(const std::exception& e)
