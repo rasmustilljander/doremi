@@ -16,12 +16,12 @@ namespace DoremiEngine
 
         bool ModelLoader::LoadQuad(MeshInfo* o_meshInfo, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device)
         {
-            Vertex tQuad[] = {{-0.5f, 0.5f, 0.0f, 0.0f}, // 1 //Lilla boxen
-                              {-0.5f, -0.5, 0.0f, 1.0f}, // 2//Framsidan
-                              {0.5f, -0.5f, 1.0f, 1.0f}, // 3
-                              {-0.5f, 0.5, 0.0f, 0.0f}, // 1//Framsidan
-                              {0.5f, 0.5f, 1.0f, 0.0f}, // 4
-                              {0.5f, -0.5f, 1.0f, 1.0f}}; // 3
+            VertexBasic tQuad[] = {{-0.5f, 0.5f, 0.0f, 0.0f}, // 1 //Lilla boxen
+                                   {-0.5f, -0.5, 0.0f, 1.0f}, // 2//Framsidan
+                                   {0.5f, -0.5f, 1.0f, 1.0f}, // 3
+                                   {-0.5f, 0.5, 0.0f, 0.0f}, // 1//Framsidan
+                                   {0.5f, 0.5f, 1.0f, 0.0f}, // 4
+                                   {0.5f, -0.5f, 1.0f, 1.0f}}; // 3
 
             int size = sizeof(tQuad);
 
