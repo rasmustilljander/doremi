@@ -1,5 +1,7 @@
 // Project specific
 #include <Server.hpp>
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 // Third party
 
@@ -24,8 +26,19 @@ int main(int argc, char** argv)
 
     try
     {
+        using namespace Utility::Timer;
+        using namespace Utility::DebugLog;
+        ConsoleManager::Startup();
+        MeasureTimer& measure = MeasureTimer::GetInstance();
+        measure.GetTimer(FILE_AND_FUNC).Start();
+
+        // The game
         Doremi::ServerMain serverMain = Doremi::ServerMain();
         serverMain.Start();
+
+        measure.GetTimer(FILE_AND_FUNC).Stop();
+        MeasureTimer::GetInstance().DumpData("clientTiming");
+        ConsoleManager::Shutdown();
     }
     catch(std::exception e)
     {
