@@ -102,7 +102,6 @@ namespace Doremi
                 }
             }
 
-
             t_audioModule.Update();
         }
         void AudioManager::OnEvent(Event* p_event)

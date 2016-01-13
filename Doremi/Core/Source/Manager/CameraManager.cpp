@@ -20,7 +20,6 @@ namespace Doremi
             : Manager(p_sharedContext, "CameraManager"),
               m_graphicModuleCameraManager(m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager())
         {
-
             // TODOKO Rename cameramanager on graphic module
             using namespace DirectX;
             XMFLOAT4X4 projection;
@@ -73,10 +72,9 @@ namespace Doremi
                 }
             }
         }
-        void CameraManager::ChangeCamera(CameraType p_type)
-        {
-            m_currentCamera = p_type;
-        }
+
+        void CameraManager::ChangeCamera(CameraType p_type) { m_currentCamera = p_type; }
+
         void CameraManager::OnEvent(Event* p_event) {}
     }
 }
