@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-class ID3D11PixelShader;
+struct ID3D11PixelShader;
 namespace DoremiEngine
 {
     namespace Graphic

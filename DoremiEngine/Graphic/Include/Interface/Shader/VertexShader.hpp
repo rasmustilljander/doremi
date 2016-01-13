@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-class ID3D11VertexShader;
-class ID3D11InputLayout;
+struct ID3D11VertexShader;
+struct ID3D11InputLayout;
 namespace DoremiEngine
 {
     namespace Graphic
