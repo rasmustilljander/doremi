@@ -25,6 +25,8 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
+// Timer
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
 // Third party
 #include <DirectXMath.h>
@@ -42,6 +44,7 @@ namespace Doremi
 
     void ServerMain::Initialize()
     {
+        TIME_FUNCTION_START
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(
             DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::AI);
 
@@ -87,10 +90,12 @@ namespace Doremi
         // Remove later, needed to see something when we play solo cause of camera interactions with input
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
+        TIME_FUNCTION_STOP
     }
 
     void ServerMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
+        TIME_FUNCTION_START
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
         // Create entity
@@ -163,10 +168,12 @@ namespace Doremi
         //    rigidComp->p_bodyID =
         //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
         //}
+        TIME_FUNCTION_STOP
     }
 
     void JawsSimulatePhysicsDebug(double deltaTime)
     {
+        TIME_FUNCTION_START
         Core::TransformComponent* trans = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(0);
 
         if(trans->position.x == -10)
@@ -186,10 +193,12 @@ namespace Doremi
             }
         }
         DirectX::XMStoreFloat4(&trans->rotation, DirectX::XMQuaternionRotationRollPitchYaw(0, 0, trans->position.y * 1.0f));
+        TIME_FUNCTION_STOP
     }
 
     void ServerMain::Run()
     {
+        TIME_FUNCTION_START
         std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
         PreviousClock = std::chrono::high_resolution_clock::now();
 
@@ -237,10 +246,12 @@ namespace Doremi
                 GameTime += UpdateStepLen;
             }
         }
+        TIME_FUNCTION_STOP
     }
 
     void ServerMain::UpdateGame(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         Core::EventHandler::GetInstance()->DeliverEvents();
         Core::PlayerHandler::GetInstance()->UpdateServer();
 
@@ -250,11 +261,14 @@ namespace Doremi
         {
             m_managers.at(i)->Update(p_deltaTime);
         }
+        TIME_FUNCTION_STOP
     }
 
     void ServerMain::Start()
     {
+        TIME_FUNCTION_START
         Initialize();
         Run();
+        TIME_FUNCTION_STOP
     }
 }

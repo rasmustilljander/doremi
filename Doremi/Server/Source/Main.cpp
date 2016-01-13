@@ -37,7 +37,7 @@ int main(int argc, char** argv)
         serverMain.Start();
 
         measure.GetTimer(FILE_AND_FUNC).Stop();
-        MeasureTimer::GetInstance().DumpData("clientTiming");
+        MeasureTimer::GetInstance().DumpData("serverTiming");
         ConsoleManager::Shutdown();
     }
     catch(std::exception e)
