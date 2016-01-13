@@ -40,7 +40,7 @@ namespace Doremi
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_vertexShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_pixelShader);
 
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {

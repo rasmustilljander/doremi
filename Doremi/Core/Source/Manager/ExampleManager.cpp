@@ -44,7 +44,7 @@ namespace Doremi
             EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
             // Loop through all entities
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             for(size_t i = 0; i < length; i++)
             {
                 // Check that the current entity has the relevant components

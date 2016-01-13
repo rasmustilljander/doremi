@@ -24,12 +24,11 @@ namespace Doremi
             m_gravityCoefficient = 1;
         }
 
-
         GravityManager::~GravityManager() {}
 
         void GravityManager::Update(double p_dt)
         {
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Gravity | (int)ComponentType::CharacterController;
             for(size_t i = 0; i < length; i++)
             {

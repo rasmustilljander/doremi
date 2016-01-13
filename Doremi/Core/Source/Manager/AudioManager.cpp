@@ -34,13 +34,12 @@ namespace Doremi
 
         AudioManager::~AudioManager() {}
 
-
         void AudioManager::Update(double p_dt)
         {
             // First get the module
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             // Loop through all entities
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             bool t_isPlaying = false;
             // Loop over all enteties to perform various functions on enteties that have sound components
             for(size_t i = 0; i < length; i++)

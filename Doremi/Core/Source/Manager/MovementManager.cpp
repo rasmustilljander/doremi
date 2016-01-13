@@ -22,7 +22,7 @@ namespace Doremi
 
         void MovementManager::Update(double p_dt)
         {
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Movement | (int)ComponentType::CharacterController;
             for(size_t i = 0; i < length; i++)
             {

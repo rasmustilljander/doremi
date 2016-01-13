@@ -31,7 +31,7 @@ namespace Doremi
         {
             // Update simulation
             m_sharedContext.GetPhysicsModule().Update(p_dt);
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::RigidBody | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {

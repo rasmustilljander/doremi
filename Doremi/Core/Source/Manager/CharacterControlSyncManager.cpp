@@ -28,7 +28,7 @@ namespace Doremi
 
         void CharacterControlSyncManager::Update(double p_dt)
         {
-            size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::CharacterController;
             for(size_t i = 0; i < length; i++)
             {
