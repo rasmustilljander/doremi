@@ -48,18 +48,18 @@ int main(int argc, const char* argv[])
     }
     catch(const std::exception& e)
     {
+        // TODORT log
         std::cout << "Unhandled exception: " << e.what() << std::endl;
-// TODORT log
 #ifdef _DEBUG
-        system("pause");
+        std::cin.get();
 #endif
     }
     catch(...)
     {
+        // TODORT log
         std::cout << "Unhandled unknown exception" << std::endl;
-// TODORT log
 #ifdef _DEBUG
-        system("pause");
+        std::cin.get();
 #endif
     }
 
