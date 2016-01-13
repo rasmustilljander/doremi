@@ -46,16 +46,19 @@ int main(int argc, const char* argv[])
     catch(const std::exception& e)
     {
         std::cout << "Unhandled exception: " << e.what() << std::endl;
-        // TODORT log
+// TODORT log
+#ifdef _DEBUG
+        system("pause");
+#endif
     }
     catch(...)
     {
         std::cout << "Unhandled unknown exception" << std::endl;
-        // TODORT log
+// TODORT log
+#ifdef _DEBUG
+        system("pause");
+#endif
     }
 
-#ifdef _DEBUG
-// system("pause"); TODOLH removed to enable fast program shutdown with esc this calls forces you to cin in console window to shut down after esc
-#endif
     return 0;
 }
