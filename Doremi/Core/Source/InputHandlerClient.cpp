@@ -1,6 +1,9 @@
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 #include <iostream>
 
 namespace Doremi
@@ -94,11 +97,13 @@ namespace Doremi
 
         void InputHandlerClient::UpdateInputsFromEngine()
         {
+            TIME_FUNCTION_START
             m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
             m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
             m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
             m_keyboardInputFromModule = m_sharedContext.GetInputModule().GetKeyBoardInput();
             m_mouseWheelInput = m_sharedContext.GetInputModule().GetMouseWheelSpins();
+            TIME_FUNCTION_STOP
         }
 
         void InputHandlerClient::PrintInputStructsDEBUG()
@@ -154,6 +159,7 @@ namespace Doremi
 
         void InputHandlerClient::Update()
         {
+            TIME_FUNCTION_START
             UpdateInputsFromEngine();
             m_lastUpdateMaskWithInput = m_maskWithInput;
             // Do one of them TODOEA
@@ -161,6 +167,7 @@ namespace Doremi
             // BuildMaskFromEngineForMeny();
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
+            TIME_FUNCTION_STOP
         }
 
         void InputHandlerClient::ChangeThisKeyToThat(int p_bitMask)

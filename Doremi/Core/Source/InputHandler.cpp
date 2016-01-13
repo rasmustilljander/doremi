@@ -3,6 +3,10 @@
 #include <InputHandler.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <iostream>
+
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 namespace Doremi
 {
     namespace Core

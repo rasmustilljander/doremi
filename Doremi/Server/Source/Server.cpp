@@ -255,11 +255,15 @@ namespace Doremi
         Core::EventHandler::GetInstance()->DeliverEvents();
         Core::PlayerHandler::GetInstance()->UpdateServer();
 
+        Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
         size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
+            Utility::Timer::MeasureInfo& info = timer.GetTimer(m_managers.at(i)->GetName());
+            info.Reset().Start();
             m_managers.at(i)->Update(p_deltaTime);
+            info.Stop();
         }
         TIME_FUNCTION_STOP
     }

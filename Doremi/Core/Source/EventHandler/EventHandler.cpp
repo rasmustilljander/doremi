@@ -4,6 +4,9 @@
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Subscriber.hpp>
 
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 namespace Doremi
 {
     namespace Core
@@ -34,6 +37,7 @@ namespace Doremi
 
         void EventHandler::DeliverEvents() // TODOJB fix broadcast event when no one is subscribed to them (currently crashes if you do)
         {
+            TIME_FUNCTION_START
             // Iterate through all events
             size_t length = m_mailBox.size();
             for(size_t i = 0; i < length; i++)
@@ -56,6 +60,7 @@ namespace Doremi
             }
 
             m_mailBox.clear();
+            TIME_FUNCTION_STOP
         }
     }
 }

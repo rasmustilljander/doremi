@@ -9,6 +9,10 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <iostream>
+
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 namespace Doremi
 {
     namespace Core
@@ -89,6 +93,7 @@ namespace Doremi
 
         float AudioHandler::GetRepeatableSoundFrequency()
         {
+            TIME_FUNCTION_START
             // Make sure that the analysis is complete otherwise m_frequencies wont be filled and we can get index out of range
             if(m_repeatableAnalysisComplete)
             {
@@ -106,10 +111,12 @@ namespace Doremi
                 int arrayPosition = (int)t_size * t_percentualPosition;
                 // Get the frequency
                 float retValue = m_frequencies[arrayPosition];
+                TIME_FUNCTION_STOP
                 return retValue;
             }
             else
             {
+                TIME_FUNCTION_STOP
                 return 0;
             }
         }
@@ -123,6 +130,7 @@ namespace Doremi
 
         void AudioHandler::Update(double p_deltaTime)
         {
+            TIME_FUNCTION_START
             unsigned int recordPointer;
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             switch(m_SoundState)
@@ -204,6 +212,7 @@ namespace Doremi
                 default:
                     break;
             }
+            TIME_FUNCTION_STOP
         }
     }
 }

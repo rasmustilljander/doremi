@@ -20,6 +20,9 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 #include <iostream>
 
 
@@ -145,20 +148,25 @@ namespace Doremi
 
         void PlayerHandler::UpdateClient()
         {
+            TIME_FUNCTION_START
             // UpdatePlayerInputs();
             UpdatePlayerPositions();
             UpdatePlayerRotationsClient();
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdateServer()
         {
+            TIME_FUNCTION_START
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdatePlayerInputs()
         {
+            TIME_FUNCTION_START
             m_sharedContext.GetInputModule().Update();
 
             std::map<uint32_t, Player*>::iterator iter;
@@ -167,12 +175,14 @@ namespace Doremi
             {
                 ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
             }
+            TIME_FUNCTION_STOP
         }
 
         // TODOEA fix this code up with comments
         // TODO fix code with comments
         void PlayerHandler::UpdatePlayerPositions()
         {
+            TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
             for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
@@ -239,10 +249,12 @@ namespace Doremi
                     }
                 }
             }
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdatePlayerRotationsClient()
         {
+            TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
             for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
@@ -324,10 +336,12 @@ namespace Doremi
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyVelocity(rigidComp->p_bodyID, bulletVel);
                 }
             }
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdatePlayerRotationsServer()
         {
+            TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
@@ -341,10 +355,12 @@ namespace Doremi
                     transComp->rotation = inputHandler->GetOrientationFromInput();
                 }
             }
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdateFiring()
         {
+            TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
@@ -357,10 +373,12 @@ namespace Doremi
                     m_gunController.FireGun(entityID, m_sharedContext);
                 }
             }
+            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
+            TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
 
             /**
@@ -411,6 +429,7 @@ namespace Doremi
             //        // If we're more recent we move forward
             //    }
             //}
+            TIME_FUNCTION_STOP
         }
     }
 }

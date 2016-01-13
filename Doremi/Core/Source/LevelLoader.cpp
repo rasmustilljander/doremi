@@ -11,6 +11,9 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 
+// Timing
+#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
 // Physics
 
 /// Standard
