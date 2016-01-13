@@ -73,6 +73,7 @@ namespace Doremi
 
     void GameMain::Initialize()
     {
+        TIME_FUNCTION_START
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
         /* This starts the physics handler. Should not be done here, but since this is the general
@@ -138,10 +139,12 @@ namespace Doremi
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         m_menuState = MenuStates::MenuState::RUNGAME; // byt denna till MAINMENU om du vill se menyn!! TODOLH
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
+        TIME_FUNCTION_START
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
         t_levelLoader->LoadLevel("Levels/test.drm");
@@ -213,10 +216,12 @@ namespace Doremi
         //    rigidComp->p_bodyID =
         //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
         //}
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::Run()
     {
+        TIME_FUNCTION_START
         // TODOCM remove for better timer
         // GameLoop is not currently set
 
@@ -282,10 +287,12 @@ namespace Doremi
                 }
             }
         }
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::UpdateGame(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         size_t length = m_managers.size();
         Core::EventHandler::GetInstance()->DeliverEvents();
         PlayerHandler::GetInstance()->UpdateClient();
@@ -300,11 +307,13 @@ namespace Doremi
             m_managers.at(i)->Update(p_deltaTime);
             info.Stop();
         }
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::UpdateMenu(double p_deltaTime) { m_menuState = (MenuStates::MenuState)MenuHandler::GetInstance()->Update(p_deltaTime); }
     void GameMain::Update(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
         switch(m_menuState)
         {
@@ -331,25 +340,31 @@ namespace Doremi
             default:
                 break;
         }
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::DrawMenu(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         MenuHandler* t_menuHandler = MenuHandler::GetInstance();
         MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, t_menuHandler->GetButtons(), t_menuHandler->GetCurrentButton());
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::DrawGame(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         size_t length = m_graphicalManagers.size();
         for(size_t i = 0; i < length; i++)
         {
             m_graphicalManagers.at(i)->Update(p_deltaTime);
         }
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::Draw(double p_deltaTime)
     {
+        TIME_FUNCTION_START
         /** TODOLH Detta ska flyttas till en function som i updaten*/
         switch(m_menuState)
         {
@@ -367,11 +382,14 @@ namespace Doremi
             default:
                 break;
         }
+        TIME_FUNCTION_STOP
     }
 
     void GameMain::Start()
     {
+        TIME_FUNCTION_START
         Initialize();
         Run();
+        TIME_FUNCTION_STOP
     }
 }
