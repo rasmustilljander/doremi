@@ -4,6 +4,7 @@
 #include <Internal/PhysicsMaterialManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
 #include <Internal/CharacterControlManagerImpl.hpp>
+#include <Internal/FluidManagerImpl.hpp>
 
 #include <PhysX/PxPhysicsAPI.h>
 
@@ -24,6 +25,7 @@ namespace DoremiEngine
             RigidBodyManagerImpl* m_rigidBodyManager;
             PhysicsMaterialManagerImpl* m_physicsMaterialManager;
             CharacterControlManagerImpl* m_characterControlManager;
+            FluidManagerImpl* m_fluidManager;
 
             // PhysX stuff
             PxDefaultAllocator m_allocator;
@@ -57,6 +59,7 @@ namespace DoremiEngine
             RigidBodyManager& GetRigidBodyManager() override;
             PhysicsMaterialManager& GetPhysicsMaterialManager() override;
             CharacterControlManager& GetCharacterControlManager() override;
+            FluidManager& GetFluidManager() override;
 
             vector<CollisionPair> GetCollisionPairs() override;
 

@@ -23,6 +23,7 @@ namespace DoremiEngine
         class RigidBodyManager;
         class PhysicsMaterialManager;
         class CharacterControlManager;
+        class FluidManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
             public:
@@ -49,6 +50,9 @@ namespace DoremiEngine
             on rigid bodies is too complex to handle
             */
             virtual CharacterControlManager& GetCharacterControlManager() = 0;
+            /**
+            Experimental fluid manager. TODOJB update Docs as necessary*/
+            virtual FluidManager& GetFluidManager() = 0;
             /**
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is

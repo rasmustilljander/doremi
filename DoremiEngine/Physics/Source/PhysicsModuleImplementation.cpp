@@ -22,6 +22,7 @@ namespace DoremiEngine
             m_utils.m_rigidBodyManager = new RigidBodyManagerImpl(m_utils);
             m_utils.m_physicsMaterialManager = new PhysicsMaterialManagerImpl(m_utils);
             m_utils.m_characterControlManager = new CharacterControlManagerImpl(m_utils);
+            m_utils.m_fluidManager = new FluidManagerImpl(m_utils);
 
             // Make some other important thingies
             m_utils.m_characterControlManager->SetCallbackClass(this);
@@ -40,6 +41,7 @@ namespace DoremiEngine
         RigidBodyManager& PhysicsModuleImplementation::GetRigidBodyManager() { return *m_utils.m_rigidBodyManager; }
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
         CharacterControlManager& PhysicsModuleImplementation::GetCharacterControlManager() { return *m_utils.m_characterControlManager; }
+        FluidManager& PhysicsModuleImplementation::GetFluidManager() { return *m_utils.m_fluidManager; }
 
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
 
