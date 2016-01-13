@@ -8,6 +8,7 @@ project(${SOLUTION_NAME})
 option(BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
 option(BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
+option(BUILD_CUSTOM_MEASUREMENT_TIMING "Unckeched is off" ON)
 
 if(BUILD_UNIT_TEST_BUILD)
 	set(ENGINE_LINK_TYPE STATIC)
@@ -73,6 +74,10 @@ set(EXTERNAL_INCLUDE_DIRECTORY
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
+
+if(BUILD_CUSTOM_MEASUREMENT_TIMING)
+	add_definitions(-DCUSTOM_TIMING_MEASUREMENT)
+endif()
 
 if(BUILD_WITH_EXTENDED_WARNINGS)
 	add_definitions(/W4)

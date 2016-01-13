@@ -5,8 +5,7 @@
 
 #define FILE_AND_FUNC std::string(__FILE__) + ":" + std::string(__func__)
 
-#define TIMING
-#ifdef TIMING
+#ifdef CUSTOM_TIMING_MEASUREMENT
 #define TIME_FUNCTION_START Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
 #define TIME_FUNCTION_STOP Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
 #else
