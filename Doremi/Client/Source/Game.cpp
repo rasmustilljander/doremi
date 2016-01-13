@@ -154,15 +154,14 @@ namespace Doremi
 
         int entityDebugJaws = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
         Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
-        trans->position = DirectX::XMFLOAT3(-10, 5, 0);
-
+        trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
         // Create platforms
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 10.0f - (float)i, i * 5.0f);
+            DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =

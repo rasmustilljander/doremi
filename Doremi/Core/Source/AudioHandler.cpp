@@ -43,8 +43,8 @@ namespace Doremi
             m_outputRepeatableSoundID = 0;
             m_accumulatedDeltaTime = 0;
             m_repeatableAnalysisComplete = false;
-            m_frequencyVectorPrecision = 0.01;
-            m_timeGunReloadButtonWasPressed = 0;
+            m_frequencyVectorPrecision = 0.01f;
+            m_timeGunReloadButtonWasPressed = 0.0f;
         }
         AudioHandler* AudioHandler::m_singleton = nullptr;
         AudioHandler* AudioHandler::GetInstance() { return m_singleton; }
