@@ -377,7 +377,10 @@ namespace Doremi
 
             // Get orientation
             EntityID id = 0;
-            PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(id);
+            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(id))
+            {
+                cout << "wrong in createinput message" << endl;
+            }
 
             if(EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
             {

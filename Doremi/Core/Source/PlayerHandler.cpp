@@ -145,7 +145,7 @@ namespace Doremi
 
         void PlayerHandler::UpdateClient()
         {
-            UpdatePlayerInputs();
+            // UpdatePlayerInputs();
             UpdatePlayerPositions();
             UpdatePlayerRotationsClient();
         }
