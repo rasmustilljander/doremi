@@ -20,9 +20,13 @@ inline wstring s2ws(const std::string& str)
 
 inline string getTwoDigit(const int& value)
 {
-    if(value < 10)
+    if(value < 10 && value > 1)
     {
         return string("0" + value);
+    }
+    if(value == 1)
+    {
+        return string("01");
     }
     return to_string(value);
 }
