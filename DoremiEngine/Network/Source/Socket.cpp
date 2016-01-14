@@ -18,7 +18,7 @@ namespace DoremiEngine
             m_messageSize = INT_MAX;
         }
 
-        Socket::~Socket() {}
+        Socket::~Socket() { closesocket(m_socketHandle); }
 
         void Socket::CreateTCPSocket()
         {

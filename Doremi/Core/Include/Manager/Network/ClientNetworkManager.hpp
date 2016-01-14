@@ -38,6 +38,11 @@ namespace Doremi
             */
             void Update(double p_dt) override;
 
+            /**
+                TODOCM doc
+            */
+            void SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d);
+
         private:
             /**
                 Recieves reliable & unreliable messages
@@ -137,7 +142,12 @@ namespace Doremi
             /**
                 Adress to server unreliable
             */
-            DoremiEngine::Network::Adress* m_serverAdress;
+            DoremiEngine::Network::Adress* m_unreliableServerAdress;
+
+            /**
+                TODOCM doc
+            */
+            DoremiEngine::Network::Adress* m_reliableServerAdress;
 
             /**
                 Adress to server reliable

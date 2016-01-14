@@ -25,12 +25,41 @@ namespace Doremi
               m_timeoutInterval(3.0f),
               m_playerID(0)
         {
-            m_serverAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
+
+
+            m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
+            m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 4050);
+
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
 
             NetMessage Message = NetMessage();
             Message.MessageID = MessageID::CONNECT_REQUEST;
-            p_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);
+            p_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
+
+            cout << "Change IP? Enter each byte with enter. (if other local is assumed)" << endl;
+
+            int a, b, c, d;
+            cin >> a;
+            if(0 > a || a > 255)
+            {
+                return;
+            }
+            cin >> b;
+            if(0 > b || b > 255)
+            {
+                return;
+            }
+            cin >> c;
+            if(0 > c || c > 255)
+            {
+                return;
+            }
+            cin >> d;
+            if(0 > d || d > 255)
+            {
+                return;
+            }
+            SetServerIP(a, b, c, d);
         }
 
         ClientNetworkManager::~ClientNetworkManager() {}
@@ -45,6 +74,28 @@ namespace Doremi
 
             // Check for timed out connections
             UpdateTimeouts(p_dt);
+        }
+
+        void ClientNetworkManager::SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
+        {
+            // Change IP on unreliable socket
+            m_unreliableServerAdress->SetIP(a, b, c, d);
+            m_unreliableServerAdress->ComposeAdress();
+
+            // Change IP on reliable socket
+            m_reliableServerAdress->SetIP(a, b, c, d);
+            m_reliableServerAdress->ComposeAdress();
+
+            // Remove the old sockets
+            m_sharedContext.GetNetworkModule().DeleteSocket(m_serverUnreliableSocketHandle);
+
+            // Create new sockets
+            m_serverUnreliableSocketHandle = m_sharedContext.GetNetworkModule().CreateUnreliableSocket();
+
+            // Send intro message
+            NetMessage Message = NetMessage();
+            Message.MessageID = MessageID::CONNECT_REQUEST;
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
         }
 
         void ClientNetworkManager::RecieveMessages(double p_dt)
@@ -65,7 +116,7 @@ namespace Doremi
                 NetMessage Message = NetMessage();
 
                 // See if we have any messages
-                while(NetworkModule.RecieveUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress))
+                while(NetworkModule.RecieveUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress))
                 {
                     std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
 
@@ -107,13 +158,12 @@ namespace Doremi
 
                                 // TODOCM add code for actuall port here
                                 // TODOCM check we dont get in lock here if wrong port
-                                DoremiEngine::Network::Adress* ReliableAdress = NetworkModule.CreateAdress(127, 0, 0, 1, 4050);
 
                                 // Connect to server
-                                m_serverReliableSocketHandle = NetworkModule.ConnectToReliable(ReliableAdress);
+                                m_serverReliableSocketHandle = NetworkModule.ConnectToReliable(m_reliableServerAdress);
 
                                 // TODOCM check if we need to save this adress or we can just bind it
-                                delete ReliableAdress;
+                                delete m_reliableServerAdress;
                             }
 
                             break;
@@ -358,7 +408,7 @@ namespace Doremi
             // std::cout << "Sending Connect request message." << std::endl; // TODOCM logg instead
 
             // Send Message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
         }
 
         void ClientNetworkManager::SendVersionMessage()
@@ -379,7 +429,7 @@ namespace Doremi
             std::cout << "Sending version message." << std::endl; // TODOCM logg instead
 
             // Send Message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
         }
 
         void ClientNetworkManager::CreateInputMessage(NetMessage& p_message)
@@ -461,7 +511,7 @@ namespace Doremi
             // TODOCM add info
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_serverUnreliableSocketHandle, m_serverAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
         }
 
         void ClientNetworkManager::UpdateTimeouts(double p_dt)

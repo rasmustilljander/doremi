@@ -231,6 +231,14 @@ namespace DoremiEngine
             return key;
         }
 
+        void NetworkModuleImplementation::DeleteSocket(size_t p_socketID)
+        {
+            Socket* socket = GetSocketFromMap(p_socketID);
+
+            delete socket;
+            m_socketHandleMap.erase(p_socketID);
+        }
+
         void NetworkModuleImplementation::Shutdown()
         {
 // TODO move shutdown to other place

@@ -113,6 +113,11 @@ namespace DoremiEngine
             virtual size_t CreateUnreliableWaitingSocket(const Adress* p_adressToConnectTo) = 0;
 
             /**
+                TODOCM doc
+            */
+            virtual void DeleteSocket(size_t p_socketID) = 0;
+
+            /**
                 Shutdown the network system, including winsock if WIN32 is specified
             */
             virtual void Shutdown() = 0;

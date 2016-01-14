@@ -117,6 +117,11 @@ namespace DoremiEngine
             size_t CreateUnreliableWaitingSocket(const Adress* p_adressToConnectTo) override;
 
             /**
+                TODOCM doc
+            */
+            void DeleteSocket(size_t p_socketID) override;
+
+            /**
                 TODOCM docs
             */
             void Shutdown() override;
