@@ -26,7 +26,7 @@
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
-
+#include <Doremi/Core/Include/LevelLoaderServer.hpp>
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -99,7 +99,8 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
-
+        Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
+        t_levelLoader->LoadLevel("Levels/test.drm");
         // Create entity
         // int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
 

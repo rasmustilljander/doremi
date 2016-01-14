@@ -31,7 +31,7 @@ namespace Doremi
     namespace Core
     {
 
-        PressureParticleManager::PressureParticleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext) {}
+        PressureParticleManager::PressureParticleManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "PressureParticleManager") {}
 
 
         PressureParticleManager::~PressureParticleManager() {}
