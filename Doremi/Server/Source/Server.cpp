@@ -123,7 +123,7 @@ namespace Doremi
         // TODOKO REMOVE Create debug potentialfields
         for(size_t i = 0; i < 1; i++)
         {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::DebugPotentialFieldActor);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
