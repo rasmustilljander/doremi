@@ -132,7 +132,7 @@ namespace Doremi
                 sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(0.5, 0.5, 0.5), matID);
 
             Core::PotentialFieldComponent* actor = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, 10, 10, true);
+            actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -10, 4, true);
         }
 
         for(size_t i = 0; i < 5; i++)

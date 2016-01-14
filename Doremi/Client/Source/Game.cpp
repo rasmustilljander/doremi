@@ -159,7 +159,7 @@ namespace Doremi
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
 
-        // t_levelLoader->LoadLevel("Levels/test.drm");
+        t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create Avatar entity
         /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
@@ -209,7 +209,7 @@ namespace Doremi
             // potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0),
             // -1, 3);
         }
-        t_levelLoader->LoadLevel("Levels/test.drm");
+        // t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create experimental pressure particle system
         int entityID = t_entityFactory.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);

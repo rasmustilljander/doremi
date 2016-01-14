@@ -52,9 +52,9 @@ namespace DoremiEngine
             */
             virtual const bool& IsStatic() const = 0;
             /**
-            Returns the closest actor occupied quad to the given position, the range is not taken in to consideration
+            Returns the closest actor occupied quad to the given quad, the range is not taken in to consideration
             */
-            virtual const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMFLOAT3 p_position) = 0;
+            virtual const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMINT2& p_quad) = 0;
         };
     }
 }

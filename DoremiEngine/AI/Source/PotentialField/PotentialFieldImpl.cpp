@@ -28,16 +28,23 @@ namespace DoremiEngine
                     float totalCharge = 0;
                     for(auto actor : m_staticActors)
                     {
-                        XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
-                        XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                        XMINT2 myQuad = XMINT2(x, y);
+                        XMINT2 closestQuad = actor->GetClosestOccupied(myQuad);
+                        if(myQuad.x == closestQuad.x && myQuad.y == closestQuad.y)
+                        {
+                            // Same quad
+                            m_grid[x][y].occupied = true;
+                        }
+                        XMFLOAT2 actorQuadPosition = m_grid[closestQuad.x][closestQuad.y].position;
+
                         float actorCharge = actor->GetCharge();
                         float actorRange = actor->GetRange();
                         // Calculate charge
-                        XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+                        XMVECTOR actorQuadPosVec = XMLoadFloat2(&actorQuadPosition);
                         XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 
-                        XMVECTOR distance = actorPosVec - quadPosVec;
-                        float dist = *XMVector3Length(distance).m128_f32;
+                        XMVECTOR distance = actorQuadPosVec - quadPosVec;
+                        float dist = *XMVector2Length(distance).m128_f32;
                         if(dist < actorRange)
                         {
                             float force = actorCharge / dist;

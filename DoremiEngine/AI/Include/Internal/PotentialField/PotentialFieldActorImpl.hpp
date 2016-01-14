@@ -22,7 +22,7 @@ namespace DoremiEngine
             const float& GetRange() const override { return m_range; };
             const std::vector<DirectX::XMINT2>& GetOccupiedQuads() const override { return m_occupiedQuads; };
             const bool& IsStatic() const override { return m_static; };
-            const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMFLOAT3 p_position);
+            const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMINT2& p_quad);
 
         private:
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
