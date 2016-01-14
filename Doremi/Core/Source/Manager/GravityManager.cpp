@@ -5,6 +5,7 @@
 // Components
 #include <EntityComponent/Components/JumpComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
 
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -29,7 +30,7 @@ namespace Doremi
         void GravityManager::Update(double p_dt)
         {
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::Gravity | (int)ComponentType::CharacterController;
+            int mask = (int)ComponentType::Gravity | (int)ComponentType::CharacterController | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
@@ -37,7 +38,8 @@ namespace Doremi
                     GravityComponent* gravComp = EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i);
                     // Make sure a jump isn't in progress
                     if(!(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Jump) &&
-                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active))
+                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active) &&
+                       EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position.y > 1) // temporary fix
                     {
                         gravComp->travelSpeed += m_gravityCoefficient * p_dt;
                         if(gravComp->travelSpeed >= gravComp->maxFallSpeed)

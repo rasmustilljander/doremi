@@ -158,7 +158,7 @@ namespace Doremi
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
-        t_levelLoader->LoadLevel("Levels/test.drm");
+        // t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create Avatar entity
         /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
@@ -200,18 +200,21 @@ namespace Doremi
             // potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0),
             // -1, 3);
         }
+        t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create experimental pressure particle system
-        //int entityID = t_entityHandler.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
-        //DoremiEngine::Physics::ParticleEmitterData emitterData;
-        //emitterData.m_density = 3;
-        //emitterData.m_dimensions = XMFLOAT2(0, 0);
-        //emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
-        //emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
-        //emitterData.m_emissionRate = 1;
-        //emitterData.m_launchPressure = 2;
-        //emitterData.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
-        //sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
+        // int entityID = t_entityFactory.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
+        // DoremiEngine::Physics::ParticleEmitterData emitterData;
+        // emitterData.m_density = 3;
+        // emitterData.m_dimensions = XMFLOAT2(0, 0);
+        // emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
+        // emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
+        // emitterData.m_emissionRate = 1;
+        // emitterData.m_launchPressure = 2;
+        // emitterData.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
+        // sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
+
+
 
         /////// TONS OF OLD CODE//////
         // Create the rigid body
