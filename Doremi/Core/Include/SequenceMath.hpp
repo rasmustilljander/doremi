@@ -5,7 +5,7 @@ namespace Doremi
     namespace Core
     {
 
-        uint8_t sequence_difference(uint8_t s1, uint8_t s2, unsigned int max)
+        static uint8_t sequence_difference(uint8_t s1, uint8_t s2, unsigned int max)
         {
             // If s1 is larger and the difference is less then half
             // meaning if they're not wrapped, the differnce should be less then half for it to be more recent
@@ -23,7 +23,7 @@ namespace Doremi
             else
             {
                 // std::cout << "Snapshot sequence is same, something is wrong" << std::endl; // TODOCM remove maybe
-                return 1;
+                return 0;
             }
         }
 
@@ -31,7 +31,7 @@ namespace Doremi
         TODOCM make sure to give cred for this func! and other stuff ofc
         http://gafferongames.com/networking-for-game-programmers/reliability-and-flow-control/
         */
-        bool sequence_more_recent(uint8_t s1, uint8_t s2, uint32_t max)
+        static bool sequence_more_recent(uint8_t s1, uint8_t s2, uint32_t max)
         {
             // If s1 is larger and the difference is less then half
             // meaning if they're not wrapped, the differnce should be less then half for it to be more recent

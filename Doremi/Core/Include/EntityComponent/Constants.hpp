@@ -3,7 +3,7 @@
 // Standard libraries
 #include <map>
 
-typedef int EntityID;
+typedef uint32_t EntityID;
 
 // Maximum number of entities allowed in the game
 #define MAX_NUM_ENTITIES 100000
@@ -38,7 +38,7 @@ enum class ComponentType : int
 /**
 Lists all available types of entities, as blueprints.
 WARNING! Subject to change due to low scalability*/
-enum class Blueprints : int
+enum class Blueprints : uint32_t
 {
     EmptyEntity,
     ExampleEntity,
@@ -52,6 +52,7 @@ enum class Blueprints : int
     JawsDebugEntity2, // TODOCM remove
     StaticEnviromentEntity,
 };
+
 
 /**
 Maps a ComponentType to a void*, where the void* is an

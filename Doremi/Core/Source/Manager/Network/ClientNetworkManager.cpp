@@ -9,6 +9,7 @@
 #include <iostream> // TODOCM remove after test
 #include <PlayerHandler.hpp>
 #include <InputHandlerClient.hpp>
+#include <AddRemoveSyncHandler.hpp>
 
 
 namespace Doremi
@@ -182,6 +183,13 @@ namespace Doremi
 
                 EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
+                uint32_t ReadOffset = 0;
+
+                // Check add/remove items
+                PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data), ReadOffset);
+
+                uint32_t ReadOffset2 = ReadOffset;
+
                 // Create new snapshot
                 Snapshot* NewSnapshot = new Snapshot();
 
@@ -218,7 +226,7 @@ namespace Doremi
                 // TODOCM notify a handler or something that new buffer exists
 
                 // Check the position we got from server
-                PlayerHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
+                InterpolationHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
             }
             else
             {
@@ -382,13 +390,13 @@ namespace Doremi
                 cout << "wrong in createinput message" << endl;
             }
 
-            if(EntityHandler::GetInstance().HasComponents(id, (int)ComponentType::Transform))
-            {
-                TransformComponent* transformComponent = GetComponent<TransformComponent>(id);
+            // Write orientation and translation
+            Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
 
-                // Write orientation and translation
-                Streamer.WriteRotationQuaternion(transformComponent->rotation);
-            }
+            // Write last sequence used for add remove
+            uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->GetNextSequenceUsed();
+
+            Streamer.WriteUnsignedInt8(lastSequenceUsed);
         }
 
         void ClientNetworkManager::SendConnectedMessage()

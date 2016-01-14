@@ -19,6 +19,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
+#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -88,6 +89,20 @@ namespace Doremi
             return outPointer;
         }
 
+        AddRemoveSyncHandler* PlayerHandler::GetAddRemoveSyncHandlerForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            AddRemoveSyncHandler* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_addRemoveSyncHandler;
+            }
+
+            return outPointer;
+        }
+
         bool PlayerHandler::GetDefaultPlayerEntityID(EntityID& o_outID)
         {
             if(m_playerMap.size() == 0)
@@ -126,7 +141,9 @@ namespace Doremi
                 std::runtime_error("Creating player twice with same ID.");
             }
 
-            Player* NewPlayer = new Player(p_inputHandler);
+            AddRemoveSyncHandler* newAddRemoveSyncHandler = new AddRemoveSyncHandler();
+
+            Player* NewPlayer = new Player(p_inputHandler, newAddRemoveSyncHandler);
 
             // TODOCM hard coded entityID for new players
             NewPlayer->m_playerEntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
@@ -376,60 +393,33 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
+        void PlayerHandler::QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
-            TIME_FUNCTION_START
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-            /**
-            Notes:
-            We need to interpolate the players position to a new position => hence why it should be in Interpolation handler.
-            We need to store the playerID to set the position of the player
-
-            */
-
-            // TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
-            // Check if we find the playerID
-            if(iter != m_playerMap.end())
+            // For each player we queue
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                // If we have character controller
-                if(Core::EntityHandler::GetInstance().HasComponents(iter->second->m_playerEntityID, (int)ComponentType::CharacterController))
-                {
-                    // Set position
-                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(iter->second->m_playerEntityID, p_positionToCheck);
-                    // cout << "set position" << endl;
-                }
+                iter->second->m_addRemoveSyncHandler->QueueAddObject(p_blueprint, p_position);
             }
+        }
 
-            // std::list<PositionStamp>::iterator removeStart = m_PositionStamps.begin();
-            // std::list<PositionStamp>::iterator removeEnd;
+        void PlayerHandler::QueueRemoveObjectToPlayers(uint32_t p_entityID)
+        {
+            // For each player we queue
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_addRemoveSyncHandler->QueueRemoveObject(p_entityID);
+            }
+        }
 
-            // std::list<PositionStamp>::iterator iterPos = m_PositionStamps.begin();
-
-            // while (iterPos != m_PositionStamps.end())
-            //{
-            //    if (p_sequenceOfPosition == iterPos->Sequence)
-            //    {
-            //        // If we find the one, we compare positions
-            //        if (p_positionToCheck.x == iterPos->Position.x &&
-            //            p_positionToCheck.y == iterPos->Position.y &&
-            //            p_positionToCheck.z == iterPos->Position.z)
-            //        {
-            //            // Woo same
-            //            cout << "same same!" << endl;
-            //        }
-            //        else
-            //        {
-            //            // buu nooo
-            //            cout << "No same" << endl;
-            //        }
-            //    }
-            //    else if (sequence_more_recent(p_sequenceOfPosition, iterPos->Sequence, 255))
-            //    {
-            //        // If we're more recent we move forward
-            //    }
-            //}
-            TIME_FUNCTION_STOP
+        void PlayerHandler::UpdateAddRemoveObjects()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_addRemoveSyncHandler->AddRemoveQueuedObjects();
+            }
         }
     }
 }

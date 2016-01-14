@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 #define MAX_OBJECTS_IN_SNAPSHOT 100
 
@@ -35,6 +36,11 @@ namespace Doremi
                 TODOCM doc
             */
             static InterpolationHandler* GetInstance();
+
+            /**
+                TODOCM doc
+            */
+            static void StartInterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODOCM doc
@@ -75,7 +81,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            InterpolationHandler();
+            InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODOCM doc
@@ -86,6 +92,11 @@ namespace Doremi
                 TODOCM doc
             */
             static InterpolationHandler* m_singleton;
+
+            /**
+                TODOCM doc
+            */
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             /**
                 TODOCM doc

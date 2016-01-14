@@ -136,5 +136,32 @@ namespace Doremi
             }
             return tNewEntityID;
         }
+
+        EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position)
+        {
+            EntityID outID = CreateEntity(p_blueprintID);
+
+            TransformComponent* transComp = GetComponent<TransformComponent>(outID);
+            transComp->position = p_position;
+
+            memcpy(GetComponent<TransformComponentNext>(outID), transComp, sizeof(TransformComponent));
+            memcpy(GetComponent<TransformComponentPrevious>(outID), transComp, sizeof(TransformComponent));
+
+            return outID;
+        }
+
+        EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation)
+        {
+            EntityID outID = CreateEntity(p_blueprintID);
+
+            TransformComponent* transComp = GetComponent<TransformComponent>(outID);
+            transComp->position = p_position;
+            transComp->rotation = p_orientation;
+
+            memcpy(GetComponent<TransformComponentNext>(outID), transComp, sizeof(TransformComponent));
+            memcpy(GetComponent<TransformComponentPrevious>(outID), transComp, sizeof(TransformComponent));
+
+            return outID;
+        }
     }
 }

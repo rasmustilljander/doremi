@@ -19,9 +19,17 @@ namespace Doremi
         {
             if(m_singleton == nullptr)
             {
-                m_singleton = new EntityHandler();
+                std::runtime_error("Get instance used on unitialized EntityHandler");
             }
             return *m_singleton;
+        }
+
+        void EntityHandler::StartupEntityHandler()
+        {
+            if(m_singleton == nullptr)
+            {
+                m_singleton = new EntityHandler();
+            }
         }
 
         void EntityHandler::RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint)
@@ -34,6 +42,16 @@ namespace Doremi
         bool EntityHandler::HasComponents(EntityID p_id, int p_mask) { return ComponentTable::GetInstance()->HasComponent(p_id, p_mask); }
 
         int EntityHandler::CreateEntity(Blueprints p_blueprintID) { return EntityFactory::GetInstance()->CreateEntity(p_blueprintID); }
+
+        int EntityHandler::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position)
+        {
+            return EntityFactory::GetInstance()->CreateEntity(p_blueprintID, p_position);
+        }
+
+        int EntityHandler::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation)
+        {
+            return EntityFactory::GetInstance()->CreateEntity(p_blueprintID, p_position, p_orientation);
+        }
 
         void EntityHandler::AddComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->AddComponent(p_entityID, p_mask); }
 

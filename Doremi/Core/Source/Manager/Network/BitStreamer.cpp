@@ -53,7 +53,7 @@ namespace Doremi
             m_IsWriting = true;
 
             // Check if enough memory left on message
-            if(p_numberOfBitsToWrite > m_bufferSize * 8 - m_writtenBits)
+            if(p_numberOfBitsToWrite > m_bufferSize * 8 - m_currentByte * 8 - m_writtenBits)
             {
                 return 0;
             }
@@ -127,7 +127,7 @@ namespace Doremi
             m_IsReading = true;
 
             // Check if enough memory left on message
-            if(p_numberOfBitsToRead > m_bufferSize * 8 - m_readBits)
+            if(p_numberOfBitsToRead > m_bufferSize * 8 - m_currentByte * 8 - m_readBits)
             {
                 return 0;
             }

@@ -21,13 +21,17 @@ namespace Doremi
     namespace Core
     {
         class InputHandler;
+        class AddRemoveSyncHandler;
 
         /**
             TODOCM doc
         */
         struct Player
         {
-            Player(InputHandler* p_inputHandler) : m_moveSpeed(0.2f), m_autoRetardation(50.0f), m_inputHandler(p_inputHandler), m_turnSpeed(0.01f) {}
+            Player(InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler)
+                : m_moveSpeed(0.2f), m_autoRetardation(50.0f), m_inputHandler(p_inputHandler), m_addRemoveSyncHandler(p_addRemoveSyncHandler), m_turnSpeed(0.01f)
+            {
+            }
 
             /**
                 TODOEA doc
@@ -38,6 +42,11 @@ namespace Doremi
                 TODOEA doc
             */
             InputHandler* m_inputHandler;
+
+            /**
+                TODOCM doc
+            */
+            AddRemoveSyncHandler* m_addRemoveSyncHandler;
 
             /**
                 TODOEA doc
@@ -66,7 +75,6 @@ namespace Doremi
         class PlayerHandler
         {
             public:
-            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
             /**
                 Is a singleton. Use this method to get the EventManager
             */
@@ -109,6 +117,11 @@ namespace Doremi
 
             /**
                 TODOCM doc
+            */
+            AddRemoveSyncHandler* GetAddRemoveSyncHandlerForPlayer(uint32_t p_playerID);
+
+            /**
+                TODOCM doc
                 TODOCM maybe change the way a player is created due to the need of external creation of inputHandler cause of difference in client and
                server
             */
@@ -123,8 +136,25 @@ namespace Doremi
                 TODOCM doc
             */
             void UpdateServer();
+
             /**
-            TODOCM doc
+                TODOCM doc
+            */
+            void QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position);
+
+            /**
+                TODOCM doc
+            */
+            void QueueRemoveObjectToPlayers(uint32_t p_entityID);
+
+            /**
+                TODOCM doc
+            */
+            void UpdateAddRemoveObjects();
+
+            private:
+            /**
+                TODOCM doc
             */
             void UpdatePlayerInputs();
 
@@ -145,7 +175,11 @@ namespace Doremi
             */
             void UpdatePlayerRotationsServer();
 
+            /**
+                TODOCM doc
+            */
             void UpdateFiring();
+
             /**
                 TODOCM doc
             */

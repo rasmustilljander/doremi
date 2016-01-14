@@ -8,6 +8,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <PlayerHandler.hpp>
 #include <InputHandlerServer.hpp>
+#include <AddRemoveSyncHandler.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -146,6 +147,10 @@ namespace Doremi
 
                 // Save position to send it on next message
                 p_connection->PositionOnLastSequence = GetComponent<TransformComponent>(entityID)->position;
+
+                uint8_t clientSequence = Streamer.ReadUnsignedInt8();
+
+                PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
             }
         }
 
@@ -353,8 +358,13 @@ namespace Doremi
             BitStreamer Streamer = BitStreamer();
             Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
 
+            uint32_t BytesWritten = 0;
+
+            PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
+
             // Write snapshot ID (1 byte
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
+
 
             // Write client last sequence (1 byte
             Streamer.WriteUnsignedInt8(p_connection->LastSequence);
@@ -362,20 +372,25 @@ namespace Doremi
             // Write position of that sequence ( 12 byte
             Streamer.WriteFloat3(p_connection->PositionOnLastSequence);
 
+            BytesWritten += 14;
+
+            uint32_t positionToWriteNumOfObjects = BytesWritten;
             // Move forward for header (14 byte + numOfObjects to be written later
-            Streamer.SetReadWritePosition(14 + sizeof(uint8_t));
+            Streamer.SetReadWritePosition(BytesWritten + sizeof(uint8_t));
+            BytesWritten += sizeof(uint8_t);
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
 
             // Mask is if we have transform and network
             int MaskToCheck = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
 
+            // Counter for how many entities we send
             uint32_t NumberOfEntitiesToSend = 0;
 
             // Loop over entities
             // TODOCM put them in some kind of priority so we can send them cross many snapshots
-            uint32_t NumOfComponents = EntityHandler.GetLastEntityIndex();
-            for(size_t EntityID = 0; EntityID < NumOfComponents && NumberOfEntitiesToSend < 100; EntityID++)
+            uint32_t NumOfEntities = EntityHandler.GetLastEntityIndex();
+            for(size_t EntityID = 0; EntityID < NumOfEntities && p_bufferSize > (BytesWritten + sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4); EntityID++)
             {
                 if(EntityHandler.HasComponents(EntityID, MaskToCheck))
                 {
@@ -383,12 +398,22 @@ namespace Doremi
                     Streamer.WriteUnsignedInt32(EntityID); // 4 byte
                     Streamer.WriteFloat3(TransComponent->position); // 4x3 = 12 byte
                     Streamer.WriteRotationQuaternion(TransComponent->rotation); // 4x4 = 16 byte
+
                     // all = 32 byte
                     NumberOfEntitiesToSend++;
+
+                    // Increase offset
+                    BytesWritten += sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4;
                 }
             }
 
-            Streamer.SetReadWritePosition(14);
+            if(NumberOfEntitiesToSend > NumOfEntities)
+            {
+                int a = 3;
+            }
+
+            // Write how many add/remove exist for player
+            Streamer.SetReadWritePosition(positionToWriteNumOfObjects);
             Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
         }
 
@@ -406,35 +431,37 @@ namespace Doremi
             // For all connected clients we send messages
             for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
             {
-
-                // Create global message
-                NetMessage Message = NetMessage();
-                Message.MessageID = MessageID::SNAPSHOT;
-
-
-                // TODOCM add snapshot info here
-                // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
-                CreateSnapshot(Message.Data, sizeof(Message.Data), iter->second);
-
-                switch(iter->second->ConnectionState)
+                if(iter->second->ConnectionState >= ConnectionState::CONNECTED)
                 {
-                    case ConnectionState::CONNECTED:
+                    // Create global message
+                    NetMessage Message = NetMessage();
+                    Message.MessageID = MessageID::SNAPSHOT;
 
-                        SendConnected(iter->second);
-                        break;
 
-                    case ConnectionState::MAP_LOADING:
+                    // TODOCM add snapshot info here
+                    // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
+                    CreateSnapshot(Message.Data, sizeof(Message.Data), iter->second);
 
-                        SendMapLoading(iter->second);
-                        break;
+                    switch(iter->second->ConnectionState)
+                    {
+                        case ConnectionState::CONNECTED:
 
-                    case ConnectionState::IN_GAME:
+                            SendConnected(iter->second);
+                            break;
 
-                        SendInGame(Message, iter->second);
-                        break;
+                        case ConnectionState::MAP_LOADING:
 
-                    default:
-                        break;
+                            SendMapLoading(iter->second);
+                            break;
+
+                        case ConnectionState::IN_GAME:
+
+                            SendInGame(Message, iter->second);
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
             }
         }

@@ -25,6 +25,8 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
+#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
@@ -43,9 +45,12 @@
 // Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/LevelLoader.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+
+
 
 // Third party
 
@@ -78,9 +83,10 @@ namespace Doremi
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
+        Core::EntityHandler::StartupEntityHandler();
         Core::PlayerHandler::StartPlayerHandler(sharedContext);
+        Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);
-        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
 
         ////////////////Example only////////////////
@@ -145,9 +151,10 @@ namespace Doremi
     void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
         TIME_FUNCTION_START
-        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
+        Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
         t_levelLoader->LoadLevel("Levels/test.drm");
+
         // Create Avatar entity
         /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
           int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;
@@ -155,16 +162,17 @@ namespace Doremi
           DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
           sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));*/
 
-        int entityDebugJaws = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+        int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
         Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
         trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
         // Create platforms
         for(size_t i = 0; i < 5; i++)
         {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 10.0f - (float)i, i * 5.0f);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =
@@ -174,7 +182,7 @@ namespace Doremi
         // Create some enemies
         for(size_t i = 0; i < 8; i++)
         {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
             XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             // int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
@@ -307,6 +315,7 @@ namespace Doremi
             m_managers.at(i)->Update(p_deltaTime);
             info.Stop();
         }
+        PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
         TIME_FUNCTION_STOP
     }
 

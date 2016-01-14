@@ -4,6 +4,7 @@
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/EntityComponent/ComponentTable.hpp>
 #include <Doremi/Core/Include/EntityComponent/StorageShelf.hpp>
+#include <DirectXMath.h>
 
 namespace Doremi
 {
@@ -13,6 +14,8 @@ namespace Doremi
         {
             public:
             static EntityHandler& GetInstance();
+
+            static void StartupEntityHandler();
 
             /** Registers a blueprint for entity creation with an ID*/
             void RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint);
@@ -24,9 +27,22 @@ namespace Doremi
             bool HasComponents(EntityID p_id, int p_mask);
 
             /**
-            Creates an entity according to the provided blueprint id
-            Also returns EntityID of newly created entity*/
-            int CreateEntity(Blueprints p_blueprintID);
+                Creates an entity according to the provided blueprint id
+                Also returns EntityID of newly created entity
+            */
+            virtual int CreateEntity(Blueprints p_blueprintID);
+
+            /**
+                Creates an entity according to the provided blueprint id
+                Also returns EntityID of newly created entity
+            */
+            virtual int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position);
+
+            /**
+                Creates an entity according to the provided blueprint id
+                Also returns EntityID of newly created entity
+            */
+            virtual int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
 
             /** Returns desired component. Example: GetComponentFromStorage<ComponentName>(id);*/
             template <class T> T* GetComponentFromStorage(EntityID p_id) { return GetComponent<T>(p_id); }
@@ -37,10 +53,12 @@ namespace Doremi
             /** Removes the entitys component*/
             void RemoveComponent(int p_entityID, int p_mask);
 
-            /** Removes the entire entity at the specific location*/
-            void RemoveEntity(int p_entityID);
+            /**
+                Removes the entire entity at the specific location
+            */
+            virtual void RemoveEntity(int p_entityID);
 
-            private:
+            protected:
             EntityHandler();
             ~EntityHandler();
             static EntityHandler* m_singleton;

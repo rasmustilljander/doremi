@@ -2,7 +2,7 @@
 #include <Server.hpp>
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
-#include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityHandlerServer.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
@@ -25,6 +25,8 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
+
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -51,7 +53,7 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
 
-        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
+        Core::EntityHandlerServer::StartupEntityHandlerServer();
         Core::PlayerHandler::StartPlayerHandler(sharedContext);
 
         ////////////////Example only////////////////
@@ -96,7 +98,7 @@ namespace Doremi
     void ServerMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
         TIME_FUNCTION_START
-        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
+        Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
 
         // Create entity
         // int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
@@ -112,14 +114,14 @@ namespace Doremi
         // sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));
         // Core::EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
 
-        int entityDebugJaws = t_entityHandler.CreateEntity(Blueprints::JawsDebugEntity);
+        int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
         Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
         trans->position = DirectX::XMFLOAT3(-10, 5, 0);
 
 
         for(size_t i = 0; i < 5; i++)
         {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
@@ -131,7 +133,7 @@ namespace Doremi
         // Create some enemies
         for(size_t i = 0; i < 8; i++)
         {
-            int entityID = t_entityHandler.CreateEntity(Blueprints::EnemyEntity);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
             XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;

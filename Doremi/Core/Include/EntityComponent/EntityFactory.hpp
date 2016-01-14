@@ -1,11 +1,12 @@
 #pragma once
 // Project Specific
-#include <EntityComponent/Constants.hpp>
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
 // Standard libraries
 #include <string>
 #include <map>
 #include <vector>
+#include <DirectXMath.h>
 
 using namespace std;
 namespace Doremi
@@ -35,6 +36,17 @@ namespace Doremi
 
             /** creates an entity according to the provided blueprint id*/
             EntityID CreateEntity(Blueprints p_blueprintID);
+
+            /**
+                TODOCM doc
+            */
+            EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position);
+
+            /**
+                TODOCM doc
+            */
+            EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
+
 
             private:
             EntityFactory();

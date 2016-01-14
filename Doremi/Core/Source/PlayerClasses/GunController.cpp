@@ -27,8 +27,9 @@ namespace Doremi
 
         void GunController::FireGun(int p_playerID, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
+            XMFLOAT3 bulletPosition = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_playerID)->position;
             // Create the new entity
-            int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity);
+            int bulletID = EntityHandler::GetInstance().CreateEntity(Blueprints::BulletEntity, bulletPosition);
             // Set it to be a friendly bullet
             EntityHandler::GetInstance().GetComponentFromStorage<EntityTypeComponent>(p_playerID)->type = EntityType::FriendlyBullet;
 
@@ -38,7 +39,7 @@ namespace Doremi
             // Orientation is the same as that of the player
             XMFLOAT4 bulletOrientation = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_playerID)->rotation;
             // Calculate position by offsetting it along the target vector of the player
-            XMFLOAT3 bulletPosition = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_playerID)->position;
+
             XMVECTOR bulletPosVec = XMLoadFloat3(&bulletPosition);
             XMVECTOR targetVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
             XMMATRIX rotMat = XMMatrixRotationQuaternion(XMLoadFloat4(&bulletOrientation));

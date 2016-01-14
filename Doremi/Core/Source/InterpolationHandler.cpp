@@ -1,6 +1,9 @@
 #include <InterpolationHandler.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+#include <PlayerHandler.hpp>
 #include <SequenceMath.hpp>
 #include <iostream>
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -11,16 +14,27 @@ namespace Doremi
     {
         InterpolationHandler* InterpolationHandler::m_singleton = nullptr;
 
+        void InterpolationHandler::StartInterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            if(m_singleton == nullptr)
+            {
+                m_singleton = new InterpolationHandler(p_sharedContext);
+            }
+        }
+
         InterpolationHandler* InterpolationHandler::GetInstance()
         {
             if(m_singleton == nullptr)
             {
-                m_singleton = new InterpolationHandler();
+                std::runtime_error("InterpolationHandler called GetInstance befor startup.");
             }
             return m_singleton;
         }
 
-        InterpolationHandler::InterpolationHandler() : m_snapshotSequenceReal(0), m_snapshotDelay(10) {}
+        InterpolationHandler::InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(10)
+        {
+        }
 
         InterpolationHandler::~InterpolationHandler() {}
 
@@ -292,27 +306,26 @@ namespace Doremi
 
         void InterpolationHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
-            // std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            /**
+             Notes:
+             We need to interpolate the players position to a new position => hence why it should be in Interpolation handler.
+             We need to store the playerID to set the position of the player
 
-            ///**
-            // Notes:
-            // We need to interpolate the players position to a new position => hence why it should be in Interpolation handler.
-            // We need to store the playerID to set the position of the player
+            */
+            EntityID playerID = 0;
+            PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerID);
 
-            //*/
+            // TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
+            // Check if we find the playerID
 
-            //// TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
-            //// Check if we find the playerID
-            // if (iter != m_playerMap.end())
-            //{
-            //    // If we have character controller
-            //    if (Core::EntityHandler::GetInstance().HasComponents(iter->second->m_playerEntityID, (int)ComponentType::CharacterController))
-            //    {
-            //        // Set position
-            //        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(iter->second->m_playerEntityID, p_positionToCheck);
-            //        // cout << "set position" << endl;
-            //    }
-            //}
+            // If we have character controller
+            if(Core::EntityHandler::GetInstance().HasComponents(playerID, (int)ComponentType::CharacterController))
+            {
+                // Set position
+                m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(playerID, p_positionToCheck);
+                // cout << "set position" << endl;
+            }
+
 
             // std::list<PositionStamp>::iterator removeStart = m_PositionStamps.begin();
             // std::list<PositionStamp>::iterator removeEnd;
