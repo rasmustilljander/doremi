@@ -80,7 +80,12 @@ namespace Doremi
             blueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::ExperimentalPressureParticleEntity, blueprint);
+        }
 
+        void CreateExperimentalParticlePressureBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::ExperimentalPressureParticleEntity, blueprint);
         }
 
         void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -502,6 +507,7 @@ namespace Doremi
             CreateEnemyBlueprintServer(sharedContext);
             CreateJawsDebugObjectServer(sharedContext);
             CreateEmpty();
+            CreateExperimentalParticlePressureBlueprintServer(sharedContext);
         }
     }
 }

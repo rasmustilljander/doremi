@@ -27,6 +27,7 @@
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
+#include <DoremiEngine/Physics/Include/FluidManager.hpp>
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -150,6 +151,17 @@ namespace Doremi
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
+
+        int entityID = t_entityFactory.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
+        DoremiEngine::Physics::ParticleEmitterData emitterData;
+        emitterData.m_density = 3;
+        emitterData.m_dimensions = XMFLOAT2(0, 0);
+        emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
+        emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
+        emitterData.m_emissionRate = 1;
+        emitterData.m_launchPressure = 2;
+        emitterData.m_position = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position;
+        // sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
 
         // TODO Not using this event atm, because of refac, will need to find some solution
         /*PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
