@@ -114,7 +114,7 @@ namespace DoremiEngine
             PxMaterial* groundMaterial = m_utils.m_physics->createMaterial(0.5, 0.5, 0.5);
 
             // Create the ground on which everything stands on. Possibly shouldn't here (member varialbe? Separate class?)
-            PxPlane groundPlane = PxPlane(0, 1, 0, 3); // change last 0 for distance from origo
+            PxPlane groundPlane = PxPlane(0, 1, 0, 0.3); // change last 0 for distance from origo
             PxRigidStatic* worldGround = PxCreatePlane(*m_utils.m_physics, groundPlane, *groundMaterial);
             // Add the ground plane to the scene. Apparently it's this easy
             m_utils.m_worldScene->addActor(*worldGround);

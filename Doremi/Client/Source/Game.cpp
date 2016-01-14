@@ -218,7 +218,7 @@ namespace Doremi
         emitterData.m_dimensions = XMFLOAT2(0, 0);
         emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
         emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
-        emitterData.m_emissionRate = 10000; // CHANGED TO AVOID LAG
+        emitterData.m_emissionRate = 10; // CHANGED TO AVOID LAG
         emitterData.m_launchPressure = 2;
         emitterData.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
         sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
