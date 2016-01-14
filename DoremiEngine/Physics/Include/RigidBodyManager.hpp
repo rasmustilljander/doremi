@@ -1,5 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
+#include <vector>
+using namespace std;
 using namespace DirectX;
 namespace DoremiEngine
 {
@@ -18,6 +20,15 @@ namespace DoremiEngine
             Static boxes stay still and are never affected by other physical entities.
             They can still be moved around however, just not by any other physical object.*/
             virtual int AddBoxBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) = 0;
+
+            /**
+            Adds a static body with a complex mesh as collision structure*/
+            virtual void AddMeshBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
+                                           vector<int>& p_indices, int p_materialID) = 0;
+            /**
+            NOT IMPLEMENTED. DO NOT USE TODOJB implement*/
+            virtual void AddMeshBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
+                                            vector<int>& p_indices, int p_materialID) = 0;
 
             /**
             TODOJB figure out what to do, and how to describe it in a comment

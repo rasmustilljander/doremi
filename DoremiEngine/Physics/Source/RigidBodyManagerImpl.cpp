@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils) {}
+        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils), m_meshCooker(new MeshCooker(p_utils)) {}
         RigidBodyManagerImpl::~RigidBodyManagerImpl() {}
 
         int RigidBodyManagerImpl::AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
@@ -75,6 +75,43 @@ namespace DoremiEngine
 
             // Kinda redundant return...
             return p_id;
+        }
+
+        void RigidBodyManagerImpl::AddMeshBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
+                                                     vector<int>& p_indices, int p_materialID)
+        {
+            // Get a mesh
+            PxTriangleMesh* mesh = m_meshCooker->CookMesh(p_vertexPositions, p_indices);
+            // Get it into a geometry
+            PxTriangleMeshGeometry meshGeometry;
+            meshGeometry.triangleMesh = mesh;
+            bool valid = meshGeometry.isValid();
+
+            // Create the transform
+            PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
+            PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
+            PxTransform transform = PxTransform(position, orientation);
+            // Create the body
+            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(transform);
+            // Get the material
+            PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
+            // Create a shape
+            body->createShape(meshGeometry, *material, transform);
+            // Add to scene
+            m_utils.m_worldScene->addActor(*body);
+
+            // Finally add the body to our list
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
+
+
+            // Hax to get callbacks to work (Set a common flag on every object)
+            SetCallback(p_id, (1 << 0), (1 << 0));
+        }
+        void RigidBodyManagerImpl::AddMeshBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
+                                                      vector<int>& p_indices, int p_materialID)
+        {
+            // implementation pending
         }
 
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)

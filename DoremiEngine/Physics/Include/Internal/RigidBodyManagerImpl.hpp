@@ -1,8 +1,17 @@
 #pragma once
+// Interface class
 #include <RigidBodyManager.hpp>
-#include <unordered_map>
+
+// Internal
+#include <Internal/RigidBodyClasses/MeshCooker.hpp>
+
+// Third party
 #include <DirectXMath.h>
 #include <PhysX/PxPhysicsAPI.h>
+
+// Standard libraries
+#include <unordered_map>
+
 using namespace physx;
 using namespace std;
 using namespace DirectX;
@@ -19,6 +28,12 @@ namespace DoremiEngine
 
             int AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
             int AddBoxBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID) override;
+            void AddMeshBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions, vector<int>& p_indices,
+                                   int p_materialID) override;
+            void AddMeshBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
+                                    vector<int>& p_indices, int p_materialID) override;
+
+
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
 
 
@@ -44,6 +59,7 @@ namespace DoremiEngine
 
             private:
             InternalPhysicsUtils& m_utils;
+            MeshCooker* m_meshCooker;
 
             // Separate lists for dynamic and static bodies
             // unordered_map<int, PxRigidDynamic*> m_bodies;

@@ -49,10 +49,9 @@
 #include <Doremi/Core/Include/LevelLoader.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 
+
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
-
-
 
 // Third party
 
