@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 4
+#define NUM_LIGHTS 100
 
 struct PixelInputType
 {
@@ -9,17 +9,41 @@ struct PixelInputType
     float3 cameraPos : CAMERAPOS;
 };
 
+struct LightGridInfo
+{
+    uint offset;
+    uint value;
+};
+
 struct Light
 {
     int type; // 0 = def, 1 = dir, 2 = spot, 3 = point
     float3 attenuation;
     float intensity;
     float3 color;
-    float coneAngle;   
+    float coneAngle;
     float3 direction;
     float penumAgle;
     float3 position;
+    bool enabled;
+    float3 pad;
 };
+
+struct Plane
+{
+    float3 N;   // Plane normal.
+    float  d;   // Distance to origin.
+};
+struct Frustum
+{
+    Plane plane[4];   // left, right, top, bottom frustum planes.
+};
+
+
+StructuredBuffer<uint> o_LightIndexList : register(t1);
+StructuredBuffer<uint> t_LightIndexList : register(t2);
+StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
+StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 
 cbuffer LightInfo : register(b0)
 {
@@ -73,7 +97,7 @@ float4 PS_main(PixelInputType input) : SV_TARGET
 {
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
     float3 rgb = float3(0, 0, 0);
-    
+
 
     for (int i = 0; i < NUM_LIGHTS; i++)
     {
@@ -85,8 +109,11 @@ float4 PS_main(PixelInputType input) : SV_TARGET
             rgb += CalcSpotLight(input, i);
         if (light[i].type == 3)
             rgb += CalcPointLight(input, i);
-       
-    }
 
+    }
+    Plane test;
+    test.N = float3(0, 0, 0);
+    
     return float4(rgb, 1) + texcolor * 0.15;
+   
 }

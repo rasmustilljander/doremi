@@ -8,21 +8,29 @@ struct LightGridInfo
     uint offset;
     uint value;
 };
-
-StructuredBuffer<Frustum> in_Frustums : register(t9);
+//StructuredBuffer<Light> Lights : register(t8);
+//StructuredBuffer<Frustum> in_Frustums : register(t9);
 
 // Global counter for current index into the light index list.
 // "o_" prefix indicates light lists for opaque geometry while 
 // "t_" prefix indicates light lists for transparent geometry.
-RWStructuredBuffer<uint> o_LightIndexCounter : register(u1);
-RWStructuredBuffer<uint> t_LightIndexCounter : register(u2);
 
-RWStructuredBuffer<uint> o_LightIndexList : register(u3);
-RWStructuredBuffer<uint> t_LightIndexList : register(u4);
+StructuredBuffer<Frustum> in_Frustums : register(t0);
+
+RWStructuredBuffer<uint> o_LightIndexCounter : register(u0);
+RWStructuredBuffer<uint> t_LightIndexCounter : register(u1);
+
+RWStructuredBuffer<uint> o_LightIndexList : register(u2);
+RWStructuredBuffer<uint> t_LightIndexList : register(u3);
 //RWTexture2D<uint2> o_LightGrid : register(u5);
 //RWTexture2D<uint2> t_LightGrid : register(u6);
-RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u5);
-RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u6);
+RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u4);
+RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u5);
+
+cbuffer LightInfo : register(b1)
+{
+    Light lights[NUM_LIGHTS];
+};
 
 groupshared uint uMinDepth;
 groupshared uint uMaxDepth;
@@ -91,8 +99,10 @@ void CS_main(ComputeShaderInput input)
 
     GroupMemoryBarrierWithGroupSync();
 
-    float fMinDepth = asfloat(uMinDepth);
-    float fMaxDepth = asfloat(uMaxDepth);
+    //float fMinDepth = asfloat(uMinDepth);
+    //float fMaxDepth = asfloat(uMaxDepth);
+    float fMinDepth = 0;
+    float fMaxDepth = 100;
 
     // Convert depth values to view space.
     float minDepthVS = ClipToView(float4(0, 0, fMinDepth, 1)).z;
@@ -108,9 +118,9 @@ void CS_main(ComputeShaderInput input)
     // Each thread in a group will cull 1 light until all lights have been culled.
     for (i = input.groupIndex; i < NUM_LIGHTS; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        if (Lights[i].enabled)
+        if (lights[i].enabled)
         {
-            Light light = Lights[i];
+            Light light = lights[i];
 
             switch (light.type)
             {

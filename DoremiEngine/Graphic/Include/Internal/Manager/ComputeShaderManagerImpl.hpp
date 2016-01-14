@@ -72,13 +72,12 @@ namespace DoremiEngine
             ComputeShaderManagerImpl(const GraphicModuleContext& p_graphicContext);
             ~ComputeShaderManagerImpl();
             void CreateComputeShaders() override;
-            void SetFrustumUAV() override;
             // Set UAV for compute shaders. Index specifies which struct to send
             void SetUAV(BufferType index) override;
+            void SetSRV();
             ID3D11UnorderedAccessView* GetUAV(int i) override;
             void DispatchFrustum() override;
             void DispatchCulling() override;
-            void CopyFrustumData() override;
             void CopyCullingData() override;
             void CopyData(BufferType index);
 
@@ -93,6 +92,7 @@ namespace DoremiEngine
             LightGridBuffer* m_oLightGrid;
             LightGridBuffer* m_tLightGrid;
             ID3D11UnorderedAccessView* m_uav[NUM_BUFFERS];
+            ID3D11ShaderResourceView* m_srv[NUM_BUFFERS];
             ID3D11Buffer* m_buffer[NUM_BUFFERS];
             ID3D11Buffer* m_bufferResult[NUM_BUFFERS];
             ComputeShader* m_frustumShader;

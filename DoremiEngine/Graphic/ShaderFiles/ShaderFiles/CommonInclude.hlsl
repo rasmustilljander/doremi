@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 8
+#define NUM_LIGHTS 100
 #define BLOCK_SIZE 16
 
 struct Material
@@ -23,8 +23,8 @@ struct Light
     float3 direction;
     float penumAgle;
     float3 position;
-    bool enabled;
-
+    int enabled;
+    float3 pad;
 };
 
 struct ComputeShaderInput
@@ -35,7 +35,7 @@ struct ComputeShaderInput
     uint  groupIndex        : SV_GroupIndex;        // Flattened local index of the thread within a thread group.
 };
 
-StructuredBuffer<Light> Lights : register(t8);
+//StructuredBuffer<Light> Lights : register(t8);
 
 struct Plane
 {
@@ -118,6 +118,7 @@ bool SphereInsidePlane(Sphere sphere, Plane plane)
 }
 
 // Check to see of a light is partially contained within the frustum.
+// Set result to false if point is NOT contained in frustum
 bool SphereInsideFrustum(Sphere sphere, Frustum frustum, float zNear, float zFar)
 {
     bool result = true;

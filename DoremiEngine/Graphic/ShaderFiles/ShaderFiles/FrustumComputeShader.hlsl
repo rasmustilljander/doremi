@@ -38,5 +38,14 @@ void CS_main(ComputeShaderInput input)
     {
         uint index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
         out_Frustums[index] = frustum;
+       /* Plane testP;
+        testP.N = float3(0, 0, 0);
+        testP.d = 0;
+        Frustum test;
+        test.plane[0] = testP;
+        test.plane[1] = testP;
+        test.plane[2] = testP;
+        test.plane[3] = testP;
+        out_Frustums[index] = test;*/
     }
 }

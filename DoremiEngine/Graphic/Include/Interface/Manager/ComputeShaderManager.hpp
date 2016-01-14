@@ -13,12 +13,10 @@ namespace DoremiEngine
             public:
             // TODORK add functions
             virtual void CreateComputeShaders() = 0;
-            virtual void SetFrustumUAV() = 0;
             virtual void SetUAV(BufferType index) = 0;
             virtual ID3D11UnorderedAccessView* GetUAV(int i) = 0;
             virtual void DispatchFrustum() = 0;
             virtual void DispatchCulling() = 0;
-            virtual void CopyFrustumData() = 0;
             virtual void CopyCullingData() = 0;
         };
     }

@@ -17,6 +17,8 @@ namespace DoremiEngine
             DirectX::XMFLOAT3 direction;
             float penumAgle;
             DirectX::XMFLOAT3 position;
+            int enabled;
+            DirectX::XMFLOAT3 pad;
         };
 
         class LightInfoImpl : public LightInfo

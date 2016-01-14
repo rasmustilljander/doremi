@@ -30,8 +30,8 @@ namespace DoremiEngine
             light.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
             light.intensity = 2.0f;
             light.penumAgle = 0.0f;
-            light.position = DirectX::XMFLOAT3(1.5f, -10.0f, 6.0f);
-
+            light.position = DirectX::XMFLOAT3(1.5f, 10.f, 6.0f);
+            light.enabled = 1;
             light.type = 3;
 
             Light light2 = Light();
@@ -41,7 +41,8 @@ namespace DoremiEngine
             light2.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
             light2.intensity = 2.0f;
             light2.penumAgle = 0.0f;
-            light2.position = DirectX::XMFLOAT3(-1.5f, -10.0f, 4.0f);
+            light2.position = DirectX::XMFLOAT3(-1.5f, 10.f, 4.0f);
+            light2.enabled = 1;
             light2.type = 3;
 
             Light light3 = Light();
@@ -51,7 +52,8 @@ namespace DoremiEngine
             light3.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
             light3.intensity = 2.0f;
             light3.penumAgle = 0.0f;
-            light3.position = DirectX::XMFLOAT3(-1.5f, -10.0f, 6.0f);
+            light3.position = DirectX::XMFLOAT3(-1.5f, 10.f, 6.0f);
+            light3.enabled = 1;
             light3.type = 3;
 
             Light light4 = Light();
@@ -61,8 +63,8 @@ namespace DoremiEngine
             light4.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
             light4.intensity = 2.0f;
             light4.penumAgle = 0.0f;
-            light4.position = DirectX::XMFLOAT3(1.5f, -10.0f, 4.0f);
-
+            light4.position = DirectX::XMFLOAT3(1.5f, 10.f, 4.0f);
+            light4.enabled = 1;
             light4.type = 3;
 
 
@@ -70,6 +72,10 @@ namespace DoremiEngine
             m_lightBuffer.lightList[1] = light4;
             m_lightBuffer.lightList[2] = light3;
             m_lightBuffer.lightList[3] = light2;
+
+            for(int i = 4; i < 95; i++)
+                m_lightBuffer.lightList[i] = m_lightBuffer.lightList[1];
+
             ////////////////////////////////////////////////
 
             D3D11_BUFFER_DESC lightBufferDesc;
@@ -88,6 +94,7 @@ namespace DoremiEngine
             memcpy(tMS.pData, &m_lightBuffer.lightList, sizeof(m_lightBuffer.lightList));
             m_deviceContext->Unmap(lBuffer, NULL);
             m_deviceContext->PSSetConstantBuffers(0, 1, &lBuffer);
+            m_deviceContext->CSSetConstantBuffers(1, 1, &lBuffer);
         }
 
         int LightManagerImpl::AddLight(Light light)

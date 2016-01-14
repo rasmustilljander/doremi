@@ -5,6 +5,7 @@
 #include <Internal/Manager/LightManagerImpl.hpp>
 #include <GraphicModuleImplementation.hpp>
 #include <GraphicModuleContext.hpp>
+#include <iostream>
 
 namespace DoremiEngine
 {
@@ -43,39 +44,6 @@ namespace DoremiEngine
         }
 
         ComputeShaderManagerImpl::~ComputeShaderManagerImpl() {}
-
-        void ComputeShaderManagerImpl::SetFrustumUAV()
-        {
-            /*m_uav = NULL;
-            m_frustumArrayBuffer = NULL;
-            m_frustumArrayBufferResult = NULL;
-            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
-            D3D11_BUFFER_DESC outputDesc;
-            outputDesc.Usage = D3D11_USAGE_DEFAULT;
-            outputDesc.ByteWidth = sizeof(FrustumInfo) * NUM_THREAD_BLOCKS;
-            outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
-            outputDesc.CPUAccessFlags = 0;
-            outputDesc.StructureByteStride = sizeof(FrustumInfo);
-            outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-            HRESULT hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_frustumArrayBuffer));
-
-            outputDesc.Usage = D3D11_USAGE_STAGING;
-            outputDesc.BindFlags = 0;
-            outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-            hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_frustumArrayBufferResult));
-
-            D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-            uavDesc.Buffer.FirstElement = 0;
-            uavDesc.Buffer.Flags = 0;
-            uavDesc.Buffer.NumElements = NUM_THREAD_BLOCKS;
-            uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-            uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-
-            hr = m_directX.GetDevice()->CreateUnorderedAccessView(m_frustumArrayBuffer, &uavDesc, &m_uav);
-            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_uav, 0);*/
-        }
 
         void ComputeShaderManagerImpl::SetUAV(BufferType index)
         {
@@ -126,7 +94,7 @@ namespace DoremiEngine
             D3D11_BUFFER_DESC outputDesc;
             outputDesc.Usage = D3D11_USAGE_DEFAULT;
             outputDesc.ByteWidth = t_size;
-            outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+            outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
             outputDesc.CPUAccessFlags = 0;
             outputDesc.StructureByteStride = t_stride;
             outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -146,9 +114,25 @@ namespace DoremiEngine
             uavDesc.Format = DXGI_FORMAT_UNKNOWN;
             uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 
+            D3D11_SHADER_RESOURCE_VIEW_DESC t_SrvDesc;
+            t_SrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+            t_SrvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+            t_SrvDesc.BufferEx.FirstElement = 0;
+            t_SrvDesc.BufferEx.Flags = 0;
+            t_SrvDesc.BufferEx.NumElements = t_numElements;
+
+            hr = m_directX.GetDevice()->CreateShaderResourceView(m_buffer[index], &t_SrvDesc, &m_srv[index]);
+
+            if(FAILED(hr))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create shader resource view" << std::endl;
+            }
+
             hr = m_directX.GetDevice()->CreateUnorderedAccessView(m_buffer[index], &uavDesc, &m_uav[index]);
-            m_deviceContext->CSSetUnorderedAccessViews(index, 1, &m_uav[index], 0);
         }
+
+        void ComputeShaderManagerImpl::SetSRV() {}
 
         ID3D11UnorderedAccessView* ComputeShaderManagerImpl::GetUAV(int i) { return m_uav[i]; }
 
@@ -158,36 +142,19 @@ namespace DoremiEngine
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             shaderManager.SetActiveComputeShader(m_frustumShader);
 
+            ID3D11UnorderedAccessView* nullUAV[] = {NULL};
+
+            // Set UAV and SRV
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_uav[BufferType::FRUSTUM], 0);
+
             m_deviceContext->Dispatch(50, 50, 1);
+
+            // Clear UAV and SRV
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+
 
             // CopyFrustumData();
             CopyData(BufferType::FRUSTUM);
-        }
-
-        void ComputeShaderManagerImpl::CopyFrustumData()
-        {
-
-            ID3D11UnorderedAccessView* nullUAV[] = {NULL};
-
-            ID3D11DeviceContext* m_context = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
-
-            m_context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
-
-            m_context->CopyResource(m_bufferResult[BufferType::FRUSTUM], m_buffer[BufferType::FRUSTUM]);
-            D3D11_MAPPED_SUBRESOURCE mappedResource;
-            HRESULT hr = m_context->Map(m_bufferResult[BufferType::FRUSTUM], 0, D3D11_MAP_READ, 0, &mappedResource);
-
-            if(SUCCEEDED(hr))
-            {
-                for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
-                {
-                    m_frustumArray->frustum[i] = reinterpret_cast<FrustumInfo*>(mappedResource.pData)[i];
-                }
-
-                m_context->Unmap(m_bufferResult[BufferType::FRUSTUM], 0);
-            }
-
-            m_context->CSSetUnorderedAccessViews(0, 1, &m_uav[BufferType::FRUSTUM], 0);
         }
 
         void ComputeShaderManagerImpl::DispatchCulling()
@@ -195,8 +162,41 @@ namespace DoremiEngine
             // dispatch culling compute shader
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             shaderManager.SetActiveComputeShader(m_cullingShader);
+            ID3D11UnorderedAccessView* nullUAV[] = {NULL};
+            ID3D11ShaderResourceView* nullSRV[] = {NULL};
+
+            // Clear Pixel shader SRV
+            m_deviceContext->PSSetShaderResources(1, 1, nullSRV);
+            m_deviceContext->PSSetShaderResources(2, 1, nullSRV);
+            m_deviceContext->PSSetShaderResources(3, 1, nullSRV);
+            m_deviceContext->PSSetShaderResources(4, 1, nullSRV);
+
+            // Set UAV and SRV
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_uav[BufferType::O_LIGHTCOUNTER], 0);
+            m_deviceContext->CSSetUnorderedAccessViews(1, 1, &m_uav[BufferType::T_LIGHTCOUNTER], 0);
+            m_deviceContext->CSSetUnorderedAccessViews(2, 1, &m_uav[BufferType::O_LIGHTINDEXLIST], 0);
+            m_deviceContext->CSSetUnorderedAccessViews(3, 1, &m_uav[BufferType::T_LIGHTINDEXLIST], 0);
+            m_deviceContext->CSSetUnorderedAccessViews(4, 1, &m_uav[BufferType::O_LIGHTGRID], 0);
+            m_deviceContext->CSSetUnorderedAccessViews(5, 1, &m_uav[BufferType::T_LIGHTGRID], 0);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_srv[BufferType::FRUSTUM]);
+
 
             m_deviceContext->Dispatch(50, 50, 1);
+
+            // Clear UAV and SRV
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+            m_deviceContext->CSSetUnorderedAccessViews(1, 1, nullUAV, 0);
+            m_deviceContext->CSSetUnorderedAccessViews(2, 1, nullUAV, 0);
+            m_deviceContext->CSSetUnorderedAccessViews(3, 1, nullUAV, 0);
+            m_deviceContext->CSSetUnorderedAccessViews(4, 1, nullUAV, 0);
+            m_deviceContext->CSSetUnorderedAccessViews(5, 1, nullUAV, 0);
+            m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
+
+            // Set SRV till Pixel shader
+            m_deviceContext->PSSetShaderResources(1, 1, &m_srv[BufferType::O_LIGHTINDEXLIST]);
+            m_deviceContext->PSSetShaderResources(2, 1, &m_srv[BufferType::T_LIGHTINDEXLIST]);
+            m_deviceContext->PSSetShaderResources(3, 1, &m_srv[BufferType::O_LIGHTGRID]);
+            m_deviceContext->PSSetShaderResources(4, 1, &m_srv[BufferType::T_LIGHTGRID]);
 
             CopyCullingData();
         }
@@ -217,7 +217,6 @@ namespace DoremiEngine
 
             ID3D11DeviceContext* m_context = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
 
-            m_context->CSSetUnorderedAccessViews(index, 1, nullUAV, 0);
 
             m_context->CopyResource(m_bufferResult[index], m_buffer[index]);
             D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -267,8 +266,6 @@ namespace DoremiEngine
 
                 m_context->Unmap(m_bufferResult[index], 0);
             }
-
-            m_context->CSSetUnorderedAccessViews(index, 1, &m_uav[index], 0);
         }
     }
 }
