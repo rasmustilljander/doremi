@@ -33,8 +33,8 @@ namespace DoremiEngine
             PxStrideIterator<const PxVec3> positions = readData->positionBuffer;
             PxStrideIterator<const PxVec3> velocities = readData->velocityBuffer;
             vector<XMFLOAT3> velocitiesVector;
-            int numParticles = readData->validParticleRange;
-            for(size_t i = 0; i < numParticles; i++)
+            uint32_t numParticles = readData->validParticleRange;
+            for(uint32_t i = 0; i < numParticles; i++)
             {
                 o_positions.push_back(XMFLOAT3(positions[i].x, positions[i].y, positions[i].z));
             }
