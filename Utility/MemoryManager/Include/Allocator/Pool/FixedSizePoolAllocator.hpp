@@ -40,12 +40,19 @@ namespace Utility
             */
             T* Allocate()
             {
-                if((m_maxOjectCount - m_currentObjectCount) > 0)
+                if(m_maxOjectCount > m_currentObjectCount)
                 {
+                    // Save the pointer to return
                     T* returnPointer = static_cast<T*>(m_currentFree);
-                    *reinterpret_cast<size_t*>(m_currentFree) = reinterpret_cast<size_t>(m_currentFree);
+
+                    // Set the next free to be the current value it was pointing to
+                    m_currentFree = reinterpret_cast<void*>(*(reinterpret_cast<size_t*>(m_currentFree)));
+
+                    // Increase the memory count
                     ++m_currentObjectCount;
                     m_occupiedMemory += sizeof(T);
+
+                    // Run default constructor for the object
                     *returnPointer = T();
                     return returnPointer;
                 }
@@ -62,7 +69,13 @@ namespace Utility
             void Free(T* p_pointer)
             {
                 // TODORT Check to see that the pointer is inside this pool?
-                *reinterpret_cast<size_t*>(reinterpret_cast<void*>(p_pointer)) = reinterpret_cast<size_t>(m_currentFree);
+                void* prevCurrentFree = m_currentFree;
+
+                // Set the newly created released pointer to be the first free
+                m_currentFree = reinterpret_cast<void*>(p_pointer);
+
+                // Set the value of the next
+                *reinterpret_cast<size_t*>(m_currentFree) = reinterpret_cast<size_t>(prevCurrentFree);
                 --m_currentObjectCount;
                 m_occupiedMemory -= sizeof(T);
             }
@@ -74,7 +87,7 @@ namespace Utility
             {
                 m_currentObjectCount = 0;
                 m_occupiedMemory = 0;
-                m_currentFree = static_cast<size_t*>(m_raw);
+                m_currentFree = m_raw;
                 PrepareBlocks();
             }
 
