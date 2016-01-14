@@ -22,7 +22,7 @@ namespace Doremi
         {
             using namespace DirectX;
 
-            int playerID = 0;
+            EntityID playerID = 0;
             if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerID))
             {
                 return;
