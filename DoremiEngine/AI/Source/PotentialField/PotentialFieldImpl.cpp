@@ -17,7 +17,6 @@ namespace DoremiEngine
             // TODOKO optimize!!!! threads would be awesome here...
             // Lets all the actors update all the gridpoints in the potentialfield using the distance and charge
             using namespace DirectX;
-            size_t nrOfActors = m_actors.size();
             size_t nrOfQuadsX = m_grid.size();
             size_t nrOfQuadsY = m_grid[0].size();
 
@@ -27,7 +26,7 @@ namespace DoremiEngine
                 {
                     XMFLOAT2 quadPos = m_grid[x][y].position;
                     float totalCharge = 0;
-                    for(auto actor : m_actors)
+                    for(auto actor : m_staticActors)
                     {
                         XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
                         XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
@@ -51,8 +50,17 @@ namespace DoremiEngine
         }
         void PotentialFieldImpl::AddActor(PotentialFieldActor* p_newActor)
         {
-            m_actors.push_back(p_newActor);
-        } // TODOKO check if actor is already in the field
+            if(p_newActor->IsStatic() && m_staticActors.find(p_newActor) == m_staticActors.end())
+            {
+                // The actor is static and not in list
+                m_staticActors.insert(p_newActor);
+            }
+            else
+            {
+                // TODOKO check if actor is already in the field
+                m_dynamicActors.push_back(p_newActor);
+            }
+        }
 
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                                     const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
@@ -82,7 +90,7 @@ namespace DoremiEngine
             }
             // Check for special cases
             size_t length = quadsToCheck.size();
-            XMFLOAT2 highestChargedPos = m_center;
+            XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
             float highestCharge = 0;
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
@@ -118,7 +126,7 @@ namespace DoremiEngine
             if(highestCharge <= -9000)
             {
             }
-            return highestChargedPos;
+            return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
         }
 
         float PotentialFieldImpl::CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor)
@@ -126,7 +134,7 @@ namespace DoremiEngine
             using namespace DirectX;
             XMFLOAT2 quadPos = m_grid[p_quadX][p_quadY].position;
             float totalCharge = 0;
-            for(auto actor : m_actors)
+            for(auto actor : m_dynamicActors)
             {
                 if(actor != p_currentActor) // this should mean that the current actor is skipped when calculating charge... still doesnt work...
                 {

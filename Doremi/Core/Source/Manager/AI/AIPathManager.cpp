@@ -9,6 +9,8 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/AIGroupComponent.hpp>
+#include <Doremi/Core/Include/PotentialFieldGridCreator.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 // Events
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/EntityCreatedEvent.hpp>
@@ -17,11 +19,13 @@
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialField.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialGroup.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
+
 // Standard
 #include <iostream>
 #include <DirectXMath.h>
@@ -36,10 +40,19 @@ namespace Doremi
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
-            m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT2(0, 0));
+            m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT3(0, 0, 0));
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
+            //////////////////////// Fixa PotFält
+
+            // Testar TODOEA
+            Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
+
+            /// debugskit
+
+
+            //&& render pos rigidbody, potentialfield
         }
 
         AIPathManager::~AIPathManager() {}
@@ -54,10 +67,9 @@ namespace Doremi
             if(firstUpdate)
             {
                 firstUpdate = false;
+                PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
+                t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
                 // creating a invisible "wall", for testing only
-                DoremiEngine::AI::PotentialFieldActor* actorwall =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(XMFLOAT3(0, 0, 25), -10, 5, true);
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AttachActor(*m_field, actorwall);
                 m_field->Update();
             }
 

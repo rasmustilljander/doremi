@@ -50,24 +50,23 @@ namespace DoremiEngine
             PxVec3 dims = PxVec3(p_dims.x, p_dims.y, p_dims.z);
             // Creates the physics object shape thingy, which collides with stuff. Shapes are just objects. I
             PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
-            PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
-            // Creates the actual body.
+            // PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             PxTransform transform = PxTransform(position, orientation);
             // This body is static
-            PxTransform trans = PxTransform(PxVec3(0, 0, 0), PxQuat(0, 0, 0, 1));
             PxRigidStatic* body = m_utils.m_physics->createRigidStatic(transform);
-
-            // Attach shape to the body
-            body->attachShape(*shape);
+            // Create a shape for this actor
+            body->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
 
             // Add the now fully created body to the scene
             m_utils.m_worldScene->addActor(*body);
-            // We're done with the shape. Release it
-            shape->release();
+            // We're done with the shape. Release itS
 
             // Finally add the body to our list
             m_bodies[p_id] = body;
             m_IDsByBodies[body] = p_id;
+
+            // Hax to get callbacks to work (Set a common flag on every object)
+            SetCallback(p_id, (1 << 0), (1 << 0));
 
             /*
             And now we have added a box to the world at the given position

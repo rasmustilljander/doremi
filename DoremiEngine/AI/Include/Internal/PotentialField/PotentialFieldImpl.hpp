@@ -1,5 +1,6 @@
 #include <Interface/PotentialField/PotentialField.hpp>
 #include <Internal/PotentialField/PotentialFieldActorImpl.hpp>
+#include <set>
 namespace DoremiEngine
 {
     namespace AI
@@ -12,7 +13,11 @@ namespace DoremiEngine
             void SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid) override;
             void SetHeight(const float& p_height) override { m_height = p_height; };
             void SetWidth(const float& p_width) override { m_width = p_width; };
-            void SetCenter(const DirectX::XMFLOAT2& p_center) override { m_center = p_center; };
+            void SetCenter(const DirectX::XMFLOAT3& p_center) override { m_center = p_center; };
+            void SetQuadSize(const DirectX::XMFLOAT2& p_quadSize) override { m_quadSize = p_quadSize; };
+            const DirectX::XMFLOAT3& GetCenter() const override { return m_center; };
+            const DirectX::XMFLOAT2& GetQuadSize() const override { return m_quadSize; };
+            const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const { return m_grid; }
             void Update() override;
             void AddActor(PotentialFieldActor* p_newActor) override;
             DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr,
@@ -22,10 +27,12 @@ namespace DoremiEngine
             // Help functions
             float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
             std::vector<std::vector<PotentialFieldGridPoint>> m_grid; // [width][height]
-            std::vector<PotentialFieldActor*> m_actors;
+            std::set<PotentialFieldActor*> m_staticActors; // set for fast check if actor already recides in list
+            std::vector<PotentialFieldActor*> m_dynamicActors; // vector for fast access through the list
             float m_width;
             float m_height;
-            DirectX::XMFLOAT2 m_center;
+            DirectX::XMFLOAT2 m_quadSize;
+            DirectX::XMFLOAT3 m_center;
         };
     }
 }

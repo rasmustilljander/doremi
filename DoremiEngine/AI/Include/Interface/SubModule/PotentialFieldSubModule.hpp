@@ -18,7 +18,7 @@ namespace DoremiEngine
             Creates a new potential field with no actors
             */
             virtual PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
-                                                   const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT2& p_center) = 0;
+                                                   const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center) = 0;
             /**
             Creates a new potential group with no actors
             */

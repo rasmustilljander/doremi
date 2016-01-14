@@ -10,7 +10,7 @@ namespace DoremiEngine
         PotentialFieldSubModuleImpl::PotentialFieldSubModuleImpl() {}
         PotentialFieldSubModuleImpl::~PotentialFieldSubModuleImpl() {}
         PotentialField* PotentialFieldSubModuleImpl::CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
-                                                                    const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT2& p_center)
+                                                                    const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center)
         {
             // TODOKO review if we need to create a 3d grid or if a 2d grid is enough just to see where they can move in x and z
             using namespace std;
@@ -21,7 +21,7 @@ namespace DoremiEngine
             float quadHeight = p_height / (float)p_numberOfQuadsHeight;
             float halfWidth = p_width / 2.0f;
             float halfHeight = p_height / 2.0f;
-            XMFLOAT2 bottomLeft = XMFLOAT2(p_center.x - halfWidth, p_center.y - halfHeight);
+            XMFLOAT2 bottomLeft = XMFLOAT2(p_center.x - halfWidth, p_center.z - halfHeight);
             grid.resize(p_numberOfQuadsWidth);
             for(size_t x = 0; x < p_numberOfQuadsWidth; x++)
             {
@@ -36,6 +36,7 @@ namespace DoremiEngine
             newField->SetCenter(p_center);
             newField->SetHeight(p_height);
             newField->SetWidth(p_width);
+            newField->SetQuadSize(XMFLOAT2(quadWidth, quadHeight));
             return newField;
         }
         PotentialGroup* PotentialFieldSubModuleImpl::CreateNewPotentialGroup()

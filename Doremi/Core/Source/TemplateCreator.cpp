@@ -62,6 +62,7 @@ namespace Doremi
             EntityBlueprint blueprint;
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EmptyEntity, blueprint);
         }
+
         void CreateExperimentalParticlePressureBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityBlueprint blueprint;
@@ -86,6 +87,38 @@ namespace Doremi
         {
             EntityBlueprint blueprint;
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::ExperimentalPressureParticleEntity, blueprint);
+        }
+
+        void CreatePotentialFieldDebugServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+            // PotentialField component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            blueprint[ComponentType::PotentialField] = potentialComp;
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            // Rigid body comp
+            RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            // Network object
+            blueprint[ComponentType::NetworkObject];
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
+        }
+
+        void CreatePotentialFieldDebugClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            blueprint[ComponentType::Render] = renderComp;
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
         }
 
         void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -527,6 +560,7 @@ namespace Doremi
             CreateJawsDebugObjectClient(sharedContext);
             CreateEmpty();
             CreateExperimentalParticlePressureBlueprintClient(sharedContext);
+            CreatePotentialFieldDebugClient(sharedContext);
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -538,6 +572,7 @@ namespace Doremi
             CreateJawsDebugObjectServer(sharedContext);
             CreateEmpty();
             CreateExperimentalParticlePressureBlueprintServer(sharedContext);
+            CreatePotentialFieldDebugServer(sharedContext);
         }
     }
 }

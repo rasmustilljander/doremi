@@ -54,6 +54,7 @@ enum class Blueprints : uint32_t
     JawsDebugEntity2, // TODOCM remove
     StaticEnviromentEntity,
     ExperimentalPressureParticleEntity,
+    DebugPotentialFieldActor,
 };
 
 

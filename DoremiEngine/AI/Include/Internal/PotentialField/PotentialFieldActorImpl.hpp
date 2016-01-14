@@ -12,22 +12,23 @@ namespace DoremiEngine
             PotentialFieldActorImpl();
             virtual ~PotentialFieldActorImpl();
 
-            void SetPosition(const DirectX::XMFLOAT3& p_position) override { m_position = p_position; };
+            void SetPosition(const DirectX::XMFLOAT3& p_position) override;
             void SetCharge(const float& p_charge) override { m_charge = p_charge; };
             void SetRange(const float& p_range) override { m_range = p_range; };
             void SetStatic(const bool& p_static) override { m_static = p_static; };
-            // void AddOccupiedQuad(DirectX::XMFLOAT2 p_occupiedQuad);//nytt TODOEA
-            // void RemoveOccupiedQuad(DirectX::XMFLOAT2 p_occupiedQuad);//nytt TODOEA
-            const DirectX::XMFLOAT3& GetPosition() const { return m_position; };
-            const float& GetCharge() const { return m_charge; };
-            const float& GetRange() const { return m_range; };
-            const std::vector<DirectX::XMFLOAT2> GetOccupiedQuads() const { return m_occupiedQuads; }; // nytt TODOEA
+            void AddOccupiedQuad(const DirectX::XMINT2& p_quad) override;
+            const DirectX::XMFLOAT3& GetPosition() const override { return m_position; };
+            const float& GetCharge() const override { return m_charge; };
+            const float& GetRange() const override { return m_range; };
+            const std::vector<DirectX::XMINT2>& GetOccupiedQuads() const override { return m_occupiedQuads; };
+            const bool& IsStatic() const override { return m_static; };
+            const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMFLOAT3 p_position);
+
             private:
-            std::vector<DirectX::XMFLOAT2> m_occupiedQuads; // nytt TODOEA //SKa det vara griddet eller positionen. ( måste vara griddet dumt o
-            // konverta flera gånger.)
+            std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
             float m_range;
             float m_charge;
-            DirectX::XMFLOAT3 m_position;
+            DirectX::XMFLOAT3 m_position; // TODOKO should maybe not be here, needed in group but not in potential field
             bool m_static;
         };
     }

@@ -9,7 +9,11 @@ namespace DoremiEngine
         {
             DirectX::XMFLOAT2 position = DirectX::XMFLOAT2(0, 0);
             float charge = 0;
-            PotentialFieldGridPoint(const DirectX::XMFLOAT2& p_position, const float& p_charge) : position(p_position), charge(p_charge) {}
+            bool occupied = false;
+            PotentialFieldGridPoint(const DirectX::XMFLOAT2& p_position, const float& p_charge, const bool& p_occupied)
+                : position(p_position), charge(p_charge), occupied(p_occupied)
+            {
+            }
             PotentialFieldGridPoint() {}
         };
         /**
@@ -25,7 +29,19 @@ namespace DoremiEngine
             virtual void SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid) = 0;
             virtual void SetHeight(const float& p_height) = 0;
             virtual void SetWidth(const float& p_width) = 0;
-            virtual void SetCenter(const DirectX::XMFLOAT2& p_center) = 0;
+            virtual void SetCenter(const DirectX::XMFLOAT3& p_center) = 0;
+            /**
+            Set the quadsize in that field.
+            */
+            virtual void SetQuadSize(const DirectX::XMFLOAT2& p_quadSize) = 0;
+            /**
+            Get the center of the field
+            */
+            virtual const DirectX::XMFLOAT3& GetCenter() const = 0;
+            /**
+            Get the quadsize
+            */
+            virtual const DirectX::XMFLOAT2& GetQuadSize() const = 0;
             /**
             Updates the potentialfield using all the actors TODOKO review if it should only update the dynamic actors and if this option should exist
             in potentialfieldactor
@@ -43,6 +59,8 @@ namespace DoremiEngine
             */
             virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                             const PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) = 0;
+
+            virtual const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const = 0;
         };
     }
 }

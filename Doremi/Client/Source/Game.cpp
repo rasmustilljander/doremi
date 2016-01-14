@@ -101,7 +101,7 @@ namespace Doremi
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
         Core::Manager* t_cameraManager = new Core::CameraManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
+        // Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
@@ -158,6 +158,7 @@ namespace Doremi
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
+
         // t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create Avatar entity
@@ -169,14 +170,23 @@ namespace Doremi
 
         int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
         Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
+
         trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
+
+
+        // TODOKO REMOVE Create debug potentialfields
+        for(size_t i = 0; i < 1; i++)
+        {
+            int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
+        }
         // Create platforms
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 10.0f - (float)i, i * 5.0f);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, i * 5);
+            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+
 
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
