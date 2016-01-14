@@ -4,7 +4,7 @@
 
 class ProximityHelperTest : public testing::Test, public Doremi::Core::ProximityChecker
 {
-    public:
+public:
     ProximityHelperTest();
     ~ProximityHelperTest();
     void SetUp();

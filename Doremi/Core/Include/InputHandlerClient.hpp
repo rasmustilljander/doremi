@@ -41,7 +41,7 @@ namespace Doremi
             void GetMousePos(int& p_positionX, int& p_positionY);
 
 
-            private:
+        private:
             /**
                 TODOEA doc
             */

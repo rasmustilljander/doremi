@@ -9,9 +9,9 @@ namespace Utility
     {
         class AllocationHeaderBuilder
         {
-            private:
+        private:
             AllocationHeaderBuilder() {}
-            public:
+        public:
             /**
                 Delete copy constructor
             */
@@ -22,7 +22,7 @@ namespace Utility
             */
             void operator=(AllocationHeaderBuilder const&) = delete;
 
-            public:
+        public:
             /**
             Sets the byte to zero
             */

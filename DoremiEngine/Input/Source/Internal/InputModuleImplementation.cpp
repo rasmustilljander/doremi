@@ -134,13 +134,13 @@ namespace DoremiEngine
         }
         void InputModuleImplementation::SetCursorInvisibleAndMiddle(bool p_bool)
         {
-            if (p_bool)
+            if(p_bool)
             {
-                SDL_SetRelativeMouseMode(SDL_TRUE);//SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
+                SDL_SetRelativeMouseMode(SDL_TRUE); // SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
             }
             else
             {
-                SDL_SetRelativeMouseMode(SDL_FALSE);//Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
+                SDL_SetRelativeMouseMode(SDL_FALSE); // Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
             }
         }
         void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable)

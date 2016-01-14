@@ -14,7 +14,7 @@ namespace DoremiEngine
 
         class ModelLoader
         {
-            public:
+        public:
             ModelLoader();
             ~ModelLoader();
             // Loads the mesh specified by filename and pushes vertices to device and changes given GraphicObject

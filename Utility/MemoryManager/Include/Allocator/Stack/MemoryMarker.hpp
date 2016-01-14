@@ -5,7 +5,7 @@ namespace Utility
     {
         struct MemoryMarker
         {
-            public:
+        public:
             MemoryMarker() : adress(nullptr), manager(nullptr) {}
             MemoryMarker(void* p_adress, void* p_manager) : adress(p_adress), manager(p_manager) {}
             ~MemoryMarker() {}
@@ -19,7 +19,7 @@ namespace Utility
                 Get the adress to rollback to.
             */
             void* GetMarkerAdress() const { return adress; }
-            private:
+        private:
             void* adress;
             void* manager;
         };

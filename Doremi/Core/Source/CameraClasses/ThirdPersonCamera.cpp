@@ -12,9 +12,7 @@ namespace Doremi
 {
     namespace Core
     {
-        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera) : m_camera(p_camera)
-        {
-        }
+        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera) : m_camera(p_camera) {}
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
 

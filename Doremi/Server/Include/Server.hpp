@@ -15,7 +15,7 @@ namespace Doremi
 
     class ServerMain : public Core::GameCore
     {
-        public:
+    public:
         /**
             Constructor
         */
@@ -31,7 +31,7 @@ namespace Doremi
         */
         void Start();
 
-        private:
+    private:
         /**
             TODOCM doc
         */

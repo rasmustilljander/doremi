@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class AStarSubModuleImpl : public AStarSubModule
         {
-            public:
+        public:
             AStarSubModuleImpl();
             ~AStarSubModuleImpl();
             void GetPath(int p_startPos, const MapGrid& p_map);

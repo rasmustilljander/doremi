@@ -12,7 +12,7 @@ namespace DoremiEngine
     {
         class CameraImpl : public Camera
         {
-            public:
+        public:
             // TODOKO add documents
             CameraImpl();
             virtual ~CameraImpl();
@@ -22,7 +22,7 @@ namespace DoremiEngine
             void SetViewMatrix(const DirectX::XMFLOAT4X4& p_matrix);
             void SetCameraPosition(const DirectX::XMFLOAT3& p_position) override;
 
-            private:
+        private:
             CameraMatrices m_matrices;
         };
     }

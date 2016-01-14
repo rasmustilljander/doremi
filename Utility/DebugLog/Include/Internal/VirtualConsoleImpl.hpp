@@ -23,7 +23,7 @@ namespace Utility
 
         class VirtualConsoleImpl : public VirtualConsole
         {
-            public:
+        public:
             VirtualConsoleImpl(ctpl::thread_pool& p_threadPool, const std::string& p_pipeName, const bool& p_writeToConsole,
                                const bool& p_writeToFile, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor);
 
@@ -44,7 +44,7 @@ namespace Utility
             */
             void WriteToSharedMemory(const LoggingData& p_loggingData);
 
-            private:
+        private:
             void BuildConsoleApplicationPath();
             void SetupSharedMemory();
             void CreateConsoleProcess();

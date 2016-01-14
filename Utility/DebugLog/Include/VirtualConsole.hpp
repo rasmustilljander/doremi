@@ -11,7 +11,7 @@ namespace Utility
     {
         class VirtualConsole
         {
-            public:
+        public:
             /**
             The actual method called when calling LogText
             */

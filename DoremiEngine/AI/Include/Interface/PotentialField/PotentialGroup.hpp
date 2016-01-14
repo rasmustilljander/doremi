@@ -12,7 +12,7 @@ namespace DoremiEngine
         */
         class PotentialGroup
         {
-            public:
+        public:
             /**
             Adds a new actor that will influate the potential field
             */

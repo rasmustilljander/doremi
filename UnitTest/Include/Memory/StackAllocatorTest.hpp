@@ -6,7 +6,7 @@
 using namespace Utility::MemoryManager;
 class StackAllocatorTest : public testing::Test
 {
-    public:
+public:
     StackAllocatorTest() {}
     virtual ~StackAllocatorTest() {}
 

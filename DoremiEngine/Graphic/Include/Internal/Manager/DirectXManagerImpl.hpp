@@ -13,7 +13,7 @@ namespace DoremiEngine
         // class RasterizerState;
         class DirectXManagerImpl : public DirectXManager
         {
-            public:
+        public:
             DirectXManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~DirectXManagerImpl();
             /**
@@ -41,7 +41,7 @@ namespace DoremiEngine
             ID3D11SamplerState* GetDefaultSamplerState() override { return m_defaultSamplerState; }
             void DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
-            private:
+        private:
             void RenderAllMeshs();
             void BuildWorldMatrix();
 

@@ -12,7 +12,7 @@ namespace DoremiEngine
         struct InternalPhysicsUtils;
         class CharacterControlManagerImpl : public CharacterControlManager, public PxControllerBehaviorCallback
         {
-            public:
+        public:
             CharacterControlManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~CharacterControlManagerImpl();
 
@@ -39,7 +39,7 @@ namespace DoremiEngine
             */
             unordered_map<PxController*, int> GetIdsByControllers();
 
-            private:
+        private:
             InternalPhysicsUtils& m_utils;
 
             unordered_map<int, PxController*> m_controllers;

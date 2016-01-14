@@ -26,7 +26,7 @@ namespace DoremiEngine
         class FluidManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
             Does nothing so far TODOJB update as necessary
             */

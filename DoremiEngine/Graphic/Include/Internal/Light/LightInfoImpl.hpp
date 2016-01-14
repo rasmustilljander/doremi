@@ -23,7 +23,7 @@ namespace DoremiEngine
 
         class LightInfoImpl : public LightInfo
         {
-            public:
+        public:
             LightInfoImpl();
             ~LightInfoImpl();
         };

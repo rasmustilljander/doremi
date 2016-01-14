@@ -10,7 +10,7 @@ namespace Utility
         */
         class MainMemoryManager
         {
-            public:
+        public:
             /**
             TODORT docs
             */
@@ -35,7 +35,7 @@ namespace Utility
             */
             void operator=(MainMemoryManager const&) = delete;
 
-            private:
+        private:
             // Non-static
             MainMemoryManager(const size_t& p_preferedSize);
             virtual ~MainMemoryManager();

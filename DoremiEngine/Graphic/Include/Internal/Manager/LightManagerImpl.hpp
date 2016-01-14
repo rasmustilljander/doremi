@@ -18,14 +18,14 @@ namespace DoremiEngine
 
         class LightManagerImpl : public LightManager
         {
-            public:
+        public:
             LightManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~LightManagerImpl();
             int AddLight(Light light) override;
             Light GetLight(int index) override;
             void InitLightManager() override;
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
             ID3D11Device* m_device;
             ID3D11DeviceContext* m_deviceContext;

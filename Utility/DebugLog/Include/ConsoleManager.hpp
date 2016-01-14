@@ -13,7 +13,7 @@ namespace Utility
     {
         class ConsoleManager
         {
-            public:
+        public:
             /**
             TODORT docs
             */
@@ -51,7 +51,7 @@ namespace Utility
             */
             VirtualConsole& GetConsole(const std::string& p_consoleName = "standard");
 
-            private:
+        private:
             // Static
             static ConsoleManager* m_instance;
 

@@ -31,16 +31,9 @@ namespace Doremi
 {
     namespace Core
     {
-        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext)
-        {
+        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
-        }
-
-        PlayerHandler::~PlayerHandler() 
-        {
-
-        }
+        PlayerHandler::~PlayerHandler() {}
 
         PlayerHandler* PlayerHandler::m_singleton = nullptr;
 
@@ -67,11 +60,11 @@ namespace Doremi
         {
             InputHandler* OutPointer = nullptr;
 
-            if (m_playerMap.size())
+            if(m_playerMap.size())
             {
                 OutPointer = m_playerMap.begin()->second->m_inputHandler;
             }
-            
+
             return OutPointer;
         }
 
@@ -81,7 +74,7 @@ namespace Doremi
 
             InputHandler* outPointer = nullptr;
 
-            if (iter != m_playerMap.end())
+            if(iter != m_playerMap.end())
             {
                 outPointer = iter->second->m_inputHandler;
             }
@@ -120,7 +113,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
 
 
-            if (iter != m_playerMap.end())
+            if(iter != m_playerMap.end())
             {
                 outID = iter->second->m_playerEntityID;
                 return true;
@@ -201,7 +194,7 @@ namespace Doremi
         {
             TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
-            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 int t_checkIfWeHavePlayer = EntityHandler::GetInstance().GetLastEntityIndex();
 
@@ -211,7 +204,7 @@ namespace Doremi
 
                 EntityID entityID = iter->second->m_playerEntityID;
 
-                if (EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
                 {
                     // Get transform component
                     TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
@@ -235,20 +228,20 @@ namespace Doremi
                     // Start by creating a movement vector
                     XMFLOAT3 movement = XMFLOAT3(0, 0, 0);
                     XMVECTOR movementVec = XMLoadFloat3(&movement);
-                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
                     {
                         movementVec += dirVec * iter->second->m_moveSpeed;
                     }
 
-                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
                     {
                         movementVec -= dirVec * iter->second->m_moveSpeed;
                     }
-                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
                     {
                         movementVec -= rightVec * iter->second->m_moveSpeed;
                     }
-                    if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
                     {
                         movementVec += rightVec * iter->second->m_moveSpeed;
                     }
@@ -273,18 +266,18 @@ namespace Doremi
         {
             TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
-            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 InputHandlerClient* inputHandler = (InputHandlerClient*)iter->second->m_inputHandler;
 
                 EntityID entityID = iter->second->m_playerEntityID;
 
-                if (EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
                 {
                     /// Handle mouse input
                     // Get mouse input
                     int t_mouseMovementX = inputHandler->GetMouseMovementX();
-                    if (t_mouseMovementX)
+                    if(t_mouseMovementX)
                     {
                         TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                         // Get direction
@@ -300,11 +293,11 @@ namespace Doremi
                         // Change the angle
                         angle += t_mouseMovementX * iter->second->m_turnSpeed;
                         // Single quaternions don't really like angles over 2*pi, we do this
-                        if (angle > 2.0f * 3.1415f)
+                        if(angle > 2.0f * 3.1415f)
                         {
                             angle -= 2.0f * 3.1415f;
                         }
-                        else if (angle < 0)
+                        else if(angle < 0)
                         {
                             angle += 2.0f * 3.1415f;
                         }

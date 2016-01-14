@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class MeshInfoImpl : public MeshInfo
         {
-            public:
+        public:
             MeshInfoImpl();
             virtual ~MeshInfoImpl();
 
@@ -26,7 +26,7 @@ namespace DoremiEngine
             void SetBufferHandle(ID3D11Buffer* p_bufferHandle);
             void SetIndexBufferHandle(ID3D11Buffer* p_bufferHandle) { m_indexBufferHandle = p_bufferHandle; };
 
-            private:
+        private:
             ID3D11Buffer* m_indexBufferHandle;
             size_t m_verticeCount;
             size_t m_indexCount;

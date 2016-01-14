@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class MapGridImpl : public MapGrid
         {
-            public:
+        public:
             MapGridImpl();
             virtual ~MapGridImpl();
             void SetMapGrid();

@@ -24,7 +24,7 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class Button
         {
-            public:
+        public:
             Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
                    Doremi::MenuStates::MenuState p_menuState);
             Button();
@@ -39,7 +39,7 @@ namespace Doremi
             MenuStates::MenuState m_menuState;
             XMFLOAT4X4 m_transformMatrix;
 
-            private:
+        private:
             MousePos m_mousePos;
             ButtonMaterials m_buttonMaterials;
         };

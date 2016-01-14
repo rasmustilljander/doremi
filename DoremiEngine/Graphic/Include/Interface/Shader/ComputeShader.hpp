@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class ComputeShader
         {
-            public:
+        public:
             virtual const std::string& GetShaderName() = 0;
             virtual ID3D11ComputeShader* GetShaderHandle() = 0;
 

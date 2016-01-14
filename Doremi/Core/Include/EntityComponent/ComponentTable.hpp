@@ -14,7 +14,7 @@ namespace Doremi
     {
         class ComponentTable
         {
-            public:
+        public:
             static ComponentTable* GetInstance();
 
             /** Checks if entity has components specified in the bitmask*/
@@ -27,7 +27,7 @@ namespace Doremi
             void RemoveEntity(int pEntityID);
 
 
-            private:
+        private:
             ComponentTable();
             ~ComponentTable();
             static ComponentTable* mSingleton;

@@ -15,7 +15,7 @@ namespace DoremiEngine
         */
         class AdressImplementation : public Adress
         {
-            public:
+        public:
             /**
                 Constructs Adress
             */
@@ -109,7 +109,7 @@ namespace DoremiEngine
                 return SameAdress;
             }
 
-            private:
+        private:
             /**
                 IP in form of Big Endian
             */

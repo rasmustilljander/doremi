@@ -382,7 +382,7 @@ namespace Doremi
             m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_serverAdress);
         }
 
-        void ClientNetworkManager::CreateInputMessage(NetMessage &p_message)
+        void ClientNetworkManager::CreateInputMessage(NetMessage& p_message)
         {
             InputHandler* inputHandler = PlayerHandler::GetInstance()->GetDefaultInputHandler();
 

@@ -14,7 +14,7 @@ namespace DoremiEngine
         class ComputeShaderManager;
         class SubModuleManager
         {
-            public:
+        public:
             virtual MeshManager& GetMeshManager() = 0;
             virtual ParticleSystemManager& GetParticleSystemManager() = 0;
             virtual ShaderManager& GetShaderManager() = 0;

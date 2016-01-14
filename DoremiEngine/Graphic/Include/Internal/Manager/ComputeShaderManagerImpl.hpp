@@ -68,7 +68,7 @@ namespace DoremiEngine
 
         class ComputeShaderManagerImpl : public ComputeShaderManager
         {
-            public:
+        public:
             ComputeShaderManagerImpl(const GraphicModuleContext& p_graphicContext);
             ~ComputeShaderManagerImpl();
             void CreateComputeShaders() override;
@@ -81,7 +81,7 @@ namespace DoremiEngine
             void CopyCullingData() override;
             void CopyData(BufferType index);
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
             ID3D11DeviceContext* m_deviceContext;
             FrustumArray* m_frustumArray;

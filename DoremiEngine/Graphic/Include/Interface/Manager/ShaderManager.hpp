@@ -10,7 +10,7 @@ namespace DoremiEngine
         class ComputeShader;
         class ShaderManager
         {
-            public:
+        public:
             // TODOKO Add docs
             virtual VertexShader* BuildVertexShader(const std::string& p_fileName, D3D11_INPUT_ELEMENT_DESC p_inputDescription[], int p_arraySize) = 0;
             virtual PixelShader* BuildPixelShader(const std::string& p_fileName) = 0;

@@ -20,7 +20,7 @@ namespace Doremi
     {
         class GraphicManager : public Manager, public Subscriber
         {
-            public:
+        public:
             GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GraphicManager();
 
@@ -34,7 +34,7 @@ namespace Doremi
             */
             void OnEvent(Event* p_event) override;
 
-            private:
+        private:
             DoremiEngine::Graphic::PixelShader* m_pixelShader;
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;

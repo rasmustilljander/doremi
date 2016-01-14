@@ -47,7 +47,7 @@ namespace DoremiEngine
     {
         class SharedContext
         {
-            public:
+        public:
             virtual const std::string GetWorkingDirectory() const = 0;
 
             virtual Audio::AudioModule& GetAudioModule() const = 0;

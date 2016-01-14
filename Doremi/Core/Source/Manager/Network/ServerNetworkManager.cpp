@@ -285,7 +285,7 @@ namespace Doremi
 
 
                     // Check if player is saved
-                    //TODOCM change the way its saved
+                    // TODOCM change the way its saved
                     std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
 
                     // If we found one we remoe it from list and use it
@@ -510,7 +510,7 @@ namespace Doremi
             m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_unreliableSocketHandle, &m_adress);
         }
 
-        void ServerNetworkManager::SendConnect(const Connection *connection, const DoremiEngine::Network::Adress& m_adress)
+        void ServerNetworkManager::SendConnect(const Connection* connection, const DoremiEngine::Network::Adress& m_adress)
         {
             std::cout << "Sending connect." << std::endl;
             ; // TODOCM logg instead

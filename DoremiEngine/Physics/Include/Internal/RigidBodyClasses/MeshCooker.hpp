@@ -15,7 +15,7 @@ namespace DoremiEngine
         Class used to cook meshes into complex collision surfaces.*/
         class MeshCooker
         {
-            public:
+        public:
             MeshCooker(InternalPhysicsUtils& p_utils);
             virtual ~MeshCooker();
 
@@ -23,7 +23,7 @@ namespace DoremiEngine
             PxTriangleMesh* CookMesh(vector<XMFLOAT3>& p_pertexPositions, vector<int>& p_indices);
 
 
-            private:
+        private:
             InternalPhysicsUtils& m_utils;
             PxCooking* m_cooker;
         };

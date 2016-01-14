@@ -8,13 +8,13 @@ namespace DoremiEngine
     {
         class PotentialGroupImpl : public PotentialGroup
         {
-            public:
+        public:
             PotentialGroupImpl();
             virtual ~PotentialGroupImpl();
             void AddActor(PotentialFieldActor* p_newActor) override;
             DirectX::XMFLOAT3 GetForceDirection(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_actor = nullptr) override;
 
-            private:
+        private:
             std::set<PotentialFieldActor*> m_group;
         };
     }

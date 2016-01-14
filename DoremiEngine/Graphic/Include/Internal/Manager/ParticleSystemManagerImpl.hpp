@@ -8,11 +8,11 @@ namespace DoremiEngine
         struct GraphicModuleContext;
         class ParticleSystemManagerImpl : public ParticleSystemManager
         {
-            public:
+        public:
             ParticleSystemManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~ParticleSystemManagerImpl();
             // TODOKO add something
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
         };
     }

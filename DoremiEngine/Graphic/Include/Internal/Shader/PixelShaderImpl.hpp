@@ -6,7 +6,7 @@ namespace DoremiEngine
     {
         class PixelShaderImpl : public PixelShader
         {
-            public:
+        public:
             PixelShaderImpl();
             virtual ~PixelShaderImpl();
             const std::string& GetShaderName() override;
@@ -15,7 +15,7 @@ namespace DoremiEngine
             virtual void SetShaderName(const std::string& p_shaderName) override { m_shaderName = p_shaderName; };
             virtual void SetShaderHandle(ID3D11PixelShader* p_shaderHandle) override { m_shaderHandle = p_shaderHandle; };
 
-            private:
+        private:
             ID3D11PixelShader* m_shaderHandle;
             std::string m_shaderName;
         };

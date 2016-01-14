@@ -25,7 +25,7 @@ namespace Doremi
         */
         class AddRemoveSyncHandler
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -76,7 +76,7 @@ namespace Doremi
             */
             uint8_t GetNextSequenceUsed();
 
-            private:
+        private:
             /**
                 TODOCM doc
             */

@@ -22,7 +22,7 @@ namespace Doremi
         class InputHandler;
         class AudioHandler
         {
-            public:
+        public:
             /** Is a singleton. Use this method to get the EventManager*/
             static AudioHandler* GetInstance();
             static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -50,7 +50,7 @@ namespace Doremi
             // playing sound.
             float GetRepeatableSoundFrequency();
 
-            private:
+        private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             InputHandler* m_inputHandler;

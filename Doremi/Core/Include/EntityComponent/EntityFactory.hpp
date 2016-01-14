@@ -15,7 +15,7 @@ namespace Doremi
     {
         class EntityFactory
         {
-            public:
+        public:
             /**
             TODORT docs
             */
@@ -48,7 +48,7 @@ namespace Doremi
             EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
 
 
-            private:
+        private:
             EntityFactory();
             ~EntityFactory();
             static EntityFactory* mSingleton;

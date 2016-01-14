@@ -6,7 +6,7 @@ namespace DoremiEngine
     {
         class MaterialInfoImpl : public MaterialInfo
         {
-            public:
+        public:
             MaterialInfoImpl();
             virtual ~MaterialInfoImpl();
             std::string GetMaterialName() const override { return m_name; };
@@ -15,7 +15,7 @@ namespace DoremiEngine
             void SetMaterialName(const std::string& p_name) override { m_name = p_name; };
             void SetTexture(ID3D11ShaderResourceView* p_texture) override { m_texture = p_texture; };
             void SetSamplerState(ID3D11SamplerState* p_samplerState) override { m_samplerState = p_samplerState; }
-            private:
+        private:
             std::string m_name;
             ID3D11ShaderResourceView* m_texture;
             ID3D11SamplerState* m_samplerState;

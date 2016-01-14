@@ -10,7 +10,7 @@ namespace Utility
     {
         class MeasureInfo
         {
-            public:
+        public:
             /**
                 Constructor
             */
@@ -45,7 +45,7 @@ namespace Utility
             const size_t& GetStartCount() const { return m_startCount; }
             const size_t& GetStopCount() const { return m_stopCount; }
 
-            protected:
+        protected:
             // TOODRT As it were an struct earlier the names are incorrect.
             std::string name;
             std::chrono::time_point<std::chrono::high_resolution_clock> startSeconds, stopSeconds;

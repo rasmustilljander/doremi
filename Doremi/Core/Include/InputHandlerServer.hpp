@@ -24,7 +24,7 @@ namespace Doremi
             */
             DirectX::XMFLOAT4 GetOrientationFromInput();
 
-            private:
+        private:
             DirectX::XMFLOAT4 m_orientationQuaternion;
         };
     }

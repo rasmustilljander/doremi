@@ -18,7 +18,7 @@ namespace DoremiEngine
     {
         class Socket
         {
-            public:
+        public:
             /**
                 TODOCM log
             */
@@ -84,7 +84,7 @@ namespace DoremiEngine
             */
             bool RecieveTCP(void* p_data, const uint32_t& p_dataSize);
 
-            private:
+        private:
             /**
                 Creates a TCP socket used for binding or connecting
             */

@@ -12,7 +12,7 @@ namespace Doremi
     {
         class EntityHandler
         {
-            public:
+        public:
             static EntityHandler& GetInstance();
 
             static void StartupEntityHandler();
@@ -58,7 +58,7 @@ namespace Doremi
             */
             virtual void RemoveEntity(int p_entityID);
 
-            protected:
+        protected:
             EntityHandler();
             ~EntityHandler();
             static EntityHandler* m_singleton;

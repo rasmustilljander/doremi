@@ -21,7 +21,7 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class AIPathManager : public Manager, public Subscriber
         {
-            public:
+        public:
             AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AIPathManager();
             void Update(double p_dt) override;
@@ -31,7 +31,7 @@ namespace Doremi
             */
             void OnEvent(Event* p_event) override;
 
-            private:
+        private:
             DoremiEngine::AI::PotentialField* m_field;
             bool firstUpdate;
         };

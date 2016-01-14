@@ -12,7 +12,7 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class AudioManager : public Manager, public Subscriber
         {
-            public:
+        public:
             AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AudioManager();
             void Update(double p_dt) override;
@@ -26,7 +26,7 @@ namespace Doremi
             // The ammount of time that the gunbutton has been pressed down
             double m_timeThatGunButtonIsDown;
 
-            private:
+        private:
         };
     }
 }

@@ -10,7 +10,7 @@ namespace DoremiEngine
         */
         class MapGrid
         {
-            public:
+        public:
             virtual void SetMapGrid() = 0;
         };
     }

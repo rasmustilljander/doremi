@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class RasterizerStateImpl : public RasterizerState
         {
-            public:
+        public:
             RasterizerStateImpl();
             virtual ~RasterizerStateImpl();
 
@@ -15,7 +15,7 @@ namespace DoremiEngine
 
             ID3D11RasterizerState* GetRasterizerState() override;
 
-            private:
+        private:
             ID3D11RasterizerState* m_rasterizerState;
         };
     }

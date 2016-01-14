@@ -21,7 +21,8 @@ namespace Doremi
     namespace Core
     {
         // Loads of structs
-        struct MaterialData {
+        struct MaterialData
+        {
             MaterialData()
             {
                 mapMasks = 0;
@@ -41,20 +42,22 @@ namespace Doremi
             float specRollOff;
         };
 
-        struct MeshData {
+        struct MeshData
+        {
             int nrPos, nrNor, nrUV, nrI;
             int triangleCount;
-            DirectX::XMFLOAT3 *positions;
-            DirectX::XMFLOAT3 *normals;
-            DirectX::XMFLOAT2 *uvs;
+            DirectX::XMFLOAT3* positions;
+            DirectX::XMFLOAT3* normals;
+            DirectX::XMFLOAT2* uvs;
 
-            int *indexPositions;
-            int *indexNormals;
-            int *indexUVs;
-            //int *indexTriangles;
-            int *trianglesPerFace;
-            //Material *material; //pekar på ett specifikt material i en vektor av material
-            ~MeshData() {
+            int* indexPositions;
+            int* indexNormals;
+            int* indexUVs;
+            // int *indexTriangles;
+            int* trianglesPerFace;
+            // Material *material; //pekar på ett specifikt material i en vektor av material
+            ~MeshData()
+            {
                 delete(positions);
                 delete(normals);
                 delete(uvs);
@@ -66,24 +69,27 @@ namespace Doremi
             }
         };
 
-        struct TransformData {
+        struct TransformData
+        {
             DirectX::XMFLOAT3 pos;
             DirectX::XMFLOAT4 rot;
             DirectX::XMFLOAT3 scale;
-            //Float3 pos, rot, scale;
+            // Float3 pos, rot, scale;
         };
 
-        struct CameraData {
-            int         isOrtho;
-            float       target[3];
-            float       upVector[3];
-            float       rightVector[3];
-            float       hAngle; //hor-FOV
+        struct CameraData
+        {
+            int isOrtho;
+            float target[3];
+            float upVector[3];
+            float rightVector[3];
+            float hAngle; // hor-FOV
         };
 
-        struct LightData {
-            int type; //0 = def, 1 = dir, 2 = spot, 3 = point
-            int decayType; //0 = none, 1 = linear, 2 = quadratic (l/d**v)
+        struct LightData
+        {
+            int type; // 0 = def, 1 = dir, 2 = spot, 3 = point
+            int decayType; // 0 = none, 1 = linear, 2 = quadratic (l/d**v)
             float intensity;
             DirectX::XMFLOAT3 colorDiffuse;
             DirectX::XMFLOAT3 direction;
@@ -97,7 +103,10 @@ namespace Doremi
             std::string transformName;
             std::string meshName;
             std::string materialName;
-            ObjectCouplingInfo(const std::string& p_transformName, const std::string& p_meshName, const std::string& p_materialName): transformName(p_transformName), meshName(p_meshName), materialName(p_materialName) {}
+            ObjectCouplingInfo(const std::string& p_transformName, const std::string& p_meshName, const std::string& p_materialName)
+                : transformName(p_transformName), meshName(p_meshName), materialName(p_materialName)
+            {
+            }
             ObjectCouplingInfo() {}
         };
 
@@ -107,6 +116,7 @@ namespace Doremi
             LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~LevelLoader();
             void LoadLevel(const std::string& p_fileName);
+
         private:
             // Help functions
             std::vector<DoremiEngine::Graphic::Vertex> BuildMesh(const MeshData& p_data);
@@ -114,7 +124,5 @@ namespace Doremi
             std::map<std::string, TransformData> m_transforms;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
         };
-
-
     }
 }

@@ -22,7 +22,7 @@ namespace DoremiEngine
         class PotentialFieldActor;
         class PotentialField
         {
-            public:
+        public:
             /**
             Saves a 2D array of 3D positions, TODOKO Might be changed to arrays instead of vector
             */

@@ -8,7 +8,7 @@ namespace Utility
     {
         class MemoryAllocator
         {
-            public:
+        public:
             /**
             TODORT docs
             */
@@ -30,7 +30,7 @@ namespace Utility
             MemorySpecification GetMemorySpecification();
 
 
-            protected:
+        protected:
             void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment);
             void AllocateFirstTime();
             uint8_t ComputeAdjustment(void* p_adress, const uint8_t& p_alignment);
@@ -46,7 +46,7 @@ namespace Utility
             uint8_t m_alignment;
             uint8_t m_adjustment;
 
-            private:
+        private:
             void* m_memoryStartRaw;
             void* m_memoryEndRaw;
             void* m_memoryStartAligned;

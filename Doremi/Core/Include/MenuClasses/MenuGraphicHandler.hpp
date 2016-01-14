@@ -10,7 +10,7 @@ namespace Doremi
     {
         class MenuGraphicHandler
         {
-            public:
+        public:
             MenuGraphicHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~MenuGraphicHandler();
 
@@ -22,7 +22,7 @@ namespace Doremi
             void DrawButtons(double p_dt, std::vector<Button> p_buttonsToDraw, int p_currentbutton);
 
 
-            private:
+        private:
             static MenuGraphicHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             DoremiEngine::Graphic::PixelShader* m_menuPixelShader;

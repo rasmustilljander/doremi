@@ -15,7 +15,7 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class MenuHandler
         {
-            public:
+        public:
             MenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution);
             virtual ~MenuHandler();
             static MenuHandler* GetInstance();
@@ -26,7 +26,7 @@ namespace Doremi
             std::vector<Button> GetButtons();
             int GetCurrentButton();
 
-            private:
+        private:
             static MenuHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::vector<Button> m_buttonList;

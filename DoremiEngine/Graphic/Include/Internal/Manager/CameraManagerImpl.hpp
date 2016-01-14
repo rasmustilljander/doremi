@@ -9,7 +9,7 @@ namespace DoremiEngine
         struct GraphicModuleContext;
         class CameraManagerImpl : public CameraManager
         {
-            public:
+        public:
             // TODOKO add documents
             CameraManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~CameraManagerImpl();
@@ -18,7 +18,7 @@ namespace DoremiEngine
             Camera* BuildNewCamera(DirectX::XMFLOAT4X4& p_projectionMatrix) override;
             void PushCameraToDevice(const Camera& p_camera) override;
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
             ID3D11Buffer* m_cameraBuffer;
         };

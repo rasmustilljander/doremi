@@ -42,7 +42,7 @@ namespace DoremiEngine
 
         class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback, public PxUserControllerHitReport
         {
-            public:
+        public:
             PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
             virtual ~PhysicsModuleImplementation();
 
@@ -69,7 +69,7 @@ namespace DoremiEngine
             float ExampleMethod(const float& posx) override;
             void ExampleMethodAltersData(float* p_posX, float* p_posY);
 
-            private:
+        private:
             // Creates the world as a scene. TODOJB create SceneManager somehow
             void CreateWorldScene();
 

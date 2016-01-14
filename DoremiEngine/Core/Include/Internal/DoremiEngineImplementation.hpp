@@ -9,7 +9,7 @@ namespace DoremiEngine
     {
         class DoremiEngineImplementation : public DoremiEngine
         {
-            public:
+        public:
             /**
                 Constructor
             */
@@ -36,7 +36,7 @@ namespace DoremiEngine
             */
             const SharedContext& GetSharedContext() const override { return *static_cast<SharedContext*>(m_sharedContext); }
 
-            private:
+        private:
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
 
             // Loading .dll

@@ -6,7 +6,7 @@ namespace DoremiEngine
     {
         class ParticleSystemManager
         {
-            public:
+        public:
             // TODOKO add something
         };
     }

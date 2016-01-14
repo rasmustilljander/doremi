@@ -69,25 +69,25 @@ namespace Doremi
         {
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
 
-            if (inputHandler != nullptr)
+            if(inputHandler != nullptr)
             {
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
                 {
                     m_moveLeftRight -= m_speed * pDT;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
                 {
                     m_moveLeftRight += m_speed * pDT;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
                 {
                     m_moveForwardBackward += m_speed * pDT;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
                 {
                     m_moveForwardBackward -= m_speed * pDT;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Fire))
                 {
                     m_camYaw += inputHandler->GetMouseMovementX() * 0.001f;
                     m_camPitch += inputHandler->GetMouseMovementY() * 0.001f;

@@ -7,7 +7,7 @@ namespace Utility
     {
         class RawAllocator : public MemoryAllocator
         {
-            public:
+        public:
             /**
                 Constructor
             */
@@ -49,7 +49,7 @@ namespace Utility
                 delete t; // TODORT implement correctly
             }
 
-            protected:
+        protected:
             uint8_t m_headerSizeInBytes = 2;
             size_t m_numBlocks;
             bool m_shared;

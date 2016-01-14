@@ -15,7 +15,7 @@ namespace DoremiEngine
     {
         class AudioModuleImplementation : public AudioModule
         {
-            public:
+        public:
             /**
                 TODO docs
             */
@@ -79,7 +79,7 @@ namespace DoremiEngine
 
             void PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID) override;
 
-            private:
+        private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 
 

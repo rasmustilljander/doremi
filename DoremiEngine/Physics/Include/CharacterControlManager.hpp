@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class CharacterControlManager
         {
-            public:
+        public:
             /**
             Adds a character controller and maps it to the specified ID.
             Controller starts at the specified position. It has the shape

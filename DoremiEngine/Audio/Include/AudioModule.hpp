@@ -18,7 +18,7 @@ namespace DoremiEngine
         */
         class AudioModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
             Updates the audiomodule
             */

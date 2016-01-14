@@ -18,13 +18,13 @@ namespace Doremi
         Doesn't do anything, and could be removed once examples are no longer necessary*/
         class SkyBoxManager : public Manager
         {
-            public:
+        public:
             SkyBoxManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~SkyBoxManager();
             void Update(double p_dt) override;
             void CreateSkyBox();
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
-            private:
+        private:
             DoremiEngine::Graphic::MaterialInfo* m_materialInfo;
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
             DoremiEngine::Graphic::PixelShader* m_skyBoxPixelShader;

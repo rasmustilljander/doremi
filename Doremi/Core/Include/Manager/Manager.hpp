@@ -14,7 +14,7 @@ namespace Doremi
         for it to run*/
         class Manager
         {
-            public:
+        public:
             Manager(const DoremiEngine::Core::SharedContext& p_sharedContext, const std::string& p_name);
 
             /** Big update loop for every type of manager*/
@@ -22,7 +22,7 @@ namespace Doremi
 
             const std::string& GetName() const { return m_name; }
 
-            protected:
+        protected:
             /** Engine-context form which specific interfaces can be accessed*/
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::string m_name;

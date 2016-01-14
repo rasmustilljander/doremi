@@ -10,7 +10,7 @@ namespace DoremiEngine
 
         class GraphicModuleImplementation : public GraphicModule
         {
-            public:
+        public:
             /**
             TODO docs
             */
@@ -39,7 +39,7 @@ namespace DoremiEngine
             */
             void Shutdown() override;
 
-            private:
+        private:
             const Core::SharedContext& m_sharedContext;
             SubModuleManagerImpl* m_subModuleManger;
             GraphicModuleContext m_graphicContext;

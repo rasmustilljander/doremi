@@ -22,7 +22,7 @@ namespace Doremi
         */
         class ClientNetworkManager : public Manager
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -38,7 +38,7 @@ namespace Doremi
             */
             void Update(double p_dt) override;
 
-            private:
+        private:
             /**
                 Recieves reliable & unreliable messages
             */
@@ -112,7 +112,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void CreateInputMessage(NetMessage &p_message);
+            void CreateInputMessage(NetMessage& p_message);
 
             /**
                 Timer for next update(send data)

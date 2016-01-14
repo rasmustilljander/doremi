@@ -14,7 +14,7 @@ namespace Doremi
     {
         class TemplateCreator
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -30,7 +30,7 @@ namespace Doremi
             */
             void CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext);
 
-            private:
+        private:
             /**
                 TODOCM doc
             */

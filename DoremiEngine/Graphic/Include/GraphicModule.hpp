@@ -18,7 +18,7 @@ namespace DoremiEngine
         */
         class GraphicModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
             Returns a sub module manager which then gives access to other sub modules in the graphic module
             */

@@ -1,7 +1,7 @@
 /// Game side
 #include <LevelLoaderServer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
-//Components
+// Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 /// Engine side
@@ -24,25 +24,23 @@ namespace Doremi
 {
     namespace Core
     {
-        LevelLoaderServer::LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext): m_sharedContext(p_sharedContext)
-        {}
-        LevelLoaderServer::~LevelLoaderServer()
-        {}
+        LevelLoaderServer::LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        LevelLoaderServer::~LevelLoaderServer() {}
         void LevelLoaderServer::LoadLevel(const std::string& p_fileName)
-        {            
+        {
             using namespace std;
             using namespace DirectX;
             string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
             ifstream ifs;
             ifs.open(fileName, ifstream::in | ofstream::binary);
-            if (ifs.is_open() == true)
+            if(ifs.is_open() == true)
             {
-                //testa o läsa lite
+                // testa o läsa lite
 
                 // scene name
                 int sceneNameSize;
                 ifs.read((char*)&sceneNameSize, sizeof(int));
-                char *sceneName = new char[sceneNameSize];
+                char* sceneName = new char[sceneNameSize];
                 ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
 
                 // how much different stuff there is
@@ -52,8 +50,8 @@ namespace Doremi
                 ifs.read((char*)&nrMeshes, sizeof(int));
                 ifs.read((char*)&nrLights, sizeof(int));
 
-                //ladda material
-                for (int i = 1; i < nrMats; i++) //defualt material, så kör inte hela nrMats
+                // ladda material
+                for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
                 {
                     int materialNameSize;
                     ifs.read((char*)&materialNameSize, sizeof(int));
@@ -75,8 +73,8 @@ namespace Doremi
                     char* diffuseTextureName = new char[diffuseTextureNameSize];
                     ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
                 }
-                //ladda transforms
-                for (int i = 0; i < nrTransforms; i++)
+                // ladda transforms
+                for(int i = 0; i < nrTransforms; i++)
                 {
                     int parentNameSize;
                     int transformNameSize;
@@ -85,20 +83,20 @@ namespace Doremi
                     ifs.read((char*)&transformNameSize, sizeof(int));
 
                     char* parentName = new char[parentNameSize]; // TODOKO Not supported yet
-                    char* transformName = new char[transformNameSize]; 
+                    char* transformName = new char[transformNameSize];
 
                     ifs.read((char*)parentName, sizeof(char) * parentNameSize);
                     ifs.read((char*)transformName, sizeof(char) * transformNameSize);
                     TransformData transformData;
 
-                    ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3) );
-                    ifs.read((char*)&transformData.rot, sizeof(float) * 4); //quaternion tror jag
+                    ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3));
+                    ifs.read((char*)&transformData.rot, sizeof(float) * 4); // quaternion tror jag
                     ifs.read((char*)&transformData.scale, sizeof(float) * 3);
 
                     m_transforms[transformName] = transformData;
                 }
-                //ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
-                for (int i = 0; i < nrMeshes; i++)
+                // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
+                for(int i = 0; i < nrMeshes; i++)
                 {
                     int transformNameSize;
                     int meshNameSize;
@@ -119,7 +117,7 @@ namespace Doremi
                     char* materialName = new char[materialNameSize];
                     ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                    //messageSTART****
+                    // messageSTART****
                     int meshID;
                     ifs.read((char*)&meshID, sizeof(int));
 
@@ -148,10 +146,11 @@ namespace Doremi
                     ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
                     ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
                     ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
-                    m_meshCoupling.push_back( ObjectCouplingInfo(transformName,meshName, materialName));
+                    m_meshCoupling.push_back(ObjectCouplingInfo(transformName, meshName, materialName));
                 }
 
-                for (int i = 0; i < nrLights; i++) {
+                for(int i = 0; i < nrLights; i++)
+                {
                     int transformNameSize;
                     int lightNameSize;
 
@@ -174,11 +173,10 @@ namespace Doremi
                     ifs.read((char*)&lightData.dropOff, sizeof(float));
                     ifs.read((char*)&lightData.coneAngle, sizeof(float));
                     ifs.read((char*)&lightData.penumAgle, sizeof(float));
-
                 }
             }
             size_t length = m_meshCoupling.size();
-            for (size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < length; i++)
             {
                 std::string transformName = m_meshCoupling[i].transformName;
                 std::string meshName = m_meshCoupling[i].meshName;
@@ -189,7 +187,6 @@ namespace Doremi
                 transComp->position = m_transforms[transformName].pos;
                 transComp->rotation = m_transforms[transformName].rot;
                 transComp->scale = m_transforms[transformName].scale;
-
             }
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoaderServer::BuildMesh(const MeshData& p_data)
@@ -201,12 +198,13 @@ namespace Doremi
 
             DoremiEngine::Graphic::Vertex tempV;
 
-            for (int i = 0; i < p_data.nrI; i = i + 3) {
-                tempV.position = p_data.positions[p_data.indexPositions[i+2]];
+            for(int i = 0; i < p_data.nrI; i = i + 3)
+            {
+                tempV.position = p_data.positions[p_data.indexPositions[i + 2]];
                 tempV.position.z = tempV.position.z * -1.0f;
-                tempV.normal = p_data.normals[p_data.indexNormals[i+2]];
+                tempV.normal = p_data.normals[p_data.indexNormals[i + 2]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
-                tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i+2]];
+                tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 2]];
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
 
                 vertexBuffer.push_back(tempV);

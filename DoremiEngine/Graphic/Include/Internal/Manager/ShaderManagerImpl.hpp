@@ -9,7 +9,7 @@ namespace DoremiEngine
 
         class ShaderManagerImpl : public ShaderManager
         {
-            public:
+        public:
             // TODOKO Add docs
             ShaderManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~ShaderManagerImpl();
@@ -21,7 +21,7 @@ namespace DoremiEngine
             void SetActivePixelShader(PixelShader* p_shader) override;
             void SetActiveComputeShader(ComputeShader* p_shader) override;
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
         };
     }

@@ -6,7 +6,7 @@ namespace DoremiEngine
     {
         class LightInfo
         {
-            public:
+        public:
         };
     }
 }

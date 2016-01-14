@@ -29,7 +29,7 @@ namespace Doremi
         class FreeLookCamera;
         class CameraHandler
         {
-            public:
+        public:
             static CameraHandler* GetInstance();
             static void StartCameraHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~CameraHandler();
@@ -43,7 +43,7 @@ namespace Doremi
 
             DirectX::XMFLOAT3 GetActiveCameraPosition();
 
-            private:
+        private:
             /**
             Dependent on the graphic module
             */

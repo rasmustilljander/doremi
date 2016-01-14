@@ -17,7 +17,7 @@ namespace DoremiEngine
         struct GraphicModuleContext;
         class SubModuleManagerImpl : public SubModuleManager
         {
-            public:
+        public:
             SubModuleManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~SubModuleManagerImpl();
             void Initialize();
@@ -38,7 +38,7 @@ namespace DoremiEngine
             CameraManagerImpl& GetCameraManagerImpl();
             LightManagerImpl& GetLightManagerImpl();
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
             MeshManagerImpl* m_meshManager;
             ParticleSystemManagerImpl* m_particleSystemManager;

@@ -67,6 +67,5 @@ namespace DoremiEngine
         LightManagerImpl& SubModuleManagerImpl::GetLightManagerImpl() { return *m_lightManager; }
 
         ComputeShaderManager& SubModuleManagerImpl::GetComputeShaderManager() { return *m_computeShaderManager; }
-
     }
 }

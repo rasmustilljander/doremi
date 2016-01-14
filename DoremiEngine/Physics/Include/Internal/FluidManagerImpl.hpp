@@ -14,7 +14,7 @@ namespace DoremiEngine
         struct InternalPhysicsUtils;
         class FluidManagerImpl : public FluidManager
         {
-            public:
+        public:
             FluidManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~FluidManagerImpl();
 
@@ -27,7 +27,7 @@ namespace DoremiEngine
             // Updates all particle emitters
             void Update(float p_dt);
 
-            private:
+        private:
             InternalPhysicsUtils& m_utils;
             unordered_map<int, ParticleEmitter*> m_emitters;
         };

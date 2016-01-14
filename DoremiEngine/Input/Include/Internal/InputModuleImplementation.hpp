@@ -11,7 +11,7 @@ namespace DoremiEngine
     {
         class InputModuleImplementation : public InputModule
         {
-            private:
+        private:
             struct MouseMovementStruct
             {
                 int x = 0;
@@ -24,7 +24,7 @@ namespace DoremiEngine
             int m_mouseWheelSpins = 0; // Y direction
 
 
-            public:
+        public:
             /**
                 TODO docs
             */
@@ -73,7 +73,7 @@ namespace DoremiEngine
             void SetCursorInvisibleAndMiddle(bool p_bool);
 
 
-            private:
+        private:
             // SDL_Window *m_win;
             const Uint8* m_keyState;
             // void InputForPlayingUpdate();

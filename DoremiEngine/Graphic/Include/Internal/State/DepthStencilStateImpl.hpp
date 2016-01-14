@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class DepthStencilStateImpl : public DepthStencilState
         {
-            public:
+        public:
             DepthStencilStateImpl();
             virtual ~DepthStencilStateImpl();
 
@@ -15,7 +15,7 @@ namespace DoremiEngine
 
             ID3D11DepthStencilState* GetDepthStencilState() override;
 
-            private:
+        private:
             ID3D11DepthStencilState* m_stencilState;
         };
     }

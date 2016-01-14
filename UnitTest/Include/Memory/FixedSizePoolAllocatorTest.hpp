@@ -6,7 +6,7 @@
 using namespace Utility::MemoryManager;
 class FixedSizePoolAllocatorTest : public testing::Test
 {
-    public:
+public:
     FixedSizePoolAllocatorTest() {}
     virtual ~FixedSizePoolAllocatorTest() {}
 

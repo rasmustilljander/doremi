@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class Adress
         {
-            public:
+        public:
             /**
                 Returns port
             */

@@ -45,8 +45,8 @@ namespace Doremi
             //// Example on how to create and Broadcast a event
 
             //// Loop through all entities
-            //size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            //for(size_t i = 0; i < length; i++)
+            // size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            // for(size_t i = 0; i < length; i++)
             //{
             //    // Check that the current entity has the relevant components
             //    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
@@ -56,12 +56,12 @@ namespace Doremi
             //}
 
             ////TransformComponent* t_trans = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(m_playerComponentID);
-            //m_playerHandler->UpdatePosition();
+            // m_playerHandler->UpdatePosition();
         }
         void PlayerManager::OnEvent(Event* p_event)
         {
             //// Check to see what event was received and do something with it (Might be changed to callback functions instead)
-            //switch(p_event->eventType)
+            // switch(p_event->eventType)
             //{
             //    case Events::Example:
             //    {

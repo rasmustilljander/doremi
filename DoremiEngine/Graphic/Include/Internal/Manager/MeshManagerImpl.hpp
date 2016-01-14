@@ -17,7 +17,7 @@ namespace DoremiEngine
         class ModelLoader;
         class MeshManagerImpl : public MeshManager
         {
-            public:
+        public:
             // TODOKO add documents
             MeshManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~MeshManagerImpl();
@@ -30,7 +30,7 @@ namespace DoremiEngine
             void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) override;
             void Draw() override;
 
-            private:
+        private:
             const GraphicModuleContext& m_graphicContext;
             ModelLoader* m_modelLoader;
             std::map<std::string, MeshInfo*> m_meshInfo;

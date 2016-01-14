@@ -16,7 +16,7 @@ namespace DoremiEngine
         class MaterialInfo;
         class MeshManager
         {
-            public:
+        public:
             // Builds a mesh from the given file, the filename then becomes the mesh's id
             virtual MeshInfo* BuildMeshInfo(const std::string& p_fileName) = 0;
             virtual MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName) = 0;

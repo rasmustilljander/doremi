@@ -31,7 +31,7 @@ namespace Doremi
 
         class InterpolationHandler
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -77,7 +77,7 @@ namespace Doremi
             */
             void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
 
-            private:
+        private:
             /**
                 TODOCM doc
             */

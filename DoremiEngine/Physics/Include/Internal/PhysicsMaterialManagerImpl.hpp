@@ -11,7 +11,7 @@ namespace DoremiEngine
         struct InternalPhysicsUtils;
         class PhysicsMaterialManagerImpl : public PhysicsMaterialManager
         {
-            public:
+        public:
             PhysicsMaterialManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~PhysicsMaterialManagerImpl();
 
@@ -22,7 +22,7 @@ namespace DoremiEngine
             // Stuff for internals
             PxMaterial* GetMaterial(int id);
 
-            private:
+        private:
             InternalPhysicsUtils& m_utils;
             unordered_map<int, PxMaterial*> m_materials;
             int m_nextMaterial;

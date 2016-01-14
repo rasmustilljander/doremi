@@ -51,13 +51,13 @@ namespace Doremi
         */
         enum class UserCommandMeny
         { // Code
-            LeftClick = 1,  // 1
+            LeftClick = 1, // 1
             RightClick = 2, // 3
-            Enter = 4,      // 13
-            Up = 8,         // 1073741906
-            Down = 16,      // 1073741905
-            Left = 32,      // 1073741904
-            Right = 64,     // 1073741903
+            Enter = 4, // 13
+            Up = 8, // 1073741906
+            Down = 16, // 1073741905
+            Left = 32, // 1073741904
+            Right = 64, // 1073741903
         };
 
         /**
@@ -65,7 +65,7 @@ namespace Doremi
         */
         class InputHandler
         {
-            public:
+        public:
             /**
                 TODOEA doc
             */
@@ -106,7 +106,7 @@ namespace Doremi
             // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
             // Behöver nog ta bort old entries eller ändra dem på något sätt.
 
-            protected:
+        protected:
             /**
                 TODOEA doc
             */

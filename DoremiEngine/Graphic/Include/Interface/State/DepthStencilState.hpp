@@ -6,7 +6,7 @@ namespace DoremiEngine
     {
         class DepthStencilState
         {
-            public:
+        public:
             virtual void SetDepthStencilState(ID3D11DepthStencilState* p_depthStencilState) = 0;
             virtual ID3D11DepthStencilState* GetDepthStencilState() = 0;
         };

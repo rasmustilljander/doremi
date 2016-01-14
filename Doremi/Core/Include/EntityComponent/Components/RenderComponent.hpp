@@ -19,7 +19,10 @@ namespace Doremi
         {
             DoremiEngine::Graphic::MeshInfo* mesh;
             DoremiEngine::Graphic::MaterialInfo* material;
-            RenderComponent(DoremiEngine::Graphic::MeshInfo* p_meshID, DoremiEngine::Graphic::MaterialInfo* p_materialID) : mesh(p_meshID), material(p_materialID) {}
+            RenderComponent(DoremiEngine::Graphic::MeshInfo* p_meshID, DoremiEngine::Graphic::MaterialInfo* p_materialID)
+                : mesh(p_meshID), material(p_materialID)
+            {
+            }
             RenderComponent() : mesh(nullptr), material(nullptr) {}
         };
     }

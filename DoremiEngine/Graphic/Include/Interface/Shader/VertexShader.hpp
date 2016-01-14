@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class VertexShader
         {
-            public:
+        public:
             virtual const std::string& GetShaderName() = 0;
             virtual ID3D11VertexShader* GetShaderHandle() = 0;
             virtual ID3D11InputLayout* GetInputLayout() = 0;

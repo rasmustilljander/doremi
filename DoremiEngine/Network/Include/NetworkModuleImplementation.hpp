@@ -30,7 +30,7 @@ namespace DoremiEngine
         */
         class NetworkModuleImplementation : public NetworkModule
         {
-            public:
+        public:
             /**
                 TODOCM docs
             */
@@ -121,7 +121,7 @@ namespace DoremiEngine
             */
             void Shutdown() override;
 
-            private:
+        private:
             /**
                 TODOCM docs
             */

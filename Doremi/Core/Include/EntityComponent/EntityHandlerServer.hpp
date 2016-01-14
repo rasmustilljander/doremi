@@ -10,7 +10,7 @@ namespace Doremi
         */
         class EntityHandlerServer : public EntityHandler
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -39,7 +39,7 @@ namespace Doremi
             */
             void RemoveEntity(int p_entityID) override;
 
-            private:
+        private:
             /**
                 TODOCM doc
             */

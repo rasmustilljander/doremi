@@ -17,7 +17,7 @@ namespace DoremiEngine
         */
         class DoremiEngine
         {
-            public:
+        public:
             /**
                 TODO docs
             */

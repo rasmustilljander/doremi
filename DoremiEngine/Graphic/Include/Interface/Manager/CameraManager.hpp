@@ -12,7 +12,7 @@ namespace DoremiEngine
         */
         class CameraManager
         {
-            public:
+        public:
             /**
             Creates a new Camera from the given projection matrix.
             */

@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class MaterialInfo
         {
-            public:
+        public:
             virtual std::string GetMaterialName() const = 0;
             virtual ID3D11ShaderResourceView* GetTexture() const = 0;
             virtual ID3D11SamplerState* GetSamplerState() const = 0;

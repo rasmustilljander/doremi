@@ -21,7 +21,7 @@ namespace DoremiEngine
         It is responsible for emitting new particles*/
         class ParticleEmitter
         {
-            public:
+        public:
             // ParticleEmitter(
             //    XMFLOAT3 p_position,
             //    XMFLOAT4 p_direction,
@@ -55,7 +55,7 @@ namespace DoremiEngine
             particles (update as more stuff is added)*/
             void Update(float p_dt);
 
-            private:
+        private:
             ParticleEmitterData m_this;
             //// Position of emitter
             // XMFLOAT3 m_position;

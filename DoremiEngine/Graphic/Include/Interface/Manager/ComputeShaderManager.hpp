@@ -10,7 +10,7 @@ namespace DoremiEngine
         // struct ID3D11UnorderedAccessView;
         class ComputeShaderManager
         {
-            public:
+        public:
             // TODORK add functions
             virtual void CreateComputeShaders() = 0;
             virtual void SetUAV(BufferType index) = 0;

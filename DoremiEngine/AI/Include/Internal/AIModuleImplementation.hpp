@@ -17,7 +17,7 @@ namespace DoremiEngine
         class AStarSubModuleImpl;
         class AIModuleImplementation : public AIModule
         {
-            public:
+        public:
             /**
                 TODO docs
             */
@@ -46,7 +46,7 @@ namespace DoremiEngine
             AStarSubModule& GetAstarSubModule() override;
 
 
-            private:
+        private:
             const Core::SharedContext& m_sharedContext;
             PotentialFieldSubModuleImpl* m_potentialFieldSubModuleImpl;
             AStarSubModuleImpl* m_aStarSubModuleImpl;

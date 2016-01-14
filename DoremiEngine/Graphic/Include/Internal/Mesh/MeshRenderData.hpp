@@ -49,7 +49,7 @@ namespace DoremiEngine
             {
                 return true;
             }
-            //if(a.texture < b.texture)
+            // if(a.texture < b.texture)
             //{
             //    return true;
             //}
@@ -62,7 +62,7 @@ namespace DoremiEngine
             {
                 return true;
             }
-            //if(a.vertexData < b.vertexData)
+            // if(a.vertexData < b.vertexData)
             //{
             //    return true;
             //}

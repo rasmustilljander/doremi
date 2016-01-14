@@ -10,7 +10,7 @@ namespace DoremiEngine
         */
         class PotentialFieldActor
         {
-            public:
+        public:
             /**
             Sets the actor position
             */

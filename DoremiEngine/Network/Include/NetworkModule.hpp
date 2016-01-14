@@ -35,7 +35,7 @@ namespace DoremiEngine
         */
         class NetworkModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
                 Startup the Network Module, if WIN32 is specified - winsock is initialized
             */

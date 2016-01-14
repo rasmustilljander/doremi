@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class PotentialFieldSubModuleImpl : public PotentialFieldSubModule
         {
-            public:
+        public:
             PotentialFieldSubModuleImpl();
             virtual ~PotentialFieldSubModuleImpl();
             PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,

@@ -17,7 +17,7 @@ namespace Doremi
     {
         class GameCore
         {
-            public:
+        public:
             /**
             TODO doc
             */
@@ -27,7 +27,7 @@ namespace Doremi
             */
             virtual ~GameCore();
 
-            protected:
+        protected:
             void LoadEngineLibrary();
             const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_engineModulesToStart);
 

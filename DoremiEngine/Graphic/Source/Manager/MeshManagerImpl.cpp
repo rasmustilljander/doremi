@@ -76,7 +76,7 @@ namespace DoremiEngine
 
         MeshInfo* MeshManagerImpl::BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName)
         {
-            if (m_meshInfo.find(p_meshName) != m_meshInfo.end())
+            if(m_meshInfo.find(p_meshName) != m_meshInfo.end())
             {
                 return m_meshInfo[p_meshName];
             }
@@ -91,7 +91,7 @@ namespace DoremiEngine
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             ID3D11Buffer* buffer;
             HRESULT res = m_directX.GetDevice()->CreateBuffer(&bd, NULL, &buffer);
-            if (!CheckHRESULT(res, "Error when creating mesh buffer"))
+            if(!CheckHRESULT(res, "Error when creating mesh buffer"))
             {
                 // TODOKO log error
                 return nullptr;
@@ -109,7 +109,7 @@ namespace DoremiEngine
 
         MeshInfo* MeshManagerImpl::GetMeshInfo(const std::string& p_meshName)
         {
-            if (m_meshInfo.find(p_meshName) != m_meshInfo.end())
+            if(m_meshInfo.find(p_meshName) != m_meshInfo.end())
             {
                 return m_meshInfo[p_meshName];
             }

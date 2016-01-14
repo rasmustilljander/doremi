@@ -22,7 +22,7 @@ namespace DoremiEngine
         class RasterizerState;
         class DirectXManager
         {
-            public:
+        public:
             // TODOKO add documents
             virtual ID3D11Device* GetDevice() = 0;
             virtual ID3D11DeviceContext* GetDeviceContext() = 0;

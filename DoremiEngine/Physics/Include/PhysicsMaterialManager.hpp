@@ -4,7 +4,7 @@ namespace DoremiEngine
     {
         class PhysicsMaterialManager
         {
-            public:
+        public:
             /**
             Creates a physical material of the specific attributes. Returns an ID to be used
             when interracting with the material.

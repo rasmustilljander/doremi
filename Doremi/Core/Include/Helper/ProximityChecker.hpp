@@ -13,7 +13,7 @@ namespace Doremi
         */
         class ProximityChecker
         {
-            public:
+        public:
             static ProximityChecker& GetInstance();
             virtual ~ProximityChecker();
             /**
@@ -25,7 +25,7 @@ namespace Doremi
             */
             std::vector<size_t> GetAllEntitysInProximity(size_t p_entityID);
 
-            protected:
+        protected:
             static ProximityChecker* m_singleton;
             ProximityChecker();
 

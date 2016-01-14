@@ -20,7 +20,7 @@ namespace DoremiEngine
         */
         class AIModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
             Updates the AImodule
             */

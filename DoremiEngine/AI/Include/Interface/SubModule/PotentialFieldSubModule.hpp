@@ -13,7 +13,7 @@ namespace DoremiEngine
         class PotentialFieldActor;
         class PotentialFieldSubModule
         {
-            public:
+        public:
             /**
             Creates a new potential field with no actors
             */

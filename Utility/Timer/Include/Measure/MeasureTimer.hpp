@@ -20,7 +20,7 @@ namespace Utility
 
         class MeasureTimer
         {
-            public:
+        public:
             /**
                 Gets an instance of this object, if no instance exists, it creates one.
             */
@@ -36,7 +36,7 @@ namespace Utility
             */
             void DumpData(const std::string& p_origin);
 
-            protected:
+        protected:
             MeasureTimer();
             MeasureTimer(MeasureTimer const&) = delete;
             void operator=(MeasureTimer const&) = delete;

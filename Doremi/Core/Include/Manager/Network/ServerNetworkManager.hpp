@@ -28,7 +28,7 @@ namespace Doremi
         */
         class ServerNetworkManager : public Manager
         {
-            public:
+        public:
             /**
                 TODOCM doc
             */
@@ -44,7 +44,7 @@ namespace Doremi
             */
             void Update(double p_dt) override;
 
-            private:
+        private:
             /**
                 Recieves reliable and unreliable messages
             */
@@ -170,7 +170,7 @@ namespace Doremi
             */
             uint8_t m_nextSnapshotSequence;
             /**
-            
+
                 test
             */
             uint32_t counter;

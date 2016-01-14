@@ -9,7 +9,7 @@ namespace Utility
     {
         template <typename T> class FixedSizePoolAllocator : public MemoryAllocator
         {
-            public:
+        public:
             /**
                 TODORT docs
             */
@@ -89,7 +89,7 @@ namespace Utility
                 PrepareBlocks();
             }
 
-            protected:
+        protected:
             void PrepareBlocks()
             {
                 size_t* current = reinterpret_cast<size_t*>(m_currentFree);

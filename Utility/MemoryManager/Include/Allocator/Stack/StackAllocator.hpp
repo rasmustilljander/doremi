@@ -9,7 +9,7 @@ namespace Utility
     {
         class StackAllocator : public MemoryAllocator
         {
-            public:
+        public:
             /**
                 Constructor
             */
@@ -45,7 +45,7 @@ namespace Utility
             */
             void FreeToMarker(const MemoryMarker& p_marker);
 
-            protected:
+        protected:
             void* m_top;
 
             void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment);

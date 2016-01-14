@@ -19,7 +19,7 @@ namespace Doremi
         class Subscriber;
         class EventHandler
         {
-            public:
+        public:
             /** Is a singleton. Use this method to get the EventManager*/
             static EventHandler* GetInstance();
             /** Puts event in mailbox to be handled by the event handler*/
@@ -29,7 +29,7 @@ namespace Doremi
             /** Begin processing events by calling OnEvent in all subscribers*/
             void DeliverEvents();
 
-            private:
+        private:
             // Private constructors because Singleton
             EventHandler();
             ~EventHandler();

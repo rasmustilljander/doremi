@@ -43,7 +43,7 @@ namespace ctpl
     {
         template <typename T> class Queue
         {
-            public:
+        public:
             bool push(T const& value)
             {
                 std::unique_lock<std::mutex> lock(this->mutex);
@@ -65,7 +65,7 @@ namespace ctpl
                 return this->q.empty();
             }
 
-            private:
+        private:
             std::queue<T> q;
             std::mutex mutex;
         };
@@ -74,7 +74,7 @@ namespace ctpl
     class thread_pool
     {
 
-        public:
+    public:
         thread_pool() { this->init(); }
         thread_pool(int nThreads)
         {
@@ -213,7 +213,7 @@ namespace ctpl
         }
 
 
-        private:
+    private:
         // deleted
         thread_pool(const thread_pool&); // = delete;
         thread_pool(thread_pool&&); // = delete;

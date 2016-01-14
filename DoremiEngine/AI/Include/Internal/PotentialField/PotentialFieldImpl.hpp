@@ -7,7 +7,7 @@ namespace DoremiEngine
     {
         class PotentialFieldImpl : public PotentialField
         {
-            public:
+        public:
             PotentialFieldImpl();
             virtual ~PotentialFieldImpl();
             void SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid) override;
@@ -23,7 +23,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr,
                                                     const bool& p_staticCheck = true) override;
 
-            private:
+        private:
             // Help functions
             float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
             std::vector<std::vector<PotentialFieldGridPoint>> m_grid; // [width][height]

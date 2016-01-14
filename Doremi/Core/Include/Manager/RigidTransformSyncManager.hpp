@@ -8,7 +8,7 @@ namespace Doremi
     {
         class RigidTransformSyncManager : public Manager, public Subscriber
         {
-            public:
+        public:
             RigidTransformSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~RigidTransformSyncManager();
 

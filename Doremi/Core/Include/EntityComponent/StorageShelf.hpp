@@ -7,14 +7,14 @@ using namespace std;
 // where we store the actual components/data
 template <class T> class StorageShelf
 {
-    public:
+public:
     static StorageShelf<T>* GetInstance();
     T mItems[MAX_NUM_ENTITIES];
 
     // TODOCM bad solution to swap pointers of singleton, fix when there's time
     void SetSingleton(void* p_pointer);
 
-    private:
+private:
     StorageShelf();
     ~StorageShelf();
 

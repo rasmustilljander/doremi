@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class PotentialFieldActorImpl : public PotentialFieldActor
         {
-            public:
+        public:
             PotentialFieldActorImpl();
             virtual ~PotentialFieldActorImpl();
 
@@ -24,7 +24,7 @@ namespace DoremiEngine
             const bool& IsStatic() const override { return m_static; };
             const DirectX::XMINT2& GetClosestOccupied(const DirectX::XMFLOAT3 p_position);
 
-            private:
+        private:
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
             float m_range;
             float m_charge;

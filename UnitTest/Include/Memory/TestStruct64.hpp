@@ -23,7 +23,7 @@ struct TestStruct64
 
 class TestStruct64Test : public testing::Test
 {
-    public:
+public:
     TestStruct64Test() {}
     virtual ~TestStruct64Test() {}
 

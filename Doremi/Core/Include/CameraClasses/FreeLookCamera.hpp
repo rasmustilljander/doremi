@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 namespace DoremiEngine
 {
-    namespace Graphic 
+    namespace Graphic
     {
         class Camera;
     }
@@ -11,7 +11,7 @@ namespace Doremi
 {
     namespace Core
     {
-        class FreeLookCamera 
+        class FreeLookCamera
         {
         public:
             FreeLookCamera(DoremiEngine::Graphic::Camera* p_camera);

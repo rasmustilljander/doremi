@@ -12,7 +12,7 @@ namespace Doremi
     }
     class GameMain : public Core::GameCore
     {
-        public:
+    public:
         /**
             Constructor
         */
@@ -28,7 +28,7 @@ namespace Doremi
         */
         void Start();
 
-        private:
+    private:
         /**
             TODOCM doc
         */
@@ -82,7 +82,7 @@ namespace Doremi
         */
         std::vector<Core::Manager*> m_graphicalManagers;
 
-        private:
+    private:
         Doremi::MenuStates::MenuState m_menuState;
     };
 }

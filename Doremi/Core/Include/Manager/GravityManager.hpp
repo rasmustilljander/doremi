@@ -8,7 +8,7 @@ namespace Doremi
     {
         class GravityManager : public Manager, public Subscriber
         {
-            public:
+        public:
             GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GravityManager();
 
@@ -22,7 +22,7 @@ namespace Doremi
             */
             void OnEvent(Event* p_event) override;
 
-            private:
+        private:
             float m_gravityCoefficient;
         };
     }

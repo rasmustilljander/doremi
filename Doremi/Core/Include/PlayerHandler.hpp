@@ -79,7 +79,7 @@ namespace Doremi
         */
         class PlayerHandler
         {
-            public:
+        public:
             /**
                 Is a singleton. Use this method to get the EventManager
             */
@@ -113,7 +113,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID &p_entityID);
+            bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID& p_entityID);
 
             /**
                 TODOCM doc
@@ -172,7 +172,7 @@ namespace Doremi
             */
             void RemoveAllPlayers();
 
-            private:
+        private:
             /**
                 TODOEA doc
             */

@@ -9,7 +9,7 @@ namespace DoremiEngine
     {
         class RigidBodyManager
         {
-            public:
+        public:
             /**
             Adds a dynamic box body to the world. Returns the ID for the body.
             Dynamic boxes are basically bodies which can be tossed around the world.

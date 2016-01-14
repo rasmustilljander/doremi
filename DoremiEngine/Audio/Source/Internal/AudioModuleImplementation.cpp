@@ -32,7 +32,7 @@ namespace DoremiEngine
             }
             m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
             ERRCHECK(m_fmodResult);
-            if (m_fmodResult == 0)
+            if(m_fmodResult == 0)
             {
                 m_initOK = true;
             }
@@ -77,7 +77,7 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
         }
 
-        double AudioModuleImplementation::GetSoundTimePointer(const size_t& p_channelID )
+        double AudioModuleImplementation::GetSoundTimePointer(const size_t& p_channelID)
         {
             unsigned int t_elapsedTime;
             m_fmodChannel[p_channelID]->getPosition(&t_elapsedTime, FMOD_TIMEUNIT_MS);
@@ -102,7 +102,7 @@ namespace DoremiEngine
 
         size_t AudioModuleImplementation::TestCopy(int p_soundIDToCopy, float p_length)
         {
-            //for every second in the buffer there is sizeof(short)*44100 bytes = 2*44100 (* numchannels)
+            // for every second in the buffer there is sizeof(short)*44100 bytes = 2*44100 (* numchannels)
             void* testStart;
             void* testest;
             unsigned int testLength;
@@ -176,7 +176,7 @@ namespace DoremiEngine
         int AudioModuleImplementation::SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID)
         {
             FMOD_VECTOR pos = {p_position.x * m_distanceFactor, p_position.y * m_distanceFactor, p_position.z * m_distanceFactor};
-            FMOD_VECTOR vel = { p_velocity.x * m_distanceFactor, p_velocity.y * m_distanceFactor, p_velocity.z * m_distanceFactor};
+            FMOD_VECTOR vel = {p_velocity.x * m_distanceFactor, p_velocity.y * m_distanceFactor, p_velocity.z * m_distanceFactor};
             m_fmodResult = m_fmodChannel[p_channelID]->set3DAttributes(&pos, &vel);
             ERRCHECK(m_fmodResult);
             return 0;
@@ -195,7 +195,7 @@ namespace DoremiEngine
 
         void AudioModuleImplementation::PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID)
         {
-            if (p_loop)
+            if(p_loop)
             {
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_NORMAL);
             }
@@ -232,7 +232,8 @@ namespace DoremiEngine
                     // Do nothing
                 }
             }
-            if(p_channelID == 99999) /**Not the best coding standards but size_t isnt defined for -1 and might bug. This value is initialized in component TODOLH*/
+            if(p_channelID ==
+               99999) /**Not the best coding standards but size_t isnt defined for -1 and might bug. This value is initialized in component TODOLH*/
             {
                 FMOD::Channel* t_channel = 0;
                 m_fmodChannel.push_back(t_channel);

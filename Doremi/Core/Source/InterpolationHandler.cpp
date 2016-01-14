@@ -76,13 +76,11 @@ namespace Doremi
                     DirectX::XMVECTOR FinalOrientationVector;
 
                     // Calculate interpolation for position
-                    FinalPositionVector =
-                        DirectX::XMVectorAdd(DirectX::XMVectorScale(PreviousPositionVector, (1.0f - realAlpha)),
-                                             DirectX::XMVectorScale(NextPositionVector, realAlpha));
+                    FinalPositionVector = DirectX::XMVectorAdd(DirectX::XMVectorScale(PreviousPositionVector, (1.0f - realAlpha)),
+                                                               DirectX::XMVectorScale(NextPositionVector, realAlpha));
 
                     // Calculate interpolation for orientation
-                    FinalOrientationVector =
-                        DirectX::XMQuaternionSlerp(PrevOrientationVector, NextOrientationVector, realAlpha);
+                    FinalOrientationVector = DirectX::XMQuaternionSlerp(PrevOrientationVector, NextOrientationVector, realAlpha);
                     // FinalOrientationVector = DirectX::XMVectorAdd(DirectX::XMVectorScale(PrevOrientationVector, (1.0f - p_alpha)),
                     // DirectX::XMVectorScale(NewOrientationVector, p_alpha));
 
@@ -90,7 +88,7 @@ namespace Doremi
                     DirectX::XMStoreFloat3(&DrawTransform->position, FinalPositionVector);
                     DirectX::XMStoreFloat4(&DrawTransform->rotation, FinalOrientationVector);
 
-                    //cout << DrawTransform->position.y << endl; TODOCM remove
+                    // cout << DrawTransform->position.y << endl; TODOCM remove
                 }
             }
             TIME_FUNCTION_STOP
@@ -112,7 +110,7 @@ namespace Doremi
                 m_SequenceInterpolationOffset = 0;
 
                 // If we have any snapshots
-                if (m_DelayedSnapshots.size())
+                if(m_DelayedSnapshots.size())
                 {
                     // Loop through from back to check which one is newest
                     std::list<Snapshot*>::reverse_iterator iter;
@@ -195,7 +193,7 @@ namespace Doremi
                     // TODOCM we assume the client and server have the same entities
                     // TODOCM we need in some way be sure that if we remove something we remove it befor adding something, example sending rendudant
                     // data many frames or something
-                    for (size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
+                    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
                     {
                         *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
                     }
@@ -230,14 +228,15 @@ namespace Doremi
                 //    // data many frames or something
                 //    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
                 //    {
-                //        *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
+                //        *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) =
+                //        TransformComponentNext(SnapshotToUse->Objects[i].Component);
                 //    }
 
                 //    m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
                 //    m_DelayedSnapshots.pop_back();
                 //    delete SnapshotToUse;
                 //}
-                //else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change
+                // else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change
                 //{
                 //    std::cout << "Lost more then two snapshots?" << std::endl;
                 //    m_NumOfSequencesToInterpolate = 1;

@@ -12,7 +12,7 @@ namespace Doremi
     {
         class GunController
         {
-            public:
+        public:
             GunController();
             virtual ~GunController();
 

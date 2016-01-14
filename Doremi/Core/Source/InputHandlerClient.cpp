@@ -41,10 +41,7 @@ namespace Doremi
             userCmdsMeny[1073741903] = UserCommandMeny::Right;
         }
 
-        void InputHandlerClient::SetCursorInvisibleAndMiddle(bool p_bool)
-        {
-            m_sharedContext.GetInputModule().SetCursorInvisibleAndMiddle(p_bool);
-        }
+        void InputHandlerClient::SetCursorInvisibleAndMiddle(bool p_bool) { m_sharedContext.GetInputModule().SetCursorInvisibleAndMiddle(p_bool); }
 
         void InputHandlerClient::GetMousePos(int& p_positionX, int& p_positionY)
         {
@@ -62,17 +59,17 @@ namespace Doremi
             }
 
             t_sizeVector = m_musInputFromModule.size();
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_musInputFromModule[i]];
             }
-            if (m_mouseWheelInput) // TODOEA move to different function that wont update each frame
+            if(m_mouseWheelInput) // TODOEA move to different function that wont update each frame
             {
-                if (m_mouseWheelInput > 0)
+                if(m_mouseWheelInput > 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[999];
                 }
-                else if (m_mouseWheelInput < 0)
+                else if(m_mouseWheelInput < 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[998];
                 }
@@ -89,7 +86,7 @@ namespace Doremi
             }
 
             t_sizeVector = m_musInputFromModule.size();
-            for (size_t i = 0; i < t_sizeVector; ++i)
+            for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_musInputFromModule[i]];
             }
@@ -151,7 +148,7 @@ namespace Doremi
 
         void InputHandlerClient::PrintInputMouseMovement()
         {
-            if (m_mouseMoveX != 0 || m_mouseMoveY != 0)
+            if(m_mouseMoveX != 0 || m_mouseMoveY != 0)
             {
                 std::cout << m_mouseMoveX << " : X, " << m_mouseMoveY << " : Y" << std::endl;
             }

@@ -22,7 +22,7 @@ namespace DoremiEngine
         struct InternalPhysicsUtils;
         class RigidBodyManagerImpl : public RigidBodyManager
         {
-            public:
+        public:
             RigidBodyManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~RigidBodyManagerImpl();
 
@@ -57,7 +57,7 @@ namespace DoremiEngine
             // Internal methods not used via interface (only used in module)
             unordered_map<PxRigidActor*, int>& GetIDsByBodies();
 
-            private:
+        private:
             InternalPhysicsUtils& m_utils;
             MeshCooker* m_meshCooker;
 

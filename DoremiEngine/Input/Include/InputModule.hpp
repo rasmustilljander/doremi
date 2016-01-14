@@ -17,7 +17,7 @@ namespace DoremiEngine
         */
         class InputModule : public DoremiEngine::Core::EngineModule
         {
-            public:
+        public:
             /**
             TODO docs
             */

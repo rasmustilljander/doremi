@@ -8,7 +8,7 @@ namespace DoremiEngine
     {
         class SharedContextImplementation : public SharedContext
         {
-            public:
+        public:
             SharedContextImplementation()
                 : m_workingDirectory(""),
                   m_audio(nullptr),
@@ -108,7 +108,7 @@ namespace DoremiEngine
                 throw std::runtime_error("AI module has not been initialized.");
             }
 
-            private:
+        private:
             std::string m_workingDirectory;
             Audio::AudioModule* m_audio;
             DoremiEngine* m_core;
