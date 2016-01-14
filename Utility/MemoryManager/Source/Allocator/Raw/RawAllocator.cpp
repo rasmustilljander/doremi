@@ -11,18 +11,9 @@ namespace Utility
         void RawAllocator::Initialize(const size_t& p_memorySize, const uint8_t& p_alignment)
         {
             MemoryAllocator::Initialize(p_memorySize, p_alignment);
-            InternalInitialize();
-        }
-
-        void RawAllocator::Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, MemoryAllocator& p_applicationAllocator)
-        {
-            MemoryAllocator::Initialize(p_memorySize, p_alignment, p_applicationAllocator);
-            InternalInitialize();
         }
 
         RawAllocator::~RawAllocator() {}
-
-        void RawAllocator::InternalInitialize() { m_currentFree = m_raw; }
 
 
         //  void* RawAllocator::Allocate(const size_t& p_memorySize)

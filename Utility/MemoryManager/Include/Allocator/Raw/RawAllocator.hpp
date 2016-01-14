@@ -16,8 +16,7 @@ namespace Utility
             /**
                 TODORT docs
             */
-            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment) override;
-            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment, MemoryAllocator& p_applicationAllocator) override;
+            virtual void Initialize(const size_t& p_memorySize, const uint8_t& p_alignment);
 
             /**
                 Destructor
@@ -51,8 +50,6 @@ namespace Utility
             }
 
             protected:
-            void InternalInitialize();
-
             uint8_t m_headerSizeInBytes = 2;
             size_t m_numBlocks;
             bool m_shared;

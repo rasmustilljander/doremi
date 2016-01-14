@@ -18,20 +18,10 @@ namespace Utility
             /**
             Start the pool and allocate it's own memory
             */
-            void Initialize(const size_t& p_MaxOjectCount, const uint8_t& p_alignment) override
+            void Initialize(const size_t& p_MaxOjectCount, const uint8_t& p_alignment)
             {
                 m_maxOjectCount = p_MaxOjectCount;
                 MemoryAllocator::Initialize(m_maxOjectCount * sizeof(T), p_alignment);
-                Clear();
-            }
-
-            /**
-            Start the pool with our application allocator as base, distributes already allocated memory from "above".
-            */
-            void Initialize(const size_t& p_MaxOjectCount, const uint8_t& p_alignment, MemoryAllocator& p_applicationAllocator)
-            {
-                m_maxOjectCount = p_MaxOjectCount;
-                MemoryAllocator::Initialize(m_maxOjectCount * sizeof(T), p_alignment, p_applicationAllocator);
                 Clear();
             }
 
@@ -46,7 +36,8 @@ namespace Utility
                     T* returnPointer = static_cast<T*>(m_currentFree);
 
                     // Set the next free to be the current value it was pointing to
-                    m_currentFree = reinterpret_cast<void*>(*(reinterpret_cast<size_t*>(m_currentFree)));
+                    size_t value = *reinterpret_cast<size_t*>(m_currentFree);
+                    m_currentFree = reinterpret_cast<void*>(value);
 
                     // Increase the memory count
                     ++m_currentObjectCount;
@@ -68,16 +59,23 @@ namespace Utility
             */
             void Free(T* p_pointer)
             {
-                // TODORT Check to see that the pointer is inside this pool?
-                void* prevCurrentFree = m_currentFree;
+                if(AssertAdresstInside(static_cast<void*>(p_pointer)))
+                {
+                    // TODORT Check to see that the pointer is inside this pool?
+                    void* prevCurrentFree = m_currentFree;
 
-                // Set the newly created released pointer to be the first free
-                m_currentFree = reinterpret_cast<void*>(p_pointer);
+                    // Set the newly created released pointer to be the first free
+                    m_currentFree = reinterpret_cast<void*>(p_pointer);
 
-                // Set the value of the next
-                *reinterpret_cast<size_t*>(m_currentFree) = reinterpret_cast<size_t>(prevCurrentFree);
-                --m_currentObjectCount;
-                m_occupiedMemory -= sizeof(T);
+                    // Set the value of the next
+                    *static_cast<size_t*>(m_currentFree) = reinterpret_cast<size_t>(prevCurrentFree);
+                    --m_currentObjectCount;
+                    m_occupiedMemory -= sizeof(T);
+                }
+                else
+                {
+                    throw std::runtime_error("This memorypool does not contain this adress.");
+                }
             }
 
             /**
@@ -87,7 +85,7 @@ namespace Utility
             {
                 m_currentObjectCount = 0;
                 m_occupiedMemory = 0;
-                m_currentFree = m_raw;
+                m_currentFree = GetAdressStartAligned();
                 PrepareBlocks();
             }
 
@@ -106,16 +104,6 @@ namespace Utility
                     // Move current to the next pointer.
                     current = reinterpret_cast<size_t*>(next);
                 }
-            }
-
-            void* AllocateUnaligned(const size_t& p_memorySize)
-            {
-                throw std::runtime_error("Cannot allocate arbitrary sized chunks within a FixedSizedPoolAllocator.");
-            }
-
-            void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment)
-            {
-                throw std::runtime_error("Cannot allocate arbitrary sized chunks within a FixedSizedPoolAllocator.");
             }
 
             size_t m_maxOjectCount;

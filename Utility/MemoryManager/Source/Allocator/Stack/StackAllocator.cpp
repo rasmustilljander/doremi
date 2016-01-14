@@ -17,25 +17,7 @@ namespace Utility
             Clear();
         }
 
-        uint8_t StackAllocator::ComputeAdjustment(void* p_adress, const uint8_t& p_alignment)
-        {
-            // p_alignment must be contained in the set of 2^x
-            // Mask must be subtracted by 1, always.
-            // 16 = 0x10 = 0001 0000
-            // 15 = 0xF = 0000 1111
-            //   XXXX XXXX
-            // & 0000 1111
-            // Which gives a misalignment between 0 and 2^x - 1
-            // Thus adjustment can never be less than 1.
-
-            const uint8_t mask = p_alignment - 1;
-            const uint8_t misalignment = (reinterpret_cast<size_t>(p_adress) & mask);
-            const uint8_t adjustment = p_alignment - misalignment;
-
-            return adjustment;
-        }
-
-        StackAllocator::~StackAllocator() {}
+        //  StackAllocator::~StackAllocator() {}
 
         void* StackAllocator::AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment)
         {
@@ -88,7 +70,7 @@ namespace Utility
 
         void StackAllocator::Clear()
         {
-            m_top = m_raw;
+            m_top = GetAdressStartAligned();
             m_occupiedMemory = 0;
         }
 
@@ -101,7 +83,7 @@ namespace Utility
                 {
                     const uint8_t adjustment = AllocationHeaderBuilder::GetAdjustment(adress);
                     m_top = reinterpret_cast<void*>(reinterpret_cast<size_t>(adress) - adjustment);
-                    m_occupiedMemory = reinterpret_cast<size_t>(m_top) - reinterpret_cast<size_t>(m_raw);
+                    m_occupiedMemory = reinterpret_cast<size_t>(m_top) - reinterpret_cast<size_t>(GetAdressStartAligned());
                 }
                 else
                 { /* The marker is no longer valid, it points to memory that has already been released. */

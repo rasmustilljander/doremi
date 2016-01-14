@@ -2,7 +2,6 @@
 #include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
 #include <Utility/MemoryManager/Include/Allocator/Stack/MemoryMarker.hpp>
 #include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
-#include <cstdint>
 
 namespace Utility
 {
@@ -22,11 +21,6 @@ namespace Utility
             void Initialize(const size_t& p_memorySize);
 
             /**
-                Destructor
-            */
-            virtual ~StackAllocator();
-
-            /**
             TODORT docs
             */
             template <typename T> T* Allocate(const uint8_t& p_alignment = 4)
@@ -39,7 +33,7 @@ namespace Utility
             /**
                 Clears the entire stack
             */
-            void Clear();
+            void Clear() override;
 
             /**
                 Get a marker which can be used to rollback memory.
@@ -54,9 +48,8 @@ namespace Utility
             protected:
             void* m_top;
 
-            void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment) override;
-            void* AllocateUnaligned(const size_t& p_newMemorySize) override;
-            uint8_t ComputeAdjustment(void* p_adress, const uint8_t& p_alignment);
+            void* AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment);
+            void* AllocateUnaligned(const size_t& p_newMemorySize);
         };
     }
 }
