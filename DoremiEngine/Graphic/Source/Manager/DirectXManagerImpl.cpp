@@ -295,16 +295,11 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::EndDraw()
         {
-<<<<<<< HEAD
-=======
 
             // dispatch frustum shader
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
 
-            // render meshes
-            RenderAllMeshs();
->>>>>>> Light culling compute shader almost done
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
