@@ -28,6 +28,21 @@ namespace DoremiEngine
 
         MeshManagerImpl::~MeshManagerImpl() {}
 
+        MeshInfo* MeshManagerImpl::BuildSphereMeshInfo(const std::string& p_fileName, int p_latLines, int p_longLines)
+        {
+            if(m_meshInfo.find(p_fileName) != m_meshInfo.end())
+            {
+                return m_meshInfo[p_fileName];
+            }
+            MeshInfo* newMesh = new MeshInfoImpl();
+            newMesh->SetFileName(p_fileName);
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            std::string filePath = m_graphicContext.m_workingDirectory + p_fileName; // TODOKO should add complete filepath
+            m_modelLoader->LoadSphere(newMesh, m_directX.GetDeviceContext(), m_directX.GetDevice(), 20, 20);
+            m_meshInfo[p_fileName] = newMesh;
+            return newMesh;
+        }
+
         MeshInfo* MeshManagerImpl::BuildMeshInfo(const std::string& p_fileName)
         {
 
@@ -117,6 +132,7 @@ namespace DoremiEngine
             ID3D11ShaderResourceView* newTexture = t_loader.LoadTexture(fileLocation, m_directX.GetDevice());
             newMaterial->SetMaterialName(p_fileName);
             newMaterial->SetTexture(newTexture);
+            newMaterial->SetSamplerState(m_directX.GetDefaultSamplerState());
             m_materialInfo[p_fileName] = newMaterial;
             return newMaterial;
         }
@@ -124,9 +140,10 @@ namespace DoremiEngine
         void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix)
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
-            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount());
-            m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
 
+            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetSamplerState(), p_mesh.GetBufferHandle(),
+                                          p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount());
+            m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
         }
         void MeshManagerImpl::Draw() {}
     }

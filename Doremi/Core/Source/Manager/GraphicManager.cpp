@@ -11,6 +11,10 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/PixelShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
 #include <dxgi.h>
 #include <d3d11_1.h>
 
@@ -31,6 +35,26 @@ namespace Doremi
             m_vertexShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl",
                                                                                                                            ied, ARRAYSIZE(ied));
             m_pixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("BasicPixelShader.hlsl");
+
+            D3D11_RASTERIZER_DESC rastDesc;
+            ZeroMemory(&rastDesc, sizeof(rastDesc));
+            rastDesc.FillMode = D3D11_FILL_SOLID;
+            rastDesc.CullMode = D3D11_CULL_NONE;
+            rastDesc.FrontCounterClockwise = false; /// fittunge ta till graphicsmanager
+            rastDesc.DepthBias = 0;
+            rastDesc.DepthBiasClamp = 0.0f;
+            rastDesc.SlopeScaledDepthBias = 0.0f;
+            rastDesc.DepthClipEnable = false;
+            rastDesc.ScissorEnable = false;
+            rastDesc.MultisampleEnable = true;
+            rastDesc.AntialiasedLineEnable = false;
+            m_rasterizerState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateRasterizerState(rastDesc);
+            D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+            ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+            depthStencilDesc.DepthEnable = true;
+            depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+            m_depthStencilState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateDepthStencilState(depthStencilDesc);
         }
 
         GraphicManager::~GraphicManager() {}
@@ -58,7 +82,11 @@ namespace Doremi
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }
             }
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
+            m_rasterizerState->GetRasterizerState();
+            m_depthStencilState->GetDepthStencilState();
+            DoremiEngine::Graphic::DirectXManager& dxmanager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(),
+                                                                                                               m_depthStencilState->GetDepthStencilState());
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}

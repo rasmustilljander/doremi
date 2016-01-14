@@ -20,6 +20,8 @@ namespace DoremiEngine
             // Builds a mesh from the given file, the filename then becomes the mesh's id
             virtual MeshInfo* BuildMeshInfo(const std::string& p_fileName) = 0;
             virtual MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName) = 0;
+            // Builds a mesh from the latlines and longlines TODOLH figure out how the latlines and longlines works and improve this comment
+            virtual MeshInfo* BuildSphereMeshInfo(const std::string& p_fileName, int p_latLines, int p_longLines) = 0;
             // Builds a mesh from the given vector of vertices, the given string becomes the mesh's id
             virtual MeshInfo* BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName) = 0;
             /**

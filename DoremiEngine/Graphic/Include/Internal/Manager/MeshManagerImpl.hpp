@@ -23,6 +23,7 @@ namespace DoremiEngine
             virtual ~MeshManagerImpl();
             MeshInfo* BuildMeshInfo(const std::string& p_fileName) override;
             MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName) override;
+            MeshInfo* BuildSphereMeshInfo(const std::string& p_fileName, int p_latLines, int p_longLines) override;
             MeshInfo* BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName) override;
             MeshInfo* GetMeshInfo(const std::string& p_meshName) override;
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;

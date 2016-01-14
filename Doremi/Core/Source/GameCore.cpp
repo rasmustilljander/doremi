@@ -15,7 +15,6 @@
 #include <Manager/Network/ClientNetworkManager.hpp>
 #include <Manager/Network/ServerNetworkManager.hpp>
 #include <Manager/GraphicManager.hpp>
-#include <Manager/CameraManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>
 #include <Manager/AI/AIPathManager.hpp>

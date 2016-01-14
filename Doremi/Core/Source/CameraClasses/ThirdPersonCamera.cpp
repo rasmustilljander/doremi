@@ -54,6 +54,9 @@ namespace Doremi
             XMVECTOR finalDir = (pos - camDir * 2.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
             XMMATRIX mat =
                 XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup)); // vup is added to position so you look abit above the player
+            XMFLOAT3 t_positionOfCamera;
+            XMStoreFloat3(&t_positionOfCamera, finalDir);
+            m_camera->SetCameraPosition(t_positionOfCamera);
             XMStoreFloat4x4(&viewMat, mat);
             m_camera->SetViewMatrix(viewMat);
         }

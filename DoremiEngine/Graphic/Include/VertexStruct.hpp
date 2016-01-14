@@ -15,5 +15,6 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 textureCoordinate;
             DirectX::XMFLOAT3 normal;
         };
+        struct VertexPos;
     }
 }

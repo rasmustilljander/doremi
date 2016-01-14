@@ -3,6 +3,8 @@
 #include <GraphicModuleContext.hpp>
 #include <GraphicModuleImplementation.hpp>
 #include <Internal/Manager/ComputeShaderManagerImpl.hpp>
+#include <Internal/State/DepthStencilStateImpl.hpp>
+#include <Internal/State/RasterizerStateImpl.hpp>
 #include <HelpFunctions.hpp>
 #include <SDL2/SDL.h>
 #include <Internal/Mesh/Vertex.hpp>
@@ -75,25 +77,6 @@ namespace DoremiEngine
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
             m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer);
             t_BackBuffer->Release();
-
-            // Rasterizer info, here you can change from backface culling mm
-            // We might want this as a class or something to enable easy switching between rasterizers
-            D3D11_RASTERIZER_DESC rastDesc;
-            ZeroMemory(&rastDesc, sizeof(rastDesc));
-            rastDesc.FillMode = D3D11_FILL_SOLID;
-            rastDesc.CullMode = D3D11_CULL_NONE;
-            rastDesc.FrontCounterClockwise = false;
-            rastDesc.DepthBias = 0;
-            rastDesc.DepthBiasClamp = 0.0f;
-            rastDesc.SlopeScaledDepthBias = 0.0f;
-            rastDesc.DepthClipEnable = false;
-            rastDesc.ScissorEnable = false;
-            rastDesc.MultisampleEnable = true;
-            rastDesc.AntialiasedLineEnable = false;
-            ID3D11RasterizerState* tRastHandle;
-            res = m_device->CreateRasterizerState(&rastDesc, &tRastHandle);
-            m_deviceContext->RSSetState(tRastHandle);
-
             // Depth buffer
             // Might want this in a class for readability and easy changing between states
             D3D11_TEXTURE2D_DESC dbdesc;
@@ -156,11 +139,9 @@ namespace DoremiEngine
             texSamDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
             texSamDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
             // mParticleTexID = CreateTexture(L"Textures/VitPlupp.dds");
-            ID3D11SamplerState* m_sampler;
-            res = m_device->CreateSamplerState(&texSamDesc, &m_sampler);
+            res = m_device->CreateSamplerState(&texSamDesc, &m_defaultSamplerState);
             CheckHRESULT(res, "Fault when creating sampler");
-            m_deviceContext->PSSetSamplers(0, 1, &m_sampler);
-            m_sampler->Release();
+            m_deviceContext->PSSetSamplers(0, 1, &m_defaultSamplerState);
 
             BuildWorldMatrix();
         }
@@ -181,6 +162,37 @@ namespace DoremiEngine
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
         ID3D11DeviceContext* DirectXManagerImpl::GetDeviceContext() { return m_deviceContext; }
 
+        ID3D11SamplerState* DirectXManagerImpl::CreateSamplerState(D3D11_SAMPLER_DESC p_samplerDesc)
+        {
+            ID3D11SamplerState* t_sampleState;
+            m_device->CreateSamplerState(&p_samplerDesc, &t_sampleState);
+            return t_sampleState;
+        }
+
+        DepthStencilState* DirectXManagerImpl::CreateDepthStencilState(D3D11_DEPTH_STENCIL_DESC p_depthStencilDesc)
+        {
+            DepthStencilState* t_depthStencilState = new DepthStencilStateImpl();
+            ID3D11DepthStencilState* t_depthState;
+            m_device->CreateDepthStencilState(&p_depthStencilDesc, &t_depthState);
+            t_depthStencilState->SetDepthStencilState(t_depthState);
+            return t_depthStencilState;
+        }
+        RasterizerState* DirectXManagerImpl::CreateRasterizerState(D3D11_RASTERIZER_DESC p_rasterizerDesc)
+        {
+            RasterizerState* t_rasterizerState = new RasterizerStateImpl();
+            ID3D11RasterizerState* t_devRasterizerState;
+            m_device->CreateRasterizerState(&p_rasterizerDesc, &t_devRasterizerState);
+            t_rasterizerState->SetRasterizerState(t_devRasterizerState);
+            return t_rasterizerState;
+        }
+
+        void DirectXManagerImpl::DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState)
+        {
+            m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
+            m_deviceContext->RSSetState(p_rasterizerState);
+            RenderAllMeshs();
+        }
+
         void DirectXManagerImpl::RenderAllMeshs()
         {
             // Sort the data according after mesh then texture
@@ -192,6 +204,7 @@ namespace DoremiEngine
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
             ID3D11ShaderResourceView* texture = renderData[0].texture;
+            ID3D11SamplerState* samplerState = renderData[0].samplerState;
 
             // Iterate all the entries and do the smallest amount of changes to the GPU
             // Render the first entry outside of the loop because it's a specialcase
@@ -201,10 +214,19 @@ namespace DoremiEngine
             memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
             m_deviceContext->Unmap(m_worldMatrix, NULL);
 
+            m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
-            m_deviceContext->Draw(renderData[0].vertexCount, 0);
+            if(renderData[0].indexData != nullptr)
+            {
+                m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
+            }
+            else
+            {
+                m_deviceContext->Draw(renderData[0].vertexCount, 0);
+            }
 
             // TODO Can be upgraded with instanced drawing
             const size_t vectorSize = renderData.size();
@@ -215,6 +237,20 @@ namespace DoremiEngine
                     vertexData = renderData[i].vertexData;
                     m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
                 }
+
+                if(renderData[i].samplerState != renderData[i - 1].samplerState)
+                {
+                    samplerState = renderData[i].samplerState;
+                    if(samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+                    }
+                    else
+                    {
+                        std::cout << "Something went wrong with the sampler in DirXmanagerImpl.cpp" << std::endl;
+                    }
+                }
+
                 if(renderData[i].texture != renderData[i - 1].texture) // Check if texture has been changed
                 {
                     texture = renderData[i].texture;
@@ -228,14 +264,32 @@ namespace DoremiEngine
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
                 m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-                m_deviceContext->Draw(renderData[i].vertexCount, 0);
+                if(renderData[i].indexData != nullptr)
+                {
+                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                    m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
+                }
+                else
+                {
+                    m_deviceContext->Draw(renderData[i].vertexCount, 0);
+                }
             }
             renderData.clear(); // Empty the vector
         }
 
+        void DirectXManagerImpl::SwapRasterizerState(RasterizerState* p_rasterizerState)
+        {
+            m_deviceContext->RSSetState(p_rasterizerState->GetRasterizerState());
+        }
+
+        void DirectXManagerImpl::SwapDepthStencilState(DepthStencilState* p_depthStencilState)
+        {
+            m_deviceContext->OMSetDepthStencilState(p_depthStencilState->GetDepthStencilState(), 0);
+        }
+
+
         void DirectXManagerImpl::EndDraw()
         {
-            RenderAllMeshs();
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer, color);

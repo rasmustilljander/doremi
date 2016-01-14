@@ -52,6 +52,7 @@ namespace Doremi
 
             XMStoreFloat3(&m_camPos, cameraPositionVec);
 
+            m_camera->SetCameraPosition(m_camPos);
             // Reset the movement values for the next update
             m_moveLeftRight = 0.0f;
             m_moveForwardBackward = 0.0f;

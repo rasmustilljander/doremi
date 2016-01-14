@@ -21,6 +21,7 @@ namespace DoremiEngine
             bool LoadMesh(MeshInfo* o_meshInfo, const std::string& p_fileName, ID3D11DeviceContext* p_deviceContext,
                           ID3D11Device* p_device); // TODORK Implement load
             bool LoadQuad(MeshInfo* o_meshInfo, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device);
+            bool LoadSphere(MeshInfo* o_meshInfo, ID3D11DeviceContext* p_deviceContext, ID3D11Device* p_device, int p_latLines, int p_longLines);
             int LoadMaterial(const std::string& p_materialName);
             ID3D11ShaderResourceView* LoadTexture(const std::string& p_fileName, ID3D11Device* p_device);
         };

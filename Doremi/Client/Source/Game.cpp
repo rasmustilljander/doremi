@@ -27,17 +27,17 @@
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
-
+#include <Doremi/Core/Include/CameraHandler.hpp>
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
 #include <Doremi/Core/Include/Manager/MovementManager.hpp>
 #include <Doremi/Core/Include/Manager/AudioManager.hpp>
-#include <Doremi/Core/Include/Manager/CameraManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
+#include <Doremi/Core/Include/Manager/SkyBoxManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 // Components
@@ -89,7 +89,8 @@ namespace Doremi
         Core::PlayerHandler::StartPlayerHandler(sharedContext);
         Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);
-
+        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
+        Core::CameraHandler::StartCameraHandler(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager
@@ -99,23 +100,23 @@ namespace Doremi
         Core::Manager* t_clientNetworkManager = new Core::ClientNetworkManager(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManager(sharedContext);
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
-        Core::Manager* t_cameraManager = new Core::CameraManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
         // Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
+        Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
 
         // Add manager to list of managers
 
         m_graphicalManagers.push_back(t_pressureParticleManager);
         m_graphicalManagers.push_back(t_renderManager);
+        m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);
         // m_managers.push_back(t_playerManager);
         // m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
-        m_managers.push_back(t_cameraManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
         m_managers.push_back(t_jumpManager);
@@ -333,6 +334,7 @@ namespace Doremi
         Core::EventHandler::GetInstance()->DeliverEvents();
         PlayerHandler::GetInstance()->UpdateClient();
         AudioHandler::GetInstance()->Update(p_deltaTime);
+        CameraHandler::GetInstance()->Update(p_deltaTime);
 
         Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
