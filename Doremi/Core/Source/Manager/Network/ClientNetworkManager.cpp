@@ -129,6 +129,8 @@ namespace Doremi
                             m_serverLastResponse = 0;
                             m_updateInterval = 1.0f;
 
+                            PlayerHandler::GetInstance()->RemoveAllPlayers();
+
                             break;
                         default:
                             break;
@@ -152,10 +154,24 @@ namespace Doremi
             }
         }
 
-        void ClientNetworkManager::RecieveLoadWorld(NetMessage& p_message)
+        void ClientNetworkManager::RecieveMapLoading(NetMessage& p_message)
         {
             if(m_serverConnectionState == ConnectionState::MAP_LOADING)
             {
+                EntityHandler& entityHandler = EntityHandler::GetInstance();
+
+                BitStreamer Streamer = BitStreamer();
+                unsigned char* dataPointer = p_message.Data;
+                Streamer.SetTargetBuffer(dataPointer, sizeof(p_message.Data));
+
+                // Read number of existing players
+                uint32_t numPlayers = Streamer.ReadUnsignedInt32();
+
+                for(size_t i = 0; i < numPlayers; i++)
+                {
+                    entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity);
+                }
+
                 // TODOCM add real loadworld code here
                 InputHandlerClient* NewInputHandler = new InputHandlerClient(m_sharedContext);
 
@@ -255,7 +271,7 @@ namespace Doremi
 
                         case MessageID::LOAD_WORLD:
 
-                            RecieveLoadWorld(Message);
+                            RecieveMapLoading(Message);
                             break;
 
                         case MessageID::INIT_SNAPSHOT:
@@ -436,6 +452,8 @@ namespace Doremi
 
         void ClientNetworkManager::SendDisconnectMessage()
         {
+            PlayerHandler::GetInstance()->RemoveAllPlayers();
+
             // Create disconnection message
             NetMessage NewMessage = NetMessage();
             NewMessage.MessageID = MessageID::DISCONNECT;

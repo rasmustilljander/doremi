@@ -108,7 +108,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void SendMapLoading(Connection* p_connection);
+            void SendLoadWorld(Connection* p_connection);
 
             /**
                 TODOCM doc

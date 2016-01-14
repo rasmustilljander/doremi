@@ -46,6 +46,7 @@ enum class Blueprints : uint32_t
     VoiceRecordEntity,
     RenderExampleEntity,
     PlayerEntity,
+    NetworkPlayerEntity,
     PlatformEntity,
     BulletEntity,
     EnemyEntity,

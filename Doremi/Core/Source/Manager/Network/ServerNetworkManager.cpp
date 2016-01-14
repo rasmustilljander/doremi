@@ -294,6 +294,12 @@ namespace Doremi
                         m_SavedPlayerIDs.erase(iter);
 
                         // TODOCM maybe crete player again
+                        PlayerID = rand();
+
+                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext);
+
+                        // Create player
+                        PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
                     }
                     else
                     {
@@ -451,7 +457,7 @@ namespace Doremi
 
                         case ConnectionState::MAP_LOADING:
 
-                            SendMapLoading(iter->second);
+                            SendLoadWorld(iter->second);
                             break;
 
                         case ConnectionState::IN_GAME:
@@ -541,13 +547,24 @@ namespace Doremi
             NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);
         }
 
-        void ServerNetworkManager::SendMapLoading(Connection* p_connection)
+        void ServerNetworkManager::SendLoadWorld(Connection* p_connection)
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
 
             NetMessage Message = NetMessage();
 
+            // Set message ID
             Message.MessageID = MessageID::LOAD_WORLD;
+
+
+            // TODOCM send all add/removed stuff here
+            BitStreamer Streamer = BitStreamer();
+            unsigned char* bufferPointer = Message.Data;
+            Streamer.SetTargetBuffer(bufferPointer, sizeof(Message.Data));
+
+            // Send created players
+            uint32_t numPlayers = PlayerHandler::GetInstance()->GetNumOfPlayers();
+            Streamer.WriteUnsignedInt32(numPlayers - 1);
 
             p_connection->ConnectionState = ConnectionState::IN_GAME;
 

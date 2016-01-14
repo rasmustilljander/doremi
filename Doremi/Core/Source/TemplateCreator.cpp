@@ -384,6 +384,8 @@ namespace Doremi
             GravityComponent* gravComp = new GravityComponent();
             t_avatarBlueprint[ComponentType::Gravity] = gravComp;
 
+            t_avatarBlueprint[ComponentType::NetworkObject];
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
             TIME_FUNCTION_STOP
@@ -443,6 +445,33 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
+        void CreateNetworkPlayerClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            TIME_FUNCTION_START
+
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            EntityBlueprint t_avatarBlueprint;
+
+            /// Fill with components
+            // Render
+            RenderComponent* t_renderComp = new RenderComponent();
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_avatarBlueprint[ComponentType::Render] = t_renderComp;
+
+            // Transform comp
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+
+            t_avatarBlueprint[ComponentType::NetworkObject];
+
+            // Register blueprint
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::NetworkPlayerEntity, t_avatarBlueprint);
+
+            TIME_FUNCTION_STOP
+        }
+
         void CreateJawsDebugObjectServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             TIME_FUNCTION_START
@@ -493,6 +522,7 @@ namespace Doremi
             CreateDebugPlatformsClient(sharedContext);
             CreateBulletBlueprintClient(sharedContext);
             CreatePlayerClient(sharedContext);
+            CreateNetworkPlayerClient(sharedContext);
             CreateEnemyBlueprintClient(sharedContext);
             CreateJawsDebugObjectClient(sharedContext);
             CreateEmpty();

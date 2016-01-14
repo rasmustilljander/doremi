@@ -32,6 +32,11 @@ namespace Doremi
                 : m_moveSpeed(0.2f), m_autoRetardation(50.0f), m_inputHandler(p_inputHandler), m_addRemoveSyncHandler(p_addRemoveSyncHandler), m_turnSpeed(0.01f)
             {
             }
+            ~Player()
+            {
+                delete m_addRemoveSyncHandler;
+                delete m_inputHandler;
+            }
 
             /**
                 TODOEA doc
@@ -157,8 +162,17 @@ namespace Doremi
             */
             void UpdatePlayerInputs();
 
-            private:
+            /**
+                TODOCM doc
+            */
+            uint32_t GetNumOfPlayers();
 
+            /**
+                TODOCM doc
+            */
+            void RemoveAllPlayers();
+
+            private:
             /**
                 TODOEA doc
             */

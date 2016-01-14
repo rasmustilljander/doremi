@@ -395,6 +395,11 @@ namespace Doremi
 
         void PlayerHandler::QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
+            if(p_blueprint == (uint32_t)Blueprints::PlayerEntity)
+            {
+                p_blueprint = (uint32_t)Blueprints::NetworkPlayerEntity;
+            }
+
             // For each player we queue
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
@@ -420,6 +425,18 @@ namespace Doremi
             {
                 iter->second->m_addRemoveSyncHandler->AddRemoveQueuedObjects();
             }
+        }
+
+        uint32_t PlayerHandler::GetNumOfPlayers() { return m_playerMap.size(); }
+
+        void PlayerHandler::RemoveAllPlayers()
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                delete iter->second;
+            }
+            m_playerMap.clear();
         }
     }
 }

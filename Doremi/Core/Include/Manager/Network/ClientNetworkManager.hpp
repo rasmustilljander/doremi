@@ -97,7 +97,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void RecieveLoadWorld(NetMessage& p_message);
+            void RecieveMapLoading(NetMessage& p_message);
 
             /**
                 TODOCM doc
