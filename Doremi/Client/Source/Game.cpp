@@ -10,6 +10,7 @@
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/FluidManager.hpp>
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
@@ -38,6 +39,7 @@
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
+#include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -103,15 +105,18 @@ namespace Doremi
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
+        Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
 
         // Add manager to list of managers
+
+        m_graphicalManagers.push_back(t_pressureParticleManager);
         m_graphicalManagers.push_back(t_renderManager);
         // m_managers.push_back(t_physicsManager);
         // m_managers.push_back(t_playerManager);
         // m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_cameraManager);
-        // m_managers.push_back(t_rigidTransSyndManager);
+        m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
@@ -194,8 +199,19 @@ namespace Doremi
             // PotentialFieldComponent* potentialComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
             // potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0),
             // -1, 3);
-
         }
+
+        // Create experimental pressure particle system
+        int entityID = t_entityHandler.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
+        DoremiEngine::Physics::ParticleEmitterData emitterData;
+        emitterData.m_density = 3;
+        emitterData.m_dimensions = XMFLOAT2(0, 0);
+        emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
+        emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
+        emitterData.m_emissionRate = 1;
+        emitterData.m_launchPressure = 2;
+        emitterData.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
+        sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
 
         /////// TONS OF OLD CODE//////
         // Create the rigid body

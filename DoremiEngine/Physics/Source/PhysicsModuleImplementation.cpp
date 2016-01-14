@@ -34,6 +34,7 @@ namespace DoremiEngine
         {
             // Start by clearing the list of collision pairs (WARNING potentially bad idea)
             m_collisionPairs.clear();
+            m_utils.m_fluidManager->Update(p_dt);
             m_utils.m_worldScene->simulate(p_dt);
             m_utils.m_worldScene->fetchResults(true);
         }

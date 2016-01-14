@@ -5,9 +5,9 @@ namespace Doremi
     {
         /**
         Particle system which spews particle in a given direction, with an angle, more or less*/
-        struct ParticlePreasureComponent
+        struct ParticlePressureComponent
         {
-            float preasure = 0;
+            float Pressure = 0;
         };
     }
 }

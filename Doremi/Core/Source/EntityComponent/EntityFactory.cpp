@@ -19,7 +19,7 @@
 #include <EntityComponent/Components/JumpComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
-#include <EntityComponent/Components/PreasureParticleComponent.hpp>
+#include <EntityComponent/Components/PressureParticleComponent.hpp>
 
 namespace Doremi
 {
@@ -134,9 +134,9 @@ namespace Doremi
                 {
                     memcpy(GetComponent<EntityTypeComponent>(tNewEntityID), iter->second, sizeof(EntityTypeComponent));
                 }
-                else if(iter->first == ComponentType::PreasureParticleSystem)
+                else if(iter->first == ComponentType::PressureParticleSystem)
                 {
-                    memcpy(GetComponent<ParticlePreasureComponent>(tNewEntityID), iter->second, sizeof(ParticlePreasureComponent));
+                    memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(ParticlePressureComponent));
                 }
             }
             return tNewEntityID;

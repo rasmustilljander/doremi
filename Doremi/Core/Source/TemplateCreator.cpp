@@ -17,6 +17,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/JumpComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/GravityComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/EntityTypeComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -55,10 +56,31 @@ namespace Doremi
 
         TemplateCreator::~TemplateCreator() {}
 
+
         void CreateEmpty()
         {
             EntityBlueprint blueprint;
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EmptyEntity, blueprint);
+        }
+        void CreateExperimentalParticlePressureBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            EntityBlueprint blueprint;
+            // Transform Component
+            TransformComponent* transComp = new TransformComponent();
+            transComp->position = XMFLOAT3(0, 13, -2);
+            transComp->scale = XMFLOAT3(0.1, 0.1, 0.1);
+            blueprint[ComponentType::Transform] = transComp;
+            // Render
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            blueprint[ComponentType::Render] = renderComp;
+            // Pressure particle comp
+            ParticlePressureComponent* particleComp = new ParticlePressureComponent();
+            blueprint[ComponentType::PressureParticleSystem] = particleComp;
+
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::ExperimentalPressureParticleEntity, blueprint);
+
         }
 
         void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -469,6 +491,7 @@ namespace Doremi
             CreateEnemyBlueprintClient(sharedContext);
             CreateJawsDebugObjectClient(sharedContext);
             CreateEmpty();
+            CreateExperimentalParticlePressureBlueprintClient(sharedContext);
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)

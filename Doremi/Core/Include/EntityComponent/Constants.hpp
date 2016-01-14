@@ -33,7 +33,7 @@ enum class ComponentType : int
     Jump = 0x40000,
     Gravity = 0x80000,
     EntityType = 0x100000,
-    PreasureParticleSystem = 0x200000,
+    PressureParticleSystem = 0x200000,
 };
 
 /**
@@ -52,6 +52,7 @@ enum class Blueprints : uint32_t
     JawsDebugEntity, // TODOCM remove
     JawsDebugEntity2, // TODOCM remove
     StaticEnviromentEntity,
+    ExperimentalPressureParticleEntity,
 };
 
 
