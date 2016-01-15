@@ -114,7 +114,7 @@ namespace Doremi
         m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);
         // m_managers.push_back(t_playerManager);
-        // m_managers.push_back(t_audioManager);
+         m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
@@ -183,14 +183,14 @@ namespace Doremi
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, i * 5);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 1, i * 5);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
 
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
         }
 
         // Create some enemies
