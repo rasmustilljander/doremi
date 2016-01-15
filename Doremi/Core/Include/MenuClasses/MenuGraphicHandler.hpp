@@ -2,8 +2,17 @@
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/MenuClasses/Button.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Shader/PixelShader.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
+namespace DoremiEngine
+{
+    namespace Graphic
+    {
+        class DepthStencilState;
+        class RasterizerState;
+        class PixelShader;
+        class VertexShader;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -27,6 +36,8 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             DoremiEngine::Graphic::PixelShader* m_menuPixelShader;
             DoremiEngine::Graphic::VertexShader* m_menuVertexShader;
+            DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
+            DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
         };
     }
 }
