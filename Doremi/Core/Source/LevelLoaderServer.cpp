@@ -4,12 +4,18 @@
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+
+// AI
+#include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -160,9 +166,9 @@ namespace Doremi
                     XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
                     realPos *= 0.5;
                     XMStoreFloat3(&m_currentPos, realPos);
-                    BuildMesh(meshData);
+                    //BuildMesh(meshData);
                     // End hax
-
+                    m_meshes[meshName] = meshData;
                     m_meshCoupling.push_back(ObjectCouplingInfo(transformName, meshName, materialName));
                 }
 
@@ -192,6 +198,7 @@ namespace Doremi
                     ifs.read((char*)&lightData.penumAgle, sizeof(float));
                 }
             }
+            // Creating the entities
             size_t length = m_meshCoupling.size();
             for(size_t i = 0; i < length; i++)
             {
@@ -204,6 +211,22 @@ namespace Doremi
                 transComp->position = m_transforms[transformName].pos;
                 transComp->rotation = m_transforms[transformName].rot;
                 transComp->scale = m_transforms[transformName].scale;
+
+                EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::PotentialField);
+                PotentialFieldComponent* pfComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
+                pfComp->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -3, 2, true); // TODOKO hardcoded shiet
+                // TODO Make it finer!
+                m_entityID = entityID;
+                m_currentScale = m_transforms[transformName].scale;
+                m_currentOrientation = m_transforms[transformName].rot;
+                m_currentPos = m_transforms[transformName].pos;
+                XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
+                realPos *= 0.5; // TODO what the hell??
+                XMStoreFloat3(&m_currentPos, realPos);
+                BuildMesh(m_meshes[m_meshCoupling[i].meshName]);
+                //EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::RigidBody);
+                //RigidBodyComponent* rbComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                //rbComp->p_bodyID = m_entityID;
             }
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoaderServer::BuildMesh(const MeshData& p_data)
@@ -278,7 +301,7 @@ namespace Doremi
             }
             // HAX
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
-                1337, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
+                m_entityID, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
                 m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5));
             // END HAX
             return vertexBuffer;

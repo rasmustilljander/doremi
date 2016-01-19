@@ -38,7 +38,7 @@
 #include <stdexcept>
 #include <exception>
 #include <chrono>
-
+#include <iostream>
 namespace Doremi
 {
     ServerMain::ServerMain() {}
@@ -61,6 +61,8 @@ namespace Doremi
         // Create manager
 
         // Manager* t_physicsManager = new ExampleManager(sharedContext);
+        Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
+        t_levelLoader->LoadLevel("Levels/test.drm");
         Core::Manager* t_serverNetworkManager = new Core::ServerNetworkManager(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
@@ -100,8 +102,7 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
-        Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
-        t_levelLoader->LoadLevel("Levels/test.drm");
+
         // Create entity
         // int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
 
@@ -120,20 +121,20 @@ namespace Doremi
         Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
         trans->position = DirectX::XMFLOAT3(-10, 5, 0);
 
-        // TODOKO REMOVE Create debug potentialfields
-        for(size_t i = 0; i < 1; i++)
-        {
-            int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(0.5, 0.5, 0.5), matID);
+        //// TODOKO REMOVE Create debug potentialfields
+        //for(size_t i = 0; i < 1; i++)
+        //{
+        //    int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
+        //    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0);
+        //    DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+        //    int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
+        //    Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
+        //    rigidComp->p_bodyID =
+        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(0.5, 0.5, 0.5), matID);
 
-            Core::PotentialFieldComponent* actor = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -10, 4, true);
-        }
+        //    Core::PotentialFieldComponent* actor = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
+        //    actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -10, 4, true);
+        //}
 
         for(size_t i = 0; i < 5; i++)
         {

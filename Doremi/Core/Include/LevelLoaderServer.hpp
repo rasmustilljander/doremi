@@ -58,14 +58,15 @@ namespace Doremi
             // Material *material; //pekar på ett specifikt material i en vektor av material
             ~MeshData()
             {
-                delete(positions);
-                delete(normals);
-                delete(uvs);
+                // TODOKO should maybe be here
+                //delete(positions);
+                //delete(normals);
+                //delete(uvs);
 
-                delete(indexPositions);
-                delete(indexNormals);
-                delete(indexUVs);
-                delete(trianglesPerFace);
+                //delete(indexPositions);
+                //delete(indexNormals);
+                //delete(indexUVs);
+                //delete(trianglesPerFace);
             }
         };
 
@@ -122,12 +123,14 @@ namespace Doremi
             std::vector<DoremiEngine::Graphic::Vertex> BuildMesh(const MeshData& p_data);
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::map<std::string, TransformData> m_transforms;
+            std::map<std::string, MeshData> m_meshes;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
 
             // HAX STUFF for physics magic
             DirectX::XMFLOAT3 m_currentScale;
             DirectX::XMFLOAT3 m_currentPos;
             DirectX::XMFLOAT4 m_currentOrientation;
+            int m_entityID;
         };
     }
 }

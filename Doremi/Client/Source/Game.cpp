@@ -174,11 +174,11 @@ namespace Doremi
         trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
 
-        // TODOKO REMOVE Create debug potentialfields
-        for(size_t i = 0; i < 1; i++)
-        {
-            int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
-        }
+        //// TODOKO REMOVE Create debug potentialfields
+        //for(size_t i = 0; i < 1; i++)
+        //{
+        //    int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
+        //}
         // Create platforms
         for(size_t i = 0; i < 5; i++)
         {

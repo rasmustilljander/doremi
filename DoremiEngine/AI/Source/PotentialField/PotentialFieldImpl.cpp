@@ -62,11 +62,12 @@ namespace DoremiEngine
                 // The actor is static and not in list
                 m_staticActors.insert(p_newActor);
             }
-            else
+            else if (!p_newActor->IsStatic())
             {
-                // TODOKO check if actor is already in the field
+                // TODOKO might need to check if it's in the list
                 m_dynamicActors.push_back(p_newActor);
             }
+
         }
 
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
@@ -109,7 +110,7 @@ namespace DoremiEngine
             {
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
-                if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size())
+                if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size() && !m_grid[x][y].occupied)
                 {
                     // The quad exists!
                     float quadCharge;

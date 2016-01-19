@@ -40,7 +40,7 @@ namespace Doremi
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
-            m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT3(0, 0, 0));
+            m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100, XMFLOAT3(0, 5, 0));
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
@@ -50,7 +50,10 @@ namespace Doremi
             Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
             /// debugskit
-
+            PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
+            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
+            // creating a invisible "wall", for testing only
+            m_field->Update();
 
             //&& render pos rigidbody, potentialfield
         }
@@ -64,14 +67,11 @@ namespace Doremi
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 
             // TODOKO Test wall
-            if(firstUpdate)
-            {
-                firstUpdate = false;
-                PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-                t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
-                // creating a invisible "wall", for testing only
-                m_field->Update();
-            }
+            //if(firstUpdate)
+            //{
+            //    firstUpdate = false;
+
+            //}
 
             for(size_t i = 0; i < length; i++)
             {

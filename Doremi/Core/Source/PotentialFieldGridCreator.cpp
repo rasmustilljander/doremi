@@ -70,11 +70,7 @@ namespace Doremi
                                     EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(objectID)->ChargedActor;
                                 actor->AddOccupiedQuad(XMINT2(x, z));
                                 op_field->AddActor(actor);
-                                // int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-                                // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.5 * x * quadSize.x, 10, 0.5 * z * quadSize.y);
-                                // DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-
-                                break; // If more than on collision occures, fuck it
+                                break; // If more than on collision occures, fuck it >D
                             }
                         }
                     }
