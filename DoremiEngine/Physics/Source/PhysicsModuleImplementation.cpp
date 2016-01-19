@@ -23,6 +23,7 @@ namespace DoremiEngine
             m_utils.m_physicsMaterialManager = new PhysicsMaterialManagerImpl(m_utils);
             m_utils.m_characterControlManager = new CharacterControlManagerImpl(m_utils);
             m_utils.m_fluidManager = new FluidManagerImpl(m_utils);
+            m_utils.m_triggerManager = new TriggerManagerImpl(m_utils);
 
             // Make some other important thingies
             m_utils.m_characterControlManager->SetCallbackClass(this);

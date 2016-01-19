@@ -5,6 +5,7 @@
 #include <Internal/PhysicsModuleImplementation.hpp>
 #include <Internal/CharacterControlManagerImpl.hpp>
 #include <Internal/FluidManagerImpl.hpp>
+#include <Internal/TriggerManagerimpl.hpp>
 
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/pvd/PxVisualDebugger.h>
@@ -28,6 +29,7 @@ namespace DoremiEngine
             PhysicsMaterialManagerImpl* m_physicsMaterialManager;
             CharacterControlManagerImpl* m_characterControlManager;
             FluidManagerImpl* m_fluidManager;
+            TriggerManagerImpl* m_triggerManager;
 
             // PhysX stuff
             PxDefaultAllocator m_allocator;
