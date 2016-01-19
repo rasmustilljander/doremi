@@ -56,6 +56,8 @@ namespace DoremiEngine
             ID3D11Buffer* m_worldMatrix;
             ID3D11SamplerState* m_defaultSamplerState;
             DirectX::XMFLOAT2 m_screenResolution;
+            ID3D11ShaderResourceView* m_srv;
+            ID3D11UnorderedAccessView* m_backbufferUAV;
         };
     }
 }

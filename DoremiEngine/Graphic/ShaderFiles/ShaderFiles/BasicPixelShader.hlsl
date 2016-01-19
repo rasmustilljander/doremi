@@ -4,6 +4,7 @@ struct PixelInputType
 {
     float4 position : SV_POSITION;
     float4 worldPos : WORLDPOS;
+    float3 screenPos : SCREENPOS;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
     float3 cameraPos : CAMERAPOS;
@@ -51,6 +52,7 @@ cbuffer LightInfo : register(b0)
 };
 
 Texture2D ObjTexture : register(t0);
+
 SamplerState ObjSamplerState : register(s0);
 
 float3 CalcDirectionalLight(PixelInputType input, int i)
@@ -95,9 +97,11 @@ float3 CalcPointLight(PixelInputType input, int i)
 
 float4 PS_main(PixelInputType input) : SV_TARGET
 {
-    float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
-    float3 rgb = float3(0, 0, 0);
+    float2 screenPos = input.screenPos.xy / input.screenPos.z;
 
+    float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
+
+    float3 rgb = float3(0, 0, 0);
 
     for (int i = 0; i < NUM_LIGHTS; i++)
     {
@@ -115,5 +119,5 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     test.N = float3(0, 0, 0);
     
     return float4(rgb, 1) + texcolor * 0.15;
-   
+    
 }

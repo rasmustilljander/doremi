@@ -61,23 +61,34 @@ namespace DoremiEngine
             // fill the swap chain description struct
             scd.BufferCount = 1; // one back buffer
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
-            scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // how swap chain is to be used
+            scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_UNORDERED_ACCESS; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
-            scd.SampleDesc.Count = 4; // how many multisamples
+            scd.SampleDesc.Count = 1; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
 
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
             if(!CheckHRESULT(res, "Error when creating device and swapchain, trying withour debug flag"))
             {
-                HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd,
-                                                            &m_swapChain, &m_device, NULL, &m_deviceContext);
+                res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd, &m_swapChain,
+                                                    &m_device, NULL, &m_deviceContext);
                 CheckHRESULT(res, "Error when creating device and swapchain");
             }
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
-            m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer);
+            res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
+            if(FAILED(res))
+            {
+                int a = 3;
+            }
+            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer);
+            if(FAILED(res))
+            {
+                int a = 3;
+            }
             t_BackBuffer->Release();
+
+
             // Depth buffer
             // Might want this in a class for readability and easy changing between states
             D3D11_TEXTURE2D_DESC dbdesc;
@@ -86,25 +97,48 @@ namespace DoremiEngine
             dbdesc.Height = m_screenResolution.y;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
-            dbdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-            dbdesc.SampleDesc.Count = 4;
+            dbdesc.Format = DXGI_FORMAT_R32_TYPELESS;
+            dbdesc.SampleDesc.Count = 1;
             dbdesc.SampleDesc.Quality = 0;
             dbdesc.Usage = D3D11_USAGE_DEFAULT;
-            dbdesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+            dbdesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
             dbdesc.CPUAccessFlags = 0;
             dbdesc.MiscFlags = 0;
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depthBuffer);
+            if(FAILED(res))
+            {
+                int a = 3;
+            }
 
             D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
             ZeroMemory(&descDSV, sizeof(descDSV));
 
-            descDSV.Format = dbdesc.Format;
-            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+            descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
             descDSV.Texture2D.MipSlice = 0;
 
-
             res = m_device->CreateDepthStencilView(m_depthBuffer, &descDSV, &m_depthView);
+            if(FAILED(res))
+            {
+                int a = 3;
+            }
+
+            m_srv = NULL;
+
+            D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+            ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+            srvd.Format = DXGI_FORMAT_R32_FLOAT;
+            srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            srvd.Texture2D.MipLevels = 1;
+
+
+            res = m_device->CreateShaderResourceView(m_depthBuffer, &srvd, &m_srv);
+            if(FAILED(res))
+            {
+                int a = 3;
+            }
+
             m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
 
             // Viewport
@@ -220,6 +254,7 @@ namespace DoremiEngine
             m_deviceContext->Unmap(m_worldMatrix, NULL);
 
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+            m_deviceContext->CSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
@@ -295,10 +330,27 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::EndDraw()
         {
+            ID3D11ShaderResourceView* nullSRV = {NULL};
+            ID3D11UnorderedAccessView* nullUAV = {NULL};
+            ID3D11RenderTargetView* nullRTV = {NULL};
+            // Remove depth bind to OM
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, nullptr);
+
+            // m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0);
+            m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
+            m_deviceContext->PSSetShaderResources(5, 1, &m_srv);
 
             // dispatch frustum shader
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
+
+            // Unbind depth
+            m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
+            m_deviceContext->PSSetShaderResources(5, 1, &nullSRV);
+            m_deviceContext->CSSetUnorderedAccessViews(6, 1, &nullUAV, 0);
+
+            // Add depth bind to OM
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};

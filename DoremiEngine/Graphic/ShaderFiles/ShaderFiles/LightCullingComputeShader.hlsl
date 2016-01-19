@@ -1,7 +1,5 @@
 #include "CommonInclude.hlsl"
 
-// The depth from the screen space texture.
-Texture2D DepthTextureVS : register(t3);
 // Precomputed frustums for the grid.
 struct LightGridInfo
 {
@@ -15,7 +13,12 @@ struct LightGridInfo
 // "o_" prefix indicates light lists for opaque geometry while 
 // "t_" prefix indicates light lists for transparent geometry.
 
+SamplerState ObjSamplerState : register(s0);
+ 
 StructuredBuffer<Frustum> in_Frustums : register(t0);
+// The depth from the screen space texture.
+Texture2D DepthTextureVS : register(t1);
+
 
 RWStructuredBuffer<uint> o_LightIndexCounter : register(u0);
 RWStructuredBuffer<uint> t_LightIndexCounter : register(u1);
@@ -26,6 +29,7 @@ RWStructuredBuffer<uint> t_LightIndexList : register(u3);
 //RWTexture2D<uint2> t_LightGrid : register(u6);
 RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u4);
 RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u5);
+RWTexture2D<float4> backbuffer : register(u6);
 
 cbuffer LightInfo : register(b1)
 {
@@ -81,6 +85,11 @@ void CS_main(ComputeShaderInput input)
     // Calculate min & max depth in threadgroup / tile.
     int2 texCoord = input.dispatchThreadID.xy;
     float fDepth = DepthTextureVS.Load(int3(texCoord, 0)).r;
+    //float2 texCoord = float2((float)input.dispatchThreadID.x/(float)numTrheads.x, (float)input.dispatchThreadID.y / (float)numTrheads.y);
+    //float fDepth = DepthTextureVS.Sample(ObjSamplerState, texCoord);
+
+    //render depth to back buffer
+    backbuffer[input.dispatchThreadID.xy] = float4(fDepth, fDepth, fDepth, 1);
 
     uint uDepth = asuint(fDepth);   // reinterpret as int since atomic operations cannot be performed on floats
 
@@ -99,10 +108,13 @@ void CS_main(ComputeShaderInput input)
 
     GroupMemoryBarrierWithGroupSync();
 
-    //float fMinDepth = asfloat(uMinDepth);
-    //float fMaxDepth = asfloat(uMaxDepth);
-    float fMinDepth = 0;
-    float fMaxDepth = 100;
+    float fMinDepth = asfloat(uMinDepth);
+    float fMaxDepth = asfloat(uMaxDepth);
+
+    //render depth to back buffer
+    //backbuffer[input.dispatchThreadID.xy] = float4(fMinDepth, 0, fMaxDepth, 1);
+    //float fMinDepth = 0;
+    //float fMaxDepth = 100;
 
     // Convert depth values to view space.
     float minDepthVS = ClipToView(float4(0, 0, fMinDepth, 1)).z;
@@ -198,12 +210,14 @@ void CS_main(ComputeShaderInput input)
     // For opaque geometry.
     for (i = input.groupIndex; i < o_LightCount; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        o_LightIndexList[o_LightIndexStartOffset + i] = o_LightList[i];
+        //o_LightIndexList[o_LightIndexStartOffset + i] = o_LightList[i];
+        o_LightIndexList[o_LightIndexStartOffset + i] = fMinDepth;
     }
     // For transparent geometry.
     for (i = input.groupIndex; i < t_LightCount; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
+        //t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
+        t_LightIndexList[t_LightIndexStartOffset + i] = fMaxDepth;
     }
 
 }

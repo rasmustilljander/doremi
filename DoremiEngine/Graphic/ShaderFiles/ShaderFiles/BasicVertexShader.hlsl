@@ -23,6 +23,7 @@ struct VOut
 {
     float4 position : SV_POSITION;
     float4 worldPos : WORLDPOS;
+    float3 screenPos : SCREENPOS;
     float2 texCoord : TEXCOORD;
     float3 normal: NORMAL;
     float3 cameraPos : CAMERAPOS;
@@ -35,7 +36,7 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
 
-
+    output.screenPos = output.position.xyw;
 
     output.worldPos = mul(float4(input.position, 1.0f), worldMatrix);
     output.normal = mul(float4(input.normal, 0.0f), worldMatrix).xyz;
