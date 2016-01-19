@@ -57,6 +57,8 @@ namespace Doremi
             return m_singleton;
         }
 
+        std::map<uint32_t, Player*>& PlayerHandler::GetPlayerMap() { return m_playerMap; }
+
         InputHandler* PlayerHandler::GetDefaultInputHandler()
         {
             InputHandler* OutPointer = nullptr;

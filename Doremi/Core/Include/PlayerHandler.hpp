@@ -190,6 +190,11 @@ namespace Doremi
             uint32_t GetNumOfPlayers();
 
             /**
+                Returns the map of players
+            */
+            std::map<uint32_t, Player*>& GetPlayerMap();
+
+            /**
                 TODOCM doc
             */
             void RemoveAllPlayers();
