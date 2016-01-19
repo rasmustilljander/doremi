@@ -64,6 +64,7 @@ namespace DoremiEngine
             PhysicsMaterialManager& GetPhysicsMaterialManager() override;
             CharacterControlManager& GetCharacterControlManager() override;
             FluidManager& GetFluidManager() override;
+            TriggerManager& GetTriggerManager() override;
 
             vector<CollisionPair> GetCollisionPairs() override;
 

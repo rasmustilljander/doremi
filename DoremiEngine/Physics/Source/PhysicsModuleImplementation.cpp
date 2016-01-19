@@ -53,6 +53,7 @@ namespace DoremiEngine
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
         CharacterControlManager& PhysicsModuleImplementation::GetCharacterControlManager() { return *m_utils.m_characterControlManager; }
         FluidManager& PhysicsModuleImplementation::GetFluidManager() { return *m_utils.m_fluidManager; }
+        TriggerManager& PhysicsModuleImplementation::GetTriggerManager() { return *m_utils.m_triggerManager; }
 
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
 

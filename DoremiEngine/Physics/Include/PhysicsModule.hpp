@@ -24,6 +24,7 @@ namespace DoremiEngine
         class PhysicsMaterialManager;
         class CharacterControlManager;
         class FluidManager;
+        class TriggerManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
         public:
@@ -53,6 +54,12 @@ namespace DoremiEngine
             /**
             Experimental fluid manager. TODOJB update Docs as necessary*/
             virtual FluidManager& GetFluidManager() = 0;
+
+            /**
+            Gets a manager used to create triggers in the game. These triggers are
+            objects which are not affected by the simulation, but they are triggered
+            at a collision and the collision data is collected.*/
+            virtual TriggerManager& GetTriggerManager() = 0;
             /**
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is
