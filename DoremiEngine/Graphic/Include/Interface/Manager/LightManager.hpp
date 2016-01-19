@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <DirectXMath.h>
 
 namespace DoremiEngine
 {
@@ -12,9 +13,10 @@ namespace DoremiEngine
         {
             // TODORK revise structure
         public:
-            virtual int AddLight(Light light) = 0;
-            virtual Light GetLight(int index) = 0;
+            virtual Light* AddLight(int type, float intensity, DirectX::XMFLOAT3 color, float coneAngle, DirectX::XMFLOAT3 direction,
+                                    float penumAngle, DirectX::XMFLOAT3 position) = 0;
             virtual void InitLightManager() = 0;
+            virtual void TestFunc() = 0;
         };
     }
 }

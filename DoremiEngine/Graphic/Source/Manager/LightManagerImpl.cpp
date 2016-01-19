@@ -14,6 +14,7 @@ namespace DoremiEngine
         {
             m_device = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDevice();
             m_deviceContext = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
+            m_lightcount = 0;
             InitLightManager();
         }
 
@@ -30,7 +31,7 @@ namespace DoremiEngine
             light.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
             light.intensity = 2.0f;
             light.penumAgle = 0.0f;
-            light.position = DirectX::XMFLOAT3(1.5f, 10.f, 6.0f);
+            light.position = DirectX::XMFLOAT3(10.5f, 1.f, 6.0f);
             light.enabled = 1;
             light.type = 3;
 
@@ -86,24 +87,45 @@ namespace DoremiEngine
             lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             lightBufferDesc.MiscFlags = 0;
             lightBufferDesc.StructureByteStride = 0;
-            ID3D11Buffer* lBuffer;
-            m_device->CreateBuffer(&lightBufferDesc, NULL, &lBuffer);
+            m_device->CreateBuffer(&lightBufferDesc, NULL, &m_lBuffer);
 
             D3D11_MAPPED_SUBRESOURCE tMS;
-            m_deviceContext->Map(lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            m_deviceContext->Map(m_lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, &m_lightBuffer.lightList, sizeof(m_lightBuffer.lightList));
-            m_deviceContext->Unmap(lBuffer, NULL);
-            m_deviceContext->PSSetConstantBuffers(0, 1, &lBuffer);
-            m_deviceContext->CSSetConstantBuffers(1, 1, &lBuffer);
+            m_deviceContext->Unmap(m_lBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(0, 1, &m_lBuffer);
+            m_deviceContext->CSSetConstantBuffers(1, 1, &m_lBuffer);
         }
 
-        int LightManagerImpl::AddLight(Light light)
+        Light* LightManagerImpl::AddLight(int type, float intensity, DirectX::XMFLOAT3 color, float coneAngle, DirectX::XMFLOAT3 direction,
+                                          float penumAngle, DirectX::XMFLOAT3 position)
         {
-            int index = sizeof(m_lightBuffer.lightList) / sizeof(Light);
-            m_lightBuffer.lightList[index] = light;
-            return index;
+            Light newLight;
+            newLight.attenuation = DirectX::XMFLOAT3(1, 1, 1);
+            newLight.color = color;
+            newLight.coneAngle = coneAngle;
+            newLight.direction = direction;
+            newLight.enabled = 1;
+            newLight.intensity = intensity;
+            newLight.penumAgle = penumAngle;
+            newLight.position = position;
+            newLight.type = type;
+
+            m_lightBuffer.lightList[m_lightcount] = newLight;
+            m_lightcount++;
+            return &newLight;
         }
 
-        Light LightManagerImpl::GetLight(int index) { return m_lightBuffer.lightList[index]; }
+        void LightManagerImpl::TestFunc()
+        {
+            m_lightBuffer.lightList[0].position.x += 0.1;
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &m_lightBuffer.lightList, sizeof(m_lightBuffer.lightList));
+            m_deviceContext->Unmap(m_lBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(0, 1, &m_lBuffer);
+            m_deviceContext->CSSetConstantBuffers(1, 1, &m_lBuffer);
+        }
     }
 }

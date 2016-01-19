@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 100
+#define NUM_LIGHTS 1
 
 struct PixelInputType
 {
@@ -101,6 +101,7 @@ float4 PS_main(PixelInputType input) : SV_TARGET
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
 
+    texcolor = float4(0, 0, 0, 1);
     float3 rgb = float3(0, 0, 0);
 
     for (int i = 0; i < NUM_LIGHTS; i++)

@@ -5,6 +5,7 @@
 #include <Internal/Manager/ComputeShaderManagerImpl.hpp>
 #include <Internal/State/DepthStencilStateImpl.hpp>
 #include <Internal/State/RasterizerStateImpl.hpp>
+#include <Internal/Manager/LightManagerImpl.hpp>
 #include <HelpFunctions.hpp>
 #include <SDL2/SDL.h>
 #include <Internal/Mesh/Vertex.hpp>
