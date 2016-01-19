@@ -7,6 +7,8 @@
 #include <Internal/FluidManagerImpl.hpp>
 
 #include <PhysX/PxPhysicsAPI.h>
+#include <PhysX/pvd/PxVisualDebugger.h>
+#include <PhysX/physxvisualdebuggersdk/PvdConnection.h>
 
 using namespace physx;
 namespace DoremiEngine

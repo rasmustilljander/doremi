@@ -16,6 +16,12 @@
 
 // Physics
 
+/// DEBUG physics TODOJB remove
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+
 /// Standard
 #include <sstream>
 #include <fstream>
@@ -146,6 +152,17 @@ namespace Doremi
                     ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
                     ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
                     ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
+
+                    // Hax in a collision
+                    m_currentScale = m_transforms[transformName].scale;
+                    m_currentOrientation = m_transforms[transformName].rot;
+                    m_currentPos = m_transforms[transformName].pos;
+                    XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
+                    realPos *= 0.5;
+                    XMStoreFloat3(&m_currentPos, realPos);
+                    BuildMesh(meshData);
+                    // End hax
+
                     m_meshCoupling.push_back(ObjectCouplingInfo(transformName, meshName, materialName));
                 }
 
@@ -194,12 +211,20 @@ namespace Doremi
             using namespace std;
             vector<DoremiEngine::Graphic::Vertex> vertexBuffer;
 
+            // Hax for collision meshes
+            XMMATRIX scaleMat = XMMatrixScalingFromVector(XMLoadFloat3(&m_currentScale));
+            vector<XMFLOAT3> positionsPX;
+            vector<int> indicesPX;
+            // END HAX
+
             int nrVertices = p_data.nrNor;
 
             DoremiEngine::Graphic::Vertex tempV;
 
             for(int i = 0; i < p_data.nrI; i = i + 3)
             {
+
+
                 tempV.position = p_data.positions[p_data.indexPositions[i + 2]];
                 tempV.position.z = tempV.position.z * -1.0f;
                 tempV.normal = p_data.normals[p_data.indexNormals[i + 2]];
@@ -208,6 +233,14 @@ namespace Doremi
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
 
                 vertexBuffer.push_back(tempV);
+                // HAX
+                XMVECTOR posVec = XMLoadFloat3(&tempV.position);
+                posVec = XMVector3Transform(posVec, scaleMat);
+                XMFLOAT3 scaledPos;
+                XMStoreFloat3(&scaledPos, posVec);
+                positionsPX.push_back(scaledPos);
+                indicesPX.push_back(i);
+                // END HAX
 
                 tempV.position = p_data.positions[p_data.indexPositions[i + 1]];
                 tempV.position.z = tempV.position.z * -1.0f;
@@ -217,6 +250,14 @@ namespace Doremi
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
 
                 vertexBuffer.push_back(tempV);
+                // HAX
+                posVec = XMLoadFloat3(&tempV.position);
+                posVec = XMVector3Transform(posVec, scaleMat);
+                scaledPos;
+                XMStoreFloat3(&scaledPos, posVec);
+                positionsPX.push_back(scaledPos);
+                indicesPX.push_back(i + 1);
+                // END HAX
 
                 tempV.position = p_data.positions[p_data.indexPositions[i]];
                 tempV.position.z = tempV.position.z * -1.0f;
@@ -226,8 +267,20 @@ namespace Doremi
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
 
                 vertexBuffer.push_back(tempV);
+                // HAX
+                posVec = XMLoadFloat3(&tempV.position);
+                posVec = XMVector3Transform(posVec, scaleMat);
+                scaledPos;
+                XMStoreFloat3(&scaledPos, posVec);
+                positionsPX.push_back(scaledPos);
+                indicesPX.push_back(i + 2);
+                // END HAX
             }
-
+            // HAX
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
+                1337, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
+                m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5));
+            // END HAX
             return vertexBuffer;
         }
     }

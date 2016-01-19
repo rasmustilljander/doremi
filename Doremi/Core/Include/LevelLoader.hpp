@@ -123,6 +123,11 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::map<std::string, TransformData> m_transforms;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
+
+            // HAX STUFF for physics magic
+            DirectX::XMFLOAT3 m_currentScale;
+            DirectX::XMFLOAT3 m_currentPos;
+            DirectX::XMFLOAT4 m_currentOrientation;
         };
     }
 }

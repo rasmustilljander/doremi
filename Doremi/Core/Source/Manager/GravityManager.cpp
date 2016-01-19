@@ -38,8 +38,7 @@ namespace Doremi
                     GravityComponent* gravComp = EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i);
                     // Make sure a jump isn't in progress
                     if(!(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Jump) &&
-                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active) &&
-                       EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position.y > 1) // temporary fix
+                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active)) // temporary fix
                     {
                         gravComp->travelSpeed += m_gravityCoefficient * p_dt;
                         if(gravComp->travelSpeed >= gravComp->maxFallSpeed)

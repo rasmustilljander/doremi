@@ -145,7 +145,7 @@ namespace Doremi
 
 
             int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5, 15, 0);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5, 30, 0);
             DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
             m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1, 1));
 
