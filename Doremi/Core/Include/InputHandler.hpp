@@ -37,8 +37,8 @@ namespace Doremi
             DebugLeft = 1024, // 1073741904
             DebugRight = 2048, // 1073741903
             DebugButton = 4096,
-            StartRepeatableAudioRecording = 8192,
-            PlayRepeatableAudioRecording = 16384,
+            StartRepeatableAudioRecording = 8192, //ä
+            PlayRepeatableAudioRecording = 16384, //ö
             ExitGame = 32768,
             LeftClick = 65536,
             // TODOEA add all here or set the 1111111... bit number to ALL

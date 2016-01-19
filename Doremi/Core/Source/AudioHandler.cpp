@@ -87,8 +87,8 @@ namespace Doremi
             t_audioModule.StopRecording();
             m_currentFrequency = 0;
             t_audioModule.StartRecording(m_repeatableFrequencyAnalyserSoundID, false); /**TODOLH Behövs stop å start recording?*/
-            t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID,
-                                             0.0f); /**TODOLH Detta setvolume på recordkanalernas playback känns inte optimalt. Revisit maybe*/
+            //t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID,
+                                             //0.0f); /**TODOLH Detta setvolume på recordkanalernas playback känns inte optimalt. Revisit maybe*/
             m_SoundState = HOLDREPEATABLEANALYSIS;
             m_repeatableAnalysisComplete = false;
         }
@@ -126,8 +126,12 @@ namespace Doremi
         void AudioHandler::PlayRepeatableRecordedSound()
         {
             // This is a dangerous function since soundID starts at 0. If there is no sound on 0 we will crash
-            DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
-            t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
+            if (m_SoundState != HOLDREPEATABLEANALYSIS && m_SoundState != ANALYSEREPEATABLE)
+            {
+                DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
+
+            }
         }
 
         void AudioHandler::Update(double p_deltaTime)
@@ -168,9 +172,6 @@ namespace Doremi
 
                 case Doremi::Core::AudioHandler::ANALYSEREPEATABLE:
                     recordPointer = t_audioModule.GetRecordPointer();
-                    /**
-                    TODOLH Här ska vi koda in arrayen som spar ner analysdatan
-                    */
                     // Kolla om ljudet är "klart" isåfall övergå till andra inspelingssättet.
                     if(!t_audioModule.IsRecording())
                     {
@@ -179,7 +180,7 @@ namespace Doremi
                         t_audioModule.StopRecording();
                         t_audioModule.StartRecording(m_continuousFrequencyAnalyserSoundID, true);
                         t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 1.0f);
-                        m_outputRepeatableSoundID = t_audioModule.TestCopy(m_repeatableFrequencyAnalyserSoundID, m_timeGunReloadButtonWasPressed);
+                        m_outputRepeatableSoundID = t_audioModule.CopySound(m_repeatableFrequencyAnalyserSoundID, m_outputRepeatableSoundID, m_timeGunReloadButtonWasPressed);
                         t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
                         t_audioModule.SetVolumeOnChannel(m_outputRepeatableSoundChannelID, 0);
                     }

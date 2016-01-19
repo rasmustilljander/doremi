@@ -357,6 +357,8 @@ namespace Doremi
             t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
             AudioHandler::GetInstance()->SetupContinuousRecording();
             AudioHandler::GetInstance()->StartContinuousRecording();
+            AudioHandler::GetInstance()->SetupRepeatableRecording();
+
 
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];

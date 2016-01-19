@@ -344,9 +344,9 @@ namespace DoremiEngine
             if(Result == SOCKET_ERROR)
             {
                 DWORD errorCode = WSAGetLastError();
-                std::string Out =
+                /*std::string Out =
                     "Failed to connect to socket with IP: " + p_connectAdress.GetIPToString() + " To port: " + std::to_string(p_connectAdress.GetPort());
-                throw std::runtime_error(Out.c_str());
+                throw std::runtime_error(Out.c_str());*/
             }
 
             // TODOCM TEST TEST TEST, warning might cause undefined behaviour cause of nonblocking nature
