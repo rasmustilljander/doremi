@@ -164,7 +164,7 @@ namespace Doremi
                                 m_serverReliableSocketHandle = NetworkModule.ConnectToReliable(m_reliableServerAdress);
 
                                 // TODOCM check if we need to save this adress or we can just bind it
-                                delete m_reliableServerAdress;
+                                //delete m_reliableServerAdress;
                             }
 
                             break;

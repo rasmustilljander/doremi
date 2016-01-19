@@ -43,7 +43,7 @@ namespace DoremiEngine
             */
             unsigned int GetRecordPointer() override;
 
-            size_t TestCopy(int p_soundIDToCopy, float p_length) override;
+            size_t CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length) override;
 
             bool IsRecording() override;
 
@@ -100,7 +100,7 @@ namespace DoremiEngine
             float m_distanceFactor = 0;
             bool m_recordingStarted = false;
 
-            static const int m_outputRate = 4800;
+            static const int m_outputRate = 44100; //4800 TODOLH Om freq analys buggar kolla hääärrrr!!!! fittunge (för ctrl+f) 
             static const int m_spectrumSize = 8192;
             const float m_spectrumRange = ((float)m_outputRate / 2.0f);
             const float m_binSize = m_spectrumRange / ((float)m_spectrumSize);

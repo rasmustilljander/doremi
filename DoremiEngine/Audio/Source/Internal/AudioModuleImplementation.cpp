@@ -99,8 +99,10 @@ namespace DoremiEngine
             m_fmodSystem->isRecording(0, &t_isRecording); /**TODOLH om vi byter till att inte använda default recordingdriver så måste du ändra här*/
             return t_isRecording;
         }
-
-        size_t AudioModuleImplementation::TestCopy(int p_soundIDToCopy, float p_length)
+        /**
+        TODOLH Change name
+        */
+        size_t AudioModuleImplementation::CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length)
         {
             // for every second in the buffer there is sizeof(short)*44100 bytes = 2*44100 (* numchannels)
             void* testStart;
@@ -112,33 +114,56 @@ namespace DoremiEngine
             int bits;
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->getFormat(&derp, &format, &chans, &bits);
             ERRCHECK(m_fmodResult);
-            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 48000 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
-
+            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 44100 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
+            ERRCHECK(m_fmodResult);
+            if (testest == nullptr)
+            {
+                int hejd = 0;
+            }
             FMOD::Sound* t_fmodSound;
             FMOD_CREATESOUNDEXINFO exinfo;
             memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
             exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
             exinfo.numchannels = 1;
             exinfo.format = FMOD_SOUND_FORMAT_PCM16;
-            exinfo.defaultfrequency = 48000;
+            exinfo.defaultfrequency = 44100;
             exinfo.length = exinfo.defaultfrequency * exinfo.numchannels * p_length;
-            exinfo.length = 48000 * chans * p_length * sizeof(short);
+            exinfo.length = 44100 * chans * p_length * sizeof(short);
 
             unsigned int testLength2;
             void* testStart2;
             m_fmodResult = m_fmodSystem->createSound(0, FMOD_3D | FMOD_SOFTWARE | FMOD_LOOP_OFF | FMOD_OPENUSER, &exinfo, &t_fmodSound);
-
-            m_fmodResult = t_fmodSound->lock(0, 48000 * p_length, &testStart2, 0, &testLength2, 0);
+            ERRCHECK(m_fmodResult);
+            m_fmodResult = t_fmodSound->lock(0, 44100 * p_length, &testStart2, 0, &testLength2, 0);
+            ERRCHECK(m_fmodResult);
             signed short* testArray = (signed short*)testStart;
             signed short* testArray2 = (signed short*)testStart2;
-            for(int i = 0; i < 48000 * p_length * chans; i++)
+            for(int i = 0; i < 44100 * p_length * chans; i++)
             {
                 testArray2[i] = testArray[i];
             }
             m_fmodResult = t_fmodSound->unlock(testArray2, 0, testLength2, 0);
-            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->unlock(testStart, 0, testLength, 0);
-            m_fmodSoundBuffer.push_back(t_fmodSound);
-            size_t returnVal = m_fmodSoundBuffer.size() - 1;
+            ERRCHECK(m_fmodResult);
+            m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->unlock(testStart, 0, 44100 * 5 * chans * sizeof(short), 0);
+            unsigned int hejsan;
+            m_fmodSoundBuffer[p_soundIDToCopy]->getLength(&hejsan, FMOD_TIMEUNIT_MS);
+            ERRCHECK(m_fmodResult);
+            size_t returnVal;
+            /// 99999 is the default value for my size_ts think of it as -1 on an int
+            if (p_soundIDDestination == 99999)
+            {
+                m_fmodSoundBuffer.push_back(t_fmodSound);
+                returnVal = m_fmodSoundBuffer.size() - 1;
+
+            }
+            else
+            {
+                m_fmodResult = m_fmodSoundBuffer[p_soundIDDestination]->release();
+                ERRCHECK(m_fmodResult);
+                m_fmodSoundBuffer[p_soundIDDestination] = t_fmodSound;
+                returnVal = p_soundIDDestination;
+
+            }
             return returnVal;
         }
 
@@ -270,7 +295,7 @@ namespace DoremiEngine
         unsigned int AudioModuleImplementation::GetRecordPointer()
         {
             unsigned int timeElapsedSinceRecordingStarted = 0;
-            m_fmodSystem->getRecordPosition(0, &timeElapsedSinceRecordingStarted);
+            m_fmodResult = m_fmodSystem->getRecordPosition(0, &timeElapsedSinceRecordingStarted);
             // funkar bara om vi använder outputdriver 0 ... 0 = default by OS. kan undvikas genom att lägga in driverchoice i starten TODOLH
             return timeElapsedSinceRecordingStarted;
         }
@@ -291,7 +316,7 @@ namespace DoremiEngine
             exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
             exinfo.numchannels = 1;
             exinfo.format = FMOD_SOUND_FORMAT_PCM16;
-            exinfo.defaultfrequency = 48000;
+            exinfo.defaultfrequency = 44100;
             exinfo.length = exinfo.defaultfrequency * sizeof(short) * exinfo.numchannels * 5;
 
             if(p_loop)

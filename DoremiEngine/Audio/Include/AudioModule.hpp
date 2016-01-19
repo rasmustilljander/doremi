@@ -29,9 +29,9 @@ namespace DoremiEngine
             */
             virtual size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) = 0;
             /**
-            TestFunction TODOLH Remove
+            Copies one sound to another. The second sound becomes a cropped version of the first. Cropping is made at the desired timepoint
             */
-            virtual size_t TestCopy(int p_soundIDToCopy, float p_length) = 0;
+            virtual size_t CopySound(int p_soundIDSource, int p_soundIDDestination, float p_length) = 0;
             /**
             Returns true if currently recording
             */
