@@ -62,7 +62,7 @@ namespace DoremiEngine
 
             /**
             Gets a vector of all trigger collision pairs. The firstID is always the
-            id of the trigger, and the secondID is always the id of the actor which 
+            id of the trigger, and the secondID is always the id of the actor which
             collided with the trigger. It's awesome that way*/
             virtual std::vector<CollisionPair> GetTriggerPairs() = 0;
 

@@ -156,7 +156,7 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count)
         {
-            for (size_t i = 0; i < count; i++)
+            for(size_t i = 0; i < count; i++)
             {
                 const PxTriggerPair& cp = pairs[i];
                 CollisionPair collisionPair;
