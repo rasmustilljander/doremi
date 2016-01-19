@@ -23,7 +23,6 @@ namespace DoremiEngine
             m_utils.m_physicsMaterialManager = new PhysicsMaterialManagerImpl(m_utils);
             m_utils.m_characterControlManager = new CharacterControlManagerImpl(m_utils);
             m_utils.m_fluidManager = new FluidManagerImpl(m_utils);
-            m_utils.m_triggerManager = new TriggerManagerImpl(m_utils);
 
             // Make some other important thingies
             m_utils.m_characterControlManager->SetCallbackClass(this);
@@ -44,6 +43,7 @@ namespace DoremiEngine
         {
             // Start by clearing the list of collision pairs (WARNING potentially bad idea)
             m_collisionPairs.clear();
+            m_triggerPairs.clear();
             m_utils.m_fluidManager->Update(p_dt);
             m_utils.m_worldScene->simulate(p_dt);
             m_utils.m_worldScene->fetchResults(true);
@@ -53,9 +53,10 @@ namespace DoremiEngine
         PhysicsMaterialManager& PhysicsModuleImplementation::GetPhysicsMaterialManager() { return *m_utils.m_physicsMaterialManager; }
         CharacterControlManager& PhysicsModuleImplementation::GetCharacterControlManager() { return *m_utils.m_characterControlManager; }
         FluidManager& PhysicsModuleImplementation::GetFluidManager() { return *m_utils.m_fluidManager; }
-        TriggerManager& PhysicsModuleImplementation::GetTriggerManager() { return *m_utils.m_triggerManager; }
 
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
+        vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
+
 
         // Only an example method to demonstrate how the engine is used
         float PhysicsModuleImplementation::ExampleMethod(const float& posx) { return 1; }
@@ -153,7 +154,17 @@ namespace DoremiEngine
         }
 
 
-        void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count) {}
+        void PhysicsModuleImplementation::onTrigger(PxTriggerPair* pairs, PxU32 count)
+        {
+            for (size_t i = 0; i < count; i++)
+            {
+                const PxTriggerPair& cp = pairs[i];
+                CollisionPair collisionPair;
+                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairs->triggerActor];
+                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairs->otherActor];
+                m_triggerPairs.push_back(collisionPair);
+            }
+        }
 
         void PhysicsModuleImplementation::onShapeHit(const PxControllerShapeHit& hit)
         {

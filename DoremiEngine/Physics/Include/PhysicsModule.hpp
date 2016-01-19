@@ -24,7 +24,6 @@ namespace DoremiEngine
         class PhysicsMaterialManager;
         class CharacterControlManager;
         class FluidManager;
-        class TriggerManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
         public:
@@ -56,15 +55,16 @@ namespace DoremiEngine
             virtual FluidManager& GetFluidManager() = 0;
 
             /**
-            Gets a manager used to create triggers in the game. These triggers are
-            objects which are not affected by the simulation, but they are triggered
-            at a collision and the collision data is collected.*/
-            virtual TriggerManager& GetTriggerManager() = 0;
-            /**
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is
             automatically cleared before each new simulation*/
             virtual std::vector<CollisionPair> GetCollisionPairs() = 0;
+
+            /**
+            Gets a vector of all trigger collision pairs. The firstID is always the
+            id of the trigger, and the secondID is always the id of the actor which 
+            collided with the trigger. It's awesome that way*/
+            virtual std::vector<CollisionPair> GetTriggerPairs() = 0;
 
             // Test function
             virtual float ExampleMethod(const float& posx) = 0;

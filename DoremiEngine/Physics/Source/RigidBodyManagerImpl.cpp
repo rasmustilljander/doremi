@@ -114,6 +114,14 @@ namespace DoremiEngine
             // implementation pending
         }
 
+        void RigidBodyManagerImpl::SetTrigger(int p_id, bool p_isTrigger)
+        {
+            PxShape* shape;
+            m_bodies[p_id]->getShapes(&shape, 1);
+            shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+            shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+        }
+
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
         {
             PxFilterData filterData;

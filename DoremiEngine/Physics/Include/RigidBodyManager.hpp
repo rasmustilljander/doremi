@@ -31,6 +31,13 @@ namespace DoremiEngine
                                             vector<int>& p_indices, int p_materialID) = 0;
 
             /**
+            This can be used to make a body into a trigger. Triggers are not affected
+            by the simulation. They trigger when colliding with other bodies, and a
+            collision pair is generated*/
+            virtual void SetTrigger(int p_id, bool p_isTrigger) = 0;
+
+
+            /**
             TODOJB figure out what to do, and how to describe it in a comment
             */
             virtual void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) = 0;
