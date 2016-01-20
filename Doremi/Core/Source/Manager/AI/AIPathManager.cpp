@@ -41,8 +41,8 @@ namespace Doremi
         {
             // TODOKO do this in a better place, might not work to have here in the future
             m_field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100,
-                                                                                          XMFLOAT3(0, 5, 0)); // Bugs if y = 5 for some reason unknown
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(40, 200, 100, 100,
+                                                                                          XMFLOAT3(-85, 15.0f, 0)); // TODOKO fit in for demo map
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
@@ -50,11 +50,12 @@ namespace Doremi
 
             // Testar TODOEA
             Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
-
+            //PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
+            //t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
+            //m_field->Update();
+            std::cout << "Done";
             /// debugskit
-            PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
-            // m_field->Update();
+
 
             //&& render pos rigidbody, potentialfield
         }
@@ -68,11 +69,11 @@ namespace Doremi
             int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 
             // TODOKO Test wall
-            //if(firstUpdate)
-            //{
-            //    firstUpdate = false;
+            if(firstUpdate)
+            {
+                firstUpdate = false;
 
-            //}
+            }
 
             for(size_t i = 0; i < length; i++)
             {
@@ -99,16 +100,16 @@ namespace Doremi
                         desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, false);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
-                    XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
-                    XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
+                   // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
+                   // XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
                     XMVECTOR dirVec = desiredPosVec - unitPosVec;
                     dirVec = XMVector3Normalize(dirVec);
-                    dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
-                    dirVec = XMVector3Normalize(dirVec);
+                   // dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
+                   //  dirVec = XMVector3Normalize(dirVec);
                     XMFLOAT3 direction;
-                    XMStoreFloat3(&direction, dirVec * 0.02f); // TODOKO remove this hard coded shiat
+                    XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
                 }

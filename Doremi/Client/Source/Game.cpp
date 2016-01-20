@@ -177,7 +177,6 @@ namespace Doremi
         //
         // trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
-
         //// TODOKO REMOVE Create debug potentialfields
         // for(size_t i = 0; i < 1; i++)
         //{
@@ -204,10 +203,10 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 8; i++)
+        for(size_t i = 0; i < 1; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
+            XMFLOAT3 position = DirectX::XMFLOAT3(0, 15 - (int)i, i * 5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             // int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);

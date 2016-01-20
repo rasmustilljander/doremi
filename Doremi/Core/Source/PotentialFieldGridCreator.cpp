@@ -45,8 +45,8 @@ namespace Doremi
                 {
                     XMFLOAT3 quadCenter = XMFLOAT3(grid[x][z].position.x, centerGridY, grid[x][z].position.y);
                     int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
-                                                                                               XMFLOAT3(quadSize.x * 0.5f, 3, quadSize.y * 0.5f), materialID);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
+                                                                                               XMFLOAT3(quadSize.x * 0.5f, 10, quadSize.y * 0.5f), materialID);
                     m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
                     std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetCollisionPairs();
                     size_t collisionListLength = collisionPairs.size();
@@ -74,7 +74,7 @@ namespace Doremi
                             }
                         }
                     }
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(myID);
+                    //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(myID);
                 }
             }
             // Någon fysikclass ska in
