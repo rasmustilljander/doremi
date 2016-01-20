@@ -40,8 +40,9 @@ namespace Doremi
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
-            m_field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(
-                100, 100, 100, 100, XMFLOAT3(0, 3, 30)); // Bugs if y = 5 for some reason unknown
+            m_field =
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(100, 100, 100, 100,
+                                                                                          XMFLOAT3(0, 5, 0)); // Bugs if y = 5 for some reason unknown
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
@@ -52,8 +53,8 @@ namespace Doremi
 
             /// debugskit
             PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
-            m_field->Update();
+            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
+            // m_field->Update();
 
             //&& render pos rigidbody, potentialfield
         }

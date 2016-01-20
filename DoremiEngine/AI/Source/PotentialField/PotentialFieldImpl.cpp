@@ -34,6 +34,7 @@ namespace DoremiEngine
                         {
                             // Same quad
                             m_grid[x][y].occupied = true;
+                            // std::cout << "x " << x << " y " << y << std::endl;
                         }
                         XMFLOAT2 actorQuadPosition = m_grid[closestQuad.x][closestQuad.y].position;
 

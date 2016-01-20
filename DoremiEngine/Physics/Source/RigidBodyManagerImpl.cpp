@@ -93,6 +93,7 @@ namespace DoremiEngine
             PxTransform transform = PxTransform(position, orientation);
             // Create the body
             PxRigidStatic* body = m_utils.m_physics->createRigidStatic(transform);
+
             // Get the material
             PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
             // Create a shape
@@ -135,6 +136,7 @@ namespace DoremiEngine
             for(uint32_t i = 0; i < numShapes; i++)
             {
                 PxShape* shape = shapes[i];
+                // shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, true); // If eveything that isnt a particle should drain, not tested TODOKO
                 shape->setSimulationFilterData(filterData);
             }
             if(shapes)

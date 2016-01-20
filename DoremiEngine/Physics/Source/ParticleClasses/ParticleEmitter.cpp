@@ -45,10 +45,13 @@ namespace DoremiEngine
         {
 
             // Update time since last particle wave was spawned
-            m_timeSinceLast += p_dt;
-            if(m_timeSinceLast > m_this.m_emissionRate)
+            // m_timeSinceLast += p_dt;
+            // if(m_timeSinceLast > m_this.m_emissionRate)
+            //{
+            //    m_timeSinceLast = 0;
+            if(m_timeSinceLast == 0) // For debug TODOKO
             {
-                m_timeSinceLast = 0;
+                m_timeSinceLast = 2;
                 vector<XMFLOAT3> velocities;
                 vector<XMFLOAT3> positions;
                 vector<int> indices;
