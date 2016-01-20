@@ -8,8 +8,11 @@
 #include <InterpolationHandler.hpp>
 #include <iostream> // TODOCM remove after test
 #include <PlayerHandler.hpp>
+#include <AudioHandler.hpp>
 #include <InputHandlerClient.hpp>
 #include <AddRemoveSyncHandler.hpp>
+#include <SequenceMath.hpp>
+#include <FrequencyBufferHandler.hpp>
 
 
 namespace Doremi
@@ -25,8 +28,6 @@ namespace Doremi
               m_timeoutInterval(3.0f),
               m_playerID(0)
         {
-
-
             m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
             m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 4050);
 
@@ -293,6 +294,9 @@ namespace Doremi
 
                 // Check the position we got from server
                 InterpolationHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
+
+                // Update frequency buffer by acc
+                PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->UpdateBufferFromSequence(Streamer.ReadUnsignedInt8());
             }
             else
             {
@@ -441,13 +445,17 @@ namespace Doremi
 
             // Set message buffer to stream
             unsigned char* BufferPointer = p_message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
+
+            uint32_t bytesWritten = 0;
 
             // Write sequence
             Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
+            bytesWritten += sizeof(uint8_t);
 
             // Write input(position directions) to stream
-            Streamer.WriteInt32(inputHandler->GetInputBitMask());
+            Streamer.WriteUnsignedInt32(inputHandler->GetInputBitMask());
+            bytesWritten += sizeof(uint32_t);
 
             // Get orientation
             EntityID id = 0;
@@ -458,11 +466,16 @@ namespace Doremi
 
             // Write orientation and translation
             Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
+            bytesWritten += sizeof(float) * 4;
 
             // Write last sequence used for add remove
             uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->GetNextSequenceUsed();
 
             Streamer.WriteUnsignedInt8(lastSequenceUsed);
+            bytesWritten += sizeof(uint8_t);
+
+            // Write sound frequency
+            PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->WriteFrequencies(Streamer, sizeof(p_message.Data), bytesWritten);
         }
 
         void ClientNetworkManager::SendConnectedMessage()

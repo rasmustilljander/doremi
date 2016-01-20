@@ -114,7 +114,7 @@ namespace Doremi
         m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);
         // m_managers.push_back(t_playerManager);
-        // m_managers.push_back(t_audioManager);
+        m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);

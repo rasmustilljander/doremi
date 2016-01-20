@@ -9,6 +9,7 @@
 #include <PlayerHandler.hpp>
 #include <InputHandlerServer.hpp>
 #include <AddRemoveSyncHandler.hpp>
+#include <FrequencyBufferHandler.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -119,19 +120,24 @@ namespace Doremi
         void ServerNetworkManager::RecieveInputMessage(NetMessage& p_message, Connection* p_connection)
         {
             InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
+            FrequencyBufferHandler* frequencyHandler = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
 
             // Create a stream
             BitStreamer Streamer = BitStreamer();
 
             // Set message buffer to stream
             unsigned char* BufferPointer = p_message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message));
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
+
+            uint32_t bytesRead = 0;
 
             // Read sequence
             p_connection->LastSequence = Streamer.ReadUnsignedInt8();
+            bytesRead += sizeof(uint8_t);
 
             // Read input from Stream
             uint32_t InputMask = Streamer.ReadUnsignedInt32();
+            bytesRead += sizeof(uint32_t);
 
             // Set Input to handler
             inputHandler->SetInputBitMask(InputMask);
@@ -140,18 +146,24 @@ namespace Doremi
             EntityID entityID = 0;
 
             // If we have a player with the ID
-            if(PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_connection->PlayerID, entityID))
+            if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_connection->PlayerID, entityID))
             {
-                // Set orientation to be updated
-                inputHandler->SetOrientationFromInput(Streamer.ReadRotationQuaternion());
-
-                // Save position to send it on next message
-                p_connection->PositionOnLastSequence = GetComponent<TransformComponent>(entityID)->position;
-
-                uint8_t clientSequence = Streamer.ReadUnsignedInt8();
-
-                PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
+                cout << "wrong in recieveinput message" << endl;
             }
+            // Set orientation to be updated
+            inputHandler->SetOrientationFromInput(Streamer.ReadRotationQuaternion());
+            bytesRead += sizeof(float) * 4;
+
+            // Save position to send it on next message
+            p_connection->PositionOnLastSequence = GetComponent<TransformComponent>(entityID)->position;
+
+            uint8_t clientSequence = Streamer.ReadUnsignedInt8();
+            bytesRead += sizeof(uint8_t);
+
+            PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
+
+            // Read frequency
+            frequencyHandler->ReadNewFrequencies(Streamer, sizeof(p_message.Data), bytesRead);
         }
 
         void ServerNetworkManager::RecieveReliableMessages()
@@ -413,14 +425,15 @@ namespace Doremi
                 }
             }
 
-            if(NumberOfEntitiesToSend > NumOfEntities)
-            {
-                int a = 3;
-            }
-
             // Write how many add/remove exist for player
             Streamer.SetReadWritePosition(positionToWriteNumOfObjects);
             Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
+
+            Streamer.SetReadWritePosition(BytesWritten);
+
+            // Write sequence acc for frequence
+            uint8_t sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
+            Streamer.WriteUnsignedInt8(sequenceAcc);
         }
 
         void ServerNetworkManager::SendMessages(double p_dt)

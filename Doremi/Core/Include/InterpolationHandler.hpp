@@ -112,6 +112,7 @@ namespace Doremi
                 TODOCM doc
             */
             uint8_t m_snapshotDelay;
+
             /**
                 TODOCM doc
             */

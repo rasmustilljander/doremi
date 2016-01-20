@@ -22,20 +22,27 @@ namespace Doremi
     {
         class InputHandler;
         class AddRemoveSyncHandler;
+        class FrequencyBufferHandler;
 
         /**
             TODOCM doc
         */
         struct Player
         {
-            Player(InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler)
-                : m_moveSpeed(0.2f), m_autoRetardation(50.0f), m_inputHandler(p_inputHandler), m_addRemoveSyncHandler(p_addRemoveSyncHandler), m_turnSpeed(0.01f)
+            Player(InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler, FrequencyBufferHandler* p_frequencyBufferHandler)
+                : m_moveSpeed(0.2f),
+                  m_autoRetardation(50.0f),
+                  m_inputHandler(p_inputHandler),
+                  m_addRemoveSyncHandler(p_addRemoveSyncHandler),
+                  m_frequencyBufferHandler(p_frequencyBufferHandler),
+                  m_turnSpeed(0.01f)
             {
             }
             ~Player()
             {
                 delete m_addRemoveSyncHandler;
                 delete m_inputHandler;
+                delete m_frequencyBufferHandler;
             }
 
             /**
@@ -52,6 +59,11 @@ namespace Doremi
                 TODOCM doc
             */
             AddRemoveSyncHandler* m_addRemoveSyncHandler;
+
+            /**
+                TODOCM doc
+            */
+            FrequencyBufferHandler* m_frequencyBufferHandler;
 
             /**
                 TODOEA doc
@@ -104,6 +116,16 @@ namespace Doremi
                 TODOEA doc
             */
             InputHandler* GetDefaultInputHandler();
+
+            /**
+                TODOCM doc
+            */
+            FrequencyBufferHandler* GetDefaultFrequencyBufferHandler();
+
+            /**
+                TODOCM doc
+            */
+            FrequencyBufferHandler* GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID);
 
             /**
                 TODOCM doc

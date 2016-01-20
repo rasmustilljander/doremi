@@ -3,6 +3,7 @@
 #include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/SequenceMath.hpp>
+#include <iostream>
 
 namespace Doremi
 {
@@ -38,11 +39,6 @@ namespace Doremi
         void AddRemoveSyncHandler::UpdateQueueWithSequence(uint8_t p_sequence)
         {
             uint32_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence, 255);
-
-            if(numOfRemoves > 0)
-            {
-                int a = 3;
-            }
 
             // Check if we can remove (error check), then remove the number of accs in difference
             if(numOfRemoves <= m_BufferedAddRemoveObjects.size())
@@ -117,6 +113,8 @@ namespace Doremi
 
             // Increase the last one we will use
             m_nextSequence += NumOfSequences;
+
+            std::cout << "Added " << (uint32_t)NumOfSequences << std::endl;
 
             // For the remaining sequences
             while(NumOfSequences)

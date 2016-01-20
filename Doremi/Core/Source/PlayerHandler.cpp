@@ -20,6 +20,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -96,6 +97,32 @@ namespace Doremi
             return outPointer;
         }
 
+        FrequencyBufferHandler* PlayerHandler::GetDefaultFrequencyBufferHandler()
+        {
+            FrequencyBufferHandler* OutPointer = nullptr;
+
+            if(m_playerMap.size())
+            {
+                OutPointer = m_playerMap.begin()->second->m_frequencyBufferHandler;
+            }
+
+            return OutPointer;
+        }
+
+        FrequencyBufferHandler* PlayerHandler::GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            FrequencyBufferHandler* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_frequencyBufferHandler;
+            }
+
+            return outPointer;
+        }
+
         bool PlayerHandler::GetDefaultPlayerEntityID(EntityID& o_outID)
         {
             if(m_playerMap.size() == 0)
@@ -135,8 +162,9 @@ namespace Doremi
             }
 
             AddRemoveSyncHandler* newAddRemoveSyncHandler = new AddRemoveSyncHandler();
+            FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
 
-            Player* NewPlayer = new Player(p_inputHandler, newAddRemoveSyncHandler);
+            Player* NewPlayer = new Player(p_inputHandler, newAddRemoveSyncHandler, newFrequencyHandler);
 
             // TODOCM hard coded entityID for new players
             NewPlayer->m_playerEntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
@@ -171,6 +199,14 @@ namespace Doremi
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
+
+
+            std::map<uint32_t, Player*>::iterator iter;
+
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_frequencyBufferHandler->GetFrequencyForFrame();
+            }
             TIME_FUNCTION_STOP
         }
 

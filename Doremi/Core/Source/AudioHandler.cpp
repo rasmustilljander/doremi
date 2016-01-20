@@ -9,6 +9,8 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <iostream>
+#include <PlayerHandler.hpp>
+#include <FrequencyBufferHandler.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -212,6 +214,14 @@ namespace Doremi
                 default:
                     break;
             }
+
+            // Send frequence to buffer
+            FrequencyBufferHandler* freqBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
+            if(freqBufferHandler != nullptr)
+            {
+                freqBufferHandler->BufferFrequency(m_currentFrequency);
+            }
+
             TIME_FUNCTION_STOP
         }
     }
