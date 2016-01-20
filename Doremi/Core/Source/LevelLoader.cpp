@@ -157,7 +157,6 @@ namespace Doremi
                     m_currentOrientation = m_transforms[transformName].rot;
                     m_currentPos = m_transforms[transformName].pos;
                     XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
-                    realPos *= 0.5;
                     XMStoreFloat3(&m_currentPos, realPos);
                     // End hax
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfoFromBuffer(BuildMesh(meshData), meshName);

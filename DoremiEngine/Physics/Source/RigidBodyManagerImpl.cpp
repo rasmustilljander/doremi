@@ -97,7 +97,7 @@ namespace DoremiEngine
             // Get the material
             PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
             // Create a shape
-            body->createShape(meshGeometry, *material, transform);
+            body->createShape(meshGeometry, *material);
             // Add to scene
             m_utils.m_worldScene->addActor(*body);
 

@@ -164,9 +164,8 @@ namespace Doremi
                     m_currentOrientation = m_transforms[transformName].rot;
                     m_currentPos = m_transforms[transformName].pos;
                     XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
-                    realPos *= 0.5;
                     XMStoreFloat3(&m_currentPos, realPos);
-                    //BuildMesh(meshData);
+                    // BuildMesh(meshData);
                     // End hax
                     m_meshes[meshName] = meshData;
                     m_meshCoupling.push_back(ObjectCouplingInfo(transformName, meshName, materialName));
@@ -221,12 +220,11 @@ namespace Doremi
                 m_currentOrientation = m_transforms[transformName].rot;
                 m_currentPos = m_transforms[transformName].pos;
                 XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
-                realPos *= 0.5; // TODO what the hell??
                 XMStoreFloat3(&m_currentPos, realPos);
                 BuildMesh(m_meshes[m_meshCoupling[i].meshName]);
-                //EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::RigidBody);
-                //RigidBodyComponent* rbComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-                //rbComp->p_bodyID = m_entityID;
+                // EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::RigidBody);
+                // RigidBodyComponent* rbComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
+                // rbComp->p_bodyID = m_entityID;
             }
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoaderServer::BuildMesh(const MeshData& p_data)
