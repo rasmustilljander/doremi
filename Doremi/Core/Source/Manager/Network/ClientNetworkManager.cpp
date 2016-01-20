@@ -252,6 +252,10 @@ namespace Doremi
 
                 uint32_t ReadOffset = 0;
 
+                // Update frequency buffer by acc
+                PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->UpdateBufferFromSequence(Streamer.ReadUnsignedInt8());
+                ReadOffset += sizeof(uint8_t);
+
                 // Check add/remove items
                 PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data), ReadOffset);
 
@@ -294,9 +298,6 @@ namespace Doremi
 
                 // Check the position we got from server
                 InterpolationHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
-
-                // Update frequency buffer by acc
-                PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->UpdateBufferFromSequence(Streamer.ReadUnsignedInt8());
             }
             else
             {

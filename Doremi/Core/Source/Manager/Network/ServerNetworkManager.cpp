@@ -378,6 +378,11 @@ namespace Doremi
 
             uint32_t BytesWritten = 0;
 
+            // Write sequence acc for frequence
+            uint8_t sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
+            Streamer.WriteUnsignedInt8(sequenceAcc);
+            BytesWritten += sizeof(uint8_t);
+
             PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
 
             // Write snapshot ID (1 byte
@@ -430,10 +435,6 @@ namespace Doremi
             Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
 
             Streamer.SetReadWritePosition(BytesWritten);
-
-            // Write sequence acc for frequence
-            uint8_t sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
-            Streamer.WriteUnsignedInt8(sequenceAcc);
         }
 
         void ServerNetworkManager::SendMessages(double p_dt)
