@@ -62,7 +62,7 @@ namespace Doremi
 
         // Manager* t_physicsManager = new ExampleManager(sharedContext);
         Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
-        t_levelLoader->LoadLevel("Levels/testMini.drm");
+        t_levelLoader->LoadLevel("Levels/test.drm");
         Core::Manager* t_serverNetworkManager = new Core::ServerNetworkManager(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
