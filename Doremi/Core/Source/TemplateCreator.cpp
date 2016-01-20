@@ -18,6 +18,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/GravityComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/EntityTypeComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -289,8 +290,8 @@ namespace Doremi
 
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 4.0f;
-            t_transformComp->scale.z = 4.0f;
+            t_transformComp->scale.x = 10.0f;
+            t_transformComp->scale.z = 10.0f;
             t_transformComp->scale.y = 0.1f;
             t_platform[ComponentType::Transform] = t_transformComp;
 
@@ -305,6 +306,10 @@ namespace Doremi
 
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
+
+            // Add component for frequency velocity add
+            PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
+            t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
@@ -324,13 +329,13 @@ namespace Doremi
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("PlayButton.dds");
             t_platform[ComponentType::Render] = t_renderComp;
 
             // Transform
             TransformComponent* t_transformComp = new TransformComponent();
-            t_transformComp->scale.x = 4.0f;
-            t_transformComp->scale.z = 4.0f;
+            t_transformComp->scale.x = 10.0f;
+            t_transformComp->scale.z = 10.0f;
             t_transformComp->scale.y = 0.1f;
             t_platform[ComponentType::Transform] = t_transformComp;
 
@@ -363,6 +368,10 @@ namespace Doremi
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
+
+            // Add component for frequency velocity add
+            PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
+            t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
@@ -421,6 +430,12 @@ namespace Doremi
 
             t_avatarBlueprint[ComponentType::NetworkObject];
 
+            // Range Component
+            RangeComponent* t_rangeComponent = new RangeComponent();
+            t_rangeComponent->range = 20.0f;
+            t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
+            
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
             TIME_FUNCTION_STOP
@@ -474,6 +489,11 @@ namespace Doremi
             // Gravity component
             GravityComponent* t_gravComp = new GravityComponent();
             t_avatarBlueprint[ComponentType::Gravity] = t_gravComp;
+
+            // Range Component
+            RangeComponent* t_rangeComponent = new RangeComponent();
+            t_rangeComponent->range = 20.0f;
+            t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);

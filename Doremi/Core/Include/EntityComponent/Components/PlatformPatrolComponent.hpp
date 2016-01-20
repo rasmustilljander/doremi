@@ -13,7 +13,7 @@ namespace Doremi
             XMFLOAT3 startPosition;
             XMFLOAT3 endPosition;
             PlatformPatrolComponent(XMFLOAT3 p_startPosition, XMFLOAT3 p_endPosition) : startPosition(p_startPosition), endPosition(p_endPosition) {}
-            PlatformPatrolComponent() : startPosition(0), endPosition(0) {}
+            PlatformPatrolComponent() : startPosition(XMFLOAT3(0,0,0)), endPosition(XMFLOAT3(0, 0, 0)) {}
         };
     }
 }

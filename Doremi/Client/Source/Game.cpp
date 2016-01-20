@@ -45,6 +45,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
 // Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/LevelLoader.hpp>
@@ -186,7 +187,7 @@ namespace Doremi
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, i * 5);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(100, 20, i * 10);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
 
@@ -194,6 +195,9 @@ namespace Doremi
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =
                 sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+            Core::PlatformPatrolComponent* t_platformPatrolComponent = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
+            t_platformPatrolComponent->startPosition = position;
+            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 20, position.z);
         }
 
         // Create some enemies

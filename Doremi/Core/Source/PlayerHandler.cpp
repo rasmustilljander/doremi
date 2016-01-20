@@ -201,14 +201,6 @@ namespace Doremi
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
-
-
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_frequencyBufferHandler->GetFrequencyForFrame();
-            }
             TIME_FUNCTION_STOP
         }
 
