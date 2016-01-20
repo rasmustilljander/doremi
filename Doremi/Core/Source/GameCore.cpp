@@ -17,6 +17,7 @@
 #include <Manager/GraphicManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>
+#include <Manager/TriggerManager.hpp>
 #include <Manager/AI/AIPathManager.hpp>
 #include <Manager/LightManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
