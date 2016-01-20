@@ -35,6 +35,7 @@ enum class ComponentType : int
     EntityType = 0x100000,
     PressureParticleSystem = 0x200000,
     Light = 0x400000,
+    PlatFormPatrolComponent = 0x800000,
 };
 
 /**

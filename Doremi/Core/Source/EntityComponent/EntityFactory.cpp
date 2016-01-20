@@ -21,6 +21,7 @@
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <EntityComponent/Components/LightComponent.hpp>
+#include <EntityComponent/Components/PlatformPatrolComponent.hpp>
 
 namespace Doremi
 {
@@ -142,6 +143,9 @@ namespace Doremi
                 else if(iter->first == ComponentType::Light)
                 {
                     memcpy(GetComponent<LightComponent>(tNewEntityID), iter->second, sizeof(LightComponent));
+                else if (iter->first == ComponentType::PlatFormPatrolComponent)
+                {
+                    memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(PlatformPatrolComponent));
                 }
             }
             return tNewEntityID;

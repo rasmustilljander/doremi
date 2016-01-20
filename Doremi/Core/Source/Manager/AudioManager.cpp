@@ -69,8 +69,8 @@ namespace Doremi
 
                 }
             }
-            // m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
-            m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
+            m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
+            // m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
             // std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
 
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();

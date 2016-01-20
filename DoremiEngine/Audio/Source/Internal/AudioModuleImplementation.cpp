@@ -367,10 +367,10 @@ namespace DoremiEngine
                 }
             }
             float dominantHz = (float)highestFrequencyBand * m_binSize;
-            /*if (dominantHz < 20)
+            if (dominantHz < 20)
             {
                 dominantHz = 0;
-            }*/
+            }
             return dominantHz;
         }
     }
