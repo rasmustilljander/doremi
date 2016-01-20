@@ -214,7 +214,7 @@ namespace Doremi
 
                 EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::PotentialField);
                 PotentialFieldComponent* pfComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(entityID);
-                pfComp->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -3, 2, true); // TODOKO hardcoded shiet
+                pfComp->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -3, 3, true); // TODOKO hardcoded shiet
                 // TODO Make it finer!
                 m_entityID = entityID;
                 m_currentScale = m_transforms[transformName].scale;

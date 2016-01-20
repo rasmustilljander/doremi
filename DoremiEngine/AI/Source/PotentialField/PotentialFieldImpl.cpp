@@ -80,7 +80,7 @@ namespace DoremiEngine
             float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
             float gridQuadHeight = m_height / (float)m_grid[0].size();
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
-            XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.y - m_height / 2.0f);
+            XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
             position2D.x -= bottomLeft.x - 0.5f;
             position2D.y -= bottomLeft.y - 0.5f;
             int quadNrX = std::floor(position2D.x / gridQuadWidth); // What quad in x and y
@@ -100,12 +100,12 @@ namespace DoremiEngine
             size_t length = quadsToCheck.size();
             XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
             float highestCharge = 0;
-            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
-            {
-                // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
-                highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
-                highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
-            }
+            // if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
+            //{
+            //    // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
+            //    highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
+            //    highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+            //}
             for(size_t i = 0; i < length; i++)
             {
                 int x = quadsToCheck[i].x;
@@ -122,6 +122,10 @@ namespace DoremiEngine
                     else
                     {
                         quadCharge = CalculateCharge(x, y, p_currentActor);
+                        if(x == quadNrX && y == quadNrY)
+                        {
+                            quadCharge -= 5; // TODOKO hardcoded - value because we want the unit to move
+                        }
                     }
                     if(quadCharge > highestCharge)
                     {
