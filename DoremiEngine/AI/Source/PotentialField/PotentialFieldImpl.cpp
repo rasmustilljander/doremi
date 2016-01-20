@@ -34,7 +34,7 @@ namespace DoremiEngine
                         {
                             // Same quad
                             m_grid[x][y].occupied = true;
-                            // std::cout << "x " << x << " y " << y << std::endl;
+                            //std::cout << "x " << x << " y " << y << std::endl;
                         }
                         XMFLOAT2 actorQuadPosition = m_grid[closestQuad.x][closestQuad.y].position;
 
@@ -54,6 +54,22 @@ namespace DoremiEngine
                     }
                     m_grid[x][y].charge = totalCharge;
                 }
+            }
+            for (size_t x = 0; x < nrOfQuadsX; x++)
+            {
+                for (size_t y = 0; y < nrOfQuadsY; y++)
+                {
+                    if (m_grid[x][y].occupied==true)
+                    {
+                        std::cout << "X";
+                    }
+                    else
+                    {
+                        std::cout << " ";
+                    }
+
+                }
+                std::cout << std::endl;
             }
         }
         void PotentialFieldImpl::AddActor(PotentialFieldActor* p_newActor)

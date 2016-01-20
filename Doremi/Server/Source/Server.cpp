@@ -129,13 +129,13 @@ namespace Doremi
         // for(size_t i = 0; i < 1; i++)
         //{
         //    int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
-        //    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0);
+        //    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 4, 0);
         //    DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
         //    int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
         //    Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
         //    rigidComp->p_bodyID =
-        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(0.5, 0.5, 0.5),
-        //        matID);
+
+        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(5, 0.5, 5), matID);
 
         //    Core::PotentialFieldComponent* actor =
         //    Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
@@ -164,10 +164,10 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 8; i++)
+        for(size_t i = 0; i < 1; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(0, 7 - (int)i, i * 5);
+            XMFLOAT3 position = DirectX::XMFLOAT3(0, 15 - (int)i, i * 5);
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
