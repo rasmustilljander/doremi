@@ -22,6 +22,7 @@ namespace Doremi
 
 
         private:
+            float m_frequencyNormalizer; // TODOLH TODOCM kanske ska göra frequencynormalizer för voice range på clienten innan man skickar till servern
         };
     }
 }

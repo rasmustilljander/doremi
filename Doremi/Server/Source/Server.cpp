@@ -10,10 +10,12 @@
 #include <Doremi/Core/Include/Manager/Network/ServerNetworkManager.hpp>
 #include <Doremi/Core/Include/Manager/MovementManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
+#include <Doremi/Core/Include/Manager/FrequencyAffectedObjectManager.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -71,6 +73,7 @@ namespace Doremi
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext); // TODO check if needed
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
+        Core::Manager* t_frequencyAffectedObjectManager = new Core::FrequencyAffectedObjectManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -82,6 +85,7 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
+        m_managers.push_back(t_frequencyAffectedObjectManager);
 
 
         // GenerateWorld(sharedContext);
@@ -139,12 +143,16 @@ namespace Doremi
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
+            //DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(100, 5, i * 10);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =
                 sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
+            Core::PlatformPatrolComponent* t_platformPatrolComponent = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
+            t_platformPatrolComponent->startPosition = position;
+            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 20, position.z);
         }
 
         // Create some enemies

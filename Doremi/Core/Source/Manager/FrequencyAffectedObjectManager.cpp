@@ -9,13 +9,14 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <Doremi/Core/Include/Helper/ProximityChecker.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 
 #include <DirectXMath.h>
 // Third party
 
 // Standard
 #include <iostream>
-
+#include <algorithm>
 using namespace std;
 
 namespace Doremi
@@ -25,6 +26,7 @@ namespace Doremi
         FrequencyAffectedObjectManager::FrequencyAffectedObjectManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "FrequencyAffectedObjectManager")
         {
+            m_frequencyNormalizer = 1000.0f;
         }
 
         FrequencyAffectedObjectManager::~FrequencyAffectedObjectManager() {}
@@ -37,9 +39,10 @@ namespace Doremi
 
             for(auto playerID = t_playerMap.begin(); playerID != t_playerMap.end(); playerID++)
             {
-                // Get the players current frequency
-                // playerID->second->GetFrequency
-
+                 //Get the players current frequency
+                float t_currentFrequency = playerID->second->m_frequencyBufferHandler->GetFrequencyForFrame() / 900.0f;
+                t_currentFrequency = std::min(t_currentFrequency, 1.0f);
+                std::cout << t_currentFrequency << endl;
                 // Loop through all entities
                 const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
                 // Loop over all entities to perform various functions on enteties that have sound components
@@ -59,15 +62,15 @@ namespace Doremi
                                 TransformComponent* t_transformComponent = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(j);
                                 XMFLOAT3 t_desiredPosition;
                                 // Get the vector between the two points
-                                XMVECTOR t_direction = XMLoadFloat3(&t_platformPatrolComp->startPosition) - XMLoadFloat3(&t_platformPatrolComp->endPosition);
-                                
+                                XMVECTOR t_direction = XMLoadFloat3(&t_platformPatrolComp->endPosition) - XMLoadFloat3(&t_platformPatrolComp->startPosition);
+                                t_currentFrequency = 1;
                                 // Normalize the Frequency to a value between 0 and 1. This is hardcoded atm TODOLH
-                                float t_frequency;
+                                
 
                                 //////// STARTA HÄRRRR fixa frekvens från jawwwwarn
 
                                 // Calculate the desiredposition if frequency is held steady: take the vector between start and end. multiply with frequencyvalue 0 to 1. And add the start position
-                                XMStoreFloat3(&t_desiredPosition, t_frequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
+                                XMStoreFloat3(&t_desiredPosition, t_currentFrequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
 
                                 // Get the distance between desired and actual position of the platform
                                 XMFLOAT3 t_distanceBetweenDesiredAndActualPosition;
