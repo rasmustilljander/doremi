@@ -34,6 +34,7 @@ enum class ComponentType : int
     Gravity = 0x80000,
     EntityType = 0x100000,
     PressureParticleSystem = 0x200000,
+    Light = 0x400000,
 };
 
 /**

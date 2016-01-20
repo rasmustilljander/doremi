@@ -26,14 +26,14 @@ namespace DoremiEngine
             //////////TODORK move to other place/////////////
             Light light = Light();
             light.attenuation = DirectX::XMFLOAT3(2.0f, 2.0f, 2.0f);
-            light.color = DirectX::XMFLOAT3(0.5f, 0.2f, 0.7f);
+            light.color = DirectX::XMFLOAT3(0.5f, 0.4f, 0.7f);
             light.coneAngle = 0.0f;
-            light.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+            light.direction = DirectX::XMFLOAT3(0.0f, -1.0f, 1.0f);
             light.intensity = 2.0f;
             light.penumAgle = 0.0f;
             light.position = DirectX::XMFLOAT3(10.5f, 1.f, 6.0f);
             light.enabled = 1;
-            light.type = 3;
+            light.type = 1;
 
             Light light2 = Light();
             light2.attenuation = DirectX::XMFLOAT3(2.0f, 2.0f, 2.0f);
@@ -118,7 +118,7 @@ namespace DoremiEngine
 
         void LightManagerImpl::TestFunc()
         {
-            m_lightBuffer.lightList[0].position.x += 0.1;
+            // m_lightBuffer.lightList[0].position.x += 0.1;
 
             D3D11_MAPPED_SUBRESOURCE tMS;
             m_deviceContext->Map(m_lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);

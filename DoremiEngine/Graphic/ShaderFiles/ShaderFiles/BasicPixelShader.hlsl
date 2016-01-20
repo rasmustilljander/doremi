@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 1
+#define NUM_LIGHTS 2
 
 struct PixelInputType
 {
@@ -57,7 +57,14 @@ SamplerState ObjSamplerState : register(s0);
 
 float3 CalcDirectionalLight(PixelInputType input, int i)
 {
-    return float3(0, 0, 0);
+    float3 lightDir;
+    float lightIntensity;
+    float4 texcolor = float4(0.0, 0.0, 0.0, 1);
+    float3 normal = normalize(input.normal);
+
+    lightDir = -light[i].direction;
+    lightIntensity = saturate(dot(normal, lightDir));
+    return saturate(light[i].color * lightIntensity) * 0.3;
 }
 
 float3 CalcSpotLight(PixelInputType input, int i)
@@ -100,8 +107,8 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
-
-    //texcolor = float4(0, 0, 0, 1);
+    //return texcolor;
+    //texcolor = float4(0.9, 0.9, 0.9, 1);
     
     float3 rgb = float3(0, 0, 0);
 

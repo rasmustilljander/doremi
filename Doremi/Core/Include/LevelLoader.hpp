@@ -122,6 +122,7 @@ namespace Doremi
             std::vector<DoremiEngine::Graphic::Vertex> BuildMesh(const MeshData& p_data);
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::map<std::string, TransformData> m_transforms;
+            std::map<std::string, std::string> m_materials;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
 
             // HAX STUFF for physics magic

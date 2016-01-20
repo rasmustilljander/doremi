@@ -331,6 +331,9 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::EndDraw()
         {
+
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetLightManager().TestFunc();
+
             ID3D11ShaderResourceView* nullSRV = {NULL};
             ID3D11UnorderedAccessView* nullUAV = {NULL};
             ID3D11RenderTargetView* nullRTV = {NULL};

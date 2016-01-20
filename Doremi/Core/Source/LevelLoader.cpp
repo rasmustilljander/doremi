@@ -10,6 +10,7 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/LightManager.hpp>
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 // Potential Field
@@ -77,6 +78,7 @@ namespace Doremi
                     ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                     char* diffuseTextureName = new char[diffuseTextureNameSize];
                     ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
+                    if(diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
                 }
                 // ladda transforms
                 for(int i = 0; i < nrTransforms; i++)
@@ -189,12 +191,17 @@ namespace Doremi
                     ifs.read((char*)&lightData.dropOff, sizeof(float));
                     ifs.read((char*)&lightData.coneAngle, sizeof(float));
                     ifs.read((char*)&lightData.penumAgle, sizeof(float));
+
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager().AddLight(lightData.type, lightData.intensity, lightData.colorDiffuse,
+                                                                                                        lightData.coneAngle, lightData.direction,
+                                                                                                        lightData.penumAgle, DirectX::XMFLOAT3(1, 1, 1));
                 }
             }
             size_t length = m_meshCoupling.size();
             for(size_t i = 0; i < length; i++)
             {
                 std::string transformName = m_meshCoupling[i].transformName;
+                std::string materialName = m_meshCoupling[i].materialName;
                 std::string meshName = m_meshCoupling[i].meshName;
                 int entityID = EntityHandler::GetInstance().CreateEntity(Blueprints::EmptyEntity);
                 EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::Render | (int)ComponentType::Transform);
@@ -210,7 +217,13 @@ namespace Doremi
                 {
                     int a = 5;
                 }
-                renderComp->material = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+
+                std::string textureName = m_materials[materialName];
+                if(textureName.length() < 5 || textureName[0] == -3) textureName = "debug.dds";
+
+                renderComp->material = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(textureName);
+                // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("BackGroundBuildingColorPalet2.dds");
+                int a = 5;
             }
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::BuildMesh(const MeshData& p_data)

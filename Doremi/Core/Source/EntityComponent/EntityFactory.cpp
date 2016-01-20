@@ -20,6 +20,7 @@
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
+#include <EntityComponent/Components/LightComponent.hpp>
 
 namespace Doremi
 {
@@ -137,6 +138,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::PressureParticleSystem)
                 {
                     memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(ParticlePressureComponent));
+                }
+                else if(iter->first == ComponentType::Light)
+                {
+                    memcpy(GetComponent<LightComponent>(tNewEntityID), iter->second, sizeof(LightComponent));
                 }
             }
             return tNewEntityID;
