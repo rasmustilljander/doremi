@@ -18,6 +18,7 @@
 #include <Manager/RigidTransformSyncManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>
 #include <Manager/AI/AIPathManager.hpp>
+#include <Manager/LightManager.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 #include <DoremiEngine/Core/Include/DoremiEngine.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>

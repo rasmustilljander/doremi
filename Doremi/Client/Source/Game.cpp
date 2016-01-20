@@ -40,6 +40,7 @@
 #include <Doremi/Core/Include/Manager/SkyBoxManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
+#include <Doremi/Core/Include/Manager/LightManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -106,6 +107,7 @@ namespace Doremi
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
         Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
+        Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
 
         // Add manager to list of managers
 
@@ -120,6 +122,7 @@ namespace Doremi
         m_managers.push_back(t_movementManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
+        m_managers.push_back(t_lightManager);
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
@@ -159,7 +162,7 @@ namespace Doremi
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
 
-        t_levelLoader->LoadLevel("Levels/testMini.drm");
+        t_levelLoader->LoadLevel("Levels/test.drm");
 
         // Create Avatar entity
         /*  int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);

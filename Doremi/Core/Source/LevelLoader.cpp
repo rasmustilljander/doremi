@@ -79,6 +79,8 @@ namespace Doremi
                     char* diffuseTextureName = new char[diffuseTextureNameSize];
                     ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
                     if(diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+
+
                 }
                 // ladda transforms
                 for(int i = 0; i < nrTransforms; i++)
@@ -123,6 +125,11 @@ namespace Doremi
 
                     char* materialName = new char[materialNameSize];
                     ifs.read((char*)materialName, sizeof(char) * materialNameSize);
+
+
+                    /////DEBUG FÖR DEMO///////
+                    if (meshNameSize == 30)
+                        materialName = "AppartmentMaterial";
 
                     // messageSTART****
                     int meshID;
@@ -246,7 +253,7 @@ namespace Doremi
                 tempV.normal = p_data.normals[p_data.indexNormals[i + 2]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 2]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
+                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
 
                 vertexBuffer.push_back(tempV);
                 // HAX
@@ -263,7 +270,7 @@ namespace Doremi
                 tempV.normal = p_data.normals[p_data.indexNormals[i + 1]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 1]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
+                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
 
                 vertexBuffer.push_back(tempV);
                 // HAX
@@ -280,7 +287,7 @@ namespace Doremi
                 tempV.normal = p_data.normals[p_data.indexNormals[i]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y - 1.0f;
+                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
 
                 vertexBuffer.push_back(tempV);
                 // HAX
