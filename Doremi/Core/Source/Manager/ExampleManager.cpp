@@ -57,13 +57,6 @@ namespace Doremi
                     // Perform desired operation
                     t_example->posX++;
 
-                    // Instruct engine
-                    m_sharedContext.GetPhysicsModule().ExampleMethod(t_example->posX);
-                    // Give instructions where we want engine to alter data
-                    m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example->posX, &t_example->posY);
-                    // Give instructions to engine where we want complex data to be changed
-                    m_sharedContext.GetPhysicsModule().ExampleMethodAltersData(&t_example2->complexStruct.floatData, &t_example2->complexStruct.floatData);
-
                     // Test run GraphicsModule
 
                     m_sharedContext.GetInputModule().Update(); // TODOEA
