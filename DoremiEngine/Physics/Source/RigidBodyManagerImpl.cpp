@@ -77,6 +77,39 @@ namespace DoremiEngine
             return p_id;
         }
 
+        void RigidBodyManagerImpl::SetKinematicActor(int p_bodyID, bool p_kinematic)
+        {
+            ((PxRigidDynamic*)m_bodies[p_bodyID])->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, p_kinematic);
+        }
+
+        void RigidBodyManagerImpl::MoveKinematicActor(int p_bodyID, XMFLOAT3 p_moveVector)
+        {
+            if((uint32_t)((PxRigidDynamic*)m_bodies[p_bodyID])->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC == PxRigidBodyFlag::eKINEMATIC)
+            {
+                PxVec3 currentPos = ((PxRigidDynamic*)m_bodies[p_bodyID])->getGlobalPose().p;
+                PxVec3 targetPos = PxVec3(p_moveVector.x, p_moveVector.y, p_moveVector.z);
+                targetPos += currentPos;
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->setKinematicTarget(PxTransform(targetPos));
+            }
+            else
+            {
+                // do nothing
+            }
+        }
+
+        void RigidBodyManagerImpl::SetWorldPositionKinematic(int p_bodyID, XMFLOAT3 p_position)
+        {
+            if((uint32_t)((PxRigidDynamic*)m_bodies[p_bodyID])->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC == PxRigidBodyFlag::eKINEMATIC)
+            {
+
+                ((PxRigidDynamic*)m_bodies[p_bodyID])->setKinematicTarget(PxTransform(p_position.x, p_position.y, p_position.z));
+            }
+            else
+            {
+                // do nothing
+            }
+        }
+
         void RigidBodyManagerImpl::AddMeshBodyStatic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
                                                      vector<int>& p_indices, int p_materialID)
         {
@@ -172,6 +205,7 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
+
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
                 ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
@@ -184,6 +218,8 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
+            // PxTransform pose = ((PxRigidDynamic*)m_bodisssssses[p_bodyID])->setMaxAngularVelocity(0);
+            // pose.q = PxQuat(0, 0, 0, 1);
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
                 ((PxRigidDynamic*)m_bodies[p_bodyID])->setAngularVelocity(PxVec3(p_v.x, p_v.y, p_v.z));

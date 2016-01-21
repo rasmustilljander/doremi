@@ -30,6 +30,9 @@ namespace Doremi
             userCmdsPlaying[246] = UserCommandPlaying::PlayRepeatableAudioRecording;
             userCmdsPlaying[27] = UserCommandPlaying::ExitGame;
             userCmdsPlaying[1] = UserCommandPlaying::LeftClick;
+            userCmdsPlaying[55] = UserCommandPlaying::SetFrequency0;
+            userCmdsPlaying[56] = UserCommandPlaying::SetFrequency500;
+            userCmdsPlaying[57] = UserCommandPlaying::SetFrequency1000;
 
             // Setup for the menyinput
             userCmdsMeny[1] = UserCommandMeny::LeftClick;

@@ -41,6 +41,9 @@ namespace Doremi
             PlayRepeatableAudioRecording = 16384, //ö
             ExitGame = 32768,
             LeftClick = 65536,
+            SetFrequency0 = 131072, // 7 55
+            SetFrequency500 = 262144, // 8 56
+            SetFrequency1000 = 524288, // 9 57
             // TODOEA add all here or set the 1111111... bit number to ALL
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
         };

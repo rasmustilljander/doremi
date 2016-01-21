@@ -45,6 +45,10 @@ namespace DoremiEngine
             void SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_angleVeloctiy) override;
             void SetBodyPosition(int p_bodyID, XMFLOAT3 p_position, XMFLOAT4 p_orientation) override;
             void SetLinearDampening(int p_bodyID, float p_dampening) override;
+            void SetKinematicActor(int p_bodyID, bool p_kinematic) override;
+            void SetWorldPositionKinematic(int p_bodyID, XMFLOAT3 p_position) override;
+
+            void MoveKinematicActor(int p_bodyID, XMFLOAT3 p_moveVector) override;
 
             XMFLOAT3 GetBodyPosition(int p_bodyID) override;
             XMFLOAT4 GetBodyOrientation(int p_bodyID) override;

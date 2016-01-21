@@ -121,15 +121,15 @@ namespace Doremi
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_movementManager);
-        m_managers.push_back(t_jumpManager);
-        m_managers.push_back(t_gravManager);
         m_managers.push_back(t_lightManager);
+        // m_managers.push_back(t_jumpManager);
+        // m_managers.push_back(t_gravManager);
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
-        // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted
+        // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
         // textures under in the same order
         t_textureNamesForMenuButtons.push_back("Playbutton.dds");
         t_textureNamesForMenuButtons.push_back("Optionsbutton.dds");
@@ -145,8 +145,8 @@ namespace Doremi
 
         // GenerateWorld(sharedContext);
 
-        // GenerateWorldClientJawsTest(sharedContext);
         Core::TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
+        // GenerateWorldClientJawsTest(sharedContext);
         SpawnDebugWorld(sharedContext);
 
         // Remove later, needed to see something when we play solo cause of camera interactions with input
@@ -172,14 +172,14 @@ namespace Doremi
           DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
           sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));*/
 
-        int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
-        Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
-
-        trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
+        // int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
+        // Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
+        //
+        // trans->position = DirectX::XMFLOAT3(-10.0f, 5.0f, 0.0f);
 
 
         //// TODOKO REMOVE Create debug potentialfields
-        //for(size_t i = 0; i < 1; i++)
+        // for(size_t i = 0; i < 1; i++)
         //{
         //    int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
         //}
@@ -187,17 +187,20 @@ namespace Doremi
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(100, 20, i * 10);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(50, 5, i * 10);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
-
+            float factor = 2.5;
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
             rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(2, 0.05, 2), matID);
-            Core::PlatformPatrolComponent* t_platformPatrolComponent = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
+                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
+                                                                                         XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor), matID);
+            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
+            Core::PlatformPatrolComponent* t_platformPatrolComponent =
+                Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
             t_platformPatrolComponent->startPosition = position;
-            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 20, position.z);
+            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 100, position.z);
         }
 
         // Create some enemies
