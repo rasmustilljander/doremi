@@ -40,7 +40,7 @@ namespace Doremi
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
             XMFLOAT4X4 projection;
             XMMATRIX mat =
-                XMMatrixTranspose(XMMatrixPerspectiveFovLH(90.0f * 3.14f / 180.0f, 800.0f / 600.0f, 0.1f, 1000.0f)); // TODOKO use config values
+                XMMatrixTranspose(XMMatrixPerspectiveFovLH(90.0f * 3.14f / 180.0f, 800.0f / 600.0f, 0.1f, 100000.0f)); // TODOKO use config values
             XMStoreFloat4x4(&projection, mat);
 
             DoremiEngine::Graphic::Camera* freecamera = t_graphicModuleCameraManager.BuildNewCamera(projection);

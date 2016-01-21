@@ -137,10 +137,6 @@ namespace Doremi
                     ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
 
-                    /////DEBUG FÖR DEMO///////
-                    if (meshNameSize == 30)
-                        materialName = "AppartmentMaterial";
-
                     // messageSTART****
                     int meshID;
                     ifs.read((char*)&meshID, sizeof(int));
