@@ -243,10 +243,32 @@ namespace Doremi
             int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
             EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
-
+            transComp->position = XMFLOAT3(0, 0, 0);
+            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
+            triggComp->dimensions = XMFLOAT3(100, 100, 100);
+            triggComp->triggerType = TriggerType::GoalTrigger;
             RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
-            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, )
+            int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            rigidComp->p_bodyID =
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation,
+                                                                                          triggComp->dimensions, materialTriggID);
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(rigidComp->p_bodyID, true);
+
+            // int entityIDTrigger2 = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity); // TODOEA REMOVE
+            // EntityHandler::GetInstance().AddComponent(entityIDTrigger2, (int)ComponentType::Trigger | (int)ComponentType::Transform |
+            // (int)ComponentType::RigidBody);
+            // TransformComponent* transComp2 = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger2);
+            // transComp2->position = XMFLOAT3(0, 0, 0);
+            // transComp2->rotation = XMFLOAT4(0, 0, 0, 1);
+            // TriggerComponent* triggComp2 = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger2);
+            // triggComp2->dimensions = XMFLOAT3(50, 50, 50);
+            // triggComp2->triggerType = TriggerType::NoTrigger;
+            // RigidBodyComponent* rigidComp2 = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger2);
+            // int materialTriggID2 = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            // rigidComp2->p_bodyID = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger2,
+            // transComp2->position, transComp2->rotation, triggComp2->dimensions, materialTriggID2);
+            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(rigidComp2->p_bodyID, true);
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoaderServer::BuildMesh(const MeshData& p_data)
         {
