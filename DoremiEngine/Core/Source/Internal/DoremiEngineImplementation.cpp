@@ -20,13 +20,11 @@ namespace DoremiEngine
               m_graphicLibrary(nullptr),
               m_networkLibrary(nullptr),
               m_physicsLibrary(nullptr),
-              m_scriptLibrary(nullptr),
               m_inputLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
               m_networkModule(nullptr),
               m_physicsModule(nullptr),
-              m_scriptModule(nullptr),
               m_inputModule(nullptr),
               m_aiModule(nullptr)
         {
@@ -55,12 +53,6 @@ namespace DoremiEngine
                 delete m_physicsModule;
             }
 
-            //    if (m_scriptModule != nullptr)
-            //    {
-            //        delete m_scriptModule;
-            //    }
-
-
             if(m_audioLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_audioLibrary);
@@ -76,10 +68,6 @@ namespace DoremiEngine
             if(m_physicsLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_physicsLibrary);
-            }
-            if(m_scriptLibrary != nullptr)
-            {
-                DynamicLoader::FreeSharedLibrary(m_scriptLibrary);
             }
             if(m_aiLibrary != nullptr)
             {
@@ -111,11 +99,6 @@ namespace DoremiEngine
             if((p_flags & EngineModuleEnum::PHYSICS) == EngineModuleEnum::PHYSICS)
             {
                 LoadPhysicsModule(*m_sharedContext);
-            }
-
-            if((p_flags & EngineModuleEnum::SCRIPT) == EngineModuleEnum::SCRIPT)
-            {
-                LoadScriptModule(*m_sharedContext);
             }
 
             if((p_flags & EngineModuleEnum::INPUT) == EngineModuleEnum::INPUT)
@@ -152,11 +135,6 @@ namespace DoremiEngine
             {
                 m_physicsModule->Shutdown();
             }
-
-            //    if (m_scriptModule != nullptr)
-            //    {
-            //        m_scriptModule->Shutdown();
-            //    }
 
             if(m_aiModule != nullptr)
             {
@@ -270,8 +248,6 @@ namespace DoremiEngine
                 // TODO logger
             }
         }
-
-        void DoremiEngineImplementation::LoadScriptModule(SharedContextImplementation& o_sharedContext) {}
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {

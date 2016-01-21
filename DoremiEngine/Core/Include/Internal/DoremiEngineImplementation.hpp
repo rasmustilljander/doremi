@@ -42,10 +42,8 @@ namespace DoremiEngine
             // Loading .dll
             void LoadAudioModule(SharedContextImplementation& o_sharedContext);
             void LoadGraphicModule(SharedContextImplementation& o_sharedContext);
-            void LoadMemoryModule(SharedContextImplementation& o_sharedContext);
             void LoadNetworkModule(SharedContextImplementation& o_sharedContext);
             void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
-            void LoadScriptModule(SharedContextImplementation& o_sharedContext);
             void LoadInputModule(SharedContextImplementation& o_sharedContext);
             void LoadAIModule(SharedContextImplementation& o_sharedContext);
 
@@ -55,10 +53,8 @@ namespace DoremiEngine
             // Pointers to .dll processes
             void* m_audioLibrary;
             void* m_graphicLibrary;
-            void* m_memoryLibrary;
             void* m_networkLibrary;
             void* m_physicsLibrary;
-            void* m_scriptLibrary;
             void* m_inputLibrary;
             void* m_aiLibrary;
 
@@ -67,7 +63,6 @@ namespace DoremiEngine
             Graphic::GraphicModule* m_graphicModule;
             Network::NetworkModule* m_networkModule;
             Physics::PhysicsModule* m_physicsModule;
-            Script::ScriptModule* m_scriptModule;
             Input::InputModule* m_inputModule;
             AI::AIModule* m_aiModule;
         };
