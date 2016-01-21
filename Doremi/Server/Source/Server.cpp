@@ -142,11 +142,11 @@ namespace Doremi
         //    actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -10, 4, true);
         //}
 
-        for(size_t i = 0; i < 5; i++)
+        for(size_t i = 0; i < 1; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(75, 5, i * 10);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
@@ -160,7 +160,7 @@ namespace Doremi
             Core::PlatformPatrolComponent* t_platformPatrolComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
             t_platformPatrolComponent->startPosition = position;
-            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 100, position.z);
+            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140, position.z);
         }
 
         // Create some enemies
