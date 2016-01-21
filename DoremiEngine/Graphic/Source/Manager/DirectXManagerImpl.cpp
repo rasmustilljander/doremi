@@ -340,7 +340,7 @@ namespace DoremiEngine
             // Remove depth bind to OM
             m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, nullptr);
 
-            // m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0);
+            // m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0);  //Remove to render normally
             m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
             m_deviceContext->PSSetShaderResources(5, 1, &m_srv);
 
