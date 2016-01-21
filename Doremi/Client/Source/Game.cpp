@@ -203,11 +203,11 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 1; i++)
+        for(size_t i = 0; i < 2; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(0, 15 - (int)i, i * 5);
-            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            // XMFLOAT3 position = DirectX::XMFLOAT3(-280 * i + 0, 150 * i + 4, -85 * i + 15);
+            // XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             // int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
             // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,

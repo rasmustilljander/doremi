@@ -1,6 +1,6 @@
 #pragma once
 #include <Interface/SubModule/PotentialFieldSubModule.hpp>
-
+#include <vector>
 namespace DoremiEngine
 {
     namespace AI
@@ -16,6 +16,9 @@ namespace DoremiEngine
             PotentialFieldActor* CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range, const bool& p_static) override;
             void AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) override;
             int GetNextStep();
+            PotentialField* FindBestPotentialField(const DirectX::XMFLOAT3& p_position) override;
+        private:
+            std::vector<PotentialField*> m_fields;
         };
     }
 }
