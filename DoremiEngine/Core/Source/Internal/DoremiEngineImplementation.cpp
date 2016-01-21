@@ -152,6 +152,7 @@ namespace DoremiEngine
             char path[254];
             GetModuleFileNameA(NULL, path, 254);
             std::string* directoryPath = new std::string(path);
+            // TODOXX This only works because Client.exe and Server.exe is 10 characters long.
             o_sharedContext.SetWorkingDirectory(directoryPath->substr(0, directoryPath->length() - 10));
         }
 
