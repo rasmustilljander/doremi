@@ -41,70 +41,78 @@ namespace DoremiEngine
             readData->unlock();
         }
 
+        void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
+
         void ParticleEmitter::Update(float p_dt)
         {
-
-            // Update time since last particle wave was spawned
-            // m_timeSinceLast += p_dt;
-            // if(m_timeSinceLast > m_this.m_emissionRate)
-            //{
-            //    m_timeSinceLast = 0;
-            if(m_timeSinceLast == 0) // For debug TODOKO
+            if(m_this.m_active)
             {
-                m_timeSinceLast = 2;
-                vector<XMFLOAT3> velocities;
-                vector<XMFLOAT3> positions;
-                vector<int> indices;
-                /// Time for more particles!
-                /// These particles will be spawned in a sort of grid (atm)
-                for(int x = -m_this.m_density; x < m_this.m_density * 2 - 1; x++)
+                // Update time since last particle wave was spawned
+                m_timeSinceLast += p_dt;
+                if(m_timeSinceLast > m_this.m_emissionRate)
                 {
-                    for(int y = -m_this.m_density; y < m_this.m_density * 2; y++)
+                    m_timeSinceLast = 0;
+                    vector<XMFLOAT3> velocities;
+                    vector<XMFLOAT3> positions;
+                    vector<int> indices;
+                    /// Time for more particles!
+                    /// These particles will be spawned in a sort of grid (atm)
+                    for(int x = -m_this.m_density; x < m_this.m_density * 2 - 1; x++)
                     {
-                        // Calculate angles in local space
-                        float xAngle = (x / m_this.m_density) * m_this.m_emissionAreaDimensions.x;
-                        float yAngle = (y / m_this.m_density) * m_this.m_emissionAreaDimensions.y;
-                        // Define standard target in local space
-                        XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
-                        XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(xAngle, yAngle, 0);
-                        particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatLocal);
-                        // Move velocity vector into world space
-                        XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
-                        particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatWorld);
-                        // Multiply with pressure
-                        particleVelocityVec *= m_this.m_launchPressure;
-                        // Store in vector
-                        XMFLOAT3 velocity;
-                        XMStoreFloat3(&velocity, particleVelocityVec);
-                        velocities.push_back(velocity);
+                        for(int y = -m_this.m_density; y < m_this.m_density * 2; y++)
+                        {
+                            // Calculate angles in local space
+                            float xAngle = (x / m_this.m_density) * m_this.m_emissionAreaDimensions.x;
+                            float yAngle = (y / m_this.m_density) * m_this.m_emissionAreaDimensions.y;
+                            // Define standard target in local space
+                            XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
+                            XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(xAngle, yAngle, 0);
+                            particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatLocal);
+                            // Move velocity vector into world space
+                            XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
+                            particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatWorld);
+                            // Multiply with pressure
+                            particleVelocityVec *= m_this.m_launchPressure;
+                            // Store in vector
+                            XMFLOAT3 velocity;
+                            XMStoreFloat3(&velocity, particleVelocityVec);
+                            velocities.push_back(velocity);
 
-                        // Add position (only emitts from the center of the emitter atm
-                        positions.push_back(m_this.m_position);
+                            // Add position (only emitts from the center of the emitter atm
+                            float launchOffset = 0.1;
+                            XMVECTOR positionVec = XMLoadFloat3(&m_this.m_position);
+                            positionVec += launchOffset * particleVelocityVec;
+                            XMFLOAT3 position;
+                            XMStoreFloat3(&position, positionVec);
 
-                        // Add index (silly way just to make it work atm)
-                        indices.push_back(m_nextIndex);
-                        m_nextIndex++;
+                            positions.push_back(position);
+
+                            // Add index (silly way just to make it work atm)
+                            indices.push_back(m_nextIndex);
+                            m_nextIndex++;
+                        }
                     }
-                }
 
-                if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
-                {
-                    // Cast into PhysX datatypes
-                    PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);
-                    PxVec3* velocitiesPX = reinterpret_cast<PxVec3*>(&velocities[0]);
-                    PxU32* indicesPX = reinterpret_cast<PxU32*>(&indices[0]);
 
-                    // Create the particles
-                    PxParticleCreationData newParticlesData;
-                    newParticlesData.numParticles = positions.size();
-                    newParticlesData.positionBuffer = PxStrideIterator<const PxVec3>(positionsPX);
-                    newParticlesData.velocityBuffer = PxStrideIterator<const PxVec3>(velocitiesPX);
-                    newParticlesData.indexBuffer = PxStrideIterator<const PxU32>(indicesPX);
-                    m_particleSystem->createParticles(newParticlesData);
-                }
-                else
-                {
-                    // No new particles. Do nothing
+                    if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
+                    {
+                        // Cast into PhysX datatypes
+                        PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);
+                        PxVec3* velocitiesPX = reinterpret_cast<PxVec3*>(&velocities[0]);
+                        PxU32* indicesPX = reinterpret_cast<PxU32*>(&indices[0]);
+
+                        // Create the particles
+                        PxParticleCreationData newParticlesData;
+                        newParticlesData.numParticles = positions.size();
+                        newParticlesData.positionBuffer = PxStrideIterator<const PxVec3>(positionsPX);
+                        newParticlesData.velocityBuffer = PxStrideIterator<const PxVec3>(velocitiesPX);
+                        newParticlesData.indexBuffer = PxStrideIterator<const PxU32>(indicesPX);
+                        m_particleSystem->createParticles(newParticlesData);
+                    }
+                    else
+                    {
+                        // No new particles. Do nothing
+                    }
                 }
             }
         }

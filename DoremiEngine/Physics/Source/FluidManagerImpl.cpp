@@ -14,6 +14,8 @@ namespace DoremiEngine
         }
         void FluidManagerImpl::GetParticlePositions(int p_id, vector<XMFLOAT3>& o_positions) { m_emitters[p_id]->GetPositions(o_positions); }
 
+        void FluidManagerImpl::SetParticleEmitterData(int p_id, ParticleEmitterData p_data) { m_emitters[p_id]->SetData(p_data); }
+
         void FluidManagerImpl::Update(float p_dt)
         {
             // Update all our emitters

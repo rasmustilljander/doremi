@@ -5,7 +5,7 @@
 #include <FluidManager.hpp>
 #include <vector>
 
-#define PARTICLE_MAX_COUNT 10000 // TODOJB specify this some other way?
+#define PARTICLE_MAX_COUNT 2000 // TODOJB specify this some other way?
 #define PARTICLE_MAX_MOTION_DISTANCE 100
 using namespace DirectX;
 using namespace physx;
@@ -39,6 +39,11 @@ namespace DoremiEngine
             particle system. Send a reference to an already defined
             vector of XMFLOATS as argument*/
             void GetPositions(vector<XMFLOAT3>& o_positions);
+
+
+            /**
+            Sets all variables of the particle emitter*/
+            void SetData(ParticleEmitterData p_data);
 
             /**
             Sets the position of the particle system*/

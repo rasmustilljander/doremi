@@ -14,6 +14,7 @@ namespace DoremiEngine
         WARNED!... Really, this is important*/
         struct ParticleEmitterData
         {
+            bool m_active;
             // Position of emitter
             XMFLOAT3 m_position;
             // Dimensions of emitter
@@ -35,7 +36,12 @@ namespace DoremiEngine
             // virtual void CreateFluid(int p_id) = 0;
             // virtual void CreateFluidParticles(int p_id, vector<XMFLOAT3>& p_positions, vector<XMFLOAT3>& p_velocities, vector<int>& p_indices) = 0;
             virtual void GetParticlePositions(int p_id, vector<XMFLOAT3>& o_positions) = 0;
-            virtual void CreateParticleEmitter(int p_id, ParticleEmitterData) = 0;
+            /**
+            Creates a new particle system. Particle system will be a pressure emitter ONLY*/
+            virtual void CreateParticleEmitter(int p_id, ParticleEmitterData p_data) = 0;
+            /**
+            Used to update the entire particle system*/
+            virtual void SetParticleEmitterData(int p_id, ParticleEmitterData p_data) = 0;
         };
     }
 }
