@@ -20,8 +20,12 @@
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
+<<<<<<< HEAD
 #include <EntityComponent/Components/LightComponent.hpp>
 #include <EntityComponent/Components/PlatformPatrolComponent.hpp>
+=======
+#include <EntityComponent/Components/TriggerComponent.hpp>
+>>>>>>> Added triggering
 
 namespace Doremi
 {
@@ -140,6 +144,7 @@ namespace Doremi
                 {
                     memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(ParticlePressureComponent));
                 }
+<<<<<<< HEAD
                 else if(iter->first == ComponentType::Light)
                 {
                     memcpy(GetComponent<LightComponent>(tNewEntityID), iter->second, sizeof(LightComponent));
@@ -147,6 +152,11 @@ namespace Doremi
                 else if(iter->first == ComponentType::PlatFormPatrolComponent)
                 {
                     memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(PlatformPatrolComponent));
+=======
+                else if(iter->first == ComponentType::Trigger)
+                {
+                    memcpy(GetComponent<TriggerComponent>(tNewEntityID), iter->second, sizeof(TriggerComponent));
+>>>>>>> Added triggering
                 }
             }
             return tNewEntityID;

@@ -1,7 +1,7 @@
 #pragma once
 // Project specific
-#include <Manager/Manager.hpp>
-#include <EventHandler/Subscriber.hpp>
+#include <Doremi/Core/Include/Manager/Manager.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
 namespace Doremi
 {

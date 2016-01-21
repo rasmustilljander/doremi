@@ -6,6 +6,7 @@
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/TriggerComponent.hpp>
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
@@ -238,6 +239,14 @@ namespace Doremi
                 // RigidBodyComponent* rbComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
                 // rbComp->p_bodyID = m_entityID;
             }
+            // Triggering ;)
+            int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
+            EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
+            TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
+
+            TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
+            RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
+            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, )
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoaderServer::BuildMesh(const MeshData& p_data)
         {

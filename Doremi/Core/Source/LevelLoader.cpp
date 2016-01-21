@@ -247,6 +247,8 @@ namespace Doremi
                 // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("BackGroundBuildingColorPalet2.dds");
                 int a = 5;
             }
+            // Triggering
+            int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::BuildMesh(const MeshData& p_data)
         {

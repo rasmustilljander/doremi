@@ -36,6 +36,7 @@ enum class ComponentType : int
     PressureParticleSystem = 0x200000,
     Light = 0x400000,
     PlatFormPatrolComponent = 0x800000,
+    Trigger = 0x1000000,
 };
 
 /**
@@ -57,6 +58,7 @@ enum class Blueprints : uint32_t
     StaticEnviromentEntity,
     ExperimentalPressureParticleEntity,
     DebugPotentialFieldActor,
+    TriggerEntity,
 };
 
 

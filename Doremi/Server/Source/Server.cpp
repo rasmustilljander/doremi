@@ -30,6 +30,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
+#include <Doremi/Core/Include/Manager/TriggerManager.hpp>
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -74,6 +75,7 @@ namespace Doremi
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
         Core::Manager* t_frequencyAffectedObjectManager = new Core::FrequencyAffectedObjectManager(sharedContext);
+        Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -86,6 +88,7 @@ namespace Doremi
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
         m_managers.push_back(t_frequencyAffectedObjectManager);
+        m_managers.push_back(t_triggerManager);
 
 
         // GenerateWorld(sharedContext);

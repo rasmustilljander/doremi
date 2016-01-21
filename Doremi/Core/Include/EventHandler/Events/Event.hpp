@@ -13,6 +13,7 @@ namespace Doremi
             PlayerCreation,
             PotentialFieldActorCreation,
             AiGroupActorCreation,
+            TriggerManagerEventTest,
         };
         /**All events needs to inherit this struct*/
         struct Event
