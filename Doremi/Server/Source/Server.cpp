@@ -146,7 +146,7 @@ namespace Doremi
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(50, 5, i * 10);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(75, 5, i * 10);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);

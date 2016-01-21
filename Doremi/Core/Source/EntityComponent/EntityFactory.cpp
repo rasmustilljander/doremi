@@ -143,7 +143,8 @@ namespace Doremi
                 else if(iter->first == ComponentType::Light)
                 {
                     memcpy(GetComponent<LightComponent>(tNewEntityID), iter->second, sizeof(LightComponent));
-                else if (iter->first == ComponentType::PlatFormPatrolComponent)
+                }
+                else if(iter->first == ComponentType::PlatFormPatrolComponent)
                 {
                     memcpy(GetComponent<ParticlePressureComponent>(tNewEntityID), iter->second, sizeof(PlatformPatrolComponent));
                 }
