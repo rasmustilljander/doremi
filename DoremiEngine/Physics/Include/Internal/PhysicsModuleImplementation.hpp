@@ -66,12 +66,6 @@ namespace DoremiEngine
             vector<CollisionPair> GetCollisionPairs() override;
             vector<CollisionPair> GetTriggerPairs() override;
 
-            /**
-            Example methods used to display how the engine can be used.
-            TODOJB remove*/
-            float ExampleMethod(const float& posx) override;
-            void ExampleMethodAltersData(float* p_posX, float* p_posY);
-
         private:
             // Creates the world as a scene. TODOJB create SceneManager somehow
             void CreateWorldScene();

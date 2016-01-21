@@ -65,10 +65,6 @@ namespace DoremiEngine
             id of the trigger, and the secondID is always the id of the actor which
             collided with the trigger. It's awesome that way*/
             virtual std::vector<CollisionPair> GetTriggerPairs() = 0;
-
-            // Test function
-            virtual float ExampleMethod(const float& posx) = 0;
-            virtual void ExampleMethodAltersData(float* p_posX, float* p_posY) = 0;
         };
     }
 }

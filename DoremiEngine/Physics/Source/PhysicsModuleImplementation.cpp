@@ -57,16 +57,6 @@ namespace DoremiEngine
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
         vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
 
-
-        // Only an example method to demonstrate how the engine is used
-        float PhysicsModuleImplementation::ExampleMethod(const float& posx) { return 1; }
-
-        void PhysicsModuleImplementation::ExampleMethodAltersData(float* p_posX, float* p_posY)
-        {
-            *p_posX = 5;
-            *p_posY = *p_posX * 2;
-        }
-
         // Custom collision filter shader
         PxFilterFlags TestFilter(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
                                  PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
