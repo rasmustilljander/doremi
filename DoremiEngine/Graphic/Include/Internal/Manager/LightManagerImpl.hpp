@@ -25,6 +25,7 @@ namespace DoremiEngine
                             DirectX::XMFLOAT3 position) override;
             void InitLightManager() override;
             void TestFunc() override;
+            void UpdateLights() override;
 
         private:
             const GraphicModuleContext& m_graphicContext;

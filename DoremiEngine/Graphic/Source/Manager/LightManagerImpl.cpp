@@ -127,5 +127,17 @@ namespace DoremiEngine
             m_deviceContext->PSSetConstantBuffers(0, 1, &m_lBuffer);
             m_deviceContext->CSSetConstantBuffers(1, 1, &m_lBuffer);
         }
+
+        void LightManagerImpl::UpdateLights()
+        {
+            // m_lightBuffer.lightList[0].position.x += 0.1;
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_lBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &m_lightBuffer.lightList, sizeof(m_lightBuffer.lightList));
+            m_deviceContext->Unmap(m_lBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(0, 1, &m_lBuffer);
+            m_deviceContext->CSSetConstantBuffers(1, 1, &m_lBuffer);
+        }
     }
 }
