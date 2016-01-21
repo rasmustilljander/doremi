@@ -40,7 +40,7 @@ namespace Doremi
             ZeroMemory(&rastDesc, sizeof(rastDesc));
             rastDesc.FillMode = D3D11_FILL_SOLID;
             rastDesc.CullMode = D3D11_CULL_NONE;
-            rastDesc.FrontCounterClockwise = false; /// fittunge ta till graphicsmanager
+            rastDesc.FrontCounterClockwise = false;
             rastDesc.DepthBias = 0;
             rastDesc.DepthBiasClamp = 0.0f;
             rastDesc.SlopeScaledDepthBias = 0.0f;
