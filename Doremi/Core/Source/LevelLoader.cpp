@@ -201,9 +201,11 @@ namespace Doremi
                     ifs.read((char*)&lightData.coneAngle, sizeof(float));
                     ifs.read((char*)&lightData.penumAgle, sizeof(float));
 
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager().AddLight(lightData.type, lightData.intensity, lightData.colorDiffuse,
-                                                                                                        lightData.coneAngle, lightData.direction,
-                                                                                                        lightData.penumAgle, DirectX::XMFLOAT3(1, 1, 1));
+
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager().AddLight(lightData.type, lightData.intensity,
+                                                                                                        lightData.colorDiffuse, lightData.coneAngle,
+                                                                                                        lightData.direction, lightData.penumAgle,
+                                                                                                        m_transforms[transformName].pos);
                 }
             }
             size_t length = m_meshCoupling.size();
