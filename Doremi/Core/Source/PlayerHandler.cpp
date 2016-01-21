@@ -14,6 +14,7 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/JumpComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
+#include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -178,6 +179,24 @@ namespace Doremi
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5, 30, 0);
             DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
             m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1, 1));
+
+            /// Create the gun
+            // Check if we have the gun
+            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
+            {
+                ParticlePressureComponent* particleComp =
+                    EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
+                particleComp->data.m_active = true;
+                particleComp->data.m_density = 2;
+                particleComp->data.m_dimensions = XMFLOAT2(0, 0);
+                particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
+                particleComp->data.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
+                particleComp->data.m_emissionRate = 1;
+                particleComp->data.m_launchPressure = 100;
+                particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
+                m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
+            }
+
 
             // Create event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
@@ -408,9 +427,15 @@ namespace Doremi
 
                 EntityID entityID = iter->second->m_playerEntityID;
                 // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
-                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnDown))
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick))
                 {
                     m_gunController.FireGun(entityID, m_sharedContext);
+                }
+                else
+                {
+                    // Set the particle emitter to not be active if we are not firing
+                    GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
+                    m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID, GetComponent<ParticlePressureComponent>(entityID)->data);
                 }
             }
             TIME_FUNCTION_STOP

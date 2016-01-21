@@ -500,6 +500,10 @@ namespace Doremi
             t_rangeComponent->range = 20.0f;
             t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
 
+            // Pressure particle comp
+            ParticlePressureComponent* particleComp = new ParticlePressureComponent();
+            t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
             TIME_FUNCTION_STOP
