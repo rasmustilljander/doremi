@@ -186,7 +186,7 @@ namespace Doremi
             {
                 ParticlePressureComponent* particleComp =
                     EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
-                particleComp->data.m_active = true;
+                particleComp->data.m_active = false;
                 particleComp->data.m_density = 2;
                 particleComp->data.m_dimensions = XMFLOAT2(0, 0);
                 particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
@@ -357,6 +357,21 @@ namespace Doremi
                     }
                 }
 
+                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
+                {
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
+                    {
+                        m_gunController.FireGun(entityID, m_sharedContext);
+                    }
+                    else
+                    {
+                        // Set the particle emitter to not be active if we are not firing
+                        GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
+                        m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID,
+                                                                                                    GetComponent<ParticlePressureComponent>(entityID)->data);
+                    }
+                }
+
                 // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
                 {
@@ -419,6 +434,8 @@ namespace Doremi
 
         void PlayerHandler::UpdateFiring()
         {
+            // THOS DOES NOTHING AT THIS MOMENT
+            // TODOJB fix gun on server
             TIME_FUNCTION_START
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
@@ -427,15 +444,19 @@ namespace Doremi
 
                 EntityID entityID = iter->second->m_playerEntityID;
                 // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
-                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick))
+                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
                 {
-                    m_gunController.FireGun(entityID, m_sharedContext);
-                }
-                else
-                {
-                    // Set the particle emitter to not be active if we are not firing
-                    GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
-                    m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID, GetComponent<ParticlePressureComponent>(entityID)->data);
+                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
+                    {
+                        m_gunController.FireGun(entityID, m_sharedContext);
+                    }
+                    else
+                    {
+                        // Set the particle emitter to not be active if we are not firing
+                        GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
+                        m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID,
+                                                                                                    GetComponent<ParticlePressureComponent>(entityID)->data);
+                    }
                 }
             }
             TIME_FUNCTION_STOP
