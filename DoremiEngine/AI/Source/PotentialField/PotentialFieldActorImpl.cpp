@@ -25,7 +25,7 @@ namespace DoremiEngine
             // TODOKO add checking for dublicates
             m_occupiedQuads.push_back(p_quad);
         }
-        const DirectX::XMINT2& PotentialFieldActorImpl::GetClosestOccupied(const DirectX::XMINT2& p_quad)
+        const DirectX::XMINT2 PotentialFieldActorImpl::GetClosestOccupied(const DirectX::XMINT2& p_quad)
         {
             using namespace DirectX;
             size_t length = m_occupiedQuads.size();
