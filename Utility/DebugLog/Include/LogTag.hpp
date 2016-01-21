@@ -21,7 +21,8 @@ namespace Utility
             RESOURCE,
             ANIMATION,
             PARTICLE,
-            MEMORY
+            MEMORY,
+            ENGINE_CORE
         };
     }
 }
