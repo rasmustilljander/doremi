@@ -6,7 +6,7 @@ namespace DoremiEngine
     namespace AI
     {
         /**
-        Is in charge of creating different potential field/group related objects
+        Is in charge of creating different potential field/group related objects and global potential field management
         */
         class PotentialField;
         class PotentialGroup;
@@ -37,6 +37,10 @@ namespace DoremiEngine
             */
 
             virtual int GetNextStep() = 0;
+            /**
+            Finds the potential field that the given position probably should be in. Returns nullptr if no field were found
+            */
+            virtual PotentialField* FindBestPotentialField(const DirectX::XMFLOAT3& p_position) = 0;
         };
     }
 }

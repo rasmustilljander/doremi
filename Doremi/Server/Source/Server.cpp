@@ -164,10 +164,10 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 1; i++)
+        for(size_t i = 0; i < 2; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(0, 15 - (int)i, i * 5);
+            XMFLOAT3 position = DirectX::XMFLOAT3(-280*(int)i + 0, 140*(int)i + 4, -85*(int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
@@ -177,7 +177,7 @@ namespace Doremi
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), -1, 3, false);
+            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1, 3, false);
 
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);

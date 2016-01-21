@@ -115,7 +115,7 @@ namespace DoremiEngine
             }
             // Check for special cases
             size_t length = quadsToCheck.size();
-            XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
+            XMFLOAT2 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
             float highestCharge = 0;
             // if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             //{
@@ -149,6 +149,32 @@ namespace DoremiEngine
                         highestCharge = quadCharge;
                         highestChargedPos = m_grid[x][y].position;
                     }
+                }
+                else
+                {
+                    //// Tries to check outside the field
+                    //// Here we create a imaginary quad and checks if that quad have a greater charge than the last, 
+                    //// if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field transition
+                    //XMFLOAT2 newQuadPosition = m_grid[quadNrX][quadNrY].position;
+                    //if (x < 0)
+                    //{
+                    //    newQuadPosition.x -= gridQuadWidth;
+                    //}
+                    //else if (x > m_grid.size()-1) // TODOKO should it be -1?
+                    //{
+                    //    newQuadPosition.x += gridQuadWidth;
+                    //}
+                    //else if (y<0)
+                    //{
+                    //    newQuadPosition.y -= gridQuadHeight;
+                    //}
+                    //else if (y > m_grid[0].size() - 1)// TODOKO should it be -1?
+                    //{
+                    //    newQuadPosition.y += gridQuadWidth;
+                    //}
+                    //
+                    //PotentialFieldGridPoint imaginaryQuad = PotentialFieldGridPoint(newQuadPosition, , false);
+
                 }
             }
             // If now charge was found we are probably outside the field... in which case we should start walking towards the field

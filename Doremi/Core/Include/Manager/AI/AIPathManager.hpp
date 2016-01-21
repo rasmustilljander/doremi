@@ -33,6 +33,7 @@ namespace Doremi
 
         private:
             DoremiEngine::AI::PotentialField* m_field;
+            DoremiEngine::AI::PotentialField* m_topField;
             bool firstUpdate;
         };
     }

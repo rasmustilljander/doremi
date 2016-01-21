@@ -41,8 +41,11 @@ namespace Doremi
         {
             // TODOKO do this in a better place, might not work to have here in the future
             m_field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(40, 200, 100, 100,
-                                                                                          XMFLOAT3(-85, 15.0f, 0)); // TODOKO fit in for demo map
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 50, 50,
+                                                                                          XMFLOAT3(-60, 5.0f, -40)); // Fits for first platform
+            m_topField =
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
+                    XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
@@ -50,10 +53,16 @@ namespace Doremi
 
             // Testar TODOEA
             Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
-            //PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-            //t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
-            //m_field->Update();
-            std::cout << "Done";
+            PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
+            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
+            std::cout << "Physical field 1 done";
+            m_field->Update();
+            std::cout << "Potential field 1 done";
+
+            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_topField);
+            std::cout << "Physical field 2 done";
+            m_topField->Update();
+            std::cout << "Potential field 2 done";
             /// debugskit
 
 
@@ -78,26 +87,23 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
-                {
+                {   // This is so the player updates his position too...
                     DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
                     actor->SetPosition(pos);
                 }
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform |
-                                                                     (int)ComponentType::Movement | (int)ComponentType::AIGroup))
+                                                                     (int)ComponentType::Movement | (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
                 {
+                    // Get the needed components
                     XMFLOAT2 desiredPos;
                     XMFLOAT3 unitPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
                     DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
-                    DoremiEngine::AI::PotentialFieldActor* currentActor = nullptr;
-                    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField))
+                    DoremiEngine::AI::PotentialFieldActor* currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
+                    DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
+                    if(field != nullptr)
                     {
-                        currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                        desiredPos = m_field->GetAttractionPosition(unitPos, currentActor, false);
-                    }
-                    else
-                    {
-                        desiredPos = m_field->GetAttractionPosition(unitPos, nullptr, false);
+                        desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
                    // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
@@ -143,6 +149,7 @@ namespace Doremi
                     {
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
+                        DoremiEngine::AI::PotentialField* field;
                         DoremiEngine::AI::PotentialGroup* group =
                             EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(realEvent->entityID)->Group;
                         if(group == nullptr)
@@ -151,6 +158,9 @@ namespace Doremi
                             group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
                         }
                         group->AddActor(actor);
+                        // TODOKO should not be done here but in a more suitable event
+                        field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
+                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->Field = field;
                     }
                     else
                     {
@@ -168,6 +178,7 @@ namespace Doremi
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->playerEntityID)->ChargedActor;
                         m_field->AddActor(actor);
+                        m_topField->AddActor(actor);
                     }
                     else
                     {
