@@ -42,7 +42,6 @@ namespace Doremi
                 // Get the players current frequency
                 float t_currentFrequency = playerID->second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
                 t_currentFrequency = std::min(t_currentFrequency, 1.0f);
-                std::cout << t_currentFrequency << endl;
                 // Loop through all entities
                 const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
                 // Loop over all entities to perform various functions on enteties that have sound components
