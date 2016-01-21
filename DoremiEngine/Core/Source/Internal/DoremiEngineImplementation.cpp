@@ -42,11 +42,10 @@ namespace DoremiEngine
                 delete m_graphicModule;
             }
 
-            // TODORT
-            //    if (m_networkModule != nullptr)
-            //    {
-            //        delete m_networkModule;
-            //    }
+            if(m_networkModule != nullptr)
+            {
+                delete m_networkModule;
+            }
 
             if(m_physicsModule != nullptr)
             {
@@ -125,11 +124,10 @@ namespace DoremiEngine
                 m_graphicModule->Shutdown();
             }
 
-            // TODORT
-            //    if (m_networkModule != nullptr)
-            //    {
-            //        m_networkModule->Shutdown();
-            //    }
+            if(m_networkModule != nullptr)
+            {
+                m_networkModule->Shutdown();
+            }
 
             if(m_physicsModule != nullptr)
             {
