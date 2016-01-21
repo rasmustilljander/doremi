@@ -101,6 +101,7 @@ namespace Doremi
                     ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3));
                     ifs.read((char*)&transformData.rot, sizeof(float) * 4); // quaternion tror jag
                     ifs.read((char*)&transformData.scale, sizeof(float) * 3);
+                    ifs.read((char*)&transformData.attributes, sizeof(CustomAttributes));
 
                     m_transforms[transformName] = transformData;
                 }
@@ -109,14 +110,25 @@ namespace Doremi
                 {
                     int transformNameSize;
                     int meshNameSize;
+                    int nrOfTransforms;
 
-                    ifs.read((char*)&transformNameSize, sizeof(int));
-                    ifs.read((char*)&meshNameSize, sizeof(int));
+                    ifs.read((char*)&nrOfTransforms, sizeof(int));
+                    std::vector<char*> transformNames;
+                    char* transformName = nullptr;
 
-                    char* transformName = new char[transformNameSize];
+                    for (int t = 0; t < nrOfTransforms; t++) //läser in alla transforms för meshen, blir flera om instanciering skall användas
+                    {
+                        ifs.read((char*)&transformNameSize, sizeof(int));
+                        transformName = new char[transformNameSize];
+
+                        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+                        transformNames.push_back(transformName);
+                    }
+                    
+
+                    ifs.read((char*)&meshNameSize, sizeof(int));                    
                     char* meshName = new char[meshNameSize];
 
-                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
                     ifs.read((char*)meshName, sizeof(char) * meshNameSize);
 
 
