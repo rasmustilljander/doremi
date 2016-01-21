@@ -56,7 +56,7 @@ namespace Doremi
 
         void SkyBoxManager::CreateSkyBox()
         {
-            m_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("SkyBox.dds");
+            m_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("SunInSpace.dds");
             D3D11_SAMPLER_DESC t_sampDesc;
             ZeroMemory(&t_sampDesc, sizeof(t_sampDesc));
             t_sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
