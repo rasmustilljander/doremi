@@ -3,6 +3,16 @@
 #include <DoremiEngine.hpp>
 #include <Internal/SharedContextImplementation.hpp>
 
+
+namespace Utility
+{
+    namespace DebugLog
+    {
+        class VirtualConsole;
+    }
+}
+
+
 namespace DoremiEngine
 {
     namespace Core
@@ -65,6 +75,9 @@ namespace DoremiEngine
             Physics::PhysicsModule* m_physicsModule;
             Input::InputModule* m_inputModule;
             AI::AIModule* m_aiModule;
+
+            // Logging
+            Utility::DebugLog::VirtualConsole* m_logger;
         };
     }
 }
