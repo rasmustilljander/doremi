@@ -153,7 +153,7 @@ namespace Doremi
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
-        m_menuState = MenuStates::MenuState::RUNGAME; // byt denna till MAINMENU om du vill se menyn!! TODOLH
+        m_menuState = MenuStates::MenuState::MAINMENU; // byt denna till MAINMENU om du vill se menyn!! TODOLH
         TIME_FUNCTION_STOP
     }
 
