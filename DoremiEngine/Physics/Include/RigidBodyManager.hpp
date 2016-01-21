@@ -63,6 +63,19 @@ namespace DoremiEngine
             Sets linear dampening of object. Not sure what this is though*/
             virtual void SetLinearDampening(int p_bodyID, float p_dampeningCoef) = 0;
 
+            /**
+                Makes the actor a kinematic actor
+            */
+            virtual void SetKinematicActor(int p_bodyID, bool p_kinematic) = 0;
+            /**
+                Sets the Kinematic actors position
+            */
+            virtual void SetWorldPositionKinematic(int p_bodyID, XMFLOAT3 p_position) = 0;
+            /**
+                Sets the Kinematic actors posing using the previous position and moves along the inputparameter
+            */
+            virtual void MoveKinematicActor(int p_bodyID, XMFLOAT3 p_moveVector) = 0;
+
             /// Getters
             /**
             Gets the position of a body*/

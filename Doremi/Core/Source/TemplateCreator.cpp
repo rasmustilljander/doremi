@@ -311,6 +311,7 @@ namespace Doremi
             PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
+            t_platform[ComponentType::NetworkObject];
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
             TIME_FUNCTION_STOP
@@ -367,11 +368,12 @@ namespace Doremi
 
             // Add label for frequency Check
             t_platform[ComponentType::FrequencyAffected];
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
 
             // Add component for frequency velocity add
             PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
+
+            t_platform[ComponentType::NetworkObject];
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);

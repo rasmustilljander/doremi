@@ -2,6 +2,7 @@
 // Project specific
 #include <AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandler.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 //#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
@@ -216,6 +217,23 @@ namespace Doremi
                     break;
             }
 
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            if(inputHandler != nullptr)
+            {
+
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency0))
+                {
+                    m_currentFrequency = 0;
+                }
+                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency500))
+                {
+                    m_currentFrequency = 500;
+                }
+                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency1000))
+                {
+                    m_currentFrequency = 1000;
+                }
+            }
             // Send frequence to buffer
             FrequencyBufferHandler* freqBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
             if(freqBufferHandler != nullptr)
