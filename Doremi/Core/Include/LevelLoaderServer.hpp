@@ -70,12 +70,27 @@ namespace Doremi
             }
         };
 
+        struct CustomAttributes
+        {
+            bool isRendered;
+            bool isBBox;
+            bool isCollider;
+            bool isInteractable;
+            float interactIntervalX;
+            float interactIntervalY;
+            float interactIntervalZ;
+            int typeSpawner;
+            int typeCheckPoint;
+            int typeStartEnd;
+            bool isAIground;
+        };
+
         struct TransformData
         {
             DirectX::XMFLOAT3 pos;
             DirectX::XMFLOAT4 rot;
             DirectX::XMFLOAT3 scale;
-            // Float3 pos, rot, scale;
+            CustomAttributes attributes; //custom attributesen!
         };
 
         struct CameraData

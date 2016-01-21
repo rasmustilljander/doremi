@@ -104,6 +104,7 @@ namespace Doremi
                     ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3));
                     ifs.read((char*)&transformData.rot, sizeof(float) * 4); // quaternion tror jag
                     ifs.read((char*)&transformData.scale, sizeof(float) * 3);
+                    ifs.read((char*)&transformData.attributes, sizeof(CustomAttributes));
 
                     m_transforms[transformName] = transformData;
                 }
@@ -112,14 +113,25 @@ namespace Doremi
                 {
                     int transformNameSize;
                     int meshNameSize;
+                    int nrOfTransforms;
 
-                    ifs.read((char*)&transformNameSize, sizeof(int));
+                    ifs.read((char*)&nrOfTransforms, sizeof(int));
+                    std::vector<char*> transformNames;
+                    char* transformName = nullptr;
+
+                    for (int t = 0; t < nrOfTransforms; t++) //läser in alla transforms för meshen, blir flera om instanciering skall användas
+                    {
+                        ifs.read((char*)&transformNameSize, sizeof(int));
+                        transformName = new char[transformNameSize];
+
+                        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+                        transformNames.push_back(transformName);
+                    }
+
+
                     ifs.read((char*)&meshNameSize, sizeof(int));
-
-                    char* transformName = new char[transformNameSize];
                     char* meshName = new char[meshNameSize];
 
-                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
                     ifs.read((char*)meshName, sizeof(char) * meshNameSize);
 
 
@@ -128,6 +140,11 @@ namespace Doremi
 
                     char* materialName = new char[materialNameSize];
                     ifs.read((char*)materialName, sizeof(char) * materialNameSize);
+
+
+                    /////DEBUG FÖR DEMO///////
+                    if (meshNameSize == 30)
+                        materialName = "AppartmentMaterial";
 
                     // messageSTART****
                     int meshID;
@@ -159,16 +176,11 @@ namespace Doremi
                     ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
                     ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
 
-                    // Hax in a collision
-                    m_currentScale = m_transforms[transformName].scale;
-                    m_currentOrientation = m_transforms[transformName].rot;
-                    m_currentPos = m_transforms[transformName].pos;
-                    XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
-                    XMStoreFloat3(&m_currentPos, realPos);
-                    // BuildMesh(meshData);
-                    // End hax
                     m_meshes[meshName] = meshData;
-                    m_meshCoupling.push_back(ObjectCouplingInfo(transformName, meshName, materialName));
+                    for (size_t i = 0; i < nrOfTransforms; i++)
+                    {
+                        m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
+                    }
                 }
 
                 for(int i = 0; i < nrLights; i++)

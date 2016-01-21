@@ -58,15 +58,31 @@ namespace Doremi
             // Material *material; //pekar på ett specifikt material i en vektor av material
             ~MeshData()
             {
-                delete(positions);
-                delete(normals);
-                delete(uvs);
+                // TODOKO FIX should be deleted/..... Needed for HAX though
+                //delete(positions);
+                //delete(normals);
+                //delete(uvs);
 
-                delete(indexPositions);
-                delete(indexNormals);
-                delete(indexUVs);
-                delete(trianglesPerFace);
+                //delete(indexPositions);
+                //delete(indexNormals);
+                //delete(indexUVs);
+                //delete(trianglesPerFace);
             }
+        };
+
+        struct CustomAttributes
+        {
+            bool isRendered;
+            bool isBBox;
+            bool isCollider;
+            bool isInteractable;
+            float interactIntervalX;
+            float interactIntervalY;
+            float interactIntervalZ;
+            int typeSpawner;
+            int typeCheckPoint;
+            int typeStartEnd;
+            bool isAIground;
         };
 
         struct TransformData
@@ -74,7 +90,7 @@ namespace Doremi
             DirectX::XMFLOAT3 pos;
             DirectX::XMFLOAT4 rot;
             DirectX::XMFLOAT3 scale;
-            // Float3 pos, rot, scale;
+            CustomAttributes attributes; //custom attributesen!
         };
 
         struct CameraData
@@ -123,12 +139,14 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::map<std::string, TransformData> m_transforms;
             std::map<std::string, std::string> m_materials;
+            std::map<std::string, MeshData> m_meshes;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
 
             // HAX STUFF for physics magic
             DirectX::XMFLOAT3 m_currentScale;
             DirectX::XMFLOAT3 m_currentPos;
             DirectX::XMFLOAT4 m_currentOrientation;
+            int m_entityID;
         };
     }
 }
