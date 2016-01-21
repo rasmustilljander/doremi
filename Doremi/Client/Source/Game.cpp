@@ -187,7 +187,7 @@ namespace Doremi
         for(size_t i = 0; i < 5; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(50, 5, i * 10);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(75, 5, i * 10);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
             float factor = 2.5;
