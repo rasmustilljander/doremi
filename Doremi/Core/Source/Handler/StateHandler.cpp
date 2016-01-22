@@ -6,6 +6,7 @@
 // Events
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
+
 /// Standard Libraries
 #include <unordered_map>
 #include <vector>
