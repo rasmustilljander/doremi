@@ -61,7 +61,13 @@ namespace Doremi
                             myEvent->entityID = collisionTriggerPairs[k].secondID;
                             EventHandler::GetInstance()->BroadcastEvent(myEvent);
                         }
+                        else {
+                            // DO nathiiing
+                        }
                     }
+                }
+                else {
+                    // do nuting
                 }
             }
         }
