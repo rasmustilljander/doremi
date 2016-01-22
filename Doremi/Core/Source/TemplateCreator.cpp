@@ -31,6 +31,7 @@
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <Doremi/Core/Include/LevelLoader.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -455,16 +456,21 @@ namespace Doremi
 
             EntityBlueprint t_avatarBlueprint;
 
+            LevelLoader loader = LevelLoader(sharedContext);
+
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
+
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+            t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -519,16 +525,22 @@ namespace Doremi
 
             EntityBlueprint t_avatarBlueprint;
 
+            LevelLoader loader = LevelLoader(sharedContext);
+
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
+
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
+            t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
+            
 
             t_avatarBlueprint[ComponentType::NetworkObject];
 

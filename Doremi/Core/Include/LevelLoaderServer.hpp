@@ -132,6 +132,7 @@ namespace Doremi
             LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~LevelLoaderServer();
             void LoadLevel(const std::string& p_fileName);
+            void LoadCharacter(const std::string& p_fileName);
 
         private:
             // Help functions
