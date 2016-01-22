@@ -4,6 +4,8 @@
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/TriggerComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
@@ -245,8 +247,22 @@ namespace Doremi
                 // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("BackGroundBuildingColorPalet2.dds");
                 int a = 5;
             }
-            // Triggering
+            // Triggering ;) TODOKO should only be done on server and the server should send the events to the client. Event sending is not supported
+            // yet though
             int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
+            EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
+            TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
+            transComp->position = XMFLOAT3(-420.4, 151.5, -110.3);
+            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
+            triggComp->dimensions = XMFLOAT3(7, 10, 34);
+            triggComp->triggerType = TriggerType::GoalTrigger;
+            RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
+            int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            rigidComp->p_bodyID =
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation,
+                                                                                          triggComp->dimensions, materialTriggID);
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(rigidComp->p_bodyID, true);
         }
         std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::BuildMesh(const MeshData& p_data)
         {
