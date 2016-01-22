@@ -36,13 +36,14 @@ namespace Doremi
 
         void TriggerManager::Update(double p_dt)
         {
-            // TODOXX If a trigger has the same wall as another trigger it acts weird. It will(tried it once) trigger one triggertype on the way out and one on the
+            // TODOXX If a trigger has the same wall as another trigger it acts weird. It will(tried it once) trigger one triggertype on the way out
+            // and one on the
             // way in
             // Loop through all entities
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             for(size_t i = 0; i < length; i++)
             {
-                //collisionTriggerPairs[k].firstID
+                // collisionTriggerPairs[k].firstID
                 // Check that the current entity has the relevant components
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Trigger) | (int)ComponentType::Transform | (int)ComponentType::RigidBody)
                 {
