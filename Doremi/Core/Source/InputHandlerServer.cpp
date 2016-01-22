@@ -3,6 +3,9 @@
 #include <iostream>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 namespace Doremi
 {
@@ -10,14 +13,14 @@ namespace Doremi
     {
         // TODOXX sequencedelay must be more then snapshotdelay in interpolationhandler
         InputHandlerServer::InputHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : InputHandler(p_sharedContext), m_sequenceDelay(10)
+            : InputHandler(p_sharedContext), m_sequenceDelay(7)
         {
         }
 
-        void InputHandlerServer::QueueInput(uint32_t p_bitMask, DirectX::XMFLOAT4 p_orienation , uint8_t p_sequence)
+        void InputHandlerServer::QueueInput(uint32_t p_bitMask, DirectX::XMFLOAT4 p_orienation, uint8_t p_sequence)
         {
             // Check if our sequence hasn't passed
-            if (sequence_more_recent(p_sequence, m_realSequence, 255))
+            if(sequence_more_recent(p_sequence, m_realSequence, 255))
             {
                 // Try to fill it
                 std::list<InputItem>::iterator iter = m_queuedInputs.begin();
@@ -40,8 +43,6 @@ namespace Doremi
         {
             // Increment realsequence
             m_realSequence++;
-
-            //std::cout << m_queuedInputs.size() << std::endl;
 
             // Holder for new input
             uint32_t newMaskWithInput = m_maskWithInput;
@@ -79,6 +80,8 @@ namespace Doremi
 
                     // Now we want to save position and sequence to server to update
                     m_positionByLastInput = GetComponent<TransformComponent>(p_entityID)->position;
+                    // m_positionByLastInput = m_sharedContext.GetPhysicsModule().GetCharacterControlManager().GetPosition(p_entityID);
+
                     m_sequenceByLastInput = m_realSequence;
                 }
             }

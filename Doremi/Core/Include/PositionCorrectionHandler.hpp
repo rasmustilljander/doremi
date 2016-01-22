@@ -18,12 +18,11 @@ namespace Doremi
         /**
             TODOCM doc
         */
-        struct PositionStamp
+        struct MovementStamp
         {
-            PositionStamp(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_movement, uint8_t p_sequence)
+            MovementStamp(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_movement, uint8_t p_sequence)
                 : Position(p_position), Orientation(p_orientation), Movement(p_movement), Sequence(p_sequence)
             {
-
             }
 
             uint8_t Sequence;
@@ -87,7 +86,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            std::list<PositionStamp> m_PositionStamps;
+            std::list<MovementStamp> m_PositionStamps;
         };
     }
 }

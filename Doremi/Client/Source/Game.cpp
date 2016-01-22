@@ -127,10 +127,11 @@ namespace Doremi
         m_managers.push_back(t_lightManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
-        m_managers.push_back(t_movementManager);
-
         // m_managers.push_back(t_aiPathManager);
-        m_managers.push_back(t_charSyncManager);
+        m_managers.push_back(t_movementManager); // Must be after gravity/jump
+        m_managers.push_back(t_charSyncManager); // Must be after movement
+
+
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
         // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
@@ -284,7 +285,8 @@ namespace Doremi
         double Offset = 0;
         double Accum = 0;
         double GameTime = 0;
-        double UpdateStepLen = 0.017;
+        double UpdateStepLen = 0.017f;
+        double MaxFrameTime = 0.25f;
 
         while(true)
         {
@@ -296,11 +298,11 @@ namespace Doremi
 
             // We simulate maximum 250 milliseconds each frame
             // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-            if(Frame > 0.25f)
+            if(Frame > MaxFrameTime)
             {
-                Offset = Frame - 0.25f;
-                Frame = 0.25f;
-                cout << "LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG" << endl;
+                Offset = Frame - MaxFrameTime;
+                Frame = MaxFrameTime;
+                cout << "Frame took more then " << MaxFrameTime << " Seconds" << endl;
             }
 
             // Update the previous position with frametime so we can catch up if we slow down
