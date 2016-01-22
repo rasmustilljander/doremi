@@ -24,7 +24,7 @@ namespace DoremiEngine
             {
                 throw std::runtime_error("No physics material exists with that ID");
             }
-            desc.stepOffset = 0.1;
+            desc.stepOffset = 0.1f;
             desc.reportCallback = m_controllerCallback;
             desc.behaviorCallback = this;
 
