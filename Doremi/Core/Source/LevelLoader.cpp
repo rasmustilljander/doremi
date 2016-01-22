@@ -318,6 +318,8 @@ namespace Doremi
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
                 1337, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
                 m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5));
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(1337, true); // TODOXX Hardcoded ID (1337) is BAD. Make sure it uses the
+            // entityID of the entity!
             // END HAX
             return vertexBuffer;
         }
