@@ -36,6 +36,7 @@ namespace Doremi
         LevelLoader::~LevelLoader() {}
         void LevelLoader::LoadLevel(const std::string& p_fileName)
         {
+            // TODOXX WTF, this function must be restructured.
             using namespace std;
             using namespace DirectX;
             string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
