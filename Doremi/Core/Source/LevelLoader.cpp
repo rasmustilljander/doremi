@@ -237,7 +237,7 @@ namespace Doremi
                 renderComp->mesh = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().GetMeshInfo(meshName);
                 if(renderComp->mesh == nullptr)
                 {
-                    int a = 5;
+                    // TODOXX General penguin panic
                 }
 
                 std::string textureName = m_materials[materialName];
