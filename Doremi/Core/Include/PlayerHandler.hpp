@@ -30,7 +30,7 @@ namespace Doremi
         struct Player
         {
             Player(InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler, FrequencyBufferHandler* p_frequencyBufferHandler)
-                : m_moveSpeed(0.5f),
+                : m_moveSpeed(0.3f),
 
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),

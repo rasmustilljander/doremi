@@ -155,13 +155,6 @@ namespace Doremi
             DirectX::XMFLOAT4 playerOrientation = Streamer.ReadRotationQuaternion();
             bytesRead += sizeof(float) * 4;
 
-            //std::cout << "Recieved: " << (uint32_t)newSequence << std::endl;
-            
-            if (InputMask != 0)
-            {
-                cout << "Input: " <<(uint32_t)newSequence << endl;
-            }
-
             // Queue input
             inputHandler->QueueInput(InputMask, playerOrientation, newSequence);
 
@@ -408,8 +401,6 @@ namespace Doremi
 
             // Write position of that sequence ( 12 byte
             Streamer.WriteFloat3(inputHandler->GetPositionByLastInput());
-
-            //cout << "Sent: " << (uint32_t)inputHandler->GetSequenceByLastInput() << endl;
 
             BytesWritten += 14;
 
