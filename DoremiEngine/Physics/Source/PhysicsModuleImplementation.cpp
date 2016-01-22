@@ -100,7 +100,7 @@ namespace DoremiEngine
             // No idea what the "tolerances" is
             PxSceneDesc sceneDesc(m_utils.m_physics->getTolerancesScale());
             // Gravity sounds straight forward
-            sceneDesc.gravity = PxVec3(0, -9.8, 0);
+            sceneDesc.gravity = PxVec3(0.0f, -9.8f, 0.0f);
             // Not too sure what this is. Probably related to how threads work
             m_utils.m_dispatcher = PxDefaultCpuDispatcherCreate(2);
             sceneDesc.cpuDispatcher = m_utils.m_dispatcher;
