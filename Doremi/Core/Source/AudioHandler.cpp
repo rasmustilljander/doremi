@@ -109,9 +109,9 @@ namespace Doremi
                 // Calculate how far into the sound that the pointer is. Percentual
                 double t_percentualPosition = t_timeElapsed / t_soundLength;
                 // Get the full range of the vector
-                double t_size = m_frequencies.size() - 1;
+                double t_size = static_cast<double>(m_frequencies.size() - 1);
                 // Calculate where in the array we should access the frequency
-                int arrayPosition = (int)t_size * t_percentualPosition;
+                int arrayPosition = static_cast<int>(t_size * t_percentualPosition);
                 // Get the frequency
                 float retValue = m_frequencies[arrayPosition];
                 TIME_FUNCTION_STOP
