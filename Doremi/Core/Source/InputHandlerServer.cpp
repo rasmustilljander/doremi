@@ -13,7 +13,7 @@ namespace Doremi
     {
         // TODOXX sequencedelay must be more then snapshotdelay in interpolationhandler
         InputHandlerServer::InputHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : InputHandler(p_sharedContext), m_sequenceDelay(7)
+            : InputHandler(p_sharedContext), m_sequenceDelay(10)
         {
         }
 
