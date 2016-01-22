@@ -32,13 +32,28 @@ namespace DoremiEngine
             PxParticleReadData* readData = m_particleSystem->lockParticleReadData();
             PxStrideIterator<const PxVec3> positions = readData->positionBuffer;
             PxStrideIterator<const PxVec3> velocities = readData->velocityBuffer;
+            PxStrideIterator<const PxParticleFlags> flags = readData->flagsBuffer;
             vector<XMFLOAT3> velocitiesVector;
+
+            vector<int> indicesOfParticlesToBeReleased;
+
             uint32_t numParticles = readData->validParticleRange;
             for(uint32_t i = 0; i < numParticles; i++)
             {
-                o_positions.push_back(XMFLOAT3(positions[i].x, positions[i].y, positions[i].z));
+                // Check if particles are supposed to be removed
+
+                if(flags[i] & (PxParticleFlag::eCOLLISION_WITH_DRAIN)) // | PxParticleFlag::eVALID))
+                {
+                    indicesOfParticlesToBeReleased.push_back(i);
+                }
+                else if(flags[i] & PxParticleFlag::eVALID)
+                {
+                    o_positions.push_back(XMFLOAT3(positions[i].x, positions[i].y, positions[i].z));
+                }
             }
             readData->unlock();
+            PxStrideIterator<const PxU32> inicesPX(reinterpret_cast<PxU32*>(&indicesOfParticlesToBeReleased[0]));
+            m_particleSystem->releaseParticles(indicesOfParticlesToBeReleased.size(), inicesPX);
         }
 
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
