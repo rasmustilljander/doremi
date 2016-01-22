@@ -138,6 +138,11 @@ namespace DoremiEngine
             m_bodies[p_id] = body;
             m_IDsByBodies[body] = p_id;
 
+            // DEBUG TODOJB move this into some funky method perhaps?
+            PxShape* shape;
+            body->getShapes(&shape, 1);
+            shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, true);
+
 
             // Hax to get callbacks to work (Set a common flag on every object)
             SetCallback(p_id, (1 << 0), (1 << 0));

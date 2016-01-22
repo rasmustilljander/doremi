@@ -5,7 +5,7 @@
 #include <FluidManager.hpp>
 #include <vector>
 
-#define PARTICLE_MAX_COUNT 2000 // TODOJB specify this some other way?
+#define PARTICLE_MAX_COUNT 200000 // TODOJB specify this some other way?
 #define PARTICLE_MAX_MOTION_DISTANCE 100
 using namespace DirectX;
 using namespace physx;
