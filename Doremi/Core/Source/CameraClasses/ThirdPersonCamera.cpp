@@ -29,7 +29,8 @@ namespace Doremi
             TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
             XMFLOAT4 orientation = playerTransform->rotation;
             XMVECTOR quater = XMLoadFloat4(&orientation);
-            XMFLOAT3 direction = XMFLOAT3(0, 0, 1);
+            XMFLOAT3 direction;
+            XMStoreFloat3(&direction, XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(0, -5, 1))));
             XMFLOAT3 up = XMFLOAT3(0, 1, 0);
             XMVECTOR vup = XMLoadFloat3(&up);
             XMVECTOR dir = XMLoadFloat3(&direction);
@@ -49,7 +50,7 @@ namespace Doremi
             XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight); // creates a projection matrix
             XMVECTOR camDir = XMVector3Transform(dir, projMat);
             camDir = XMVector3Normalize(camDir);
-            XMVECTOR finalDir = (pos - camDir * 2.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
+            XMVECTOR finalDir = (pos - camDir * 3.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
             XMMATRIX mat =
                 XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup)); // vup is added to position so you look abit above the player
             XMFLOAT3 t_positionOfCamera;

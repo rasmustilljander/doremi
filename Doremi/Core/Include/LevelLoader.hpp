@@ -126,12 +126,23 @@ namespace Doremi
             ObjectCouplingInfo() {}
         };
 
+        struct CharacterDataNames
+        {
+            std::string meshName;
+            std::string materialName;
+            std::vector<DoremiEngine::Graphic::Vertex> vertices;
+        };
+
         class LevelLoader
         {
         public:
             LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~LevelLoader();
             void LoadLevel(const std::string& p_fileName);
+
+            CharacterDataNames LoadCharacter(const std::string& p_fileName);
+
+            std::vector<DoremiEngine::Graphic::Vertex> BuildMeshForCharacter(const MeshData & p_data);
 
         private:
             // Help functions
