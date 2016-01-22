@@ -134,8 +134,8 @@ namespace Doremi
         m_managers.push_back(t_rigidTransSyndManager);
 
         m_managers.push_back(t_lightManager);
-        m_managers.push_back(t_jumpManager);
-        m_managers.push_back(t_gravManager);
+        // m_managers.push_back(t_jumpManager);
+        // m_managers.push_back(t_gravManager);
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_movementManager); // Must be after gravity/jump
         m_managers.push_back(t_charSyncManager); // Must be after movement
