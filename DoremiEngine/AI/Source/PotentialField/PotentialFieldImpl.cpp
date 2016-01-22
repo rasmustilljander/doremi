@@ -100,8 +100,8 @@ namespace DoremiEngine
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
             position2D.x -= bottomLeft.x - 0.5f;
             position2D.y -= bottomLeft.y - 0.5f;
-            int quadNrX = std::floor(position2D.x / gridQuadWidth); // What quad in x and y
-            int quadNrY = std::floor(position2D.y / gridQuadHeight);
+            int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
+            int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
             // Add quads that needs checking, 3x3 square around the unit
 
             std::vector<XMINT2> quadsToCheck;
