@@ -4,7 +4,8 @@
 #include <vector>
 #include <Doremi/Core/Include/MenuClasses/Button.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
-#include <Doremi/Core/Include/Helper/MenuStates.hpp>
+#include <Doremi/Core/Include/Helper/DoremiStates.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 namespace Doremi
 {
     namespace Core
@@ -33,7 +34,7 @@ namespace Doremi
             DirectX::XMFLOAT2 m_resolution;
             int m_currentButton;
             InputHandlerClient* m_inputHandler;
-            MenuStates::MenuState m_menuState;
+            Core::DoremiStates m_menuState;
         };
     }
 }

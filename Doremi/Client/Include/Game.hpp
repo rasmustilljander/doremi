@@ -1,7 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <vector>
-#include <Doremi/Core/Include/Helper/MenuStates.hpp>
 
 namespace Doremi
 {
@@ -9,6 +8,7 @@ namespace Doremi
     {
         class Manager;
         class EntityInterface;
+        class ScreenSpaceDrawer;
     }
     class GameMain : public Core::GameCore
     {
@@ -82,7 +82,6 @@ namespace Doremi
         */
         std::vector<Core::Manager*> m_graphicalManagers;
 
-    private:
-        Doremi::MenuStates::MenuState m_menuState;
+        Core::ScreenSpaceDrawer* m_screenSpaceDrawer;
     };
 }

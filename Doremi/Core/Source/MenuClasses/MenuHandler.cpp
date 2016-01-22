@@ -1,10 +1,12 @@
 // Project specific
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+// Event
+#include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
 // Third party
 
@@ -80,7 +82,7 @@ namespace Doremi
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
                 // Skapa knapp å stoppa in i listan Menustate är riskmodd. Hårdkodat mot vilken ordning som namnen laddas in. Finns kommentarer till
                 // detta androp om ordning
-                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, (MenuStates::MenuState)i));
+                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, (Core::DoremiStates)((int)pow(2, (int)i))));
             }
             m_inputHandler = new InputHandlerClient(m_sharedContext);
         }
@@ -89,7 +91,7 @@ namespace Doremi
 
         std::vector<Button> MenuHandler::GetButtons() { return m_buttonList; }
 
-        int MenuHandler::Update(double p_dt)
+        int MenuHandler::Update(double p_dt) // TODOKO Dont need to return int anymore
         {
             int mouseX;
             int mouseY;
@@ -113,12 +115,16 @@ namespace Doremi
             // check if player has clicked the mouse and is hovering over a button
             if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
             {
-                return m_buttonList[m_currentButton].m_menuState;
+                // passing state change event
+                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                menuEvent->state = m_buttonList[m_currentButton].m_menuState;
+                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
             }
             else
             {
-                return MenuStates::MAINMENU;
+                // Nothing
             }
+            return 0;
         }
     }
 }

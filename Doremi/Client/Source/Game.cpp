@@ -30,6 +30,8 @@
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 
+#include <Doremi/Core/Include/Handler/StateHandler.hpp>
+
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
@@ -48,10 +50,13 @@
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
+// Events
+#include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 // Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/LevelLoader.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
+#include <Doremi/Core/Include/ScreenSpaceDrawer.hpp>
 
 
 // Timer
@@ -92,9 +97,12 @@ namespace Doremi
         Core::PlayerHandler::StartPlayerHandler(sharedContext);
         Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);
+        Core::StateHandler::StartStateHandler(sharedContext);
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
         Core::CameraHandler::StartCameraHandler(sharedContext);
         Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
+        // Initialize 2d drawer class
+        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager
@@ -158,7 +166,7 @@ namespace Doremi
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
-        m_menuState = MenuStates::MenuState::MAINMENU; // byt denna till MAINMENU om du vill se menyn!! TODOLH
+
         TIME_FUNCTION_STOP
     }
 
@@ -349,7 +357,6 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         size_t length = m_managers.size();
-        Core::EventHandler::GetInstance()->DeliverEvents();
         PlayerHandler::GetInstance()->UpdateClient();
         AudioHandler::GetInstance()->Update(p_deltaTime);
 
@@ -371,32 +378,46 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
-    void GameMain::UpdateMenu(double p_deltaTime) { m_menuState = (MenuStates::MenuState)MenuHandler::GetInstance()->Update(p_deltaTime); }
+    void GameMain::UpdateMenu(double p_deltaTime) {}
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputsClient();
-        switch(m_menuState)
+
+        Core::EventHandler::GetInstance()->DeliverEvents();
+        Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
+
+        switch(t_state)
         {
-            case MenuStates::MAINMENU:
+            case Core::DoremiStates::MAINMENU:
                 // Update Menu Logic
-                UpdateMenu(p_deltaTime);
+                MenuHandler::GetInstance()->Update(p_deltaTime);
                 break;
-            case MenuStates::RUNGAME:
+            case Core::DoremiStates::RUNGAME:
                 // Update Game logic
                 UpdateGame(p_deltaTime);
                 break;
-            case MenuStates::EXIT:
+            case Core::DoremiStates::EXIT:
+            {
                 std::cout << "You clicked exit its not ver effective state changed back to mainmenu" << std::endl;
-                m_menuState = MenuStates::MAINMENU;
+                // State is changed with events TODOXX should be removed from here once EXIT is implemented
+                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                menuEvent->state = Core::DoremiStates::MAINMENU;
+                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
                 return;
-                break;
-            case MenuStates::PAUSE:
+            }
+            break;
+            case Core::DoremiStates::PAUSE:
                 // Update Pause Screen
                 break;
-            case MenuStates::OPTIONS:
+            case Core::DoremiStates::OPTIONS:
+            {
                 std::cout << "You clicked options button. It has no effect. State changed back to MAINMENU" << std::endl;
-                m_menuState = MenuStates::MAINMENU;
+                // State is changed with events TODOXX should be removed from here once options is implemented
+                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                menuEvent->state = Core::DoremiStates::MAINMENU;
+                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+            }
             // Update Options
             default:
                 break;
@@ -427,22 +448,18 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         /** TODOLH Detta ska flyttas till en function som i updaten*/
-        switch(m_menuState)
+        Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
+        switch(t_state)
         {
-            case MenuStates::MAINMENU:
-                // Draw mainMenu
-                DrawMenu(p_deltaTime);
-                break;
-            case MenuStates::RUNGAME:
+            case Core::DoremiStates::RUNGAME:
                 // Draw Game
                 DrawGame(p_deltaTime);
-                break;
-            case MenuStates::PAUSE:
-                // Draw PauseSCreen
                 break;
             default:
                 break;
         }
+        // WE always draw 2d stuff
+        m_screenSpaceDrawer->Draw();
         TIME_FUNCTION_STOP
     }
 

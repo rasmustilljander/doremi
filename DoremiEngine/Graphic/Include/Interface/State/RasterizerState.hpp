@@ -1,5 +1,5 @@
 #pragma once
-class ID3D11RasterizerState;
+struct ID3D11RasterizerState;
 namespace DoremiEngine
 {
     namespace Graphic

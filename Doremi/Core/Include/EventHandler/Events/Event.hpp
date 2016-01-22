@@ -14,6 +14,7 @@ namespace Doremi
             PotentialFieldActorCreation,
             AiGroupActorCreation,
             Trigger,
+            ChangeMenuState,
         };
         /**All events needs to inherit this struct*/
         struct Event

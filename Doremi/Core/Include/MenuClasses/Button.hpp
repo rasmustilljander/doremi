@@ -3,7 +3,7 @@
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
-#include <Doremi/Core/Include/Helper/MenuStates.hpp>
+#include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 namespace Doremi
 {
     namespace Core
@@ -26,7 +26,7 @@ namespace Doremi
         {
         public:
             Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
-                   Doremi::MenuStates::MenuState p_menuState);
+                   Core::DoremiStates p_menuState);
             Button();
             virtual ~Button();
             XMFLOAT2 m_position;
@@ -36,7 +36,7 @@ namespace Doremi
             // Kanske en texID för när den är highlightad?
             // Checks if mouse is inside this button
             bool CheckIfInside(int p_mousePosX, int p_mousePosY);
-            MenuStates::MenuState m_menuState;
+            Core::DoremiStates m_menuState;
             XMFLOAT4X4 m_transformMatrix;
 
         private:

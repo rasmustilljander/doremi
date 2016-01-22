@@ -1,5 +1,5 @@
 #pragma once
-class ID3D11DepthStencilState;
+struct ID3D11DepthStencilState;
 namespace DoremiEngine
 {
     namespace Graphic

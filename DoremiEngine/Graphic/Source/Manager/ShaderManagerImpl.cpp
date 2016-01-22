@@ -61,6 +61,7 @@ namespace DoremiEngine
         }
         PixelShader* ShaderManagerImpl::BuildPixelShader(const std::string& p_fileName)
         {
+            // TODOKO make shaders save in map just like mesh info
             std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
             ID3D11PixelShader* shader;
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
