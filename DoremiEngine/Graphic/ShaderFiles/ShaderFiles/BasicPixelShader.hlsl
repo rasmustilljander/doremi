@@ -64,7 +64,7 @@ float3 CalcDirectionalLight(PixelInputType input, int i)
 
     lightDir = -light[i].direction;
     lightIntensity = saturate(dot(normal, lightDir));
-    return saturate(light[i].color * lightIntensity) * 0.08;
+    return saturate(light[i].color * lightIntensity) * 0.3;
 }
 
 float3 CalcSpotLight(PixelInputType input, int i)
@@ -127,6 +127,6 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     Plane test;
     test.N = float3(0, 0, 0);
     
-    return float4(rgb, 1) + texcolor * 0.015;
+    return float4(rgb, 1) + texcolor * 0.5;
     
 }
