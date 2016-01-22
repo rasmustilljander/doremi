@@ -20,6 +20,10 @@ namespace Doremi
             {
                 m_singleton = new InterpolationHandler(p_sharedContext);
             }
+            else
+            {
+                std::runtime_error("Duplicate startup called on InterpolationHandler.");
+            }
         }
 
         InterpolationHandler* InterpolationHandler::GetInstance()
@@ -30,9 +34,9 @@ namespace Doremi
             }
             return m_singleton;
         }
-
+        // TODOXX snapshotdelay must be less then sequencedleay in inputhandlerserver
         InterpolationHandler::InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(10)
+            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(5)
         {
         }
 
@@ -296,64 +300,5 @@ namespace Doremi
         }
 
         uint8_t InterpolationHandler::GetRealSnapshotSequence() { return m_snapshotSequenceReal; }
-
-
-        void InterpolationHandler::QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position)
-        {
-            // m_PositionStamps.push_front(PositionStamp(m_snapshotSequenceReal, p_position));
-        }
-
-        void InterpolationHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
-        {
-            /**
-             Notes:
-             We need to interpolate the players position to a new position => hence why it should be in Interpolation handler.
-             We need to store the playerID to set the position of the player
-
-            */
-            EntityID playerID = 0;
-            PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerID);
-
-            // TODOCM remove this hotfix, and use list of inputs to check against, and set a interpolation point
-            // Check if we find the playerID
-
-            // If we have character controller
-            if(Core::EntityHandler::GetInstance().HasComponents(playerID, (int)ComponentType::CharacterController))
-            {
-                // Set position
-                m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetPosition(playerID, p_positionToCheck);
-                // cout << "set position" << endl;
-            }
-
-
-            // std::list<PositionStamp>::iterator removeStart = m_PositionStamps.begin();
-            // std::list<PositionStamp>::iterator removeEnd;
-
-            // std::list<PositionStamp>::iterator iterPos = m_PositionStamps.begin();
-
-            // while (iterPos != m_PositionStamps.end())
-            //{
-            //    if (p_sequenceOfPosition == iterPos->Sequence)
-            //    {
-            //        // If we find the one, we compare positions
-            //        if (p_positionToCheck.x == iterPos->Position.x &&
-            //            p_positionToCheck.y == iterPos->Position.y &&
-            //            p_positionToCheck.z == iterPos->Position.z)
-            //        {
-            //            // Woo same
-            //            cout << "same same!" << endl;
-            //        }
-            //        else
-            //        {
-            //            // buu nooo
-            //            cout << "No same" << endl;
-            //        }
-            //    }
-            //    else if (sequence_more_recent(p_sequenceOfPosition, iterPos->Sequence, 255))
-            //    {
-            //        // If we're more recent we move forward
-            //    }
-            //}
-        }
     }
 }

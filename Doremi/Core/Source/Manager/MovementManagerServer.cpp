@@ -1,6 +1,6 @@
 #pragma once
 // Project specific
-#include <Manager/MovementManager.hpp>
+#include <Manager/MovementManagerServer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
@@ -16,11 +16,11 @@ namespace Doremi
 {
     namespace Core
     {
-        MovementManager::MovementManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "MovementManager") {}
+        MovementManagerServer::MovementManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "MovementManager") {}
 
-        MovementManager::~MovementManager() {}
+        MovementManagerServer::~MovementManagerServer() {}
 
-        void MovementManager::Update(double p_dt)
+        void MovementManagerServer::Update(double p_dt)
         {
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Movement | (int)ComponentType::CharacterController;
@@ -31,6 +31,7 @@ namespace Doremi
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, movementComp->movement, p_dt);
                     movementComp->movement = XMFLOAT3(0, 0, 0);
+
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     // XMFLOAT3 currentVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(rigidBody->p_bodyID);
                     // XMVECTOR forward = XMLoadFloat3(&movement->direction);
@@ -50,6 +51,6 @@ namespace Doremi
             }
         }
 
-        void MovementManager::OnEvent(Event* p_event) {}
+        void MovementManagerServer::OnEvent(Event* p_event) {}
     }
 }

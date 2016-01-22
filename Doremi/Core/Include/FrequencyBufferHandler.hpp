@@ -9,13 +9,6 @@ namespace Doremi
     {
         class BitStreamer;
 
-        struct DebufFrequence
-        {
-            DebufFrequence(float p_frequence, uint8_t p_sequence) : frequence(p_frequence), sequence(p_sequence) {}
-            float frequence;
-            uint8_t sequence;
-        };
-
         class FrequencyBufferHandler
         {
         public:
@@ -68,7 +61,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            std::list<DebufFrequence> m_bufferedFrequencies;
+            std::list<float> m_bufferedFrequencies;
 
             /**
                 The next one we will recieve

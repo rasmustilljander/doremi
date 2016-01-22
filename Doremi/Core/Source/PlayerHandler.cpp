@@ -208,7 +208,7 @@ namespace Doremi
         void PlayerHandler::UpdateClient()
         {
             TIME_FUNCTION_START
-            // UpdatePlayerInputs();
+            
             UpdatePlayerPositions();
             UpdatePlayerRotationsClient();
             TIME_FUNCTION_STOP
@@ -217,22 +217,35 @@ namespace Doremi
         void PlayerHandler::UpdateServer()
         {
             TIME_FUNCTION_START
+            UpdatePlayerInputsServer();
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandler::UpdatePlayerInputs()
+        void PlayerHandler::UpdatePlayerInputsClient()
         {
             TIME_FUNCTION_START
             m_sharedContext.GetInputModule().Update();
 
             std::map<uint32_t, Player*>::iterator iter;
 
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
+            }
+            TIME_FUNCTION_STOP
+        }
+
+        void PlayerHandler::UpdatePlayerInputsServer()
+        {
+            TIME_FUNCTION_START
+            std::map<uint32_t, Player*>::iterator iter;
+
+            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                ((InputHandlerServer*)iter->second->m_inputHandler)->Update(iter->second->m_playerEntityID);
             }
             TIME_FUNCTION_STOP
         }
@@ -304,7 +317,10 @@ namespace Doremi
                     XMStoreFloat3(&movement, movementVec);
                     if(movement.x != 0 || movement.y != 0 || movement.z != 0)
                     {
-                        EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(entityID)->movement = movement;
+                        MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(entityID);
+                        moveComp->movement.x += movement.x;
+                        moveComp->movement.y += movement.y;
+                        moveComp->movement.z += movement.z;
                     }
                 }
             }

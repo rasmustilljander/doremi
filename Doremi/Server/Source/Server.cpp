@@ -8,7 +8,7 @@
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ServerNetworkManager.hpp>
-#include <Doremi/Core/Include/Manager/MovementManager.hpp>
+#include <Doremi/Core/Include/Manager/MovementManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/FrequencyAffectedObjectManager.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
@@ -42,6 +42,8 @@
 #include <exception>
 #include <chrono>
 #include <iostream>
+
+
 namespace Doremi
 {
     ServerMain::ServerMain() {}
@@ -67,7 +69,7 @@ namespace Doremi
         Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
         t_levelLoader->LoadLevel("Levels/test.drm");
         Core::Manager* t_serverNetworkManager = new Core::ServerNetworkManager(sharedContext);
-        Core::Manager* t_movementManager = new Core::MovementManager(sharedContext);
+        Core::Manager* t_movementManager = new Core::MovementManagerServer(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
 
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
@@ -82,13 +84,14 @@ namespace Doremi
         // m_managers.push_back(t_physicsManager);
         m_managers.push_back(t_serverNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
-        m_managers.push_back(t_movementManager);
         m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
         m_managers.push_back(t_frequencyAffectedObjectManager);
         m_managers.push_back(t_triggerManager);
+        m_managers.push_back(t_movementManager);
+
 
 
         // GenerateWorld(sharedContext);
@@ -274,6 +277,7 @@ namespace Doremi
             {
                 Offset = Frame - 0.25f;
                 Frame = 0.25f;
+                std::cout << "LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG" << std::endl;
             }
 
             // Update the previous position with frametime so we can catch up if we slow down

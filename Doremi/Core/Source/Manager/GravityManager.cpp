@@ -6,6 +6,7 @@
 #include <EntityComponent/Components/JumpComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/MovementComponent.hpp>
 
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -30,7 +31,7 @@ namespace Doremi
         void GravityManager::Update(double p_dt)
         {
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::Gravity | (int)ComponentType::CharacterController | (int)ComponentType::Transform;
+            int mask = (int)ComponentType::Gravity | (int)ComponentType::CharacterController | (int)ComponentType::Transform | (int)ComponentType::Movement;
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
@@ -51,7 +52,9 @@ namespace Doremi
                         // Jump in progress, hence gravity isn't needed
                         gravComp->travelSpeed = 0;
                     }
-                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, -gravComp->travelSpeed, 0), p_dt);
+                    
+                    // Add to movement component
+                    GetComponent<MovementComponent>(i)->movement.y += -gravComp->travelSpeed;
                 }
             }
         }

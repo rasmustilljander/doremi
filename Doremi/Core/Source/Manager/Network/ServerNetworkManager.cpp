@@ -10,6 +10,7 @@
 #include <InputHandlerServer.hpp>
 #include <AddRemoveSyncHandler.hpp>
 #include <FrequencyBufferHandler.hpp>
+#include <SequenceMath.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -48,6 +49,8 @@ namespace Doremi
 
         void ServerNetworkManager::Update(double p_dt)
         {
+            //std::cout << "Real: " << (uint32_t)m_nextSnapshotSequence << std::endl;
+
             // Recieve Messages
             RecieveMessages(p_dt);
 
@@ -132,15 +135,12 @@ namespace Doremi
             uint32_t bytesRead = 0;
 
             // Read sequence
-            p_connection->LastSequence = Streamer.ReadUnsignedInt8();
+            uint8_t newSequence = Streamer.ReadUnsignedInt8();
             bytesRead += sizeof(uint8_t);
 
             // Read input from Stream
             uint32_t InputMask = Streamer.ReadUnsignedInt32();
             bytesRead += sizeof(uint32_t);
-
-            // Set Input to handler
-            inputHandler->SetInputBitMask(InputMask);
 
             // Set orientation
             EntityID entityID = 0;
@@ -150,13 +150,26 @@ namespace Doremi
             {
                 cout << "wrong in recieveinput message" << endl;
             }
+
             // Set orientation to be updated
-            inputHandler->SetOrientationFromInput(Streamer.ReadRotationQuaternion());
+            DirectX::XMFLOAT4 playerOrientation = Streamer.ReadRotationQuaternion();
             bytesRead += sizeof(float) * 4;
 
-            // Save position to send it on next message
-            p_connection->PositionOnLastSequence = GetComponent<TransformComponent>(entityID)->position;
+            //std::cout << "Recieved: " << (uint32_t)newSequence << std::endl;
+            
+            if (InputMask != 0)
+            {
+                cout << "Input: " <<(uint32_t)newSequence << endl;
+            }
 
+            // Queue input
+            inputHandler->QueueInput(InputMask, playerOrientation, newSequence);
+
+            // Read client position, TODOCM debug
+            DirectX::XMFLOAT3 pos = Streamer.ReadFloat3();
+            bytesRead += sizeof(float) * 3;
+
+            // Save add/remove sequence
             uint8_t clientSequence = Streamer.ReadUnsignedInt8();
             bytesRead += sizeof(uint8_t);
 
@@ -261,7 +274,6 @@ namespace Doremi
                 // Create a new connection
                 Connection* newConnection = new Connection();
                 newConnection->LastResponse = 0;
-                newConnection->LastSequence = m_nextSnapshotSequence;
                 newConnection->ConnectionState = ConnectionState::CONNECTING;
                 newConnection->NewConnection = false;
 
@@ -373,6 +385,8 @@ namespace Doremi
             // That have a position component
             // That has a flag that it is active
             // We put info to render
+            InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
+
             BitStreamer Streamer = BitStreamer();
             Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
 
@@ -383,17 +397,19 @@ namespace Doremi
             Streamer.WriteUnsignedInt8(sequenceAcc);
             BytesWritten += sizeof(uint8_t);
 
+            // Add new Add/Remove items
             PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
 
             // Write snapshot ID (1 byte
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
-
-
+            
             // Write client last sequence (1 byte
-            Streamer.WriteUnsignedInt8(p_connection->LastSequence);
+            Streamer.WriteUnsignedInt8(inputHandler->GetSequenceByLastInput());
 
             // Write position of that sequence ( 12 byte
-            Streamer.WriteFloat3(p_connection->PositionOnLastSequence);
+            Streamer.WriteFloat3(inputHandler->GetPositionByLastInput());
+
+            //cout << "Sent: " << (uint32_t)inputHandler->GetSequenceByLastInput() << endl;
 
             BytesWritten += 14;
 
@@ -444,8 +460,6 @@ namespace Doremi
 
             // Update sequence here because of the error checking..
             m_nextSnapshotSequence++;
-
-            // cout << (int)m_nextSnapshotSequence << endl;
 
 
             // For all connected clients we send messages
@@ -596,6 +610,7 @@ namespace Doremi
             {
                 p_message.MessageID = MessageID::INIT_SNAPSHOT;
                 p_connection->NewConnection = false;
+                ((InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID))->SetSequence(m_nextSnapshotSequence);
             }
             else
             {

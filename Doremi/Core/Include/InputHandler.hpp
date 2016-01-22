@@ -99,11 +99,6 @@ namespace Doremi
             */
             uint32_t GetInputBitMask();
 
-            /**
-                TODOCM doc
-            */
-            void SetInputBitMask(uint32_t p_bitMask);
-
             // TODOEA void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
             // Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
             // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
