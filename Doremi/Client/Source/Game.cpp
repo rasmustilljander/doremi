@@ -29,7 +29,6 @@
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
-
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
 
 // Managers
@@ -385,7 +384,6 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputsClient();
-
         Core::EventHandler::GetInstance()->DeliverEvents();
         Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
 
