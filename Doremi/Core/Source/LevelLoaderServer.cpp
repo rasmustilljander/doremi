@@ -344,6 +344,7 @@ namespace Doremi
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
                 m_entityID, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
                 m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5));
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(m_entityID, true);
             // END HAX
             return vertexBuffer;
         }
