@@ -245,7 +245,6 @@ namespace Doremi
 
                 renderComp->material = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(textureName);
                 // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("BackGroundBuildingColorPalet2.dds");
-                int a = 5;
             }
             // Triggering ;) TODOKO should only be done on server and the server should send the events to the client. Event sending is not supported
             // yet though
