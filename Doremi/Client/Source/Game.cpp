@@ -45,6 +45,7 @@
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 #include <Doremi/Core/Include/Manager/LightManager.hpp>
+#include <Doremi/Core/Include/Manager/TriggerManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -121,6 +122,7 @@ namespace Doremi
         Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
         Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
 
+        Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
         // Add manager to list of managers
 
         m_graphicalManagers.push_back(t_pressureParticleManager);
@@ -138,7 +140,7 @@ namespace Doremi
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_movementManager); // Must be after gravity/jump
         m_managers.push_back(t_charSyncManager); // Must be after movement
-
+        m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
 
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;

@@ -587,8 +587,17 @@ namespace Doremi
             TIME_FUNCTION_START
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             EntityBlueprint t_triggerBlueprint;
+            // Transform comp
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_triggerBlueprint[ComponentType::Transform] = t_transformComp;
+            // RIgid body comp
+            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            t_triggerBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
+            // Trigger comp
+            TriggerComponent* t_triggerComp = new TriggerComponent();
+            t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
             // Register blueprint
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_triggerBlueprint);
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::TriggerEntity, t_triggerBlueprint);
             TIME_FUNCTION_STOP
         }
         void CreateTriggerObjectServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -606,7 +615,7 @@ namespace Doremi
             TriggerComponent* t_triggerComp = new TriggerComponent();
             t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
             // Register blueprint
-            t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_triggerBlueprint);
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::TriggerEntity, t_triggerBlueprint);
             TIME_FUNCTION_STOP
         }
         void TemplateCreator::CreateTemplatesForClient(const DoremiEngine::Core::SharedContext& sharedContext)

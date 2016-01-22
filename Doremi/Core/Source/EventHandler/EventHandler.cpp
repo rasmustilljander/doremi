@@ -40,7 +40,7 @@ namespace Doremi
             TIME_FUNCTION_START
             // Iterate through all events
             size_t length = m_mailBox.size();
-            for(size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < m_mailBox.size(); i++) // need to check size if a new event is cast during delivery
             {
                 // Iterate through all systems the event is to be broadcasted to
                 unordered_map<EventType, vector<Subscriber*>>::iterator t_iter =

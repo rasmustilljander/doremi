@@ -45,7 +45,7 @@ namespace Doremi
             {
                 // collisionTriggerPairs[k].firstID
                 // Check that the current entity has the relevant components
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Trigger) | (int)ComponentType::Transform | (int)ComponentType::RigidBody)
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody))
                 {
                     std::vector<DoremiEngine::Physics::CollisionPair> collisionTriggerPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();
                     size_t collisionListLength = collisionTriggerPairs.size();
