@@ -55,12 +55,12 @@ namespace Doremi
             int offset = 5;
             // Gör höjden på varje knapp bero på upplösningen
             // Orienterad efter origin. Length används och fungerar även om den listan är för lång eftersom vi går efter extents från origin.
-            float t_buttonHeightExtent = ((m_resolution.y - offset * 2) / length);
+            float t_buttonHeightExtent = ((m_resolution.y - offset * 2) / static_cast<float>(length));
             // En knapp täcker halva skärmen. Extents åt båda hållen ger halva skärmen. Extentsen blir då en 4dedel
-            float t_buttonWidthExtent = m_resolution.x * 0.25;
+            float t_buttonWidthExtent = m_resolution.x * 0.25f;
             // Positionera I mitten av skärmen
-            float t_buttonXPosition = m_resolution.x * 0.5;
-            length = floor(length * 0.5);
+            float t_buttonXPosition = m_resolution.x * 0.5f;
+            length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
             for(size_t i = 0; i < length; i++)
             {
                 // Lägg in materialinfo å meshinfo för varje knapp i dess klass instantiering. Lägg till i listan för knappar
