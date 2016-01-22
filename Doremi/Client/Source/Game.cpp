@@ -102,7 +102,7 @@ namespace Doremi
         Core::CameraHandler::StartCameraHandler(sharedContext);
         Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         // Initialize 2d drawer class
-        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext);
+        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, XMFLOAT2(800, 800));
 
         ////////////////Example only////////////////
         // Create manager

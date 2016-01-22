@@ -12,6 +12,8 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
+#include <Doremi/Core/Include/MenuClasses/VictoryScreen.hpp>
+
 
 // DirectX
 #include <dxgi.h> // TODOXX booring to include directx thingies outside module
@@ -20,7 +22,8 @@ namespace Doremi
 {
     namespace Core
     {
-        ScreenSpaceDrawer::ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        ScreenSpaceDrawer::ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext, XMFLOAT2 p_resolution) : m_sharedContext(p_sharedContext),
+            m_resolution(p_resolution)
         {
             // Initialize shader thingies
             m_menuPixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("TextPixelShader.hlsl");
@@ -30,6 +33,27 @@ namespace Doremi
             };
             m_menuVertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("TextVertexShader.hlsl", ied, ARRAYSIZE(ied));
+
+
+            CreateVictoryScreen();
+
+        }
+        void ScreenSpaceDrawer::CreateVictoryScreen()
+        {
+            DoremiEngine::Graphic::MeshInfo* t_meshInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
+            m_victoryScreen = new VictoryScreen(t_meshInfo);
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("VictoryScreen.dds");
+            //m_victoryScreen->AddScreenObject(t_materialInfo, )
+        }
+        using namespace DirectX;
+        XMFLOAT2 ScreenSpaceDrawer::ConvertWithResolution(XMFLOAT2 p_point)
+        {
+            XMFLOAT2 t_newPoint;
+            return t_newPoint;
+
+
+
         }
         ScreenSpaceDrawer::~ScreenSpaceDrawer() {}
         void ScreenSpaceDrawer::Draw()
@@ -56,6 +80,12 @@ namespace Doremi
                     break;
             }
         }
+
+        void ScreenSpaceDrawer::DrawVictoryScreen()
+        {
+
+        }
+
         void ScreenSpaceDrawer::DrawMainMenu()
         {
             std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
