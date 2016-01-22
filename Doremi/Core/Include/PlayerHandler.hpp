@@ -7,6 +7,9 @@
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
+#include <Doremi/Core/Include/InputHandler.hpp>
+#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 
 namespace DoremiEngine
 {
@@ -20,9 +23,6 @@ namespace Doremi
 {
     namespace Core
     {
-        class InputHandler;
-        class AddRemoveSyncHandler;
-        class FrequencyBufferHandler;
 
         /**
             TODOCM doc
