@@ -12,7 +12,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        struct LightInfo;
+        class LightInfo;
         struct GraphicModuleContext;
         struct Plane
         {
