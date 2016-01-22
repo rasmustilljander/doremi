@@ -281,6 +281,7 @@ namespace DoremiEngine
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
             if(renderData[0].indexData != nullptr)
             {
                 m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);

@@ -77,7 +77,7 @@ namespace Doremi
             {
                 ChangeMenuState* menuStateEvent =
                     new ChangeMenuState(); // Send event so we easily can call the event changing algorithm to see if the new state is valid
-                menuStateEvent->state = DoremiStates::MAINMENU;
+                menuStateEvent->state = DoremiStates::VICTORY;
                 EventHandler::GetInstance()->BroadcastEvent(menuStateEvent); // TODOKO review if this is a good idea
                 // m_state = DoremiStates::MAINMENU;
             }
