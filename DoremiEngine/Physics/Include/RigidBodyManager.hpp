@@ -36,6 +36,12 @@ namespace DoremiEngine
             collision pair is generated*/
             virtual void SetTrigger(int p_id, bool p_isTrigger) = 0;
 
+            /**
+            Sets the body to be a drain. This means that particles which collide with
+            the body are removed. No callbacks are triggered at this moment however.
+            TODOJB Update as necessary*/
+            virtual void SetDrain(int p_id, bool p_isDrain) = 0;
+
 
             /**
             TODOJB figure out what to do, and how to describe it in a comment

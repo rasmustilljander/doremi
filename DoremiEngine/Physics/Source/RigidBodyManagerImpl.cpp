@@ -138,12 +138,6 @@ namespace DoremiEngine
             m_bodies[p_id] = body;
             m_IDsByBodies[body] = p_id;
 
-            // DEBUG TODOJB move this into some funky method perhaps?
-            PxShape* shape;
-            body->getShapes(&shape, 1);
-            shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, true);
-
-
             // Hax to get callbacks to work (Set a common flag on every object)
             SetCallback(p_id, (1 << 0), (1 << 0));
         }
@@ -159,6 +153,13 @@ namespace DoremiEngine
             m_bodies[p_id]->getShapes(&shape, 1);
             shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
             shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+        }
+
+        void RigidBodyManagerImpl::SetDrain(int p_id, bool p_isDrain)
+        {
+            PxShape* shape;
+            m_bodies[p_id]->getShapes(&shape, 1);
+            shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, p_isDrain);
         }
 
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)

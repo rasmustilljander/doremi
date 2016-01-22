@@ -34,6 +34,7 @@ namespace DoremiEngine
                                     vector<int>& p_indices, int p_materialID) override;
 
             void SetTrigger(int p_id, bool p_isTrigger) override;
+            void SetDrain(int p_id, bool p_isDrain) override;
 
 
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
