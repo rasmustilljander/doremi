@@ -252,13 +252,13 @@ namespace Doremi
             int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
             EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
-            transComp->position = XMFLOAT3(-420.4, 151.5, -110.3);
-            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            transComp->position = XMFLOAT3(-420.4f, 151.5f, -110.3f);
+            transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
-            triggComp->dimensions = XMFLOAT3(7, 10, 34);
+            triggComp->dimensions = XMFLOAT3(7.0f, 10.0f, 34.0f);
             triggComp->triggerType = TriggerType::GoalTrigger;
             RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
-            int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             rigidComp->p_bodyID =
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation,
                                                                                           triggComp->dimensions, materialTriggID);
@@ -333,7 +333,7 @@ namespace Doremi
             // HAX
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
                 1337, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
-                m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5));
+                m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5f, 0.5f, 0.5f));
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(1337, true); // TODOXX Hardcoded ID (1337) is BAD. Make sure it uses the
             // entityID of the entity!
             // END HAX
