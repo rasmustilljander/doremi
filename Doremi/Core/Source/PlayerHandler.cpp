@@ -176,9 +176,9 @@ namespace Doremi
 
 
             int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5, 30, 0);
-            DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
-            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1, 1));
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
+            DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1.0f, 1.0f));
 
             /// Create the gun
             // Check if we have the gun
@@ -187,11 +187,11 @@ namespace Doremi
                 ParticlePressureComponent* particleComp =
                     EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
                 particleComp->data.m_active = false;
-                particleComp->data.m_density = 2;
-                particleComp->data.m_dimensions = XMFLOAT2(0, 0);
+                particleComp->data.m_density = 2.0f;
+                particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
                 particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
-                particleComp->data.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
-                particleComp->data.m_emissionRate = 0.1;
+                particleComp->data.m_emissionAreaDimensions = XMFLOAT2(0.1f, 0.4f);
+                particleComp->data.m_emissionRate = 0.1f;
                 particleComp->data.m_launchPressure = 100;
                 particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
                 m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
