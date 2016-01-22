@@ -243,10 +243,10 @@ namespace Doremi
             int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
             EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
-            transComp->position = XMFLOAT3(0, 0, 0);
+            transComp->position = XMFLOAT3(-420.4, 151.5, -110.3);
             transComp->rotation = XMFLOAT4(0, 0, 0, 1);
             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
-            triggComp->dimensions = XMFLOAT3(100, 100, 100);
+            triggComp->dimensions = XMFLOAT3(7, 10, 34);
             triggComp->triggerType = TriggerType::GoalTrigger;
             RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
             int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
