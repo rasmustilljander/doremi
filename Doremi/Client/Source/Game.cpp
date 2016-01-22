@@ -345,7 +345,6 @@ namespace Doremi
         Core::EventHandler::GetInstance()->DeliverEvents();
         PlayerHandler::GetInstance()->UpdateClient();
         AudioHandler::GetInstance()->Update(p_deltaTime);
-        CameraHandler::GetInstance()->Update(p_deltaTime);
 
         Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
@@ -356,6 +355,8 @@ namespace Doremi
             m_managers.at(i)->Update(p_deltaTime);
             info.Stop();
         }
+
+        CameraHandler::GetInstance()->Update(p_deltaTime);
         PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
         TIME_FUNCTION_STOP
     }
