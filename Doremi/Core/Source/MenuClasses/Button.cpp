@@ -1,7 +1,7 @@
 // Project specific
 #include <Doremi/Core/Include/MenuClasses/Button.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-#include <Doremi/Core/Include/Helper/MenuStates.hpp>
+#include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 
 // Third party
 
@@ -16,7 +16,7 @@ namespace Doremi
     {
         using namespace DirectX;
         Button::Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials,
-                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, MenuStates::MenuState p_menuState)
+                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, Core::DoremiStates p_menuState)
             : m_position(p_position), m_size(p_size), m_buttonMaterials(p_buttonMaterials), m_meshInfo(p_meshInfo), m_menuState(p_menuState)
         {
             // Building a transform matrix. needs no rotation or scaling orientation the variable can be reused. Scaling origin is 0,0,0 for the quad

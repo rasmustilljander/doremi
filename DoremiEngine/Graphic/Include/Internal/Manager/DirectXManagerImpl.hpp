@@ -39,6 +39,8 @@ namespace DoremiEngine
             void SwapRasterizerState(RasterizerState* p_rasterizerState) override;
             void SwapDepthStencilState(DepthStencilState* p_depthStencilState) override;
             ID3D11SamplerState* GetDefaultSamplerState() override { return m_defaultSamplerState; }
+            RasterizerState* GetDefaultRasterizerState() override { return m_defaultRasterizerState; };
+            DepthStencilState* GetDefaultDepthStencilState() override { return m_defaultDepthStencilState; };
             void DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
         private:
@@ -58,6 +60,8 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 m_screenResolution;
             ID3D11ShaderResourceView* m_srv;
             ID3D11UnorderedAccessView* m_backbufferUAV;
+            RasterizerState* m_defaultRasterizerState;
+            DepthStencilState* m_defaultDepthStencilState;
         };
     }
 }

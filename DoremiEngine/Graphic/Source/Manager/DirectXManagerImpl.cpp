@@ -157,9 +157,8 @@ namespace DoremiEngine
             m_deviceContext->RSSetViewports(1, &viewport);
 
             // TODO add more different things like transparancy
-            // TODOKO Move code to better location
 
-            // For texture sampler TODOKO Should not be here!
+            // For default texture sampler
             D3D11_SAMPLER_DESC texSamDesc;
             texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
             texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -180,6 +179,29 @@ namespace DoremiEngine
             m_deviceContext->PSSetSamplers(0, 1, &m_defaultSamplerState);
 
             BuildWorldMatrix();
+
+            // For default rasterizer state
+            D3D11_RASTERIZER_DESC rastDesc;
+            ZeroMemory(&rastDesc, sizeof(rastDesc));
+            rastDesc.FillMode = D3D11_FILL_SOLID;
+            rastDesc.CullMode = D3D11_CULL_NONE;
+            rastDesc.FrontCounterClockwise = false;
+            rastDesc.DepthBias = 0;
+            rastDesc.DepthBiasClamp = 0.0f;
+            rastDesc.SlopeScaledDepthBias = 0.0f;
+            rastDesc.DepthClipEnable = false;
+            rastDesc.ScissorEnable = false;
+            rastDesc.MultisampleEnable = true;
+            rastDesc.AntialiasedLineEnable = false;
+            m_defaultRasterizerState = CreateRasterizerState(rastDesc);
+
+            // For default depth stencil state
+            D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+            ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+            depthStencilDesc.DepthEnable = true;
+            depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+            m_defaultDepthStencilState = CreateDepthStencilState(depthStencilDesc);
         }
 
         void DirectXManagerImpl::SetScreenResolution(DirectX::XMFLOAT2 p_res) { m_screenResolution = p_res; }
