@@ -54,7 +54,8 @@ namespace Doremi
             uint32_t NumberOfEntities = EntityHandler.GetLastEntityIndex();
 
             // Compute real alpha
-            double realAlpha = (p_alpha + (double)m_SequenceInterpolationOffset) / (double)m_NumOfSequencesToInterpolate;
+            float realAlpha =
+                (static_cast<float>(p_alpha) + static_cast<float>(m_SequenceInterpolationOffset)) / static_cast<float>(m_NumOfSequencesToInterpolate);
 
             if(m_NumOfSequencesToInterpolate <= 0)
             {
