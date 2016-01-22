@@ -97,7 +97,7 @@ namespace DoremiEngine
                             velocities.push_back(velocity);
 
                             // Add position (only emitts from the center of the emitter atm
-                            float launchOffset = 0.1;
+                            float launchOffset = 0.1f;
                             XMVECTOR positionVec = XMLoadFloat3(&m_this.m_position);
                             positionVec += launchOffset * particleVelocityVec;
                             XMFLOAT3 position;
