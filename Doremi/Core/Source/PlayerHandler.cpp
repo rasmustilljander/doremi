@@ -191,7 +191,7 @@ namespace Doremi
                 particleComp->data.m_dimensions = XMFLOAT2(0, 0);
                 particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
                 particleComp->data.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
-                particleComp->data.m_emissionRate = 1;
+                particleComp->data.m_emissionRate = 0.1;
                 particleComp->data.m_launchPressure = 100;
                 particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
                 m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
