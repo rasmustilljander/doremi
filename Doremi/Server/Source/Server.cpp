@@ -152,37 +152,37 @@ namespace Doremi
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            float factor = 2.5;
+            float factor = 2.5f;
             rigidComp->p_bodyID =
                 sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
                                                                                          XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor), matID);
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0, 0, 0));
+            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0.0f, 0.0f, 0.0f));
             sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
 
             Core::PlatformPatrolComponent* t_platformPatrolComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
             t_platformPatrolComponent->startPosition = position;
-            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140, position.z);
+            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140.0f, position.z);
         }
 
         // Create some enemies
         for(size_t i = 0; i < 2; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
-            XMFLOAT3 position = DirectX::XMFLOAT3(-280*(int)i + 0, 140*(int)i + 4, -85*(int)i + 15); //-2,6,60 -280, 150.0f, -85
-            XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+            XMFLOAT3 position = DirectX::XMFLOAT3(-280 * (int)i + 0, 140 * (int)i + 4, -85 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
+            XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
             // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
             //                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
-            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1, 0.5));
+            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1, 3, false);
+            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1.0f, 3.0f, false);
 
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
@@ -260,8 +260,8 @@ namespace Doremi
         double Offset = 0;
         double Accum = 0;
         double GameTime = 0;
-        double UpdateStepLen = 0.017f;
-        double MaxFrameTime = 0.25f;
+        double UpdateStepLen = 0.017;
+        double MaxFrameTime = 0.25;
 
         while(true)
         {
