@@ -52,8 +52,11 @@ namespace DoremiEngine
                 }
             }
             readData->unlock();
-            PxStrideIterator<const PxU32> inicesPX(reinterpret_cast<PxU32*>(&indicesOfParticlesToBeReleased[0]));
-            m_particleSystem->releaseParticles(indicesOfParticlesToBeReleased.size(), inicesPX);
+            if(indicesOfParticlesToBeReleased.size() != 0)
+            {
+                PxStrideIterator<const PxU32> inicesPX(reinterpret_cast<PxU32*>(&indicesOfParticlesToBeReleased[0]));
+                m_particleSystem->releaseParticles(indicesOfParticlesToBeReleased.size(), inicesPX);
+            }
         }
 
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
