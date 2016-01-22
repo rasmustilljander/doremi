@@ -13,7 +13,10 @@
 #include <AddRemoveSyncHandler.hpp>
 #include <SequenceMath.hpp>
 #include <FrequencyBufferHandler.hpp>
+#include <PositionCorrectionHandler.hpp>
 
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 namespace Doremi
 {
@@ -67,6 +70,8 @@ namespace Doremi
 
         void ClientNetworkManager::Update(double p_dt)
         {
+            //std::cout << "Real: " << (uint32_t)(InterpolationHandler::GetInstance()->GetRealSnapshotSequence()) << std::endl;
+
             // Recieve Messages
             RecieveMessages(p_dt);
 
@@ -266,6 +271,7 @@ namespace Doremi
 
                 // Read sequence of snapshot
                 NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
+
                 if(p_initial)
                 {
                     InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
@@ -297,7 +303,7 @@ namespace Doremi
                 // TODOCM notify a handler or something that new buffer exists
 
                 // Check the position we got from server
-                InterpolationHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
+                PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
             }
             else
             {
@@ -354,6 +360,7 @@ namespace Doremi
             // Update DeltaTime
             m_nextUpdateTimer += p_dt;
 
+
             if(m_nextUpdateTimer >= m_updateInterval)
             {
                 m_nextUpdateTimer -= m_updateInterval;
@@ -378,26 +385,34 @@ namespace Doremi
                         SendVersionMessage();
                         break;
 
-                    case ConnectionState::CONNECTED:
-
-                        // TODOCM Send ping to keep an update with server?
-                        SendConnectedMessage();
-                        break;
-
-                    case ConnectionState::MAP_LOADING:
-
-                        SendMapLoadingMessage();
-                        break;
-
-                    case ConnectionState::IN_GAME:
-
-                        SendInGameMessage();
-                        break;
-
                     default:
                         break;
                 }
             }
+
+            
+            // Always send if were connected
+            switch (m_serverConnectionState)
+            {
+            case ConnectionState::CONNECTED:
+
+                // TODOCM Send ping to keep an update with server?
+                SendConnectedMessage();
+                break;
+
+            case ConnectionState::MAP_LOADING:
+
+                SendMapLoadingMessage();
+                break;
+
+            case ConnectionState::IN_GAME:
+
+                SendInGameMessage();
+                break;
+            default:
+                break;
+            }
+            
         }
 
         void ClientNetworkManager::SendConnectRequestMessage()
@@ -453,6 +468,7 @@ namespace Doremi
             // Write sequence
             Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
             bytesWritten += sizeof(uint8_t);
+            //cout << "Writing " << (uint32_t)InterpolationHandler::GetInstance()->GetRealSnapshotSequence() << endl;
 
             // Write input(position directions) to stream
             Streamer.WriteUnsignedInt32(inputHandler->GetInputBitMask());
@@ -468,6 +484,9 @@ namespace Doremi
             // Write orientation and translation
             Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
             bytesWritten += sizeof(float) * 4;
+
+            Streamer.WriteFloat3(GetComponent<TransformComponent>(id)->position);
+            bytesWritten += sizeof(float) * 3;
 
             // Write last sequence used for add remove
             uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->GetNextSequenceUsed();

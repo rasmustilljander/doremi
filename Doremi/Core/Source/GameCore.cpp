@@ -38,7 +38,7 @@
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <PlayerHandler.hpp>
-#include <Manager/MovementManager.hpp>
+#include <Manager/MovementManagerServer.hpp>
 #include <AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>

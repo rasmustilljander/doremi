@@ -28,10 +28,12 @@
 #include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 #include <Doremi/Core/Include/CameraHandler.hpp>
+#include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
+
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
-#include <Doremi/Core/Include/Manager/MovementManager.hpp>
+#include <Doremi/Core/Include/Manager/MovementManagerClient.hpp>
 #include <Doremi/Core/Include/Manager/AudioManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
@@ -92,6 +94,7 @@ namespace Doremi
         Core::AudioHandler::StartAudioHandler(sharedContext);
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
         Core::CameraHandler::StartCameraHandler(sharedContext);
+        Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager
@@ -99,7 +102,7 @@ namespace Doremi
         // Manager* t_physicsManager = new ExampleManager(sharedContext);
         // Manager* t_playerManager = new PlayerManager(sharedContext);
         Core::Manager* t_clientNetworkManager = new Core::ClientNetworkManager(sharedContext);
-        Core::Manager* t_movementManager = new Core::MovementManager(sharedContext);
+        Core::Manager* t_movementManager = new Core::MovementManagerClient(sharedContext);
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
         // Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
@@ -120,10 +123,11 @@ namespace Doremi
         m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
-        m_managers.push_back(t_movementManager);
+
         m_managers.push_back(t_lightManager);
-        // m_managers.push_back(t_jumpManager);
-        // m_managers.push_back(t_gravManager);
+        m_managers.push_back(t_jumpManager);
+        m_managers.push_back(t_gravManager);
+        m_managers.push_back(t_movementManager);
 
         // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_charSyncManager);
@@ -296,6 +300,7 @@ namespace Doremi
             {
                 Offset = Frame - 0.25f;
                 Frame = 0.25f;
+                cout << "LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG" << endl;
             }
 
             // Update the previous position with frametime so we can catch up if we slow down
@@ -356,7 +361,10 @@ namespace Doremi
             info.Stop();
         }
 
+
+        // Update camera after we update positions
         CameraHandler::GetInstance()->Update(p_deltaTime);
+
         PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
         TIME_FUNCTION_STOP
     }
@@ -365,7 +373,7 @@ namespace Doremi
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
-        Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
+        Core::PlayerHandler::GetInstance()->UpdatePlayerInputsClient();
         switch(m_menuState)
         {
             case MenuStates::MAINMENU:

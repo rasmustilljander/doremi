@@ -22,12 +22,7 @@ namespace Doremi
             SnapshotObject Objects[MAX_OBJECTS_IN_SNAPSHOT];
         };
 
-        struct PositionStamp
-        {
-            PositionStamp(uint8_t p_sequence, DirectX::XMFLOAT3 p_position) : Sequence(p_sequence), Position(p_position) {}
-            uint8_t Sequence;
-            DirectX::XMFLOAT3 Position;
-        };
+
 
         class InterpolationHandler
         {
@@ -66,16 +61,6 @@ namespace Doremi
                 TODOCM doc
             */
             uint8_t GetRealSnapshotSequence();
-
-            /**
-                TODOCM doc
-            */
-            void QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position);
-
-            /**
-                TODOCM doc
-            */
-            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
 
         private:
             /**
@@ -128,10 +113,7 @@ namespace Doremi
             */
             uint8_t m_SequenceInterpolationOffset;
 
-            /**
-                TODOCM doc
-            */
-            std::list<PositionStamp> m_PositionStamps;
+            
         };
     }
 }

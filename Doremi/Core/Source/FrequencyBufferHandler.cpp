@@ -30,7 +30,7 @@ namespace Doremi
             {
                 if(m_bufferedFrequencies.size())
                 {
-                    returnFrequency = (*m_bufferedFrequencies.begin()).frequence;
+                    returnFrequency = *m_bufferedFrequencies.begin();
                     m_bufferedFrequencies.pop_front();
                 }
             }
@@ -40,7 +40,7 @@ namespace Doremi
 
         void FrequencyBufferHandler::BufferFrequency(float p_frequency)
         {
-            m_bufferedFrequencies.push_back(DebufFrequence(p_frequency, m_nextSequence));
+            m_bufferedFrequencies.push_back(p_frequency);
         }
 
         void FrequencyBufferHandler::UpdateBufferFromSequence(uint8_t p_sequence)
@@ -107,7 +107,7 @@ namespace Doremi
                 float frequency = p_streamer.ReadFloat();
 
                 // Add frequency to buffer
-                m_bufferedFrequencies.push_back(DebufFrequence(frequency, FirstSequence));
+                m_bufferedFrequencies.push_back(frequency);
                 FirstSequence++;
 
                 // Add to offset
@@ -149,7 +149,7 @@ namespace Doremi
 
             // Start going through the buffered one with oldest first, and after each write move one byte ahead, and check if next one will fir into
             // the message, if not we have to split it into smaller ones
-            std::list<DebufFrequence>::iterator iter = m_bufferedFrequencies.begin();
+            std::list<float>::iterator iter = m_bufferedFrequencies.begin();
 
             for(; iter != m_bufferedFrequencies.end(); ++iter)
             {
@@ -165,7 +165,7 @@ namespace Doremi
                 bytesLeftToWrite -= bytesToWrite;
 
                 // Write frequency
-                p_streamer.WriteFloat((*iter).frequence);
+                p_streamer.WriteFloat(*iter);
 
                 // Increment how many bytes we've written
                 op_BytesWritten += bytesToWrite;

@@ -2,6 +2,7 @@
 #include <Manager/JumpManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/JumpComponent.hpp>
+#include <EntityComponent/Components/MovementComponent.hpp>
 
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -23,7 +24,7 @@ namespace Doremi
         void JumpManager::Update(double p_dt)
         {
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::Jump | (int)ComponentType::CharacterController;
+            int mask = (int)ComponentType::Jump | (int)ComponentType::CharacterController | (int)ComponentType::Movement;
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
@@ -36,7 +37,8 @@ namespace Doremi
                         {
                             jumpComp->active = false;
                         }
-                        m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, XMFLOAT3(0, jumpComp->movementRemaining, 0), p_dt);
+                        // Add to movement component
+                        GetComponent<MovementComponent>(i)->movement.y += jumpComp->movementRemaining;
                     }
                 }
             }

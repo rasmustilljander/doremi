@@ -10,11 +10,11 @@ namespace Doremi
         /**
         Updates the force on the entity by the accelleration and direction
         */
-        class MovementManager : public Manager, public Subscriber
+        class MovementManagerServer : public Manager, public Subscriber
         {
         public:
-            MovementManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            virtual ~MovementManager();
+            MovementManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            virtual ~MovementManagerServer();
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
             void OnEvent(Event* p_event) override;

@@ -50,7 +50,5 @@ namespace Doremi
         }
 
         uint32_t InputHandler::GetInputBitMask() { return m_maskWithInput; }
-
-        void InputHandler::SetInputBitMask(uint32_t p_bitMask) { m_maskWithInput = p_bitMask; }
     }
 }
