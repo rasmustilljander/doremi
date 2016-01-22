@@ -17,8 +17,8 @@ namespace DoremiEngine
             using namespace DirectX;
             PotentialField* newField = new PotentialFieldImpl();
             vector<vector<PotentialFieldGridPoint>> grid;
-            float quadWidth = p_width / (float)p_numberOfQuadsWidth;
-            float quadHeight = p_height / (float)p_numberOfQuadsHeight;
+            float quadWidth = p_width / static_cast<float>(p_numberOfQuadsWidth);
+            float quadHeight = p_height / static_cast<float>(p_numberOfQuadsHeight);
             float halfWidth = p_width / 2.0f;
             float halfHeight = p_height / 2.0f;
             XMFLOAT2 bottomLeft = XMFLOAT2(p_center.x - halfWidth, p_center.z - halfHeight);
