@@ -75,7 +75,6 @@ namespace Doremi
         void AIPathManager::Update(double p_dt)
         {
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Health;
 
             // TODOKO Test wall
             if(firstUpdate)
@@ -86,8 +85,9 @@ namespace Doremi
 
             for(size_t i = 0; i < length; i++)
             {
+                // Update actors position, should perhaps not be here...
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
-                {   // This is so the player updates his position too...
+                { // This is so the player updates his position too...
                     DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
                     actor->SetPosition(pos);

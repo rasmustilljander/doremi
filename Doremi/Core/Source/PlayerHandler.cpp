@@ -2,11 +2,7 @@
 // Project specific
 #include <PlayerHandler.hpp>
 #include <Doremi/Core/Include/InputHandler.hpp>
-#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
-#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
-//#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
-#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+
 #include <EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
@@ -15,6 +11,7 @@
 #include <EntityComponent/Components/JumpComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -22,6 +19,17 @@
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+
+/// Engine
+// AI
+#include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+// Physics
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+//#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -180,6 +188,13 @@ namespace Doremi
             DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1.0f, 1.0f));
 
+            /// Add a new potential field actor to the player
+            // Check if we have a actor, different from server and client...
+            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
+            {
+                PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
+                pfComponent->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, 3, 30, false);
+            }
             /// Create the gun
             // Check if we have the gun
             if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
