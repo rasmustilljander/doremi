@@ -2,18 +2,11 @@
 #include <Manager/TriggerManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-#include <DoremiEngine/Audio/Include/AudioModule.hpp>
-#include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <EntityComponent/EntityHandler.hpp>
-#include <EntityComponent/Components/ExampleComponent.hpp>
-#include <EntityComponent/Components/Example2Component.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/TriggerEvent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
-
-#include <Doremi/Core/Include/PlayerHandler.hpp>
 
 
 // Third party
@@ -26,10 +19,7 @@ namespace Doremi
 {
     namespace Core
     {
-        TriggerManager::TriggerManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "TriggerManager")
-        {
-            // EventHandler::GetInstance()->Subscribe(EventType::Trigger, this); //TODOEA REMOVE
-        }
+        TriggerManager::TriggerManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "TriggerManager") {}
 
         TriggerManager::~TriggerManager() {}
 
@@ -57,7 +47,6 @@ namespace Doremi
                             TriggerEventStruct* myEvent = new TriggerEventStruct();
                             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(i);
                             myEvent->triggerType = triggComp->triggerType;
-                            // myEvent->entityID = collisionTriggerPairs[k].secondID;
                             myEvent->entityID = collisionTriggerPairs[k].secondID;
                             EventHandler::GetInstance()->BroadcastEvent(myEvent);
                         }
@@ -78,22 +67,7 @@ namespace Doremi
             // Check to see what event was received and do something with it (Might be changed to callback functions instead)
             switch(p_event->eventType)
             {
-                // case EventType::Trigger: // TODOEA REMOVE!
-                //{
-                //    // Cast the event to the correct format
-                //    TriggerEventStruct* t_event = (TriggerEventStruct*)p_event;
-                //    int triggerID = t_event->entityID;
-                //    cout << triggerID << endl;
-                //    if (t_event->triggerType == TriggerType::GoalTrigger)
-                //    {
-                //        std::cout << "ReachGoalTriggered av denna fjant: " << std::endl;
-                //    }
-                //    if (t_event->triggerType == TriggerType::NoTrigger)
-                //    {
-                //        std::cout << "#hejsan" <<endl;
-                //    }
-                //    break;
-                //}
+
                 default:
                     break;
             }
