@@ -61,17 +61,19 @@ namespace Doremi
 
         void GraphicManager::Update(double p_dt)
         {
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_vertexShader);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_pixelShader);
+            DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
+            submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
+            submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
 
-            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            EntityHandler& entityHandler = EntityHandler::GetInstance();
+            const size_t length = entityHandler.GetLastEntityIndex();
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {
-                if(EntityHandler::GetInstance().HasComponents(i, mask))
+                if(entityHandler.HasComponents(i, mask))
                 {
-                    RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
-                    TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
+                    RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+                    TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
                     DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
@@ -79,14 +81,12 @@ namespace Doremi
                         DirectX::XMMatrixRotationQuaternion(quaternion) *
                         DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z));
                     DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+                    submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }
             }
             m_rasterizerState->GetRasterizerState();
             m_depthStencilState->GetDepthStencilState();
-            DoremiEngine::Graphic::DirectXManager& dxmanager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(),
-                                                                                                               m_depthStencilState->GetDepthStencilState());
+            submoduleManager.GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}
