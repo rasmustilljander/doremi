@@ -81,9 +81,7 @@ namespace Doremi
             if(firstUpdate)
             {
                 firstUpdate = false;
-
             }
-
             for(size_t i = 0; i < length; i++)
             {
                 // Update actors position, should perhaps not be here...

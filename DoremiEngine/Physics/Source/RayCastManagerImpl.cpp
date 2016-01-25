@@ -24,7 +24,7 @@ namespace DoremiEngine
             unordered_map<PxRigidActor*, int> idsByRigidBody = m_utils.m_rigidBodyManager->GetIDsByBodies();
             if(idsByRigidBody.find(hit.block.actor) != idsByRigidBody.end())
             {
-                // return idsByRigidBody[hit.block.actor];
+                return idsByRigidBody[hit.block.actor];
             }
             else
             {
@@ -32,11 +32,11 @@ namespace DoremiEngine
             }
             // Now comes the difficult task of checking vs character controllers
             unordered_map<PxController*, int> idsByCharacterController = m_utils.m_characterControlManager->GetIdsByControllers();
-            for(auto pairs : idsByCharacterController)
+            for(auto pairs : idsByCharacterController) // Loop through every pair in the list
             {
-                if(pairs.first->getActor() == hit.block.actor)
+                if(pairs.first->getActor() == hit.block.actor) // The first part contains the actor pointer
                 {
-                    return pairs.second;
+                    return pairs.second; // If this is true we found a hit vs character controller, second contains ID
                 }
             }
             return 0;
