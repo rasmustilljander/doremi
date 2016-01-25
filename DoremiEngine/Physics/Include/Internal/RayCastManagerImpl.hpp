@@ -1,3 +1,4 @@
+#pragma once
 #include <DoremiEngine/Physics/Include/RayCastManager.hpp>
 namespace DoremiEngine
 {

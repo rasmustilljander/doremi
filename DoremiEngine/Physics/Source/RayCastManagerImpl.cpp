@@ -24,7 +24,7 @@ namespace DoremiEngine
             unordered_map<PxRigidActor*, int> idsByRigidBody = m_utils.m_rigidBodyManager->GetIDsByBodies();
             if(idsByRigidBody.find(hit.block.actor) != idsByRigidBody.end())
             {
-                return idsByRigidBody[hit.block.actor];
+                // return idsByRigidBody[hit.block.actor];
             }
             else
             {

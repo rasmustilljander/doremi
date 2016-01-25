@@ -24,6 +24,7 @@ namespace DoremiEngine
         class PhysicsMaterialManager;
         class CharacterControlManager;
         class FluidManager;
+        class RayCastManager;
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
         public:
@@ -54,6 +55,10 @@ namespace DoremiEngine
             Experimental fluid manager. TODOJB update Docs as necessary*/
             virtual FluidManager& GetFluidManager() = 0;
 
+            /**
+            Returns the raycast manager which contains different raycasting functions
+            */
+            virtual RayCastManager& GetRayCastManager() = 0;
             /**
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is
