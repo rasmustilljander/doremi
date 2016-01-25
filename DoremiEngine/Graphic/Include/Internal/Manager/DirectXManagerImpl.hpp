@@ -11,6 +11,13 @@ namespace DoremiEngine
         struct GraphicModuleContext;
         // class DepthStencilState;
         // class RasterizerState;
+
+        struct WorldMatrices
+        {
+            DirectX::XMFLOAT4X4 worldMat;
+            DirectX::XMFLOAT4X4 invTransWorldMat;
+        };
+
         class DirectXManagerImpl : public DirectXManager
         {
         public:

@@ -64,6 +64,7 @@ namespace Doremi
             t_sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
             t_sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
             t_sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+            t_sampDesc.MaxAnisotropy = 1;
             t_sampDesc.MinLOD = 0;
             t_sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 

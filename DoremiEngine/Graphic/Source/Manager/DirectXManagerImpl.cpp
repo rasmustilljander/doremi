@@ -217,7 +217,7 @@ namespace DoremiEngine
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             bd.MiscFlags = 0;
             bd.StructureByteStride = 0;
-            bd.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+            bd.ByteWidth = sizeof(WorldMatrices);
             m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
         }
 
@@ -324,7 +324,15 @@ namespace DoremiEngine
                     }
                 }
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-                memcpy(tMS.pData, &renderData[i].worldMatrix, sizeof(DirectX::XMFLOAT4X4)); // Copy matrix to buffer
+
+                WorldMatrices t_worldMatrices;
+
+                DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
+                DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
+                t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
+                DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
+                t_worldMatrices.worldMat = renderData[i].worldMatrix;
+                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
                 m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
