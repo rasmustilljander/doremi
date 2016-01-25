@@ -10,6 +10,7 @@ cbuffer CameraMatrixBuffer : register(b1)
 cbuffer ModelMatrixBuffer : register(b0)
 {
     matrix worldMatrix;
+    matrix invTransWorldMatrix;
 };
 
 struct VertexInputType
@@ -39,7 +40,7 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
     output.screenPos = output.position.xyw;
 
     output.worldPos = mul(float4(input.position, 1.0f), worldMatrix);
-    output.normal = mul(float4(input.normal, 0.0f), worldMatrix).xyz;
+    output.normal = mul(float4(input.normal, 0.0f), invTransWorldMatrix).xyz;
     output.texCoord = input.texCoord;
     output.cameraPos = cameraPosition;
     return output;

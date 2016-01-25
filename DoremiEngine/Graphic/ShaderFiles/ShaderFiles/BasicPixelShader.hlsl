@@ -107,6 +107,7 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
+    texcolor = saturate(texcolor);
     //return texcolor;
     //texcolor = float4(0.9, 0.9, 0.9, 1);
     
@@ -127,6 +128,6 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     Plane test;
     test.N = float3(0, 0, 0);
     
-    return float4(rgb, 1) + texcolor * 0.5;
+    return float4(rgb, 1) * texcolor * 3;
     
 }
