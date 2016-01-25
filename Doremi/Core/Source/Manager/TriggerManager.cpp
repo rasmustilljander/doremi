@@ -33,17 +33,19 @@ namespace Doremi
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             for(size_t i = 0; i < length; i++)
             {
-                // collisionTriggerPairs[k].firstID
                 // Check that the current entity has the relevant components
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody))
                 {
+
+                    // Get the collisionpairs from physicmodule
                     std::vector<DoremiEngine::Physics::CollisionPair> collisionTriggerPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();
                     size_t collisionListLength = collisionTriggerPairs.size();
                     for(size_t k = 0; k < collisionListLength; ++k)
                     {
+                        // The first id will always be the trigger.
                         if(i == collisionTriggerPairs[k].firstID)
                         {
-
+                            // setting up an event to broadcast the triggertype from the component trigger.
                             TriggerEventStruct* myEvent = new TriggerEventStruct();
                             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(i);
                             myEvent->triggerType = triggComp->triggerType;
