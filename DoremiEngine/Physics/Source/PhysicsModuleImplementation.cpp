@@ -149,7 +149,7 @@ namespace DoremiEngine
                     // Probably hit a controller. TODOJB solve some time
                 }
 
-                if (m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
                 {
                     collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
                 }
@@ -157,7 +157,6 @@ namespace DoremiEngine
                 {
                     // Probably hit a controller. TODOJB solve some time
                 }
-
 
 
                 m_collisionPairs.push_back(collisionPair);
