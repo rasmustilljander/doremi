@@ -1,6 +1,7 @@
 /// Game side
 #include <LevelLoaderServer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
+#include <EntityComponent/EntityFactory.hpp>
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
@@ -216,7 +217,7 @@ namespace Doremi
             {
                 std::string transformName = m_meshCoupling[i].transformName;
                 std::string meshName = m_meshCoupling[i].meshName;
-                int entityID = EntityHandler::GetInstance().CreateEntity(Blueprints::EmptyEntity);
+                int entityID = EntityFactory::GetInstance()->CreateEntity(Blueprints::EmptyEntity);
                 EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::Transform);
                 TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
 
@@ -240,7 +241,7 @@ namespace Doremi
                 // rbComp->p_bodyID = m_entityID;
             }
             // Triggering ;)
-            int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
+            int entityIDTrigger = EntityFactory::GetInstance()->CreateEntity(Blueprints::TriggerEntity);
             EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
             transComp->position = XMFLOAT3(-420.4f, 151.5f, -110.3f);
@@ -255,7 +256,7 @@ namespace Doremi
                                                                                           triggComp->dimensions, materialTriggID);
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(rigidComp->p_bodyID, true);
 
-            // int entityIDTrigger2 = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity); // TODOEA REMOVE
+            // int entityIDTrigger2 = EntityFactory::GetInstance()->CreateEntity(Blueprints::TriggerEntity); // TODOEA REMOVE
             // EntityHandler::GetInstance().AddComponent(entityIDTrigger2, (int)ComponentType::Trigger | (int)ComponentType::Transform |
             // (int)ComponentType::RigidBody);
             // TransformComponent* transComp2 = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger2);
