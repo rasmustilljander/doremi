@@ -123,6 +123,19 @@ namespace DoremiEngine
             }
         }
 
+        void CharacterControlManagerImpl::SetDrain(int p_id, bool p_isDrain)
+        {       
+            // Check if controller exists
+            if (m_controllers.find(p_id) == m_controllers.end())
+            {
+                // Controller did not exist
+                throw std::runtime_error("Physics error: Cannot set controller to drain: No controller exists with id: " + to_string(p_id));
+            }
+            PxShape* shape;
+            m_controllers[p_id]->getActor()->getShapes(&shape, 1);
+            shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, true);
+        }
+
         void CharacterControlManagerImpl::SetCallbackClass(PxUserControllerHitReport* p_callback) { m_controllerCallback = p_callback; }
 
         unordered_map<PxController*, int> CharacterControlManagerImpl::GetIdsByControllers() { return m_IDsByControllers; }
