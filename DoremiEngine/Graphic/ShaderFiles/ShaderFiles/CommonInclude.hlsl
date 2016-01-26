@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 100
+#define NUM_LIGHTS 6
 #define BLOCK_SIZE 16
 
 struct Material
@@ -76,7 +76,7 @@ float4 ClipToView(float4 clip)
 {
     // View space position.
     //TODORK change to inverseProjection
-    float4 view = mul(projectionMatrix, clip);
+    float4 view = mul(inverseProjection, clip);
     // Perspecitive projection.
     view = view / view.w;
 
@@ -140,7 +140,6 @@ bool SphereInsideFrustum(Sphere sphere, Frustum frustum, float zNear, float zFar
             result = false;
         }
     }
-
     return result;
 }
 
@@ -187,6 +186,5 @@ bool ConeInsideFrustum(Cone cone, Frustum frustum, float zNear, float zFar)
             result = false;
         }
     }
-
     return result;
 }
