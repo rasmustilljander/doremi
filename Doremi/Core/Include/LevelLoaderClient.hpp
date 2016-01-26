@@ -5,19 +5,21 @@ namespace Doremi
 {
     namespace Core
     {
-        class LevelLoaderServer : public LevelLoader
+        class LevelLoaderClient : public LevelLoader
         {
         public:
-            LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            LevelLoaderClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
-            virtual ~LevelLoaderServer();
+            virtual ~LevelLoaderClient();
 
             void LoadLevel(const std::string& p_fileName);
 
-            void LoadCharacter(const std::string& p_fileName);
+            CharacterDataNames LoadCharacter(const std::string& p_fileName);
 
         protected:
             void BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;
+            void BuildLights();
+            void LoadFileInternal(const std::string& p_fileName);
         };
     }
 }

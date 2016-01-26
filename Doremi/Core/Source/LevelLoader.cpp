@@ -1,5 +1,6 @@
 /// Game side
 #include <LevelLoader.hpp>
+#include <EntityComponent/EntityFactory.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
@@ -35,593 +36,305 @@ namespace Doremi
     {
         LevelLoader::LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
         LevelLoader::~LevelLoader() {}
-        void LevelLoader::LoadLevel(const std::string& p_fileName)
+
+        void LevelLoader::LoadMaterial(std::ifstream& ifs, int nrMats)
         {
-            // TODOXX WTF, this function must be restructured.
-            using namespace std;
-            using namespace DirectX;
-            string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
-            ifstream ifs;
-            ifs.open(fileName, ifstream::in | ofstream::binary);
-            if(ifs.is_open() == true)
+            // ladda material
+            for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
             {
-                // testa o läsa lite
+                int materialNameSize;
+                ifs.read((char*)&materialNameSize, sizeof(int));
+                char* materialName = new char[materialNameSize];
+                ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                // scene name
-                int sceneNameSize;
-                ifs.read((char*)&sceneNameSize, sizeof(int));
-                char* sceneName = new char[sceneNameSize];
-                ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
+                MaterialData materialData;
+                ifs.read((char*)&materialData.mapMasks, sizeof(int));
+                ifs.read((char*)&materialData.diffuse, sizeof(float));
+                ifs.read((char*)&materialData.color, sizeof(float) * 3);
+                ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
+                ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
+                ifs.read((char*)&materialData.specCosine, sizeof(float));
+                ifs.read((char*)&materialData.specEccentricity, sizeof(float));
+                ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
-                // how much different stuff there is
-                int nrMats, nrTransforms, nrMeshes, nrLights;
-                ifs.read((char*)&nrMats, sizeof(int));
-                ifs.read((char*)&nrTransforms, sizeof(int));
-                ifs.read((char*)&nrMeshes, sizeof(int));
-                ifs.read((char*)&nrLights, sizeof(int));
+                int diffuseTextureNameSize;
+                ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
+                char* diffuseTextureName = new char[diffuseTextureNameSize];
+                ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
+                if(diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                delete materialName;
+                delete diffuseTextureName;
+            }
+        }
 
-                // ladda material
-                for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
+        void LevelLoader::LoadTransforms(std::ifstream& ifs, int nrTransforms)
+        {
+            for(int i = 0; i < nrTransforms; i++)
+            {
+                int parentNameSize;
+                int transformNameSize;
+
+                ifs.read((char*)&parentNameSize, sizeof(int));
+                ifs.read((char*)&transformNameSize, sizeof(int));
+
+                char* parentName = new char[parentNameSize]; // TODOKO Not supported yet
+                char* transformName = new char[transformNameSize];
+
+                ifs.read((char*)parentName, sizeof(char) * parentNameSize);
+                ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+
+                TransformData transformData;
+                ifs.read((char*)&transformData, sizeof(transformData));
+
+                m_transforms[transformName] = transformData;
+                delete parentName;
+                delete transformName;
+            }
+        }
+
+        void LevelLoader::LoadMeshes(std::ifstream& ifs, int nrMeshes)
+        {
+            // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
+            for(int i = 0; i < nrMeshes; i++)
+            {
+                int transformNameSize;
+                int meshNameSize;
+                int nrOfTransforms;
+
+                ifs.read((char*)&nrOfTransforms, sizeof(int));
+                std::vector<char*> transformNames;
+                char* transformName = nullptr;
+
+                for(int t = 0; t < nrOfTransforms; t++) // läser in alla transforms för meshen, blir flera om instanciering skall användas
                 {
-                    int materialNameSize;
-                    ifs.read((char*)&materialNameSize, sizeof(int));
-                    char* materialName = new char[materialNameSize];
-                    ifs.read((char*)materialName, sizeof(char) * materialNameSize);
-
-                    MaterialData materialData;
-                    ifs.read((char*)&materialData.mapMasks, sizeof(int));
-                    ifs.read((char*)&materialData.diffuse, sizeof(float));
-                    ifs.read((char*)&materialData.color, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.specCosine, sizeof(float));
-                    ifs.read((char*)&materialData.specEccentricity, sizeof(float));
-                    ifs.read((char*)&materialData.specRollOff, sizeof(float));
-
-                    int diffuseTextureNameSize;
-                    ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
-                    char* diffuseTextureName = new char[diffuseTextureNameSize];
-                    ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                    if(diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
-                }
-                // ladda transforms
-                for(int i = 0; i < nrTransforms; i++)
-                {
-                    int parentNameSize;
-                    int transformNameSize;
-
-                    ifs.read((char*)&parentNameSize, sizeof(int));
                     ifs.read((char*)&transformNameSize, sizeof(int));
-
-                    char* parentName = new char[parentNameSize]; // TODOKO Not supported yet
-                    char* transformName = new char[transformNameSize];
-
-                    ifs.read((char*)parentName, sizeof(char) * parentNameSize);
-                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                    TransformData transformData;
-
-                    ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3));
-                    ifs.read((char*)&transformData.rot, sizeof(float) * 4); // quaternion tror jag
-                    ifs.read((char*)&transformData.scale, sizeof(float) * 3);
-                    ifs.read((char*)&transformData.attributes, sizeof(CustomAttributes));
-
-                    m_transforms[transformName] = transformData;
-                }
-                // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
-                for(int i = 0; i < nrMeshes; i++)
-                {
-                    int transformNameSize;
-                    int meshNameSize;
-                    int nrOfTransforms;
-
-                    ifs.read((char*)&nrOfTransforms, sizeof(int));
-                    std::vector<char*> transformNames;
-                    char* transformName = nullptr;
-
-                    for (int t = 0; t < nrOfTransforms; t++) //läser in alla transforms för meshen, blir flera om instanciering skall användas
-                    {
-                        ifs.read((char*)&transformNameSize, sizeof(int));
-                        transformName = new char[transformNameSize];
-
-                        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                        transformNames.push_back(transformName);
-                    }
-                    
-
-                    ifs.read((char*)&meshNameSize, sizeof(int));                    
-                    char* meshName = new char[meshNameSize];
-
-                    ifs.read((char*)meshName, sizeof(char) * meshNameSize);
-
-
-                    int materialNameSize;
-                    ifs.read((char*)&materialNameSize, sizeof(int));
-
-                    char* materialName = new char[materialNameSize];
-                    ifs.read((char*)materialName, sizeof(char) * materialNameSize);
-
-
-                    // messageSTART****
-                    int meshID;
-                    ifs.read((char*)&meshID, sizeof(int));
-
-                    MeshData meshData;
-
-                    ifs.read((char*)&meshData.nrPos, sizeof(int));
-                    ifs.read((char*)&meshData.nrNor, sizeof(int));
-                    ifs.read((char*)&meshData.nrUV, sizeof(int));
-                    ifs.read((char*)&meshData.nrI, sizeof(int));
-                    ifs.read((char*)&meshData.triangleCount, sizeof(int));
-
-                    meshData.positions = new XMFLOAT3[meshData.nrPos];
-                    meshData.normals = new XMFLOAT3[meshData.nrNor];
-                    meshData.uvs = new XMFLOAT2[meshData.nrUV];
-
-                    meshData.indexPositions = new int[meshData.nrI];
-                    meshData.indexNormals = new int[meshData.nrI];
-                    meshData.indexUVs = new int[meshData.nrI];
-                    meshData.trianglesPerFace = new int[meshData.triangleCount];
-                    vector<XMFLOAT3> poss;
-                    ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.nrPos);
-                    ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.nrNor);
-                    ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.nrUV);
-
-                    ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
-                    
-                    m_meshes[meshName] = meshData;
-                    // All the transform that this mesh should be placed at and puts it in the coupling vector
-                    for (size_t i = 0; i < nrOfTransforms; i++) 
-                    {
-                        m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
-                    }
-                    
-                }
-
-                for(int i = 0; i < nrLights; i++)
-                {
-                    int transformNameSize;
-                    int lightNameSize;
-
-                    ifs.read((char*)&transformNameSize, sizeof(int));
-                    ifs.read((char*)&lightNameSize, sizeof(int));
-
-                    char* transformName = new char[transformNameSize];
-                    char* lightName = new char[lightNameSize];
+                    transformName = new char[transformNameSize];
 
                     ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                    ifs.read((char*)lightName, sizeof(char) * lightNameSize);
-
-                    LightData lightData;
-
-                    ifs.read((char*)&lightData.type, sizeof(int));
-                    ifs.read((char*)&lightData.decayType, sizeof(int));
-                    ifs.read((char*)&lightData.intensity, sizeof(float));
-                    ifs.read((char*)&lightData.colorDiffuse, sizeof(XMFLOAT3));
-                    ifs.read((char*)&lightData.direction, sizeof(XMFLOAT3));
-                    ifs.read((char*)&lightData.dropOff, sizeof(float));
-                    ifs.read((char*)&lightData.coneAngle, sizeof(float));
-                    ifs.read((char*)&lightData.penumAgle, sizeof(float));
+                    transformNames.push_back(transformName);
+                }
 
 
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager().AddLight(lightData.type, lightData.intensity,
-                                                                                                        lightData.colorDiffuse, lightData.coneAngle,
-                                                                                                        lightData.direction, lightData.penumAgle,
-                                                                                                        m_transforms[transformName].pos);
+                ifs.read((char*)&meshNameSize, sizeof(int));
+                char* meshName = new char[meshNameSize];
+
+                ifs.read((char*)meshName, sizeof(char) * meshNameSize);
+
+
+                int materialNameSize;
+                ifs.read((char*)&materialNameSize, sizeof(int));
+
+                char* materialName = new char[materialNameSize];
+                ifs.read((char*)materialName, sizeof(char) * materialNameSize);
+
+
+                // messageSTART****
+                int meshID;
+                ifs.read((char*)&meshID, sizeof(int));
+
+                MeshData meshData;
+
+                ifs.read((char*)&meshData.nrPos, sizeof(int));
+                ifs.read((char*)&meshData.nrNor, sizeof(int));
+                ifs.read((char*)&meshData.nrUV, sizeof(int));
+                ifs.read((char*)&meshData.nrI, sizeof(int));
+                ifs.read((char*)&meshData.triangleCount, sizeof(int));
+
+                meshData.positions = new XMFLOAT3[meshData.nrPos];
+                meshData.normals = new XMFLOAT3[meshData.nrNor];
+                meshData.uvs = new XMFLOAT2[meshData.nrUV];
+
+                meshData.indexPositions = new int[meshData.nrI];
+                meshData.indexNormals = new int[meshData.nrI];
+                meshData.indexUVs = new int[meshData.nrI];
+                meshData.trianglesPerFace = new int[meshData.triangleCount];
+                vector<XMFLOAT3> poss;
+                ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.nrPos);
+                ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.nrNor);
+                ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.nrUV);
+
+                ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.nrI);
+                ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
+                ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
+                ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
+
+                m_meshes[meshName] = meshData;
+                // All the transform that this mesh should be placed at and puts it in the coupling vector
+                for(size_t i = 0; i < nrOfTransforms; i++)
+                {
+                    m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
                 }
             }
-            size_t length = m_meshCoupling.size();
+        }
+
+        void LevelLoader::LoadLights(std::ifstream& ifs, int nrLights)
+        {
+            m_lights.reserve(nrLights);
+            m_lights.resize(nrLights);
+            for(int i = 0; i < nrLights; i++)
+            {
+                int transformNameSize;
+                int lightNameSize;
+
+                ifs.read((char*)&transformNameSize, sizeof(int));
+                ifs.read((char*)&lightNameSize, sizeof(int));
+                LightData lightData;
+
+                char* transformName = new char[transformNameSize];
+                char* lightName = new char[lightNameSize];
+
+                lightData.transformName = transformName;
+                lightData.lightName = lightName;
+                ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+                ifs.read((char*)lightName, sizeof(char) * lightNameSize);
+                ifs.read((char*)&lightData.type, sizeof(int));
+                ifs.read((char*)&lightData.decayType, sizeof(int));
+                ifs.read((char*)&lightData.intensity, sizeof(float));
+                ifs.read((char*)&lightData.colorDiffuse, sizeof(XMFLOAT3));
+                ifs.read((char*)&lightData.direction, sizeof(XMFLOAT3));
+                ifs.read((char*)&lightData.dropOff, sizeof(float));
+                ifs.read((char*)&lightData.coneAngle, sizeof(float));
+                ifs.read((char*)&lightData.penumAgle, sizeof(float));
+                m_lights[i] = lightData;
+            }
+        }
+
+        void LevelLoader::BuildEntities()
+        {
+            const size_t length = m_meshCoupling.size();
             for(size_t i = 0; i < length; i++)
             {
-                std::string transformName = m_meshCoupling[i].transformName;
-                std::string materialName = m_meshCoupling[i].materialName;
-                std::string meshName = m_meshCoupling[i].meshName;
-                int entityID = EntityHandler::GetInstance().CreateEntity(Blueprints::EmptyEntity);
-                EntityHandler::GetInstance().AddComponent(entityID, (int)ComponentType::Render | (int)ComponentType::Transform);
-                TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
-                RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(entityID);
+                // Get scale, pos and transform
+                const DirectX::XMFLOAT3 scale = m_transforms[m_meshCoupling[i].transformName].scale;
+                m_currentOrientation = m_transforms[m_meshCoupling[i].transformName].rot;
+                m_currentPos = m_transforms[m_meshCoupling[i].transformName].pos;
 
-                transComp->position = m_transforms[transformName].pos;
-                transComp->rotation = m_transforms[transformName].rot;
-                transComp->scale = m_transforms[transformName].scale;
+                // Build vertex list for graphics, and position and index list for physics
+                std::vector<XMFLOAT3> positionPX;
+                std::vector<int> indexPX;
+                std::vector<DoremiEngine::Graphic::Vertex>& vertexBuffer =
+                    ComputeVertexAndPositionAndIndex(m_meshes[m_meshCoupling[i].meshName], scale, positionPX, indexPX);
 
-                // TODO HAX Make it finer!
-                m_entityID = entityID;
-                m_currentScale = m_transforms[transformName].scale;
-                m_currentOrientation = m_transforms[transformName].rot;
-                m_currentPos = m_transforms[transformName].pos;
-                XMVECTOR realPos = XMLoadFloat3(&m_currentPos);
-                XMStoreFloat3(&m_currentPos, realPos);
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfoFromBuffer(BuildMesh(m_meshes[m_meshCoupling[i].meshName]), meshName);
-                // HAX ENDS
-                renderComp->mesh = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().GetMeshInfo(meshName);
-                if(renderComp->mesh == nullptr)
-                {
-                    // TODOXX General penguin panic
-                }
+                // Create Entity
+                const int entityID = EntityFactory::GetInstance()->CreateEntity(Blueprints::EmptyEntity);
 
-                std::string textureName = m_materials[materialName];
-                if(textureName.length() < 5 || textureName[0] == -3) textureName = "debug.dds";
+                // Create components
+                BuildComponents(entityID, i, vertexBuffer);
 
-                renderComp->material = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(textureName);
-                // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("BackGroundBuildingColorPalet2.dds");
+                SetPhysicalAttributesOnMesh(entityID, positionPX, indexPX);
             }
+        }
+
+        void LevelLoader::LoadTriggers()
+        {
             // Triggering ;) TODOKO should only be done on server and the server should send the events to the client. Event sending is not supported
             // yet though
-            int entityIDTrigger = EntityHandler::GetInstance().CreateEntity(Blueprints::TriggerEntity);
+            int entityIDTrigger = EntityFactory::GetInstance()->CreateEntity(Blueprints::TriggerEntity);
             EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
+
+            // Transform for trigger
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
             transComp->position = XMFLOAT3(-420.4f, 151.5f, -110.3f);
             transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
+            // The actual trigger component
             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
             triggComp->dimensions = XMFLOAT3(7.0f, 10.0f, 34.0f);
             triggComp->triggerType = TriggerType::GoalTrigger;
+
+            // The rigid body for the trigger
             RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
             int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
+
+            // Get the rigidbody manager
+            DoremiEngine::Physics::RigidBodyManager& rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+            // Create the physics version of the trigger
             rigidComp->p_bodyID =
-                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation,
-                                                                                          triggComp->dimensions, materialTriggID);
-            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(rigidComp->p_bodyID, true);
+                rigidBodyManager.AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation, triggComp->dimensions, materialTriggID);
+            rigidBodyManager.SetTrigger(rigidComp->p_bodyID, true);
         }
 
-        CharacterDataNames LevelLoader::LoadCharacter(const std::string& p_fileName)
+
+        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::ComputeVertexAndPositionAndIndex(const MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
+                                                                                                 std::vector<DirectX::XMFLOAT3>& o_positionPX,
+                                                                                                 std::vector<int>& o_indexPX)
         {
-            using namespace std;
-            using namespace DirectX;
-            string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
-            ifstream ifs;
-            ifs.open(fileName, ifstream::in | ofstream::binary);
-            if (ifs.is_open() == true)
-            {
-                // testa o läsa lite
-
-                // scene name
-                int sceneNameSize;
-                ifs.read((char*)&sceneNameSize, sizeof(int));
-                char* sceneName = new char[sceneNameSize];
-                ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
-
-                // how much different stuff there is
-                int nrMats, nrTransforms, nrMeshes, nrLights;
-                ifs.read((char*)&nrMats, sizeof(int));
-                ifs.read((char*)&nrTransforms, sizeof(int));
-                ifs.read((char*)&nrMeshes, sizeof(int));
-                ifs.read((char*)&nrLights, sizeof(int));
-
-                // ladda material
-                for (int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
-                {
-                    int materialNameSize;
-                    ifs.read((char*)&materialNameSize, sizeof(int));
-                    char* materialName = new char[materialNameSize];
-                    ifs.read((char*)materialName, sizeof(char) * materialNameSize);
-
-                    MaterialData materialData;
-                    ifs.read((char*)&materialData.mapMasks, sizeof(int));
-                    ifs.read((char*)&materialData.diffuse, sizeof(float));
-                    ifs.read((char*)&materialData.color, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
-                    ifs.read((char*)&materialData.specCosine, sizeof(float));
-                    ifs.read((char*)&materialData.specEccentricity, sizeof(float));
-                    ifs.read((char*)&materialData.specRollOff, sizeof(float));
-
-                    int diffuseTextureNameSize;
-                    ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
-                    char* diffuseTextureName = new char[diffuseTextureNameSize];
-                    ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                    if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
-                }
-                // ladda transforms
-                for (int i = 0; i < nrTransforms; i++)
-                {
-                    int parentNameSize;
-                    int transformNameSize;
-
-                    ifs.read((char*)&parentNameSize, sizeof(int));
-                    ifs.read((char*)&transformNameSize, sizeof(int));
-
-                    char* parentName = new char[parentNameSize]; // TODOKO Not supported yet
-                    char* transformName = new char[transformNameSize];
-
-                    ifs.read((char*)parentName, sizeof(char) * parentNameSize);
-                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                    TransformData transformData;
-
-                    ifs.read((char*)&transformData.pos, sizeof(XMFLOAT3));
-                    ifs.read((char*)&transformData.rot, sizeof(float) * 4); // quaternion tror jag
-                    ifs.read((char*)&transformData.scale, sizeof(float) * 3);
-                    ifs.read((char*)&transformData.attributes, sizeof(CustomAttributes));
-
-                    m_transforms[transformName] = transformData;
-                }
-                // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
-                for (int i = 0; i < nrMeshes; i++)
-                {
-                    int transformNameSize;
-                    int meshNameSize;
-                    int nrOfTransforms;
-
-                    ifs.read((char*)&nrOfTransforms, sizeof(int));
-                    std::vector<char*> transformNames;
-                    char* transformName = nullptr;
-
-                    for (int t = 0; t < nrOfTransforms; t++) //läser in alla transforms för meshen, blir flera om instanciering skall användas
-                    {
-                        ifs.read((char*)&transformNameSize, sizeof(int));
-                        transformName = new char[transformNameSize];
-
-                        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                        transformNames.push_back(transformName);
-                    }
-
-
-                    ifs.read((char*)&meshNameSize, sizeof(int));
-                    char* meshName = new char[meshNameSize];
-
-                    ifs.read((char*)meshName, sizeof(char) * meshNameSize);
-
-
-                    int materialNameSize;
-                    ifs.read((char*)&materialNameSize, sizeof(int));
-
-                    char* materialName = new char[materialNameSize];
-                    ifs.read((char*)materialName, sizeof(char) * materialNameSize);
-
-
-                    // messageSTART****
-                    int meshID;
-                    ifs.read((char*)&meshID, sizeof(int));
-
-                    MeshData meshData;
-
-                    ifs.read((char*)&meshData.nrPos, sizeof(int));
-                    ifs.read((char*)&meshData.nrNor, sizeof(int));
-                    ifs.read((char*)&meshData.nrUV, sizeof(int));
-                    ifs.read((char*)&meshData.nrI, sizeof(int));
-                    ifs.read((char*)&meshData.triangleCount, sizeof(int));
-
-                    meshData.positions = new XMFLOAT3[meshData.nrPos];
-                    meshData.normals = new XMFLOAT3[meshData.nrNor];
-                    meshData.uvs = new XMFLOAT2[meshData.nrUV];
-
-                    meshData.indexPositions = new int[meshData.nrI];
-                    meshData.indexNormals = new int[meshData.nrI];
-                    meshData.indexUVs = new int[meshData.nrI];
-                    meshData.trianglesPerFace = new int[meshData.triangleCount];
-                    vector<XMFLOAT3> poss;
-                    ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.nrPos);
-                    ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.nrNor);
-                    ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.nrUV);
-
-                    ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
-                    ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
-
-                    m_meshes[meshName] = meshData;
-                    // All the transform that this mesh should be placed at and puts it in the coupling vector
-                    for (size_t i = 0; i < nrOfTransforms; i++)
-                    {
-                        m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
-                    }
-
-                }
-                
-
-                for (int i = 0; i < nrLights; i++)
-                {
-                    int transformNameSize;
-                    int lightNameSize;
-
-                    ifs.read((char*)&transformNameSize, sizeof(int));
-                    ifs.read((char*)&lightNameSize, sizeof(int));
-
-                    char* transformName = new char[transformNameSize];
-                    char* lightName = new char[lightNameSize];
-
-                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-                    ifs.read((char*)lightName, sizeof(char) * lightNameSize);
-
-                    LightData lightData;
-
-                    ifs.read((char*)&lightData.type, sizeof(int));
-                    ifs.read((char*)&lightData.decayType, sizeof(int));
-                    ifs.read((char*)&lightData.intensity, sizeof(float));
-                    ifs.read((char*)&lightData.colorDiffuse, sizeof(XMFLOAT3));
-                    ifs.read((char*)&lightData.direction, sizeof(XMFLOAT3));
-                    ifs.read((char*)&lightData.dropOff, sizeof(float));
-                    ifs.read((char*)&lightData.coneAngle, sizeof(float));
-                    ifs.read((char*)&lightData.penumAgle, sizeof(float));
-
-
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager().AddLight(lightData.type, lightData.intensity,
-                        lightData.colorDiffuse, lightData.coneAngle,
-                        lightData.direction, lightData.penumAgle,
-                        m_transforms[transformName].pos);
-                }
-
-                
-            }
-            size_t length = m_meshCoupling.size();
-
-            if (length > 1 || length < 0)
-            {
-                std::cout << "Too many meshes in load " << std::endl;
-            }
-
-            CharacterDataNames o_charData;
-            for (size_t i = 0; i < length; i++)
-            {
-                //o_charData. transformName = m_meshCoupling[i].transformName;
-                o_charData.meshName = m_meshCoupling[i].meshName;
-
-                // TODO HAX Make it finer!
-
-                // Get this?
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfoFromBuffer(BuildMeshForCharacter(m_meshes[m_meshCoupling[i].meshName]), o_charData.meshName);
-                // HAX ENDS
-                //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().GetMeshInfo(meshName);
-
-
-                std::string textureName = m_materials[m_meshCoupling[i].materialName];
-                if (textureName.length() < 5 || textureName[0] == -3) textureName = "debug.dds";
-
-                // Get this?
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(textureName);
-                o_charData.materialName = textureName;
-            }
-            return o_charData;
-        }
-
-        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::BuildMeshForCharacter(const MeshData& p_data)
-        {
-            using namespace std;
             vector<DoremiEngine::Graphic::Vertex> vertexBuffer;
-            // Hax for collision meshes
-            XMMATRIX scaleMat = XMMatrixScalingFromVector(XMLoadFloat3(&m_currentScale));
-            vector<XMFLOAT3> positionsPX;
-            vector<int> indicesPX;
-            // END HAX
-            int nrVertices = p_data.nrNor;
 
+            const XMMATRIX scaleMat = XMMatrixScalingFromVector(XMLoadFloat3(&p_scale));
             DoremiEngine::Graphic::Vertex tempV;
+            XMVECTOR posVec;
+            XMFLOAT3 scaledPos;
 
-            for (int i = 0; i < p_data.nrI; i = i + 3)
+            const int nrVertices = p_data.nrNor;
+            for(int i = 0; i < p_data.nrI; i += 3)
             {
+                //// First
+                // First vertex
                 tempV.position = p_data.positions[p_data.indexPositions[i + 2]];
                 tempV.position.z = tempV.position.z * -1.0f;
                 tempV.normal = p_data.normals[p_data.indexNormals[i + 2]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 2]];
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
                 vertexBuffer.push_back(tempV);
-                // HAX
-                XMVECTOR posVec = XMLoadFloat3(&tempV.position);
-                posVec = XMVector3Transform(posVec, scaleMat);
-                XMFLOAT3 scaledPos;
-                XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i);
-                // END HAX
 
+                // First index
+                posVec = XMLoadFloat3(&tempV.position);
+                posVec = XMVector3Transform(posVec, scaleMat);
+                XMStoreFloat3(&scaledPos, posVec);
+                o_positionPX.push_back(scaledPos);
+                o_indexPX.push_back(i);
+
+                //// Second
+                // Second vertex
                 tempV.position = p_data.positions[p_data.indexPositions[i + 1]];
                 tempV.position.z = tempV.position.z * -1.0f;
                 tempV.normal = p_data.normals[p_data.indexNormals[i + 1]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 1]];
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
                 vertexBuffer.push_back(tempV);
-                // HAX
+
+                // Second index
                 posVec = XMLoadFloat3(&tempV.position);
                 posVec = XMVector3Transform(posVec, scaleMat);
-                scaledPos;
                 XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i + 1);
-                // END HAX
+                o_positionPX.push_back(scaledPos);
+                o_indexPX.push_back(i + 1);
 
+                //// Third
+                // Third vertex
                 tempV.position = p_data.positions[p_data.indexPositions[i]];
                 tempV.position.z = tempV.position.z * -1.0f;
                 tempV.normal = p_data.normals[p_data.indexNormals[i]];
                 tempV.normal.z = tempV.normal.z * -1.0f;
                 tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i]];
                 tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
                 vertexBuffer.push_back(tempV);
-                // HAX
+
+                // Third index
                 posVec = XMLoadFloat3(&tempV.position);
                 posVec = XMVector3Transform(posVec, scaleMat);
-                scaledPos;
                 XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i + 2);
-                // END HAX
+                o_positionPX.push_back(scaledPos);
+                o_indexPX.push_back(i + 2);
             }
-            // HAX
-
-            // END HAX
             return vertexBuffer;
         }
 
-        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::BuildMesh(const MeshData& p_data)
+        // TODORT Boths vectors should be const
+        void LevelLoader::SetPhysicalAttributesOnMesh(int p_entityID, std::vector<DirectX::XMFLOAT3>& p_positionPX, std::vector<int>& p_indexPX)
         {
-            using namespace std;
-            vector<DoremiEngine::Graphic::Vertex> vertexBuffer;
-            // Hax for collision meshes
-            XMMATRIX scaleMat = XMMatrixScalingFromVector(XMLoadFloat3(&m_currentScale));
-            vector<XMFLOAT3> positionsPX;
-            vector<int> indicesPX;
-            // END HAX
-            int nrVertices = p_data.nrNor;
+            using namespace DoremiEngine::Physics;
+            PhysicsModule& physicsModule = m_sharedContext.GetPhysicsModule();
+            RigidBodyManager& rigidBodyManager = physicsModule.GetRigidBodyManager();
+            PhysicsMaterialManager& physicsMaterialManager = physicsModule.GetPhysicsMaterialManager();
 
-            DoremiEngine::Graphic::Vertex tempV;
-
-            for(int i = 0; i < p_data.nrI; i = i + 3)
-            { 
-                tempV.position = p_data.positions[p_data.indexPositions[i + 2]];
-                tempV.position.z = tempV.position.z * -1.0f;
-                tempV.normal = p_data.normals[p_data.indexNormals[i + 2]];
-                tempV.normal.z = tempV.normal.z * -1.0f;
-                tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 2]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
-                vertexBuffer.push_back(tempV);
-                // HAX
-                XMVECTOR posVec = XMLoadFloat3(&tempV.position);
-                posVec = XMVector3Transform(posVec, scaleMat);
-                XMFLOAT3 scaledPos;
-                XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i);
-                // END HAX
-
-                tempV.position = p_data.positions[p_data.indexPositions[i + 1]];
-                tempV.position.z = tempV.position.z * -1.0f;
-                tempV.normal = p_data.normals[p_data.indexNormals[i + 1]];
-                tempV.normal.z = tempV.normal.z * -1.0f;
-                tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i + 1]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
-                vertexBuffer.push_back(tempV);
-                // HAX
-                posVec = XMLoadFloat3(&tempV.position);
-                posVec = XMVector3Transform(posVec, scaleMat);
-                scaledPos;
-                XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i + 1);
-                // END HAX
-
-                tempV.position = p_data.positions[p_data.indexPositions[i]];
-                tempV.position.z = tempV.position.z * -1.0f;
-                tempV.normal = p_data.normals[p_data.indexNormals[i]];
-                tempV.normal.z = tempV.normal.z * -1.0f;
-                tempV.textureCoordinate = p_data.uvs[p_data.indexUVs[i]];
-                tempV.textureCoordinate.y = tempV.textureCoordinate.y * -1.0f;
-
-                vertexBuffer.push_back(tempV);
-                // HAX
-                posVec = XMLoadFloat3(&tempV.position);
-                posVec = XMVector3Transform(posVec, scaleMat);
-                scaledPos;
-                XMStoreFloat3(&scaledPos, posVec);
-                positionsPX.push_back(scaledPos);
-                indicesPX.push_back(i + 2);
-                // END HAX
-            }
-            // HAX
-            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddMeshBodyStatic(
-                1337, m_currentPos, m_currentOrientation, positionsPX, indicesPX,
-                m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5f, 0.5f, 0.5f));
-            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(1337, true); // TODOXX Hardcoded ID (1337) is BAD. Make sure it uses the
-            // entityID of the entity!
-            // END HAX
-            return vertexBuffer;
+            const int material = physicsMaterialManager.CreateMaterial(0.5, 0.5, 0.5);
+            rigidBodyManager.AddMeshBodyStatic(p_entityID, m_currentPos, m_currentOrientation, p_positionPX, p_indexPX, material);
+            rigidBodyManager.SetDrain(p_entityID, true);
         }
     }
 }
