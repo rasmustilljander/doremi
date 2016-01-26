@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <iostream>
-#include <Doremi/Core/Include/Helper/ProximityChecker.hpp>
 
 int main(int argc, char** argv)
 {
