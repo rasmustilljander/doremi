@@ -31,6 +31,7 @@ namespace DoremiEngine
             // Update all our emitters
             for(auto it = m_emitters.begin(); it != m_emitters.end(); ++it)
             {
+                it->second->SetParticlesLifeTime(1);
                 it->second->Update(p_dt);
             }
         }
