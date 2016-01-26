@@ -38,43 +38,49 @@ namespace Doremi
             std::map<uint32_t, Player*> t_playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
 
             /*for(auto playerID = t_playerMap.begin(); playerID != t_playerMap.end(); playerID++)*/
-            for (auto &playerID : t_playerMap)
-            {
-                // Get the players current frequency
-                float t_currentFrequency = playerID.second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
-                t_currentFrequency = std::min(t_currentFrequency, 1.0f);
-                // Loop through all entities
-                const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-                // Loop over all entities to perform various functions on enteties that have sound components
-                for(size_t j = 0; j < length; j++)
-                {
-                    // Check if entity will be affected by the frequencyanalyser.
-                    if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::FrequencyAffected))
-                    {
-                        // Code for other frequency affected objects here
 
-                        // Update the platformpatrollers. First by making it move towards start position.
-                        if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::PlatFormPatrolComponent))
+            // Loop through all entities
+            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            // Loop over all entities to perform various functions on enteties that have sound components
+            for(size_t j = 0; j < length; j++)
+            {
+                // Check if entity will be affected by the frequencyanalyser.
+                if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::FrequencyAffected))
+                {
+                    // Code for other frequency affected objects here
+
+                    // Update the platformpatrollers. First by making it move towards start position.
+                    if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::PlatFormPatrolComponent))
+                    {
+                        float t_gatheredFrequency = 0;
+                        for(auto& playerID : t_playerMap)
                         {
+                            // Get the players current frequency
+                            float t_currentFrequency = playerID.second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
+                            t_currentFrequency = std::min(t_currentFrequency, 1.0f);
                             if(ProximityChecker::GetInstance().CheckProximityToEntity(playerID.second->m_playerEntityID, j))
                             {
-                                UpdatePlatformPatrollerFrequencyMovement(j, t_currentFrequency);
+                                t_gatheredFrequency += t_currentFrequency;
                             }
                             else
                             {
-                                // TODOLH fixa för fler players samla på sig frequency å lägg på i slutet
-                                UpdatePlatformPatrollerFrequencyMovement(j, 0);
+                                // do nothing
                             }
                         }
-                        else
+                        int t_length = t_playerMap.size();
+                        if(t_length > 0)
                         {
-                            // Do nothing
+                            UpdatePlatformPatrollerFrequencyMovement(j, t_gatheredFrequency / t_length);
                         }
                     }
                     else
                     {
-                        // do nothing
+                        // Do nothing
                     }
+                }
+                else
+                {
+                    // do nothing
                 }
             }
         }
