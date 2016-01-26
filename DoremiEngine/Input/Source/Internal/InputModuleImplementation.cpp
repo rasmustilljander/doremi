@@ -13,6 +13,7 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Startup()
         {
+            // Initializing SDL.
             if(!SDL_WasInit(SDL_INIT_VIDEO))
             {
                 if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -24,10 +25,11 @@ namespace DoremiEngine
                 {
                     // TODO logger maybe
                 }
-            } // the window to be used
+            } 
+            // checks if there is an active window.
             if(GetActiveWindow() == nullptr)
             {
-                CreateWindowSDL(800, 800);
+                CreateWindowSDL(800, 800); // TODOCONFIG
             }
         }
 
@@ -41,32 +43,27 @@ namespace DoremiEngine
 
         void InputModuleImplementation::Update()
         {
-            // TODOEA COmments that maybe sohuld be removed in the end, it doesnt even matter
-            // ResetButtonsDown();
-            // ResetMouseMovementStruct();
-            // m_mouseWheelSpins = 0;
             ResetMouseMovementStruct();
             SDL_Event eventVariable;
             SwitchCaseEventsForPlaying(eventVariable);
             SDL_GetMouseState(&m_mousePosX, &m_mousePosY);
-            // PrintInputMouseMovement();
-            // TODEA
-            // PrintInputStructsDEBUG();
-            // PrintInputMouseMovement();
         }
         int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {
             // 1200,200 är plats för window
+            // TODOCONFIG change the place for the window.
             SDL_Window* t_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
             if(!t_win)
             {
                 std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
                 SDL_QUIT;
+                return 0;
             }
             return 1;
         }
         void InputModuleImplementation::PrintInputStructsDEBUG()
         {
+            // Debug, couts different structs used in inputmodule.
             const size_t t_forLoopSizeI = m_keyboardButtonsDown.size();
             for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
@@ -109,6 +106,7 @@ namespace DoremiEngine
         }
         void InputModuleImplementation::PrintInputMouseMovement()
         {
+            // Debug, couts the mousemovement
             if(m_mouseMovementStruct.x != 0 || m_mouseMovementStruct.y != 0)
             {
                 std::cout << m_mouseMovementStruct.x << " : X, " << m_mouseMovementStruct.y << " : Y" << std::endl;
@@ -116,18 +114,21 @@ namespace DoremiEngine
         }
         int InputModuleImplementation::GetMouseMovementX()
         {
+            // Get function of the movement in mouse x.
+            // this value is reset every update in Update() then ResetMouseMovementStruct();
             int t_return = m_mouseMovementStruct.x;
-            // m_mouseMovementStruct.x = 0;
             return t_return;
         }
         int InputModuleImplementation::GetMouseMovementY()
         {
+            // get function that returns the mousemovement in y. 
+            // this value is reset every update in Update() then ResetMouseMovementStruct();
             int t_return = m_mouseMovementStruct.y;
-            // m_mouseMovementStruct.y = 0;
             return t_return;
         }
         int InputModuleImplementation::GetMouseWheelSpins()
         {
+            // Get function for the amount of mousewheelspins
             int t_return = m_mouseWheelSpins;
             m_mouseWheelSpins = 0;
             return t_return;
@@ -136,41 +137,45 @@ namespace DoremiEngine
         {
             if(p_bool)
             {
-                SDL_SetRelativeMouseMode(SDL_TRUE); // SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
+                // SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
+                SDL_SetRelativeMouseMode(SDL_TRUE); 
             }
             else
             {
-                SDL_SetRelativeMouseMode(SDL_FALSE); // Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
+                // Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
+                SDL_SetRelativeMouseMode(SDL_FALSE); 
             }
         }
         void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable)
         {
+            // loops through ALL the events. 
             while(SDL_PollEvent(&p_eventVariable))
             {
+                // Checks if the event type is relevant to what we are looking for.
                 switch(p_eventVariable.type)
                 {
-
+                    // If a key is pressed/down we add it to the list if the key isnt allready in the list.
                     case SDL_KEYDOWN:
                         AddToList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                         break;
-
+                        // if a key is released we remove it form our list
                     case SDL_KEYUP:
                         RemoveFromList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                         break;
-
+                        // if a mousebutton is down
                     case SDL_MOUSEBUTTONDOWN:
                         AddToList(p_eventVariable.button.button, m_mouseButtonsDown);
                         break;
-
+                        // if a mousebutton is released
                     case SDL_MOUSEBUTTONUP:
                         RemoveFromList(p_eventVariable.button.button, m_mouseButtonsDown);
                         break;
-
+                        // if the mouse is moving we update our mousemovementstruct
                     case SDL_MOUSEMOTION:
                         m_mouseMovementStruct.x = m_mouseMovementStruct.x + p_eventVariable.motion.xrel;
                         m_mouseMovementStruct.y = m_mouseMovementStruct.y + p_eventVariable.motion.yrel;
                         break;
-
+                        // if the wheel is spun we add it to our int. 
                     case SDL_MOUSEWHEEL:
                         m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                         break;
@@ -219,14 +224,10 @@ namespace DoremiEngine
             m_mouseMovementStruct.x = 0;
             m_mouseMovementStruct.y = 0;
         }
-        void InputModuleImplementation::ResetButtonsDown()
-        {
-            m_keyboardButtonsDown.clear();
-            m_mouseButtonsDown.clear();
-        }
         void InputModuleImplementation::RemoveFromList(SDL_Keycode p_eventvariable, std::vector<int>& o_listToUse)
         {
             size_t t_sizeOfVector = o_listToUse.size();
+            // Checks if the following keycode exists in the list. Remove it if it exists.
             for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
                 if(o_listToUse[i] == p_eventvariable)
@@ -240,6 +241,7 @@ namespace DoremiEngine
         {
             const size_t t_sizeOfVector = o_listToUse.size();
             bool t_doesItAlreadyExist = false;
+            // this will check the list of keyboardkeys or mousebuttons if they already are in it.
             for(size_t i = 0; i < t_sizeOfVector; ++i)
             {
                 if(o_listToUse[i] == p_eventvariable)

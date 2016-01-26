@@ -20,7 +20,9 @@ namespace Doremi
     {
         // TODOEA Lägga in detta i en textfil.
         /**
-            TODOEA doc
+            Check the class for more info. More detailed
+            This class contains the different enums for the actions in the game.
+            Please fill out what key it is.
         */
         enum class UserCommandPlaying
         { // Key                  Code for it
@@ -44,13 +46,13 @@ namespace Doremi
             SetFrequency0 = 131072, // 7 55
             SetFrequency500 = 262144, // 8 56
             SetFrequency1000 = 524288, // 9 57
-            // TODOEA add all here or set the 1111111... bit number to ALL
-            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown, // Seen this be done so doing it here aswell! =D
+
+            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton | StartRepeatableAudioRecording | PlayRepeatableAudioRecording | ExitGame | LeftClick | SetFrequency0 | SetFrequency500 | SetFrequency1000,
         };
 
         // TODOEA Lägga in detta i en textfil.
         /**
-            TODOEA doc
+            Class that is not being used so far. Might get relevant if we navigate the menu with buttons.
         */
         enum class UserCommandMeny
         { // Code
@@ -64,61 +66,56 @@ namespace Doremi
         };
 
         /**
-            TODOEA doc
+            There is documentation on how to recieve input on googledrive!
         */
         class InputHandler
         {
         public:
             /**
-                TODOEA doc
+                Will make you able to recieve input.
             */
             InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
-                TODOEA doc
+                Empty deconstructor
             */
             ~InputHandler();
 
             /**
-                TODOEA doc
-            */
-            void Initialize();
-
-            /**
-                TODOEA doc
+                Checks if the desired key is pushed.
             */
             bool CheckBitMaskInputFromGame(int p_bitMask);
 
             /**
-                TODOEA doc
+                Check if one key is pressed and returns true when the key is first pressed. The next check if the key still is pressed will return a false.
             */
             bool CheckForOnePress(int p_bitMask);
 
             /*
-                TODOCM doc
+                Returns the keys being pressed.
             */
             uint32_t GetInputBitMask();
 
             // TODOEA void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
             // Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
-            // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt ;)
+            // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt 
             // Behöver nog ta bort old entries eller ändra dem på något sätt.
 
         protected:
             /**
-                TODOEA doc
+                Fixar shared context
             */
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
 
-            // TODOEA Could be a problem with meny and game inputs I DUNNO To only hav one bitmask
+            // TODOXX Could be a problem with meny and game inputs I DUNNO To only hav one bitmask.
             /**
-                TODOEA doc
+                Masken som byggs upp av inputhandlern som sedans används för att checka vad som tryckts.
             */
             uint32_t m_maskWithInput = 0;
 
             /**
-                TODOEA doc
+                Masken som används för att kolla vad som tycktes ner senaste updaten. Används för om man ska kolla om man tryckt ner något en gång och inte kontinuerligt.
             */
             uint32_t m_lastUpdateMaskWithInput = 0;
         };
