@@ -369,7 +369,8 @@ namespace DoremiEngine
             ID3D11UnorderedAccessView* nullUAV = {NULL};
             ID3D11RenderTargetView* nullRTV = {NULL};
             // Remove depth bind to OM
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, nullptr);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, nullptr); // switch between &m_backBuffer and &nullRTV
+
 
             // m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0);  //Remove to render normally
             m_deviceContext->CSSetShaderResources(1, 1, &m_srv);

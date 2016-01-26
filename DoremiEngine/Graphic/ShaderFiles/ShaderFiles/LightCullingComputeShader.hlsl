@@ -182,6 +182,7 @@ void CS_main(ComputeShaderInput input)
         }
     }
 
+
     // Update global memory with visible light buffer.
     // First update the light grid (only thread 0 in group needs to do this)
     if (input.groupIndex == 0)
@@ -202,6 +203,9 @@ void CS_main(ComputeShaderInput input)
         //t_LightGrid[input.groupID.xy] = uint2(t_LightIndexStartOffset, t_LightCount);
         index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
         t_LightGrid[index] = lightGridInfo;
+
+
+        
     }
 
     GroupMemoryBarrierWithGroupSync();
@@ -210,14 +214,12 @@ void CS_main(ComputeShaderInput input)
     // For opaque geometry.
     for (i = input.groupIndex; i < o_LightCount; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        //o_LightIndexList[o_LightIndexStartOffset + i] = o_LightList[i];
-        o_LightIndexList[o_LightIndexStartOffset + i] = fMinDepth;
+        o_LightIndexList[o_LightIndexStartOffset + i] = o_LightList[i];
     }
     // For transparent geometry.
     for (i = input.groupIndex; i < t_LightCount; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        //t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
-        t_LightIndexList[t_LightIndexStartOffset + i] = fMaxDepth;
+        t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
     }
 
 }

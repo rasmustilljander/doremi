@@ -128,6 +128,8 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     Plane test;
     test.N = float3(0, 0, 0);
     
-    return float4(rgb, 1) * texcolor * 3;
-    
+    //return float4(rgb, 1) * texcolor * 3;
+    return float4((t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, 1);
+    //return float4(4.f/6.f, 4.f/6.f, 4.f/6.f, 1);
+
 }
