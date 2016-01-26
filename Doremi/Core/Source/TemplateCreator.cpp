@@ -31,7 +31,7 @@
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
-#include <Doremi/Core/Include/LevelLoader.hpp>
+#include <Doremi/Core/Include/LevelLoaderClient.hpp>
 
 // Timing
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
@@ -458,7 +458,7 @@ namespace Doremi
 
             EntityBlueprint t_avatarBlueprint;
 
-            LevelLoader loader = LevelLoader(sharedContext);
+            LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
             CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
 
@@ -527,7 +527,7 @@ namespace Doremi
 
             EntityBlueprint t_avatarBlueprint;
 
-            LevelLoader loader = LevelLoader(sharedContext);
+            LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
             CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
 

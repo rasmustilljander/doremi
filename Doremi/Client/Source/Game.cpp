@@ -54,7 +54,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 // Other stuff
 #include <Doremi/Core/Include/TemplateCreator.hpp>
-#include <Doremi/Core/Include/LevelLoader.hpp>
+#include <Doremi/Core/Include/LevelLoaderClient.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 #include <Doremi/Core/Include/ScreenSpaceDrawer.hpp>
 
@@ -175,9 +175,9 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
-        Core::LevelLoader* t_levelLoader = new Core::LevelLoader(sharedContext);
+        Core::LevelLoaderClient t_levelLoader = LevelLoaderClient(sharedContext);
 
-        t_levelLoader->LoadLevel("Levels/test.drm");
+        t_levelLoader.LoadLevel("Levels/test.drm");
 
         // Create platforms
         for(size_t i = 0; i < 1; i++)

@@ -1,8 +1,10 @@
+#pragma once
 #include <string>
 #include <map>
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/VertexStruct.hpp>
 #include <vector>
+#include <fstream>
 
 namespace DoremiEngine
 {
@@ -104,6 +106,8 @@ namespace Doremi
 
         struct LightData
         {
+            char* lightName;
+            char* transformName;
             int type; // 0 = def, 1 = dir, 2 = spot, 3 = point
             int decayType; // 0 = none, 1 = linear, 2 = quadratic (l/d**v)
             float intensity;
@@ -136,28 +140,42 @@ namespace Doremi
         class LevelLoader
         {
         public:
+            /**
+                TODO comment
+            */
             LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            /**
+                TODO comment
+            */
+
             virtual ~LevelLoader();
-            void LoadLevel(const std::string& p_fileName);
 
-            CharacterDataNames LoadCharacter(const std::string& p_fileName);
-
-            std::vector<DoremiEngine::Graphic::Vertex> BuildMeshForCharacter(const MeshData & p_data);
-
-        private:
-            // Help functions
-            std::vector<DoremiEngine::Graphic::Vertex> BuildMesh(const MeshData& p_data);
+        protected:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
+
+            // Help functions
             std::map<std::string, TransformData> m_transforms;
             std::map<std::string, std::string> m_materials;
             std::map<std::string, MeshData> m_meshes;
+            std::vector<LightData> m_lights;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
 
             // HAX STUFF for physics magic
-            DirectX::XMFLOAT3 m_currentScale;
             DirectX::XMFLOAT3 m_currentPos;
             DirectX::XMFLOAT4 m_currentOrientation;
-            int m_entityID;
+
+            void LoadMaterial(std::ifstream& ifs, int nrMats);
+            void LoadTransforms(std::ifstream& ifs, int nrTransforms);
+            void LoadMeshes(std::ifstream& ifs, int nrMeshes);
+            void LoadLights(std::ifstream& ifs, int nrLights);
+            void BuildEntities();
+            virtual void BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) = 0;
+
+            void LoadTriggers();
+            std::vector<DoremiEngine::Graphic::Vertex> ComputeVertexAndPositionAndIndex(const MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
+                                                                                        std::vector<DirectX::XMFLOAT3>& o_positionPX, std::vector<int>& o_indexPX);
+            void SetPhysicalAttributesOnMesh(int p_entityID, std::vector<DirectX::XMFLOAT3>& p_positionPX, std::vector<int>& p_indexPX);
         };
     }
 }
