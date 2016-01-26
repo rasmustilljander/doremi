@@ -236,6 +236,7 @@ namespace Doremi
 
             // Transform
             TransformComponent* transComp = new TransformComponent();
+            transComp->scale = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
             blueprint[ComponentType::Transform] = transComp;
 
             // PhysicsMaterialComp
@@ -268,6 +269,7 @@ namespace Doremi
 
             // Transform
             TransformComponent* transComp = new TransformComponent();
+            transComp->scale = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
             blueprint[ComponentType::Transform] = transComp;
 
             // Render

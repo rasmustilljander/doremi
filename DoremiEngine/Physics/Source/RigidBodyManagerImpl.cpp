@@ -1,6 +1,9 @@
 #include <Internal/RigidBodyManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
 #include <cstdint>
+
+#include <iostream>
+using namespace std;
 namespace DoremiEngine
 {
     namespace Physics
@@ -79,12 +82,20 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetKinematicActor(int p_bodyID, bool p_kinematic)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             // TODOXX det kan krångla om man antar att det är en PxRigidDynamic* om det är en static. Borde kollas om det är en dynamic.
             ((PxRigidDynamic*)m_bodies[p_bodyID])->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, p_kinematic);
         }
 
         void RigidBodyManagerImpl::MoveKinematicActor(int p_bodyID, XMFLOAT3 p_moveVector)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             if((uint32_t)((PxRigidDynamic*)m_bodies[p_bodyID])->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC == PxRigidBodyFlag::eKINEMATIC)
             {
                 PxVec3 currentPos = ((PxRigidDynamic*)m_bodies[p_bodyID])->getGlobalPose().p;
@@ -100,6 +111,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetWorldPositionKinematic(int p_bodyID, XMFLOAT3 p_position)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             if((uint32_t)((PxRigidDynamic*)m_bodies[p_bodyID])->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC == PxRigidBodyFlag::eKINEMATIC)
             {
 
@@ -150,6 +165,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetTrigger(int p_id, bool p_isTrigger)
         {
+            if(m_bodies.find(p_id) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxShape* shape;
             m_bodies[p_id]->getShapes(&shape, 1);
             shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
@@ -158,6 +177,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetDrain(int p_id, bool p_isDrain)
         {
+            if(m_bodies.find(p_id) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxShape* shape;
             m_bodies[p_id]->getShapes(&shape, 1);
             shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, p_isDrain);
@@ -165,6 +188,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxFilterData filterData;
             filterData.word0 = p_filterGroup; // Own ID
             filterData.word1 = p_filterMask; // ID mask to filter pairs that trigger contact callback
@@ -188,6 +215,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
                 ((PxRigidDynamic*)m_bodies[p_bodyID])->addForce(PxVec3(p_force.x, p_force.y, p_force.z));
@@ -200,6 +231,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
                 ((PxRigidDynamic*)m_bodies[p_bodyID])->addTorque(PxVec3(p_torque.x, p_torque.y, p_torque.z));
@@ -212,7 +247,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
-
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
                 ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearVelocity(PxVec3(p_v.x, p_v.y, p_v.z));
@@ -225,6 +263,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyAngularVelocity(int p_bodyID, XMFLOAT3 p_v)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             // PxTransform pose = ((PxRigidDynamic*)m_bodisssssses[p_bodyID])->setMaxAngularVelocity(0);
             // pose.q = PxQuat(0, 0, 0, 1);
             if(m_bodies[p_bodyID]->isRigidDynamic())
@@ -239,6 +281,10 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetBodyPosition(int p_bodyID, XMFLOAT3 p_v, XMFLOAT4 p_o)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxVec3 position = PxVec3(p_v.x, p_v.y, p_v.z);
             PxQuat orientation = PxQuat(p_o.x, p_o.y, p_o.z, p_o.w);
             PxTransform trans;
@@ -250,30 +296,49 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetLinearDampening(int p_bodyID, float p_dampening)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             ((PxRigidDynamic*)m_bodies[p_bodyID])->setLinearDamping(p_dampening);
         }
 
         XMFLOAT3 RigidBodyManagerImpl::GetBodyPosition(int p_bodyID)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxVec3 p = m_bodies[p_bodyID]->getGlobalPose().p;
             return XMFLOAT3(p.x, p.y, p.z);
         }
 
         XMFLOAT4 RigidBodyManagerImpl::GetBodyOrientation(int p_bodyID)
         {
-
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxQuat q = m_bodies[p_bodyID]->getGlobalPose().q;
             return XMFLOAT4(q.x, q.y, q.z, q.w);
         }
 
         XMFLOAT3 RigidBodyManagerImpl::GetBodyVelocity(int p_bodyID)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getLinearVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
 
         XMFLOAT3 RigidBodyManagerImpl::GetBodyAngularVelocity(int p_bodyID)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             PxVec3 v = ((PxRigidDynamic*)m_bodies[p_bodyID])->getAngularVelocity();
             return XMFLOAT3(v.x, v.y, v.z);
         }
@@ -282,6 +347,10 @@ namespace DoremiEngine
 
         bool RigidBodyManagerImpl::IsSleeping(int p_bodyID)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
             bool isSleeping = true;
             if(m_bodies[p_bodyID]->isRigidDynamic())
             {
@@ -292,6 +361,11 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::RemoveBody(int p_bodyID)
         {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "shit went wrong" << endl;
+            }
+            m_IDsByBodies.erase(m_bodies[p_bodyID]);
             m_bodies[p_bodyID]->release();
             m_bodies.erase(p_bodyID);
         }

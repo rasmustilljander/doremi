@@ -4,7 +4,7 @@ namespace Doremi
     namespace Core
     {
         /**
-        The audio component contains the handle to the soundchannel and a handle to the sound
+        Used for specifying what type of entity it is, if needed
         */
         enum class EntityType
         {

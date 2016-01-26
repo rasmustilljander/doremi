@@ -118,7 +118,7 @@ namespace DoremiEngine
             PxMaterial* groundMaterial = m_utils.m_physics->createMaterial(0.5, 0.5, 0.5);
 
             // Create the ground on which everything stands on. Possibly shouldn't here (member varialbe? Separate class?)
-            PxPlane groundPlane = PxPlane(0, 1, 0, 100); // change last digit for distance from origo
+            PxPlane groundPlane = PxPlane(0, 1, 0, 10); // change last digit for distance from origo
 
             PxRigidStatic* worldGround = PxCreatePlane(*m_utils.m_physics, groundPlane, *groundMaterial);
             // Add the ground plane to the scene. Apparently it's this easy
@@ -139,8 +139,10 @@ namespace DoremiEngine
             {
                 const PxContactPair& cp = pairs[i];
                 CollisionPair collisionPair;
-                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
-                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
+                // collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
+                // collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
+                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
+                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
                 m_collisionPairs.push_back(collisionPair);
             }
         }
@@ -152,8 +154,8 @@ namespace DoremiEngine
             {
                 const PxTriggerPair& cp = pairs[i];
                 CollisionPair collisionPair;
-                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairs->triggerActor];
-                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairs->otherActor];
+                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->triggerActor)->second;
+                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
                 m_triggerPairs.push_back(collisionPair);
             }
         }
@@ -173,8 +175,8 @@ namespace DoremiEngine
             int first = idsByControllers[firstActor];
             int second = idsByControllers[secondActor];
 
-            collisionPair.firstID = m_utils.m_characterControlManager->GetIdsByControllers()[hit.controller];
-            collisionPair.secondID = m_utils.m_characterControlManager->GetIdsByControllers()[hit.other];
+            collisionPair.firstID = m_utils.m_characterControlManager->GetIdsByControllers().find(hit.controller)->second;
+            collisionPair.secondID = m_utils.m_characterControlManager->GetIdsByControllers().find(hit.other)->second;
             m_collisionPairs.push_back(collisionPair);
         }
     }
