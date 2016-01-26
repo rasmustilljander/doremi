@@ -9,7 +9,7 @@ option(BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
 option(BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 option(BUILD_CUSTOM_MEASUREMENT_TIMING "Unckeched is off" ON)
-option(BUILD_BUILD_DRMEDITORPLUGIN "Must be runned in 64 bit." OFF)
+option(BUILD_DRM_EDITOR_PLUGIN "Must be runned in 64 bit." OFF)
 
 if(BUILD_UNIT_TEST_BUILD)
 	set(ENGINE_LINK_TYPE STATIC)
@@ -102,7 +102,7 @@ if(BUILD_UNIT_TEST_BUILD)
 	add_subdirectory(UnitTest)
 endif()
 
-if(BUILD_BUILD_MAYA_PLUGIN)
+if(BUILD_DRM_EDITOR_PLUGIN)
 	add_subdirectory(DRMEditorPlugin)
 endif()
 
