@@ -50,7 +50,6 @@ namespace Utility
             std::string name;
             std::chrono::time_point<std::chrono::high_resolution_clock> startSeconds, stopSeconds;
             std::chrono::duration<double> accumulatedTime;
-            //  double accumulatedTime;
             size_t m_startCount, m_stopCount;
         };
     }
