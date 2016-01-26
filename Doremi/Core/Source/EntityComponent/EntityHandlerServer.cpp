@@ -24,6 +24,11 @@ namespace Doremi
 
             PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, DirectX::XMFLOAT3(0, 0, 0));
 
+            if(HasComponents(outID, (int)ComponentType::NetworkObject))
+            {
+                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
+            }
+
             return outID;
         }
 
@@ -33,6 +38,11 @@ namespace Doremi
 
             PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, p_position);
 
+            if(HasComponents(outID, (int)ComponentType::NetworkObject))
+            {
+                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
+            }
+
             return outID;
         }
 
@@ -41,6 +51,11 @@ namespace Doremi
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation);
 
             PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, p_position);
+
+            if(HasComponents(outID, (int)ComponentType::NetworkObject))
+            {
+                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
+            }
 
             return outID;
         }

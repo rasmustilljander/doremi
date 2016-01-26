@@ -7,9 +7,7 @@
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
-#include <Doremi/Core/Include/InputHandler.hpp>
-#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
-#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+
 
 namespace DoremiEngine
 {
@@ -23,19 +21,25 @@ namespace Doremi
 {
     namespace Core
     {
+        class InputHandler;
+        class AddRemoveSyncHandler;
+        class FrequencyBufferHandler;
+        class NetworkPriorityHandler;
 
         /**
             TODOCM doc
         */
         struct Player
         {
-            Player(InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler, FrequencyBufferHandler* p_frequencyBufferHandler)
-                : m_moveSpeed(0.3f),
-
+            Player(EntityID p_EntityID, InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler,
+                   FrequencyBufferHandler* p_frequencyBufferHandler, NetworkPriorityHandler* p_networkPriorityHandler)
+                : m_playerEntityID(p_EntityID),
+                  m_moveSpeed(0.3f),
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),
                   m_addRemoveSyncHandler(p_addRemoveSyncHandler),
                   m_frequencyBufferHandler(p_frequencyBufferHandler),
+                  m_networkPriorityHandler(p_networkPriorityHandler),
                   m_turnSpeed(0.01f)
             {
             }
@@ -44,12 +48,13 @@ namespace Doremi
                 delete m_addRemoveSyncHandler;
                 delete m_inputHandler;
                 delete m_frequencyBufferHandler;
+                delete m_networkPriorityHandler;
             }
 
             /**
                 TODOEA doc
             */
-            int m_playerEntityID;
+            EntityID m_playerEntityID;
 
             /**
                 TODOEA doc
@@ -65,6 +70,11 @@ namespace Doremi
                 TODOCM doc
             */
             FrequencyBufferHandler* m_frequencyBufferHandler;
+
+            /**
+                TODOCM doc
+            */
+            NetworkPriorityHandler* m_networkPriorityHandler;
 
             /**
                 TODOEA doc
@@ -168,6 +178,11 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void UpdateNetworkObjectPriority();
+
+            /**
+                TODOCM doc
+            */
             void QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position);
 
             /**
@@ -204,6 +219,11 @@ namespace Doremi
                 TODOCM doc
             */
             void RemoveAllPlayers();
+
+            /**
+                TODOCM doc
+            */
+            void AddNetObjectToPlayers(const EntityID& p_entityID);
 
         private:
             /**
