@@ -37,10 +37,11 @@ namespace Doremi
             // First get the playermap from player handler
             std::map<uint32_t, Player*> t_playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
 
-            for(auto playerID = t_playerMap.begin(); playerID != t_playerMap.end(); playerID++)
+            /*for(auto playerID = t_playerMap.begin(); playerID != t_playerMap.end(); playerID++)*/
+            for (auto &playerID : t_playerMap)
             {
                 // Get the players current frequency
-                float t_currentFrequency = playerID->second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
+                float t_currentFrequency = playerID.second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
                 t_currentFrequency = std::min(t_currentFrequency, 1.0f);
                 // Loop through all entities
                 const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
@@ -55,15 +56,24 @@ namespace Doremi
                         // Update the platformpatrollers. First by making it move towards start position.
                         if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::PlatFormPatrolComponent))
                         {
-                            if(ProximityChecker::GetInstance().CheckProximityToEntity(playerID->second->m_playerEntityID, j))
+                            if(ProximityChecker::GetInstance().CheckProximityToEntity(playerID.second->m_playerEntityID, j))
                             {
                                 UpdatePlatformPatrollerFrequencyMovement(j, t_currentFrequency);
                             }
                             else
                             {
+                                // TODOLH fixa för fler players samla på sig frequency å lägg på i slutet
                                 UpdatePlatformPatrollerFrequencyMovement(j, 0);
                             }
                         }
+                        else
+                        {
+                            // Do nothing
+                        }
+                    }
+                    else
+                    {
+                        // do nothing
                     }
                 }
             }
