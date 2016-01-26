@@ -76,44 +76,59 @@ namespace DoremiEngine
 
         void ParticleEmitter::UpdateParticleLifeTimeAndRemoveExpired(float p_dt)
         {
+            std::vector<PxU32> t_indicesToRemove;
             // Get particle indexData
             PxParticleReadData* t_particleData = m_particleSystem->lockParticleReadData();
             PX_ASSERT(t_particleData);
-            std::vector<PxU32> t_indicesToRemove;
-            PxU32 newvalidRange = 0;
             // Kolla om vi har några particlar som är valid annars onödigt att ens börja uppdatera
-            if (t_particleData->validParticleRange > 0)
+            if(t_particleData->validParticleRange > 0)
             {
-                for (PxU32 i = 0; i <= (t_particleData->validParticleRange - 1) >> 5; i++)
+                int length = t_particleData->validParticleRange;
+
+                for(PxU32 i = 0; i <= (t_particleData->validParticleRange - 1) >> 5; i++)
                 {
-                    for (PxU32 j = t_particleData->validParticleBitmap[i]; j; j &= j - 1)
+
+                    for(PxU32 j = t_particleData->validParticleBitmap[i]; j; j &= j - 1)
                     {
-                        // TODOXX super unsafe. I am not sure what i am doing here. I was following a tutorial and a function they used was missing. This seems to be what they did essentially but WARNING!!
+                        // TODOXX super unsafe. I am not sure what i am doing here. I was following a tutorial and a function they used was missing.
+                        // This seems to be what they did essentially but WARNING!!
+                        // Get index from physx. you have to use bitoperations from their bittable for indices. Its pretty complicated and Im not 100%
+                        // sure this code is safe
                         unsigned long b;
                         _BitScanForward(&b, j);
-                        PxU32 t_index = (i << 5 | b);
-                        if (m_particlesLifeTime[t_index] = -p_dt < 0.0)
+                        PxU32 t_index = (i << 5 | (PxU32)b);
+                        // Update particle lifetime
+                        m_particlesLifeTime[t_index] -= p_dt;
+                        // CHeck if particle is still alive
+                        if((m_particlesLifeTime[t_index]) < 0.0)
                         {
                             m_particlesLifeTime[t_index] = 0;
                             t_indicesToRemove.push_back(t_index);
                         }
-
                     }
                 }
-                t_particleData->unlock();
-                PxStrideIterator<const PxU32> t_indexData(&t_indicesToRemove[0]);
-                m_particleSystem->releaseParticles(static_cast<PxU32>(t_indicesToRemove.size()), t_indexData);
-                // TODOLH om vi skaffar indexPool kör m_indexpool->freeIndices(indices.size(), indexData);
             }
             else
             {
                 // Do nothing
+            }
+            // Release the data we have been looking at
+            t_particleData->unlock();
+            // Needs to not crash
+            if(t_indicesToRemove.size() > 0)
+            {
+                // Need Stride for releaseparticle.
+                PxStrideIterator<const PxU32> t_indexData(&t_indicesToRemove[0]);
+                // Now release the particles that we want to remove
+                m_particleSystem->releaseParticles(static_cast<PxU32>(t_indicesToRemove.size()), t_indexData);
+                // TODOLH om vi skaffar indexPool kör m_indexpool->freeIndices(indices.size(), indexData);
             }
         }
 
         void ParticleEmitter::Update(float p_dt)
         {
             m_drainsHit.clear();
+            UpdateParticleLifeTimeAndRemoveExpired(p_dt);
             if(m_this.m_active)
             {
                 // Update time since last particle wave was spawned
