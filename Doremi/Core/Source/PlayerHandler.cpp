@@ -19,6 +19,10 @@
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+#include <Doremi/Core/Include/InputHandler.hpp>
+#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+#include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 
 /// Engine
 // AI
@@ -172,13 +176,14 @@ namespace Doremi
                 std::runtime_error("Creating player twice with same ID.");
             }
 
+            // TODOCM hard coded entityID for new players
+            EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
+
             AddRemoveSyncHandler* newAddRemoveSyncHandler = new AddRemoveSyncHandler();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
+            NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
 
-            Player* NewPlayer = new Player(p_inputHandler, newAddRemoveSyncHandler, newFrequencyHandler);
-
-            // TODOCM hard coded entityID for new players
-            NewPlayer->m_playerEntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
+            Player* NewPlayer = new Player(t_EntityID, p_inputHandler, newAddRemoveSyncHandler, newFrequencyHandler, newNetworkPriorityHandler);
 
             m_playerMap[p_playerID] = NewPlayer;
 
@@ -238,6 +243,7 @@ namespace Doremi
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
+            UpdateNetworkObjectPriority();
             TIME_FUNCTION_STOP
         }
 
@@ -495,6 +501,16 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
+        void PlayerHandler::UpdateNetworkObjectPriority()
+        {
+            // For each player we update their networkobj priorities
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_networkPriorityHandler->Update(iter->second->m_playerEntityID);
+            }
+        }
+
         void PlayerHandler::QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
             if(p_blueprint == (uint32_t)Blueprints::PlayerEntity)
@@ -539,6 +555,15 @@ namespace Doremi
                 delete iter->second;
             }
             m_playerMap.clear();
+        }
+
+        void PlayerHandler::AddNetObjectToPlayers(const EntityID& p_entityID)
+        {
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
+            }
         }
     }
 }

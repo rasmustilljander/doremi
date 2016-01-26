@@ -23,7 +23,11 @@
 #include <EntityComponent/Components/LightComponent.hpp>
 #include <EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
+<<<<<<< HEAD
 #include <EntityComponent/Components/DamageInflictorsComponent.hpp>
+=======
+#include <EntityComponent/Components/NetworkObjectComponent.hpp>
+>>>>>>> Added priorityHandler to players
 
 namespace Doremi
 {
@@ -154,9 +158,15 @@ namespace Doremi
                 {
                     memcpy(GetComponent<TriggerComponent>(tNewEntityID), iter->second, sizeof(TriggerComponent));
                 }
+<<<<<<< HEAD
                 else if(iter->first == ComponentType::DamageInflictors)
                 {
                     memcpy(GetComponent<DamageInflictorsComponent>(tNewEntityID), iter->second, sizeof(DamageInflictorsComponent));
+=======
+                else if(iter->first == ComponentType::NetworkObject)
+                {
+                    memcpy(GetComponent<NetworkObjectComponent>(tNewEntityID), iter->second, sizeof(NetworkObjectComponent));
+>>>>>>> Added priorityHandler to players
                 }
             }
             return tNewEntityID;

@@ -20,6 +20,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TriggerComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -108,7 +109,10 @@ namespace Doremi
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
             // Network object
-            blueprint[ComponentType::NetworkObject];
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(100, 10);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
+
+
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
         }
 
@@ -121,6 +125,10 @@ namespace Doremi
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
             blueprint[ComponentType::Render] = renderComp;
+
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
+
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
         }
 
@@ -168,7 +176,8 @@ namespace Doremi
             // Register blueprint
 
             // Network object
-            blueprint[ComponentType::NetworkObject];
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
             TIME_FUNCTION_STOP
@@ -219,7 +228,8 @@ namespace Doremi
             GravityComponent* gravComp = new GravityComponent();
             blueprint[ComponentType::Gravity] = gravComp;
             // Network object
-            blueprint[ComponentType::NetworkObject];
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(10000, 100);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
@@ -252,7 +262,9 @@ namespace Doremi
             EntityTypeComponent* typeComp = new EntityTypeComponent();
             blueprint[ComponentType::EntityType] = typeComp;
 
-            blueprint[ComponentType::NetworkObject];
+            // Network object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(5000, 100);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
 
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
@@ -278,7 +290,9 @@ namespace Doremi
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
             blueprint[ComponentType::Render] = renderComp;
 
-            blueprint[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
 
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
@@ -318,7 +332,10 @@ namespace Doremi
             PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
-            t_platform[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(5000, 100);
+            t_platform[ComponentType::NetworkObject] = netObjComp;
+
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
             TIME_FUNCTION_STOP
@@ -380,7 +397,9 @@ namespace Doremi
             PlatformPatrolComponent* t_platformPatrolComponent = new PlatformPatrolComponent();
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
-            t_platform[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            t_platform[ComponentType::NetworkObject] = netObjComp;
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
@@ -438,7 +457,9 @@ namespace Doremi
             GravityComponent* gravComp = new GravityComponent();
             t_avatarBlueprint[ComponentType::Gravity] = gravComp;
 
-            t_avatarBlueprint[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(50000, 100);
+            t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Range Component
             RangeComponent* t_rangeComponent = new RangeComponent();
@@ -546,9 +567,10 @@ namespace Doremi
             TransformComponent* t_transformComp = new TransformComponent();
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
             t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
-            
 
-            t_avatarBlueprint[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::NetworkPlayerEntity, t_avatarBlueprint);
@@ -568,7 +590,9 @@ namespace Doremi
             TransformComponent* t_transformComp = new TransformComponent();
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
 
-            t_avatarBlueprint[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(30, 10);
+            t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
@@ -593,7 +617,9 @@ namespace Doremi
             TransformComponent* t_transformComp = new TransformComponent();
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
 
-            t_avatarBlueprint[ComponentType::NetworkObject];
+            // Net object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
 
             // Register blueprint
