@@ -13,6 +13,8 @@ namespace Doremi
         InputHandlerClient::InputHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : InputHandler(p_sharedContext)
         {
             // Setup the different inputmoves! (Used in the game)
+            // When inserting something here please fill out in the enum what key is is and what code it is.(In input handler)
+            // TODOCONFIG ladda in vad alla värden och vilken action de tillhör.
             userCmdsPlaying[32] = UserCommandPlaying::Jump;
             userCmdsPlaying[119] = UserCommandPlaying::Forward;
             userCmdsPlaying[115] = UserCommandPlaying::Backward;
@@ -34,7 +36,8 @@ namespace Doremi
             userCmdsPlaying[56] = UserCommandPlaying::SetFrequency500;
             userCmdsPlaying[57] = UserCommandPlaying::SetFrequency1000;
 
-            // Setup for the menyinput
+            // Setup for the menuinput
+            // TODOEA Not used yet.
             userCmdsMeny[1] = UserCommandMeny::LeftClick;
             userCmdsMeny[3] = UserCommandMeny::RightClick;
             userCmdsMeny[13] = UserCommandMeny::Enter;
@@ -48,6 +51,7 @@ namespace Doremi
 
         void InputHandlerClient::GetMousePos(int& p_positionX, int& p_positionY)
         {
+            // Recieves the mousepos from input module.
             p_positionX = m_sharedContext.GetInputModule().GetMousePosX();
             p_positionY = m_sharedContext.GetInputModule().GetMousePosY();
         }
@@ -56,22 +60,27 @@ namespace Doremi
         {
             size_t t_sizeVector = m_keyboardInputFromModule.size();
             m_maskWithInput = 0;
+            // Checks if the inputs from input module contain any relevant keystrokes using the keyboard.
             for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_keyboardInputFromModule[i]];
             }
 
             t_sizeVector = m_musInputFromModule.size();
+            // checks if the inputs from the input module contain any relevant keystrokes using the mouse.
             for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_musInputFromModule[i]];
             }
-            if(m_mouseWheelInput) // TODOEA move to different function that wont update each frame
+            // Just checks if the mousewheel has been scrolled. I think 999 and 998 is harc coded values that i reserved for mousewheel.
+            if(m_mouseWheelInput) 
             {
+                // if it is above zero it is considered as mwheel up
                 if(m_mouseWheelInput > 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[999];
                 }
+                // if it is below zero it is considered as mwheel down
                 else if(m_mouseWheelInput < 0)
                 {
                     m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[998];
@@ -82,13 +91,14 @@ namespace Doremi
         void InputHandlerClient::BuildMaskFromEngineForMeny()
         {
             size_t t_sizeVector = m_keyboardInputFromModule.size();
-
+            // Checks if the inputs from input module contain any relevant keystrokes using the keyboard.
             for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_keyboardInputFromModule[i]];
             }
 
             t_sizeVector = m_musInputFromModule.size();
+            // checks if the inputs from the input module contain any relevant keystrokes using the mouse.
             for(size_t i = 0; i < t_sizeVector; ++i)
             {
                 m_maskWithInput = m_maskWithInput | (int)userCmdsMeny[m_musInputFromModule[i]];
@@ -98,6 +108,7 @@ namespace Doremi
         void InputHandlerClient::UpdateInputsFromEngine()
         {
             TIME_FUNCTION_START
+            // Recieves the following things from the Input Module.
             m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
             m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
             m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
@@ -108,13 +119,15 @@ namespace Doremi
 
         void InputHandlerClient::PrintInputStructsDEBUG()
         {
+            // Debug purpose pick the thing you want/don't want to be printed and decomment/comment
             const size_t t_forLoopSizeI = m_keyboardInputFromModule.size();
+            // Keyboard
             for(size_t i = 0; i < t_forLoopSizeI; ++i)
             {
                 std::cout << m_keyboardInputFromModule[i] << ", ";
             }
             const size_t t_forLoopSizeII = m_musInputFromModule.size();
-
+            // MouseButtons
             for(size_t i = 0; i < t_forLoopSizeII; ++i)
             {
                 std::cout << m_musInputFromModule[i] << ", ";
@@ -123,15 +136,6 @@ namespace Doremi
             {
                 std::cout << std::endl;
             }
-            // bool t_printDebug = false;
-            // for (size_t i = 0; i < m_structArraySize; ++i)
-            //{
-            //    if (m_inputForPlaying.keys[i])
-            //    {
-            //        t_printDebug = true;
-            //    }
-
-            //}
             // if (t_printDebug)
             //{
             //    for (size_t i = 0; i < m_structArraySize; ++i)
@@ -140,17 +144,20 @@ namespace Doremi
             //    }
             //    std::cout << std::endl;
             //}
+            // Mousewheel
             // if (m_mouseWheelSpins != 0)
             //{
             //    std::cout << m_mouseWheelSpins << std::endl;
             //}
-
+            // Amount of keyboardbuttons pressed
             // std::cout << m_keyboardButtonsDown.size() << std::endl;
+            // Amount of mousebuttons pressed
             // std::cout << m_mouseButtonsDown.size() << " : MouseInputs. " << m_keyboardButtonsDown.size() << " : KeyboardInputs" << std::endl;
         }
 
         void InputHandlerClient::PrintInputMouseMovement()
         {
+            // Debug for showing the mousemovement
             if(m_mouseMoveX != 0 || m_mouseMoveY != 0)
             {
                 std::cout << m_mouseMoveX << " : X, " << m_mouseMoveY << " : Y" << std::endl;
@@ -162,9 +169,7 @@ namespace Doremi
             TIME_FUNCTION_START
             UpdateInputsFromEngine();
             m_lastUpdateMaskWithInput = m_maskWithInput;
-            // Do one of them TODOEA
             BuildMaskFromEngineForGame();
-            // BuildMaskFromEngineForMeny();
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
             TIME_FUNCTION_STOP

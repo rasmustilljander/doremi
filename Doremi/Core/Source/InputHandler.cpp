@@ -17,6 +17,7 @@ namespace Doremi
 
         bool InputHandler::CheckBitMaskInputFromGame(int p_bitMask)
         {
+            // Checks if the desired key is pushed.
             if((m_maskWithInput & p_bitMask) == p_bitMask)
             {
                 return true;
@@ -25,19 +26,24 @@ namespace Doremi
             {
                 return false;
             }
+            // If it doesn't find what it is looking for it will return false.
             return false;
         }
 
         bool InputHandler::CheckForOnePress(int p_bitMask)
         {
+            // Using the other function to check if it is the desired key.
             if(CheckBitMaskInputFromGame(p_bitMask))
             {
+                // Checks if the key was down last update
                 if((m_lastUpdateMaskWithInput & p_bitMask) == p_bitMask)
                 {
+                    // If the key was pressed last update then this is not the first time it is pressed this keystroke and will return a false.
                     return false;
                 }
                 else
                 {
+                    // If the key wasn't pressed last update it is the first time update being down and will return a true.
                     return true;
                 }
             }
