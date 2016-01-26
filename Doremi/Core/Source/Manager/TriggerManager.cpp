@@ -54,13 +54,13 @@ namespace Doremi
                         }
                         else
                         {
-                            // DO nathiiing
+                            // Do nothing
                         }
                     }
                 }
                 else
                 {
-                    // do nuting
+                    // Do nothing
                 }
             }
         }
