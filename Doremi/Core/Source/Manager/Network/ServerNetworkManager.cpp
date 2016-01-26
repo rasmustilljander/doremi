@@ -11,6 +11,7 @@
 #include <AddRemoveSyncHandler.hpp>
 #include <FrequencyBufferHandler.hpp>
 #include <SequenceMath.hpp>
+#include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -404,44 +405,11 @@ namespace Doremi
 
             BytesWritten += 14;
 
-            uint32_t positionToWriteNumOfObjects = BytesWritten;
-            // Move forward for header (14 byte + numOfObjects to be written later
-            Streamer.SetReadWritePosition(BytesWritten + sizeof(uint8_t));
-            BytesWritten += sizeof(uint8_t);
+            // Get networkPriorityHandler
+            NetworkPriorityHandler* netPrioHandler = PlayerHandler::GetInstance()->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
 
-            EntityHandler& EntityHandler = EntityHandler::GetInstance();
-
-            // Mask is if we have transform and network
-            int MaskToCheck = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
-
-            // Counter for how many entities we send
-            uint32_t NumberOfEntitiesToSend = 0;
-
-            // Loop over entities
-            // TODOCM put them in some kind of priority so we can send them cross many snapshots
-            uint32_t NumOfEntities = EntityHandler.GetLastEntityIndex();
-            for(size_t EntityID = 0; EntityID < NumOfEntities && p_bufferSize > (BytesWritten + sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4); EntityID++)
-            {
-                if(EntityHandler.HasComponents(EntityID, MaskToCheck))
-                {
-                    TransformComponent* TransComponent = EntityHandler.GetComponentFromStorage<TransformComponent>(EntityID);
-                    Streamer.WriteUnsignedInt32(EntityID); // 4 byte
-                    Streamer.WriteFloat3(TransComponent->position); // 4x3 = 12 byte
-                    Streamer.WriteRotationQuaternion(TransComponent->rotation); // 4x4 = 16 byte
-
-                    // all = 32 byte
-                    NumberOfEntitiesToSend++;
-
-                    // Increase offset
-                    BytesWritten += sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4;
-                }
-            }
-
-            // Write how many add/remove exist for player
-            Streamer.SetReadWritePosition(positionToWriteNumOfObjects);
-            Streamer.WriteUnsignedInt8(NumberOfEntitiesToSend);
-
-            Streamer.SetReadWritePosition(BytesWritten);
+            // Write objects from priority
+            netPrioHandler->WriteObjectsByPriority(Streamer, p_bufferSize, BytesWritten);
         }
 
         void ServerNetworkManager::SendMessages(double p_dt)

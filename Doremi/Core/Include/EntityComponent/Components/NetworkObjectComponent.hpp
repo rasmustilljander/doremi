@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <algorithm>
+#include <minmax.h>
 
 #define PRIORITY_DISTANCE_DIV_FACTOR 10.0f
 
@@ -46,13 +46,18 @@ namespace Doremi
             {
                 if(p_length)
                 {
-                    FramePriority = std::max(Priority / (p_length * PRIORITY_DISTANCE_DIV_FACTOR), 2.0f);
+                    FramePriority = max(Priority / (p_length * PRIORITY_DISTANCE_DIV_FACTOR), 2.0f);
                 }
                 else
                 {
                     FramePriority = 0;
                 }
             }
+
+            /**
+                TODOCM doc
+            */
+            void ResetPriority() { Priority = PriorityStart; }
 
         private:
             /**

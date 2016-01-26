@@ -1,6 +1,7 @@
 #pragma once
 #include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
+#include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
 #include <list>
 #include <vector>
 
@@ -59,6 +60,11 @@ namespace Doremi
                 TODOCM doc
             */
             void UpdateNetworkObject(const EntityID& p_entityID);
+
+            /**
+                TODOCM doc
+            */
+            void WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
 
         private:
             /**
