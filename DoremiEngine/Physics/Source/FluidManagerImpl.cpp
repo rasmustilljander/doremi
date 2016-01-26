@@ -16,6 +16,16 @@ namespace DoremiEngine
 
         void FluidManagerImpl::SetParticleEmitterData(int p_id, ParticleEmitterData p_data) { m_emitters[p_id]->SetData(p_data); }
 
+        vector<int> FluidManagerImpl::GetDrainsHit(int p_id)
+        {
+            // Secure that the emitter exists
+            if(m_emitters.find(p_id) == m_emitters.end())
+            {
+                throw std::runtime_error("Physics: DrainsHit fetch failed: No particle emitter exists with id: " + to_string(p_id));
+            }
+            return m_emitters[p_id]->GetDrainsHit();
+        }
+
         void FluidManagerImpl::Update(float p_dt)
         {
             // Update all our emitters
