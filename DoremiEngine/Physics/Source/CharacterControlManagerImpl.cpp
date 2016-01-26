@@ -124,9 +124,9 @@ namespace DoremiEngine
         }
 
         void CharacterControlManagerImpl::SetDrain(int p_id, bool p_isDrain)
-        {       
+        {
             // Check if controller exists
-            if (m_controllers.find(p_id) == m_controllers.end())
+            if(m_controllers.find(p_id) == m_controllers.end())
             {
                 // Controller did not exist
                 throw std::runtime_error("Physics error: Cannot set controller to drain: No controller exists with id: " + to_string(p_id));
