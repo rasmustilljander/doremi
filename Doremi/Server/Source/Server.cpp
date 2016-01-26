@@ -115,45 +115,9 @@ namespace Doremi
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
 
-        // Create entity
-        // int playerID = t_entityHandler.CreateEntity(Blueprints::PlayerEntity);
-
-        //// Create the rigid body
-        // int materialID = t_entityHandler.GetComponentFromStorage<Core::PhysicsMaterialComponent>(playerID)->p_materialID;
-        // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 0);
-        // DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0, 0, 0, 1);
-        // Core::RigidBodyComponent* bodyComp = t_entityHandler.GetComponentFromStorage<Core::RigidBodyComponent>(playerID);
-        /*bodyComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(playerID, position, orientation,
-                                                                                                      DirectX::XMFLOAT3(0.5, 0.5, 0.5), materialID);*/
-
-        // sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(playerID, materialID, position, XMFLOAT2(1, 1));
-        // Core::EntityHandler::GetInstance().AddComponent(playerID, (int)ComponentType::CharacterController);
-
-        // int entityDebugJaws = t_entityFactory.CreateEntity(Blueprints::JawsDebugEntity);
-        // Core::TransformComponent* trans = GetComponent<Core::TransformComponent>(entityDebugJaws);
-        // trans->position = DirectX::XMFLOAT3(-10, 5, 0);
-
-        //// TODOKO REMOVE Create debug potentialfields
-        // for(size_t i = 0; i < 1; i++)
-        //{
-        //    int entityID = t_entityFactory.CreateEntity(Blueprints::DebugPotentialFieldActor);
-        //    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 4, 0);
-        //    DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-        //    int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-        //    Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-        //    rigidComp->p_bodyID =
-
-        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(entityID, position, orientation, XMFLOAT3(5, 0.5, 5), matID);
-
-        //    Core::PotentialFieldComponent* actor =
-        //    Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-        //    actor->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -10, 4, true);
-        //}
-
         for(size_t i = 0; i < 1; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
-            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10 - (int)i, i * 5);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
@@ -178,9 +142,6 @@ namespace Doremi
             XMFLOAT3 position = DirectX::XMFLOAT3(-280 * (int)i + 0, 140 * (int)i + 4, -85 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            // RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);
-            // rigidComp->p_bodyID = sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
-            //                                                                                               XMFLOAT3(0.5, 0.5, 0.5), matID);
             sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
 
             Core::PotentialFieldComponent* potentialComponent =
@@ -190,66 +151,13 @@ namespace Doremi
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
-
-        // int entityID = t_entityFactory.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
-        // DoremiEngine::Physics::ParticleEmitterData emitterData;
-        // emitterData.m_density = 3;
-        // emitterData.m_dimensions = XMFLOAT2(0, 0);
-        // emitterData.m_direction = XMFLOAT4(0, 0, 0, 1);
-        // emitterData.m_emissionAreaDimensions = XMFLOAT2(0.1, 0.4);
-        // emitterData.m_emissionRate = 10000;
-        // emitterData.m_launchPressure = 2;
-        // emitterData.m_position = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position;
-        // sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
-
-        // entityID = t_entityFactory.CreateEntity(Blueprints::ExperimentalPressureParticleEntity);
-        // emitterData.m_position = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position;
-        // sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, emitterData);
-        // TODO Not using this event atm, because of refac, will need to find some solution
-        /*PlayerCreationEvent* playerCreationEvent = new PlayerCreationEvent();
-        playerCreationEvent->eventType = Events::PlayerCreation;
-        playerCreationEvent->playerEntityID = playerID;*/
-
-        // EventHandler::GetInstance()->BroadcastEvent(playerCreationEvent);
-
-
-        // for(size_t i = 0; i < 1; i++)
-        //{
-        //    int entityID = t_entityHandler.CreateEntity(Blueprints::PlatformEntity);
-        //    XMFLOAT3 position = DirectX::XMFLOAT3(0, -2 - (int)i, i * 5);
-        //    XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
-        //    int matID = EntityHandler::GetInstance().GetComponentFromStorage<PhysicsMaterialComponent>(entityID)->p_materialID;
-        //    RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityID);/*
-        //    rigidComp->p_bodyID =
-        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(2, 0.05, 2), matID);*/
-        //    rigidComp->p_bodyID =
-        //        sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(position, orientation, XMFLOAT3(200, 0.05, 200), matID);
-        //}
         TIME_FUNCTION_STOP
     }
 
     void JawsSimulatePhysicsDebug(double deltaTime)
     {
         TIME_FUNCTION_START
-        // Core::TransformComponent* trans = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(0);
-        //
-        // if(trans->position.x == -10)
-        // {
-        //     trans->position.y += deltaTime;
-        //     if(trans->position.y > 5)
-        //     {
-        //         trans->position.x = -11;
-        //     }
-        // }
-        // else
-        // {
-        //     trans->position.y -= deltaTime;
-        //     if(trans->position.y < -5)
-        //     {
-        //         trans->position.x = -10;
-        //     }
-        // }
-        // DirectX::XMStoreFloat4(&trans->rotation, DirectX::XMQuaternionRotationRollPitchYaw(0, 0, trans->position.y * 1.0f));
+
         TIME_FUNCTION_STOP
     }
 
