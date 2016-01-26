@@ -139,10 +139,27 @@ namespace DoremiEngine
             {
                 const PxContactPair& cp = pairs[i];
                 CollisionPair collisionPair;
-                // collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[0]];
-                // collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies()[pairHeader.actors[1]];
-                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
-                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
+
+                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                {
+                    collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
+                }
+                else
+                {
+                    // Probably hit a controller. TODOJB solve some time
+                }
+
+                if (m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                {
+                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
+                }
+                else
+                {
+                    // Probably hit a controller. TODOJB solve some time
+                }
+
+
+
                 m_collisionPairs.push_back(collisionPair);
             }
         }
