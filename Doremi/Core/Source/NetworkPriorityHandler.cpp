@@ -86,5 +86,48 @@ namespace Doremi
         {
             memcpy(&m_netPriorityObjects[p_entityID], GetComponent<NetworkObjectComponent>(p_entityID), sizeof(NetworkObjectComponent));
         }
+
+        void NetworkPriorityHandler::WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
+        {
+            // Set position so we can get here later
+            uint32_t positionToWriteNumOfObjects = op_BytesWritten;
+
+            // Move forward for header (14 byte + numOfObjects to be written later
+            p_streamer.SetReadWritePosition(op_BytesWritten + sizeof(uint8_t));
+            op_BytesWritten += sizeof(uint8_t);
+
+            EntityHandler& EntityHandler = EntityHandler::GetInstance();
+
+            size_t t_NumOfObjects = m_idByPriorityList.size();
+            size_t t_SizeOfOneObject = sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4; // TODOCM update this when we update the quat writer
+
+            // We want to count the objects as well so we set this outside
+            size_t objectNum = 0;
+
+            // Loop over list and add as many as possible
+            for(; objectNum < t_NumOfObjects && p_bufferSize > (op_BytesWritten + t_SizeOfOneObject); objectNum++)
+            {
+                EntityID entityID = m_idByPriorityList[objectNum];
+
+                // Get transform and write it
+                TransformComponent* TransComponent = EntityHandler.GetComponentFromStorage<TransformComponent>(entityID);
+                p_streamer.WriteUnsignedInt32(entityID); // 4 byte
+                p_streamer.WriteFloat3(TransComponent->position); // 4x3 = 12 byte
+                p_streamer.WriteRotationQuaternion(TransComponent->rotation); // 4x4 = 16 byte
+
+                // Reset sent objects priority
+                m_netPriorityObjects[entityID].ResetPriority();
+
+                // Increase offset
+                op_BytesWritten += t_SizeOfOneObject;
+            }
+
+            // Write how many objects there is in the snapshot
+            p_streamer.SetReadWritePosition(positionToWriteNumOfObjects);
+            p_streamer.WriteUnsignedInt8(objectNum);
+
+            // Set position again
+            p_streamer.SetReadWritePosition(op_BytesWritten);
+        }
     }
 }

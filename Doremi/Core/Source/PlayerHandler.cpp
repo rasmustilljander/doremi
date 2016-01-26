@@ -138,6 +138,20 @@ namespace Doremi
             return outPointer;
         }
 
+        NetworkPriorityHandler* PlayerHandler::GetNetworkPriorityHandlerForplayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            NetworkPriorityHandler* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_networkPriorityHandler;
+            }
+
+            return outPointer;
+        }
+
         bool PlayerHandler::GetDefaultPlayerEntityID(EntityID& o_outID)
         {
             if(m_playerMap.size() == 0)

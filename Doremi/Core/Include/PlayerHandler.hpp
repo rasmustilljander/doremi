@@ -26,6 +26,7 @@ namespace Doremi
         class FrequencyBufferHandler;
         class NetworkPriorityHandler;
 
+
         /**
             TODOCM doc
         */
@@ -137,6 +138,11 @@ namespace Doremi
                 TODOCM doc
             */
             FrequencyBufferHandler* GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID);
+
+            /**
+                TODOCM doc
+            */
+            NetworkPriorityHandler* GetNetworkPriorityHandlerForplayer(uint32_t p_playerID);
 
             /**
                 TODOCM doc
