@@ -8,13 +8,13 @@ error=0
 > .formatCache
 
 # Find all files that has been changed
-files=`git diff --cached -p --diff-algorithm=minimal | grep "diff --git" | cut -d" " -f3 | cut -c 3- | grep ".cpp\|.hpp"`
+files=`git diff --cached -p --diff-algorithm=minimal | grep -a "diff --git" | cut -d" " -f3 | cut -c 3- | grep -a ".cpp\|.hpp"`
 echo "[$date] All files: $files" >> $logFile
 
 # Cross reference with deleted files, aka, remove deleted files from format check.
-for deletedFile in $(git diff --cached --summary | grep delete | cut -d" " -f5)
+for deletedFile in $(git diff --cached --summary | grep -a delete | cut -d" " -f5)
 do
-	files=`echo "$files" | grep -v $deletedFile`
+	files=`echo "$files" | grep -a -v $deletedFile`
 done
 
 echo -e "Checking formatting in source files."
