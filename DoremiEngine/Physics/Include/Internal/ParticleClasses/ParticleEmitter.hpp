@@ -4,6 +4,7 @@
 #include <PhysX/PxPhysicsAPI.h>
 #include <FluidManager.hpp>
 #include <vector>
+#include <map>
 
 #define PARTICLE_MAX_COUNT 200000 // TODOJB specify this some other way?
 #define PARTICLE_MAX_MOTION_DISTANCE 100
@@ -65,9 +66,19 @@ namespace DoremiEngine
             Update-loop for this particle system. Creates new
             particles (update as more stuff is added)*/
             void Update(float p_dt);
+            /**
+                UpdateLifetime of all active particles. Release particles that have lifetime < 0            
+            */
+            void UpdateParticleLifeTimeAndRemoveExpired(float p_dt);
+            /**
+                Sets the lifetime of the particles made after this call. Should be set before every particle call just to be safe that it is the correct timelength
+            */
+            void SetParticlesLifeTime(double p_time) { m_lifeTime = p_time; }
 
         private:
             ParticleEmitterData m_this;
+            std::map<int, double>m_particlesLifeTime;
+            double m_lifeTime;
             //// Position of emitter
             // XMFLOAT3 m_position;
             //// Dimensions of emitter

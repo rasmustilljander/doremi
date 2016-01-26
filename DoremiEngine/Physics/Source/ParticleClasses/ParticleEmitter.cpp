@@ -3,6 +3,8 @@
 //#include <FluidManager.hpp> // Included for the sake of particle data. Kinda silly, really
 #include <Internal/PhysicsModuleImplementation.hpp>
 
+// 3rd parties
+
 using namespace DirectX;
 using namespace physx;
 namespace DoremiEngine
@@ -72,6 +74,43 @@ namespace DoremiEngine
 
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
 
+        void ParticleEmitter::UpdateParticleLifeTimeAndRemoveExpired(float p_dt)
+        {
+            // Get particle indexData
+            PxParticleReadData* t_particleData = m_particleSystem->lockParticleReadData();
+            PX_ASSERT(t_particleData);
+            std::vector<PxU32> t_indicesToRemove;
+            PxU32 newvalidRange = 0;
+            // Kolla om vi har några particlar som är valid annars onödigt att ens börja uppdatera
+            if (t_particleData->validParticleRange > 0)
+            {
+                for (PxU32 i = 0; i <= (t_particleData->validParticleRange - 1) >> 5; i++)
+                {
+                    for (PxU32 j = t_particleData->validParticleBitmap[i]; j; j &= j - 1)
+                    {
+                        // TODOXX super unsafe. I am not sure what i am doing here. I was following a tutorial and a function they used was missing. This seems to be what they did essentially but WARNING!!
+                        unsigned long b;
+                        _BitScanForward(&b, j);
+                        PxU32 t_index = (i << 5 | b);
+                        if (m_particlesLifeTime[t_index] = -p_dt < 0.0)
+                        {
+                            m_particlesLifeTime[t_index] = 0;
+                            t_indicesToRemove.push_back(t_index);
+                        }
+
+                    }
+                }
+                t_particleData->unlock();
+                PxStrideIterator<const PxU32> t_indexData(&t_indicesToRemove[0]);
+                m_particleSystem->releaseParticles(static_cast<PxU32>(t_indicesToRemove.size()), t_indexData);
+                // TODOLH om vi skaffar indexPool kör m_indexpool->freeIndices(indices.size(), indexData);
+            }
+            else
+            {
+                // Do nothing
+            }
+        }
+
         void ParticleEmitter::Update(float p_dt)
         {
             m_drainsHit.clear();
@@ -119,6 +158,8 @@ namespace DoremiEngine
 
                             // Add index (silly way just to make it work atm)
                             indices.push_back(m_nextIndex);
+                            // Set the lifetime of this particle TODOLH maybe add support for particles without lifetime. Some kind of bool. Hopefully we dont have to do this. Seems hard at first glance
+                            m_particlesLifeTime[m_nextIndex] = m_lifeTime;
                             m_nextIndex++;
                         }
                     }
@@ -131,6 +172,7 @@ namespace DoremiEngine
                         PxVec3* velocitiesPX = reinterpret_cast<PxVec3*>(&velocities[0]);
                         PxU32* indicesPX = reinterpret_cast<PxU32*>(&indices[0]);
 
+                        
                         // Create the particles
                         PxParticleCreationData newParticlesData;
                         newParticlesData.numParticles = positions.size();
