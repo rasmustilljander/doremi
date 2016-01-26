@@ -40,6 +40,12 @@ namespace DoremiEngine
             vector of XMFLOATS as argument*/
             void GetPositions(vector<XMFLOAT3>& o_positions);
 
+            /**
+            Returns a vector with the index for all drain objects
+            that were hit by a particle in the previous simulation
+            step*/
+            vector<int> GetDrainsHit();
+
 
             /**
             Sets all variables of the particle emitter*/
@@ -83,6 +89,8 @@ namespace DoremiEngine
             InternalPhysicsUtils& m_utils;
             // Float to keep track of when last particle wave was emitted
             float m_timeSinceLast;
+
+            vector<int> m_drainsHit;
 
             // Temporary index variable to make sure things work
             int m_nextIndex;

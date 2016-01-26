@@ -15,6 +15,7 @@ namespace DoremiEngine
             m_nextIndex = 0;
             m_particleSystem = m_utils.m_physics->createParticleSystem(PARTICLE_MAX_COUNT);
             m_particleSystem->setMaxMotionDistance(PARTICLE_MAX_MOTION_DISTANCE);
+            m_particleSystem->setParticleReadDataFlag(PxParticleReadDataFlag::eVELOCITY_BUFFER, true);
             m_utils.m_worldScene->addActor(*m_particleSystem);
             // Might be necessary to set flag to collide with dynamics
             // m_particleSystem->setParticleBaseFlag(PxParticleBaseFlag::eCOLLISION_WITH_DYNAMIC_ACTORS, true);
@@ -41,14 +42,22 @@ namespace DoremiEngine
             for(uint32_t i = 0; i < numParticles; i++)
             {
                 // Check if particles are supposed to be removed
-
+                XMFLOAT3 position = XMFLOAT3(positions[i].x, positions[i].y, positions[i].z);
+                XMFLOAT3 velocity = XMFLOAT3(velocities[i].x, velocities[i].y, velocities[i].z);
+                XMVECTOR velVec = XMLoadFloat3(&velocity);
+                velVec = XMVector3Normalize(velVec);
+                XMStoreFloat3(&velocity, velVec); // TODOJB Remove normalization once it's fixed in CastRay
                 if(flags[i] & (PxParticleFlag::eCOLLISION_WITH_DRAIN)) // | PxParticleFlag::eVALID))
                 {
+                    /// Particle should be removed
+                    // Add index to release list
                     indicesOfParticlesToBeReleased.push_back(i);
+                    // Find out which actor it collided with using ray tracing (seriously. It was this easy...)
+                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
                 }
                 else if(flags[i] & PxParticleFlag::eVALID)
                 {
-                    o_positions.push_back(XMFLOAT3(positions[i].x, positions[i].y, positions[i].z));
+                    o_positions.push_back(position);
                 }
             }
             readData->unlock();
@@ -59,10 +68,13 @@ namespace DoremiEngine
             }
         }
 
+        vector<int> ParticleEmitter::GetDrainsHit() { return m_drainsHit; }
+
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
 
         void ParticleEmitter::Update(float p_dt)
         {
+            m_drainsHit.clear();
             if(m_this.m_active)
             {
                 // Update time since last particle wave was spawned

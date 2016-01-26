@@ -42,6 +42,10 @@ namespace DoremiEngine
             /**
             Used to update the entire particle system*/
             virtual void SetParticleEmitterData(int p_id, ParticleEmitterData p_data) = 0;
+
+            /**
+            Gets all drains hit by a particle of the specified particle system*/
+            virtual vector<int> GetDrainsHit(int p_id) = 0;
         };
     }
 }
