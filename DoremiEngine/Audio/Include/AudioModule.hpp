@@ -27,11 +27,11 @@ namespace DoremiEngine
             /**
             Loads sound from file (Used for debugging) TODOLH remove at release
             */
-            virtual size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) = 0;
+            virtual int LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) = 0;
             /**
             Copies one sound to another. The second sound becomes a cropped version of the first. Cropping is made at the desired timepoint
             */
-            virtual size_t CopySound(int p_soundIDSource, int p_soundIDDestination, float p_length) = 0;
+            virtual int CopySound(int p_soundIDSource, int p_soundIDDestination, float p_length) = 0;
             /**
             Returns true if currently recording
             */
@@ -39,23 +39,23 @@ namespace DoremiEngine
             /**
             Returns the elapsed time of a sound in milliseconds
             */
-            virtual double GetSoundTimePointer(const size_t& p_channelID) = 0;
+            virtual double GetSoundTimePointer(const int& p_channelID) = 0;
             /**
             Gets the length of a sound
             */
-            virtual double GetSoundLength(const size_t& p_soundID) = 0;
+            virtual double GetSoundLength(const int& p_soundID) = 0;
             /**
             Plays a sound that is already in the system
             */
-            virtual void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) = 0;
+            virtual void PlayASound(int p_soundID, bool p_loop, int& p_channelID) = 0;
             /**
             Plays a sound on a specific channel
             */
-            virtual void PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID) = 0;
+            virtual void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID) = 0;
             /**
             Checks if the channel is playing
             */
-            virtual bool GetChannelPlaying(const size_t& p_channelID) = 0;
+            virtual bool GetChannelPlaying(const int& p_channelID) = 0;
             /**
             Stops recording from default recording driver
             */
@@ -63,7 +63,7 @@ namespace DoremiEngine
             /**
             Sets the priority of the channel. 0 is highest 256 is lowest and 128 is default
             */
-            virtual void SetPriority(const size_t& p_chanelID, const int& p_priority) = 0;
+            virtual void SetPriority(const int& p_chanelID, const int& p_priority) = 0;
             /**
             TODO DOCS
             */
@@ -72,17 +72,17 @@ namespace DoremiEngine
             /**
             Sets up the recording variables and returns the ID of the sound that will take care of the recording
             */
-            virtual size_t SetupRecording(bool p_loop) = 0;
+            virtual int SetupRecording(bool p_loop) = 0;
 
             /**
             Starts recording to the given soundvariable
             */
-            virtual int StartRecording(size_t p_soundID, bool p_loopRec) = 0;
+            virtual int StartRecording(int p_soundID, bool p_loopRec) = 0;
 
             /**
             Analyze a sound at the giving moment and returns the frequency
             */
-            virtual float AnalyseSoundSpectrum(const size_t& p_channelID) = 0;
+            virtual float AnalyseSoundSpectrum(const int& p_channelID) = 0;
             /**
             Returns the pointer of the position in recording
             */
@@ -95,7 +95,7 @@ namespace DoremiEngine
             /**
             Sets the position and velocity of a sound
             */
-            virtual int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID) = 0;
+            virtual int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const int& p_channelID) = 0;
 
             /**
             Sets the listener position
@@ -104,7 +104,7 @@ namespace DoremiEngine
             /**
             Sets the channels volume volume is 0 - 1, where  is loudest
             */
-            virtual int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) = 0;
+            virtual int SetVolumeOnChannel(const int& p_channelID, float p_volume) = 0;
 
             /**
             TODO docs

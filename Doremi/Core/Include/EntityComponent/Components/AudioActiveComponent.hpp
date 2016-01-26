@@ -8,9 +8,9 @@ namespace Doremi
         */
         struct AudioActiveComponent
         {
-            size_t channelID;
-            AudioActiveComponent(size_t p_channelID) { channelID = p_channelID; }
-            AudioActiveComponent() : channelID(99999) {}
+            int channelID;
+            AudioActiveComponent(int p_channelID) { channelID = p_channelID; }
+            AudioActiveComponent() : channelID(-1) {}
         };
     }
 }

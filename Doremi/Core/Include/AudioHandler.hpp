@@ -29,7 +29,7 @@ namespace Doremi
             static void StopAudioHandler();
             AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~AudioHandler();
-            // Initializes the handler. Mostly sets values to 0 or channelID to 99999 (used as a "error" value)
+            // Initializes the handler. Mostly sets values to 0 or channelID to -1 (used as a "error" value)
             void Initialize();
             // Sets the variable for how long the reloadbutton was pressed and therefore how long the sound should be
             void SetGunButtonDownTime(double p_time);
@@ -62,12 +62,12 @@ namespace Doremi
             float m_frequencyVectorPrecision;
             static AudioHandler* m_singleton;
             // Sound IDs and ChannelIDs
-            size_t m_continuousFrequencyAnalyserChannelID;
-            size_t m_continuousFrequencyAnalyserSoundID;
-            size_t m_repeatableFrequencyAnalyserChannelID;
-            size_t m_repeatableFrequencyAnalyserSoundID;
-            size_t m_outputRepeatableSoundChannelID;
-            size_t m_outputRepeatableSoundID;
+            int m_continuousFrequencyAnalyserChannelID;
+            int m_continuousFrequencyAnalyserSoundID;
+            int m_repeatableFrequencyAnalyserChannelID;
+            int m_repeatableFrequencyAnalyserSoundID;
+            int m_outputRepeatableSoundChannelID;
+            int m_outputRepeatableSoundID;
             // The current frequency that just got analysed
             float m_currentFrequency;
             // Used to control the flow of pdate function. Cant use the function until the array is filled with values
