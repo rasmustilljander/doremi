@@ -1,10 +1,15 @@
 /// Project
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 #include <PlayerHandler.hpp>
+#include <EntityComponent/EntityHandler.hpp>
+#include <EntityComponent/EntityFactory.hpp>
 // Components
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
+#include <EntityComponent/Components/EntityTypeComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 // Helper
 #include <Helper/ProximityChecker.hpp>
 
@@ -12,8 +17,13 @@
 // Physics
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RayCastManager.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 // Third party
 #include <DirectXMath.h>
+#include <iostream>
+
+// DEBUG remove
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 namespace Doremi
 {
     namespace Core
@@ -24,12 +34,26 @@ namespace Doremi
 
         void AITargetManager::Update(double p_dt)
         {
+            static int debug = 0;
+            static double totTime = 0;
+            totTime += p_dt;
+            if(totTime > 5)
+            {
+                totTime -= 5;
+            }
+            else
+            {
+                return;
+            }
             using namespace DirectX;
+            // gets all the players in the world, used to see if we can see anyone of them
             std::map<uint32_t, Player*> t_players = PlayerHandler::GetInstance()->GetPlayerMap();
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
             for(size_t i = 0; i < length; i++)
             {
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Range | (int)ComponentType::AIAgent | (int)ComponentType::Transform))
+                if(t_entityHandler.HasComponents(i, (int)ComponentType::Range | (int)ComponentType::AIAgent | (int)ComponentType::Transform))
                 {
                     // They have a range component and are AI agents, let's see if a player is in range!
                     // I use proximitychecker here because i'm guessing it's faster than raycast
@@ -46,11 +70,12 @@ namespace Doremi
                                 return;
                             }
                             // Fetch some components
-                            TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
-                            TransformComponent* AITransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
-                            RangeComponent* aiRange = EntityHandler::GetInstance().GetComponentFromStorage<RangeComponent>(i);
+                            TransformComponent* playerTransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(playerID);
+                            TransformComponent* AITransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                            RangeComponent* aiRange = t_entityHandler.GetComponentFromStorage<RangeComponent>(i);
                             // Get things in to vectors
                             XMVECTOR playerPos = XMLoadFloat3(&playerTransform->position);
+
                             XMVECTOR AIPos = XMLoadFloat3(&AITransform->position);
                             // Calculate direction
                             XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
@@ -63,11 +88,29 @@ namespace Doremi
                             XMFLOAT3 rayOriginFloat;
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);
                             // Send it to physx for raycast calculation
-                            int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, aiRange->range);
+                            int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, 30);
 
                             if(bodyHit == playerID)
                             {
                                 // We acctually did hit the player!!!! Let's kill him!!!!!
+                                int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity);
+                                // Get the components that we need to change/need to change other stuff
+                                // RigidBodyComponent* rbComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(id);
+                                PhysicsMaterialComponent* matComp = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(id);
+                                EntityTypeComponent* typeComp = t_entityHandler.GetComponentFromStorage<EntityTypeComponent>(id);
+                                // Create a new dynamic rigid body TODOXX The blueprint uses a halved unitbox thats why dim in the function below is
+                                // 0.25f
+                                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(
+                                    id, XMFLOAT3(AITransform->position.x, AITransform->position.y + 5, AITransform->position.z), XMFLOAT4(0, 0, 0, 1),
+                                    XMFLOAT3(0.25, 0.25, 0.25), matComp->p_materialID);
+                                // Add a force to the body TODOXX should not be hard coded the force amount
+                                direction *= 1000.0f;
+                                XMFLOAT3 force;
+                                XMStoreFloat3(&force, direction);
+                                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
+                                typeComp->type = EntityType::EnemyBullet;
+
+                                debug++;
                             }
                         }
                     }

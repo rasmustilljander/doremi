@@ -11,7 +11,7 @@ namespace DoremiEngine
         {
         public:
             /**
-            Returns the id of the body hit by the ray. Returns -1 if no hit occured
+            Returns the id of the body hit by the ray. Returns -1 if no hit occured. Range may not be negative or 0
             */
             virtual int CastRay(const DirectX::XMFLOAT3& p_origin, const DirectX::XMFLOAT3& p_direction, const float& p_range) = 0;
         };
