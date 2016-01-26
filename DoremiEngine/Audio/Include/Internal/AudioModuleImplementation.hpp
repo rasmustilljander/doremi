@@ -43,41 +43,41 @@ namespace DoremiEngine
             */
             unsigned int GetRecordPointer() override;
 
-            size_t CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length) override;
+            int CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length) override;
 
             bool IsRecording() override;
 
-            double GetSoundTimePointer(const size_t& p_channelID) override;
+            double GetSoundTimePointer(const int& p_channelID) override;
 
-            double GetSoundLength(const size_t& p_soundID) override;
+            double GetSoundLength(const int& p_soundID) override;
 
-            size_t LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
+            int LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
-            void PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID) override;
+            void PlayASound(int p_soundID, bool p_loop, int& p_channelID) override;
 
-            bool GetChannelPlaying(const size_t& p_channelID) override;
+            bool GetChannelPlaying(const int& p_channelID) override;
 
-            size_t SetupRecording(bool p_loop) override;
+            int SetupRecording(bool p_loop) override;
 
-            int StartRecording(size_t p_soundID, bool p_loopRec) override;
+            int StartRecording(int p_soundID, bool p_loopRec) override;
 
-            float AnalyseSoundSpectrum(const size_t& p_channelID) override;
+            float AnalyseSoundSpectrum(const int& p_channelID) override;
 
             int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
 
-            int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID) override;
+            int SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const int& p_channelID) override;
 
             int SetListenerPos(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_forward, DirectX::XMFLOAT3 p_up) override;
 
-            int SetVolumeOnChannel(const size_t& p_channelID, float p_volume) override;
+            int SetVolumeOnChannel(const int& p_channelID, float p_volume) override;
 
             bool GetInitializationStatus() override;
 
             void StopRecording() override;
 
-            void SetPriority(const size_t& p_chanelID, const int& p_priority) override;
+            void SetPriority(const int& p_chanelID, const int& p_priority) override;
 
-            void PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID) override;
+            void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID) override;
 
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);

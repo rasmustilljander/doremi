@@ -42,13 +42,13 @@ namespace Doremi
         {
             m_currentFrequency = 0;
             /* 99999 is a default "error" value. It is used to create a new channel in module. We send the channelID to the module and if it is 99999
-            it is treated as uninitialized
+            it is treated as uninitialized This has been fixed. 999999 is now -1
             and starts a new channel that is returned to the variable.*/
-            m_continuousFrequencyAnalyserChannelID = 99999;
+            m_continuousFrequencyAnalyserChannelID = -1;
             m_continuousFrequencyAnalyserSoundID = 0;
-            m_repeatableFrequencyAnalyserChannelID = 99999;
+            m_repeatableFrequencyAnalyserChannelID = -1;
             m_repeatableFrequencyAnalyserSoundID = 0;
-            m_outputRepeatableSoundChannelID = 99999;
+            m_outputRepeatableSoundChannelID = -1;
             m_outputRepeatableSoundID = 0;
             m_accumulatedDeltaTime = 0;
             m_repeatableAnalysisComplete = false;
@@ -152,9 +152,8 @@ namespace Doremi
                     if(recordPointer > 9600)
                     {
                         m_SoundState = ANALYSECONTINUOUS;
-                        // Fulfix för att kunna återanvända kanalen 99999 är min -1. Default värde som inte kan användas. I komponenterna sätts det i
-                        // defaultkontruktorn.
-                        if(m_continuousFrequencyAnalyserChannelID != 99999)
+                        // Default värde som inte kan användas. I komponenterna sätts det i defaultkontruktorn.
+                        if(m_continuousFrequencyAnalyserChannelID != -1)
                         {
                             /**
                             TODOLH Behövs nog uppdatera ljudposition till listener position.

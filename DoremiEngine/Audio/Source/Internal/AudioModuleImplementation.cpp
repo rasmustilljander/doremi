@@ -77,7 +77,7 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
         }
 
-        double AudioModuleImplementation::GetSoundTimePointer(const size_t& p_channelID)
+        double AudioModuleImplementation::GetSoundTimePointer(const int& p_channelID)
         {
             unsigned int t_elapsedTime;
             m_fmodChannel[p_channelID]->getPosition(&t_elapsedTime, FMOD_TIMEUNIT_MS);
@@ -85,7 +85,7 @@ namespace DoremiEngine
             return returnVal;
         }
 
-        double AudioModuleImplementation::GetSoundLength(const size_t& p_soundID)
+        double AudioModuleImplementation::GetSoundLength(const int& p_soundID)
         {
             unsigned int t_length;
             m_fmodSoundBuffer[p_soundID]->getLength(&t_length, FMOD_TIMEUNIT_MS);
@@ -99,10 +99,7 @@ namespace DoremiEngine
             m_fmodSystem->isRecording(0, &t_isRecording); /**TODOLH om vi byter till att inte använda default recordingdriver så måste du ändra här*/
             return t_isRecording;
         }
-        /**
-        TODOLH Change name
-        */
-        size_t AudioModuleImplementation::CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length)
+        int AudioModuleImplementation::CopySound(int p_soundIDToCopy, int p_soundIDDestination, float p_length)
         {
             // for every second in the buffer there is sizeof(short)*44100 bytes = 2*44100 (* numchannels)
             void* testStart;
@@ -148,13 +145,12 @@ namespace DoremiEngine
             unsigned int hejsan;
             m_fmodSoundBuffer[p_soundIDToCopy]->getLength(&hejsan, FMOD_TIMEUNIT_MS);
             ERRCHECK(m_fmodResult);
-            size_t returnVal;
-            /// 99999 is the default value for my size_ts think of it as -1 on an int
-            if (p_soundIDDestination == 99999)
+            int returnVal;
+            /// -1 is the default value for my size_ts think of it as -1 on an int
+            if(p_soundIDDestination == -1)
             {
                 m_fmodSoundBuffer.push_back(t_fmodSound);
                 returnVal = m_fmodSoundBuffer.size() - 1;
-
             }
             else
             {
@@ -167,7 +163,7 @@ namespace DoremiEngine
             return returnVal;
         }
 
-        size_t AudioModuleImplementation::LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance)
+        int AudioModuleImplementation::LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance)
         {
             std::string fileLocation = m_sharedContext.GetWorkingDirectory() + p_soundName;
             std::string t_soundName = p_soundName;
@@ -194,11 +190,11 @@ namespace DoremiEngine
             m_fmodResult = t_fmodSound->setMode(FMOD_LOOP_NORMAL);
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
-            size_t returnVal = m_fmodSoundBuffer.size() - 1;
+            int returnVal = m_fmodSoundBuffer.size() - 1;
             return returnVal;
         }
 
-        int AudioModuleImplementation::SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const size_t& p_channelID)
+        int AudioModuleImplementation::SetSoundPositionAndVelocity(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT3 p_velocity, const int& p_channelID)
         {
             FMOD_VECTOR pos = {p_position.x * m_distanceFactor, p_position.y * m_distanceFactor, p_position.z * m_distanceFactor};
             FMOD_VECTOR vel = {p_velocity.x * m_distanceFactor, p_velocity.y * m_distanceFactor, p_velocity.z * m_distanceFactor};
@@ -218,7 +214,7 @@ namespace DoremiEngine
             return 0;
         }
 
-        void AudioModuleImplementation::PlaySoundOnSpecificChannel(const size_t& p_soundID, bool p_loop, const size_t& p_channelID)
+        void AudioModuleImplementation::PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID)
         {
             if(p_loop)
             {
@@ -232,7 +228,7 @@ namespace DoremiEngine
             m_fmodChannel[p_channelID]->setVolume(0.5f);
         }
 
-        void AudioModuleImplementation::PlayASound(size_t p_soundID, bool p_loop, size_t& p_channelID)
+        void AudioModuleImplementation::PlayASound(int p_soundID, bool p_loop, int& p_channelID)
         {
             if(p_loop)
             {
@@ -257,8 +253,7 @@ namespace DoremiEngine
                     // Do nothing
                 }
             }
-            if(p_channelID ==
-               99999) /**Not the best coding standards but size_t isnt defined for -1 and might bug. This value is initialized in component TODOLH*/
+            if(p_channelID == -1)
             {
                 FMOD::Channel* t_channel = 0;
                 m_fmodChannel.push_back(t_channel);
@@ -272,19 +267,19 @@ namespace DoremiEngine
             m_fmodChannel[p_channelID]->setVolume(0.5f);
         }
 
-        void AudioModuleImplementation::SetPriority(const size_t& p_channelID, const int& p_priority)
+        void AudioModuleImplementation::SetPriority(const int& p_channelID, const int& p_priority)
         {
             m_fmodChannel[p_channelID]->setPriority(p_priority);
         }
 
-        bool AudioModuleImplementation::GetChannelPlaying(const size_t& p_channelID)
+        bool AudioModuleImplementation::GetChannelPlaying(const int& p_channelID)
         {
             bool t_isPlaying = false;
             m_fmodChannel[p_channelID]->isPlaying(&t_isPlaying);
             return t_isPlaying;
         }
 
-        int AudioModuleImplementation::SetVolumeOnChannel(const size_t& p_channelID, float p_volume)
+        int AudioModuleImplementation::SetVolumeOnChannel(const int& p_channelID, float p_volume)
         {
             m_fmodChannel[p_channelID]->setVolume(p_volume);
             return 0;
@@ -308,7 +303,7 @@ namespace DoremiEngine
             return 0;
         }
 
-        size_t AudioModuleImplementation::SetupRecording(bool p_loop)
+        int AudioModuleImplementation::SetupRecording(bool p_loop)
         {
             FMOD::Sound* t_fmodSound;
             FMOD_CREATESOUNDEXINFO exinfo;
@@ -329,11 +324,11 @@ namespace DoremiEngine
             }
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
-            size_t r_retVal = m_fmodSoundBuffer.size() - 1;
+            int r_retVal = m_fmodSoundBuffer.size() - 1;
             return r_retVal;
         }
 
-        int AudioModuleImplementation::StartRecording(size_t p_soundID, bool p_loopRec)
+        int AudioModuleImplementation::StartRecording(int p_soundID, bool p_loopRec)
         {
             m_fmodResult = m_fmodSystem->recordStart(0, m_fmodSoundBuffer[p_soundID], p_loopRec); /**0an kan stå för driver TODOLH*/
             ERRCHECK(m_fmodResult);
@@ -345,7 +340,7 @@ namespace DoremiEngine
             m_fmodResult = m_fmodSystem->recordStop(0);
             ERRCHECK(m_fmodResult);
         }
-        float AudioModuleImplementation::AnalyseSoundSpectrum(const size_t& p_channelID)
+        float AudioModuleImplementation::AnalyseSoundSpectrum(const int& p_channelID)
         {
             FMOD_RESULT t_result;
             float spectrum[m_spectrumSize];
