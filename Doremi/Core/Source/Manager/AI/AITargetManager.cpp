@@ -58,16 +58,16 @@ namespace Doremi
                             XMFLOAT3 directionFloat;
                             XMStoreFloat3(&directionFloat, direction);
                             // Offset origin of ray so we dont hit ourself
-                            XMVECTOR rayOrigin = playerPos + direction * 1.0f; // TODOXX x.xf is offset from the units body, might need to increase if
+                            XMVECTOR rayOrigin = AIPos + direction * 1.0f; // TODOXX x.xf is offset from the units body, might need to increase if
                             // the bodies radius is larger than x.x
                             XMFLOAT3 rayOriginFloat;
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);
                             // Send it to physx for raycast calculation
                             int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, aiRange->range);
+
                             if(bodyHit == playerID)
                             {
                                 // We acctually did hit the player!!!! Let's kill him!!!!!
-                                int a = 5;
                             }
                         }
                     }
