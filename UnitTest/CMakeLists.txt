@@ -16,7 +16,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(${DOREMIENGINE_LOCATION}/Graphic/Include)
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
-set(LIBRARIES Graphic GameCore MemoryManager)
+set(LIBRARIES AI Audio EngineCore Graphic Input Network Physics GameCore DebugLog DynamicLoader MemoryManager Timer)
 
 # Add the target
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
