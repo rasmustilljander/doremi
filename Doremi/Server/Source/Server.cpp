@@ -31,6 +31,7 @@
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
+#include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -73,6 +74,7 @@ namespace Doremi
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
 
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
+        Core::Manager* t_aiTargetManager = new Core::AITargetManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext); // TODO check if needed
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
@@ -85,6 +87,7 @@ namespace Doremi
         m_managers.push_back(t_serverNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_aiPathManager);
+        m_managers.push_back(t_aiTargetManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
         m_managers.push_back(t_frequencyAffectedObjectManager);

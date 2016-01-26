@@ -14,7 +14,7 @@ namespace DoremiEngine
             PxVec3 direction = PxVec3(p_direction.x, p_direction.y, p_direction.z);
 
             PxRaycastBuffer hit; // Used to save the hit
-            bool status = m_utils.m_worldScene->raycast(origin, direction, p_range, hit);
+            bool status = m_utils.m_worldScene->raycast(origin, direction, p_range, hit, PxHitFlag::eMESH_BOTH_SIDES);
             if(!status && !hit.hasBlock)
             {
                 // No hit detected, return -1 TODOKO Maybee i should return something better?
@@ -39,7 +39,7 @@ namespace DoremiEngine
                     return pairs.second; // If this is true we found a hit vs character controller, second contains ID
                 }
             }
-            return 0;
+            return -1;
         }
     }
 }

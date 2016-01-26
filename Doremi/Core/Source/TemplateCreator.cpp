@@ -199,7 +199,7 @@ namespace Doremi
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 4;
+            rangeComp->range = 30;
             blueprint[ComponentType::Range] = rangeComp;
 
             // PotentialField component
