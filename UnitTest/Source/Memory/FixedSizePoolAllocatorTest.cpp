@@ -142,3 +142,57 @@ TEST_F(FixedSizePoolAllocatorTest, freeLogicOnLargeSet)
     ASSERT_EQ(m_poolAllocator->GetMemorySpecification().occupied, 100000000);
     ASSERT_EQ(m_poolAllocator->GetMemorySpecification().total, 100000000);
 }
+
+TEST_F(FixedSizePoolAllocatorTest, advancedFreeLogicOnLargeSet)
+{
+    m_poolAllocator->Initialize(1562500, 0);
+    TestStruct64* first = m_poolAllocator->Allocate();
+    loopAllocate<TestStruct64>(m_poolAllocator, 781250 - 11); // Allocate about half
+
+    TestStruct64* midPointers[10];
+    for(size_t i = 0; i < 10; ++i)
+    {
+        midPointers[i] = m_poolAllocator->Allocate();
+    }
+
+    loopAllocate<TestStruct64>(m_poolAllocator, 781250 - 10); // Allocate the resthalf
+    TestStruct64* end[10];
+    for(size_t i = 0; i < 10; ++i)
+    {
+        end[i] = m_poolAllocator->Allocate();
+    }
+
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().free, 0);
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().occupied, 100000000);
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().total, 100000000);
+
+    m_poolAllocator->Free(end[5]);
+    m_poolAllocator->Free(end[4]);
+    m_poolAllocator->Free(end[6]);
+
+    ASSERT_EQ(192, m_poolAllocator->GetMemorySpecification().free);
+    ASSERT_EQ(99999808, m_poolAllocator->GetMemorySpecification().occupied);
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().total, 100000000);
+
+    TestStruct64* newest = m_poolAllocator->Allocate();
+
+    ASSERT_TRUE(first < newest);
+    ASSERT_TRUE(newest < end[9]);
+    ASSERT_EQ(newest, end[6]);
+
+    newest = m_poolAllocator->Allocate();
+
+    ASSERT_TRUE(first < newest);
+    ASSERT_TRUE(newest < end[9]);
+    ASSERT_EQ(newest, end[4]);
+
+    newest = m_poolAllocator->Allocate();
+
+    ASSERT_TRUE(first < newest);
+    ASSERT_TRUE(newest < end[9]);
+    ASSERT_EQ(newest, end[5]);
+
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().free, 0);
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().occupied, 100000000);
+    ASSERT_EQ(m_poolAllocator->GetMemorySpecification().total, 100000000);
+}
