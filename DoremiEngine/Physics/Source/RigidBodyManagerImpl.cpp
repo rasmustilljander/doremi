@@ -79,6 +79,7 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetKinematicActor(int p_bodyID, bool p_kinematic)
         {
+            // TODOXX det kan krångla om man antar att det är en PxRigidDynamic* om det är en static. Borde kollas om det är en dynamic.
             ((PxRigidDynamic*)m_bodies[p_bodyID])->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, p_kinematic);
         }
 
