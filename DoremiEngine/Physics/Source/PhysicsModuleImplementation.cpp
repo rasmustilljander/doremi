@@ -170,8 +170,30 @@ namespace DoremiEngine
             {
                 const PxTriggerPair& cp = pairs[i];
                 CollisionPair collisionPair;
+                // Get trigger ID
                 collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->triggerActor)->second;
-                collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
+                // Determine whether other actor is controller or rigid body
+                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor) == m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                {
+                    /*
+                    Was controller
+                    Loop through all controllers to see which it is. This is silly, but because PxController and PxActor are two
+                    Entierly different things, we have to do it this way. I think...*/
+                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                    for(auto const& controller : idsByControllers)
+                    {
+                        if(controller.first->getActor() == pairs->otherActor)
+                        {
+                            collisionPair.secondID = controller.second;
+                        }
+                    }
+                }
+                else
+                {
+                    // Has to be a rigid body. Possibly dangerous to assume...
+                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
+                }
+
                 m_triggerPairs.push_back(collisionPair);
             }
         }
