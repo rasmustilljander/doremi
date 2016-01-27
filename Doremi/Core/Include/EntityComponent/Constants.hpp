@@ -37,6 +37,7 @@ enum class ComponentType : int
     Light = 0x400000,
     PlatFormPatrolComponent = 0x800000,
     Trigger = 0x1000000,
+    DamageInflictors = 0x2000000,
 };
 
 /**
