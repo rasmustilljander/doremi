@@ -116,7 +116,7 @@ namespace Doremi
                     XMFLOAT3 direction;
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
-                    // moveComp->movement = direction;
+                    moveComp->movement = direction;
                 }
             }
         }
