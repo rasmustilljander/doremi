@@ -15,6 +15,7 @@ namespace Doremi
             AiGroupActorCreation,
             Trigger,
             ChangeMenuState,
+            DamageTaken,
         };
         /**All events needs to inherit this struct*/
         struct Event

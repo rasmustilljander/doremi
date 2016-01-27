@@ -444,8 +444,12 @@ namespace Doremi
             RangeComponent* t_rangeComponent = new RangeComponent();
             t_rangeComponent->range = 20.0f;
             t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
-            
 
+            // HP component
+            HealthComponent* hpComp = new HealthComponent();
+            hpComp->currentHealth = 50;
+            hpComp->maxHealth = 50;
+            t_avatarBlueprint[ComponentType::Health] = hpComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
             TIME_FUNCTION_STOP

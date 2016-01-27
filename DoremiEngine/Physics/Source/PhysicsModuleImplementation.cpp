@@ -147,7 +147,14 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    // Probably hit a controller. TODOJB solve some time
+                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                    for(auto const& controller : idsByControllers)
+                    {
+                        if(controller.first->getActor() == pairHeader.actors[0])
+                        {
+                            collisionPair.firstID = controller.second;
+                        }
+                    }
                 }
 
                 if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
@@ -156,10 +163,15 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    // Probably hit a controller. TODOJB solve some time
+                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                    for(auto const& controller : idsByControllers)
+                    {
+                        if(controller.first->getActor() == pairHeader.actors[1])
+                        {
+                            collisionPair.secondID = controller.second;
+                        }
+                    }
                 }
-
-
                 m_collisionPairs.push_back(collisionPair);
             }
         }
