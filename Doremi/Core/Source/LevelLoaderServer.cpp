@@ -81,13 +81,19 @@ namespace Doremi
         void LevelLoaderServer::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
         {
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
-
+            // Adds transform components to the world
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Transform);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityId);
 
             transComp->position = m_transforms[meshCoupling.transformName].pos;
             transComp->rotation = m_transforms[meshCoupling.transformName].rot;
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
+
+            // Adds potential field components to the world
+            EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);
+            PotentialFieldComponent* potComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityId);
+            potComp->ChargedActor =
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -3, 3, true); // TODOKO hardcoded shiet
         }
     }
 }

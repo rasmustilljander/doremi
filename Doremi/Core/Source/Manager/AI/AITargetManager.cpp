@@ -93,7 +93,7 @@ namespace Doremi
                             if(bodyHit == playerID)
                             {
                                 // We acctually did hit the player!!!! Let's kill him!!!!!
-                                int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity);
+                                int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, rayOriginFloat);
                                 // Get the components that we need to change/need to change other stuff
                                 // RigidBodyComponent* rbComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(id);
                                 PhysicsMaterialComponent* matComp = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(id);
@@ -103,7 +103,7 @@ namespace Doremi
                                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(id, rayOriginFloat, XMFLOAT4(0, 0, 0, 1),
                                                                                                            XMFLOAT3(0.25, 0.25, 0.25), matComp->p_materialID);
                                 // Add a force to the body TODOXX should not be hard coded the force amount
-                                direction *= 1000.0f;
+                                direction *= 1500.0f;
                                 XMFLOAT3 force;
                                 XMStoreFloat3(&force, direction);
                                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
