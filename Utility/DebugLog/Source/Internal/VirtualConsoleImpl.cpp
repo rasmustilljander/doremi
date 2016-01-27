@@ -70,7 +70,7 @@ namespace Utility
             GetModuleFileNameW(hModule, applicationPath, MAX_PATH); // Get the path to this executable.
 
             std::wstring path = std::wstring(applicationPath); // Put the path into a string
-            path = std::wstring(path.begin(), path.end() - 10); // TODORT, This only works for server.exe and client.exe as it's 10 characters.
+            path = std::wstring(path.begin(), path.end() - 10); // TODOXX, This only works for server.exe and client.exe as it's 10 characters.
             path.append(L"ConsoleApplication.exe"); // Add the name of the desired application instead
             m_consoleApplicationPath = path;
         }
