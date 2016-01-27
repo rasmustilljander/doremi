@@ -9,15 +9,18 @@ template <class T> class StorageShelf
 {
 public:
     static StorageShelf<T>* GetInstance();
-    T mItems[MAX_NUM_ENTITIES];
+    T* mItems;
 
     // TODOCM bad solution to swap pointers of singleton, fix when there's time
     void SetSingleton(void* p_pointer);
 
+    T* GetPointerToArray() { return mItems; }
+
+    void SetPointerToArray(T* p_InPointer) { mItems = p_InPointer; }
+
 private:
     StorageShelf();
     ~StorageShelf();
-
     static StorageShelf<T>* mSingleton;
 };
 
@@ -36,7 +39,7 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
 
 template <class T> void StorageShelf<T>::SetSingleton(void* p_pointer) { mSingleton = (StorageShelf<T>*)p_pointer; }
 
-template <class T> StorageShelf<T>::StorageShelf() {}
+template <class T> StorageShelf<T>::StorageShelf() { mItems = new T[MAX_NUM_ENTITIES](); }
 
 template <class T> StorageShelf<T>::~StorageShelf() {}
 
@@ -81,5 +84,31 @@ template <class T, class U> static void CloneShelf()
     StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
 
     // Memcpy
+    // TODO could take parameter of how many entities we have active
     memcpy(tSecondShelf, tFirstShelf, sizeof(T) * MAX_NUM_ENTITIES);
+}
+
+/**
+    TODOCM doc
+*/
+template <class T, class U, class V> static void RotateShelfs()
+{
+    if(sizeof(T) != sizeof(U) || sizeof(T) != sizeof(V))
+    {
+        std::runtime_error("Attempting to memcpy two different sized shelfs!");
+    }
+    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
+    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
+    StorageShelf<V>* tThirdShelf = tThirdShelf->GetInstance();
+
+
+    // Get Pointers
+    T* tFirstArray = tFirstShelf->GetInstance()->GetPointerToArray();
+    U* tSecondArray = tSecondShelf->GetInstance()->GetPointerToArray();
+    V* tThirdArray = tThirdShelf->GetInstance()->GetPointerToArray();
+
+
+    tFirstShelf->SetPointerToArray(tFirstArray);
+    tSecondShelf->SetPointerToArray(tSecondArray);
+    tThirdShelf->SetPointerToArray(tThirdArray);
 }

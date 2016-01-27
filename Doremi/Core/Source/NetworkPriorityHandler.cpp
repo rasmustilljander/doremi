@@ -5,6 +5,7 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <algorithm>
+#include <iostream>
 
 
 namespace Doremi
@@ -31,6 +32,8 @@ namespace Doremi
             size_t lastEntityID = t_entityHandler.GetLastEntityIndex();
             DirectX::XMVECTOR t_playerPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(p_playerID)->position));
 
+            int counter = 0;
+
             // Update all priorities
             for(size_t i = 0; i < lastEntityID; i++)
             {
@@ -38,19 +41,21 @@ namespace Doremi
                 {
                     NetworkObjectComponent* netObject = &m_netPriorityObjects[i];
 
-                    // Update priority
-                    netObject->UpdatePriorityFromPlayer();
 
                     // How will we see if it's active or not, we can see if position changed, velocity changed?
                     if(t_entityHandler.HasComponents(i, (int)ComponentType::RigidBody))
                     {
-                        if(t_rigidManager.IsSleeping(GetComponent<RigidBodyComponent>(i)->p_bodyID))
+                        if(t_rigidManager.IsSleeping(i))
                         {
                             // If we're sleeping set to sleepiong
                             netObject->SetFramePriorityBySleep();
+                            counter++;
                             continue;
                         }
                     }
+
+                    // Update priority
+                    netObject->UpdatePriorityFromPlayer();
 
                     // Get position of object
                     DirectX::XMVECTOR t_objectPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(i)->position));
@@ -71,6 +76,9 @@ namespace Doremi
             // Fill with ID
             for(size_t i = 0; i < lastEntityID; i++)
             {
+                // TODOCM might put in !t_rigidManager.IsSleeping(i) here ,
+                // however if we spawn a lot of objects those objects who were excluded during this time might not recieve their final position update
+                // TODOCM if we want ever lasting objects on the ground we will need to exclude probobly
                 if(t_entityHandler.HasComponents(i, (int)ComponentType::NetworkObject))
                 {
                     m_idByPriorityList.push_back(i);
@@ -85,6 +93,7 @@ namespace Doremi
         void NetworkPriorityHandler::UpdateNetworkObject(const EntityID& p_entityID)
         {
             memcpy(&m_netPriorityObjects[p_entityID], GetComponent<NetworkObjectComponent>(p_entityID), sizeof(NetworkObjectComponent));
+            m_netPriorityObjects[p_entityID].AddPriorityForNewMovement();
         }
 
         void NetworkPriorityHandler::WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)

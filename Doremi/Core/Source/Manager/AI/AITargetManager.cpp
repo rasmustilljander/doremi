@@ -33,9 +33,9 @@ namespace Doremi
             static int debug = 0;
             static double totTime = 0;
             totTime += p_dt;
-            if(totTime > 5)
+            if(totTime > 0.5f)
             {
-                totTime -= 5;
+                totTime -= 0.5f;
             }
             else
             {

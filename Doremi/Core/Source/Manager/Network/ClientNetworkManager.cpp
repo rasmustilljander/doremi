@@ -223,7 +223,7 @@ namespace Doremi
                 // Read number of existing players
                 uint32_t numPlayers = Streamer.ReadUnsignedInt32();
 
-                for(size_t i = 0; i < numPlayers; i++)
+                for(size_t i = 0; i < numPlayers; ++i)
                 {
                     entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity);
                 }

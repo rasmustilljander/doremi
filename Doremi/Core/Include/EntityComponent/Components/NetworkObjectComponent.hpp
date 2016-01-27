@@ -3,6 +3,7 @@
 #include <minmax.h>
 
 #define PRIORITY_DISTANCE_DIV_FACTOR 10.0f
+#define PRIORITY_FROM_SPAWN 100000.0f
 
 namespace Doremi
 {
@@ -53,6 +54,8 @@ namespace Doremi
                     FramePriority = 0;
                 }
             }
+
+            void AddPriorityForNewMovement() { Priority += PRIORITY_FROM_SPAWN; }
 
             /**
                 TODOCM doc
