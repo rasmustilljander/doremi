@@ -25,8 +25,12 @@ namespace DoremiEngine
             float m_launchPressure;
             // How many particles are emitted per second
             float m_emissionRate;
-            // How dense the particles are packed
+            // How dense the particles are packed UNUSED TODOJB remove?
             float m_density;
+            // The number of particles spawned along the local X axis
+            int m_numParticlesX;
+            // The number of particles spawned along the local Y axis
+            int m_numParticlesY;
             // How wide and high the emission area is in radians
             XMFLOAT2 m_emissionAreaDimensions;
         };

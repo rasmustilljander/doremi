@@ -139,11 +139,13 @@ namespace DoremiEngine
                     vector<XMFLOAT3> velocities;
                     vector<XMFLOAT3> positions;
                     vector<int> indices;
+                    int halfParticlesx = m_this.m_numParticlesX / 2;
+                    int halfParticlesy = m_this.m_numParticlesY / 2;
                     /// Time for more particles!
                     /// These particles will be spawned in a sort of grid (atm)
-                    for(int x = -m_this.m_density; x < m_this.m_density * 2 - 1; x++)
+                    for(int x = -halfParticlesx; x < halfParticlesx; x++)
                     {
-                        for(int y = -m_this.m_density; y < m_this.m_density * 2; y++)
+                        for(int y = -halfParticlesy; y < halfParticlesy; y++)
                         {
                             // Calculate angles in local space
                             float xAngle = (x / m_this.m_density) * m_this.m_emissionAreaDimensions.x;
@@ -156,7 +158,7 @@ namespace DoremiEngine
                             XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
                             particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatWorld);
                             // Multiply with pressure
-                            particleVelocityVec *= m_this.m_launchPressure;
+                            particleVelocityVec *= 1; // m_this.m_launchPressure;
                             // Store in vector
                             XMFLOAT3 velocity;
                             XMStoreFloat3(&velocity, particleVelocityVec);

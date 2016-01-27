@@ -31,7 +31,7 @@ namespace DoremiEngine
             // Update all our emitters
             for(auto it = m_emitters.begin(); it != m_emitters.end(); ++it)
             {
-                it->second->SetParticlesLifeTime(1);
+                it->second->SetParticlesLifeTime(100); // TODOJB ensure this isn't hard-codes
                 it->second->Update(p_dt);
             }
         }
