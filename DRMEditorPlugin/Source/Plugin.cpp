@@ -515,14 +515,10 @@ MaterialInfo outMaterialData(std::string name)
                             else if(name.length() < 100)
                             {
                                 FileMapping::printInfo(mat.name() + " FOUND TEXTURE MAP " + name);
-                                // std::string strname = name.asChar();
-                                for(int i = 0; i < name.length(); i++)
-                                {
-                                    outMat.diffuseTexturePath[i] = name.asChar()[i];
-                                }
-                                outMat.diffuseTexturePath[name.length()] = 0;
+                                outMat.diffuseTexturePath = name.asChar();
+                                // outMat.diffuseTexturePath[name.length()] = 0;
                                 outMat.matData.mapMasks |= (int)bitmask::COLORMAP;
-                                FileMapping::printInfo(outMat.diffuseTexturePath);
+                                FileMapping::printInfo(outMat.diffuseTexturePath.c_str());
                             }
                             else
                             {
@@ -543,6 +539,42 @@ MaterialInfo outMaterialData(std::string name)
                 if(status) plg.getValue(outMat.matData.color[2]);
             }
         }
+        plg = mat.findPlug("incandescence", &status);
+        if(status)
+        {
+            if(plg.isConnected())
+            {
+                MPlugArray plgArray;
+                plg.connectedTo(plgArray, true, false);
+                for(int i = 0; i < plgArray.length(); ++i)
+                {
+                    if(plgArray[i].node().apiType() == MFn::kFileTexture)
+                    {
+                        MFnDependencyNode glowTexture(plgArray[i].node());
+                        plg = glowTexture.findPlug("fileTextureName", &status);
+                        MString name = plg.asString();
+                        if(name.length() < 1)
+                        {
+                            FileMapping::printWarning(mat.name() + "TEXTURE PATH NOT SET");
+                            outMat.diffuseTexturePath[0] = 0;
+                        }
+                        else if(name.length() < 100)
+                        {
+                            FileMapping::printInfo(mat.name() + " FOUND GLOW MAP " + name);
+                            outMat.glowTexturePath = name.asChar();
+                            FileMapping::printInfo(outMat.glowTexturePath.c_str());
+                            outMat.matData.mapMasks |= (int)bitmask::GLOWMAP;
+                        }
+                        else
+                        {
+                            FileMapping::printError(mat.name() + "Glow texture path name too long");
+                        }
+                    }
+                }
+            }
+        }
+
+
         plg = mat.findPlug("specularColor", &status);
         if(status)
         {
@@ -982,7 +1014,7 @@ void mAddNode(std::string name, std::string parentName, int type, int extra = 0,
             }
             if(!exists)
             {
-                MaterialInfo material{name, "", extra};
+                MaterialInfo material{name, "", "", "", "", extra};
                 materialVector.push_back(material);
                 if(debug) FileMapping::printInfo("Added material: " + MString(name.c_str()));
                 mAddMessage(name, msgAdded, nMaterial);
