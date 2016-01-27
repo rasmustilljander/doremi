@@ -57,12 +57,21 @@ namespace DoremiEngine
             XMFLOAT3 GetBodyAngularVelocity(int p_bodyID) override;
             float GetLinearDampening(int p_bodyID) override;
 
+            std::vector<int>& GetRecentlyWokenObjects() override;
+            std::vector<int>& GetRecentlySleepingObjects() override;
+
             bool IsSleeping(int p_bodyID) override;
 
             void RemoveBody(int p_bodyID) override;
 
-            // Internal methods not used via interface (only used in module)
+            /// Internal methods not used via interface (only used in module)
             unordered_map<PxRigidActor*, int>& GetIDsByBodies();
+            // Set methods called from the callback method in PhysicsModuleImplementation
+            void SetRecentlyWokenObjects(PxActor** p_actors, int p_count);
+            void SetRecentlySleepingObjects(PxActor** p_actors, int p_count);
+            // Clears the above lists. Called from PhysicsModuleImplementation before each fetchResults
+            void ClearRecentlyWakeStatusLists();
+
 
         private:
             InternalPhysicsUtils& m_utils;
@@ -73,6 +82,8 @@ namespace DoremiEngine
             // unordered_map<int, PxRigidStatic*> m_staticBodies;
             unordered_map<int, PxRigidActor*> m_bodies;
             unordered_map<PxRigidActor*, int> m_IDsByBodies;
+            vector<int> m_recentlyWokenObjects;
+            vector<int> m_recentlySleepingObjects;
         };
     }
 }

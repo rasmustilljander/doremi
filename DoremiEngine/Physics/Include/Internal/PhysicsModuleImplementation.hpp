@@ -81,9 +81,9 @@ namespace DoremiEngine
             // NOT USED
             virtual void onConstraintBreak(PxConstraintInfo*, PxU32) {}
             // NOT USED
-            virtual void onWake(PxActor**, PxU32) {}
+            virtual void onWake(PxActor**, PxU32);
             // NOT USED
-            virtual void onSleep(PxActor**, PxU32) {}
+            virtual void onSleep(PxActor**, PxU32);
             /// End PxSimulationEventCallback
 
             /// Implements PxUserCharacterControlCallback

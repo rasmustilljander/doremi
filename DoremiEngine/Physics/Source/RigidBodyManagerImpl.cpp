@@ -21,6 +21,8 @@ namespace DoremiEngine
             PxTransform transform = PxTransform(position, orientation);
             // This body is dynamic
             PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
+            // Hard coded flag so that we trigger the onSleep and onAwake callbacks for all dynamic bodies
+            body->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
             // Create a shape for the body
             body->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
@@ -345,6 +347,9 @@ namespace DoremiEngine
 
         float RigidBodyManagerImpl::GetLinearDampening(int p_bodyID) { return ((PxRigidDynamic*)m_bodies[p_bodyID])->getLinearDamping(); }
 
+        std::vector<int>& RigidBodyManagerImpl::GetRecentlyWokenObjects() { return m_recentlyWokenObjects; }
+        std::vector<int>& RigidBodyManagerImpl::GetRecentlySleepingObjects() { return m_recentlySleepingObjects; }
+
         bool RigidBodyManagerImpl::IsSleeping(int p_bodyID)
         {
             if(m_bodies.find(p_bodyID) == m_bodies.end())
@@ -371,5 +376,32 @@ namespace DoremiEngine
         }
 
         unordered_map<PxRigidActor*, int>& RigidBodyManagerImpl::GetIDsByBodies() { return m_IDsByBodies; }
+
+        void RigidBodyManagerImpl::SetRecentlyWokenObjects(PxActor** p_actors, int p_count)
+        {
+            for(size_t i = 0; i < p_count; i++)
+            {
+                if(p_actors[i]->isRigidBody())
+                {
+                    m_recentlyWokenObjects.push_back(m_IDsByBodies.find((PxRigidActor*)p_actors[i])->second);
+                }
+            }
+        }
+        void RigidBodyManagerImpl::SetRecentlySleepingObjects(PxActor** p_actors, int p_count)
+        {
+            for(size_t i = 0; i < p_count; i++)
+            {
+                if(p_actors[i]->isRigidBody())
+                {
+                    m_recentlySleepingObjects.push_back(m_IDsByBodies.find((PxRigidActor*)p_actors[i])->second);
+                }
+            }
+        }
+
+        void RigidBodyManagerImpl::ClearRecentlyWakeStatusLists()
+        {
+            m_recentlySleepingObjects.clear();
+            m_recentlyWokenObjects.clear();
+        }
     }
 }
