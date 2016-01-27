@@ -88,13 +88,17 @@ void CS_main(ComputeShaderInput input)
     //float2 texCoord = float2((float)input.dispatchThreadID.x/(float)numTrheads.x, (float)input.dispatchThreadID.y / (float)numTrheads.y);
     //float fDepth = DepthTextureVS.Sample(ObjSamplerState, texCoord);
 
-    //render depth to back buffer
-    backbuffer[input.dispatchThreadID.xy] = float4(fDepth, fDepth, fDepth, 1);
+    
 
     uint uDepth = asuint(fDepth);   // reinterpret as int since atomic operations cannot be performed on floats
 
     if (input.groupIndex == 0) // Avoid contention by other threads in the group.
     {
+        if (input.groupID.x == 0 && input.groupID.y == 0)
+        {
+            o_LightIndexCounter[0] = 0;
+            t_LightIndexCounter[0] = 0;
+        }
         uMinDepth = 0xffffffff;
         uMaxDepth = 0;
         o_LightCount = 0;
@@ -127,7 +131,7 @@ void CS_main(ComputeShaderInput input)
 
     int i = 0;
     // Cull lights
-    // Each thread in a group will cull 1 light until all lights have been culled.
+    // Each thread in a group will cull 1 light until all lights have been culled.  
     for (i = input.groupIndex; i < NUM_LIGHTS; i += BLOCK_SIZE * BLOCK_SIZE)
     {
         if (lights[i].enabled)
@@ -137,8 +141,7 @@ void CS_main(ComputeShaderInput input)
             switch (light.type)
             {
             case 3: //pointlight
-
-                Sphere sphere = { light.position.xyz, light.intensity }; //TODORK change intensity to light range
+                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 50.f}; //TODORK change intensity to light range
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
@@ -155,7 +158,7 @@ void CS_main(ComputeShaderInput input)
                 break;
             case 2: //spot light
 
-                float coneRadius = tan(radians(light.coneAngle)) * light.intensity; //TODORK change intensity to light range
+                float coneRadius = tan(radians(light.coneAngle)) * light.intensity * 50; //TODORK change intensity to light range
                 Cone cone = { light.position.xyz, light.intensity, light.direction.xyz, coneRadius };
                 if (ConeInsideFrustum(cone, GroupFrustum, nearClipVS, maxDepthVS))
                 {
@@ -222,4 +225,6 @@ void CS_main(ComputeShaderInput input)
         t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
     }
 
+    //render depth to back buffer
+    //backbuffer[input.dispatchThreadID.xy] = float4(((float)o_LightCount) / 7.0f, ((float)o_LightCount)/ 7.0f, ((float)o_LightCount) / 7.0f,1.0f);
 }

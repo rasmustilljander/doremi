@@ -14,13 +14,24 @@ void CS_main(ComputeShaderInput input)
     // View space eye position is always at the origin.
     const float3 eyePos = float3(0, 0, 0);
 
+    float4 screenSpace[4];
+    // Top left point
+    //DEBUG groupID = dispatchThreadID
+    screenSpace[0] = float4(input.groupID.xy * BLOCK_SIZE, -1.0f, 1.0f);
+    // Top right point
+    screenSpace[1] = float4(float2(input.groupID.x + 1, input.groupID.y) * BLOCK_SIZE, -1.0f, 1.0f);
+    // Bottom left point
+    screenSpace[2] = float4(float2(input.groupID.x, input.groupID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
+    // Bottom right point
+    screenSpace[3] = float4(float2(input.groupID.x + 1, input.groupID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
+
     float3 viewSpace[4];
     Frustum frustum;
 
-    viewSpace[0] = ScreenToView(float4(input.dispatchThreadID.xy * BLOCK_SIZE, -1.0f, 1.0f)).xyz;
-    viewSpace[1] = ScreenToView(float4(float2(input.dispatchThreadID.x + 1, input.dispatchThreadID.y) * BLOCK_SIZE, -1.0f, 1.0f)).xyz;
-    viewSpace[2] = ScreenToView(float4(float2(input.dispatchThreadID.x, input.dispatchThreadID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f)).xyz;
-    viewSpace[3] = ScreenToView(float4(float2(input.dispatchThreadID.x + 1, input.dispatchThreadID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f)).xyz;
+    for (int i = 0; i < 4; i++)
+    {
+        viewSpace[i] = ScreenToView(screenSpace[i]).xyz;
+    }
 
 
     // Left plane

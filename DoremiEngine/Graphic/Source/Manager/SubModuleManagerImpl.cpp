@@ -36,6 +36,8 @@ namespace DoremiEngine
             // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
 
             ComputeShader* cshader = m_shaderManager->BuildComputeShader("FrustumComputeShader.hlsl");
+            m_computeShaderManager->DispatchCulling();
+            m_computeShaderManager->DispatchFrustum();
         }
 
         MeshManager& SubModuleManagerImpl::GetMeshManager() { return *m_meshManager; }
