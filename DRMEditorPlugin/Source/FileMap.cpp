@@ -1107,6 +1107,10 @@ MaterialMessage FileMapping::createMessageMaterial(MessageInfo& msginfo, Materia
     MaterialMessage outMsg;
 
     int nodeNameLength = msginfo.nodeName.length();
+    int diffTexLength = mInfo.diffuseTexturePath.length();
+    int glowTexLength = mInfo.glowTexturePath.length();
+    int specTexLength = mInfo.specTexturePath.length();
+
     if(nodeNameLength <= 100)
     {
         for(int i = 0; i < nodeNameLength; i++)
@@ -1120,7 +1124,15 @@ MaterialMessage FileMapping::createMessageMaterial(MessageInfo& msginfo, Materia
     {
         FileMapping::printError("* Node name too long!");
     }
-    memcpy(&outMsg.diffuseTexturePath, &mInfo.diffuseTexturePath, sizeof(char) * 100);
+
+    // Fill Texture path names
+    strcpy(outMsg.diffuseTexturePath, mInfo.diffuseTexturePath.c_str());
+    strcpy(outMsg.glowTexturePath, mInfo.glowTexturePath.c_str());
+    strcpy(outMsg.specTexturePath, mInfo.specTexturePath.c_str());
+    strcpy(outMsg.bumpTexturePath, mInfo.bumpTexturePath.c_str());
+    FileMapping::printInfo("GLOW TEX: " + MString(outMsg.glowTexturePath));
+
+    // memcpy(&outMsg.diffuseTexturePath, &mInfo.diffuseTexturePath, sizeof(char) * 100);
 
     FileMapping::printInfo("TEXTURE PATH: " + MString(outMsg.diffuseTexturePath));
 

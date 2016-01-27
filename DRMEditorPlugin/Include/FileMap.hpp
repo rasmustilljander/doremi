@@ -30,8 +30,9 @@ enum NodeType
 enum class bitmask : int
 {
     COLORMAP = 0x01,
-    SPECULARMAP = 0x02,
-    BUMPMAP = 0x04
+    GLOWMAP = 0x02,
+    SPECMAP = 0x04,
+    BUMPMAP = 0x08
 };
 
 struct MessageHeader
@@ -171,7 +172,10 @@ struct MaterialData
 struct MaterialInfo
 {
     std::string nodeName;
-    char diffuseTexturePath[100];
+    std::string diffuseTexturePath;
+    std::string glowTexturePath;
+    std::string specTexturePath;
+    std::string bumpTexturePath;
     int type;
     MaterialData matData;
 };
@@ -179,6 +183,9 @@ struct MaterialMessage
 {
     char nodeName[100];
     char diffuseTexturePath[100];
+    char glowTexturePath[100];
+    char specTexturePath[100];
+    char bumpTexturePath[100];
     int type;
     MaterialData matData;
 };
