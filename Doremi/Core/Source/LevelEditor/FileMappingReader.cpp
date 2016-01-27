@@ -1,12 +1,12 @@
 #include <Doremi/Core/Include/LevelEditor/FileMappingReader.hpp>
 
-#include <LevelEditor/Core/Include/MessageHeader.hpp>
-#include <LevelEditor/Core/Include/MeshMessage.hpp>
-#include <LevelEditor/Core/Include/NameMessage.hpp>
-#include <LevelEditor/Core/Include/TransformMessage.hpp>
-#include <LevelEditor/Core/Include/MaterialMessage.hpp>
-#include <LevelEditor/Core/Include/LightMessage.hpp>
-#include <LevelEditor/Core/Include/CameraMessage.hpp>
+#include <DoremiEditor/Core/Include/MessageHeader.hpp>
+#include <DoremiEditor/Core/Include/MeshMessage.hpp>
+#include <DoremiEditor/Core/Include/NameMessage.hpp>
+#include <DoremiEditor/Core/Include/TransformMessage.hpp>
+#include <DoremiEditor/Core/Include/MaterialMessage.hpp>
+#include <DoremiEditor/Core/Include/LightMessage.hpp>
+#include <DoremiEditor/Core/Include/CameraMessage.hpp>
 
 namespace Doremi
 {

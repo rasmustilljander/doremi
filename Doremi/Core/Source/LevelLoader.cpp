@@ -30,6 +30,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <DoremiEditor/Core/Include/MaterialData.hpp>
+
 namespace Doremi
 {
     namespace Core
@@ -39,6 +41,7 @@ namespace Doremi
 
         void LevelLoader::LoadMaterial(std::ifstream& ifs, int nrMats)
         {
+            using namespace DoremiEditor::Core;
             // ladda material
             for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
             {
@@ -69,6 +72,7 @@ namespace Doremi
 
         void LevelLoader::LoadTransforms(std::ifstream& ifs, int nrTransforms)
         {
+            using namespace DoremiEditor::Core;
             for(int i = 0; i < nrTransforms; i++)
             {
                 int parentNameSize;
@@ -94,6 +98,7 @@ namespace Doremi
 
         void LevelLoader::LoadMeshes(std::ifstream& ifs, int nrMeshes)
         {
+            using namespace DoremiEditor::Core;
             // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
             for(int i = 0; i < nrMeshes; i++)
             {
@@ -134,29 +139,29 @@ namespace Doremi
 
                 MeshData meshData;
 
-                ifs.read((char*)&meshData.nrPos, sizeof(int));
-                ifs.read((char*)&meshData.nrNor, sizeof(int));
-                ifs.read((char*)&meshData.nrUV, sizeof(int));
-                ifs.read((char*)&meshData.nrI, sizeof(int));
-                ifs.read((char*)&meshData.triangleCount, sizeof(int));
+                ifs.read((char*)&meshData.vertCount, sizeof(int));
+                ifs.read((char*)&meshData.normalCount, sizeof(int));
+                ifs.read((char*)&meshData.UVCount, sizeof(int));
+                ifs.read((char*)&meshData.indCount, sizeof(int));
+                ifs.read((char*)&meshData.triCount, sizeof(int));
 
-                meshData.positions = new XMFLOAT3[meshData.nrPos];
-                meshData.normals = new XMFLOAT3[meshData.nrNor];
-                meshData.uvs = new XMFLOAT2[meshData.nrUV];
+                meshData.positions = new XMFLOAT3[meshData.vertCount];
+                meshData.normals = new XMFLOAT3[meshData.normalCount];
+                meshData.uvs = new XMFLOAT2[meshData.UVCount];
 
-                meshData.indexPositions = new int[meshData.nrI];
-                meshData.indexNormals = new int[meshData.nrI];
-                meshData.indexUVs = new int[meshData.nrI];
-                meshData.trianglesPerFace = new int[meshData.triangleCount];
+                meshData.indexPositions = new int[meshData.indCount];
+                meshData.indexNormals = new int[meshData.indCount];
+                meshData.indexUVs = new int[meshData.indCount];
+                meshData.trianglesPerFace = new int[meshData.triCount];
                 vector<XMFLOAT3> poss;
-                ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.nrPos);
-                ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.nrNor);
-                ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.nrUV);
+                ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.vertCount);
+                ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.normalCount);
+                ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.UVCount);
 
-                ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.nrI);
-                ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
-                ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
-                ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
+                ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.indCount);
+                ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.indCount);
+                ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.indCount);
+                ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triCount);
 
                 m_meshes[meshName] = meshData;
                 // All the transform that this mesh should be placed at and puts it in the coupling vector
@@ -169,6 +174,7 @@ namespace Doremi
 
         void LevelLoader::LoadLights(std::ifstream& ifs, int nrLights)
         {
+            using namespace DoremiEditor::Core;
             m_lights.reserve(nrLights);
             m_lights.resize(nrLights);
             for(int i = 0; i < nrLights; i++)
@@ -183,8 +189,6 @@ namespace Doremi
                 char* transformName = new char[transformNameSize];
                 char* lightName = new char[lightNameSize];
 
-                lightData.transformName = transformName;
-                lightData.lightName = lightName;
                 ifs.read((char*)transformName, sizeof(char) * transformNameSize);
                 ifs.read((char*)lightName, sizeof(char) * lightNameSize);
                 ifs.read((char*)&lightData.type, sizeof(int));
@@ -196,6 +200,7 @@ namespace Doremi
                 ifs.read((char*)&lightData.coneAngle, sizeof(float));
                 ifs.read((char*)&lightData.penumAgle, sizeof(float));
                 m_lights[i] = lightData;
+                m_lightNames[i] = std::pair<char*, char*>(transformName,lightName);
             }
         }
 
@@ -206,8 +211,8 @@ namespace Doremi
             {
                 // Get scale, pos and transform
                 const DirectX::XMFLOAT3 scale = m_transforms[m_meshCoupling[i].transformName].scale;
-                m_currentOrientation = m_transforms[m_meshCoupling[i].transformName].rot;
-                m_currentPos = m_transforms[m_meshCoupling[i].transformName].pos;
+                m_currentOrientation = m_transforms[m_meshCoupling[i].transformName].rotation;
+                m_currentPos = m_transforms[m_meshCoupling[i].transformName].translation;
 
                 // Build vertex list for graphics, and position and index list for physics
                 std::vector<XMFLOAT3> positionPX;
@@ -256,7 +261,7 @@ namespace Doremi
         }
 
 
-        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::ComputeVertexAndPositionAndIndex(const MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
+        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
                                                                                                  std::vector<DirectX::XMFLOAT3>& o_positionPX,
                                                                                                  std::vector<int>& o_indexPX)
         {
@@ -267,8 +272,8 @@ namespace Doremi
             XMVECTOR posVec;
             XMFLOAT3 scaledPos;
 
-            const int nrVertices = p_data.nrNor;
-            for(int i = 0; i < p_data.nrI; i += 3)
+            const int nrVertices = p_data.normalCount;
+            for(int i = 0; i < p_data.indCount; i += 3)
             {
                 //// First
                 // First vertex

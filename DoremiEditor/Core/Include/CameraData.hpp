@@ -1,5 +1,5 @@
 #pragma once
-#include <LevelEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/SharedVariables.hpp>
 
 namespace DoremiEditor
 {

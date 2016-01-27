@@ -141,8 +141,8 @@ namespace Doremi
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityId);
             RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(p_entityId);
 
-            transComp->position = m_transforms[meshCoupling.transformName].pos;
-            transComp->rotation = m_transforms[meshCoupling.transformName].rot;
+            transComp->position = m_transforms[meshCoupling.transformName].translation;
+            transComp->rotation = m_transforms[meshCoupling.transformName].rotation;
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
             DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
@@ -159,11 +159,14 @@ namespace Doremi
         void LevelLoaderClient::BuildLights()
         {
             DoremiEngine::Graphic::LightManager& lightManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager();
+            int i = 0;
             for(auto& light : m_lights)
             {
                 lightManager.AddLight(light.type, light.intensity, light.colorDiffuse, light.coneAngle, light.direction, light.penumAgle,
-                                      m_transforms[light.transformName].pos);
+                                      m_transforms[m_lightNames[i].first].translation);
+                ++i;
             }
+            // TODOXX delete the content of m_lightNames
         }
     }
 }
