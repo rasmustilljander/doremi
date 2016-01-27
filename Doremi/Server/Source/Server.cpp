@@ -32,6 +32,7 @@
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
+#include <Doremi/Core/Include/Manager/DamageManager.hpp>
 // Timer
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
@@ -80,6 +81,7 @@ namespace Doremi
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
         Core::Manager* t_frequencyAffectedObjectManager = new Core::FrequencyAffectedObjectManager(sharedContext);
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext);
+        Core::Manager* t_damageManager = new Core::DamageManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -94,7 +96,7 @@ namespace Doremi
         m_managers.push_back(t_triggerManager);
         m_managers.push_back(t_movementManager); // Must be after gravity/jump
         m_managers.push_back(t_charSyncManager); // Must be after movement
-
+        m_managers.push_back(t_damageManager);
 
         // GenerateWorld(sharedContext);
         // GenerateWorldServerJawsTest(sharedContext);

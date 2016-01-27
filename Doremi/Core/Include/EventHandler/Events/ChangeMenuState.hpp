@@ -3,8 +3,8 @@
 #include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 
 /**
-Only an example of what an event might look like
-Not needed for project. Could be removed when examples are no longer needed*/
+Used for changing the state of the game
+*/
 
 namespace Doremi
 {

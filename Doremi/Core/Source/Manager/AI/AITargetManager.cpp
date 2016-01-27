@@ -1,8 +1,7 @@
 /// Project
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 #include <PlayerHandler.hpp>
-#include <EntityComponent/EntityHandler.hpp>
-#include <EntityComponent/EntityFactory.hpp>
+
 // Components
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
@@ -21,9 +20,6 @@
 // Third party
 #include <DirectXMath.h>
 #include <iostream>
-
-// DEBUG remove
-#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 namespace Doremi
 {
     namespace Core
@@ -108,8 +104,6 @@ namespace Doremi
                                 XMStoreFloat3(&force, direction);
                                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
                                 typeComp->type = EntityType::EnemyBullet;
-
-                                debug++;
                             }
                         }
                     }
