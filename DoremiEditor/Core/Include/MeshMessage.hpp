@@ -1,12 +1,11 @@
 #pragma once
-#include <LevelEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/MeshData.hpp>
 
 namespace DoremiEditor
 {
     namespace Core
     {
-        struct MeshData;
-
         struct MeshMessage
         {
             char objectName[MAX_NAME_SIZE];
@@ -14,7 +13,7 @@ namespace DoremiEditor
             char materialName[MAX_NAME_SIZE];
             int meshID; // kolla ifall denna meshen ska instance draw:as!
             int materialID;
-            MeshData* meshData;
+            MeshData meshData;
         };
     }
 }

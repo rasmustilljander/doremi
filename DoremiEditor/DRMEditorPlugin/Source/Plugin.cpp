@@ -1,4 +1,7 @@
 #include <Plugin.hpp>
+#include <DoremiEditor/Core/Include/MessageType.hpp>
+#include <DoremiEditor/Core/Include/NodeType.hpp>
+#include <DoremiEditor/Core/Include/bitmask.hpp>
 
 // OUT DATA FUNCTIONS
 MeshInfo outMeshData(std::string name, bool getDynamicData)
@@ -103,30 +106,44 @@ MeshInfo outMeshData(std::string name, bool getDynamicData)
     outMesh.meshData.normalCount = mNode.numNormals();
     outMesh.meshData.UVCount = mNode.numUVs();
 
-    outMesh.meshData.vertices = vertices;
-    outMesh.meshData.normals = normals;
+    int j = 0;
+    for(size_t i = 0; i < outMesh.meshData.vertCount; ++i)
+    {
+        outMesh.meshData.positions[i].x = vertices[j];
+        outMesh.meshData.positions[i].y = vertices[j + 1];
+        outMesh.meshData.positions[i].z = vertices[j + 2];
+        j += 3;
+    }
 
-    outMesh.meshData.triPerFace = new int[triCount.length()];
-    triCount.get(outMesh.meshData.triPerFace);
+    j = 0;
+    for(size_t i = 0; i < outMesh.meshData.normalCount; ++i)
+    {
+        outMesh.meshData.normals[i].x = normals[j];
+        outMesh.meshData.normals[i].y = normals[j + 1];
+        outMesh.meshData.normals[i].z = normals[j + 2];
+    }
 
-    outMesh.meshData.uv = new float2[mNode.numUVs()];
+    outMesh.meshData.trianglesPerFace = new int[triCount.length()];
+    triCount.get(outMesh.meshData.trianglesPerFace);
+
+    outMesh.meshData.uvs = new DirectX::XMFLOAT2[mNode.numUVs()];
     for(int i = 0; i < outMesh.meshData.UVCount; i++)
     {
-        outMesh.meshData.uv[i][0] = uArray[i];
-        outMesh.meshData.uv[i][1] = vArray[i];
+        outMesh.meshData.uvs[i].x = uArray[i];
+        outMesh.meshData.uvs[i].y = vArray[i];
     }
 
     outMesh.meshData.indCount = triVerts.length();
     outMesh.meshData.triCount = triCount.length();
 
-    outMesh.meshData.triIndices = new int[outMesh.meshData.indCount];
-    triVerts.get(outMesh.meshData.triIndices);
+    outMesh.meshData.indexPositions = new int[outMesh.meshData.indCount];
+    triVerts.get(outMesh.meshData.indexPositions);
 
-    outMesh.meshData.norIndices = new int[triNorIndices.length()];
-    triNorIndices.get(outMesh.meshData.norIndices);
+    outMesh.meshData.indexNormals = new int[triNorIndices.length()];
+    triNorIndices.get(outMesh.meshData.indexNormals);
 
-    outMesh.meshData.UVIndices = new int[triUVIndices.length()];
-    triUVIndices.get(outMesh.meshData.UVIndices);
+    outMesh.meshData.indexUVs = new int[triUVIndices.length()];
+    triUVIndices.get(outMesh.meshData.indexUVs);
 
     // Prints general mesh data
     if(debug)
@@ -144,14 +161,14 @@ MeshInfo outMeshData(std::string name, bool getDynamicData)
 
             if(i != triCount.length() - 1)
             {
-                triFaceStr += MString() + outMesh.meshData.triPerFace[i] + " , ";
+                triFaceStr += MString() + outMesh.meshData.trianglesPerFace[i] + " , ";
                 // triIndStr += MString() + outMesh.triIndices[i] + "," + MString() + outMesh.norIndices[i] + "," + MString() + outMesh.UVIndices[i] +
                 // ")";
             }
 
             else
             {
-                triFaceStr += MString() + outMesh.meshData.triPerFace[i];
+                triFaceStr += MString() + outMesh.meshData.trianglesPerFace[i];
                 // triIndStr += MString() + outMesh.triIndices[i] + "," + MString() + outMesh.norIndices[i] + "," + MString() + outMesh.UVIndices[i] +
                 // ")";
             }
@@ -167,22 +184,22 @@ MeshInfo outMeshData(std::string name, bool getDynamicData)
             for(int i = 0; i + 3 < outMesh.meshData.indCount; i += 3)
             {
                 triIndStr += "(";
-                triIndStr += ("(" + MString() + outMesh.meshData.triIndices[i + 2] + "," + MString() + outMesh.meshData.norIndices[i + 2] + "," +
-                              MString() + outMesh.meshData.UVIndices[i + 2] + ")");
-                triIndStr += ("(" + MString() + outMesh.meshData.triIndices[i + 1] + "," + MString() + outMesh.meshData.norIndices[i + 1] + "," +
-                              MString() + outMesh.meshData.UVIndices[i + 1] + ")");
-                triIndStr += ("(" + MString() + outMesh.meshData.triIndices[i] + "," + MString() + outMesh.meshData.norIndices[i] + "," + MString() +
-                              outMesh.meshData.UVIndices[i] + ")");
+                triIndStr += ("(" + MString() + outMesh.meshData.indexPositions[i + 2] + "," + MString() + outMesh.meshData.indexNormals[i + 2] +
+                              "," + MString() + outMesh.meshData.indexUVs[i + 2] + ")");
+                triIndStr += ("(" + MString() + outMesh.meshData.indexPositions[i + 1] + "," + MString() + outMesh.meshData.indexNormals[i + 1] +
+                              "," + MString() + outMesh.meshData.indexUVs[i + 1] + ")");
+                triIndStr += ("(" + MString() + outMesh.meshData.indexPositions[i] + "," + MString() + outMesh.meshData.indexNormals[i] + "," +
+                              MString() + outMesh.meshData.indexUVs[i] + ")");
                 triIndStr += ")\n";
             }
 
-
+            /* TODOJW
             for(int i = 0; i < outMesh.meshData.normalCount * 3; i += 3)
             {
                 iDataStr += "Pos ";
-                iDataStr += "(" + MString() + outMesh.meshData.vertices[i] + " , ";
-                iDataStr += MString() + outMesh.meshData.vertices[i + 1] + " , ";
-                iDataStr += MString() + outMesh.meshData.vertices[i + 2] + ")";
+                iDataStr += "(" + MString() + outMesh.meshData.positions[i] + " , ";
+                iDataStr += MString() + outMesh.meshData.positions[i + 1] + " , ";
+                iDataStr += MString() + outMesh.meshData.positions[i + 2] + ")";
 
                 iDataStr += "Nor ";
                 iDataStr += "(" + MString() + outMesh.meshData.normals[i] + " , ";
@@ -190,9 +207,10 @@ MeshInfo outMeshData(std::string name, bool getDynamicData)
                 iDataStr += MString() + outMesh.meshData.normals[i + 2] + ")";
 
                 iDataStr += "UV ";
-                iDataStr += "(" + MString() + outMesh.meshData.uv[i][0] + " , ";
-                iDataStr += MString() + outMesh.meshData.uv[i][1] + ")\n";
+                iDataStr += "(" + MString() + outMesh.meshData.uvs[i][0] + " , ";
+                iDataStr += MString() + outMesh.meshData.uvs[i][1] + ")\n";
             }
+            */
         }
         FileMapping::printInfo("outMesh Indices per triangle: " + triIndStr);
         if(dbug2) FileMapping::printInfo(iDataStr);
@@ -282,21 +300,20 @@ TransformInfo outTransformData(std::string name)
                     cbNameChange(dagPath.node(), MString(name.c_str()), nullptr);
                 }
 
-
                 MVector trans = mNode.getTranslation(MSpace::kTransform, &result);
-                outTrans.transformData.translation[0] = transM.x;
-                outTrans.transformData.translation[1] = transM.y;
-                outTrans.transformData.translation[2] = transM.z;
+                outTrans.transformData.translation.x = transM.x;
+                outTrans.transformData.translation.y = transM.y;
+                outTrans.transformData.translation.z = transM.z;
                 /*		outTrans.transformData.translation[0] = trans.x;
                         outTrans.transformData.translation[1] = trans.y;
                         outTrans.transformData.translation[2] = trans.z;*/
 
                 double rots[4];
                 mNode.getRotationQuaternion(rots[0], rots[1], rots[2], rots[3], MSpace::kTransform);
-                outTrans.transformData.rotation[0] = rotsM[0] * -1.0f;
-                outTrans.transformData.rotation[1] = rotsM[1] * -1.0f;
-                outTrans.transformData.rotation[2] = rotsM[2] * -1.0f;
-                outTrans.transformData.rotation[3] = rotsM[3] * -1.0f;
+                outTrans.transformData.rotation.x = rotsM[0] * -1.0f;
+                outTrans.transformData.rotation.y = rotsM[1] * -1.0f;
+                outTrans.transformData.rotation.z = rotsM[2] * -1.0f;
+                outTrans.transformData.rotation.w = rotsM[3] * -1.0f;
                 /*outTrans.transformData.rotation[0] = rots[0];
                 outTrans.transformData.rotation[1] = rots[1];
                 outTrans.transformData.rotation[2] = rots[2];
@@ -304,9 +321,9 @@ TransformInfo outTransformData(std::string name)
 
                 double scale[3];
                 mNode.getScale(scale);
-                outTrans.transformData.scale[0] = scaleM[0];
-                outTrans.transformData.scale[1] = scaleM[1];
-                outTrans.transformData.scale[2] = scaleM[2];
+                outTrans.transformData.scale.x = scaleM[0];
+                outTrans.transformData.scale.y = scaleM[1];
+                outTrans.transformData.scale.z = scaleM[2];
                 /*outTrans.transformData.scale[0] = scale[0];
                 outTrans.transformData.scale[1] = scale[1];
                 outTrans.transformData.scale[2] = scale[2];*/
@@ -367,20 +384,20 @@ CameraInfo outCameraData(std::string name)
             double fov = mNode.verticalFieldOfView();
 
 
-            outCam.camData.isOrtho = isOrtho;
+            outCam.cameraData.isOrtho = isOrtho;
             if(isOrtho)
             {
-                outCam.camData.hAngle = mNode.orthoWidth();
+                outCam.cameraData.hAngle = mNode.orthoWidth();
             }
             else
             {
-                outCam.camData.hAngle = fov;
+                outCam.cameraData.hAngle = fov;
             }
             for(int i = 0; i < 3; i++)
             {
-                outCam.camData.rightVector[i] = right[i];
-                outCam.camData.target[i] = dir[i];
-                outCam.camData.upVector[i] = up[i];
+                outCam.cameraData.rightVector[i] = right[i];
+                outCam.cameraData.target[i] = dir[i];
+                outCam.cameraData.upVector[i] = up[i];
             }
 
             if(debug)
@@ -389,7 +406,7 @@ CameraInfo outCameraData(std::string name)
                 FileMapping::printInfo("Dir(" + MString() + dir.x + " , " + MString() + dir.y + " , " + MString() + dir.z + ")");
                 FileMapping::printInfo("Up(" + MString() + up.x + " , " + MString() + up.y + " , " + MString() + up.z + ")");
                 FileMapping::printInfo("Orthographic: " + MString() + isOrtho);
-                FileMapping::printInfo("Horizontal fov / Orthographic width: " + MString() + outCam.camData.hAngle);
+                FileMapping::printInfo("Horizontal fov / Orthographic width: " + MString() + outCam.cameraData.hAngle);
             }
         }
     }
@@ -1939,11 +1956,11 @@ void cbMessageTimer(float elapsedTime, float lastTime, void* clientData)
                                            msgTypeVector[msgQueue.front().msgType].c_str() + " Mesh)");
                     if(fileMap.tryWriteMesh(msgQueue.front(), outMesh) == true)
                     {
-                        delete[] outMesh.meshData.uv;
-                        delete[] outMesh.meshData.triIndices;
-                        delete[] outMesh.meshData.norIndices;
-                        delete[] outMesh.meshData.UVIndices;
-                        delete[] outMesh.meshData.triPerFace;
+                        delete[] outMesh.meshData.uvs;
+                        delete[] outMesh.meshData.indexPositions;
+                        delete[] outMesh.meshData.indexNormals;
+                        delete[] outMesh.meshData.indexUVs;
+                        delete[] outMesh.meshData.trianglesPerFace;
                         FileMapping::printInfo("*** MESSAGE Result( " + MString(msgQueue.front().nodeName.c_str()) + " ): Success");
                         msgQueue.pop();
                     }

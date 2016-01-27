@@ -1,6 +1,6 @@
 #pragma once
-#include <LevelEditor/Core/Include/SharedVariables.hpp>
-#include <LevelEditor/Core/Include/CustomAttributes.hpp>
+#include <DoremiEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/CustomAttributes.hpp>
 #include <DirectXMath.h>
 
 namespace DoremiEditor
@@ -9,8 +9,8 @@ namespace DoremiEditor
     {
         struct TransformData
         {
-            DirectX::XMFLOAT2 pos;
-            DirectX::XMFLOAT4 rot;
+            DirectX::XMFLOAT3 translation;
+            DirectX::XMFLOAT4 rotation;
             DirectX::XMFLOAT3 scale;
             CustomAttributes attributes;
         };

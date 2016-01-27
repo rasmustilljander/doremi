@@ -1,6 +1,6 @@
 #pragma once
-#include <LevelEditor/Core/Include/SharedVariables.hpp>
-#include <LevelEditor/Core/Include/LightData.hpp>
+#include <DoremiEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/LightData.hpp>
 
 namespace DoremiEditor
 {

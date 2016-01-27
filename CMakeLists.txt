@@ -102,10 +102,7 @@ if(BUILD_UNIT_TEST_BUILD)
 	add_subdirectory(UnitTest)
 endif()
 
-add_subdirectory(LevelEditor)
-if(BUILD_DRM_EDITOR_PLUGIN)
-	add_subdirectory(DRMEditorPlugin)
-endif()
+add_subdirectory(DoremiEditor)
 
 # Copy game resources
 add_custom_target(_resourceCopy ALL

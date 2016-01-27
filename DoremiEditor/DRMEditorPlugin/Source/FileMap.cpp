@@ -1,4 +1,5 @@
 #include <FileMap.hpp>
+#include <DoremiEditor/Core/Include/MessageType.hpp>
 
 
 FileMapping::FileMapping()
@@ -413,19 +414,19 @@ bool FileMapping::writeMesh(MessageHeader& hdr, MeshMessage& mdata, int config)
             tempHead += sizeof(char) * 300;
             memcpy((unsigned char*)mMessageData + localHead + tempHead, &mdata+sizeof(int)*2+300, sizeof(int) * 5);
             tempHead += sizeof(int) * 5;*/
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.vertices, sizeof(float) * 3 * mdata.meshData.vertCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.positions, sizeof(float) * 3 * mdata.meshData.vertCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.vertCount;
             memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.normals, sizeof(float) * 3 * mdata.meshData.normalCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.normalCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.uv, sizeof(float) * 2 * mdata.meshData.UVCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.uvs, sizeof(float) * 2 * mdata.meshData.UVCount);
             tempHead += sizeof(float) * 2 * mdata.meshData.UVCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.triIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexPositions, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.norIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexNormals, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.UVIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexUVs, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.triPerFace, sizeof(int) * mdata.meshData.triCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.trianglesPerFace, sizeof(int) * mdata.meshData.triCount);
             tempHead += sizeof(int) * mdata.meshData.triCount;
 
             FileMapping::printInfo("***** (CFG " + MString() + cfg + ") " + MString() + (tempHead + hdr.bytePadding) + " " + MString() + hdr.byteTotal);
@@ -471,19 +472,19 @@ bool FileMapping::writeMesh(MessageHeader& hdr, MeshMessage& mdata, int config)
             memcpy((unsigned char*)mMessageData + localHead + tempHead, &mdata.meshData.triCount, sizeof(int));
             tempHead += sizeof(int);
 
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.vertices, sizeof(float) * 3 * mdata.meshData.vertCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.positions, sizeof(float) * 3 * mdata.meshData.vertCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.vertCount;
             memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.normals, sizeof(float) * 3 * mdata.meshData.normalCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.normalCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.uv, sizeof(float) * 2 * mdata.meshData.UVCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.uvs, sizeof(float) * 2 * mdata.meshData.UVCount);
             tempHead += sizeof(float) * 2 * mdata.meshData.UVCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.triIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexPositions, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.norIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexNormals, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.UVIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.indexUVs, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.triPerFace, sizeof(int) * mdata.meshData.triCount);
+            memcpy((unsigned char*)mMessageData + localHead + tempHead, mdata.meshData.trianglesPerFace, sizeof(int) * mdata.meshData.triCount);
             tempHead += sizeof(int) * mdata.meshData.triCount;
 
             FileMapping::printInfo("***** (CFG " + MString() + cfg + ") " + MString() + (tempHead + hdr.bytePadding) + " " + MString() + hdr.byteTotal);
@@ -520,19 +521,19 @@ bool FileMapping::writeMesh(MessageHeader& hdr, MeshMessage& mdata, int config)
             tempHead += sizeof(int);
             memcpy((unsigned char*)mMessageData + localHead + tempHead, &mdata.meshData.triCount, sizeof(int));
             tempHead += sizeof(int);
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.vertices, sizeof(float) * 3 * mdata.meshData.vertCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.positions, sizeof(float) * 3 * mdata.meshData.vertCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.vertCount;
             memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.normals, sizeof(float) * 3 * mdata.meshData.normalCount);
             tempHead += sizeof(float) * 3 * mdata.meshData.normalCount;
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.uv, sizeof(float) * 2 * mdata.meshData.UVCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.uvs, sizeof(float) * 2 * mdata.meshData.UVCount);
             tempHead += sizeof(float) * 2 * mdata.meshData.UVCount;
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.triIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.indexPositions, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.norIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.indexNormals, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.UVIndices, sizeof(int) * mdata.meshData.indCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.indexUVs, sizeof(int) * mdata.meshData.indCount);
             tempHead += sizeof(int) * mdata.meshData.indCount;
-            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.triPerFace, sizeof(int) * mdata.meshData.triCount);
+            memcpy((unsigned char*)mMessageData + tempHead, mdata.meshData.trianglesPerFace, sizeof(int) * mdata.meshData.triCount);
             tempHead += sizeof(int) * mdata.meshData.triCount;
 
             FileMapping::printInfo("***** (CFG " + MString() + cfg + ") " + MString() + (tempHead + hdr.bytePadding) + " " + MString() + hdr.byteTotal);
@@ -992,10 +993,10 @@ MeshMessage FileMapping::createMessageMesh(MessageInfo& msginfo, MeshInfo& mInfo
     {
         for(int i = 0; i < nodeNameLength; i++)
         {
-            msg.nodeName[i] = msginfo.nodeName[i];
+            msg.objectName[i] = msginfo.nodeName[i];
         }
         // msg.nodeName[nodeNameLength] = (char)"\0";
-        msg.nodeName[nodeNameLength] = '\0';
+        msg.objectName[nodeNameLength] = '\0';
     }
     else
     {
@@ -1063,7 +1064,7 @@ TransformMessage FileMapping::createMessageTransform(MessageInfo& msginfo, Trans
     {
         FileMapping::printError("* Transform name too long!");
     }
-    outMsg.trData = tInfo.transformData;
+    outMsg.transformData = tInfo.transformData;
 
 
     return outMsg;
@@ -1099,7 +1100,7 @@ CameraMessage FileMapping::createMessageCamera(MessageInfo& msginfo, CameraInfo&
     {
         FileMapping::printError("* Transform name too long!");
     }
-    outMsg.camData = cInfo.camData;
+    outMsg.cameraData = cInfo.cameraData;
     return outMsg;
 }
 MaterialMessage FileMapping::createMessageMaterial(MessageInfo& msginfo, MaterialInfo& mInfo)
@@ -1136,7 +1137,7 @@ MaterialMessage FileMapping::createMessageMaterial(MessageInfo& msginfo, Materia
 
     FileMapping::printInfo("TEXTURE PATH: " + MString(outMsg.diffuseTexturePath));
 
-    outMsg.matData = mInfo.matData;
+    outMsg.data = mInfo.matData;
 
     return outMsg;
 }

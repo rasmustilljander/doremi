@@ -1,6 +1,6 @@
 #pragma once
-#include <LevelEditor/Core/Include/SharedVariables.hpp>
-#include <LevelEditor/Core/Include/CameraData.hpp>
+#include <DoremiEditor/Core/Include/SharedVariables.hpp>
+#include <DoremiEditor/Core/Include/CameraData.hpp>
 
 namespace DoremiEditor
 {
@@ -8,7 +8,7 @@ namespace DoremiEditor
     {
         struct CameraMessage
         {
-            char objectName[MAX_NAME_SIZE];
+            char nodeName[MAX_NAME_SIZE];
             char transformName[MAX_NAME_SIZE];
             CameraData cameraData;
         };

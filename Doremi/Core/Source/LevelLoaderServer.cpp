@@ -85,8 +85,8 @@ namespace Doremi
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Transform);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityId);
 
-            transComp->position = m_transforms[meshCoupling.transformName].pos;
-            transComp->rotation = m_transforms[meshCoupling.transformName].rot;
+            transComp->position = m_transforms[meshCoupling.transformName].translation;
+            transComp->rotation = m_transforms[meshCoupling.transformName].rotation;
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
             // Adds potential field components to the world

@@ -2,57 +2,24 @@
 #ifndef FILEMAP_H
 #define FILEMAP_H
 
-
 #include <Windows.h>
 #include <ostream>
 #include <iostream>
 
 #include <maya/MGlobal.h>
+#include <DoremiEditor/Core/Include/MessageHeader.hpp>
+#include <DoremiEditor/Core/Include/CameraMessage.hpp>
+#include <DoremiEditor/Core/Include/MaterialMessage.hpp>
+#include <DoremiEditor/Core/Include/MeshMessage.hpp>
+#include <DoremiEditor/Core/Include/TransformMessage.hpp>
+#include <DoremiEditor/Core/Include/MeshData.hpp>
+#include <DoremiEditor/Core/Include/TransformData.hpp>
+#include <DoremiEditor/Core/Include/CameraData.hpp>
+#include <DoremiEditor/Core/Include/MaterialData.hpp>
 
 
-enum MessageType
-{
-    msgAdded = 1,
-    msgEdited = 2,
-    msgDeleted = 3,
-    msgRenamed = 4,
-    msgSwitched = 5
-};
-enum NodeType
-{
-    nDefaultNode = 0,
-    nMesh = 1,
-    nTransform = 2,
-    nCamera = 3,
-    nLight = 4,
-    nMaterial = 5
-};
-enum class bitmask : int
-{
-    COLORMAP = 0x01,
-    GLOWMAP = 0x02,
-    SPECMAP = 0x04,
-    BUMPMAP = 0x08
-};
+using namespace DoremiEditor::Core;
 
-struct MessageHeader
-{
-    MessageHeader()
-    {
-        nodeType = 0;
-        messageType = 0;
-        msgConfig = 0;
-        byteTotal = 0;
-        byteSize = 0;
-        bytePadding = 0;
-    }
-    int nodeType;
-    int messageType;
-    int msgConfig;
-    size_t byteTotal;
-    size_t byteSize;
-    size_t bytePadding;
-};
 struct MessageInfo
 {
     std::string nodeName;
@@ -71,46 +38,13 @@ struct RenameDeleteMessage
     char nodeName2[100];
 };
 
-
-struct TransformData
-{
-    float translation[3];
-    float rotation[4];
-    float scale[3];
-};
 struct TransformInfo
 {
     std::string nodeName;
     std::string parentName; // om ingen parent sätt till 0 första bokstav fuck off.
     TransformData transformData;
 };
-struct TransformMessage
-{
-    char nodeName[100];
-    char parentName[100];
-    TransformData trData;
-};
-struct MeshData
-{
-    int vertCount;
-    int normalCount;
-    int UVCount;
-    int indCount;
-    int triCount;
-    // int triCountTotal;
-    const float* vertices;
-    const float* normals;
-    float2* uv;
-    int* triIndices;
-    int* norIndices;
-    int* UVIndices;
-    int* triPerFace;
 
-    ~MeshData()
-    {
-        // delete[] this->triPerFace;
-    }
-};
 struct MeshInfo
 {
     std::string nodeName;
@@ -120,55 +54,13 @@ struct MeshInfo
     int materialID;
     MeshData meshData;
 };
-struct MeshMessage
-{
-    char nodeName[100];
-    char transformName[100];
-    char materialName[100];
-    int meshID;
-    int materialID;
-    MeshData meshData;
-};
-struct CameraData
-{
-    int isOrtho;
-    float target[3];
-    float upVector[3];
-    float rightVector[3];
-    float hAngle;
-};
 struct CameraInfo
 {
     std::string nodeName;
     std::string transformName;
-    CameraData camData;
+    CameraData cameraData;
 };
-struct CameraMessage
-{
-    char nodeName[100];
-    char transformName[100];
-    CameraData camData;
-};
-struct MaterialData
-{
-    MaterialData()
-    {
-        mapMasks = 0;
-        diffuse = 0;
-        color[0] = color[1] = color[2] = 0.0f;
-        ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
-        specColor[0] = specColor[1] = specColor[2] = 0.0f;
-        specCosine = specEccentricity = specRollOff = 0;
-    }
-    int mapMasks;
-    float diffuse;
-    float color[3];
-    float ambColor[3];
-    float specColor[3];
-    float specCosine;
-    float specEccentricity;
-    float specRollOff;
-};
+
 struct MaterialInfo
 {
     std::string nodeName;
@@ -179,16 +71,7 @@ struct MaterialInfo
     int type;
     MaterialData matData;
 };
-struct MaterialMessage
-{
-    char nodeName[100];
-    char diffuseTexturePath[100];
-    char glowTexturePath[100];
-    char specTexturePath[100];
-    char bumpTexturePath[100];
-    int type;
-    MaterialData matData;
-};
+
 struct LightData
 {
     LightData()
