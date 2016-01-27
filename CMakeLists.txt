@@ -102,6 +102,7 @@ if(BUILD_UNIT_TEST_BUILD)
 	add_subdirectory(UnitTest)
 endif()
 
+add_subdirectory(LevelEditor)
 if(BUILD_DRM_EDITOR_PLUGIN)
 	add_subdirectory(DRMEditorPlugin)
 endif()
