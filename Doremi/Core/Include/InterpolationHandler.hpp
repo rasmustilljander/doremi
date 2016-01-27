@@ -22,6 +22,7 @@ namespace Doremi
             SnapshotObject Objects[MAX_OBJECTS_IN_SNAPSHOT];
         };
 
+        static bool SnapObjIDMoreRecent(const SnapshotObject& p_1, const SnapshotObject& p_2) { return p_1.EntityID < p_2.EntityID; }
 
 
         class InterpolationHandler
@@ -46,6 +47,11 @@ namespace Doremi
                 TODOCM doc
             */
             void QueueSnapshot(Snapshot* p_newSnapshot);
+
+            /**
+                TODOCM doc
+            */
+            TransformComponentNext ExtrapolateTransform(TransformComponentOld* p_old, TransformComponentPrevious* p_prev, float alpha);
 
             /**
                 TODOCM doc

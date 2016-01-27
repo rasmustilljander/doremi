@@ -6,6 +6,7 @@
 #include <PlayerHandler.hpp>
 #include <SequenceMath.hpp>
 #include <iostream>
+#include <algorithm>
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 
 namespace Doremi
@@ -99,6 +100,24 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
+        TransformComponentNext InterpolationHandler::ExtrapolateTransform(TransformComponentOld* p_old, TransformComponentPrevious* p_prev, float alpha)
+        {
+            TransformComponentNext o_next;
+
+            // Extrapolate with interpolate function where T is larger then one
+            XMStoreFloat3(&o_next.position, XMVectorLerp(XMLoadFloat3(&p_prev->position), XMLoadFloat3(&p_old->position), alpha));
+
+
+            // Extrapolate orientation
+            // TODOCM not sure if this works or not, if you can extrapolate with SLER
+            XMStoreFloat4(&o_next.rotation, DirectX::XMQuaternionSlerp(XMLoadFloat4(&p_prev->rotation), XMLoadFloat4(&p_prev->rotation), alpha));
+
+            // Extrapolate scale
+            XMStoreFloat3(&o_next.scale, XMVectorLerp(XMLoadFloat3(&p_prev->scale), XMLoadFloat3(&p_old->scale), alpha));
+
+            return o_next;
+        }
+
         void InterpolationHandler::UpdateInterpolationTransforms()
         {
             TIME_FUNCTION_START
@@ -110,7 +129,9 @@ namespace Doremi
             {
                 // Clone so that the changed values are saved
                 // TODOCM maybe change method how to update saved snapshot positions here
-                CloneShelf<TransformComponentNext, TransformComponentPrevious>();
+                // CloneShelf<TransformComponentNext, TransformComponentPrevious>();
+
+                RotateShelfs<TransformComponentPrevious, TransformComponentNext, TransformComponentOld>();
 
                 m_SequenceInterpolationOffset = 0;
 
@@ -151,38 +172,10 @@ namespace Doremi
 
                     m_DelayedSnapshots.erase(iterRemoveStart, iterRemoveEnd);
 
-                    // Loop to the last item (excluding it in the loop because we want to use it if it's the oldest
-                    // for (iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
-                    //{
-                    //    if (sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
-                    //    {
-                    //        // If we find somone that is the same or infront of us
-                    //        break;
-                    //    }
-                    //    else if (m_DelayedSnapshots.size() > 1)
-                    //    {
-                    //        if (amountOfSnapshotBeforCrash == 2)
-                    //        {
-                    //            int a = 3;
-                    //        }
-
-                    //        // If older, we remove it
-                    //        std::list<Snapshot*>::iterator tempIter = m_DelayedSnapshots.erase(--iter.base());
-
-                    //        //std::list<Snapshot*>::iterator tempIter = m_DelayedSnapshots.erase(std::next(iter).base());
-
-                    //        iter = std::list<Snapshot*>::reverse_iterator(tempIter);
-                    //    }
-                    //    else
-                    //    {
-                    //        break;
-                    //    }
-                    //}
-
                     // We somehow need to check if it's the last anyway because of the alpha?
                     Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
 
-                    // std::cout << "New snapshot put" << std::endl;
+                    uint8_t t_prevSequencesToInterpolate = m_NumOfSequencesToInterpolate;
 
                     // If the snapshot we are to use is ahead, we check how far ahead it is, else we just interpolate it one frame
                     if(sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
@@ -198,6 +191,79 @@ namespace Doremi
                     // TODOCM we assume the client and server have the same entities
                     // TODOCM we need in some way be sure that if we remove something we remove it befor adding something, example sending rendudant
                     // data many frames or something
+
+                    // What if we loop through all objects with NetworkObjComp, for all objects we DONT find, we get the next by making a diff between
+                    // the two?
+                    EntityHandler& entityHandler = EntityHandler::GetInstance();
+                    size_t NumEntities = entityHandler.GetLastEntityIndex();
+                    int mask = (int)ComponentType::NetworkObject | (int)ComponentType::Transform;
+
+                    // Sort the objects by ID
+                    std::sort(&SnapshotToUse->Objects[0], &SnapshotToUse->Objects[SnapshotToUse->NumOfObjects - 1], SnapObjIDMoreRecent);
+
+                    uint32_t objectCounter = 0;
+
+                    size_t entityID = 0;
+
+                    float extrapolateAlpha = 1.0f + (float)m_NumOfSequencesToInterpolate / (float)t_prevSequencesToInterpolate;
+
+                    // If there are any objects in snapshot
+                    // TODOCM check if there can be no objects in snapshot, if so remove this check
+                    if(!SnapshotToUse->NumOfObjects)
+                    {
+                        EntityID nextID = SnapshotToUse->Objects[objectCounter].EntityID;
+
+                        // Go through all entities
+                        for(; entityID < NumEntities; entityID++)
+                        {
+                            // If netobject and has transform
+                            if(entityHandler.HasComponents(entityID, mask))
+                            {
+                                // If ID is in snapshot
+                                if(entityID == nextID)
+                                {
+                                    // Set snapshot data to next to use
+                                    *GetComponent<TransformComponentNext>(entityID) = TransformComponentNext(SnapshotToUse->Objects[entityID].Component);
+                                    objectCounter++;
+
+                                    // If there are no objects left
+                                    if(objectCounter == SnapshotToUse->NumOfObjects)
+                                    {
+                                        break;
+                                    }
+
+                                    // Get next ID
+                                    EntityID nextID = SnapshotToUse->Objects[objectCounter].EntityID;
+                                }
+                                else // If not ID we extrapolate
+                                {
+                                    TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
+                                    TransformComponentPrevious* prev = GetComponent<TransformComponentPrevious>(entityID);
+                                    TransformComponentOld* old = GetComponent<TransformComponentOld>(entityID);
+
+                                    // We extrapolate with distance between the values as how many frames they were,
+                                    *next = ExtrapolateTransform(old, prev, extrapolateAlpha);
+                                }
+                            }
+                        }
+                    }
+
+
+                    // Extrapolate remaining
+                    for(; entityID < NumEntities; entityID++)
+                    {
+                        // If netobject and has transform
+                        if(entityHandler.HasComponents(entityID, mask))
+                        {
+                            TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
+                            TransformComponentPrevious* prev = GetComponent<TransformComponentPrevious>(entityID);
+                            TransformComponentOld* old = GetComponent<TransformComponentOld>(entityID);
+
+                            *next = ExtrapolateTransform(old, prev, extrapolateAlpha);
+                        }
+                    }
+
+
                     for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
                     {
                         *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
@@ -212,40 +278,6 @@ namespace Doremi
                     // std::cout << "Lost more then two snapshots?" << std::endl;
                     m_NumOfSequencesToInterpolate = 1;
                 }
-
-                // if(m_DelayedSnapshots.size())
-                //{
-                //    // Pick the snapshot to update with
-                //    Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
-
-                //    uint8_t last = m_NumOfSequencesToInterpolate;
-                //    // Get the number of sequences to interpolate, will only be more then 1 if we lost any snapshots
-                //    m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
-
-                //    if (m_NumOfSequencesToInterpolate > 150)
-                //    {
-                //        int a = 3;
-                //    }
-
-                //    // Update the new Next transform array
-                //    // TODOCM we assume the client and server have the same entities
-                //    // TODOCM we need in some way be sure that if we remove something we remove it befor adding something, example sending rendudant
-                //    // data many frames or something
-                //    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
-                //    {
-                //        *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) =
-                //        TransformComponentNext(SnapshotToUse->Objects[i].Component);
-                //    }
-
-                //    m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
-                //    m_DelayedSnapshots.pop_back();
-                //    delete SnapshotToUse;
-                //}
-                // else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change
-                //{
-                //    std::cout << "Lost more then two snapshots?" << std::endl;
-                //    m_NumOfSequencesToInterpolate = 1;
-                //}
             }
             else
             {

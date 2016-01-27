@@ -38,5 +38,15 @@ namespace Doremi
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
         };
+
+        struct TransformComponentOld
+        {
+            DirectX::XMFLOAT3 position;
+            DirectX::XMFLOAT4 rotation;
+            DirectX::XMFLOAT3 scale;
+            TransformComponentOld() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+        };
     }
 }
