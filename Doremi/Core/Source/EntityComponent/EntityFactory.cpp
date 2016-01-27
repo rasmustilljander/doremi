@@ -23,6 +23,7 @@
 #include <EntityComponent/Components/LightComponent.hpp>
 #include <EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
+#include <EntityComponent/Components/DamageInflictorsComponent.hpp>
 
 namespace Doremi
 {
@@ -152,6 +153,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::Trigger)
                 {
                     memcpy(GetComponent<TriggerComponent>(tNewEntityID), iter->second, sizeof(TriggerComponent));
+                }
+                else if(iter->first == ComponentType::DamageInflictors)
+                {
+                    memcpy(GetComponent<DamageInflictorsComponent>(tNewEntityID), iter->second, sizeof(DamageInflictorsComponent));
                 }
             }
             return tNewEntityID;
