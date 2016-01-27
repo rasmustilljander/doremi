@@ -105,6 +105,16 @@ namespace DoremiEngine
             virtual bool IsSleeping(int p_body) = 0;
 
             /**
+            Returns a vector with the IDs of all dynamic actors that woke up during
+            the  previous simulation step through some sort of movement or collision*/
+            virtual std::vector<int>& GetRecentlyWokenObjects() = 0;
+
+            /**
+            Returns a vector with the IDs of all dynamic actors that fell asleep in
+            the previous simulation step due to inactivity*/
+            virtual std::vector<int>& GetRecentlySleepingObjects() = 0;
+
+            /**
             Releases the actor
             */
             virtual void RemoveBody(int p_bodyID) = 0;

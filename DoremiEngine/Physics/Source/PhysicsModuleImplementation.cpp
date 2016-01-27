@@ -47,6 +47,7 @@ namespace DoremiEngine
             m_triggerPairs.clear();
             m_utils.m_fluidManager->Update(p_dt);
             m_utils.m_worldScene->simulate(p_dt);
+            m_utils.m_rigidBodyManager->ClearRecentlyWakeStatusLists();
             m_utils.m_worldScene->fetchResults(true);
         }
 
@@ -196,6 +197,16 @@ namespace DoremiEngine
 
                 m_triggerPairs.push_back(collisionPair);
             }
+        }
+
+        void PhysicsModuleImplementation::onWake(PxActor** p_actors, PxU32 p_count)
+        {
+            m_utils.m_rigidBodyManager->SetRecentlyWokenObjects(p_actors, p_count);
+        }
+
+        void PhysicsModuleImplementation::onSleep(PxActor** p_actors, PxU32 p_count)
+        {
+            m_utils.m_rigidBodyManager->SetRecentlySleepingObjects(p_actors, p_count);
         }
 
         void PhysicsModuleImplementation::onShapeHit(const PxControllerShapeHit& hit)
