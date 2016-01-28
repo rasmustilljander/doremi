@@ -9,27 +9,33 @@ namespace DoremiEngine
     {
         /**
         This is used when creating particle emitters
-        Ensure that ALL variables are filled. NO
-        standard values are assigned. YOU HAVE BEEN
-        WARNED!... Really, this is important*/
+        Ensure that ALL variables are filled. This
+        particular particle system spawns a grid of
+        particles which are emitted in a predictable
+        and deterministic manner.
+        NO default values are assigned. YOU HAVE BEEN
+        WARNED!... Really, this is important. Set all
+        variables.*/
         struct ParticleEmitterData
         {
             bool m_active;
             // Position of emitter
             XMFLOAT3 m_position;
-            // Dimensions of emitter
+            // Dimensions of emitter UNUSED TODOJB remove?
             XMFLOAT2 m_dimensions;
             // Direction in which the emitter fires particles
             XMFLOAT4 m_direction;
             // Pressure with which particles are launched (arbitrary unit)
             float m_launchPressure;
-            // How many particles are emitted per second
+            // Time between particles
             float m_emissionRate;
             // How dense the particles are packed UNUSED TODOJB remove?
             float m_density;
-            // The number of particles spawned along the local X axis
+            /* The number of particles spawned along the local X axis
+            Currently even numbers are rounded up*/
             int m_numParticlesX;
-            // The number of particles spawned along the local Y axis
+            /* The number of particles spawned along the local Y axis
+            Currently even numbers are rounded up*/
             int m_numParticlesY;
             // How wide and high the emission area is in radians
             XMFLOAT2 m_emissionAreaDimensions;
