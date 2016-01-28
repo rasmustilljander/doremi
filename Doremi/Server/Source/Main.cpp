@@ -3,25 +3,22 @@
 #include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
 #include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
+
 // Third party
 
 // Standard libraries
 #ifdef _WIN32
 #include <windows.h>
+#include <DbgHelp.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
-#include <DbgHelp.h>
 #else
 #error Platform not supported
 #endif
 #include <exception>
 #include <iostream>
-#include <csignal> // For signal handling
 #include <exception> // std::set_unexpected
-
-// Managing signals
-static void signalHandler(int signum);
 
 // The method called when shutting down
 void attemptGracefulShutdown();
@@ -39,6 +36,9 @@ void startup();
 // Shutdown the important singletons
 void shutdown();
 
+// Controlhandler
+BOOL CtrlHandler(DWORD fdwCtrlType);
+
 void localMain()
 {
     try
@@ -51,12 +51,14 @@ void localMain()
         // TODORT log
         std::cout << "Unhandled exception: " << e.what() << std::endl;
         attemptGracefulShutdown();
+        exit(1);
     }
     catch(...)
     {
         // TODORT log
         std::cout << "Unhandled unknown exception" << std::endl;
         attemptGracefulShutdown();
+        exit(1);
     }
 }
 
@@ -67,13 +69,10 @@ int main(int argc, const char* argv[])
 #error Platform not supported
 #endif
 {
-    // Set shutdown logic
-    signal(SIGINT, signalHandler); // TODORT not sure if signlas are needed.
-    signal(SIGTERM, signalHandler);
-    signal(SIGSEGV, signalHandler);
     std::set_terminate(g_terminate);
     std::set_unexpected(g_unexpected);
     SetErrorMode(SEM_FAILCRITICALERRORS);
+    SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
     // Run startup code
     startup();
@@ -90,6 +89,7 @@ int main(int argc, const char* argv[])
     __except(EXCEPTION_EXECUTE_HANDLER)
     {
         attemptGracefulShutdown();
+        exit(1);
     }
 
     // Run shutdown code
@@ -99,8 +99,6 @@ int main(int argc, const char* argv[])
 
 void g_unexpected() { attemptGracefulShutdown(); }
 void g_terminate() { attemptGracefulShutdown(); }
-
-static void signalHandler(int signum) { attemptGracefulShutdown(); }
 
 void startup()
 {
@@ -115,7 +113,7 @@ void shutdown()
     using namespace Utility::Timer;
     using namespace Utility::DebugLog;
     MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
-    MeasureTimer::GetInstance().DumpData("server_timings");
+    MeasureTimer::GetInstance().DumpData("client_timings");
     ConsoleManager::Shutdown();
 }
 
@@ -126,7 +124,6 @@ void attemptGracefulShutdown()
 #ifdef _DEBUG
     std::cin.get();
 #endif
-    exit(1);
 }
 
 #ifdef _WIN32
@@ -156,4 +153,25 @@ void printStack()
 
     free(symbol);
 }
+
+BOOL CtrlHandler(DWORD fdwCtrlType)
+{
+    switch(fdwCtrlType)
+    {
+        // Handle the CTRL-C signal.
+        case CTRL_C_EVENT:
+            attemptGracefulShutdown();
+            return (TRUE);
+
+        // CTRL-CLOSE: confirm that the user wants to exit.
+        case CTRL_CLOSE_EVENT:
+            attemptGracefulShutdown();
+            return (TRUE);
+
+        default:
+            return FALSE;
+    }
+}
+
+
 #endif
