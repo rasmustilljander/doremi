@@ -157,7 +157,7 @@ namespace DoremiEngine
                         {
                             // Calculate angle in local space
                             float yAngle = ((float)y / (float)m_this.m_numParticlesY) * m_this.m_emissionAreaDimensions.y;
-                            // Define velocity vector in local space
+                            // Calculate velocity vector in local space
                             XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
                             XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(yAngle, xAngle, 0);
                             particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatLocal);
@@ -170,7 +170,7 @@ namespace DoremiEngine
                             XMStoreFloat3(&velocity, particleVelocityVec);
                             velocities.push_back(velocity);
                             // Add position (only emitts from the center of the emitter atm
-                            float launchOffset = 1;
+                            float launchOffset = 1; // Intended hard coded value
                             XMVECTOR positionVec = XMLoadFloat3(&m_this.m_position);
                             positionVec += launchOffset * XMVector3Normalize(particleVelocityVec);
                             XMFLOAT3 position;

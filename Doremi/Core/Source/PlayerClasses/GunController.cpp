@@ -10,6 +10,7 @@
 /// Game
 // Handlers
 #include <EntityComponent/EntityHandler.hpp>
+#include <AudioHandler.hpp>
 // Components
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
@@ -29,8 +30,23 @@ namespace Doremi
 
         void GunController::FireGun(int p_playerID, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
+            /// This is very temporary code to show that we can use frequency to affect beam width
+            float width;
+            // Get current frequency (seems laggy?)
+            float freq = AudioHandler::GetInstance()->GetFrequency();
+            // If there is no frequency, we set the beam to be singular
+            if(freq == 0)
+            {
+                width = 0;
+            }
+            else
+            {
+                // We want a width between 0 and 3.14/2 (90 degrees) sortof. This calculation is VERY non-finished
+                width = (400 - freq) / 200;
+            }
             GetComponent<ParticlePressureComponent>(p_playerID)->data.m_position = GetComponent<TransformComponent>(p_playerID)->position;
             GetComponent<ParticlePressureComponent>(p_playerID)->data.m_direction = GetComponent<TransformComponent>(p_playerID)->rotation;
+            GetComponent<ParticlePressureComponent>(p_playerID)->data.m_emissionAreaDimensions.x = width;
             GetComponent<ParticlePressureComponent>(p_playerID)->data.m_active = true;
             p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_playerID, GetComponent<ParticlePressureComponent>(p_playerID)->data);
         }
