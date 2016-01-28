@@ -151,10 +151,11 @@ namespace DoremiEngine
                     XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
                     for(int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
                     {
+                        // Calculate angle in local space
                         float xAngle = ((float)x / (float)m_this.m_numParticlesX) * m_this.m_emissionAreaDimensions.x;
                         for(int y = -halfParticlesy; y < halfParticlesy + 1; y++)
                         {
-                            // Calculate angles in local space
+                            // Calculate angle in local space
                             float yAngle = ((float)y / (float)m_this.m_numParticlesY) * m_this.m_emissionAreaDimensions.y;
                             // Define velocity vector in local space
                             XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
