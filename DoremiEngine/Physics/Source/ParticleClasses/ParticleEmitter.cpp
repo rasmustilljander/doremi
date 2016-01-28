@@ -139,38 +139,41 @@ namespace DoremiEngine
                     vector<XMFLOAT3> velocities;
                     vector<XMFLOAT3> positions;
                     vector<int> indices;
+                    // TODOJB fix even particle numbers
                     int halfParticlesx = m_this.m_numParticlesX / 2;
                     int halfParticlesy = m_this.m_numParticlesY / 2;
-                    /// Time for more particles!
-                    /// These particles will be spawned in a sort of grid (atm)
-                    for(int x = -halfParticlesx; x < halfParticlesx; x++)
+
+                    /// Calculate new particles
+                    /**
+                    We want a grid generated that is of dimension numParticlesX * numparticlexY.
+                    */
+                    // Calculate matrix to rotate velocity to world space
+                    XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
+                    for(int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
                     {
-                        for(int y = -halfParticlesy; y < halfParticlesy; y++)
+                        float xAngle = ((float)x / (float)m_this.m_numParticlesX) * m_this.m_emissionAreaDimensions.x;
+                        for(int y = -halfParticlesy; y < halfParticlesy + 1; y++)
                         {
                             // Calculate angles in local space
-                            float xAngle = (x / m_this.m_density) * m_this.m_emissionAreaDimensions.x;
-                            float yAngle = (y / m_this.m_density) * m_this.m_emissionAreaDimensions.y;
-                            // Define standard target in local space
+                            float yAngle = ((float)y / (float)m_this.m_numParticlesY) * m_this.m_emissionAreaDimensions.y;
+                            // Define velocity vector in local space
                             XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
-                            XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(xAngle, yAngle, 0);
+                            XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(yAngle, xAngle, 0);
                             particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatLocal);
                             // Move velocity vector into world space
-                            XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
                             particleVelocityVec = XMVector3Transform(particleVelocityVec, rotMatWorld);
                             // Multiply with pressure
-                            particleVelocityVec *= 1; // m_this.m_launchPressure;
+                            particleVelocityVec *= m_this.m_launchPressure;
                             // Store in vector
                             XMFLOAT3 velocity;
                             XMStoreFloat3(&velocity, particleVelocityVec);
                             velocities.push_back(velocity);
-
                             // Add position (only emitts from the center of the emitter atm
-                            float launchOffset = 0.1f;
+                            float launchOffset = 1;
                             XMVECTOR positionVec = XMLoadFloat3(&m_this.m_position);
-                            positionVec += launchOffset * particleVelocityVec;
+                            positionVec += launchOffset * XMVector3Normalize(particleVelocityVec);
                             XMFLOAT3 position;
                             XMStoreFloat3(&position, positionVec);
-
                             positions.push_back(position);
 
                             // Add index (silly way just to make it work atm)
@@ -180,7 +183,6 @@ namespace DoremiEngine
                             m_nextIndex++;
                         }
                     }
-
 
                     if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
                     {
