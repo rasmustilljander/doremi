@@ -32,7 +32,15 @@ namespace Doremi
             size_t lastEntityID = t_entityHandler.GetLastEntityIndex();
             DirectX::XMVECTOR t_playerPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(p_playerID)->position));
 
-            int counter = 0;
+
+            // Check new sleeping objects
+            std::vector<int>& t_objectIDSleeping = t_rigidManager.GetRecentlySleepingObjects();
+            size_t t_numOfObjects = t_objectIDSleeping.size();
+            for(size_t i = 0; i < t_numOfObjects; i++)
+            {
+                m_netPriorityObjects[t_objectIDSleeping[i]].SetToStartSleep();
+            }
+
 
             // Update all priorities
             for(size_t i = 0; i < lastEntityID; i++)
@@ -41,6 +49,12 @@ namespace Doremi
                 {
                     NetworkObjectComponent* netObject = &m_netPriorityObjects[i];
 
+                    // Get position of object
+                    DirectX::XMVECTOR t_objectPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(i)->position));
+
+                    // Get a distance
+                    DirectX::XMFLOAT3 t_length;
+                    DirectX::XMStoreFloat3(&t_length, DirectX::XMVector3Length(DirectX::XMVectorSubtract(t_objectPosVec, t_playerPosVec)));
 
                     // How will we see if it's active or not, we can see if position changed, velocity changed?
                     if(t_entityHandler.HasComponents(i, (int)ComponentType::RigidBody))
@@ -48,8 +62,7 @@ namespace Doremi
                         if(t_rigidManager.IsSleeping(i))
                         {
                             // If we're sleeping set to sleepiong
-                            netObject->SetFramePriorityBySleep();
-                            counter++;
+                            netObject->SetFramePriorityBySleep(t_length.x);
                             continue;
                         }
                     }
@@ -57,12 +70,6 @@ namespace Doremi
                     // Update priority
                     netObject->UpdatePriorityFromPlayer();
 
-                    // Get position of object
-                    DirectX::XMVECTOR t_objectPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(i)->position));
-
-                    // Get a distance
-                    DirectX::XMFLOAT3 t_length;
-                    DirectX::XMStoreFloat3(&t_length, DirectX::XMVector3Length(DirectX::XMVectorSubtract(t_objectPosVec, t_playerPosVec)));
 
                     // If we're not sleeping set frame priority
                     netObject->SetFramePriorityByLength(t_length.x);
@@ -93,7 +100,7 @@ namespace Doremi
         void NetworkPriorityHandler::UpdateNetworkObject(const EntityID& p_entityID)
         {
             memcpy(&m_netPriorityObjects[p_entityID], GetComponent<NetworkObjectComponent>(p_entityID), sizeof(NetworkObjectComponent));
-            m_netPriorityObjects[p_entityID].AddPriorityForNewMovement();
+            m_netPriorityObjects[p_entityID].SetToStartAlive();
         }
 
         void NetworkPriorityHandler::WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)

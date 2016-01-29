@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+
 namespace Doremi
 {
     namespace Core
@@ -37,16 +38,50 @@ namespace Doremi
                 : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1))
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentNext(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot, DirectX::XMFLOAT3 p_scale)
+                : position(p_pos), rotation(p_rot), scale(p_scale)
+            {
+            }
         };
 
-        struct TransformComponentOld
+        struct TransformComponentSnapshotNext
         {
             DirectX::XMFLOAT3 position;
             DirectX::XMFLOAT4 rotation;
             DirectX::XMFLOAT3 scale;
-            TransformComponentOld() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1))
+            uint32_t framesToNextCounter;
+            TransformComponentSnapshotNext()
+                : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNextCounter(0)
+            {
+
+            } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentSnapshotNext(const TransformComponentNext& p_copy)
+            {
+                position = p_copy.position;
+                rotation = p_copy.rotation;
+                scale = p_copy.scale;
+                framesToNextCounter = 0;
+            }
+            void IncrementFrame() { framesToNextCounter++; }
+        };
+
+        struct TransformComponentSnapshotPrevious
+        {
+            DirectX::XMFLOAT3 position;
+            DirectX::XMFLOAT4 rotation;
+            DirectX::XMFLOAT3 scale;
+            uint32_t framesToNext;
+            TransformComponentSnapshotPrevious()
+                : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNext(0)
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentSnapshotPrevious(const TransformComponentNext& p_copy)
+            {
+                position = p_copy.position;
+                rotation = p_copy.rotation;
+                scale = p_copy.scale;
+                framesToNext = 0;
+            }
         };
     }
 }

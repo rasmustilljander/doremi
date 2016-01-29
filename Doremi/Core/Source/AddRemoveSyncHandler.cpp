@@ -114,8 +114,6 @@ namespace Doremi
             // Increase the last one we will use
             m_nextSequence += NumOfSequences;
 
-            std::cout << "Added " << (uint32_t)NumOfSequences << std::endl;
-
             // For the remaining sequences
             while(NumOfSequences)
             {
