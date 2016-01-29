@@ -576,22 +576,22 @@ namespace Doremi
                 counter++; // TODOCM remove test
                 int checkValue;
 
-                if(counter < 2)
+                if(counter < 30)
                 {
                     checkValue = 100;
                 }
                 else
                 {
+
                     counter = -1;
                     checkValue = -1;
                 }
 
                 // TODOCM remove, packet loss experiment
-                int a = rand() % 100;
-                if(a < checkValue)
+
+                if(100 == checkValue)
                 {
-                    /*std::cout << "Dropping packages..." << std::endl;
-                    return;*/
+                    // return;
                 }
             }
 

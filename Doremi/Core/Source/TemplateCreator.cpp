@@ -137,6 +137,8 @@ namespace Doremi
             TIME_FUNCTION_START
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
+
+
             blueprint[ComponentType::Transform] = transComp;
             // Render
             RenderComponent* renderComp = new RenderComponent();

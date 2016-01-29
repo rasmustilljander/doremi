@@ -16,7 +16,7 @@ public:
 
     T* GetPointerToArray() { return mItems; }
 
-    void SetPointerToArray(T* p_InPointer) { mItems = p_InPointer; }
+    void SetPointerToArray(void* p_InPointer) { mItems = (T*)p_InPointer; }
 
 private:
     StorageShelf();
@@ -85,7 +85,7 @@ template <class T, class U> static void CloneShelf()
 
     // Memcpy
     // TODO could take parameter of how many entities we have active
-    memcpy(tSecondShelf, tFirstShelf, sizeof(T) * MAX_NUM_ENTITIES);
+    memcpy(tSecondShelf->mItems, tFirstShelf->mItems, sizeof(T) * MAX_NUM_ENTITIES);
 }
 
 /**
@@ -107,8 +107,29 @@ template <class T, class U, class V> static void RotateShelfs()
     U* tSecondArray = tSecondShelf->GetInstance()->GetPointerToArray();
     V* tThirdArray = tThirdShelf->GetInstance()->GetPointerToArray();
 
+    // Swap arrays
+    tFirstShelf->SetPointerToArray(tThirdArray);
+    tSecondShelf->SetPointerToArray(tFirstArray);
+    tThirdShelf->SetPointerToArray(tSecondArray);
+}
 
-    tFirstShelf->SetPointerToArray(tFirstArray);
-    tSecondShelf->SetPointerToArray(tSecondArray);
-    tThirdShelf->SetPointerToArray(tThirdArray);
+/**
+TODOCM doc
+*/
+template <class T, class U> static void SwapShelfs()
+{
+    if(sizeof(T) != sizeof(U))
+    {
+        std::runtime_error("Attempting to memcpy two different sized shelfs!");
+    }
+    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
+    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
+
+    // Get Pointers
+    T* tFirstArray = tFirstShelf->GetInstance()->GetPointerToArray();
+    U* tSecondArray = tSecondShelf->GetInstance()->GetPointerToArray();
+
+    // Swap arrays
+    tFirstShelf->SetPointerToArray(tSecondShelf);
+    tSecondShelf->SetPointerToArray(tFirstArray);
 }

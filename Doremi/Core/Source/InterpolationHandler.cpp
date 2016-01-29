@@ -100,24 +100,6 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-        TransformComponentNext InterpolationHandler::ExtrapolateTransform(TransformComponentOld* p_old, TransformComponentPrevious* p_prev, float alpha)
-        {
-            TransformComponentNext o_next;
-
-            // Extrapolate with interpolate function where T is larger then one
-            XMStoreFloat3(&o_next.position, XMVectorLerp(XMLoadFloat3(&p_prev->position), XMLoadFloat3(&p_old->position), alpha));
-
-
-            // Extrapolate orientation
-            // TODOCM not sure if this works or not, if you can extrapolate with SLER
-            XMStoreFloat4(&o_next.rotation, DirectX::XMQuaternionSlerp(XMLoadFloat4(&p_prev->rotation), XMLoadFloat4(&p_prev->rotation), alpha));
-
-            // Extrapolate scale
-            XMStoreFloat3(&o_next.scale, XMVectorLerp(XMLoadFloat3(&p_prev->scale), XMLoadFloat3(&p_old->scale), alpha));
-
-            return o_next;
-        }
-
         void InterpolationHandler::UpdateInterpolationTransforms()
         {
             TIME_FUNCTION_START
@@ -125,13 +107,29 @@ namespace Doremi
             // then the one that we should be interpolating towards, we skip
             // cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
             //     << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) << endl;
+
+            EntityHandler& entityHandler = EntityHandler::GetInstance();
+            size_t NumEntities = entityHandler.GetLastEntityIndex();
+            int mask = (int)ComponentType::NetworkObject | (int)ComponentType::Transform;
+
+            for(size_t entityID = 0; entityID < NumEntities; entityID++)
+            {
+                if(entityHandler.HasComponents(entityID, mask))
+                {
+                    // Increment the frame by 1
+                    GetComponent<TransformComponentSnapshotNext>(entityID)->IncrementFrame();
+                }
+            }
+
             if(sequence_more_recent(m_snapshotSequenceReal, m_snapshotSequenceUsed, 255))
             {
                 // Clone so that the changed values are saved
                 // TODOCM maybe change method how to update saved snapshot positions here
-                // CloneShelf<TransformComponentNext, TransformComponentPrevious>();
 
-                RotateShelfs<TransformComponentPrevious, TransformComponentNext, TransformComponentOld>();
+
+                // SwapShelf<TransformComponentPrevious, TransformComponentNext>();
+                CloneShelf<TransformComponentNext, TransformComponentPrevious>();
+
 
                 m_SequenceInterpolationOffset = 0;
 
@@ -175,8 +173,6 @@ namespace Doremi
                     // We somehow need to check if it's the last anyway because of the alpha?
                     Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
 
-                    uint8_t t_prevSequencesToInterpolate = m_NumOfSequencesToInterpolate;
-
                     // If the snapshot we are to use is ahead, we check how far ahead it is, else we just interpolate it one frame
                     if(sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
                     {
@@ -194,56 +190,64 @@ namespace Doremi
 
                     // What if we loop through all objects with NetworkObjComp, for all objects we DONT find, we get the next by making a diff between
                     // the two?
-                    EntityHandler& entityHandler = EntityHandler::GetInstance();
-                    size_t NumEntities = entityHandler.GetLastEntityIndex();
-                    int mask = (int)ComponentType::NetworkObject | (int)ComponentType::Transform;
+
 
                     // Sort the objects by ID
-                    std::sort(&SnapshotToUse->Objects[0], &SnapshotToUse->Objects[SnapshotToUse->NumOfObjects - 1], SnapObjIDMoreRecent);
+                    std::sort(&SnapshotToUse->Objects[0], &SnapshotToUse->Objects[SnapshotToUse->NumOfObjects], SnapObjIDMoreRecent);
 
                     uint32_t objectCounter = 0;
 
                     size_t entityID = 0;
 
-                    float extrapolateAlpha = 1.0f + (float)m_NumOfSequencesToInterpolate / (float)t_prevSequencesToInterpolate;
+                    float extrapolateAlpha = static_cast<float>(m_NumOfSequencesToInterpolate);
 
                     // If there are any objects in snapshot
                     // TODOCM check if there can be no objects in snapshot, if so remove this check
-                    if(!SnapshotToUse->NumOfObjects)
+                    if(SnapshotToUse->NumOfObjects)
                     {
                         EntityID nextID = SnapshotToUse->Objects[objectCounter].EntityID;
 
                         // Go through all entities
                         for(; entityID < NumEntities; entityID++)
                         {
-                            // If netobject and has transform
-                            if(entityHandler.HasComponents(entityID, mask))
+                            // If ID is in snapshot
+                            if(entityID == nextID)
                             {
-                                // If ID is in snapshot
-                                if(entityID == nextID)
+                                // If netobject and has transform
+                                if(entityHandler.HasComponents(entityID, mask))
                                 {
-                                    // Set snapshot data to next to use
-                                    *GetComponent<TransformComponentNext>(entityID) = TransformComponentNext(SnapshotToUse->Objects[entityID].Component);
-                                    objectCounter++;
+                                    // Change old new snapshot to previous snapshot
+                                    *GetComponent<TransformComponentSnapshotPrevious>(entityID) =
+                                        *(TransformComponentSnapshotPrevious*)GetComponent<TransformComponentSnapshotNext>(entityID);
 
-                                    // If there are no objects left
-                                    if(objectCounter == SnapshotToUse->NumOfObjects)
-                                    {
-                                        break;
-                                    }
-
-                                    // Get next ID
-                                    EntityID nextID = SnapshotToUse->Objects[objectCounter].EntityID;
+                                    // Set incomming snapshot data to next to use for interpolation, and snapshot new
+                                    *GetComponent<TransformComponentSnapshotNext>(entityID) =
+                                        TransformComponentSnapshotNext(SnapshotToUse->Objects[objectCounter].Component);
+                                    *GetComponent<TransformComponentNext>(entityID) = TransformComponentNext(SnapshotToUse->Objects[objectCounter].Component);
                                 }
-                                else // If not ID we extrapolate
+
+                                // Increase counter
+                                objectCounter++;
+
+                                // If there are no objects left
+                                if(objectCounter == SnapshotToUse->NumOfObjects)
                                 {
-                                    TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
-                                    TransformComponentPrevious* prev = GetComponent<TransformComponentPrevious>(entityID);
-                                    TransformComponentOld* old = GetComponent<TransformComponentOld>(entityID);
-
-                                    // We extrapolate with distance between the values as how many frames they were,
-                                    *next = ExtrapolateTransform(old, prev, extrapolateAlpha);
+                                    entityID++;
+                                    break;
                                 }
+
+                                // Get next ID
+                                nextID = SnapshotToUse->Objects[objectCounter].EntityID;
+                            }
+
+                            else if(entityHandler.HasComponents(entityID, mask)) // If not ID we extrapolate
+                            {
+                                TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
+                                TransformComponentSnapshotNext* snapNext = GetComponent<TransformComponentSnapshotNext>(entityID);
+                                TransformComponentSnapshotPrevious* snapPrev = GetComponent<TransformComponentSnapshotPrevious>(entityID);
+
+                                // We extrapolate with distance between the values as how many frames they were,
+                                *next = ExtrapolateTransform(snapPrev, snapNext, extrapolateAlpha);
                             }
                         }
                     }
@@ -256,18 +260,15 @@ namespace Doremi
                         if(entityHandler.HasComponents(entityID, mask))
                         {
                             TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
-                            TransformComponentPrevious* prev = GetComponent<TransformComponentPrevious>(entityID);
-                            TransformComponentOld* old = GetComponent<TransformComponentOld>(entityID);
+                            TransformComponentSnapshotNext* snapNext = GetComponent<TransformComponentSnapshotNext>(entityID);
+                            TransformComponentSnapshotPrevious* snapPrev = GetComponent<TransformComponentSnapshotPrevious>(entityID);
 
-                            *next = ExtrapolateTransform(old, prev, extrapolateAlpha);
+                            // We extrapolate with distance between the values as how many frames they were,
+                            *next = ExtrapolateTransform(snapPrev, snapNext, extrapolateAlpha);
                         }
                     }
 
 
-                    for(size_t i = 0; i < SnapshotToUse->NumOfObjects; i++)
-                    {
-                        *GetComponent<TransformComponentNext>(SnapshotToUse->Objects[i].EntityID) = TransformComponentNext(SnapshotToUse->Objects[i].Component);
-                    }
                     // We set the sequence we're using and remove it from the list
                     m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
                     m_DelayedSnapshots.pop_back();
@@ -277,6 +278,22 @@ namespace Doremi
                 {
                     // std::cout << "Lost more then two snapshots?" << std::endl;
                     m_NumOfSequencesToInterpolate = 1;
+
+                    // TODOCM NOT TESTED to extrapolate if we don't have anything
+                    // Extrapolate remaining
+                    for(size_t entityID = 0; entityID < NumEntities; entityID++)
+                    {
+                        // If netobject and has transform
+                        if(entityHandler.HasComponents(entityID, mask))
+                        {
+                            TransformComponentNext* next = GetComponent<TransformComponentNext>(entityID);
+                            TransformComponentSnapshotNext* snapNext = GetComponent<TransformComponentSnapshotNext>(entityID);
+                            TransformComponentSnapshotPrevious* snapPrev = GetComponent<TransformComponentSnapshotPrevious>(entityID);
+
+                            // We extrapolate with distance between the values as how many frames they were,
+                            *next = ExtrapolateTransform(snapPrev, snapNext, m_NumOfSequencesToInterpolate);
+                        }
+                    }
                 }
             }
             else

@@ -290,8 +290,11 @@ namespace Doremi
                 for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
                 {
                     NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
-                    NewSnapshot->Objects[i].Component.position = Streamer.ReadFloat3();
-                    NewSnapshot->Objects[i].Component.rotation = Streamer.ReadRotationQuaternion();
+                    XMFLOAT3 t_position = Streamer.ReadFloat3();
+                    XMFLOAT4 p_orientation = Streamer.ReadRotationQuaternion();
+                    NewSnapshot->Objects[i].Component =
+                        TransformComponentNext(t_position, p_orientation,
+                                               XMFLOAT3(1.0f, 1.0f, 1.0f)); // TODOXX setting scale here, not sure if want to send over network?
                 }
 
                 // Queue snapshot
