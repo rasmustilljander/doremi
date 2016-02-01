@@ -86,7 +86,20 @@ namespace DoremiEngine
             }
 
         }
-
+        DirectX::XMINT2 PotentialFieldImpl::WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition)
+        {
+            using namespace DirectX;
+            XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
+            float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
+            float gridQuadHeight = m_height / (float)m_grid[0].size();
+            // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
+            XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
+            position2D.x -= bottomLeft.x - 0.5f;
+            position2D.y -= bottomLeft.y - 0.5f;
+            int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
+            int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
+            return XMINT2(quadNrX, quadNrY);
+        }
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                                     const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
@@ -123,6 +136,16 @@ namespace DoremiEngine
             //    highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
             //    highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             //}
+
+            // Going through the phermone trail and adding them to the corresponding gridpos.
+            std::vector<XMINT2> phermoneVector = p_currentActor->GetPhermoneTrail();
+            int t_vecSize = phermoneVector.size();
+            for (size_t i = 0; i < t_vecSize; ++i)
+            {
+
+                m_grid[phermoneVector[i].x][phermoneVector[i].y].charge = m_grid[phermoneVector[i].x][phermoneVector[i].y].charge - 1000;
+
+            }
             for(size_t i = 0; i < length; i++)
             {
                 int x = quadsToCheck[i].x;
