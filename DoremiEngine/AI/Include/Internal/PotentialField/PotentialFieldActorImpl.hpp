@@ -23,11 +23,21 @@ namespace DoremiEngine
             const std::vector<DirectX::XMINT2>& GetOccupiedQuads() const override { return m_occupiedQuads; };
             const bool& IsStatic() const override { return m_static; };
             const DirectX::XMINT2 GetClosestOccupied(const DirectX::XMINT2& p_quad);
+            const std::vector<DirectX::XMINT2>& GetPhermoneTrail() const override { return m_phermoneTrail; };
+            const DirectX::XMINT2 GetPrevGridPos() const override { return m_prevGridPos; };
+            /*const DirectX::XMINT2 GetGridPos() const override { return m_gridPos; };*/
+            void SetPrevGridPosition(const DirectX::XMINT2& p_prevGridPos) override { m_prevGridPos = p_prevGridPos; };
+            void UpdatePhermoneTrail(const DirectX::XMINT2& p_gridPosToAdd) override;
+            void EraseFirstInPhermoneList() override;
 
         private:
+
+            std::vector<DirectX::XMINT2> m_phermoneTrail;
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
             float m_range;
             float m_charge;
+            DirectX::XMINT2 m_prevGridPos;
+            /*DirectX::XMINT2 m_gridPos;*/
             DirectX::XMFLOAT3 m_position; // TODOKO should maybe not be here, needed in group but not in potential field
             bool m_static;
         };

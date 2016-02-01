@@ -51,7 +51,7 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
                     std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();// GetCollisionPairs();
                     size_t collisionListLength = collisionPairs.size();
-                    int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
+                    //int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
                     for(size_t i = 0; i < collisionListLength; ++i)
                     {
                         if(myID == collisionPairs[i].firstID || myID == collisionPairs[i].secondID)

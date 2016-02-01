@@ -100,6 +100,31 @@ namespace Doremi
                     DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
                     DoremiEngine::AI::PotentialFieldActor* currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
+                    // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
+
+                    if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
+                    {
+                        //DEBUG
+                        int hej = 0;
+
+                        // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
+                        // Do nothing
+                    }
+                    else 
+                    {
+                        //DEBUG
+                        std::vector<XMINT2> hej = currentActor->GetPhermoneTrail();
+
+                        XMINT2 hej1 = currentActor->GetPrevGridPos();
+                        // Add the previous gridPos to the trail.
+                        // TODOEA This will make the Ai move as the game starts.
+
+                        currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
+                        //DEBUG 
+                        //XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
+                        XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
+                        currentActor->SetPrevGridPosition(newPrevPos);
+                    }
                     if(field != nullptr)
                     {
                         desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
@@ -117,6 +142,7 @@ namespace Doremi
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
+
                 }
             }
         }

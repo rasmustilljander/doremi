@@ -55,6 +55,26 @@ namespace DoremiEngine
             Returns the closest actor occupied quad to the given quad, the range is not taken in to consideration
             */
             virtual const DirectX::XMINT2 GetClosestOccupied(const DirectX::XMINT2& p_quad) = 0;
+            /**
+            Returns the phermonetrail vector.
+            */
+            virtual const std::vector<DirectX::XMINT2>& GetPhermoneTrail() const = 0;
+            /**
+            Returns last updates GridPos.
+            */
+            virtual const DirectX::XMINT2 GetPrevGridPos() const = 0;
+            /**
+            Sets the actor gridpos x,y
+            */
+            virtual void SetPrevGridPosition(const DirectX::XMINT2& p_prevGridPos) = 0;
+            /**
+            If the vector.size is more than 5 we remove the last one and add the new one. Otherwise we just add the gridpos.
+            */
+            virtual void UpdatePhermoneTrail(const DirectX::XMINT2& p_gridPosToAdd) = 0;
+            /**
+            Erase the first([0]) element in the phermone list!
+            */
+            virtual void EraseFirstInPhermoneList() = 0;
         };
     }
 }
