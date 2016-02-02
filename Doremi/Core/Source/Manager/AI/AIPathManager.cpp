@@ -88,8 +88,7 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
                 { // This is so the player updates his position too...
                     DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                    XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
-                    actor->SetPosition(pos);
+                    XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;                    actor->SetPosition(pos);
                 }
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform |
                                                                      (int)ComponentType::Movement | (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
