@@ -200,10 +200,7 @@ namespace DoremiEngine
 
                 }
             }
-            // If now charge was found we are probably outside the field... in which case we should start walking towards the field
-            if(highestCharge <= -9000)
-            {
-            }
+
             return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
         }
 
@@ -216,21 +213,10 @@ namespace DoremiEngine
             {
                 if(actor != p_currentActor) // this should mean that the current actor is skipped when calculating charge... still doesnt work...
                 {
-                    XMFLOAT3 actorPos3d = actor->GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
-                    XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
-                    float actorCharge = actor->GetCharge();
-                    float actorRange = actor->GetRange();
-                    // Calculate charge
-                    XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
-                    XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
-
-                    XMVECTOR distance = actorPosVec - quadPosVec;
-                    float dist = *XMVector3Length(distance).m128_f32;
-                    if(dist < actorRange)
-                    {
-                        float force = actorCharge / dist;
-                        totalCharge += force;
-                    }
+                    // This is for the actors influence
+                    totalCharge += GetChargeInfluenceFromActor(quadPos, *actor);
+                    // This is for the current actors special influence, if any
+                    totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor);
                 }
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
@@ -278,6 +264,68 @@ namespace DoremiEngine
                 }
             }
             return false;
+        }
+
+        float PotentialFieldImpl::GetChargeInfluenceFromActor(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actor)
+        {
+            using namespace DirectX;
+            XMFLOAT3 actorPos3d = p_actor.GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+            XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+            float actorCharge = p_actor.GetCharge();
+            float actorRange = p_actor.GetRange();
+            // Calculate charge
+            XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+            XMVECTOR quadPosVec = XMLoadFloat2(&p_position);
+
+            XMVECTOR distance = actorPosVec - quadPosVec;
+            float dist = *XMVector3Length(distance).m128_f32;
+            float force = 0;
+            if (dist < actorRange)
+            {
+                force = actorCharge / dist;                
+            }
+            return force;
+        }
+
+        float PotentialFieldImpl::GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck, const PotentialFieldActor& p_yourActor)
+        {
+            float force = 0;
+            // Get all the special fields in your actor
+            const std::vector<PotentialChargeInformation>& t_specialCharges = p_yourActor.GetPotentialVsOthers();
+            size_t length = t_specialCharges.size();
+            for (size_t i = 0; i < length; i++)
+            {
+                // Check if this field should be used on this actor.
+                if ((t_specialCharges[i].AddedOnAttracting && p_actorToCheck.GetCharge() > 0) ||
+                    (t_specialCharges[i].AddedOnReppeling && p_actorToCheck.GetCharge() < 0))
+                {
+                    // Check if it's active
+                    if (t_specialCharges[i].active)
+                    {
+                        // Yay, everything fitts! Lets make a new temporary actor with the info provided by special field and look for charge
+                        // TODOKO Thats not possible now since we dont have intermodule communication yet here...
+                        using namespace DirectX;
+                        XMFLOAT3 actorPos3d = p_actorToCheck.GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+                        XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                        float actorCharge = t_specialCharges[i].charge;
+                        float actorRange = t_specialCharges[i].range;
+                        // Calculate charge
+                        XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+                        XMVECTOR quadPosVec = XMLoadFloat2(&p_position);
+
+                        XMVECTOR distance = actorPosVec - quadPosVec;
+                        float dist = *XMVector3Length(distance).m128_f32;
+                        float force = 0;
+                        if (dist < actorRange)
+                        {
+                            force = actorCharge / dist;
+                        }
+                        return force;
+
+                    }
+                }
+            }
+            return force;
         }
     }
 }

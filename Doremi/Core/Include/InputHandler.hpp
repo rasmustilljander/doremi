@@ -46,8 +46,9 @@ namespace Doremi
             SetFrequency0 = 131072, // 7 55
             SetFrequency500 = 262144, // 8 56
             SetFrequency1000 = 524288, // 9 57
+            RightClick = 1048576,
 
-            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton | StartRepeatableAudioRecording | PlayRepeatableAudioRecording | ExitGame | LeftClick | SetFrequency0 | SetFrequency500 | SetFrequency1000,
+            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton | StartRepeatableAudioRecording | PlayRepeatableAudioRecording | ExitGame | LeftClick | SetFrequency0 | SetFrequency500 | SetFrequency1000 | RightClick,
         };
 
         // TODOEA Lägga in detta i en textfil.

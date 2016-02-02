@@ -87,7 +87,7 @@ namespace Doremi
                 {
                     m_moveForwardBackward -= m_speed * pDT;
                 }
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency1000))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::RightClick))
                 {
                     m_camYaw += inputHandler->GetMouseMovementX() * 0.001f;
                     m_camPitch += inputHandler->GetMouseMovementY() * 0.001f;

@@ -33,7 +33,6 @@ namespace DoremiEngine
             virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const { return m_potentialsVsOther; };
 
         private:
-
             std::vector<DirectX::XMINT2> m_phermoneTrail;
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
             std::vector<PotentialChargeInformation> m_potentialsVsOther;
