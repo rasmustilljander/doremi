@@ -61,7 +61,7 @@ namespace DoremiEngine
             // if it is greater than 5 we remove the last before we add this one
             // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 5
 
-            if (vectorSize >= 5) 
+            if (vectorSize >= 10) 
             {
 
                 m_phermoneTrail.erase(m_phermoneTrail.begin());
@@ -70,9 +70,9 @@ namespace DoremiEngine
 
             m_phermoneTrail.push_back(p_gridPosToAdd);
         }
-        void PotentialFieldActorImpl::EraseFirstInPhermoneList()
+        void PotentialFieldActorImpl::EraseLatestAddedToPhermoneList()
         {
-            //m_phermoneTrail.erase(m_phermoneTrail.begin());
+            m_phermoneTrail.erase(m_phermoneTrail.begin());
         }
         void PotentialFieldActorImpl::AddPotentialVsOther(const PotentialChargeInformation& p_newPotential)
         {

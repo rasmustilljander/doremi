@@ -42,7 +42,7 @@ namespace Doremi
         {
             // TODOKO do this in a better place, might not work to have here in the future
             m_field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 50, 50,
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 100, 100,
                                                                                           XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
             m_topField =
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
@@ -105,9 +105,10 @@ namespace Doremi
                     {
                         // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
                         // if we are still standing on the same quad as the last update we do nothing 
+                        // TODOKO if we have been standing stil for 2 long something might be wrong, Force him to move!!!
                     }
                     else 
-                    {
+                    {                        
                         XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
                         currentActor->SetPrevGridPosition(newPrevPos);
                         currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());

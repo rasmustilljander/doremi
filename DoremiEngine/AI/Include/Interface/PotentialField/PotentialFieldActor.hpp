@@ -91,7 +91,7 @@ namespace DoremiEngine
             /**
             Erase the first([0]) element in the phermone list!
             */
-            virtual void EraseFirstInPhermoneList() = 0;
+            virtual void EraseLatestAddedToPhermoneList() = 0;
             /**
             Adds a new potential to be used when checking vs other actors. This is what makes ranged stay on range and melee go to melee.
             If a actor contains one of these fields it will be used when checking vs other actors. For example a range unit might contain a 
