@@ -140,9 +140,9 @@ namespace Doremi
         // Create some enemies
         for(size_t i = 0; i < 2; i++)
         {
-            int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
             XMFLOAT3 position = DirectX::XMFLOAT3(-280 * (int)i + 0, 140 * (int)i + 4, -85 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
 

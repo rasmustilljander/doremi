@@ -59,22 +59,17 @@ namespace DoremiEngine
         void PotentialFieldActorImpl::UpdatePhermoneTrail(const DirectX::XMINT2 & p_gridPosToAdd)
         {
             int vectorSize = m_phermoneTrail.size();
-            //if it is greater than 5 we remove the last
-            // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 50
-            if (vectorSize == 50)
-            {
-                int hejs = 0;
-            }
-            if (vectorSize >= 50) 
+            // if it is greater than 5 we remove the last before we add this one
+            // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 5
+
+            if (vectorSize >= 5) 
             {
 
-                //m_phermoneTrail.erase(m_phermoneTrail.begin());
-                m_phermoneTrail.push_back(p_gridPosToAdd);
+                m_phermoneTrail.erase(m_phermoneTrail.begin());
+                // m_phermoneTrail.push_back(p_gridPosToAdd);
             }
-            else
-            {
-                m_phermoneTrail.push_back(p_gridPosToAdd);
-            }
+
+            m_phermoneTrail.push_back(p_gridPosToAdd);
         }
         void PotentialFieldActorImpl::EraseFirstInPhermoneList()
         {
