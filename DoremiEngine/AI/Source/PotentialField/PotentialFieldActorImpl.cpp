@@ -11,7 +11,6 @@ namespace DoremiEngine
         {
             //TODOEA FULT SOM FAN att sätat en hårdkodad fulposition så att listan inte är tom. bättre än att kolla varje gång att den är tom.
             m_prevGridPos = DirectX::XMINT2(0, 0);
-            m_phermoneTrail.push_back(DirectX::XMINT2(0, 0));
         }
         PotentialFieldActorImpl::~PotentialFieldActorImpl() {}
         void PotentialFieldActorImpl::SetPosition(const DirectX::XMFLOAT3& p_position)
@@ -74,6 +73,10 @@ namespace DoremiEngine
         void PotentialFieldActorImpl::EraseFirstInPhermoneList()
         {
             //m_phermoneTrail.erase(m_phermoneTrail.begin());
+        }
+        void PotentialFieldActorImpl::AddPotentialVsOther(const PotentialChargeInformation& p_newPotential)
+        {
+            m_potentialsVsOther.push_back(p_newPotential);
         }
     }
 }

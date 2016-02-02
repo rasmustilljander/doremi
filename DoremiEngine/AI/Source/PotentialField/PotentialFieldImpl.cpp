@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl() {}
+        PotentialFieldImpl::PotentialFieldImpl(): m_phermoneEffect(5) {}
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
@@ -103,9 +103,15 @@ namespace DoremiEngine
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                                     const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
-            // TODOKO Test!
-            // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             using namespace DirectX;
+            // If there is no positive actor/goal to go to simply dont move!
+            bool goalInRange = AnyPositiveGoalInRange(p_unitPosition);
+            if (!goalInRange)
+            {
+                return XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+            }
+
+            // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
             float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
             float gridQuadHeight = m_height / (float)m_grid[0].size();
@@ -115,8 +121,8 @@ namespace DoremiEngine
             position2D.y -= bottomLeft.y - 0.5f;
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
-            // Add quads that needs checking, 3x3 square around the unit
 
+            // Add quads that needs checking, 3x3 square around the unit
             std::vector<XMINT2> quadsToCheck;
             for(int x = -1; x < 2; x++) // -1, 0, 1
             {
@@ -126,26 +132,20 @@ namespace DoremiEngine
                     quadsToCheck.push_back(XMINT2(quadNrX + x, quadNrY + y));
                 }
             }
+            // Remove the quad we are standing on since that one is our start value we dont need to check it again
+            quadsToCheck.erase(quadsToCheck.begin() + 4);
             // Check for special cases
             size_t length = quadsToCheck.size();
             XMFLOAT2 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
-            float highestCharge = 0;
-            // if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
-            //{
-            //    // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
-            //    highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor); // TODOKO secure for if the unit is outside the grid
-            //    highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
-            //}
-
-            // Going through the phermone trail and adding them to the corresponding gridpos.
-            std::vector<XMINT2> phermoneVector = p_currentActor->GetPhermoneTrail();
-            int t_vecSize = phermoneVector.size();
-            for (size_t i = 0; i < t_vecSize; ++i)
+            float highestCharge = 0; // A low value
+            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
-
-                m_grid[phermoneVector[i].x][phermoneVector[i].y].charge = m_grid[phermoneVector[i].x][phermoneVector[i].y].charge - 1000;
-
+                // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
+                highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor) ; // +5 since that the max number of phermonetrails in the list TODOCONFIG
+                highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             }
+
+
             for(size_t i = 0; i < length; i++)
             {
                 int x = quadsToCheck[i].x;
@@ -164,7 +164,7 @@ namespace DoremiEngine
                         quadCharge = CalculateCharge(x, y, p_currentActor);
                         if(x == quadNrX && y == quadNrY)
                         {
-                            quadCharge -= 5; // TODOKO hardcoded - value because we want the unit to move
+                            // quadCharge -= 5; // TODOKO hardcoded - value because we want the unit to move
                         }
                     }
                     if(quadCharge > highestCharge)
@@ -234,7 +234,50 @@ namespace DoremiEngine
                 }
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
+            // Only do the phermonetrail thingie if we have a actor
+            if (p_currentActor != nullptr)
+            {
+                // Going through the phermone trail and adding them to the corresponding gridpos.
+                std::vector<XMINT2> phermoneVector = p_currentActor->GetPhermoneTrail();
+                size_t t_vecSize = phermoneVector.size();
+                for (size_t i = 0; i < t_vecSize; ++i)
+                {
+                    // If the wuad we are checking is in the trail
+                    if (p_quadX == phermoneVector[i].x && p_quadY == phermoneVector[i].y)
+                    {
+                        // Reduce the totalcharge depening on i because thats a correlation to how new the trail point is
+                        totalCharge -= (m_phermoneEffect + (t_vecSize - i)); // TODOCONFIG Hardcoded value on how much the phermonetrail should effect
+                    }
+                }
+            }
+
             return totalCharge + m_grid[p_quadX][p_quadY].charge;
+        }
+        bool PotentialFieldImpl::AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position)
+        {
+            using namespace DirectX;
+            // Here i assume that the only positive charge is from dynamic actors,TODOKO this is wrong but for now it'll do 
+            // Should cehck occupied quads but i dont thing dynamic actors have these yet...
+            for (auto actor: m_dynamicActors)
+            {
+                XMFLOAT3 position3d = actor->GetPosition();
+                float range = actor->GetRange();
+                // TODOXX this is copied from ProximityChecker in gamecore, if that function starts failing thisone needs changing too
+                // It should be safe though
+                XMVECTOR vecBetweenEntities = XMLoadFloat3(&position3d) - XMLoadFloat3(&p_position);
+                XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
+                float distance = *distanceVec.m128_f32;
+                if (distance <= range)
+                {
+                    // we dont really care if multiple actors are in range
+                    return true;
+                }
+                else
+                {
+                    // We still need to check the other actors
+                }
+            }
+            return false;
         }
     }
 }
