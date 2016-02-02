@@ -8,6 +8,8 @@
 #include <iostream>
 #include <algorithm>
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
+
 
 namespace Doremi
 {
@@ -266,6 +268,15 @@ namespace Doremi
                             // We extrapolate with distance between the values as how many frames they were,
                             *next = ExtrapolateTransform(snapPrev, snapNext, extrapolateAlpha);
                         }
+                    }
+
+                    // Check if we have a player, should always have a player if we have a snapshot
+                    // TODOCM not to nice check if we have player, maybe remove or change
+                    std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
+                    if(playerMap.begin() != playerMap.end())
+                    {
+                        PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(playerMap.begin()->first, SnapshotToUse->PlayerPositionToCheck,
+                                                                                          SnapshotToUse->SequenceToCheckPosAgainst);
                     }
 
 
