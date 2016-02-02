@@ -11,6 +11,7 @@
 #include <Doremi/Core/Include/Manager/MovementManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/FrequencyAffectedObjectManager.hpp>
+#include <Doremi/Core/Include/Manager/EntitySpawnManager.hpp>
 #include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
 #include <Doremi/Core/Include/TemplateCreator.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
@@ -73,6 +74,7 @@ namespace Doremi
         Core::Manager* t_serverNetworkManager = new Core::ServerNetworkManager(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManagerServer(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
+        Core::Manager* t_entitySpawnManager = new Core::EntitySpawnManager(sharedContext);
 
         Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_aiTargetManager = new Core::AITargetManager(sharedContext);
@@ -97,6 +99,7 @@ namespace Doremi
         m_managers.push_back(t_movementManager); // Must be after gravity/jump
         m_managers.push_back(t_charSyncManager); // Must be after movement
         m_managers.push_back(t_damageManager);
+        m_managers.push_back(t_entitySpawnManager);
 
         // GenerateWorld(sharedContext);
         // GenerateWorldServerJawsTest(sharedContext);
