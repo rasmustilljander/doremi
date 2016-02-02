@@ -38,6 +38,7 @@ enum class ComponentType : int
     PlatFormPatrolComponent = 0x800000,
     Trigger = 0x1000000,
     DamageInflictors = 0x2000000,
+    EntitySpawner = 0x4000000,
 };
 
 /**
