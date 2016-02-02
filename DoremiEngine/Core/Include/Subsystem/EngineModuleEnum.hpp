@@ -10,7 +10,7 @@ namespace DoremiEngine
         namespace EngineModuleEnum
         {
             /* For bitwise operations enum is actually better than enum class */
-            enum EngineModuleEnumReal
+            enum EngineModuleEnumReal // TODO Define integer size
             {
                 AUDIO = 1,
                 GRAPHIC = 2,
