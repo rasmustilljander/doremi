@@ -4,8 +4,6 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RangeComponent.hpp>
-// Utilities
-#include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 // Standard
 
@@ -32,12 +30,15 @@ namespace Doremi
             if(!EntityHandler::GetInstance().HasComponents(p_entityID, mask) || !EntityHandler::GetInstance().HasComponents(p_entityToCheckID, mask) ||
                !EntityHandler::GetInstance().HasComponents(p_entityID, (int)ComponentType::Range))
             {
-                Utility::DebugLog::ConsoleManager& manager = Utility::DebugLog::ConsoleManager::GetInstance();
+                // TODORT Add logging
+                // TODOXX Might be really important
+                // TODOLOG Add logginging again
+                // Utility::DebugLog::ConsoleManager& manager = Utility::DebugLog::ConsoleManager::GetInstance();
 
                 // Default settings requires no parameters, will be named "standard"
-                Utility::DebugLog::VirtualConsole& defaultConsole = manager.GetConsole();
-                defaultConsole.LogText(Utility::DebugLog::LogTag::GAME, Utility::DebugLog::LogLevel::DEBUG,
-                                       "One of the entities provided did not have the needed component. ID1: %d ID2: %d", p_entityID, p_entityToCheckID);
+                // Utility::DebugLog::VirtualConsole& defaultConsole = manager.GetConsole();
+                // defaultConsole.LogText(Utility::DebugLog::LogTag::GAME, Utility::DebugLog::LogLevel::DEBUG,
+                // "One of the entities provided did not have the needed component. ID1: %d ID2: %d", p_entityID, p_entityToCheckID);
                 return false;
             }
             // Everything is good, the entities have the needed components

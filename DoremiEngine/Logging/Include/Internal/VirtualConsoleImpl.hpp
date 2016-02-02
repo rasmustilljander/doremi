@@ -9,9 +9,9 @@
 #include <string>
 #include <map>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         struct TagLevelInfo // TODORT move to hpp
         {

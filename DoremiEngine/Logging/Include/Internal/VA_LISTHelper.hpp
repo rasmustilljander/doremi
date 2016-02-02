@@ -2,12 +2,12 @@
 #include <cstdarg>
 #include <string>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
 
-        using ::std::string;
+        using std::string;
 
         ///
         /// \breif Format message

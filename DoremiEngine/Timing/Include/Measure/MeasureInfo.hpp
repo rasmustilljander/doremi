@@ -4,9 +4,9 @@
 #include <vector>
 #include <chrono>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace Timer
+    namespace Timing
     {
         class MeasureInfo
         {

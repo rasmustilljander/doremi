@@ -8,9 +8,9 @@ namespace
     ctpl::thread_pool* g_threadPool;
 }
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         ConsoleManager* ConsoleManager::m_instance = nullptr;
 

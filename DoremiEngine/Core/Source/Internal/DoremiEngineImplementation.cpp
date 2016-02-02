@@ -8,13 +8,11 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/Logging/Include/LoggingModule.hpp>
+#include <DoremiEngine/Timing/Include/TimingModule.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
 #include <Windows.h>
-
-// Logging
-#include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 namespace DoremiEngine
 {
@@ -28,13 +26,15 @@ namespace DoremiEngine
               m_inputLibrary(nullptr),
               m_aiLibrary(nullptr),
               m_loggingLibrary(nullptr),
+              m_timingLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
               m_networkModule(nullptr),
               m_physicsModule(nullptr),
               m_inputModule(nullptr),
               m_aiModule(nullptr),
-              m_loggingModule(nullptr)
+              m_loggingModule(nullptr),
+              m_timingModule(nullptr)
         {
         }
 
@@ -60,6 +60,21 @@ namespace DoremiEngine
                 delete m_physicsModule;
             }
 
+            if(m_aiModule != nullptr)
+            {
+                delete m_aiModule;
+            }
+
+            if(m_loggingModule != nullptr)
+            {
+                delete m_loggingModule;
+            }
+
+            if(m_timingModule != nullptr)
+            {
+                delete m_timingModule;
+            }
+
             if(m_audioLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_audioLibrary);
@@ -80,6 +95,16 @@ namespace DoremiEngine
             {
                 DynamicLoader::FreeSharedLibrary(m_aiLibrary);
             }
+
+            if(m_loggingLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_loggingLibrary);
+            }
+
+            if(m_timingLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_timingLibrary);
+            }
         }
 
         SharedContext& DoremiEngineImplementation::Start(const size_t& p_flags)
@@ -88,11 +113,8 @@ namespace DoremiEngine
             m_sharedContext->SetCoreModule(this);
             BuildWorkingDirectory(*m_sharedContext);
 
-            // TODO, should logging always exist? I think yes
-            // if((p_flags & EngineModuleEnum::LOGGING) == EngineModuleEnum::LOGGING)
-            {
-                LoadLoggingModule(*m_sharedContext);
-            }
+            LoadLoggingModule(*m_sharedContext);
+            LoadTimingModule(*m_sharedContext);
 
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
@@ -152,6 +174,16 @@ namespace DoremiEngine
             {
                 m_aiModule->Shutdown();
             }
+
+            if(m_loggingModule != nullptr)
+            {
+                m_loggingModule->Shutdown();
+            }
+
+            if(m_timingModule != nullptr)
+            {
+                m_timingModule->Shutdown();
+            }
         }
 
         void DoremiEngineImplementation::BuildWorkingDirectory(SharedContextImplementation& o_sharedContext)
@@ -165,19 +197,19 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadLoggingModule(SharedContextImplementation& o_sharedContext)
         {
-            //	m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll");
+            //	m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Logging.dll");
             m_loggingLibrary = DynamicLoader::LoadSharedLibrary("Logging.dll");
 
             if(m_loggingLibrary != nullptr)
             {
-                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Success");
-                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll");
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Logging.dll - Success");
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Logging.dll");
 
                 CREATE_LOGGING_MODULE functionCreateLoggingModule =
                     (CREATE_LOGGING_MODULE)DynamicLoader::LoadProcess(m_loggingLibrary, "CreateLoggingModule");
                 if(functionCreateLoggingModule != nullptr)
                 {
-                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Success");
+                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Logging.dll - Success");
 
                     m_loggingModule = static_cast<Logging::LoggingModule*>(functionCreateLoggingModule(o_sharedContext));
                     m_loggingModule->Startup();
@@ -185,18 +217,48 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Failed");
+                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Logging.dll - Failed");
                 }
             }
             else
             {
-                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Failed");
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Logging.dll - Failed");
+            }
+        }
+
+        void DoremiEngineImplementation::LoadTimingModule(SharedContextImplementation& o_sharedContext)
+        {
+            //	m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll");
+            m_timingLibrary = DynamicLoader::LoadSharedLibrary("Timing.dll");
+
+            if(m_timingLibrary != nullptr)
+            {
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Success");
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll");
+
+                CREATE_TIMING_MODULE functionCreateTimingModule =
+                    (CREATE_TIMING_MODULE)DynamicLoader::LoadProcess(m_timingLibrary, "CreateTimingModule");
+                if(functionCreateTimingModule != nullptr)
+                {
+                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Success");
+
+                    m_timingModule = static_cast<Timing::TimingModule*>(functionCreateTimingModule(o_sharedContext));
+                    m_timingModule->Startup();
+                    o_sharedContext.SetTimingModule(m_timingModule);
+                }
+                else
+                {
+                    // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Failed");
+                }
+            }
+            else
+            {
+                // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadAudioModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll");
             m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
 
@@ -227,7 +289,6 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadGraphicModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll");
             m_graphicLibrary = DynamicLoader::LoadSharedLibrary("Graphic.dll");
 
@@ -257,7 +318,6 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll");
             m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
 
@@ -287,7 +347,6 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll");
             m_physicsLibrary = DynamicLoader::LoadSharedLibrary("Physics.dll");
 
@@ -317,7 +376,6 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll");
             m_inputLibrary = DynamicLoader::LoadSharedLibrary("Input.dll");
 
@@ -346,7 +404,6 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadAIModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Utility::DebugLog;
             // m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll");
             m_aiLibrary = DynamicLoader::LoadSharedLibrary("AI.dll");
 

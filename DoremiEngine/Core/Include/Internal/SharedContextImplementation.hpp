@@ -19,7 +19,8 @@ namespace DoremiEngine
                   m_script(nullptr),
                   m_input(nullptr),
                   m_ai(nullptr),
-                  m_logging(nullptr)
+                  m_logging(nullptr),
+                  m_timing(nullptr)
             {
             }
 
@@ -34,6 +35,7 @@ namespace DoremiEngine
             void SetInputModule(Input::InputModule* p_inputModule) { m_input = p_inputModule; }
             void SetAIModule(AI::AIModule* p_AIModule) { m_ai = p_AIModule; }
             void SetLoggingModule(Logging::LoggingModule* p_loggingModule) { m_logging = p_loggingModule; }
+            void SetTimingModule(Timing::TimingModule* p_timingModule) { m_timing = p_timingModule; }
 
             const std::string GetWorkingDirectory() const { return m_workingDirectory; };
 
@@ -118,6 +120,15 @@ namespace DoremiEngine
                 throw std::runtime_error("Logging module has not been initialized."); // TODOXX This cannot be used over .dll borders.
             }
 
+            Timing::TimingModule& GetTimingModule() const
+            {
+                if(m_timing != nullptr)
+                {
+                    return *m_timing;
+                }
+                throw std::runtime_error("Timing module has not been initialized."); // TODOXX This cannot be used over .dll borders.
+            }
+
         private:
             std::string m_workingDirectory;
             Audio::AudioModule* m_audio;
@@ -129,6 +140,7 @@ namespace DoremiEngine
             Input::InputModule* m_input;
             AI::AIModule* m_ai;
             Logging::LoggingModule* m_logging;
+            Timing::TimingModule* m_timing;
         };
     }
 }

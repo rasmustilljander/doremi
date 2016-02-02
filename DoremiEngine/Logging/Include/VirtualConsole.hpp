@@ -1,13 +1,13 @@
 #pragma once
 #include <Windows.h>
 #include <string>
-#include <Utility/DebugLog/Include/ConsoleColor.hpp>
-#include <Utility/DebugLog/Include/LogLevel.hpp>
-#include <Utility/DebugLog/Include/LogTag.hpp>
+#include <DoremiEngine\Logging\Include\ConsoleColor.hpp>
+#include <DoremiEngine\Logging\Include\LogLevel.hpp>
+#include <DoremiEngine\Logging\Include\LogTag.hpp>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         class VirtualConsole
         {

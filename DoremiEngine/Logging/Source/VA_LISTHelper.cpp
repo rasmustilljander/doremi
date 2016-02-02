@@ -5,9 +5,9 @@
 
 using std::string;
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         ///
         /// \breif Format message

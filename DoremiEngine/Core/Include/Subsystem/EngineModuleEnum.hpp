@@ -19,8 +19,7 @@ namespace DoremiEngine
                 SCRIPT = 16,
                 INPUT = 32,
                 AI = 64,
-                LOGGING = 128,
-                ALL = AUDIO | GRAPHIC | NETWORK | PHYSICS | SCRIPT | INPUT | AI | LOGGING
+                ALL = AUDIO | GRAPHIC | NETWORK | PHYSICS | SCRIPT | INPUT | AI
             };
         };
     }

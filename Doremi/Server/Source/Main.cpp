@@ -1,7 +1,5 @@
 // Project specific
 #include <Server.hpp>
-#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
-#include <Utility/DebugLog/Include/ConsoleManager.hpp>
 
 
 // Third party
@@ -102,19 +100,23 @@ void g_terminate() { attemptGracefulShutdown(); }
 
 void startup()
 {
-    using namespace Utility::Timer;
-    using namespace Utility::DebugLog;
-    ConsoleManager::Startup();
-    MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
+    // TODORT
+    // TODOLOG
+    // using namespace Utility::Timer;
+    // using namespace Utility::DebugLog;
+    // ConsoleManager::Startup();
+    // MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
 }
 
 void shutdown()
 {
-    using namespace Utility::Timer;
-    using namespace Utility::DebugLog;
-    MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
-    MeasureTimer::GetInstance().DumpData("client_timings");
-    ConsoleManager::Shutdown();
+    // TODORT
+    // TODOLOG
+    // using namespace Utility::Timer;
+    // using namespace Utility::DebugLog;
+    // MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
+    // MeasureTimer::GetInstance().DumpData("client_timings");
+    // ConsoleManager::Shutdown();
 }
 
 void attemptGracefulShutdown()
@@ -143,12 +145,16 @@ void printStack()
     symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
     symbol->MaxNameLen = 255;
     symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-    using namespace Utility::DebugLog;
-    VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole("stackPrint", false);
+    // TODORT
+    // TODOLOG
+    // using namespace Utility::DebugLog;
+    // VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole("stackPrint", false);
     for(i = 0; i < frames; i++)
     {
         SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-        console.LogText(LogTag::NOTAG, LogLevel::MASS_DATA_PRINT, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+        // TODORT
+        // TODOLOG
+        // console.LogText(LogTag::NOTAG, LogLevel::MASS_DATA_PRINT, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
     }
 
     free(symbol);

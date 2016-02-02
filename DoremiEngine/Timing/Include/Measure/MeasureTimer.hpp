@@ -1,21 +1,25 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include <Utility/Timer/Include/Measure/MeasureInfo.hpp>
+#include <DoremiEngine\Timing\Include\Measure\MeasureInfo.hpp>
 
 #define FILE_AND_FUNC std::string(__FILE__) + ":" + std::string(__func__)
 
 #ifdef CUSTOM_TIMING_MEASUREMENT
-#define TIME_FUNCTION_START Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
-#define TIME_FUNCTION_STOP Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
+// TODORT
+// TODOLOG
+//#define TIME_FUNCTION_START Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
+//#define TIME_FUNCTION_STOP Utility::Timer::MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
+#define TIME_FUNCTION_START ;
+#define TIME_FUNCTION_STOP ;
 #else
 #define TIME_FUNCTION_START ;
 #define TIME_FUNCTION_STOP ;
 #endif
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace Timer
+    namespace Timing
     {
 
         class MeasureTimer
