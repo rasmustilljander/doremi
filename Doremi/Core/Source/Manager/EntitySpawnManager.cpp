@@ -28,6 +28,18 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::EntitySpawner))
                 {
                     // We've found an entity spawner
+                    EntitySpawnComponent* spawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(i);
+                    // Check if its a timed spawned
+                    if(spawnComp->type == SpawnerType::TimedSpawner)
+                    {
+                        // Update time since last spawn
+                        spawnComp->timeSinceLastSpawn += p_dt;
+                        // Check if it's time to spawn
+                        if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns)
+                        {
+                            // We should spawn something
+                        }
+                    }
                 }
             }
         }
