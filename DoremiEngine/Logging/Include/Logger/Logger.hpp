@@ -1,19 +1,17 @@
 #pragma once
-#include <Windows.h>
+#include <DoremiEngine/Logging/Include/Logger/LogTag.hpp>
+#include <DoremiEngine/Logging/Include/Logger/LogLevel.hpp>
 #include <string>
-#include <DoremiEngine\Logging\Include\ConsoleColor.hpp>
-#include <DoremiEngine\Logging\Include\LogLevel.hpp>
-#include <DoremiEngine\Logging\Include\LogTag.hpp>
 
 namespace DoremiEngine
 {
     namespace Logging
     {
-        class VirtualConsole
+        class Logger
         {
         public:
             /**
-            The actual method called when calling LogText
+                The actual method called when calling LogText
             */
             virtual void LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...) = 0;
 
@@ -24,7 +22,10 @@ namespace DoremiEngine
         };
     }
 }
+
+#ifndef LogText
 /*
 A bit of a hack
 */
 #define LogText(...) LT(__FUNCTION__, __LINE__, ##__VA_ARGS__)
+#endif

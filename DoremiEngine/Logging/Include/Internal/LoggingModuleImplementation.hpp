@@ -29,6 +29,14 @@ namespace DoremiEngine
               TODO docs
             */
             void Shutdown() override;
+
+            /**
+              TODO docs
+            */
+            SubmoduleManager& GetSubModuleManager() override;
+
+        private:
+            SubmoduleManager* m_submoduleManager;
         };
     }
 }

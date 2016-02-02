@@ -1,6 +1,6 @@
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measure/MeasureTimer.hpp>
 #include <exception>
-#include <DoremiEngine/Logging/Include/ConsoleManager.hpp>
+#include <DoremiEngine/Logging/Include/Console/ConsoleManager.hpp>
 
 namespace DoremiEngine
 {

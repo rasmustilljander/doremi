@@ -7,13 +7,14 @@ namespace DoremiEngine
 {
     namespace Logging
     {
-        LoggingModuleImplementation::LoggingModuleImplementation() {}
+        LoggingModuleImplementation::LoggingModuleImplementation() : m_submoduleManager(nullptr) {}
 
         LoggingModuleImplementation::~LoggingModuleImplementation() {}
 
         void LoggingModuleImplementation::Startup() {}
 
         void LoggingModuleImplementation::Shutdown() {}
+        SubmoduleManager& LoggingModuleImplementation::GetSubModuleManager() { return *m_submoduleManager; }
     }
 }
 
