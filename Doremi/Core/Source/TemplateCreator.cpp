@@ -35,7 +35,7 @@
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
 
 // Timing
-#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
 
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>

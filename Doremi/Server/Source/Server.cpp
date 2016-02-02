@@ -34,7 +34,7 @@
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 #include <Doremi/Core/Include/Manager/DamageManager.hpp>
 // Timer
-#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
 
 // Third party
 #include <DirectXMath.h>
@@ -224,15 +224,19 @@ namespace Doremi
         Core::EventHandler::GetInstance()->DeliverEvents();
         Core::PlayerHandler::GetInstance()->UpdateServer(p_deltaTime);
 
-        Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
+        // TODORT
+        // TODOLOG
+        // Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
         size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
-            Utility::Timer::MeasureInfo& info = timer.GetTimer(m_managers.at(i)->GetName());
-            info.Reset().Start();
+            // TODORT
+            // TODOLOG
+            // Utility::Timer::MeasureInfo& info = timer.GetTimer(m_managers.at(i)->GetName());
+            // info.Reset().Start();
             m_managers.at(i)->Update(p_deltaTime);
-            info.Stop();
+            // info.Stop();
         }
         TIME_FUNCTION_STOP
     }

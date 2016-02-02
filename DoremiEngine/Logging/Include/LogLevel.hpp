@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         enum class LogLevel
         {

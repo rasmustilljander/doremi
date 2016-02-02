@@ -14,7 +14,7 @@
 #include <FrequencyBufferHandler.hpp>
 
 // Timing
-#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
 
 namespace Doremi
 {

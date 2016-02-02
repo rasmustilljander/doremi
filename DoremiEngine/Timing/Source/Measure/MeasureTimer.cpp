@@ -1,10 +1,10 @@
-#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
+#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
 #include <exception>
-#include <Utility/DebugLog/Include/ConsoleManager.hpp>
+#include <DoremiEngine/Logging/Include/ConsoleManager.hpp>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace Timer
+    namespace Timing
     {
         MeasureTimer& MeasureTimer::GetInstance()
         {
@@ -26,14 +26,18 @@ namespace Utility
 
         void MeasureTimer::DumpData(const std::string& p_origin)
         {
-            using namespace Utility::DebugLog;
-            VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole(p_origin, false);
+            // TODOLOG
+            // TODORT
+            // using namespace Utility::DebugLog;
+            // VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole(p_origin, false);
 
             for(auto current : m_timers)
             {
+                // TODOLOG
+                // TODORT
                 auto a = current.second;
-                console.LogText(LogTag::GENERAL, LogLevel::INFO, "Totaltime: %f, StartCount: %u, StopCount: %u, Location: %s: ", a.GetSeconds(),
-                                a.GetStartCount(), a.GetStopCount(), a.GetName().c_str());
+                //    console.LogText(LogTag::GENERAL, LogLevel::INFO, "Totaltime: %f, StartCount: %u, StopCount: %u, Location: %s: ", a.GetSeconds(),
+                //                   a.GetStartCount(), a.GetStopCount(), a.GetName().c_str());
             }
         }
     }

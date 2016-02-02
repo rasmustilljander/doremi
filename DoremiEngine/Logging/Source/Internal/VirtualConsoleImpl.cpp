@@ -4,14 +4,13 @@
 #include <thread>
 #include <Internal/VA_LISTHelper.hpp>
 #include <iostream>
-#include <Utility/DebugLog/Include/Internal/ThreadPool.hpp>
+#include <DoremiEngine\Logging\Include\Internal\ThreadPool.hpp>
 #include <string>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
-
         struct LoggingData // TODORT, maybe move to .cpp?
         {
             std::string function;

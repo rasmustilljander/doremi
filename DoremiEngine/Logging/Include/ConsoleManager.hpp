@@ -1,15 +1,15 @@
 #pragma once
 
-#include <Utility/DebugLog/Include/VirtualConsole.hpp>
-#include <Utility/DebugLog/Include/LogLevel.hpp>
-#include <Utility/DebugLog/Include/LogTag.hpp>
-#include <Utility/DebugLog/Include/ConsoleColor.hpp>
+#include <DoremiEngine\Logging\Include\VirtualConsole.hpp>
+#include <DoremiEngine\Logging\Include\LogLevel.hpp>
+#include <DoremiEngine\Logging\Include\LogTag.hpp>
+#include <DoremiEngine\Logging\Include\ConsoleColor.hpp>
 
 #include <unordered_map>
 #include <string>
-namespace Utility
+namespace DoremiEngine
 {
-    namespace DebugLog
+    namespace Logging
     {
         class ConsoleManager
         {

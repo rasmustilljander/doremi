@@ -1,8 +1,8 @@
 #include <Measure/MeasureInfo.hpp>
 
-namespace Utility
+namespace DoremiEngine
 {
-    namespace Timer
+    namespace Timing
     {
 
         MeasureInfo::MeasureInfo() : accumulatedTime(0.0), m_startCount(0), m_stopCount(0) {}
