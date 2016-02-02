@@ -224,7 +224,7 @@ void CS_main(ComputeShaderInput input)
     {
         t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
     }
-
+    uint a = o_LightIndexList[0];
     //render depth to back buffer
     //backbuffer[input.dispatchThreadID.xy] = float4(((float)o_LightCount) / 7.0f, ((float)o_LightCount)/ 7.0f, ((float)o_LightCount) / 7.0f,1.0f);
 }

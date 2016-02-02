@@ -44,14 +44,16 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             // ladda material
+
             for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
+
             {
                 int materialNameSize;
                 ifs.read((char*)&materialNameSize, sizeof(int));
                 char* materialName = new char[materialNameSize];
                 ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                MaterialData materialData;
+                DoremiEngine::Graphic::MaterialData materialData;
                 ifs.read((char*)&materialData.mapMasks, sizeof(int));
                 ifs.read((char*)&materialData.diffuse, sizeof(float));
                 ifs.read((char*)&materialData.color, sizeof(float) * 3);
@@ -73,6 +75,7 @@ namespace Doremi
                 ifs.read((char*)&glowTextureNameSize, sizeof(int));
                 char* glowTextureName = new char[glowTextureNameSize];
                 ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
+                //if (glowTextureNameSize != 0) m_materials[materialName].glowTextureName = glowTextureName;
                 // TODOKO save the texture name
 
                 delete diffuseTextureName;
@@ -118,6 +121,7 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             for(int i = 0; i < nrTransforms; i++)
+
             {
                 int parentNameSize;
                 int transformNameSize;
@@ -170,7 +174,7 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
-            for(int i = 0; i < nrMeshes; i++)
+            for (int i = 0; i < nrMeshes; i++)
             {
                 int transformNameSize;
                 int meshNameSize;
@@ -180,7 +184,7 @@ namespace Doremi
                 std::vector<char*> transformNames;
                 char* transformName = nullptr;
 
-                for(int t = 0; t < nrOfTransforms; t++) // läser in alla transforms för meshen, blir flera om instanciering skall användas
+                for (int t = 0; t < nrOfTransforms; t++) // läser in alla transforms för meshen, blir flera om instanciering skall användas
                 {
                     ifs.read((char*)&transformNameSize, sizeof(int));
                     transformName = new char[transformNameSize];
@@ -235,7 +239,7 @@ namespace Doremi
 
                 m_meshes[meshName] = meshData;
                 // All the transform that this mesh should be placed at and puts it in the coupling vector
-                for(size_t i = 0; i < nrOfTransforms; i++)
+                for (size_t i = 0; i < nrOfTransforms; i++)
                 {
                     m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
                 }
@@ -247,7 +251,9 @@ namespace Doremi
             using namespace std;
             using namespace DoremiEditor::Core;
             m_lights.reserve(nrLights);
+
             for(int i = 0; i < nrLights; i++)
+
             {
                 int transformNameSize;
                 int lightNameSize;
@@ -281,7 +287,7 @@ namespace Doremi
         void LevelLoader::BuildEntities()
         {
             const size_t length = m_meshCoupling.size();
-            for(size_t i = 0; i < length; i++)
+            for (size_t i = 0; i < length; i++)
             {
                 // Get scale, pos and transform
                 const DirectX::XMFLOAT3 scale = m_transforms[m_meshCoupling[i].transformName].scale;
@@ -333,6 +339,7 @@ namespace Doremi
         std::vector<DoremiEngine::Graphic::Vertex>
         LevelLoader::ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
                                                       std::vector<DirectX::XMFLOAT3>& o_positionPX, std::vector<int>& o_indexPX)
+
         {
             vector<DoremiEngine::Graphic::Vertex> vertexBuffer;
 
@@ -343,6 +350,7 @@ namespace Doremi
 
             const int nrVertices = p_data.normalCount;
             for(int i = 0; i < p_data.indCount; i += 3)
+
             {
                 //// First
                 // First vertex

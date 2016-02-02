@@ -52,6 +52,7 @@ namespace DoremiEngine
 
         private:
             void RenderAllMeshs();
+            void DispatchCompute();
             void BuildWorldMatrix();
 
             std::vector<MeshRenderData> renderData;
@@ -60,13 +61,16 @@ namespace DoremiEngine
             ID3D11DeviceContext* m_deviceContext;
             IDXGISwapChain* m_swapChain;
             ID3D11RenderTargetView* m_backBuffer;
+            ID3D11RenderTargetView* m_postEffectRT;
             ID3D11Texture2D* m_depthBuffer;
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
             ID3D11SamplerState* m_defaultSamplerState;
             DirectX::XMFLOAT2 m_screenResolution;
             ID3D11ShaderResourceView* m_srv;
+            ID3D11ShaderResourceView* m_renderedScene;
             ID3D11UnorderedAccessView* m_backbufferUAV;
+            ID3D11UnorderedAccessView* m_postEffektUAV;
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;
         };

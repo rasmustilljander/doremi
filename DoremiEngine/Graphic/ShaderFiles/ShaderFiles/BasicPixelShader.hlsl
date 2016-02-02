@@ -52,6 +52,7 @@ cbuffer LightInfo : register(b0)
 };
 
 Texture2D ObjTexture : register(t0);
+Texture2D GlowTexture : register(t5);
 
 SamplerState ObjSamplerState : register(s0);
 
@@ -116,6 +117,7 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     int value = o_LightGrid[groupID].value;
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
+    //float4 texcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
     texcolor = saturate(texcolor);
     //return texcolor;
     //texcolor = float4(0.9, 0.9, 0.9, 1);
@@ -135,7 +137,6 @@ float4 PS_main(PixelInputType input) : SV_TARGET
             rgb += CalcPointLight(input, l);
 
     }
-    
     return float4(rgb, 1) * texcolor * 3;
     //return float4(screenPos.x/800.f, screenPos.y/800.f, 0, 1);
     //return float4((t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, 1);

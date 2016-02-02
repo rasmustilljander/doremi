@@ -257,6 +257,9 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderAllMeshs()
         {
+            //Dispatch light culling compute shader
+            DispatchCompute();
+
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -265,7 +268,8 @@ namespace DoremiEngine
             const uint32_t stride = sizeof(Vertex);
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
-            ID3D11ShaderResourceView* texture = renderData[0].texture;
+            ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
+            ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
             ID3D11SamplerState* samplerState = renderData[0].samplerState;
 
             // Iterate all the entries and do the smallest amount of changes to the GPU
@@ -279,6 +283,7 @@ namespace DoremiEngine
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->CSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
@@ -315,9 +320,9 @@ namespace DoremiEngine
                     }
                 }
 
-                if(renderData[i].texture != renderData[i - 1].texture) // Check if texture has been changed
+                if(renderData[i].diffuseTexture != renderData[i - 1].diffuseTexture) // Check if texture has been changed
                 {
-                    texture = renderData[i].texture;
+                    texture = renderData[i].diffuseTexture;
                     if(texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetShaderResources(0, 1, &texture);
@@ -349,6 +354,36 @@ namespace DoremiEngine
             renderData.clear(); // Empty the vector
         }
 
+        void DirectXManagerImpl::DispatchCompute()
+        {
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetLightManager().TestFunc();
+
+            ID3D11ShaderResourceView* nullSRV = { NULL };
+            ID3D11UnorderedAccessView* nullUAV = { NULL };
+            ID3D11RenderTargetView* nullRTV = { NULL };
+            // Remove depth bind to OM
+            m_deviceContext->OMSetRenderTargets(1, &nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
+
+
+            m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
+            m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
+            m_deviceContext->PSSetShaderResources(6, 1, &m_srv);
+
+            // dispatch frustum shader
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
+
+            // Unbind depth
+            m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
+            m_deviceContext->PSSetShaderResources(6, 1, &nullSRV);
+            m_deviceContext->CSSetUnorderedAccessViews(6, 1, &nullUAV, 0);
+
+            // Add depth bind to OM
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
+
+
+        }
+
         void DirectXManagerImpl::SwapRasterizerState(RasterizerState* p_rasterizerState)
         {
             m_deviceContext->RSSetState(p_rasterizerState->GetRasterizerState());
@@ -363,30 +398,11 @@ namespace DoremiEngine
         void DirectXManagerImpl::EndDraw()
         {
 
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetLightManager().TestFunc();
-
-            ID3D11ShaderResourceView* nullSRV = {NULL};
-            ID3D11UnorderedAccessView* nullUAV = {NULL};
-            ID3D11RenderTargetView* nullRTV = {NULL};
-            // Remove depth bind to OM
-            m_deviceContext->OMSetRenderTargets(1, &nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
+            //////////////////FIXA GLOWY STUFF//////////////////////
 
 
-            m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
-            m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
-            m_deviceContext->PSSetShaderResources(5, 1, &m_srv);
 
-            // dispatch frustum shader
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
-
-            // Unbind depth
-            m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
-            m_deviceContext->PSSetShaderResources(5, 1, &nullSRV);
-            m_deviceContext->CSSetUnorderedAccessViews(6, 1, &nullUAV, 0);
-
-            // Add depth bind to OM
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
+            //////////////////SLUT PÅ GLOWY STUFF//////////////////////
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
