@@ -34,7 +34,7 @@
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 #include <Doremi/Core/Include/Manager/DamageManager.hpp>
 // Timer
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 // Third party
 #include <DirectXMath.h>

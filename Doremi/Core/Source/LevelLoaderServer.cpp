@@ -20,7 +20,7 @@
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 
 // Timing
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 // Physics
 
