@@ -47,6 +47,7 @@ namespace DoremiEngine
             SDL_Event eventVariable;
             SwitchCaseEventsForPlaying(eventVariable);
             SDL_GetMouseState(&m_mousePosX, &m_mousePosY);
+            // PrintInputStructsDEBUG();
         }
         int InputModuleImplementation::CreateWindowSDL(int p_width, int p_height)
         {

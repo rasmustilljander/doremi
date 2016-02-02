@@ -35,6 +35,7 @@ namespace Doremi
             userCmdsPlaying[55] = UserCommandPlaying::SetFrequency0;
             userCmdsPlaying[56] = UserCommandPlaying::SetFrequency500;
             userCmdsPlaying[57] = UserCommandPlaying::SetFrequency1000;
+            userCmdsPlaying[3] = UserCommandPlaying::RightClick;
 
             // Setup for the menuinput
             // TODOEA Not used yet.

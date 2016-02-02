@@ -9,17 +9,17 @@ namespace DoremiEngine
         {
             float charge; // charge as float
             float range; // range as float
-            bool OnlyAddedOnAttracting; // if this field should only be added when checking vs attracting forces
-            bool OnlyAddedOnReppeling; // if this field should only be added when checking vs reppeling forces
+            bool AddedOnAttracting; // if this field should only be added when checking vs attracting forces
+            bool AddedOnReppeling; // if this field should only be added when checking vs reppeling forces
             bool active; // If it's active or not
             // TODOKO add a specific actor this field should be used when checking against, if needed
             PotentialChargeInformation(const float& p_charge, const float& p_range,
-                const bool& p_onlyAddedOnAttracting, const bool& p_onlyAddedOnReppeling, const bool& p_active)
-                : charge(p_charge), range(p_range), OnlyAddedOnAttracting(p_onlyAddedOnAttracting), OnlyAddedOnReppeling(p_onlyAddedOnReppeling), active(p_active) {}
+                const bool& p_addedOnAttracting, const bool& p_addedOnReppeling, const bool& p_active)
+                : charge(p_charge), range(p_range), AddedOnAttracting(p_addedOnAttracting), AddedOnReppeling(p_addedOnReppeling), active(p_active) {}
             /**
             Standard is false for everything and 0 in range and charge
             */
-            PotentialChargeInformation(): charge(0), range(0), OnlyAddedOnAttracting(false), OnlyAddedOnReppeling(false), active(false) {}
+            PotentialChargeInformation(): charge(0), range(0), AddedOnAttracting(false), AddedOnReppeling(false), active(false) {}
         };
         /**
         A potentialfield actor contains information on reppeling or attracting force. It also contains a range and charge information.
