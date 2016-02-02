@@ -43,7 +43,7 @@ namespace DoremiEngine
                 {
                     return *m_audio;
                 }
-                throw std::runtime_error("Audiomodule has not been initialized.");
+                throw std::runtime_error("Audiomodule has not been initialized."); // TODOXX This cannot be used across .dll borders.
             }
 
             DoremiEngine& GetCoreModule() const
@@ -52,7 +52,7 @@ namespace DoremiEngine
                 {
                     return *m_core;
                 }
-                throw std::runtime_error("Coremodule has not been initialized.");
+                throw std::runtime_error("Coremodule has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             Graphic::GraphicModule& GetGraphicModule() const
@@ -61,7 +61,7 @@ namespace DoremiEngine
                 {
                     return *m_graphic;
                 }
-                throw std::runtime_error("Graphic module has not been initialized.");
+                throw std::runtime_error("Graphic module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             Network::NetworkModule& GetNetworkModule() const
@@ -70,7 +70,7 @@ namespace DoremiEngine
                 {
                     return *m_network;
                 }
-                throw std::runtime_error("Network module has not been initialized.");
+                throw std::runtime_error("Network module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             Physics::PhysicsModule& GetPhysicsModule() const
@@ -79,7 +79,7 @@ namespace DoremiEngine
                 {
                     return *m_physics;
                 }
-                throw std::runtime_error("Physics module has not been initialized.");
+                throw std::runtime_error("Physics module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             Script::ScriptModule& GetScriptModule() const
@@ -88,7 +88,7 @@ namespace DoremiEngine
                 {
                     return *m_script;
                 }
-                throw std::runtime_error("Script module has not been initialized.");
+                throw std::runtime_error("Script module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             Input::InputModule& GetInputModule() const
@@ -97,7 +97,7 @@ namespace DoremiEngine
                 {
                     return *m_input;
                 }
-                throw std::runtime_error("Input module has not been initialized.");
+                throw std::runtime_error("Input module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
             AI::AIModule& GetAIModule() const
