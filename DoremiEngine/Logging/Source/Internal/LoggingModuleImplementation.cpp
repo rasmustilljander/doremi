@@ -1,7 +1,6 @@
 #include <Internal/LoggingModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
-#include <iostream>
-#include <Windows.h>
+#include <Internal/SubmoduleManagerImpl.hpp>
 
 namespace DoremiEngine
 {
@@ -11,7 +10,7 @@ namespace DoremiEngine
 
         LoggingModuleImplementation::~LoggingModuleImplementation() {}
 
-        void LoggingModuleImplementation::Startup() {}
+        void LoggingModuleImplementation::Startup() { m_submoduleManager = new SubmoduleManagerImpl(); }
 
         void LoggingModuleImplementation::Shutdown() {}
         SubmoduleManager& LoggingModuleImplementation::GetSubModuleManager() { return *m_submoduleManager; }

@@ -6,6 +6,7 @@ namespace DoremiEngine
     {
         class SubmoduleManagerImpl : public SubmoduleManager
         {
+        public:
             /**
             TODORT docs
             */
