@@ -1,7 +1,7 @@
 #pragma once
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
-#include <vector>
+#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
 #if defined(_WINDLL)
 #define LOGGING_DLL_EXPORT __declspec(dllexport)
 #else
@@ -18,6 +18,7 @@ namespace DoremiEngine
         class LoggingModule : public DoremiEngine::Core::EngineModule
         {
         public:
+            virtual SubmoduleManager& GetSubModuleManager() = 0;
         };
     }
 }
