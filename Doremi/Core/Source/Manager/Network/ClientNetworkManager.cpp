@@ -278,10 +278,13 @@ namespace Doremi
                 }
 
                 // Read sequence of incomming position
-                uint8_t PositionCheckSequence = Streamer.ReadUnsignedInt8();
+                // uint8_t PositionCheckSequence = Streamer.ReadUnsignedInt8();
+                NewSnapshot->SequenceToCheckPosAgainst = Streamer.ReadUnsignedInt8();
 
                 // Read position to check against
-                DirectX::XMFLOAT3 PositionToCheck = Streamer.ReadFloat3();
+                // DirectX::XMFLOAT3 PositionToCheck = Streamer.ReadFloat3();
+
+                NewSnapshot->PlayerPositionToCheck = Streamer.ReadFloat3();
 
                 // Read how many objects we got in the message
                 NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
@@ -306,7 +309,7 @@ namespace Doremi
                 // TODOCM notify a handler or something that new buffer exists
 
                 // Check the position we got from server
-                PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
+                // PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
             }
             else
             {

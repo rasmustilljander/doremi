@@ -21,6 +21,8 @@ namespace Doremi
         {
             uint8_t SnapshotSequence;
             uint8_t NumOfObjects;
+            DirectX::XMFLOAT3 PlayerPositionToCheck;
+            uint8_t SequenceToCheckPosAgainst;
             SnapshotObject Objects[MAX_OBJECTS_IN_SNAPSHOT];
         };
 
