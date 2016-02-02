@@ -22,7 +22,7 @@ namespace Doremi
         which objects triggers it: this filtereing is handled by the
         manager. Might be a good idea to change this behaviour.
         */
-        struct EntitySpawner
+        struct EntitySpawnComponent
         {
             // The type of this specific spawner
             SpawnerType type;
