@@ -21,6 +21,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TriggerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/EntitySpawnerComponent.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -426,6 +427,16 @@ namespace Doremi
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            // Spawn component DEBUG REMOVE
+            EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
+            t_entitySpawnComp->entityBlueprint = Blueprints::BulletEntity;
+            t_entitySpawnComp->spawnRadius = 2;
+            t_entitySpawnComp->timeBetweenSpawns = 2;
+            t_entitySpawnComp->timeSinceLastSpawn = 0;
+            t_entitySpawnComp->type = SpawnerType::TimedSpawner;
+            t_avatarBlueprint[ComponentType::EntitySpawner] = t_entitySpawnComp;
+
 
             // Rigid body comp
             // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();

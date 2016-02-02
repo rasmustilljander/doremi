@@ -25,6 +25,7 @@
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/DamageInflictorsComponent.hpp>
 #include <EntityComponent/Components/NetworkObjectComponent.hpp>
+#include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 
 namespace Doremi
 {
@@ -162,6 +163,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::NetworkObject)
                 {
                     memcpy(GetComponent<NetworkObjectComponent>(tNewEntityID), iter->second, sizeof(NetworkObjectComponent));
+                }
+                else if(iter->first == ComponentType::EntitySpawner)
+                {
+                    memcpy(GetComponent<EntitySpawnComponent>(tNewEntityID), iter->second, sizeof(EntitySpawnComponent));
                 }
             }
             return tNewEntityID;
