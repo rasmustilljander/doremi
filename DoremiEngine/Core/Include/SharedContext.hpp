@@ -43,6 +43,11 @@ namespace DoremiEngine
         class AIModule;
     }
 
+    namespace Logging
+    {
+        class LoggingModule;
+    }
+
     namespace Core
     {
         class SharedContext
@@ -58,6 +63,7 @@ namespace DoremiEngine
             virtual Script::ScriptModule& GetScriptModule() const = 0;
             virtual Input::InputModule& GetInputModule() const = 0;
             virtual AI::AIModule& GetAIModule() const = 0;
+            virtual Logging::LoggingModule& GetLoggingModule() const = 0;
         };
     }
 }

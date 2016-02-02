@@ -3,16 +3,6 @@
 #include <DoremiEngine.hpp>
 #include <Internal/SharedContextImplementation.hpp>
 
-
-namespace Utility
-{
-    namespace DebugLog
-    {
-        class VirtualConsole;
-    }
-}
-
-
 namespace DoremiEngine
 {
     namespace Core
@@ -56,6 +46,7 @@ namespace DoremiEngine
             void LoadPhysicsModule(SharedContextImplementation& o_sharedContext);
             void LoadInputModule(SharedContextImplementation& o_sharedContext);
             void LoadAIModule(SharedContextImplementation& o_sharedContext);
+            void LoadLoggingModule(SharedContextImplementation& o_sharedContext);
 
             // Shared context
             SharedContextImplementation* m_sharedContext;
@@ -67,6 +58,7 @@ namespace DoremiEngine
             void* m_physicsLibrary;
             void* m_inputLibrary;
             void* m_aiLibrary;
+            void* m_loggingLibrary;
 
             // Pointers to the interfaces
             Audio::AudioModule* m_audioModule;
@@ -75,9 +67,7 @@ namespace DoremiEngine
             Physics::PhysicsModule* m_physicsModule;
             Input::InputModule* m_inputModule;
             AI::AIModule* m_aiModule;
-
-            // Logging
-            Utility::DebugLog::VirtualConsole* m_logger;
+            Logging::LoggingModule* m_loggingModule;
         };
     }
 }
