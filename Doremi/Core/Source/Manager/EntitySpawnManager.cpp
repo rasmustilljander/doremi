@@ -4,7 +4,7 @@
 // Handlers
 #include <EntityComponent/EntityHandler.hpp>
 // Components
-#include <EntityComponent/Components/EntitySpawner.hpp>
+#include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 
 namespace Doremi
 {
