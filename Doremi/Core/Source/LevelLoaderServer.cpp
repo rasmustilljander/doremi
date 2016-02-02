@@ -93,7 +93,7 @@ namespace Doremi
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);
             PotentialFieldComponent* potComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityId);
             potComp->ChargedActor =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -3, 3, true); // TODOKO hardcoded shiet
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, 0, 3, true); // TODOKO hardcoded shiet
         }
     }
 }

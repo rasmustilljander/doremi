@@ -143,6 +143,12 @@ namespace DoremiEngine
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
                 highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor) ; // +5 since that the max number of phermonetrails in the list TODOCONFIG
                 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+                if (m_grid[quadNrX][quadNrY].occupied)
+                {
+                    // If the one we are in is occupied set highest charge to low just to get out
+                    highestCharge = -100000;
+                    // THis might happen when the AI is cutting corners
+                }
             }
 
 
@@ -234,6 +240,22 @@ namespace DoremiEngine
                         // Reduce the totalcharge depening on i because thats a correlation to how new the trail point is
                         totalCharge -= (m_phermoneEffect + (t_vecSize - i)); // TODOCONFIG Hardcoded value on how much the phermonetrail should effect
                     }
+                    // Test
+                    //else
+                    //{
+                    //    XMFLOAT2 phermonePos = m_grid[phermoneVector[i].x][phermoneVector[i].y].position;
+                    //    XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
+                    //    XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
+
+                    //    XMVECTOR distance = phermonePosVec - quadPosVec;
+                    //    float dist = *XMVector3Length(distance).m128_f32;
+                    //    float force = 0;
+                    //    if (dist < 0.5f)
+                    //    {
+                    //        force = -(m_phermoneEffect + (t_vecSize - i)) / dist;
+                    //    }
+                    //    totalCharge += force * 0.2; // The phermone force shouldnt be that high
+                    //}
                 }
             }
 
@@ -282,7 +304,7 @@ namespace DoremiEngine
             float force = 0;
             if (dist < actorRange)
             {
-                force = actorCharge / dist;                
+                force = actorCharge / dist; // std::pow(dist, 2); // if we want diztance to matter more this might work
             }
             return force;
         }

@@ -28,7 +28,7 @@ namespace DoremiEngine
             /*const DirectX::XMINT2 GetGridPos() const override { return m_gridPos; };*/
             void SetPrevGridPosition(const DirectX::XMINT2& p_prevGridPos) override { m_prevGridPos = p_prevGridPos; };
             void UpdatePhermoneTrail(const DirectX::XMINT2& p_gridPosToAdd) override;
-            void EraseFirstInPhermoneList() override;
+            void EraseLatestAddedToPhermoneList() override;
             void AddPotentialVsOther(const PotentialChargeInformation& p_newPotential) override;
             virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const { return m_potentialsVsOther; };
 
