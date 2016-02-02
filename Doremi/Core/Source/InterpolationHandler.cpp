@@ -7,7 +7,7 @@
 #include <SequenceMath.hpp>
 #include <iostream>
 #include <algorithm>
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 namespace Doremi
 {

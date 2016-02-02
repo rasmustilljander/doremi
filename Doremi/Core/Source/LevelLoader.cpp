@@ -15,7 +15,8 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/LightManager.hpp>
 // Timing
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+
 // Potential Field
 #include <Doremi/Core/Include/PotentialFieldGridCreator.hpp>
 // Physics

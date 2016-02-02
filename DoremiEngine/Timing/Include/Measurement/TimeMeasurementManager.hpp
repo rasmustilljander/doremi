@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-#include <unordered_map>
-#include <DoremiEngine\Timing\Include\Measure\MeasureInfo.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 #define FILE_AND_FUNC std::string(__FILE__) + ":" + std::string(__func__)
 
@@ -21,30 +20,20 @@ namespace DoremiEngine
 {
     namespace Timing
     {
+        class TimeMeasurement;
 
-        class MeasureTimer
+        class TimeMeasurementManager
         {
         public:
             /**
-                Gets an instance of this object, if no instance exists, it creates one.
+                Gets a timemeasurement with a given name
             */
-            static MeasureTimer& GetInstance();
-
-            /**
-                Gets a timer with a given name
-            */
-            MeasureInfo& GetTimer(const std::string& p_name);
+            virtual TimeMeasurement& GetTimeMeasurement(const std::string& p_name) = 0;
 
             /**
                 TODORT docs
             */
-            void DumpData(const std::string& p_origin);
-
-        protected:
-            MeasureTimer();
-            MeasureTimer(MeasureTimer const&) = delete;
-            void operator=(MeasureTimer const&) = delete;
-            std::unordered_map<std::string, MeasureInfo> m_timers;
+            virtual void DumpData(const std::string& p_origin) = 0;
         };
     }
 }

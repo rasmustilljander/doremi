@@ -2,7 +2,7 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
 // Timing
-#include <DoremiEngine\Timing\Include\Measure\MeasureTimer.hpp>
+#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 #include <iostream>
 
