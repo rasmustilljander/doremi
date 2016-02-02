@@ -131,9 +131,27 @@ namespace DoremiEngine
             ModelLoader t_loader = ModelLoader();
             ID3D11ShaderResourceView* newTexture = t_loader.LoadTexture(fileLocation, m_directX.GetDevice());
             newMaterial->SetMaterialName(p_fileName);
-            newMaterial->SetTexture(newTexture);
+            newMaterial->SetDiffuseTexture(newTexture);
+            newMaterial->SetGlowTexture(nullptr);
             newMaterial->SetSamplerState(m_directX.GetDefaultSamplerState());
             m_materialInfo[p_fileName] = newMaterial;
+            return newMaterial;
+        }
+
+        MaterialInfo* MeshManagerImpl::BuildMaterialInfo(MaterialData p_materialData)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            MaterialInfo* newMaterial = new MaterialInfoImpl();
+            std::string diffuseFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.diffuseTextureName;
+            std::string glowFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.glowTextureName;
+            ModelLoader t_loader = ModelLoader();
+            ID3D11ShaderResourceView* newDiffuseTexture = t_loader.LoadTexture(diffuseFileLocation, m_directX.GetDevice());
+            ID3D11ShaderResourceView* newGlowTexture = t_loader.LoadTexture(glowFileLocation, m_directX.GetDevice());
+            newMaterial->SetMaterialName(p_materialData.diffuseTextureName);
+            newMaterial->SetDiffuseTexture(newDiffuseTexture);
+            newMaterial->SetGlowTexture(newGlowTexture);
+            newMaterial->SetSamplerState(m_directX.GetDefaultSamplerState());
+            m_materialInfo[p_materialData.diffuseTextureName] = newMaterial;
             return newMaterial;
         }
 
@@ -141,7 +159,7 @@ namespace DoremiEngine
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
 
-            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetSamplerState(), p_mesh.GetBufferHandle(),
+            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(), p_mesh.GetBufferHandle(),
                                           p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount());
             m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
         }

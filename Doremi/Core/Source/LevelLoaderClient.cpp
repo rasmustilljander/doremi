@@ -110,7 +110,8 @@ namespace Doremi
                 // Player specific
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 const std::string meshName = m_meshCoupling[0].meshName;
-                std::string textureName = m_materials[m_meshCoupling[0].materialName];
+                std::string textureName;
+                textureName = m_materials[m_meshCoupling[0].materialName];
 
                 // Compute vertexdata for graphics, discard data for physics.
                 DirectX::XMFLOAT3 scale = {1.0f, 1.0f, 1.0f}; // TODOXX Should the scale for the player always be one?
@@ -119,7 +120,7 @@ namespace Doremi
                 vector<DoremiEngine::Graphic::Vertex>& vertexBuffer = ComputeVertexAndPositionAndIndex(m_meshes[meshName], scale, positionPX, indexPX);
 
                 meshManager.BuildMeshInfoFromBuffer(vertexBuffer, meshName);
-                meshManager.BuildMaterialInfo(textureName);
+                meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);
 
                 CharacterDataNames o_charData;
                 o_charData.meshName = meshName;
@@ -165,16 +166,18 @@ namespace Doremi
                 {
                     textureName = "debug.dds";
                 }
-                renderComp->material = meshManager.BuildMaterialInfo(textureName);
+                renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
             }
 
             // If non physic object
             if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 || transformationData.attributes.startOrEndPoint == 2)
+
             {
                 r_shouldBuildPhysics = false;
             }
 
             return r_shouldBuildPhysics;
+
         }
 
         void LevelLoaderClient::BuildLights()

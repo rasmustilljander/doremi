@@ -3,11 +3,13 @@
 #include <map>
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/VertexStruct.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <vector>
 #include <fstream>
 #include <DoremiEditor/Core/Include/TransformData.hpp>
 #include <DoremiEditor/Core/Include/LightData.hpp>
 #include <DoremiEditor/Core/Include/MeshData.hpp>
+#include <DoremiEditor/Core/Include/MaterialData.hpp>
 
 namespace DoremiEngine
 {
@@ -18,13 +20,41 @@ namespace DoremiEngine
     namespace Graphic
     {
         class MeshInfo;
+        
     }
 }
 
 namespace Doremi
 {
+
     namespace Core
     {
+        // Loads of structs
+        
+        //struct MaterialData
+        //{
+        //    MaterialData()
+        //    {
+        //        mapMasks = 0;
+        //        diffuse = 0;
+        //        color[0] = color[1] = color[2] = 0.5f;
+        //        ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
+        //        specColor[0] = specColor[1] = specColor[2] = 0.0f;
+        //        specCosine = specEccentricity = specRollOff = 0;
+        //    }
+        //    int mapMasks;
+        //    float diffuse;
+        //    float color[3];
+        //    float ambColor[3];
+        //    float specColor[3];
+        //    float specCosine;
+        //    float specEccentricity;
+        //    float specRollOff;
+        //    char* diffuseTextureName;
+        //    char* glowTextureName;
+        //};
+
+
         struct ObjectCouplingInfo
         {
             std::string transformName;
@@ -62,11 +92,17 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             // Help functions
+
             std::map<std::string, DoremiEditor::Core::TransformData> m_transforms;
+
             std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!
             std::map<std::string, std::string> m_materials;
+
+            //std::map<std::string, DoremiEngine::Graphic::MaterialData> m_materials;
+
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;
+
             std::vector<ObjectCouplingInfo> m_meshCoupling;
             std::map<int, std::pair<std::string, std::string>> m_lightNames; // <index, <transformName, lightName>>
 
