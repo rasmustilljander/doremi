@@ -5,6 +5,11 @@
 
 namespace DoremiEngine
 {
+    namespace Logging
+    {
+        class Logger;
+    }
+
     namespace Core
     {
         class DoremiEngineImplementation : public DoremiEngine
@@ -38,6 +43,7 @@ namespace DoremiEngine
 
         private:
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
+            void SetLoggingVariables();
 
             // Loading .dll
             void LoadAudioModule(SharedContextImplementation& o_sharedContext);
@@ -71,6 +77,9 @@ namespace DoremiEngine
             AI::AIModule* m_aiModule;
             Logging::LoggingModule* m_loggingModule;
             Timing::TimingModule* m_timingModule;
+
+            // Logging variables
+            Logging::Logger* m_logger;
         };
     }
 }

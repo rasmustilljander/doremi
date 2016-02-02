@@ -2,6 +2,8 @@
 #include <Internal/Logger/LogginData.hpp>
 #include <Internal/VA_LISTHelper.hpp>
 
+#include <iostream>
+
 namespace DoremiEngine
 {
     namespace Logging
@@ -43,6 +45,9 @@ namespace DoremiEngine
             threadData->logLevel = p_vLevel;
             toString(threadData->p_message, p_format, args);
             va_end(args);
+            using namespace std;
+            cout << threadData->p_message << endl;
+            ;
         }
     }
 }
