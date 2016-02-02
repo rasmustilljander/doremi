@@ -4,19 +4,26 @@
 // Handlers
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/EntityHandlerServer.hpp>
+#include <EventHandler/EventHandler.hpp>
 // Components
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
+// Events
+#include <EventHandler/Events/EntityCreatedEvent.hpp>
 
 /// Engine
 // Physics
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+// AI
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include<DoremiEngine/AI/Include/AIModule.hpp>
 /// Third party
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -39,6 +46,7 @@ namespace Doremi
 
         void EntitySpawnManager::Update(double p_dt)
         {
+			static int DEBUGcount = 0;
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             // Loop through all entities
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
@@ -54,27 +62,51 @@ namespace Doremi
                     {
                         // Update time since last spawn
                         spawnComp->timeSinceLastSpawn += p_dt;
-                        cout << spawnComp->timeSinceLastSpawn;
                         // Check if it's time to spawn
                         if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns)
                         {
+							DEBUGcount++;
+							cout << DEBUGcount << endl;
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
-                            // cout << "spawning dude" << endl;
-                            // We should spawn something
-                            /// DEBUG STUFF. Work in progress
+							// We should spawn something
+							TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+							XMFLOAT3 spawnPosition = transComp->position;
+							spawnPosition.y += 10;
+							int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
+							int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
+							m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
+
+							Core::PotentialFieldComponent* potentialComponent =
+								Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
+							potentialComponent->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
+
+							EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
+							EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
+
+                            
+							
+							
+							
+							/// DEBUG STUFF. Work in progress
                             // Make it into an enemy bullet just to see that it works
-                            TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                            /*TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
                             XMFLOAT3 spawnPosition = transComp->position;
                             spawnPosition.y += 10;
+							int numEntities = entityHandler.GetLastEntityIndex();
+							int numEntities2 = EntityHandlerServer::GetInstance().GetLastEntityIndex();
+
                             int enemyID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::BulletEntity, spawnPosition);
+							numEntities = entityHandler.GetLastEntityIndex();
+							numEntities2 = EntityHandlerServer::GetInstance().GetLastEntityIndex();
                             PhysicsMaterialComponent* matComp = entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(i);
                             matComp->p_materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
-                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(i, spawnPosition, XMFLOAT4(0, 0, 0, 1),
+                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(enemyID, spawnPosition, XMFLOAT4(0, 0, 0, 1),
                                                                                                        XMFLOAT3(0.25, 0.25, 0.25), matComp->p_materialID);
 
                             EntityTypeComponent* typeComp = entityHandler.GetComponentFromStorage<EntityTypeComponent>(i);
-                            typeComp->type = EntityType::EnemyBullet;
+                            typeComp->type = EntityType::EnemyBullet;*/
+							/// END DEBUG STUFF
                         }
                         else
                         {
