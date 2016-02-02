@@ -12,7 +12,8 @@ namespace Doremi
 {
     namespace Core
     {
-        NetworkPriorityHandler::NetworkPriorityHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        NetworkPriorityHandler::NetworkPriorityHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : m_sharedContext(p_sharedContext), RelevantTimer(5.0f), ShortRelevantTimer(1.0f), CullRange(1000000000.0f)
         {
             // Copy all current network objects
             uint32_t t_numEntities = EntityHandler::GetInstance().GetLastEntityIndex();
@@ -24,22 +25,13 @@ namespace Doremi
 
         NetworkPriorityHandler::~NetworkPriorityHandler() {}
 
-        void NetworkPriorityHandler::Update(EntityID p_playerID)
+        void NetworkPriorityHandler::Update(EntityID p_playerID, double p_dt)
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             DoremiEngine::Physics::RigidBodyManager& t_rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
             size_t lastEntityID = t_entityHandler.GetLastEntityIndex();
             DirectX::XMVECTOR t_playerPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(p_playerID)->position));
-
-
-            // Check new sleeping objects
-            std::vector<int>& t_objectIDSleeping = t_rigidManager.GetRecentlySleepingObjects();
-            size_t t_numOfObjects = t_objectIDSleeping.size();
-            for(size_t i = 0; i < t_numOfObjects; i++)
-            {
-                m_netPriorityObjects[t_objectIDSleeping[i]].SetToStartSleep();
-            }
 
 
             // Update all priorities
@@ -49,6 +41,20 @@ namespace Doremi
                 {
                     NetworkObjectComponent* netObject = &m_netPriorityObjects[i];
 
+                    // Update priority timer
+                    netObject->UpdateLastUpdateTimer(p_dt);
+
+                    // Check if dormant
+                    if(t_entityHandler.HasComponents(i, (int)ComponentType::RigidBody))
+                    {
+                        if(t_rigidManager.IsSleeping(i))
+                        {
+                            // Update not relevant timer
+                            netObject->UpdateToNotRelevant(p_dt);
+                            continue;
+                        }
+                    }
+
                     // Get position of object
                     DirectX::XMVECTOR t_objectPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(i)->position));
 
@@ -56,23 +62,17 @@ namespace Doremi
                     DirectX::XMFLOAT3 t_length;
                     DirectX::XMStoreFloat3(&t_length, DirectX::XMVector3Length(DirectX::XMVectorSubtract(t_objectPosVec, t_playerPosVec)));
 
-                    // How will we see if it's active or not, we can see if position changed, velocity changed?
-                    if(t_entityHandler.HasComponents(i, (int)ComponentType::RigidBody))
+                    // If outside cullrange we see it as not relevant
+                    if(t_length.x > CullRange)
                     {
-                        if(t_rigidManager.IsSleeping(i))
-                        {
-                            // If we're sleeping set to sleepiong
-                            netObject->SetFramePriorityBySleep(t_length.x);
-                            continue;
-                        }
+                        // Update not relevant timer
+                        netObject->UpdateToNotRelevant(p_dt);
                     }
-
-                    // Update priority
-                    netObject->UpdatePriorityFromPlayer();
-
-
-                    // If we're not sleeping set frame priority
-                    netObject->SetFramePriorityByLength(t_length.x);
+                    else
+                    {
+                        // Update relevant timer
+                        netObject->UpdateToRelevant(p_dt);
+                    }
                 }
             }
 
@@ -88,7 +88,22 @@ namespace Doremi
                 // TODOCM if we want ever lasting objects on the ground we will need to exclude probobly
                 if(t_entityHandler.HasComponents(i, (int)ComponentType::NetworkObject))
                 {
-                    m_idByPriorityList.push_back(i);
+                    NetworkObjectComponent* netObject = &m_netPriorityObjects[i];
+                    // If not relevant for more than 5 seconds, don't send
+                    if(netObject->GetNotRelevantTimer() < RelevantTimer)
+                    {
+                        // If relevant for less then 1 second, force send
+                        if(netObject->GetRelevantTimer() < ShortRelevantTimer)
+                        {
+                            netObject->CalculateFramePriorityByShortRelevance();
+                        }
+                        else // Else add with normal priority
+                        {
+                            netObject->CalculateFramePriority();
+                        }
+
+                        m_idByPriorityList.push_back(i);
+                    }
                 }
             }
 
@@ -100,7 +115,6 @@ namespace Doremi
         void NetworkPriorityHandler::UpdateNetworkObject(const EntityID& p_entityID)
         {
             memcpy(&m_netPriorityObjects[p_entityID], GetComponent<NetworkObjectComponent>(p_entityID), sizeof(NetworkObjectComponent));
-            m_netPriorityObjects[p_entityID].SetToStartAlive();
         }
 
         void NetworkPriorityHandler::WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
@@ -132,7 +146,7 @@ namespace Doremi
                 p_streamer.WriteRotationQuaternion(TransComponent->rotation); // 4x4 = 16 byte
 
                 // Reset sent objects priority
-                m_netPriorityObjects[entityID].ResetPriority();
+                m_netPriorityObjects[entityID].ResetLastUpdateTimer();
 
                 // Increase offset
                 op_BytesWritten += t_SizeOfOneObject;

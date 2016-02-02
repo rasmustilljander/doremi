@@ -222,7 +222,7 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::EventHandler::GetInstance()->DeliverEvents();
-        Core::PlayerHandler::GetInstance()->UpdateServer();
+        Core::PlayerHandler::GetInstance()->UpdateServer(p_deltaTime);
 
         Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update

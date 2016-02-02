@@ -250,14 +250,14 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandler::UpdateServer()
+        void PlayerHandler::UpdateServer(double p_dt)
         {
             TIME_FUNCTION_START
             UpdatePlayerInputsServer();
             UpdatePlayerPositions();
             UpdatePlayerRotationsServer();
             UpdateFiring();
-            UpdateNetworkObjectPriority();
+            UpdateNetworkObjectPriority(p_dt);
             TIME_FUNCTION_STOP
         }
 
@@ -515,13 +515,13 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandler::UpdateNetworkObjectPriority()
+        void PlayerHandler::UpdateNetworkObjectPriority(double p_dt)
         {
             // For each player we update their networkobj priorities
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                iter->second->m_networkPriorityHandler->Update(iter->second->m_playerEntityID);
+                iter->second->m_networkPriorityHandler->Update(iter->second->m_playerEntityID, p_dt);
             }
         }
 

@@ -179,12 +179,12 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void UpdateServer();
+            void UpdateServer(double p_dt);
 
             /**
                 TODOCM doc
             */
-            void UpdateNetworkObjectPriority();
+            void UpdateNetworkObjectPriority(double p_dt);
 
             /**
                 TODOCM doc

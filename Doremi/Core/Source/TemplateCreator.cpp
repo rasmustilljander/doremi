@@ -109,7 +109,7 @@ namespace Doremi
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
             // Network object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(100, 10);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
 
@@ -126,7 +126,7 @@ namespace Doremi
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
             blueprint[ComponentType::Render] = renderComp;
 
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
@@ -178,7 +178,7 @@ namespace Doremi
             // Register blueprint
 
             // Network object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
@@ -230,7 +230,7 @@ namespace Doremi
             GravityComponent* gravComp = new GravityComponent();
             blueprint[ComponentType::Gravity] = gravComp;
             // Network object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(10000, 100);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(2.0f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
@@ -265,7 +265,7 @@ namespace Doremi
             blueprint[ComponentType::EntityType] = typeComp;
 
             // Network object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(5000, 100);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1.0f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             /// Register blueprint
@@ -293,7 +293,7 @@ namespace Doremi
             blueprint[ComponentType::Render] = renderComp;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             /// Register blueprint
@@ -335,7 +335,7 @@ namespace Doremi
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(5000, 100);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
             t_platform[ComponentType::NetworkObject] = netObjComp;
 
             // Register bluepirnt
@@ -400,7 +400,7 @@ namespace Doremi
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_platform[ComponentType::NetworkObject] = netObjComp;
 
             // Register bluepirnt
@@ -460,7 +460,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Gravity] = gravComp;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(50000, 100);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(3);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Range Component
@@ -571,7 +571,7 @@ namespace Doremi
             t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
@@ -593,7 +593,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(30, 10);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
@@ -620,7 +620,7 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0, 0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
 
