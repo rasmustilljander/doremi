@@ -37,8 +37,6 @@ namespace DoremiEngine
 
         int InputModuleImplementation::GetMousePosY() { return m_mousePosY; }
 
-        void InputModuleImplementation::SetWorkingDirectory(const std::string& p_workingDirectory) {}
-
         void InputModuleImplementation::Shutdown() {}
 
         void InputModuleImplementation::Update()

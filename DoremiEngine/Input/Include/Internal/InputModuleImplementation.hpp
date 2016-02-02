@@ -20,12 +20,11 @@ namespace DoremiEngine
                 int x = 0;
                 int y = 0;
             };
-            
-            MouseMovementStruct m_mouseMovementStruct;
-            std::vector<int> m_keyboardButtonsDown; 
-            std::vector<int> m_mouseButtonsDown; // will be sent if the target wants the buttons of the mouse(no scrolling)
-            int m_mouseWheelSpins = 0; 
 
+            MouseMovementStruct m_mouseMovementStruct;
+            std::vector<int> m_keyboardButtonsDown;
+            std::vector<int> m_mouseButtonsDown; // will be sent if the target wants the buttons of the mouse(no scrolling)
+            int m_mouseWheelSpins = 0;
 
         public:
             /**
@@ -52,11 +51,6 @@ namespace DoremiEngine
                 Initializes SDL and creates window if there isn't a window active.
             */
             void Startup() override;
-
-            /**
-                TODO docs
-            */
-            void SetWorkingDirectory(const std::string& p_workingDirectory) override;
 
             /**
             TODO Does nothing
