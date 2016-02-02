@@ -1,143 +1,106 @@
 #pragma once
 #include <stdint.h>
-#include <minmax.h>
 
-#define PRIORITY_DISTANCE_DIV_FACTOR 0.001f
-#define PRIORITY_FROM_SPAWN 100000000.0f
-#define PRIORITY_FROM_SLEEP 10000000.0f
-#define NUM_SENDS_BEFOR_SLEEP 30
-#define NUM_SENDS_AFTER_SPAWN 120
+
+#define FORCE_UPDATE_VALUE 360.0f
 
 namespace Doremi
 {
     namespace Core
     {
         /**
-            TODOCM doc
+            Component used for each object for each player, used for prioritizeing net objects
         */
         struct NetworkObjectComponent
         {
-            NetworkObjectComponent() : PriorityStart(0), PriorityIncrement(0), Priority(0), FramePriority(0), SleepUpdatesLeft(0), SpawnUpdatesLeft(0)
-            {
-            }
-            NetworkObjectComponent(float p_priorityStart, float p_priorityIncrement)
-                : PriorityStart(p_priorityStart), PriorityIncrement(p_priorityIncrement), Priority(p_priorityStart), FramePriority(0), SleepUpdatesLeft(0)
+            NetworkObjectComponent() : Priority(0.0f), FramePriority(0.0f), LastUpdateTimer(0.0f), NotRelevantTimer(0.0f), RelevantTimer(0.0f) {}
+            NetworkObjectComponent(float p_priorityStart)
+                : Priority(p_priorityStart), FramePriority(0), LastUpdateTimer(0.0f), NotRelevantTimer(0.0f), RelevantTimer(0.0f)
             {
             }
 
             /**
-                TODOCM doc
+                Get the priority for the current frame
             */
             const float& GetFramePriority() { return FramePriority; }
 
             /**
-                TODOCM doc
+                Update priority, needed for starvation
             */
-            void UpdatePriorityFromPlayer() { Priority += PriorityIncrement; }
+            void UpdateLastUpdateTimer(const double& p_dt) { LastUpdateTimer += p_dt; }
 
             /**
-                TODOCM doc
+                Update not relevant timer, if higher then a value, will be exluded
             */
-            void UpdatePriorityGlobal() {}
-
-            /**
-                Sets priority to 1, 1 above zero because excluding
-            */
-            void SetFramePriorityBySleep(float p_length)
+            void UpdateToNotRelevant(const double& p_dt)
             {
-                if(!SleepUpdatesLeft)
-                {
-                    FramePriority = 1;
-                }
-                else
-                {
-                    SetFramePriorityByLengthAndAddValue(p_length, PRIORITY_FROM_SLEEP);
-                }
+                RelevantTimer = 0.0f;
+                NotRelevantTimer += p_dt;
             }
 
             /**
-                Calculate priority by distance and set it as frame priority, will be 2 if too far
+                Update relevant timer, if lower then a value, will always be included
             */
-            void SetFramePriorityByLength(float p_length)
+            void UpdateToRelevant(const double& p_dt)
             {
-                if(!SpawnUpdatesLeft)
-                {
-                    SetFramePriorityByLengthAndAddValue(p_length, 0.0f);
-                }
-                else
-                {
-                    SetFramePriorityByLengthAndAddValue(p_length, PRIORITY_FROM_SPAWN);
-                }
+                NotRelevantTimer = 0.0f;
+                RelevantTimer += p_dt;
             }
-
-            void SetFramePriorityByLengthAndAddValue(float p_length, float p_value)
-            {
-                if(p_length > 1)
-                {
-                    FramePriority = max(Priority /*/ (p_length * PRIORITY_DISTANCE_DIV_FACTOR)*/, 2.0f);
-                }
-                else
-                {
-                    FramePriority = Priority /* / PRIORITY_DISTANCE_DIV_FACTOR*/;
-                }
-            }
-
-            void SetToStartSleep()
-            {
-                SleepUpdatesLeft = NUM_SENDS_BEFOR_SLEEP;
-                SpawnUpdatesLeft = 0;
-            }
-
-            void SetToStartAlive() { SpawnUpdatesLeft = NUM_SENDS_AFTER_SPAWN; }
 
             /**
-                TODOCM doc
+                Get NotRelevantTimer
             */
-            void ResetPriority()
-            {
-                Priority = PriorityStart;
+            float GetNotRelevantTimer() { return NotRelevantTimer; }
 
-                // Decrement sleepupdates if we have any
-                if(SleepUpdatesLeft)
-                {
-                    SleepUpdatesLeft--;
-                }
-                if(SpawnUpdatesLeft)
-                {
-                    SpawnUpdatesLeft--;
-                }
+            /**
+                Get RelevantTimer
+            */
+            float GetRelevantTimer() { return RelevantTimer; }
+
+            /**
+                Calculate priority by time it hasn't been send
+            */
+            void CalculateFramePriority() { FramePriority = LastUpdateTimer * Priority; }
+
+            /**
+                Calculate priority with a forced value, will try to include this in next package
+            */
+            void CalculateFramePriorityByShortRelevance()
+            {
+                LastUpdateTimer += FORCE_UPDATE_VALUE;
+                CalculateFramePriority();
             }
+
+            /**
+                Reset the last update timer
+            */
+            void ResetLastUpdateTimer() { LastUpdateTimer = 0.0f; }
 
         private:
             /**
-                TODOCM doc
-            */
-            float FramePriority;
-
-            /**
-                TODOCM doc
+                Static priority for object
             */
             float Priority;
 
             /**
-                TODOCM doc
+                Frame priority, based on time from last update and Priority
             */
-            float PriorityIncrement;
+            float FramePriority;
 
             /**
-                TODOCM doc
+                Timer from last update, used for remove starvation
             */
-            float PriorityStart;
+            float LastUpdateTimer;
 
             /**
-                TODOCM doc
+                Timer to check not relevant
             */
-            uint8_t SleepUpdatesLeft;
+            float NotRelevantTimer;
 
             /**
-                TODOCM doc
+                Timer to check relevant
             */
-            uint8_t SpawnUpdatesLeft;
+            float RelevantTimer;
         };
     }
 }
