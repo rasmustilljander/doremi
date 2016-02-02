@@ -1,7 +1,5 @@
 #pragma once
 #include <EntityComponent/Constants.hpp>
-#include <vector>
-using namespace std;
 namespace Doremi
 {
     namespace Core
@@ -26,8 +24,8 @@ namespace Doremi
         {
             // The type of this specific spawner
             SpawnerType type;
-            // All entities that this spawner can spawn
-            vector<Blueprints> possibleEntities;
+            // The entity we want to spawn
+            Blueprints entityBlueprint;
 
             // Used by timed spawner
             float timeBetweenSpawns;
