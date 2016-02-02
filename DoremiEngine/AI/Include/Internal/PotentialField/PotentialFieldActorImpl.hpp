@@ -29,11 +29,14 @@ namespace DoremiEngine
             void SetPrevGridPosition(const DirectX::XMINT2& p_prevGridPos) override { m_prevGridPos = p_prevGridPos; };
             void UpdatePhermoneTrail(const DirectX::XMINT2& p_gridPosToAdd) override;
             void EraseFirstInPhermoneList() override;
+            void AddPotentialVsOther(const PotentialChargeInformation& p_newPotential) override;
+            virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const { return m_potentialsVsOther; };
 
         private:
 
             std::vector<DirectX::XMINT2> m_phermoneTrail;
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
+            std::vector<PotentialChargeInformation> m_potentialsVsOther;
             float m_range;
             float m_charge;
             DirectX::XMINT2 m_prevGridPos;

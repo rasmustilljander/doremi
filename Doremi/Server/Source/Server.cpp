@@ -138,7 +138,7 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 2; i++)
+        for(size_t i = 0; i < 1; i++)
         {
             XMFLOAT3 position = DirectX::XMFLOAT3(-280 * (int)i + 0, 140 * (int)i + 4, -85 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);

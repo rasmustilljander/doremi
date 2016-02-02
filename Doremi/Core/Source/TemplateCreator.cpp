@@ -452,7 +452,6 @@ namespace Doremi
 
             // Potential field component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(DirectX::XMFLOAT3(0, 0, 0), 3, 30, false); // TODOKO should be done after the entity is created
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
 
             // Gravity component

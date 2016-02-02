@@ -5,8 +5,25 @@ namespace DoremiEngine
 {
     namespace AI
     {
+        struct PotentialChargeInformation
+        {
+            float charge; // charge as float
+            float range; // range as float
+            bool OnlyAddedOnAttracting; // if this field should only be added when checking vs attracting forces
+            bool OnlyAddedOnReppeling; // if this field should only be added when checking vs reppeling forces
+            bool active; // If it's active or not
+            // TODOKO add a specific actor this field should be used when checking against, if needed
+            PotentialChargeInformation(const float& p_charge, const float& p_range,
+                const bool& p_onlyAddedOnAttracting, const bool& p_onlyAddedOnReppeling, const bool& p_active)
+                : charge(p_charge), range(p_range), OnlyAddedOnAttracting(p_onlyAddedOnAttracting), OnlyAddedOnReppeling(p_onlyAddedOnReppeling), active(p_active) {}
+            /**
+            Standard is false for everything and 0 in range and charge
+            */
+            PotentialChargeInformation(): charge(0), range(0), OnlyAddedOnAttracting(false), OnlyAddedOnReppeling(false), active(false) {}
+        };
         /**
-        TODOKO docs
+        A potentialfield actor contains information on reppeling or attracting force. It also contains a range and charge information.
+        it also contains private fields that should be used when trying to move to another actor with some information on what different actors it should use these fields on
         */
         class PotentialFieldActor
         {
@@ -75,6 +92,18 @@ namespace DoremiEngine
             Erase the first([0]) element in the phermone list!
             */
             virtual void EraseFirstInPhermoneList() = 0;
+            /**
+            Adds a new potential to be used when checking vs other actors. This is what makes ranged stay on range and melee go to melee.
+            If a actor contains one of these fields it will be used when checking vs other actors. For example a range unit might contain a 
+            potential which will only be used when checking against positive charges. This will make the enemy move against the player since
+            the player have a strong attracting force. This ranged enemy will also add this potential to the total charge making it almost as
+            though the player have 2 charges with different information enabling the ranged unit to stay at range.
+            */
+            virtual void AddPotentialVsOther(const PotentialChargeInformation& p_newPotential) = 0;
+            /**
+            Gets the list with potentials vs others
+            */
+            virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const = 0;
         };
     }
 }

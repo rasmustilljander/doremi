@@ -43,7 +43,7 @@ namespace Doremi
             // TODOKO do this in a better place, might not work to have here in the future
             m_field =
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 50, 50,
-                                                                                          XMFLOAT3(-60, 5.0f, -40)); // Fits for first platform
+                                                                                          XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
             m_topField =
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
                     XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
@@ -102,29 +102,17 @@ namespace Doremi
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
                     // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
 
-                    //if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
-                    //{
-                    //    //DEBUG
-                    //    int hej = 0;
-
-                    //    // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
-                    //    // Do nothing
-                    //}
-                    //else 
-                    //{
-                    //    //DEBUG
-                    //    std::vector<XMINT2> hej = currentActor->GetPhermoneTrail();
-
-                    //    XMINT2 hej1 = currentActor->GetPrevGridPos();
-                    //    // Add the previous gridPos to the trail.
-                    //    // TODOEA This will make the Ai move as the game starts.
-
-                    //    currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
-                    //    //DEBUG 
-                    //    //XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
-                    //    XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
-                    //    currentActor->SetPrevGridPosition(newPrevPos);
-                    //}
+                    if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
+                    {
+                        // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
+                        // if we are still standing on the same quad as the last update we do nothing 
+                    }
+                    else 
+                    {
+                        XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
+                        currentActor->SetPrevGridPosition(newPrevPos);
+                        currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
+                    }
                     if(field != nullptr)
                     {
                         desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);

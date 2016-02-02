@@ -27,6 +27,7 @@ namespace DoremiEngine
         private:
             // Help functions
             float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
+            bool AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position);
             std::vector<std::vector<PotentialFieldGridPoint>> m_grid; // [width][height]
             std::set<PotentialFieldActor*> m_staticActors; // set for fast check if actor already recides in list
             std::vector<PotentialFieldActor*> m_dynamicActors; // vector for fast access through the list
@@ -34,6 +35,7 @@ namespace DoremiEngine
             float m_height;
             DirectX::XMFLOAT2 m_quadSize;
             DirectX::XMFLOAT3 m_center;
+            float m_phermoneEffect;
         };
     }
 }
