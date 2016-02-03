@@ -368,7 +368,8 @@ namespace DoremiEngine
         {
             if(m_bodies.find(p_bodyID) == m_bodies.end())
             {
-                cout << "shit went wrong" << endl;
+                cout << "Physics: couldn't remove rigid body ID: " << p_bodyID << " since it did not exist" << endl;
+                return;
             }
             m_IDsByBodies.erase(m_bodies[p_bodyID]);
             m_bodies[p_bodyID]->release();
