@@ -68,7 +68,7 @@ namespace Doremi
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
                             // We should spawn something
-
+                            CreateEntity(spawnComp->entityBlueprint, i);
                         }
                         else
                         {
