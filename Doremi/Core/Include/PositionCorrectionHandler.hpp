@@ -43,48 +43,53 @@ namespace Doremi
         {
         public:
             /**
-                TODOCM doc
+                StartPositionCorrectionHandler needs to be called befor this
             */
             static PositionCorrectionHandler* GetInstance();
 
             /**
-                TODOCM doc
+                Needs to be called befor GetInstance
             */
             static void StartPositionCorrectionHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
-                TODOCM doc
+                Checks a position retrieved from server and sets the correction to the next interpolation goal
             */
-            void CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
+            void InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
 
             /**
-                TODOCM doc
+                Doesn't extrapolate for now, but actually applies the physics position to the transform
+            */
+            void ExtrapolatePosition(uint32_t p_playerEntityID);
+
+            /**
+                Queues position and movement, used as we check vs server later
             */
             void QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_movement, uint8_t p_sequence);
 
         private:
             /**
-                TODOCM doc
+                Constructor
             */
             PositionCorrectionHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
-                TODOCM doc
+                Destructor
             */
             ~PositionCorrectionHandler();
 
             /**
-                TODOCM doc
+                Singleton pointer
             */
             static PositionCorrectionHandler* m_singleton;
 
             /**
-                TODOCM doc
+                Sharedcontext, used to get physics
             */
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             /**
-                TODOCM doc
+                Buffered positions and movements from the past we can use for checking vs server pos
             */
             std::list<MovementStamp> m_PositionStamps;
         };

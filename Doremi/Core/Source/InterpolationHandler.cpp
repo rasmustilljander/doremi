@@ -275,8 +275,8 @@ namespace Doremi
                     std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
                     if(playerMap.begin() != playerMap.end())
                     {
-                        PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(playerMap.begin()->first, SnapshotToUse->PlayerPositionToCheck,
-                                                                                          SnapshotToUse->SequenceToCheckPosAgainst);
+                        PositionCorrectionHandler::GetInstance()->InterpolatePositionFromServer(playerMap.begin()->first, SnapshotToUse->PlayerPositionToCheck,
+                                                                                                SnapshotToUse->SequenceToCheckPosAgainst);
                     }
 
 
@@ -305,12 +305,28 @@ namespace Doremi
                             *next = ExtrapolateTransform(snapPrev, snapNext, m_NumOfSequencesToInterpolate);
                         }
                     }
+
+                    // Check if we have a player, and move update the next transform
+                    // TODOCM not to nice check if we have player, maybe remove or change
+                    std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
+                    if(playerMap.begin() != playerMap.end())
+                    {
+                        PositionCorrectionHandler::GetInstance()->ExtrapolatePosition(playerMap.begin()->first);
+                    }
                 }
             }
             else
             {
                 m_SequenceInterpolationOffset++;
                 // std::cout << "Doing a long interpolation..." << std::endl;
+
+                // Check if we have a player, and move update the next transform
+                // TODOCM not to nice check if we have player, maybe remove or change
+                std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
+                if(playerMap.begin() != playerMap.end())
+                {
+                    PositionCorrectionHandler::GetInstance()->ExtrapolatePosition(playerMap.begin()->first);
+                }
             }
             m_snapshotSequenceReal++;
             // std::cout << "NumOfBufferedSnapshots: " << m_DelayedSnapshots.size() << std::endl;
