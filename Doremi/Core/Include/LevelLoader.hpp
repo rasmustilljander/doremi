@@ -67,7 +67,7 @@ namespace Doremi
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;
             std::vector<ObjectCouplingInfo> m_meshCoupling;
-            std::map<int, std::pair<char*, char*>> m_lightNames; // <index, <transformName, lightName>>
+            std::map<int, std::pair<std::string, std::string>> m_lightNames; // <index, <transformName, lightName>>
 
             // HAX STUFF for physics magic
             DirectX::XMFLOAT3 m_currentPos;

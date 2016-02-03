@@ -175,9 +175,9 @@ namespace Doremi
 
         void LevelLoader::LoadLights(std::ifstream& ifs, int nrLights)
         {
+            using namespace std;
             using namespace DoremiEditor::Core;
             m_lights.reserve(nrLights);
-            m_lights.resize(nrLights);
             for(int i = 0; i < nrLights; i++)
             {
                 int transformNameSize;
@@ -200,8 +200,12 @@ namespace Doremi
                 ifs.read((char*)&lightData.dropOff, sizeof(float));
                 ifs.read((char*)&lightData.coneAngle, sizeof(float));
                 ifs.read((char*)&lightData.penumAgle, sizeof(float));
-                m_lights[i] = lightData;
-                m_lightNames[i] = std::pair<char*, char*>(transformName,lightName);
+                m_lights.push_back(move(lightData));
+
+                m_lightNames[i] = pair<string, string>(string(transformName), string(lightName));
+
+                delete transformName;
+                delete lightName;
             }
         }
 
