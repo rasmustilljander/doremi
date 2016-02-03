@@ -62,13 +62,14 @@ namespace Doremi
                     {
                         // Update time since last spawn
                         spawnComp->timeSinceLastSpawn += p_dt;
-                        // Check if it's time to spawn
-                        if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns)
+                        // Check if it's time to spawn and if we haven't already spawned the max number
+                        if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns && spawnComp->currentNumSpawnedEntities < spawnComp->maxNumSpawnedEntites)
                         {
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
                             // We should spawn something
                             CreateEntity(spawnComp->entityBlueprint, i);
+                            spawnComp->currentNumSpawnedEntities++;
                         }
                         else
                         {
@@ -105,8 +106,6 @@ namespace Doremi
 
                     EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
                     EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
-                    break;
-                default:
                     break;
             }
         }
