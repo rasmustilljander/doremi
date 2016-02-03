@@ -428,16 +428,6 @@ namespace Doremi
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
-            // Spawn component DEBUG REMOVE
-            EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
-            t_entitySpawnComp->entityBlueprint = Blueprints::EnemyEntity;
-            t_entitySpawnComp->spawnRadius = 2;
-            t_entitySpawnComp->timeBetweenSpawns = 2;
-            t_entitySpawnComp->type = SpawnerType::TimedSpawner;
-            t_entitySpawnComp->maxNumSpawnedEntites = 4;
-            t_avatarBlueprint[ComponentType::EntitySpawner] = t_entitySpawnComp;
-
-
             // Rigid body comp
             // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
             // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
@@ -678,6 +668,35 @@ namespace Doremi
             t_entityHandler.RegisterEntityBlueprint(Blueprints::TriggerEntity, t_triggerBlueprint);
             TIME_FUNCTION_STOP
         }
+
+        void CreateSpawnerEntityClient()
+        {
+            // Empty by design: exists only on server
+            EntityBlueprint t_blueprint;
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_blueprint[ComponentType::Transform] = t_transformComp;
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemySpawnerEntity, t_blueprint);
+        }
+        void CreateSpawnerEntityServer()
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            EntityBlueprint t_blueprint;
+
+            // Transform comp
+            TransformComponent* t_transformComp = new TransformComponent();
+            t_blueprint[ComponentType::Transform] = t_transformComp;
+
+            // Spawn component
+            EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
+            t_entitySpawnComp->entityBlueprint = Blueprints::EnemyEntity;
+            t_entitySpawnComp->spawnRadius = 2;
+            t_entitySpawnComp->timeBetweenSpawns = 2;
+            t_entitySpawnComp->type = SpawnerType::TimedSpawner;
+            t_entitySpawnComp->maxNumSpawnedEntites = 4;
+            t_blueprint[ComponentType::EntitySpawner] = t_entitySpawnComp;
+
+            t_entityHandler.RegisterEntityBlueprint(Blueprints::EnemySpawnerEntity, t_blueprint);
+        }
         void TemplateCreator::CreateTemplatesForClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             CreateDebugPlatformsClient(sharedContext);
@@ -690,6 +709,7 @@ namespace Doremi
             CreateExperimentalParticlePressureBlueprintClient(sharedContext);
             CreatePotentialFieldDebugClient(sharedContext);
             CreateTriggerObjectClient(sharedContext);
+            CreateSpawnerEntityClient();
         }
 
         void TemplateCreator::CreateTemplatesForServer(const DoremiEngine::Core::SharedContext& sharedContext)
@@ -703,6 +723,7 @@ namespace Doremi
             CreateExperimentalParticlePressureBlueprintServer(sharedContext);
             CreatePotentialFieldDebugServer(sharedContext);
             CreateTriggerObjectServer(sharedContext);
+            CreateSpawnerEntityServer();
         }
     }
 }
