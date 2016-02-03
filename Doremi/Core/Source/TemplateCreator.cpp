@@ -433,8 +433,8 @@ namespace Doremi
             t_entitySpawnComp->entityBlueprint = Blueprints::BulletEntity;
             t_entitySpawnComp->spawnRadius = 2;
             t_entitySpawnComp->timeBetweenSpawns = 2;
-            t_entitySpawnComp->timeSinceLastSpawn = 0;
             t_entitySpawnComp->type = SpawnerType::TimedSpawner;
+            t_entitySpawnComp->maxNumSpawnedEntites = 4;
             t_avatarBlueprint[ComponentType::EntitySpawner] = t_entitySpawnComp;
 
 

@@ -26,10 +26,14 @@ namespace Doremi
             SpawnerType type;
             // The entity we want to spawn
             Blueprints entityBlueprint;
+            // Number of entities to be spawned from this spawner
+            int maxNumSpawnedEntites;
+            // Current number of entities that have been spawned
+            int currentNumSpawnedEntities = 0;
 
             // Used by timed spawner
             float timeBetweenSpawns;
-            float timeSinceLastSpawn;
+            float timeSinceLastSpawn = 0;
             // Used to filter out if thingies are too far away
             float spawnRadius;
         };
