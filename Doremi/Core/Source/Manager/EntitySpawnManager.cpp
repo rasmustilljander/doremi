@@ -91,6 +91,18 @@ namespace Doremi
                 }
             }
         }
+
         void EntitySpawnManager::OnEvent(Event* p_event) {}
+
+        void EntitySpawnManager::CreateEntity(Blueprints p_blueprint)
+        {
+            switch(p_blueprint)
+            {
+                case Blueprints::EnemyEntity:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
