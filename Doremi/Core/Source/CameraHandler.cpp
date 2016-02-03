@@ -52,7 +52,7 @@ namespace Doremi
 
         CameraHandler::~CameraHandler() {}
 
-        void CameraHandler::Update(double p_dt)
+        void CameraHandler::UpdateInput(double p_dt)
         {
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
@@ -76,12 +76,33 @@ namespace Doremi
                 {
                     case CameraType::FREELOOK:
                         inputHandler->SetCursorInvisibleAndMiddle(false);
-                        m_freeLookCamera->Update(p_dt);
-                        t_graphicModuleCameraManager.PushCameraToDevice(m_freeLookCamera->GetCamera());
+                        m_freeLookCamera->UpdateInput(p_dt);
+
                         break;
                     case CameraType::THIRDPERSON:
                         inputHandler->SetCursorInvisibleAndMiddle(true);
-                        m_thirdPersonCamera->Update(p_dt);
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        void CameraHandler::UpdateDraw()
+        {
+            DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            if(inputHandler != nullptr)
+            {
+                switch(m_currentCamera)
+                {
+                    case CameraType::FREELOOK:
+                        m_freeLookCamera->Update();
+                        t_graphicModuleCameraManager.PushCameraToDevice(m_freeLookCamera->GetCamera());
+                        break;
+                    case CameraType::THIRDPERSON:
+                        m_thirdPersonCamera->Update();
                         t_graphicModuleCameraManager.PushCameraToDevice(m_thirdPersonCamera->GetCamera());
                         break;
                     default:
@@ -89,6 +110,7 @@ namespace Doremi
                 }
             }
         }
+
         void CameraHandler::ChangeCamera(CameraType p_type) { m_currentCamera = p_type; }
         DirectX::XMFLOAT3 CameraHandler::GetActiveCameraPosition()
         {

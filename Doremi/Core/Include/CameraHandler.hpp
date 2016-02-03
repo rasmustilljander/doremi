@@ -37,7 +37,12 @@ namespace Doremi
             /**
             Updates the camera
             */
-            void Update(double p_dt);
+            void UpdateInput(double p_dt);
+
+            /**
+                TODO
+            */
+            void UpdateDraw();
 
             void ChangeCamera(CameraType p_type);
 

@@ -541,8 +541,8 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // Net object
-            // NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
-            // t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
+            t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);

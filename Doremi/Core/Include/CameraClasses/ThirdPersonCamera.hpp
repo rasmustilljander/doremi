@@ -16,7 +16,7 @@ namespace Doremi
         public:
             ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera);
             virtual ~ThirdPersonCamera();
-            void Update(double p_dt);
+            void Update();
             DoremiEngine::Graphic::Camera& GetCamera() const { return *m_camera; }
         private:
             DoremiEngine::Graphic::Camera* m_camera;

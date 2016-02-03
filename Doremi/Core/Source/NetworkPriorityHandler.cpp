@@ -101,8 +101,11 @@ namespace Doremi
                         {
                             netObject->CalculateFramePriority();
                         }
-
-                        m_idByPriorityList.push_back(i);
+                        // If we're not player we add it
+                        if(i != p_playerID)
+                        {
+                            m_idByPriorityList.push_back(i);
+                        }
                     }
                 }
             }
