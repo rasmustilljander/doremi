@@ -32,63 +32,49 @@ namespace DoremiEngine
         void ParticleEmitter::GetPositions(vector<XMFLOAT3>& o_positions)
         {
             // This is a bit harder than it really ought to be...
-            PxParticleReadData* readData = m_particleSystem->lockParticleReadData();
-            PxStrideIterator<const PxVec3> positions = readData->positionBuffer;
-            PxStrideIterator<const PxVec3> velocities = readData->velocityBuffer;
-            PxStrideIterator<const PxParticleFlags> flags = readData->flagsBuffer;
-            vector<XMFLOAT3> velocitiesVector;
+            // Important to lock data
+            LockParticleData();
+            // Get the positions
+            PxStrideIterator<const PxVec3> positions = m_readData->positionBuffer;
+            // And the flags (so we know that the particles are valid)
+            PxStrideIterator<const PxParticleFlags> flags = m_readData->flagsBuffer;
 
-            vector<int> indicesOfParticlesToBeReleased;
-
-            uint32_t numParticles = readData->validParticleRange;
+            uint32_t numParticles = m_readData->validParticleRange;
             for(uint32_t i = 0; i < numParticles; i++)
             {
-                // Check if particles are supposed to be removed
-                XMFLOAT3 position = XMFLOAT3(positions[i].x, positions[i].y, positions[i].z);
-                XMFLOAT3 velocity = XMFLOAT3(velocities[i].x, velocities[i].y, velocities[i].z);
-                XMVECTOR velVec = XMLoadFloat3(&velocity);
-                velVec = XMVector3Normalize(velVec);
-                XMStoreFloat3(&velocity, velVec); // TODOJB Remove normalization once it's fixed in CastRay
-                if(flags[i] & (PxParticleFlag::eCOLLISION_WITH_DRAIN)) // | PxParticleFlag::eVALID))
+                // Check valid flag
+                if(flags[i] & PxParticleFlag::eVALID)
                 {
-                    /// Particle should be removed
-                    // Add index to release list
-                    indicesOfParticlesToBeReleased.push_back(i);
-                    // Find out which actor it collided with using ray tracing (seriously. It was this easy...)
-                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
-                }
-                else if(flags[i] & PxParticleFlag::eVALID)
-                {
-                    o_positions.push_back(position);
+                    // Save the particle position
+                    o_positions.push_back(XMFLOAT3(positions[i].x, positions[i].y, positions[i].z));
                 }
             }
-            readData->unlock();
-            if(indicesOfParticlesToBeReleased.size() != 0)
-            {
-                PxStrideIterator<const PxU32> inicesPX(reinterpret_cast<PxU32*>(&indicesOfParticlesToBeReleased[0]));
-                m_particleSystem->releaseParticles(indicesOfParticlesToBeReleased.size(), inicesPX);
-            }
+            // Unlock once we're done
+            UnlockParticleData();
         }
 
         vector<int> ParticleEmitter::GetDrainsHit() { return m_drainsHit; }
 
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
 
+        void ParticleEmitter::LockParticleData() { m_readData = m_particleSystem->lockParticleReadData(); }
+
+        void ParticleEmitter::UnlockParticleData() { m_readData->unlock(); }
+
         void ParticleEmitter::UpdateParticleLifeTimeAndRemoveExpired(float p_dt)
         {
             std::vector<PxU32> t_indicesToRemove;
             // Get particle indexData
-            PxParticleReadData* t_particleData = m_particleSystem->lockParticleReadData();
             PX_ASSERT(t_particleData);
             // Kolla om vi har några particlar som är valid annars onödigt att ens börja uppdatera
-            if(t_particleData->validParticleRange > 0)
+            if(m_readData->validParticleRange > 0)
             {
-                int length = t_particleData->validParticleRange;
+                int length = m_readData->validParticleRange;
 
-                for(PxU32 i = 0; i <= (t_particleData->validParticleRange - 1) >> 5; i++)
+                for(PxU32 i = 0; i <= (m_readData->validParticleRange - 1) >> 5; i++)
                 {
 
-                    for(PxU32 j = t_particleData->validParticleBitmap[i]; j; j &= j - 1)
+                    for(PxU32 j = m_readData->validParticleBitmap[i]; j; j &= j - 1)
                     {
                         // TODOXX super unsafe. I am not sure what i am doing here. I was following a tutorial and a function they used was missing.
                         // This seems to be what they did essentially but WARNING!!
@@ -113,7 +99,7 @@ namespace DoremiEngine
                 // Do nothing
             }
             // Release the data we have been looking at
-            t_particleData->unlock();
+            m_readData->unlock();
             // Needs to not crash
             if(t_indicesToRemove.size() > 0)
             {
@@ -125,10 +111,43 @@ namespace DoremiEngine
             }
         }
 
-        void ParticleEmitter::Update(float p_dt)
+        void ParticleEmitter::RemoveDrainCollidedParticles(float p_dt)
         {
-            m_drainsHit.clear();
-            UpdateParticleLifeTimeAndRemoveExpired(p_dt);
+            // This is a bit harder than it really ought to be...
+            PxStrideIterator<const PxVec3> positions = m_readData->positionBuffer;
+            PxStrideIterator<const PxVec3> velocities = m_readData->velocityBuffer;
+            PxStrideIterator<const PxParticleFlags> flags = m_readData->flagsBuffer;
+            vector<XMFLOAT3> velocitiesVector;
+
+            vector<int> indicesOfParticlesToBeReleased;
+
+            uint32_t numParticles = m_readData->validParticleRange;
+            for(uint32_t i = 0; i < numParticles; i++)
+            {
+                // Check if particles are supposed to be removed
+                XMFLOAT3 position = XMFLOAT3(positions[i].x, positions[i].y, positions[i].z);
+                XMFLOAT3 velocity = XMFLOAT3(velocities[i].x, velocities[i].y, velocities[i].z);
+                XMVECTOR velVec = XMLoadFloat3(&velocity);
+                velVec = XMVector3Normalize(velVec);
+                XMStoreFloat3(&velocity, velVec); // TODOJB Remove normalization once it's fixed in CastRay
+                if(flags[i] & (PxParticleFlag::eCOLLISION_WITH_DRAIN)) // | PxParticleFlag::eVALID))
+                {
+                    /// Particle should be removed
+                    // Add index to release list
+                    indicesOfParticlesToBeReleased.push_back(i);
+                    // Find out which actor it collided with using ray tracing (seriously. It was this easy...)
+                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
+                }
+            }
+            if(indicesOfParticlesToBeReleased.size() != 0)
+            {
+                PxStrideIterator<const PxU32> inicesPX(reinterpret_cast<PxU32*>(&indicesOfParticlesToBeReleased[0]));
+                m_particleSystem->releaseParticles(indicesOfParticlesToBeReleased.size(), inicesPX);
+            }
+        }
+
+        void ParticleEmitter::UpdateParticleEmission(float p_dt)
+        {
             if(m_this.m_active)
             {
                 // Update time since last particle wave was spawned
@@ -149,7 +168,7 @@ namespace DoremiEngine
                     */
                     // Calculate matrix to rotate velocity to world space
                     XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
-                    for(int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
+                    for (int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
                     {
                         // Calculate angle in local space
                         float xAngle = ((float)x / (float)m_this.m_numParticlesX) * m_this.m_emissionAreaDimensions.x;
@@ -185,14 +204,14 @@ namespace DoremiEngine
                         }
                     }
 
-                    if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
+                    if (positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
                     {
                         // Cast into PhysX datatypes
                         PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);
                         PxVec3* velocitiesPX = reinterpret_cast<PxVec3*>(&velocities[0]);
                         PxU32* indicesPX = reinterpret_cast<PxU32*>(&indices[0]);
 
-                        
+
                         // Create the particles
                         PxParticleCreationData newParticlesData;
                         newParticlesData.numParticles = positions.size();
@@ -206,7 +225,30 @@ namespace DoremiEngine
                         // No new particles. Do nothing
                     }
                 }
+                else
+                {
+                    // Not time for new particles
+                }
             }
+            else
+            {
+                // Particle system is not active
+            }
+        }
+
+        void ParticleEmitter::Update(float p_dt)
+        {
+            m_drainsHit.clear();
+            // Lock the read data
+            LockParticleData();
+            // Remove old (aged) particles
+            UpdateParticleLifeTimeAndRemoveExpired(p_dt);
+            // Spray new particles
+            UpdateParticleEmission(p_dt);
+            // Remove particles that have collided with a drain
+            RemoveDrainCollidedParticles(p_dt);
+            // Unlock particle data
+            UnlockParticleData();
         }
     }
 }
