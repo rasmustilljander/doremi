@@ -93,10 +93,6 @@ namespace DoremiEngine
             {
                 pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
             }
-			if ((filterData0.word0 & ignore) || filterData1.word0 & ignore)
-			{
-				return PxFilterFlag::eKILL;
-			}
 
             return PxFilterFlag::eDEFAULT;
         }
