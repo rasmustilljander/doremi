@@ -23,12 +23,12 @@ namespace Doremi
             ~FrequencyBufferHandler();
 
             /**
-                TODOCM doc
+                Returns the frequency for the current frame, if none is buffered 0 is returned
             */
             float GetFrequencyForFrame();
 
             /**
-                TODOCM doc
+                Buffer a frequency used for send
             */
             void BufferFrequency(float p_frequency);
 
@@ -38,28 +38,28 @@ namespace Doremi
             void UpdateBufferFromSequence(uint8_t p_sequence);
 
             /**
-                TODOCM doc
+                Read incomming frequencies from a buffer
             */
             void ReadNewFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
 
             /**
-                TODOCM doc
+                Write outgoing frequencies to a buffer
             */
             void WriteFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
 
             /**
-                TODOCM doc
+                Initialize the sequence
             */
             void SetStartingSequence(uint8_t p_sequence);
 
             /**
-                TODOCM doc
+                Returns the sequence used in next update
             */
             uint8_t GetNextSequenceUsed();
 
         private:
             /**
-                TODOCM doc
+                Buffered frequencies, both for incomming and sending
             */
             std::list<float> m_bufferedFrequencies;
 
@@ -69,17 +69,20 @@ namespace Doremi
             uint8_t m_nextSequence;
 
             /**
-                TODOCM doc
+                The sequence we are using now
             */
             uint8_t m_realSequence;
 
             /**
-                TODOCM doc
+                How many frequences we buffer
             */
             uint8_t m_bufferDelay;
 
-            float testfloat;
-            bool first;
+            /**
+                A hotfix to initialize sequencce
+                TODOCM remove later
+            */
+            bool m_first;
         };
     }
 }
