@@ -9,6 +9,9 @@ namespace Doremi
     {
         class BitStreamer;
 
+        /**
+            Used to buffer frequency for send, and recieve
+        */
         class FrequencyBufferHandler
         {
         public:

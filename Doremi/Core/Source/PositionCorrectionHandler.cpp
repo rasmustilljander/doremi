@@ -44,7 +44,7 @@ namespace Doremi
 
         }
 
-        void PositionCorrectionHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
+        void PositionCorrectionHandler::InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
             EntityID playerEntityID = 0;
             if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
@@ -81,9 +81,32 @@ namespace Doremi
             m_PositionStamps.erase(iter, m_PositionStamps.end());
 
             // Get rotation and scale
+            // TODOXX if we want to change size/rotation from server we need to change this
             TransformComponent* realTrans = GetComponent<TransformComponent>(playerEntityID);
 
             // Update the next interpolation
+            *GetComponent<TransformComponentNext>(playerEntityID) =
+                TransformComponentNext(charControlManager.GetPosition(playerEntityID), realTrans->rotation, realTrans->scale);
+        }
+
+        void PositionCorrectionHandler::ExtrapolatePosition(uint32_t p_playerID)
+        {
+            // TODOCM this doesn't really extrapolate, but sets the position with movement it should interpolate
+            // Could in some way fix this if we save the position we get corrected from each frame, and see if there's a movement, then use this to
+            // extrapolate
+            // Get player Entity ID
+            EntityID playerEntityID = 0;
+            if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
+            {
+                std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
+            }
+
+            DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+
+            // Get rotation and scale
+            TransformComponent* realTrans = GetComponent<TransformComponent>(playerEntityID);
+
+            // Get data from physics object
             *GetComponent<TransformComponentNext>(playerEntityID) =
                 TransformComponentNext(charControlManager.GetPosition(playerEntityID), realTrans->rotation, realTrans->scale);
         }
