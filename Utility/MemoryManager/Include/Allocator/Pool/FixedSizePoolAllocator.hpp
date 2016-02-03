@@ -11,7 +11,7 @@ namespace Utility
         {
         public:
             /**
-                TODORT docs
+                Constructpr
             */
             FixedSizePoolAllocator() : m_maxOjectCount(0), m_currentObjectCount(0), m_currentFree(nullptr), MemoryAllocator() {}
 
@@ -26,7 +26,9 @@ namespace Utility
             }
 
             /**
-            TODORT docs
+            Allocates an object of T and runs the default constructor.
+            Returns a pointer to the newly created object.
+            Throws exception allocation was not possible.
             */
             T* Allocate()
             {
@@ -49,19 +51,21 @@ namespace Utility
                 }
                 else
                 {
+                    // TODOLOG
                     // TODORT log
+                    // TODOXX Exception may be problematic as it cannot be thrown across dll borders.
                     throw std::runtime_error("No more space in the pool.");
                 }
             }
 
             /**
-            TODORT docs
+            Attempts to free a pointer from the pool. Does NOT
+            Throws an exception if the pointer is not contained within this pool.
             */
             void Free(T* p_pointer)
             {
                 if(AssertAdresstInside(static_cast<void*>(p_pointer)))
                 {
-                    // TODORT Check to see that the pointer is inside this pool?
                     void* prevCurrentFree = m_currentFree;
 
                     // Set the newly created released pointer to be the first free
@@ -69,6 +73,8 @@ namespace Utility
 
                     // Set the value of the next
                     *static_cast<size_t*>(m_currentFree) = reinterpret_cast<size_t>(prevCurrentFree);
+
+                    // Reduce the object count
                     --m_currentObjectCount;
                     m_occupiedMemory -= sizeof(T);
                 }
@@ -79,7 +85,8 @@ namespace Utility
             }
 
             /**
-            TODORT docs
+            Clears the entire pool of data, does not execute the constructor on the content.
+            // TODORT Execute the destructor on each object ?
             */
             void Clear() override
             {
@@ -106,9 +113,9 @@ namespace Utility
                 }
             }
 
-            size_t m_maxOjectCount;
-            size_t m_currentObjectCount;
-            void* m_currentFree;
+            size_t m_maxOjectCount; // Max amount of objects that can be contained within the pool
+            size_t m_currentObjectCount; // The current number of objects in the pool
+            void* m_currentFree; // Pointer to current free memory
         };
     }
 }

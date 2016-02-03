@@ -25,13 +25,21 @@ namespace Utility
             return MemorySpecification(m_totalMemory - m_occupiedMemory, m_totalMemory, m_occupiedMemory);
         }
 
-
         void MemoryAllocator::AllocateFirstTime()
         {
+            // Allocate a chunk of memory and save the raw pointer
             m_memoryStartRaw = std::malloc(m_totalMemory);
+
+            // Adress to end of memory chunk
             m_memoryEndRaw = reinterpret_cast<void*>(reinterpret_cast<size_t>(m_memoryStartRaw) + m_totalMemory);
+
+            // Set entire chunk to zero
             memset(m_memoryStartRaw, 0, m_totalMemory); // TODORT could be removed in the future
+
+            // Compute the adjustment basd on alignment
             m_adjustment = ComputeAdjustment(m_memoryStartRaw, m_alignment);
+
+            // Get the aligned pointer to the memory chunk
             m_memoryStartAligned = reinterpret_cast<void*>(reinterpret_cast<size_t>(m_memoryStartRaw) + m_adjustment);
         }
 
@@ -60,9 +68,9 @@ namespace Utility
         {
             if(p_adressToAssert >= GetAdressStartRaw() && p_adressToAssert < GetAdressEndRaw())
             {
-                return true;
+                return true; // Inside
             }
-            return false;
+            return false; // Outside
         }
     }
 }

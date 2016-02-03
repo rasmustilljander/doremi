@@ -12,12 +12,10 @@ namespace Utility
 
         void StackAllocator::Initialize(const size_t& p_memorySize)
         {
-            // Allocate the memory to use
+            // Allocate the memory to use, the stackallocator does not use a global alignment.
             MemoryAllocator::Initialize(p_memorySize, 0);
             Clear();
         }
-
-        //  StackAllocator::~StackAllocator() {}
 
         void* StackAllocator::AllocateAligned(const size_t& p_memorySize, const uint8_t& p_alignment)
         {
@@ -54,9 +52,12 @@ namespace Utility
         {
             if(m_occupiedMemory + p_newMemorySize < m_totalMemory)
             {
-                m_occupiedMemory += p_newMemorySize;
                 void* returnAdress = m_top;
                 m_top = reinterpret_cast<void*>(reinterpret_cast<size_t>(m_top) + p_newMemorySize);
+
+                // Update the currently occupied data information
+                m_occupiedMemory += p_newMemorySize;
+
                 return returnAdress;
             }
             else
@@ -81,8 +82,13 @@ namespace Utility
                 void* adress = p_marker.GetMarkerAdress();
                 if(reinterpret_cast<size_t>(adress) > reinterpret_cast<size_t>(m_top))
                 {
+                    // Compute adjustment
                     const uint8_t adjustment = AllocationHeaderBuilder::GetAdjustment(adress);
+
+                    // Compute the new top of the stack
                     m_top = reinterpret_cast<void*>(reinterpret_cast<size_t>(adress) - adjustment);
+
+                    // Compute the new total available data
                     m_occupiedMemory = reinterpret_cast<size_t>(m_top) - reinterpret_cast<size_t>(GetAdressStartAligned());
                 }
                 else
