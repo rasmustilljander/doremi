@@ -7,6 +7,9 @@ namespace Doremi
 {
     namespace Core
     {
+        // Pre-declaration. Included in .cpp
+        enum class Blueprints;
+
         /**
         Manager to create entities. So far it does it either after a period
         of time has elapsed, or after a certain event has been sent. Should
@@ -18,6 +21,12 @@ namespace Doremi
             virtual ~EntitySpawnManager();
             void Update(double p_dt) override;
             void OnEvent(Event* p_event) override;
+
+        private:
+            /*
+            Big method for specific code depending on which entity we
+            want to spawn*/
+            void CreateEntity(Blueprints p_blueprint);
         };
     }
 }
