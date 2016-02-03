@@ -48,7 +48,7 @@ namespace DoremiEngine
                         float dist = *XMVector2Length(distance).m128_f32;
                         if(dist < actorRange)
                         {
-                            float force = actorCharge / dist;
+                            float force = actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f);
                             totalCharge += force;
                         }
                     }
@@ -302,9 +302,10 @@ namespace DoremiEngine
             XMVECTOR distance = actorPosVec - quadPosVec;
             float dist = *XMVector3Length(distance).m128_f32;
             float force = 0;
-            if (dist < actorRange)
+            if(dist < actorRange)
             {
-                force = actorCharge / dist; // std::pow(dist, 2); // if we want diztance to matter more this might work
+                force = actorCharge *
+                        std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::pow(dist, 2); // if we want diztance to matter more this might work
             }
             return force;
         }
@@ -338,12 +339,11 @@ namespace DoremiEngine
                         XMVECTOR distance = actorPosVec - quadPosVec;
                         float dist = *XMVector3Length(distance).m128_f32;
                         float force = 0;
-                        if (dist < actorRange)
+                        if(dist < actorRange)
                         {
-                            force = actorCharge / dist;
+                            force = actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f);
                         }
                         return force;
-
                     }
                 }
             }
