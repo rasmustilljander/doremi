@@ -68,20 +68,7 @@ namespace Doremi
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
                             // We should spawn something
-                            TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
-                            // Spawn inside the spawner. This might be changed in the future
-                            XMFLOAT3 spawnPosition = transComp->position;
-                            int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
-                            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
-                            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
 
-                            Core::PotentialFieldComponent* potentialComponent =
-                                Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
-                            potentialComponent->ChargedActor =
-                                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
-
-                            EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
-                            EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                         }
                         else
                         {
@@ -94,11 +81,26 @@ namespace Doremi
 
         void EntitySpawnManager::OnEvent(Event* p_event) {}
 
-        void EntitySpawnManager::CreateEntity(Blueprints p_blueprint)
+        void EntitySpawnManager::CreateEntity(Blueprints p_blueprint, int p_spawnerID)
         {
+            EntityHandler& entityHandler = EntityHandler::GetInstance();
             switch(p_blueprint)
             {
                 case Blueprints::EnemyEntity:
+                    TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
+                    // Spawn inside the spawner. This might be changed in the future
+                    XMFLOAT3 spawnPosition = transComp->position;
+                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
+                    int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
+                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
+
+                    Core::PotentialFieldComponent* potentialComponent =
+                        Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
+                    potentialComponent->ChargedActor =
+                        m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
+
+                    EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
+                    EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     break;
                 default:
                     break;
