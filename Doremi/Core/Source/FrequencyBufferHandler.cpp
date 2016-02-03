@@ -8,11 +8,7 @@ namespace Doremi
 {
     namespace Core
     {
-        FrequencyBufferHandler::FrequencyBufferHandler() : m_bufferDelay(6)
-        {
-            testfloat = 0.0f;
-            first = true;
-        }
+        FrequencyBufferHandler::FrequencyBufferHandler() : m_bufferDelay(6) { m_first = true; }
 
         FrequencyBufferHandler::~FrequencyBufferHandler() {}
 
@@ -68,10 +64,10 @@ namespace Doremi
             // Read the starting sequence
             uint8_t FirstSequence = p_streamer.ReadUnsignedInt8();
 
-            // TODOCM remove...
-            if(first)
+            // TODOCM remove for better solution later for initialize
+            if(m_first)
             {
-                first = false;
+                m_first = false;
                 SetStartingSequence(FirstSequence);
             }
 
