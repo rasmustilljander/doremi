@@ -257,6 +257,7 @@ namespace Doremi
                 // Update interpolation transforms from snapshots
                 Core::InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
+
                 // Remove time from accumulator
                 // Accumulator -= UpdateTimeStepLength;
                 Accum -= UpdateStepLen;

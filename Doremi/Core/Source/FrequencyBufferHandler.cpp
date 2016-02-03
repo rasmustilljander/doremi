@@ -8,7 +8,7 @@ namespace Doremi
 {
     namespace Core
     {
-        FrequencyBufferHandler::FrequencyBufferHandler() : m_bufferDelay(10)
+        FrequencyBufferHandler::FrequencyBufferHandler() : m_bufferDelay(6)
         {
             testfloat = 0.0f;
             first = true;
