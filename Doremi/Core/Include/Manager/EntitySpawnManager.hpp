@@ -27,7 +27,7 @@ namespace Doremi
             /*
             Big method for specific code depending on which entity we
             want to spawn*/
-            void CreateEntity(Blueprints p_blueprint);
+            void CreateEntity(Blueprints p_blueprint, int p_spawnerID);
         };
     }
 }
