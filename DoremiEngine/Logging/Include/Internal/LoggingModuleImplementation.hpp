@@ -11,27 +11,27 @@ namespace DoremiEngine
 
         public:
             /**
-                TODO docs
+                Constructor, should only be called by core.
             */
             LoggingModuleImplementation();
 
             /**
-                TODO docs
+                Destructor, should only be called by core.
             */
             virtual ~LoggingModuleImplementation();
 
             /**
-                  TODO docs
+                Starts the module, all and any initialize code is runned here.
             */
             void Startup() override;
 
             /**
-              TODO docs
+              Terminates this module gracefully and releases all memory which this modules is currently responsible for.
             */
             void Shutdown() override;
 
             /**
-              TODO docs
+              Fetches the submodulemanager which manages different parts within the logging module.
             */
             SubmoduleManager& GetSubModuleManager() override;
 

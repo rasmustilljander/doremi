@@ -8,22 +8,22 @@ namespace DoremiEngine
         {
         public:
             /**
-            TODORT docs
+            Constructor, should only be called by LoggingModule.
             */
             SubmoduleManagerImpl();
 
             /**
-            TODORT docs
+            Destructor, should only be called by LoggingModule.
             */
             virtual ~SubmoduleManagerImpl();
 
             /**
-            TODORT docs
+            Fetches the main application logger.
             */
             Logger& GetLogger() override;
 
             /**
-            TODORT docs
+            Fetches the consolemanager which manages theoretical external consoles.
             */
             ConsoleManager& GetConsoleManager() override;
 

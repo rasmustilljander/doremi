@@ -6,23 +6,24 @@ namespace DoremiEngine
 {
     namespace Logging
     {
-
         using std::string;
 
-        ///
-        /// \breif Format message
-        /// \param dst String to store formatted message
-        /// \param format Format of message
-        /// \param ap Variable argument list
-        ///
+        /**
+        Code found on stackoverflow.
+        Converts valist to string.
+        \param dst String to store formatted message
+        \param format Format of message
+        \param ap Variable argument list
+        */
         void toString(string& dst, const char* format, va_list ap) throw();
 
-        ///
-        /// \breif Format message
-        /// \param dst String to store formatted message
-        /// \param format Format of message
-        /// \param ... Variable argument list
-        ///
+        /**
+        Code found on stackoverflow.
+        Converts valist to string.
+        \param dst String to store formatted message
+        \param format Format of message
+        \param ap Variable argument list
+        */
         void toString(string& dst, const char* format, ...) throw();
     }
 }

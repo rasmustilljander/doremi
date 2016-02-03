@@ -36,9 +36,10 @@ namespace DoremiEngine
 
         void LoggerImpl::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...)
         {
+            // TODORT expand
             va_list args;
             va_start(args, p_format);
-            LoggingData* threadData = new LoggingData();
+            LoggingData* threadData = new LoggingData(); // TODORT delete allocation
             threadData->function = p_function;
             threadData->line = p_line;
             threadData->logTag = p_tag;
@@ -47,7 +48,6 @@ namespace DoremiEngine
             va_end(args);
             using namespace std;
             cout << threadData->p_message << endl;
-            ;
         }
     }
 }

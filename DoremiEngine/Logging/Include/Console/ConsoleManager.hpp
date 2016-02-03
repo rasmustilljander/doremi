@@ -14,7 +14,7 @@ namespace DoremiEngine
         {
         public:
             /**
-                TODORT docs
+                Create a new console with the given parameters, returns an already existing console if one exists with the given name.
             */
             virtual Console& CreateNewConsole(const std::string& p_consoleName = "standard", const LogTag& p_logtag = LogTag::NOTAG,
                                               const ConsoleColor& p_textColor = ConsoleColorEnum::WHITE,
