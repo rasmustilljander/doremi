@@ -271,6 +271,10 @@ namespace Doremi
 
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
+
+            // Update camera after we update positions
+            CameraHandler::GetInstance()->UpdateDraw();
+
             Draw(UpdateStepLen);
             // Escape
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
@@ -305,9 +309,8 @@ namespace Doremi
             // info.Stop();
         }
 
+        CameraHandler::GetInstance()->UpdateInput(p_deltaTime);
 
-        // Update camera after we update positions
-        CameraHandler::GetInstance()->Update(p_deltaTime);
 
         PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
         TIME_FUNCTION_STOP

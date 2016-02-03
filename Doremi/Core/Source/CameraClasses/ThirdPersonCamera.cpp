@@ -16,7 +16,7 @@ namespace Doremi
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
 
-        void ThirdPersonCamera::Update(double p_dt)
+        void ThirdPersonCamera::Update()
         {
             using namespace DirectX;
 

@@ -29,9 +29,11 @@ namespace Doremi
 
         FreeLookCamera::~FreeLookCamera() {}
 
-        void FreeLookCamera::Update(double p_dt)
+        void FreeLookCamera::UpdateInput(double p_dt) { HandleUserCMD(p_dt); }
+
+        void FreeLookCamera::Update()
         {
-            HandleUserCMD(p_dt);
+
             using namespace DirectX;
             // creates a rotation matrix from jaw and pitch
             XMStoreFloat4x4(&m_camRotationMatrix, XMMatrixRotationRollPitchYaw(m_camPitch, m_camYaw, 0));

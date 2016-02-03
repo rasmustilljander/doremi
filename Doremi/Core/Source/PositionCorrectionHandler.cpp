@@ -46,6 +46,14 @@ namespace Doremi
 
         void PositionCorrectionHandler::CheckPositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
+            EntityID playerEntityID = 0;
+            if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
+            {
+                std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
+            }
+
+            DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+
             // Find the movement matching our sequence, and apply it and all the movements until our frame
             std::list<MovementStamp>::iterator iter;
             iter = std::find(m_PositionStamps.begin(), m_PositionStamps.end(), p_sequenceOfPosition);
@@ -53,14 +61,8 @@ namespace Doremi
             // Check if the one we entered is in buffer ( could be that we already recieved a previous.
             if(iter != m_PositionStamps.end())
             {
-                EntityID playerEntityID = 0;
-                if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
-                {
-                    std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
-                }
-
                 // Set position to players
-                DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+
                 charControlManager.SetPosition(playerEntityID, p_positionToCheck);
 
                 // Create reverse iterator
@@ -77,6 +79,13 @@ namespace Doremi
 
             // remove all the movements we've passed and the one we checked
             m_PositionStamps.erase(iter, m_PositionStamps.end());
+
+            // Get rotation and scale
+            TransformComponent* realTrans = GetComponent<TransformComponent>(playerEntityID);
+
+            // Update the next interpolation
+            *GetComponent<TransformComponentNext>(playerEntityID) =
+                TransformComponentNext(charControlManager.GetPosition(playerEntityID), realTrans->rotation, realTrans->scale);
         }
 
         void PositionCorrectionHandler::QueuePlayerPositionForCheck(DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation,

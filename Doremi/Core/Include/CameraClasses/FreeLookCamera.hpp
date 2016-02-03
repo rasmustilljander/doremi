@@ -16,7 +16,8 @@ namespace Doremi
         public:
             FreeLookCamera(DoremiEngine::Graphic::Camera* p_camera);
             virtual ~FreeLookCamera();
-            void Update(double p_dt);
+            void UpdateInput(double p_dt);
+            void Update();
             DoremiEngine::Graphic::Camera& GetCamera() const { return *m_camera; }
         private:
             void HandleUserCMD(double pDT);
