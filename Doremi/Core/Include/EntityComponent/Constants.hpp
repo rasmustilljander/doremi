@@ -61,6 +61,7 @@ enum class Blueprints : uint32_t
     ExperimentalPressureParticleEntity,
     DebugPotentialFieldActor,
     TriggerEntity,
+    EnemySpawnerEntity,
 };
 
 
