@@ -5,6 +5,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/EntityHandlerServer.hpp>
 #include <EventHandler/EventHandler.hpp>
+#include <PlayerHandler.hpp>
 // Components
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
@@ -65,11 +66,15 @@ namespace Doremi
                         // Check if it's time to spawn and if we haven't already spawned the max number
                         if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns && spawnComp->currentNumSpawnedEntities < spawnComp->maxNumSpawnedEntites)
                         {
+                            // Hax to ensure nothing spawns when no players are active, which apparently is a no-can-do
+                            if(PlayerHandler::GetInstance()->GetPlayerMap().size() > 0)
+                            {
+                                // We should spawn something
+                                CreateEntity(spawnComp->entityBlueprint, i);
+                                spawnComp->currentNumSpawnedEntities++;
+                            }
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
-                            // We should spawn something
-                            CreateEntity(spawnComp->entityBlueprint, i);
-                            spawnComp->currentNumSpawnedEntities++;
                         }
                         else
                         {
