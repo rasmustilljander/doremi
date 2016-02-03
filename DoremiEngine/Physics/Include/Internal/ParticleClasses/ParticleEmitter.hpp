@@ -77,22 +77,8 @@ namespace DoremiEngine
 
         private:
             ParticleEmitterData m_this;
-            std::map<int, double>m_particlesLifeTime;
+            std::map<int, double> m_particlesLifeTime;
             double m_lifeTime;
-            //// Position of emitter
-            // XMFLOAT3 m_position;
-            //// Dimensions of emitter
-            // XMFLOAT2 m_dimensions; // UNUSED ATM
-            //// Direction in which the emitter fires particles
-            // XMFLOAT4 m_direction;
-            //// Pressure with which particles are launched (arbitrary unit)
-            // float m_launchPressure;
-            //// How many particles are emitted per second
-            // float m_emissionRate;
-            //// How dense the particles are packed
-            // float m_density;
-            //// How wide and high the emission area is in radians
-            // XMFLOAT2 m_emissionAreaDimensions;
 
             // The actual PhysX particle system
             PxParticleSystem* m_particleSystem;
