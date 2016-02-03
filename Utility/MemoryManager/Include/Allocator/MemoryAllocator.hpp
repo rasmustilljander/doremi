@@ -38,7 +38,7 @@ namespace Utility
 
             void* GetAdressStartRaw() const { return m_memoryStartRaw; }
             void* GetAdressEndRaw() const { return m_memoryEndRaw; }
-            void* GetAdressStartAligned() const { return m_memoryStartRaw; }
+            void* GetAdressStartAligned() const { return m_memoryStartAligned; }
 
             // Variables
             size_t m_occupiedMemory;
