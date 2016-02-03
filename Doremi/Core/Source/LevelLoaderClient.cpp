@@ -166,7 +166,6 @@ namespace Doremi
                                       m_transforms[m_lightNames[i].first].translation);
                 ++i;
             }
-            // TODOXX delete the content of m_lightNames
         }
     }
 }
