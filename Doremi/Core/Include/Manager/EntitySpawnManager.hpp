@@ -3,13 +3,14 @@
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
+// Pre-declaration. Included in .cpp
+// For some reason the blueprints are not inside the Doremi::core namespace
+enum class Blueprints : uint32_t;
+
 namespace Doremi
 {
     namespace Core
     {
-        // Pre-declaration. Included in .cpp
-        enum class Blueprints;
-
         /**
         Manager to create entities. So far it does it either after a period
         of time has elapsed, or after a certain event has been sent. Should
