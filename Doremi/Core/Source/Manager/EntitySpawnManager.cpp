@@ -65,48 +65,23 @@ namespace Doremi
                         // Check if it's time to spawn
                         if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns)
                         {
-							DEBUGcount++;
-							cout << DEBUGcount << endl;
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;
-							// We should spawn something
-							TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
-							XMFLOAT3 spawnPosition = transComp->position;
-							spawnPosition.y += 10;
-							int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
-							int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
-							m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
-
-							Core::PotentialFieldComponent* potentialComponent =
-								Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
-							potentialComponent->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
-
-							EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
-							EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
-
-                            
-							
-							
-							
-							/// DEBUG STUFF. Work in progress
-                            // Make it into an enemy bullet just to see that it works
-                            /*TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                            // We should spawn something
+                            TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                            // Spawn inside the spawner. This might be changed in the future
                             XMFLOAT3 spawnPosition = transComp->position;
-                            spawnPosition.y += 10;
-							int numEntities = entityHandler.GetLastEntityIndex();
-							int numEntities2 = EntityHandlerServer::GetInstance().GetLastEntityIndex();
+                            int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
+                            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
+                            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
 
-                            int enemyID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::BulletEntity, spawnPosition);
-							numEntities = entityHandler.GetLastEntityIndex();
-							numEntities2 = EntityHandlerServer::GetInstance().GetLastEntityIndex();
-                            PhysicsMaterialComponent* matComp = entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(i);
-                            matComp->p_materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
-                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(enemyID, spawnPosition, XMFLOAT4(0, 0, 0, 1),
-                                                                                                       XMFLOAT3(0.25, 0.25, 0.25), matComp->p_materialID);
+                            Core::PotentialFieldComponent* potentialComponent =
+                                Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
+                            potentialComponent->ChargedActor =
+                                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
 
-                            EntityTypeComponent* typeComp = entityHandler.GetComponentFromStorage<EntityTypeComponent>(i);
-                            typeComp->type = EntityType::EnemyBullet;*/
-							/// END DEBUG STUFF
+                            EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
+                            EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                         }
                         else
                         {
