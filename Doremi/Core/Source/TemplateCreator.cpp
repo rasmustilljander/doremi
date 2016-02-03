@@ -430,7 +430,7 @@ namespace Doremi
 
             // Spawn component DEBUG REMOVE
             EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
-            t_entitySpawnComp->entityBlueprint = Blueprints::BulletEntity;
+            t_entitySpawnComp->entityBlueprint = Blueprints::EnemyEntity;
             t_entitySpawnComp->spawnRadius = 2;
             t_entitySpawnComp->timeBetweenSpawns = 2;
             t_entitySpawnComp->type = SpawnerType::TimedSpawner;
