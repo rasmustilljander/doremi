@@ -9,7 +9,7 @@ namespace DoremiEngine
         {
         public:
             /**
-                Sends data to console
+            Sends data to console
             */
             virtual void WriteToConsole(const LogLevel& p_vLevel, const char* p_format, ...) = 0;
         };

@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace Logging
     {
-        struct TagLevelInfo // TODORT move to hpp
+        struct TagLevelInfo
         {
             TagLevelInfo(const std::string& p_name) : name(p_name) {}
             TagLevelInfo() {}

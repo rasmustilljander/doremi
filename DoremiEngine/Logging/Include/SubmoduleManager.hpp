@@ -11,12 +11,12 @@ namespace DoremiEngine
         {
         public:
             /**
-            TODO docs
+            Fetches the main application logger.
             */
             virtual Logger& GetLogger() = 0;
 
             /**
-            TODO docs
+            Fetches the consolemanager which manages theoretical external consoles.
             */
             virtual ConsoleManager& GetConsoleManager() = 0;
         };

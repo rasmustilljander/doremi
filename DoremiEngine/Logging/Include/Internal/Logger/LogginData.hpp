@@ -7,6 +7,7 @@ namespace DoremiEngine
 {
     namespace Logging
     {
+        // TODORT Refactor in the future, removed if unused.
         struct LoggingData
         {
             std::string function;

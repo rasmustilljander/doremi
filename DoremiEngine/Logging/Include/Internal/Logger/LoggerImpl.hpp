@@ -11,10 +11,15 @@ namespace DoremiEngine
         class LoggerImpl : public Logger
         {
         public:
+            /**
+                Constructor
+            */
             LoggerImpl();
 
+            /**
+           Destuctor
+            */
             virtual ~LoggerImpl();
-
 
             /**
             The actual method called when calling LogText

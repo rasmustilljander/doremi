@@ -12,12 +12,12 @@ namespace DoremiEngine
 {
     namespace Logging
     {
-        /**
-        TODO docs
-        */
         class LoggingModule : public DoremiEngine::Core::EngineModule
         {
         public:
+            /**
+
+            */
             virtual SubmoduleManager& GetSubModuleManager() = 0;
         };
     }

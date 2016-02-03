@@ -9,12 +9,6 @@ namespace DoremiEngine
 {
     namespace Logging
     {
-        ///
-        /// \breif Format message
-        /// \param dst String to store formatted message
-        /// \param format Format of message
-        /// \param ap Variable argument list
-        ///
         void toString(string& dst, const char* format, va_list ap) throw()
         {
             int length;
@@ -34,12 +28,6 @@ namespace DoremiEngine
             }
         }
 
-        ///
-        /// \breif Format message
-        /// \param dst String to store formatted message
-        /// \param format Format of message
-        /// \param ... Variable argument list
-        ///
         void toString(string& dst, const char* format, ...) throw()
         {
             va_list ap;

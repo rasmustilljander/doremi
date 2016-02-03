@@ -15,12 +15,14 @@ namespace DoremiEngine
         {
         public:
             /**
-            TODO docs
+            Constructor
+            TODORT
+            TODOMEM Convert into empty constructor and add init function for easier memory overwrite.
             */
             ConsoleImpl(const std::string& p_consoleName, LogTag p_logTag, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor);
 
             /**
-            TODO docs
+            Destructor
             */
             virtual ~ConsoleImpl();
 

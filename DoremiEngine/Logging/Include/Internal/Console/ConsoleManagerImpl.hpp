@@ -16,10 +16,13 @@ namespace DoremiEngine
             ConsoleManagerImpl();
             virtual ~ConsoleManagerImpl();
 
+            /**
+                Initializes the consolemanager with a given logger.
+            */
             void Initialize(Logger& p_logger);
 
             /**
-                TODORT docs
+                Create a new console with the given parameters, returns an already existing console if one exists with the given name.
             */
             Console& CreateNewConsole(const std::string& p_consoleName, const LogTag& p_logtag, const ConsoleColor& p_textColor,
                                       const ConsoleColor& p_backgroundColor) override;
