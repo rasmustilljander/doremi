@@ -208,6 +208,10 @@ namespace Doremi
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
         }
 
+        // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
+        int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
+
+
         TIME_FUNCTION_STOP
     }
 
