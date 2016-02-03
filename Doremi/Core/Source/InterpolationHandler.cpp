@@ -39,7 +39,7 @@ namespace Doremi
         }
         // TODOXX snapshotdelay must be less then sequencedleay in inputhandlerserver
         InterpolationHandler::InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(5)
+            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(3)
         {
         }
 
