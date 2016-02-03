@@ -1,8 +1,10 @@
 # Ignore folders
 tools/script/TODO
+tools/script/docs
 
 # Ignore log files
 logs
 
 # Ignore format cache
 .formatCache
+
