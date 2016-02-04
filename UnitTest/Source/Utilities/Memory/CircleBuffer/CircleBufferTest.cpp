@@ -4,13 +4,13 @@
 
 TEST_F(CircleBufferTest, basicInit)
 {
-    m_circleBuffer->Initialize(100);
+    m_circleBuffer->Initialize(104);
     SUCCEED();
 }
 
 TEST_F(CircleBufferTest, emptyConsume)
 {
-    m_circleBuffer->Initialize(100);
+    m_circleBuffer->Initialize(104);
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
@@ -23,7 +23,7 @@ TEST_F(CircleBufferTest, emptyConsume)
 
 TEST_F(CircleBufferTest, toManyProduce)
 {
-    m_circleBuffer->Initialize(100);
+    m_circleBuffer->Initialize(104);
 
     CircleBufferHeader sendHeader = CircleBufferHeader();
     TestStruct64 sendData = TestStruct64();

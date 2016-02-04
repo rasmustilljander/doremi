@@ -6,6 +6,7 @@
 #include <mutex>
 #include <Utility/Utilities/Include/IO/Mutex/Mutex.hpp>
 #include <Utility/Utilities/Include/Memory/Circlebuffer/CircleBufferHeader.hpp>
+#include <string>
 
 // Move to Logging lib
 struct LogText
@@ -63,7 +64,8 @@ namespace Doremi
                 }
 
                 /**
-                The useable size of the buffer will be p_bufferSize - sizeof(size_t)
+                The useable size of the buffer will be p_bufferSize - sizeof(StaticData).
+                Each object will allocate sizeof(T) + sizeof(CircleBufferHeader) each
                 */
                 void Initialize(const size_t& p_bufferSize, IO::Mutex* p_mutex = nullptr)
                 {
@@ -74,7 +76,8 @@ namespace Doremi
                     SetupVariables();
                 }
                 /**
-                The useable size of the buffer will be p_bufferSize - sizeof(size_t)
+                The useable size of the buffer will be p_bufferSize - sizeof(StaticData)
+                Each object will allocate sizeof(T) + sizeof(CircleBufferHeader) each
                 */
                 void Initialize(void* const p_preAllocatedBuffer, const size_t& p_bufferSize, IO::Mutex* p_mutex = nullptr)
                 {
@@ -207,7 +210,12 @@ namespace Doremi
                     m_sizeOfOneObject = sizeof(T) + sizeof(CircleBufferHeader);
                     if(m_sizeOfOneObject > (p_bufferSize - sizeof(StaticData)))
                     {
-                        throw std::runtime_error("Not enough space.");
+                        const std::string errorMessage =
+                            std::string("Not enough space. Each object will take up sizeof(T) + sizeof(CircleBufferHeader) which is " +
+                                        std::to_string(sizeof(T)) + "+" + std::to_string(sizeof(CircleBufferHeader)) + "=" +
+                                        std::to_string(m_sizeOfOneObject) + ". This buffer only has access to " + std::to_string(p_bufferSize) + "-" +
+                                        std::to_string(sizeof(StaticData)) + "=" + std::to_string(p_bufferSize - sizeof(StaticData)));
+                        throw std::runtime_error(errorMessage);
                     }
                     if(m_alreadyInitialized)
                     {
@@ -244,22 +252,23 @@ namespace Doremi
 
                 void CircleBuffer::SetupVariables()
                 {
+                    m_alreadyInitialized = true;
                     m_rawBufferPointerEnd = PointerArithmetic::Addition(m_rawBufferPointerStart, m_rawBufferSize);
                     ComputeAdjustments();
                     ComputeMaxObjects();
                     m_data = static_cast<StaticData*>(m_rawBufferPointerStart);
-                    *m_data = StaticData();
 
-                    // TODORT This is currently done on both sides, right / wrong?
-                    if(m_data->currentTail == nullptr)
+                    // TODORT
+                    // LockMetaData In a very specific state both processes may come here at about the same time.
+                    // However, that should not be a problem. If they're almost here at the same no data should be lost.
+                    if(m_data->started != STARTED)
                     {
+                        *m_data = StaticData();
                         m_data->currentTail = m_adjustedBufferPointerStart;
-                    }
-                    if(m_data->currentHead == nullptr)
-                    {
                         m_data->currentHead = m_adjustedBufferPointerStart;
                     }
-                    m_alreadyInitialized = true;
+                    // TODORT
+                    // UnLockMetaData
                 }
 
                 StaticData* m_data;

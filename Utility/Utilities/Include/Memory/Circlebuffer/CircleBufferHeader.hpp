@@ -8,10 +8,9 @@ namespace Doremi
         {
             struct CircleBufferHeader
             {
-                CircleBufferHeader() : packageType(CircleBufferTypeEnum::UNKNOWN), packageSize(0), packageFlags(0) {}
+                CircleBufferHeader() : packageType(CircleBufferTypeEnum::UNKNOWN), packageSize(0) {}
                 CircleBufferType packageType;
                 int32_t packageSize;
-                int8_t packageFlags; // TODORT 2012-02-04 Not currently used
             };
         }
     }
