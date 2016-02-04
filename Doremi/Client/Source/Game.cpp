@@ -206,6 +206,9 @@ namespace Doremi
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
+            m_sharedContext->GetPhysicsModule().GetRigidBodyManager().AddSphereBodyDynamic(entityID, position, 2);
+            m_sharedContext->GetPhysicsModule().GetRigidBodyManager().SetIgnoredDEBUG(entityID);
+            m_sharedContext->GetPhysicsModule().GetRigidBodyManager().SetDrain(entityID, true);
         }
 
         // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
