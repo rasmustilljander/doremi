@@ -25,6 +25,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
@@ -151,7 +152,8 @@ namespace Doremi
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
-            potentialComponent->ChargedActor = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1.0f, 3.0f, false);
+            potentialComponent->ChargedActor =
+                sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1.0f, 3.0f, false, DoremiEngine::AI::AIActorType::Enemy);
 
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);

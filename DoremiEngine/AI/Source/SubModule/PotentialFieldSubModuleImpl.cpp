@@ -45,15 +45,16 @@ namespace DoremiEngine
             PotentialGroup* newGroup = new PotentialGroupImpl();
             return newGroup;
         }
-        PotentialFieldActor*
-        PotentialFieldSubModuleImpl::CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range, const bool& p_static) // TODOKO position should possibly be float2. Pointer so we dont need to send pos every frame?
+        PotentialFieldActor* PotentialFieldSubModuleImpl::CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge,
+                                                                         const float& p_range, const bool& p_static, const AIActorType& p_actorType) // TODOKO position should possibly be float2. Pointer so we dont need to send pos every frame?
         {
             PotentialFieldActor* newActor = new PotentialFieldActorImpl();
             newActor->SetStatic(p_static); // needs to be done first since set position is dependent on static or not
             newActor->SetPosition(p_position); // TODOKO Might produce a error since no static objects will have a good position
             newActor->SetCharge(p_charge);
             newActor->SetRange(p_range);
-            
+            newActor->SetActorType(p_actorType);
+
             return newActor;
         }
         void PotentialFieldSubModuleImpl::AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) { o_field.AddActor(p_actor); }

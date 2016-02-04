@@ -5,25 +5,45 @@ namespace DoremiEngine
 {
     namespace AI
     {
+        enum class AIActorType : size_t
+        {
+            None = 0,
+            Player = 1,
+            Enemy = 2,
+            Wall = 4,
+            Goal = 8
+        };
         struct PotentialChargeInformation
         {
             float charge; // charge as float
             float range; // range as float
-            bool AddedOnAttracting; // if this field should only be added when checking vs attracting forces
+            bool AddedOnAttracting; // if this field should only be added when checking vs attracting forces TODOKO obsoloete?
             bool AddedOnReppeling; // if this field should only be added when checking vs reppeling forces
             bool active; // If it's active or not
+            bool usePhermoneTrail; // If true the phermone trail wont be used if this field is active and used/in range
+            AIActorType actorToBeAddedTo; // Adds this potentialfield to all actors that have the bitmask specified
             // TODOKO add a specific actor this field should be used when checking against, if needed
-            PotentialChargeInformation(const float& p_charge, const float& p_range,
-                const bool& p_addedOnAttracting, const bool& p_addedOnReppeling, const bool& p_active)
-                : charge(p_charge), range(p_range), AddedOnAttracting(p_addedOnAttracting), AddedOnReppeling(p_addedOnReppeling), active(p_active) {}
+            PotentialChargeInformation(const float& p_charge, const float& p_range, const bool& p_addedOnAttracting, const bool& p_addedOnReppeling,
+                                       const bool& p_active, const bool& p_usePhermoneTrail, const AIActorType& p_actorType)
+                : charge(p_charge),
+                  range(p_range),
+                  AddedOnAttracting(p_addedOnAttracting),
+                  AddedOnReppeling(p_addedOnReppeling),
+                  active(p_active),
+                  usePhermoneTrail(p_usePhermoneTrail),
+                  actorToBeAddedTo(p_actorType){};
             /**
             Standard is false for everything and 0 in range and charge
             */
-            PotentialChargeInformation(): charge(0), range(0), AddedOnAttracting(false), AddedOnReppeling(false), active(false) {}
+            PotentialChargeInformation()
+                : charge(0), range(0), AddedOnAttracting(false), AddedOnReppeling(false), active(false), usePhermoneTrail(false), actorToBeAddedTo(AIActorType::None)
+            {
+            }
         };
         /**
         A potentialfield actor contains information on reppeling or attracting force. It also contains a range and charge information.
-        it also contains private fields that should be used when trying to move to another actor with some information on what different actors it should use these fields on
+        it also contains private fields that should be used when trying to move to another actor with some information on what different actors it
+        should use these fields on
         */
         class PotentialFieldActor
         {
@@ -60,6 +80,14 @@ namespace DoremiEngine
             Gets the range of the actor
             */
             virtual const float& GetRange() const = 0;
+            /**
+            Gets the actors type
+            */
+            virtual const AIActorType& GetActorType() const = 0;
+            /**
+            Sets the actors type
+            */
+            virtual void SetActorType(const AIActorType& p_type) = 0;
             /**
             Gets all the quads the actor is occupiing
             */

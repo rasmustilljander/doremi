@@ -162,8 +162,12 @@ namespace Doremi
                     {
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
-                        DoremiEngine::AI::PotentialChargeInformation t_newSpecial = DoremiEngine::AI::PotentialChargeInformation(-1000, 10, true, false, true);
+                        DoremiEngine::AI::PotentialChargeInformation t_newSpecial =
+                            DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, false, true, true, DoremiEngine::AI::AIActorType::Player);
+                        DoremiEngine::AI::PotentialChargeInformation t_newSpecial2 =
+                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, false, true, false, DoremiEngine::AI::AIActorType::Player);
                         actor->AddPotentialVsOther(t_newSpecial);
+                        actor->AddPotentialVsOther(t_newSpecial2);
                         DoremiEngine::AI::PotentialField* field;
                         DoremiEngine::AI::PotentialGroup* group =
                             EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(realEvent->entityID)->Group;

@@ -18,6 +18,7 @@
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -92,8 +93,8 @@ namespace Doremi
             // Adds potential field components to the world
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);
             PotentialFieldComponent* potComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityId);
-            potComp->ChargedActor =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, 0, 3, true); // TODOKO hardcoded shiet
+            potComp->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -1, 2, true,
+                                                                                                              DoremiEngine::AI::AIActorType::Wall); // TODOKO hardcoded shiet
         }
     }
 }

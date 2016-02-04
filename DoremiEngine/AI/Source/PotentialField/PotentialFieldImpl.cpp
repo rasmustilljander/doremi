@@ -215,46 +215,45 @@ namespace DoremiEngine
             using namespace DirectX;
             XMFLOAT2 quadPos = m_grid[p_quadX][p_quadY].position;
             float totalCharge = 0;
+            bool usePhermone = true;
             for(auto actor : m_dynamicActors)
             {
                 if(actor != p_currentActor) // this should mean that the current actor is skipped when calculating charge... still doesnt work...
                 {
                     // This is for the actors influence
                     totalCharge += GetChargeInfluenceFromActor(quadPos, *actor);
-                    // This is for the current actors special influence, if any
-                    totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor);
+                    // This is for the current actors special influence, if any TODOKO Might be a speed up to do this only if we are in range of actor
+                    totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor, usePhermone);
                 }
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
             // Only do the phermonetrail thingie if we have a actor
-            if (p_currentActor != nullptr)
+            if(p_currentActor != nullptr && usePhermone == true)
             {
                 // Going through the phermone trail and adding them to the corresponding gridpos.
                 std::vector<XMINT2> phermoneVector = p_currentActor->GetPhermoneTrail();
                 size_t t_vecSize = phermoneVector.size();
-                for (size_t i = 0; i < t_vecSize; ++i)
+                for(size_t i = 0; i < t_vecSize; ++i)
                 {
-                    // If the wuad we are checking is in the trail
-                    if (p_quadX == phermoneVector[i].x && p_quadY == phermoneVector[i].y)
-                    {
-                        // Reduce the totalcharge depening on i because thats a correlation to how new the trail point is
-                        totalCharge -= (m_phermoneEffect + (t_vecSize - i)); // TODOCONFIG Hardcoded value on how much the phermonetrail should effect
-                    }
-                    // Test
-                    //else
+                    //// If the wuad we are checking is in the trail
+                    // if (p_quadX == phermoneVector[i].x && p_quadY == phermoneVector[i].y)
                     //{
-                    //    XMFLOAT2 phermonePos = m_grid[phermoneVector[i].x][phermoneVector[i].y].position;
-                    //    XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
-                    //    XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
+                    //    // Reduce the totalcharge depening on i because thats a correlation to how new the trail point is
+                    //    totalCharge -= (m_phermoneEffect + i); // TODOCONFIG Hardcoded value on how much the phermonetrail should effect
+                    //}
+                    ////// Test might work TODOKO test
+                    // else
+                    //{
+                    XMFLOAT2 phermonePos = m_grid[phermoneVector[i].x][phermoneVector[i].y].position;
+                    XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
+                    XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 
-                    //    XMVECTOR distance = phermonePosVec - quadPosVec;
-                    //    float dist = *XMVector3Length(distance).m128_f32;
-                    //    float force = 0;
-                    //    if (dist < 0.5f)
-                    //    {
-                    //        force = -(m_phermoneEffect + (t_vecSize - i)) / dist;
-                    //    }
-                    //    totalCharge += force * 0.2; // The phermone force shouldnt be that high
+                    XMVECTOR distance = phermonePosVec - quadPosVec;
+                    float dist = *XMVector3Length(distance).m128_f32;
+                    float force = 0;
+                    force = -(m_phermoneEffect + i) *
+                            std::fmaxf(1.0f - dist / 1.0f, 0.0f); // TODOCONFIG TODOKO division by 1.0f is range of phermone charge
+                    totalCharge += force; // The phermone force shouldnt be that high
                     //}
                 }
             }
@@ -304,47 +303,45 @@ namespace DoremiEngine
             float force = 0;
             if(dist < actorRange)
             {
-                force = actorCharge *
-                        std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::pow(dist, 2); // if we want diztance to matter more this might work
+                force = actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f), 0.0f);
             }
             return force;
         }
 
-        float PotentialFieldImpl::GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck, const PotentialFieldActor& p_yourActor)
+        float PotentialFieldImpl::GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck,
+                                                                   const PotentialFieldActor& p_yourActor, bool& o_phermoneActive)
         {
-            float force = 0;
             // Get all the special fields in your actor
             const std::vector<PotentialChargeInformation>& t_specialCharges = p_yourActor.GetPotentialVsOthers();
             size_t length = t_specialCharges.size();
-            for (size_t i = 0; i < length; i++)
+            float force = 0;
+            for(size_t i = 0; i < length; i++)
             {
                 // Check if this field should be used on this actor.
-                if ((t_specialCharges[i].AddedOnAttracting && p_actorToCheck.GetCharge() > 0) ||
-                    (t_specialCharges[i].AddedOnReppeling && p_actorToCheck.GetCharge() < 0))
+                if(((size_t)t_specialCharges[i].actorToBeAddedTo & (size_t)p_actorToCheck.GetActorType()) == (size_t)p_actorToCheck.GetActorType() &&
+                   t_specialCharges[i].active)
                 {
-                    // Check if it's active
-                    if (t_specialCharges[i].active)
-                    {
-                        // Yay, everything fitts! Lets make a new temporary actor with the info provided by special field and look for charge
-                        // TODOKO Thats not possible now since we dont have intermodule communication yet here...
-                        using namespace DirectX;
-                        XMFLOAT3 actorPos3d = p_actorToCheck.GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
-                        XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
-                        float actorCharge = t_specialCharges[i].charge;
-                        float actorRange = t_specialCharges[i].range;
-                        // Calculate charge
-                        XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
-                        XMVECTOR quadPosVec = XMLoadFloat2(&p_position);
+                    // Yay, everything fitts! Lets make a new temporary actor with the info provided by special field and look for charge
+                    // TODOKO Thats not possible now since we dont have intermodule communication yet here...
+                    using namespace DirectX;
+                    XMFLOAT3 actorPos3d = p_actorToCheck.GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
+                    XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
+                    float actorCharge = t_specialCharges[i].charge;
+                    float actorRange = t_specialCharges[i].range;
+                    // Calculate charge
+                    XMVECTOR actorPosVec = XMLoadFloat2(&actorPos);
+                    XMVECTOR quadPosVec = XMLoadFloat2(&p_position);
 
-                        XMVECTOR distance = actorPosVec - quadPosVec;
-                        float dist = *XMVector3Length(distance).m128_f32;
-                        float force = 0;
-                        if(dist < actorRange)
-                        {
-                            force = actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f);
-                        }
-                        return force;
+                    XMVECTOR distance = actorPosVec - quadPosVec;
+                    float dist = *XMVector3Length(distance).m128_f32;
+
+
+                    // Check if phermone trail should be used
+                    if(dist < actorRange && !t_specialCharges[i].usePhermoneTrail)
+                    {
+                        o_phermoneActive = false;
                     }
+                    force += actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f), 0.0f);
                 }
             }
             return force;
