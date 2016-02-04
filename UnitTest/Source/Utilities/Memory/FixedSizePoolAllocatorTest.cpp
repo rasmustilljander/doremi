@@ -1,4 +1,4 @@
-#include <Memory/FixedSizePoolAllocatorTest.hpp>
+#include <Utilities/Memory/FixedSizePoolAllocatorTest.hpp>
 
 TEST_F(FixedSizePoolAllocatorTest, basicInitialization)
 {
