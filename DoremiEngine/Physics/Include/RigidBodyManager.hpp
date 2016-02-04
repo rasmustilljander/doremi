@@ -31,6 +31,10 @@ namespace DoremiEngine
                                             vector<int>& p_indices, int p_materialID) = 0;
 
             /**
+            Adds a dynamic sphere to the world. This method creates a standard material (0,0,0)*/
+            virtual int AddSphereBodyDynamic(int p_id, XMFLOAT3 p_position, float p_radius) = 0;
+
+            /**
             This can be used to make a body into a trigger. Triggers are not affected
             by the simulation. They trigger when colliding with other bodies, and a
             collision pair is generated*/
