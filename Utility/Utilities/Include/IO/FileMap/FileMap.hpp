@@ -11,71 +11,45 @@ namespace Doremi
     {
         namespace IO
         {
-
             class FileMap
             {
             public:
                 /**
                 TODO docs
                 */
-                FileMap() : m_mapHandle(nullptr), m_fileMapSize(0), m_rawMemoryOfMappedFile(nullptr) {}
+                FileMap();
 
                 /**
                 TODO docs
                 */
-                virtual ~FileMap() { CloseHandle(m_mapHandle); }
+                virtual ~FileMap();
+
+                /**
+                Returns the adress of the filemap
+                */
+                void* Initialize(const std::string& p_name, const size_t& p_fileMapSize);
 
                 /**
                 TODO docs
                 */
-                void* Initialize(const std::string& p_name, const size_t& p_fileMapSize)
-                {
-                    m_name = p_name;
-                    m_fileMapSize = p_fileMapSize;
-                    bool success = false;
+                void AttemptLock(const uint32_t& p_timeOut);
 
-                    success = OpenFileMap();
-                    if(!success)
-                    {
-                        // TODORT LOG
-                        // TODOLOG
-                        return nullptr;
-                    }
-                    success = MapFileMapIntoMemory();
-                    if(!success)
-                    {
-                        // TODORT LOG
-                        // TODOLOG
-                        return nullptr;
-                    }
-                    return m_rawMemoryOfMappedFile;
-                }
 
-                bool OpenFileMap()
-                {
-                    m_mapHandle = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, (DWORD)0, m_fileMapSize, String::s2ws(m_name).c_str());
-                    if(m_mapHandle != NULL)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
+                /**
+                TODO docs
+                */
+                void Lock();
 
-                bool MapFileMapIntoMemory()
-                {
-                    m_rawMemoryOfMappedFile = MapViewOfFile(m_mapHandle, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-                    if(m_rawMemoryOfMappedFile != NULL)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
 
-                void AttemptLock(const uint32_t& p_timeOut) { m_mutex.AttemptLock(p_timeOut); }
+                /**
+                TODO docs
+                */
+                void UnLock();
 
-                void Lock() { m_mutex.Lock(); }
+            protected:
+                bool OpenFileMap();
 
-                void UnLock() {}
+                bool MapFileMapIntoMemory();
 
             private:
                 HANDLE m_mapHandle;
