@@ -1,11 +1,12 @@
 #pragma once
-#include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
+#include <Utility/Utilities/Include/Memory/MemoryAllocator.hpp>
 #include <cstdint>
+
 namespace Utility
 {
     namespace MemoryManager
     {
-        class RawAllocator : public MemoryAllocator
+        class RawAllocator : public Doremi::Utilities::Memory::MemoryAllocator
         {
         public:
             /**

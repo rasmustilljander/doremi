@@ -1,9 +1,9 @@
 #pragma once
 #include <gtest/gtest.h>
-#include <Utility/MemoryManager/Include/Allocator/Stack/StackAllocator.hpp>
+#include <Utility/Utilities/Include/Memory/Stack/StackAllocator.hpp>
 #include <Utilities/Memory/TestStruct64.hpp>
 
-using namespace Utility::MemoryManager;
+using namespace Doremi::Utilities::Memory;
 class StackAllocatorTest : public testing::Test
 {
 public:

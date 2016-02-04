@@ -1,9 +1,9 @@
 #pragma once
 #include <gtest/gtest.h>
 #include <Utilities/Memory/TestStruct64.hpp>
-#include <Utility/MemoryManager/Include/Allocator/Pool/FixedSizePoolAllocator.hpp>
+#include <Utility/Utilities/Include/Memory/Pool/FixedSizePoolAllocator.hpp>
 
-using namespace Utility::MemoryManager;
+using namespace Doremi::Utilities::Memory;
 class FixedSizePoolAllocatorTest : public testing::Test
 {
 public:
