@@ -1,14 +1,22 @@
 #pragma once
-
-struct StaticData
+namespace Doremi
 {
-    StaticData()
+    namespace Utilities
     {
-        currentTail = nullptr;
-        currentHead = nullptr;
-        currentObjectCount = 0;
+        namespace Memory
+        {
+            struct StaticData
+            {
+                StaticData()
+                {
+                    currentTail = nullptr;
+                    currentHead = nullptr;
+                    currentObjectCount = 0;
+                }
+                void* currentTail;
+                void* currentHead;
+                size_t currentObjectCount;
+            };
+        }
     }
-    void* currentTail;
-    void* currentHead;
-    size_t currentObjectCount;
-};
+}
