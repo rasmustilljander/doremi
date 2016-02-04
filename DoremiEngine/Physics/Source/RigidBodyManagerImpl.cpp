@@ -239,6 +239,21 @@ namespace DoremiEngine
             }
         }
 
+        void RigidBodyManagerImpl::SetIgnoredDEBUG(int p_bodyID)
+        {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "Physics. Rigid bodies. SetIgnore. No such body with ID found. ID: " << p_bodyID << endl;
+                return;
+            }
+            PxShape* shape;
+            m_bodies.find(p_bodyID)->second->getShapes(&shape, 1);
+            PxFilterData data = PxFilterData(0, 0, 0, 1);
+            shape->setSimulationFilterData(data);
+            shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+            m_bodies.find(p_bodyID)->second->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+        }
+
         void RigidBodyManagerImpl::AddForceToBody(int p_bodyID, XMFLOAT3 p_force)
         {
             if(m_bodies.find(p_bodyID) == m_bodies.end())

@@ -38,7 +38,7 @@ namespace DoremiEngine
 
 
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
-
+            void SetIgnoredDEBUG(int p_bodyID) override;
 
             void AddForceToBody(int p_bodyID, XMFLOAT3 p_force) override;
             void AddTorqueToBody(int p_bodyID, XMFLOAT3 p_torque) override;
