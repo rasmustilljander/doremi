@@ -56,7 +56,7 @@ namespace DoremiEngine
             return -1;
         }
 
-        int RayCastManagerImpl::CastSweep(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, const float& p_range)
+        int RayCastManagerImpl::CastSweep(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range)
         {
             if(p_range <= 0.0f)
             {
@@ -70,7 +70,7 @@ namespace DoremiEngine
             PxSweepBuffer hit; // Used to save the hit
             /// Paramters for the sweep
             // PxGeometry* geometry
-            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(1), PxTransform(origin), direction, p_range, hit);
+            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(p_width), PxTransform(origin), direction, p_range, hit);
             // hit.block.position;
             if(!status && !hit.hasBlock)
             {
