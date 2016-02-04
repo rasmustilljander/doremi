@@ -141,8 +141,8 @@ namespace DoremiEngine
                     /// Particle should be removed
                     // Add index to release list
                     indicesOfParticlesToBeReleased.push_back(i);
-                    // Find out which actor it collided with using ray tracing (seriously. It was this easy...)
-                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 100)); // Zero might turn up buggy
+                    // m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
+                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100));
                 }
             }
             if(indicesOfParticlesToBeReleased.size() != 0)
