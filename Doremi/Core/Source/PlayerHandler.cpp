@@ -231,6 +231,7 @@ namespace Doremi
                 particleComp->data.m_launchPressure = 100;
                 particleComp->data.m_numParticlesX = 5;
                 particleComp->data.m_numParticlesY = 1;
+                particleComp->data.m_size = 1;
                 particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
                 m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
             }
