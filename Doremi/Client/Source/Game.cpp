@@ -45,6 +45,7 @@
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 #include <Doremi/Core/Include/Manager/LightManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
+#include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -120,6 +121,7 @@ namespace Doremi
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
         Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
         Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
+        Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
 
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
         // Add manager to list of managers
@@ -141,6 +143,7 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager); // Must be after movement
         m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
 
+        // m_managers.push_back(t_extraDrainManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
         // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
@@ -212,7 +215,7 @@ namespace Doremi
         }
 
         // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
-        int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity);
+        int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
 
 
         TIME_FUNCTION_STOP
