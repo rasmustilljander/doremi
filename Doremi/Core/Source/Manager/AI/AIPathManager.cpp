@@ -15,7 +15,8 @@
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/EntityCreatedEvent.hpp>
 #include <EventHandler/Events/PlayerCreationEvent.hpp>
-
+// Force Equations
+#include <AIHelper/ForceImpactFunctions.hpp>
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
@@ -31,6 +32,7 @@
 #include <iostream>
 #include <DirectXMath.h>
 #include <set>
+#include <functional>
 
 using namespace std;
 
@@ -130,10 +132,10 @@ namespace Doremi
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
-
                 }
             }
         }
+
         void AIPathManager::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -160,12 +162,13 @@ namespace Doremi
                     EntityCreatedEvent* realEvent = static_cast<EntityCreatedEvent*>(p_event);
                     if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField | (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
                     {
+                        std::function<float(float, float, float)> chargeEquation = ForceEquations::Standard;
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
                         DoremiEngine::AI::PotentialChargeInformation t_newSpecial =
-                            DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, false, true, true, DoremiEngine::AI::AIActorType::Player);
+                            DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, false, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
                         DoremiEngine::AI::PotentialChargeInformation t_newSpecial2 =
-                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, false, true, false, DoremiEngine::AI::AIActorType::Player);
+                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, false, true, false, DoremiEngine::AI::AIActorType::Player, chargeEquation);
                         actor->AddPotentialVsOther(t_newSpecial);
                         actor->AddPotentialVsOther(t_newSpecial2);
                         DoremiEngine::AI::PotentialField* field;

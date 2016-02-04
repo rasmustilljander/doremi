@@ -345,7 +345,9 @@ namespace DoremiEngine
                     {
                         o_phermoneActive = false;
                     }
-                    force += actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f), 0.0f);
+                    // force += actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f),
+                    // 0.0f);
+                    force += t_specialCharges[i].forceEquation(actorCharge, dist, actorRange);
                 }
             }
             return force;
