@@ -1,4 +1,6 @@
 #pragma once
+
+
 namespace DoremiEngine
 {
     namespace Core
@@ -10,13 +12,14 @@ namespace Doremi
 {
     namespace Core
     {
+        class Player;
         class GunController
         {
         public:
             GunController();
             virtual ~GunController();
 
-            void FireGun(int p_playerID, const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void FireGun(int p_playerID, Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
         };
     }
 }

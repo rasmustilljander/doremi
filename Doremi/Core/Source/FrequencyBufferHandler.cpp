@@ -27,17 +27,27 @@ namespace Doremi
                 if(m_bufferedFrequencies.size())
                 {
                     returnFrequency = *m_bufferedFrequencies.begin();
-                    m_bufferedFrequencies.pop_front();
                 }
             }
 
             return returnFrequency;
         }
 
-        void FrequencyBufferHandler::BufferFrequency(float p_frequency)
+        void FrequencyBufferHandler::Update()
         {
-            m_bufferedFrequencies.push_back(p_frequency);
+            uint8_t CurrentSequence = m_nextSequence - m_bufferedFrequencies.size();
+
+            // If we got stuff to get from, should only be a initialize problem
+            if(CurrentSequence == m_realSequence)
+            {
+                if(m_bufferedFrequencies.size())
+                {
+                    m_bufferedFrequencies.pop_front();
+                }
+            }
         }
+
+        void FrequencyBufferHandler::BufferFrequency(float p_frequency) { m_bufferedFrequencies.push_back(p_frequency); }
 
         void FrequencyBufferHandler::UpdateBufferFromSequence(uint8_t p_sequence)
         {
