@@ -180,6 +180,7 @@ namespace Doremi
                         // TODOKO should not be done here but in a more suitable event
                         field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->Field = field;
+                        field->AddActor(actor);
                     }
                     else
                     {
