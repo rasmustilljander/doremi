@@ -32,6 +32,7 @@ namespace Doremi
             // Check if the player was hit by any enemy bullet
             std::vector<DoremiEngine::Physics::CollisionPair> t_collisionPairs = m_sharedContext.GetPhysicsModule().GetCollisionPairs();
             size_t length = t_collisionPairs.size();
+
             // Start with getting every pair with a enemy bullet and save it to a list with bullet first, other second
             std::vector<XMINT2> t_bulletPairs;
             for(size_t i = 0; i < length; i++)
@@ -90,6 +91,49 @@ namespace Doremi
                 else
                 {
                     // The bullet did hit multiple targets but have already been removed, do nothing.
+                }
+            }
+            // Check if the player hit any enemies
+
+            // Look through our entities for the enemies
+
+            size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
+            for(size_t i = 0; i < entitiesLength; i++)
+            {
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PressureParticleSystem))
+                {
+                    std::vector<int> t_drainsHit = m_sharedContext.GetPhysicsModule().GetFluidManager().GetDrainsHit(i);
+                    size_t particleVecLength = t_drainsHit.size();
+
+                    for(size_t o = 0; o < particleVecLength; o++)
+                    {
+                        if(t_drainsHit[o] != -1)
+                        {
+                            if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], (int)ComponentType::Health | (int)ComponentType::AIAgent |
+                                                                                              (int)ComponentType::Transform))
+                            {
+                                HealthComponent* drainHitHpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(t_drainsHit[o]);
+                                // TODOEA Make it related to the guns damage and not hard coded
+                                // std::cout << drainHitHpComp->currentHealth << std::endl;
+                                drainHitHpComp->currentHealth -= 5; // TODOKO change to getting from comp
+
+                                if(drainHitHpComp->currentHealth <= 0)
+                                {
+                                    //    // u ded TODOKO
+                                    EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
+                                    std::cout << "Enemy DED!!!" << std::endl;
+                                }
+                                else
+                                {
+                                    std::cout << "Enemy Hit!!" << std::endl;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // nothing
+                        }
+                    }
                 }
             }
         }

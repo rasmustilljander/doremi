@@ -5,6 +5,9 @@
 
 // 3rd parties
 
+#include <iostream>
+using namespace std;
+
 using namespace DirectX;
 using namespace physx;
 namespace DoremiEngine
@@ -128,15 +131,18 @@ namespace DoremiEngine
                 XMFLOAT3 position = XMFLOAT3(positions[i].x, positions[i].y, positions[i].z);
                 XMFLOAT3 velocity = XMFLOAT3(velocities[i].x, velocities[i].y, velocities[i].z);
                 XMVECTOR velVec = XMLoadFloat3(&velocity);
+                XMVECTOR posVec = XMLoadFloat3(&position);
+                posVec -= velVec;
                 velVec = XMVector3Normalize(velVec);
                 XMStoreFloat3(&velocity, velVec); // TODOJB Remove normalization once it's fixed in CastRay
+                XMStoreFloat3(&position, posVec);
                 if(flags[i] & (PxParticleFlag::eCOLLISION_WITH_DRAIN)) // | PxParticleFlag::eVALID))
                 {
                     /// Particle should be removed
                     // Add index to release list
                     indicesOfParticlesToBeReleased.push_back(i);
                     // Find out which actor it collided with using ray tracing (seriously. It was this easy...)
-                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
+                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 100)); // Zero might turn up buggy
                 }
             }
             if(indicesOfParticlesToBeReleased.size() != 0)
