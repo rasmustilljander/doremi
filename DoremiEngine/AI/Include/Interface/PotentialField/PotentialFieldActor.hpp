@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <vector>
+#include <functional>
 namespace DoremiEngine
 {
     namespace AI
@@ -22,16 +23,19 @@ namespace DoremiEngine
             bool active; // If it's active or not
             bool usePhermoneTrail; // If true the phermone trail wont be used if this field is active and used/in range
             AIActorType actorToBeAddedTo; // Adds this potentialfield to all actors that have the bitmask specified
+            std::function<float(float, float, float)> forceEquation; // The field uses the given function to calculate force impact
             // TODOKO add a specific actor this field should be used when checking against, if needed
             PotentialChargeInformation(const float& p_charge, const float& p_range, const bool& p_addedOnAttracting, const bool& p_addedOnReppeling,
-                                       const bool& p_active, const bool& p_usePhermoneTrail, const AIActorType& p_actorType)
+                                       const bool& p_active, const bool& p_usePhermoneTrail, const AIActorType& p_actorType,
+                                       const std::function<float(float, float, float)>& p_forceEquation)
                 : charge(p_charge),
                   range(p_range),
                   AddedOnAttracting(p_addedOnAttracting),
                   AddedOnReppeling(p_addedOnReppeling),
                   active(p_active),
                   usePhermoneTrail(p_usePhermoneTrail),
-                  actorToBeAddedTo(p_actorType){};
+                  actorToBeAddedTo(p_actorType),
+                  forceEquation(p_forceEquation){};
             /**
             Standard is false for everything and 0 in range and charge
             */
