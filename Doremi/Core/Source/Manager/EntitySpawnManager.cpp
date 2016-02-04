@@ -15,7 +15,7 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
 // Events
-#include <EventHandler/Events/EntityCreatedEvent.hpp>
+#include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
 
 /// Engine
 // Physics
@@ -105,12 +105,15 @@ namespace Doremi
                     XMFLOAT3 spawnPosition = transComp->position;
                     int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
 
+
                     // TODOCONFIG HP pool for monsters
                     // healthComp->maxHealth = 200;
                     // healthComp->currentHealth = 200;
 
                     // Send event that enemy has been created
-                    EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
+
+                    SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
+
                     EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     break;
 

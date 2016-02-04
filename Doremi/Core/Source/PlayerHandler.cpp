@@ -537,7 +537,7 @@ namespace Doremi
             }
         }
 
-        void PlayerHandler::QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
+        void PlayerHandler::QueueAddObjectToPlayers(EntityID p_entityID, uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
             // Fix because there is a difference between "myPlayer" and "otherplayers" for the client
             if(p_blueprint == (uint32_t)Blueprints::PlayerEntity)
@@ -549,7 +549,11 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                iter->second->m_networkEventSender->QueueAddObject(p_blueprint, p_position);
+                // TODOCM remove, we currently exclude player when we send it
+                if(iter->second->m_playerEntityID != p_entityID)
+                {
+                    iter->second->m_networkEventSender->QueueAddObject(p_blueprint, p_position);
+                }
             }
         }
 
@@ -609,7 +613,8 @@ namespace Doremi
                         AddNetObjectToPlayers(t_entityCreatedEvent->entityID);
                     }
 
-                    QueueAddObjectToPlayers((uint32_t)t_entityCreatedEvent->bluepirnt, GetComponent<TransformComponent>(t_entityCreatedEvent->entityID)->position);
+                    QueueAddObjectToPlayers(t_entityCreatedEvent->entityID, (uint32_t)t_entityCreatedEvent->bluepirnt,
+                                            GetComponent<TransformComponent>(t_entityCreatedEvent->entityID)->position);
 
                     break;
                 }

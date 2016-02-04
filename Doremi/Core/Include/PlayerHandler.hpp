@@ -199,7 +199,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position);
+            void QueueAddObjectToPlayers(EntityID p_ID, uint32_t p_blueprint, DirectX::XMFLOAT3 p_position);
 
             /**
                 TODOCM doc
