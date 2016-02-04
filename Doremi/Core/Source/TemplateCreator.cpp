@@ -540,7 +540,7 @@ namespace Doremi
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // Net object
