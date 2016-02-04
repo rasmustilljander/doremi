@@ -60,42 +60,72 @@ namespace DoremiEngine
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
         vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
 
-        // Custom collision filter shader
-        PxFilterFlags TestFilter(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
-                                 PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+        // New fancier collision filter
+        PxFilterFlags TestFilter2(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
+                                  PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
         {
-            // Rigid bodies collisions
-            if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
-            {
-                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
-                return PxFilterFlag::eDEFAULT;
-            }
-
-            // controller vs. controller collisions
-            bool kinematic0 = PxFilterObjectIsKinematic(attributes0);
-            bool kinematic1 = PxFilterObjectIsKinematic(attributes1);
-
-            if(kinematic0 && kinematic1)
-            {
-                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-                return PxFilterFlag::eDEFAULT;
-            }
-
             // generate contacts for all that were not filtered above
             pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
-            // trigger the contact callback for pairs (A,B) where
-            // the filtermask of A contains the ID of B and vice versa.
+            // General filter if they match
             if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
             {
                 pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
             }
 
-            return PxFilterFlag::eDEFAULT;
+
+            // Filter out collisions with ignore-bodies REALLY UGLY TODOJB Improve
+            if(filterData0.word3 == 1 || filterData1.word3 == 1) // been an ignore collision
+            {
+                if(filterData0.word0 == 1 || filterData1.word0 == 1) return PxFilterFlag::eKILL;
+            }
+
+            // Trigger collisions
+            if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+            {
+                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+                return PxFilterFlag::eDEFAULT;
+            }
+
+            return PxFilterFlags();
         }
+
+        // Custom collision filter shader (OLD DEPRICATED CRAP. Still kept around for safety)
+        // PxFilterFlags TestFilterOLD(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
+        //                         PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+        //{
+        //    // Rigid bodies collisions
+        //    if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+        //    {
+        //        pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+        //        pairFlags |= PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+        //        pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+        //        pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
+        //        return PxFilterFlag::eDEFAULT;
+        //    }
+
+        //    // controller vs. controller collisions
+        //    bool kinematic0 = PxFilterObjectIsKinematic(attributes0);
+        //    bool kinematic1 = PxFilterObjectIsKinematic(attributes1);
+
+        //    if(kinematic0 && kinematic1)
+        //    {
+        //        pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+        //        return PxFilterFlag::eDEFAULT;
+        //    }
+
+        //    // generate contacts for all that were not filtered above
+        //    pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+
+        //    // trigger the contact callback for pairs (A,B) where
+        //    // the filtermask of A contains the ID of B and vice versa.
+        //    if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+        //    {
+        //        pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+        //    }
+
+        //    return PxFilterFlag::eDEFAULT;
+        //}
 
         void PhysicsModuleImplementation::CreateWorldScene()
         {
@@ -108,7 +138,7 @@ namespace DoremiEngine
             m_utils.m_dispatcher = PxDefaultCpuDispatcherCreate(2);
             sceneDesc.cpuDispatcher = m_utils.m_dispatcher;
             // Some way of filtering collisions. Use default shaders since we cba to write our own
-            sceneDesc.filterShader = TestFilter;
+            sceneDesc.filterShader = TestFilter2;
             // Notify PhysX that we want callbacks to be called here
             sceneDesc.simulationEventCallback = this;
 
