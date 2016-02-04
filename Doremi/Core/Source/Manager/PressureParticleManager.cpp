@@ -60,6 +60,7 @@ namespace Doremi
                     // Read thingies
                     vector<XMFLOAT3> returnPositions;
                     m_sharedContext.GetPhysicsModule().GetFluidManager().GetParticlePositions(i, returnPositions);
+                    ParticlePressureComponent* particleComp = EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(i);
 
                     // Render thingies
                     RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
@@ -69,7 +70,8 @@ namespace Doremi
                         DirectX::XMMATRIX tempTransMat =
                             DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(returnPositions[j].x, returnPositions[j].y, returnPositions[j].z));
                         DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
+                                                                                                                  *particleComp->material, transMat);
                     }
                 }
             }
