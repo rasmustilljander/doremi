@@ -48,6 +48,11 @@ namespace DoremiEngine
             */
             virtual void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) = 0;
 
+            /**
+            Makes the body ignored by lots of thingies. This is just an experimental
+            method to see if we can use drains in a fancy fashion TODOJB Make general*/
+            virtual void SetIgnoredDEBUG(int p_bodyID) = 0;
+
             /// Manipulators
             /**
             Adds a force to a body*/
