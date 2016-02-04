@@ -39,6 +39,8 @@ namespace DoremiEngine
             int m_numParticlesY;
             // How wide and high the emission area is in radians
             XMFLOAT2 m_emissionAreaDimensions;
+            // How big particles are (think of them as spheres) (This is actually not that truthful...)
+            float m_size;
         };
         class FluidManager
         {
