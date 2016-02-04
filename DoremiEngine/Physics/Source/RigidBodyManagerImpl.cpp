@@ -13,6 +13,18 @@ namespace DoremiEngine
 
         int RigidBodyManagerImpl::AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
         {
+
+
+            // really silly debug code TODOJB remove
+            // static bool derp = true;
+            // if (derp)
+            //{
+            //    derp = false;
+            //    int matID = m_utils.m_physicsMaterialManager->CreateMaterial(0, 0, 0);
+            //    m_utils.m_rigidBodyManager->AddBoxBodyDynamic(99999, XMFLOAT3(0, 10, 0), XMFLOAT4(0, 0, 0, 1), XMFLOAT3(5, 5, 5), matID);
+            //    m_utils.m_rigidBodyManager->SetDrain(99999, true);
+            //}
+
             // Create a world matrix (only translation) i think
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
             PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
@@ -39,10 +51,22 @@ namespace DoremiEngine
             I'm not too sure how we update the box, or the scene, or perform
             any form of interaction however*/
 
-
+            //// DEBUG CODE TODOJB REMOVE
+            // if (p_id == 99999)
+            //{
+            //    PxShape* shape;
+            //    body->getShapes(&shape, 1);
+            //    PxFilterData data = PxFilterData(0, 0, 0, 1);
+            //    shape->setSimulationFilterData(data);
+            //    shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+            //    //body->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+            //    //SetTrigger(99999, true);
+            //}
+            // else
+            //{
             // Hax to get callbacks to work (Set a common flag on every object)
             SetCallback(p_id, (1 << 0), (1 << 0));
-
+            //}
             // Kinda redundant return...
             return p_id;
         }
@@ -157,7 +181,7 @@ namespace DoremiEngine
             m_IDsByBodies[body] = p_id;
 
             // Hax to get callbacks to work (Set a common flag on every object)
-            SetCallback(p_id, (1 << 0), (1 << 0));
+            // SetCallback(p_id, (1 << 0), (1 << 0));
         }
         void RigidBodyManagerImpl::AddMeshBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
                                                       vector<int>& p_indices, int p_materialID)
