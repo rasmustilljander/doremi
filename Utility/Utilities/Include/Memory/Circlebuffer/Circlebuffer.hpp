@@ -5,47 +5,7 @@
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
 #include <mutex>
 #include <Utility/Utilities/Include/IO/Mutex/Mutex.hpp>
-
-enum class CircleBufferTypeEnum : int8_t
-{
-    TEXT,
-    COMMAND,
-    UNKNOWN,
-};
-
-union CircleBufferType
-{
-    CircleBufferType(const CircleBufferTypeEnum& p_enum) : typeEnum(p_enum) {}
-
-    CircleBufferType(const int8_t& p_type) : typeValue(p_type) {}
-
-    CircleBufferType& operator=(const CircleBufferTypeEnum& p_enum)
-    {
-        this->typeEnum = p_enum;
-        return *this;
-    }
-
-    bool operator==(const CircleBufferTypeEnum& p_enum)
-    {
-        if(typeEnum == p_enum)
-        {
-            return true;
-        }
-        return false;
-    }
-
-
-    int8_t typeValue;
-    CircleBufferTypeEnum typeEnum;
-};
-
-struct CircleBufferHeader
-{
-    CircleBufferHeader() : packageType(CircleBufferTypeEnum::UNKNOWN), packageSize(0), packageFlags(0) {}
-    CircleBufferType packageType;
-    int32_t packageSize; // TODORT 2012-02-04 Not currently used
-    int8_t packageFlags; // TODORT 2012-02-04 Not currently used
-};
+#include <Utility/Utilities/Include/Memory/Circlebuffer/CircleBufferHeader.hpp>
 
 // Move to Logging lib
 struct LogText
@@ -72,6 +32,9 @@ namespace Doremi
             template <typename T> class CircleBuffer
             {
             public:
+                /**
+                TODO docs
+                */
                 CircleBuffer()
                     : m_data(nullptr),
                       m_rawBufferPointerStart(nullptr),
@@ -88,24 +51,14 @@ namespace Doremi
                 {
                 }
 
+                /**
+                TODO docs
+                */
                 virtual ~CircleBuffer()
                 {
                     if(m_internalMemoryManagement)
                     {
                         free(m_rawBufferPointerStart);
-                    }
-                }
-
-                void AssertInitialize(const size_t& p_bufferSize)
-                {
-                    m_sizeOfOneObject = sizeof(T) + sizeof(CircleBufferHeader);
-                    if(m_sizeOfOneObject > (p_bufferSize - sizeof(StaticData)))
-                    {
-                        throw std::runtime_error("Not enough space.");
-                    }
-                    if(m_alreadyInitialized)
-                    {
-                        throw std::runtime_error("Already initialized.");
                     }
                 }
 
@@ -131,53 +84,6 @@ namespace Doremi
                     m_mutex = p_mutex;
                     m_internalMemoryManagement = false;
                     SetupVariables();
-                }
-
-                void LockMetaData()
-                {
-                    if(m_mutex != nullptr)
-                    {
-                        m_mutex->AttemptLock();
-                    }
-                }
-
-                void UnLockMetaData()
-                {
-                    if(m_mutex != nullptr)
-                    {
-                        m_mutex->Unlock();
-                    }
-                }
-
-                void ComputeAdjustments()
-                {
-                    m_adjustedBufferSize = m_rawBufferSize - sizeof(StaticData);
-                    m_adjustedBufferSize = (m_adjustedBufferSize / m_sizeOfOneObject) * m_sizeOfOneObject;
-
-                    m_adjustedBufferPointerStart = PointerArithmetic::Addition(m_rawBufferPointerStart, sizeof(StaticData));
-                    m_adjustedBufferPointerEnd = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_adjustedBufferSize);
-                }
-
-                void ComputeMaxObjects() { m_maxContainedObjects = m_adjustedBufferSize / m_sizeOfOneObject; }
-
-                void SetupVariables()
-                {
-                    m_rawBufferPointerEnd = PointerArithmetic::Addition(m_rawBufferPointerStart, m_rawBufferSize);
-                    ComputeAdjustments();
-                    ComputeMaxObjects();
-                    m_data = static_cast<StaticData*>(m_rawBufferPointerStart);
-                    *m_data = StaticData();
-
-                    // TODORT This is currently done on both sides, right / wrong?
-                    if(m_data->currentTail == nullptr)
-                    {
-                        m_data->currentTail = m_adjustedBufferPointerStart;
-                    }
-                    if(m_data->currentHead == nullptr)
-                    {
-                        m_data->currentHead = m_adjustedBufferPointerStart;
-                    }
-                    m_alreadyInitialized = true;
                 }
 
                 /**
@@ -296,6 +202,66 @@ namespace Doremi
                 }
 
             protected:
+                void CircleBuffer::AssertInitialize(const size_t& p_bufferSize)
+                {
+                    m_sizeOfOneObject = sizeof(T) + sizeof(CircleBufferHeader);
+                    if(m_sizeOfOneObject > (p_bufferSize - sizeof(StaticData)))
+                    {
+                        throw std::runtime_error("Not enough space.");
+                    }
+                    if(m_alreadyInitialized)
+                    {
+                        throw std::runtime_error("Already initialized.");
+                    }
+                }
+
+                void CircleBuffer::LockMetaData()
+                {
+                    if(m_mutex != nullptr)
+                    {
+                        m_mutex->AttemptLock();
+                    }
+                }
+
+                void CircleBuffer::UnLockMetaData()
+                {
+                    if(m_mutex != nullptr)
+                    {
+                        m_mutex->Unlock();
+                    }
+                }
+
+                void CircleBuffer::ComputeAdjustments()
+                {
+                    m_adjustedBufferSize = m_rawBufferSize - sizeof(StaticData);
+                    m_adjustedBufferSize = (m_adjustedBufferSize / m_sizeOfOneObject) * m_sizeOfOneObject;
+
+                    m_adjustedBufferPointerStart = PointerArithmetic::Addition(m_rawBufferPointerStart, sizeof(StaticData));
+                    m_adjustedBufferPointerEnd = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_adjustedBufferSize);
+                }
+
+                void CircleBuffer::ComputeMaxObjects() { m_maxContainedObjects = m_adjustedBufferSize / m_sizeOfOneObject; }
+
+                void CircleBuffer::SetupVariables()
+                {
+                    m_rawBufferPointerEnd = PointerArithmetic::Addition(m_rawBufferPointerStart, m_rawBufferSize);
+                    ComputeAdjustments();
+                    ComputeMaxObjects();
+                    m_data = static_cast<StaticData*>(m_rawBufferPointerStart);
+                    *m_data = StaticData();
+
+                    // TODORT This is currently done on both sides, right / wrong?
+                    if(m_data->currentTail == nullptr)
+                    {
+                        m_data->currentTail = m_adjustedBufferPointerStart;
+                    }
+                    if(m_data->currentHead == nullptr)
+                    {
+                        m_data->currentHead = m_adjustedBufferPointerStart;
+                    }
+                    m_alreadyInitialized = true;
+                }
+
                 StaticData* m_data;
                 void* m_rawBufferPointerStart;
                 void* m_rawBufferPointerEnd;
