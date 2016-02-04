@@ -1,5 +1,5 @@
 #pragma once
-#include <Utility/MemoryManager/Include/Allocator/MemoryAllocator.hpp>
+#include <Utility/Utilities/Include/Memory/MemoryAllocator.hpp>
 
 namespace Utility
 {
@@ -39,7 +39,7 @@ namespace Utility
             // Non-static
             MainMemoryManager(const size_t& p_preferedSize);
             virtual ~MainMemoryManager();
-            MemoryAllocator* m_applicationAllocator;
+            Doremi::Utilities::Memory::MemoryAllocator* m_applicationAllocator;
 
             // Static
             static MainMemoryManager* m_instance;
