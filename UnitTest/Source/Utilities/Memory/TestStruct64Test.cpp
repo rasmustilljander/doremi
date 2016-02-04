@@ -1,4 +1,4 @@
-#include <Memory/TestStruct64.hpp>
+#include <Utilities/Memory/TestStruct64.hpp>
 
 TEST_F(TestStruct64Test, basic64Struct) { ASSERT_EQ(sizeof(TestStruct64), 64); }
 

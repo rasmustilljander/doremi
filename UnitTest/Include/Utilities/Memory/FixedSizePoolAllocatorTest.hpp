@@ -1,6 +1,6 @@
 #pragma once
 #include <gtest/gtest.h>
-#include <Memory/TestStruct64.hpp>
+#include <Utilities/Memory/TestStruct64.hpp>
 #include <Utility/MemoryManager/Include/Allocator/Pool/FixedSizePoolAllocator.hpp>
 
 using namespace Utility::MemoryManager;

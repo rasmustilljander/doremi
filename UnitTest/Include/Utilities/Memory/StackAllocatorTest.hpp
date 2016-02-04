@@ -1,7 +1,7 @@
 #pragma once
 #include <gtest/gtest.h>
 #include <Utility/MemoryManager/Include/Allocator/Stack/StackAllocator.hpp>
-#include <Memory/TestStruct64.hpp>
+#include <Utilities/Memory/TestStruct64.hpp>
 
 using namespace Utility::MemoryManager;
 class StackAllocatorTest : public testing::Test
