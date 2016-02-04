@@ -88,11 +88,13 @@ namespace Doremi
 
             /**
                 Time for how long time untill a unrelevant object will be excluded
+                TODOCONFIG
             */
             float RelevantTimer;
 
             /**
                 Time to when a object is always included
+                TODOCONFIG
             */
             float ShortRelevantTimer;
 

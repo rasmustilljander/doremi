@@ -1,4 +1,4 @@
-#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/NetworkEventSender.hpp>
 #include <Doremi/Core/Include/Manager/Network/NetMessage.hpp>
 #include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
@@ -9,12 +9,12 @@ namespace Doremi
 {
     namespace Core
     {
-        AddRemoveSyncHandler::AddRemoveSyncHandler() : m_nextSequence(0) {}
+        NetworkEventSender::NetworkEventSender() : m_nextSequence(0) {}
 
 
-        AddRemoveSyncHandler::~AddRemoveSyncHandler() {}
+        NetworkEventSender::~NetworkEventSender() {}
 
-        void AddRemoveSyncHandler::AddRemoveQueuedObjects()
+        void NetworkEventSender::AddRemoveQueuedObjects()
         {
             EntityHandler& entityHandler = EntityHandler::GetInstance();
 
@@ -36,7 +36,7 @@ namespace Doremi
             m_frameQueuedObjects.clear();
         }
 
-        void AddRemoveSyncHandler::UpdateQueueWithSequence(uint8_t p_sequence)
+        void NetworkEventSender::UpdateQueueWithSequence(uint8_t p_sequence)
         {
             uint32_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence, 255);
 
@@ -52,7 +52,7 @@ namespace Doremi
             }
         }
 
-        void AddRemoveSyncHandler::QueueObjectsFromFrame()
+        void NetworkEventSender::QueueObjectsFromFrame()
         {
             // If we got any add or removes, we queue them
             if(m_frameQueuedObjects.size())
@@ -64,7 +64,7 @@ namespace Doremi
             }
         }
 
-        void AddRemoveSyncHandler::QueueAddObject(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
+        void NetworkEventSender::QueueAddObject(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
             ObjectToAddOrRemove obj = ObjectToAddOrRemove();
             obj.AddObject = true;
@@ -74,7 +74,7 @@ namespace Doremi
             m_frameQueuedObjects.push_front(obj);
         }
 
-        void AddRemoveSyncHandler::QueueRemoveObject(uint32_t p_id)
+        void NetworkEventSender::QueueRemoveObject(uint32_t p_id)
         {
             ObjectToAddOrRemove obj = ObjectToAddOrRemove();
             obj.AddObject = false;
@@ -83,7 +83,7 @@ namespace Doremi
             m_frameQueuedObjects.push_front(obj);
         }
 
-        void AddRemoveSyncHandler::CheckNewAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead)
+        void NetworkEventSender::CheckNewAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead)
         {
             // Read AddRemove items
             uint8_t NumOfSequences = p_streamer.ReadUnsignedInt8();
@@ -150,7 +150,7 @@ namespace Doremi
             p_streamer.SetReadWritePosition(op_BytesRead);
         }
 
-        void AddRemoveSyncHandler::WriteAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
+        void NetworkEventSender::WriteAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
         {
             // Queue new objects
             QueueObjectsFromFrame();
@@ -277,6 +277,6 @@ namespace Doremi
             p_streamer.SetReadWritePosition(op_BytesWritten);
         }
 
-        uint8_t AddRemoveSyncHandler::GetNextSequenceUsed() { return m_nextSequence; }
+        uint8_t NetworkEventSender::GetNextSequenceUsed() { return m_nextSequence; }
     }
 }

@@ -1,12 +1,18 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandlerServer.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
-
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 
 namespace Doremi
 {
     namespace Core
     {
-        EntityHandlerServer::EntityHandlerServer() {}
+        EntityHandlerServer::EntityHandlerServer()
+        {
+            // Subscribing on add and remove entity
+            EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
+        }
 
         EntityHandlerServer::~EntityHandlerServer() {}
 
@@ -22,12 +28,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID);
 
-            PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, DirectX::XMFLOAT3(0, 0, 0));
-
-            if(HasComponents(outID, (int)ComponentType::NetworkObject))
-            {
-                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
-            }
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID));
 
             return outID;
         }
@@ -36,12 +37,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position);
 
-            PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, p_position);
-
-            if(HasComponents(outID, (int)ComponentType::NetworkObject))
-            {
-                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
-            }
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID));
 
             return outID;
         }
@@ -50,21 +46,21 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation);
 
-            PlayerHandler::GetInstance()->QueueAddObjectToPlayers((uint32_t)p_blueprintID, p_position);
-
-            if(HasComponents(outID, (int)ComponentType::NetworkObject))
-            {
-                PlayerHandler::GetInstance()->AddNetObjectToPlayers(outID);
-            }
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID));
 
             return outID;
         }
 
-        void EntityHandlerServer::RemoveEntity(int p_entityID)
-        {
-            PlayerHandler::GetInstance()->QueueRemoveObjectToPlayers(p_entityID);
+        void EntityHandlerServer::RemoveEntity(int p_entityID) { EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(p_entityID)); }
 
-            EntityHandler::RemoveEntity(p_entityID);
+        void EntityHandlerServer::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::RemoveEntity)
+            {
+                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
+
+                EntityHandler::RemoveEntity(p_removeEvent->entityID);
+            }
         }
     }
 }

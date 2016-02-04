@@ -9,6 +9,8 @@ namespace Doremi
         enum class EventType
         {
             Undefined,
+            EntityCreated,
+            RemoveEntity,
             Example, // Only an example
             PlayerCreation,
             PotentialFieldActorCreation,

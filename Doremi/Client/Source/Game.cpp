@@ -26,7 +26,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
-#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/NetworkEventSender.hpp>
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
@@ -322,7 +322,9 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputsClient();
-        Core::EventHandler::GetInstance()->DeliverEvents();
+        Core::EventHandler::GetInstance()->DeliverBasicEvents();
+        Core::EventHandler::GetInstance()->DeliverRemoveEvents();
+
         Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
 
         switch(t_state)

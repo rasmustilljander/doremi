@@ -8,7 +8,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <PlayerHandler.hpp>
 #include <InputHandlerServer.hpp>
-#include <AddRemoveSyncHandler.hpp>
+#include <NetworkEventSender.hpp>
 #include <FrequencyBufferHandler.hpp>
 #include <SequenceMath.hpp>
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
@@ -167,7 +167,7 @@ namespace Doremi
             uint8_t clientSequence = Streamer.ReadUnsignedInt8();
             bytesRead += sizeof(uint8_t);
 
-            PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
+            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
 
             // Read frequency
             frequencyHandler->ReadNewFrequencies(Streamer, sizeof(p_message.Data), bytesRead);
@@ -392,11 +392,11 @@ namespace Doremi
             BytesWritten += sizeof(uint8_t);
 
             // Add new Add/Remove items
-            PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
+            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
 
             // Write snapshot ID (1 byte
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
-            
+
             // Write client last sequence (1 byte
             Streamer.WriteUnsignedInt8(inputHandler->GetSequenceByLastInput());
 

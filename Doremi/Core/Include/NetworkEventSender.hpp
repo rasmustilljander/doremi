@@ -23,18 +23,18 @@ namespace Doremi
         /**
             TODOCM doc
         */
-        class AddRemoveSyncHandler
+        class NetworkEventSender
         {
         public:
             /**
                 TODOCM doc
             */
-            AddRemoveSyncHandler();
+            NetworkEventSender();
 
             /**
                 TODOCM doc
             */
-            ~AddRemoveSyncHandler();
+            ~NetworkEventSender();
 
             /**
                 TODOCM doc

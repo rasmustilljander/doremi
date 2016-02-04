@@ -20,14 +20,30 @@ namespace Doremi
         class EventHandler
         {
         public:
-            /** Is a singleton. Use this method to get the EventManager*/
+            /**
+                Is a singleton. Use this method to get the EventManager
+            */
             static EventHandler* GetInstance();
-            /** Puts event in mailbox to be handled by the event handler*/
+
+            /**
+                Puts event in mailbox to be handled by the event handler
+            */
             void BroadcastEvent(Event* p_event);
-            /** Subscribes to a certain event type*/
+
+            /**
+                Subscribes to a certain event type
+            */
             void Subscribe(EventType p_eventType, Subscriber* p_subscriber);
-            /** Begin processing events by calling OnEvent in all subscribers*/
-            void DeliverEvents();
+
+            /**
+                Begin processing basic events by calling OnEvent in all subscribers
+            */
+            void DeliverBasicEvents();
+
+            /**
+                Begin processing remove events by calling OnEvent in all subscribers
+            */
+            void DeliverRemoveEvents();
 
         private:
             // Private constructors because Singleton
@@ -35,10 +51,20 @@ namespace Doremi
             ~EventHandler();
 
             static EventHandler* m_singleton;
-            // A map between the event type and the classes subscribing to the event
+            /**
+                A map between the event type and the classes subscribing to the event
+            */
             unordered_map<EventType, vector<Subscriber*>> m_broadcastMap;
-            // Big ass mailbox for storing the events for later delivery
-            vector<Event*> m_mailBox;
+
+            /**
+                Mailbox for storing the regular events(not add and remove) for later delivery
+            */
+            vector<Event*> m_basicEventBox;
+
+            /**
+                Mailbox for storing remove events for later delivery
+            */
+            vector<Event*> m_removeEventBox;
         };
     }
 }

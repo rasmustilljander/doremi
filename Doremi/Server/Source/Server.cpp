@@ -1,41 +1,55 @@
 // Project specific
 #include <Server.hpp>
+
+// Engine
+#include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+#include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+
+// Game
 #include <Doremi/Core/Include/GameCore.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SpecialEntityCreatedEvent.hpp>
+#include <Doremi/Core/Include/TemplateCreator.hpp>
+#include <Doremi/Core/Include/LevelLoaderServer.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
+#include <Doremi/Core/Include/HealthChecker.hpp>
+
+// Components
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
+
+// Handlers
 #include <Doremi/Core/Include/EntityComponent/EntityHandlerServer.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
+
+// Managers
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ServerNetworkManager.hpp>
 #include <Doremi/Core/Include/Manager/MovementManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/FrequencyAffectedObjectManager.hpp>
 #include <Doremi/Core/Include/Manager/EntitySpawnManager.hpp>
-#include <DoremiEngine/Core/Include/Subsystem/EngineModuleEnum.hpp>
-#include <Doremi/Core/Include/TemplateCreator.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/PlatformPatrolComponent.hpp>
-#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
-#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
-#include <Doremi/Core/Include/InputHandlerClient.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/PotentialFieldComponent.hpp>
-#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
-#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
-#include <DoremiEngine/AI/Include/AIModule.hpp>
-#include <Doremi/Core/Include/Manager/JumpManager.hpp>
-#include <Doremi/Core/Include/Manager/GravityManager.hpp>
-#include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
-#include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
-#include <Doremi/Core/Include/LevelLoaderServer.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AITargetManager.hpp>
 #include <Doremi/Core/Include/Manager/DamageManager.hpp>
+#include <DoremiEngine/Physics/Include/FluidManager.hpp>
+#include <Doremi/Core/Include/Manager/JumpManager.hpp>
+#include <Doremi/Core/Include/Manager/GravityManager.hpp>
+
+// other
+#include <Doremi/Core/Include/LevelLoaderServer.hpp>
+
 // Timer
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
@@ -149,7 +163,7 @@ namespace Doremi
 
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
 
-            Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
+            Core::SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
 
@@ -160,13 +174,6 @@ namespace Doremi
         {
             Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position = position;
         }
-        TIME_FUNCTION_STOP
-    }
-
-    void JawsSimulatePhysicsDebug(double deltaTime)
-    {
-        TIME_FUNCTION_START
-
         TIME_FUNCTION_STOP
     }
 
@@ -210,12 +217,9 @@ namespace Doremi
             while(Accum >= UpdateStepLen)
             {
                 // Update Game logic
-                JawsSimulatePhysicsDebug(UpdateStepLen); // TODOCM remove
-                // Update Game logic
                 UpdateGame(UpdateStepLen);
 
                 // Remove time from accumulator
-                // Accumulator -= UpdateTimeStepLength;
                 Accum -= UpdateStepLen;
 
                 // Add time to start
@@ -228,7 +232,16 @@ namespace Doremi
     void ServerMain::UpdateGame(double p_deltaTime)
     {
         TIME_FUNCTION_START
-        Core::EventHandler::GetInstance()->DeliverEvents();
+        // Deliver basic events
+        Core::EventHandler::GetInstance()->DeliverBasicEvents();
+
+        // Check add removes of events health low etc..
+        Core::HealthChecker::GetInstance()->Update();
+
+        // Deliver add remove events
+        Core::EventHandler::GetInstance()->DeliverRemoveEvents();
+
+
         Core::PlayerHandler::GetInstance()->UpdateServer(p_deltaTime);
 
         // TODORT

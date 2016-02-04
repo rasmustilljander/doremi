@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
 
 namespace DoremiEngine
@@ -22,7 +23,7 @@ namespace Doremi
     namespace Core
     {
         class InputHandler;
-        class AddRemoveSyncHandler;
+        class NetworkEventSender;
         class FrequencyBufferHandler;
         class NetworkPriorityHandler;
 
@@ -32,13 +33,13 @@ namespace Doremi
         */
         struct Player
         {
-            Player(EntityID p_EntityID, InputHandler* p_inputHandler, AddRemoveSyncHandler* p_addRemoveSyncHandler,
+            Player(EntityID p_EntityID, InputHandler* p_inputHandler, NetworkEventSender* p_networkEventSender,
                    FrequencyBufferHandler* p_frequencyBufferHandler, NetworkPriorityHandler* p_networkPriorityHandler)
                 : m_playerEntityID(p_EntityID),
                   m_moveSpeed(0.3f),
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),
-                  m_addRemoveSyncHandler(p_addRemoveSyncHandler),
+                  m_networkEventSender(p_networkEventSender),
                   m_frequencyBufferHandler(p_frequencyBufferHandler),
                   m_networkPriorityHandler(p_networkPriorityHandler),
                   m_turnSpeed(0.01f)
@@ -46,7 +47,7 @@ namespace Doremi
             }
             ~Player()
             {
-                delete m_addRemoveSyncHandler;
+                delete m_networkEventSender;
                 delete m_inputHandler;
                 delete m_frequencyBufferHandler;
                 delete m_networkPriorityHandler;
@@ -65,7 +66,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            AddRemoveSyncHandler* m_addRemoveSyncHandler;
+            NetworkEventSender* m_networkEventSender;
 
             /**
                 TODOCM doc
@@ -98,10 +99,19 @@ namespace Doremi
             float m_turnSpeed;
         };
 
+        // Temporary
+        struct AddRemoveStruct
+        {
+            AddRemoveStruct(bool p_AddNotRemove, uint32_t p_IDOrBlueprint) : AddNotRemove(p_AddNotRemove), EntityIDOrBlueprint(p_IDOrBlueprint) {}
+            bool AddNotRemove;
+            uint32_t EntityIDOrBlueprint;
+        };
+
+
         /**
             TODOEA doc
         */
-        class PlayerHandler
+        class PlayerHandler : public Subscriber
         {
         public:
             /**
@@ -162,7 +172,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            AddRemoveSyncHandler* GetAddRemoveSyncHandlerForPlayer(uint32_t p_playerID);
+            NetworkEventSender* GetNetworkEventSenderForPlayer(uint32_t p_playerID);
 
             /**
                 TODOCM doc
@@ -231,6 +241,11 @@ namespace Doremi
             */
             void AddNetObjectToPlayers(const EntityID& p_entityID);
 
+            /**
+                TODOCM doc
+            */
+            void OnEvent(Event* p_event) override;
+
         private:
             /**
                 TODOEA doc
@@ -272,6 +287,12 @@ namespace Doremi
                 Map from playerID to player struct, playerID != EntityID
             */
             std::map<uint32_t, Player*> m_playerMap;
+
+            /**
+                TODOCM doc
+            */
+            std::vector<AddRemoveStruct> m_sinceGameStartAddRemoves;
+
 
             // TODOEA add these attributes?
             // int m_bodyID;
