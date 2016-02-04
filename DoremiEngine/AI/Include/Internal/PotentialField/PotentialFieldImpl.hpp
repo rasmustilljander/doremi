@@ -29,7 +29,8 @@ namespace DoremiEngine
             float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
             bool AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position);
             float GetChargeInfluenceFromActor(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actor);
-            float GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck, const PotentialFieldActor& p_yourActor);
+            float GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck,
+                                                   const PotentialFieldActor& p_yourActor, bool& o_phermoneActive);
             std::vector<std::vector<PotentialFieldGridPoint>> m_grid; // [width][height]
             std::set<PotentialFieldActor*> m_staticActors; // set for fast check if actor already recides in list
             std::vector<PotentialFieldActor*> m_dynamicActors; // vector for fast access through the list

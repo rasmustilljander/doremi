@@ -17,6 +17,7 @@
 // Third Party
 #include <DirectXMath.h>
 #include <iostream>
+#include <set>
 namespace Doremi
 {
     namespace Core
@@ -75,11 +76,21 @@ namespace Doremi
                     }
                 }
             }
+            // We need this set to ensure that a bullet that hits multiple targets isnt removed twice
+            std::set<int> removedBullets;
             for(size_t i = 0; i < length; i++)
             {
                 // Remove all bullets that hit something, TODOKO review if this is what we want
-                EntityHandler::GetInstance().RemoveEntity(t_bulletPairs[i].x);
-                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(t_bulletPairs[i].x);
+                if(removedBullets.count(t_bulletPairs[i].x) == 0)
+                {
+                    EntityHandler::GetInstance().RemoveEntity(t_bulletPairs[i].x);
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(t_bulletPairs[i].x);
+                    removedBullets.insert(t_bulletPairs[i].x);
+                }
+                else
+                {
+                    // The bullet did hit multiple targets but have already been removed, do nothing.
+                }
             }
         }
     }

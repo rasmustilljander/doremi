@@ -20,6 +20,8 @@ namespace DoremiEngine
             const DirectX::XMFLOAT3& GetPosition() const override { return m_position; };
             const float& GetCharge() const override { return m_charge; };
             const float& GetRange() const override { return m_range; };
+            const AIActorType& GetActorType() const override { return m_actorType; };
+            void SetActorType(const AIActorType& p_type) { m_actorType = p_type; };
             const std::vector<DirectX::XMINT2>& GetOccupiedQuads() const override { return m_occupiedQuads; };
             const bool& IsStatic() const override { return m_static; };
             const DirectX::XMINT2 GetClosestOccupied(const DirectX::XMINT2& p_quad);
@@ -40,7 +42,8 @@ namespace DoremiEngine
             float m_charge;
             DirectX::XMINT2 m_prevGridPos;
             /*DirectX::XMINT2 m_gridPos;*/
-            DirectX::XMFLOAT3 m_position; // TODOKO should maybe not be here, needed in group but not in potential field
+            DirectX::XMFLOAT3 m_position;
+            AIActorType m_actorType;
             bool m_static;
         };
     }

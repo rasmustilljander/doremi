@@ -55,17 +55,15 @@ namespace DoremiEngine
             return returnQuad;
         }
 
-        void PotentialFieldActorImpl::UpdatePhermoneTrail(const DirectX::XMINT2 & p_gridPosToAdd)
+        void PotentialFieldActorImpl::UpdatePhermoneTrail(const DirectX::XMINT2& p_gridPosToAdd)
         {
             int vectorSize = m_phermoneTrail.size();
-            // if it is greater than 5 we remove the last before we add this one
-            // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 5
+            // if it is greater than 10 we remove the last before we add this one
+            // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 10
 
-            if (vectorSize >= 10) 
+            if(vectorSize >= 10)
             {
-
                 m_phermoneTrail.erase(m_phermoneTrail.begin());
-                // m_phermoneTrail.push_back(p_gridPosToAdd);
             }
 
             m_phermoneTrail.push_back(p_gridPosToAdd);
