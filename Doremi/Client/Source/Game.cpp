@@ -314,6 +314,7 @@ namespace Doremi
 
 
         PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
+
         TIME_FUNCTION_STOP
     }
 

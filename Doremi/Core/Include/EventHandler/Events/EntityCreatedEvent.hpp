@@ -17,7 +17,6 @@ namespace Doremi
                 : Event(EventType::EntityCreated), entityID(p_playerEntityID), bluepirnt(p_blueprint)
             {
             }
-            EntityCreatedEvent() : Event(EventType::Undefined) {}
             size_t entityID;
             Blueprints bluepirnt;
         };

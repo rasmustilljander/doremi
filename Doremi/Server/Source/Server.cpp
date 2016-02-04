@@ -258,6 +258,7 @@ namespace Doremi
             m_managers.at(i)->Update(p_deltaTime);
             // info.Stop();
         }
+
         TIME_FUNCTION_STOP
     }
 
