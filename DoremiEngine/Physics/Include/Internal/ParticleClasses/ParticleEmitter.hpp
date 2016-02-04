@@ -5,6 +5,7 @@
 #include <FluidManager.hpp>
 #include <vector>
 #include <map>
+#include <random>
 
 #define PARTICLE_MAX_COUNT 200000 // TODOCONFIG
 #define PARTICLE_MAX_MOTION_DISTANCE 100 // TODOCONFIG
@@ -108,6 +109,9 @@ namespace DoremiEngine
 
             // Temporary index variable to make sure things work
             int m_nextIndex;
+
+            // Used to make particles spray a bit more
+            default_random_engine m_randomGenerator;
         };
     }
 }

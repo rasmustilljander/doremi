@@ -148,6 +148,8 @@ namespace DoremiEngine
 
         void ParticleEmitter::UpdateParticleEmission(float p_dt)
         {
+            // Factor to cause some more spray
+            float sprayFactor = 0.1;
             if(m_this.m_active)
             {
                 // Update time since last particle wave was spawned
@@ -172,10 +174,14 @@ namespace DoremiEngine
                     {
                         // Calculate angle in local space
                         float xAngle = ((float)x / (float)m_this.m_numParticlesX) * m_this.m_emissionAreaDimensions.x;
+                        // Add some randomness to make them spray more
+                        uniform_real_distribution<float> distribution(-sprayFactor, sprayFactor);
+                        xAngle += distribution(m_randomGenerator);
                         for(int y = -halfParticlesy; y < halfParticlesy + 1; y++)
                         {
                             // Calculate angle in local space
                             float yAngle = ((float)y / (float)m_this.m_numParticlesY) * m_this.m_emissionAreaDimensions.y;
+                            yAngle += distribution(m_randomGenerator);
                             // Calculate velocity vector in local space
                             XMVECTOR particleVelocityVec = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
                             XMMATRIX rotMatLocal = XMMatrixRotationRollPitchYaw(yAngle, xAngle, 0);
