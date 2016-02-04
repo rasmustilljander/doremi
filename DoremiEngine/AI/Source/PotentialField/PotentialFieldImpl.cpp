@@ -263,25 +263,29 @@ namespace DoremiEngine
         bool PotentialFieldImpl::AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position)
         {
             using namespace DirectX;
-            // Here i assume that the only positive charge is from dynamic actors,TODOKO this is wrong but for now it'll do 
+            // Here i assume that the only positive charge is from dynamic actors,TODOKO this is wrong but for now it'll do
             // Should cehck occupied quads but i dont thing dynamic actors have these yet...
-            for (auto actor: m_dynamicActors)
+            for(auto actor : m_dynamicActors)
             {
-                XMFLOAT3 position3d = actor->GetPosition();
-                float range = actor->GetRange();
-                // TODOXX this is copied from ProximityChecker in gamecore, if that function starts failing thisone needs changing too
-                // It should be safe though
-                XMVECTOR vecBetweenEntities = XMLoadFloat3(&position3d) - XMLoadFloat3(&p_position);
-                XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
-                float distance = *distanceVec.m128_f32;
-                if (distance <= range)
+                float charge = actor->GetCharge();
+                if(charge > 0)
                 {
-                    // we dont really care if multiple actors are in range
-                    return true;
-                }
-                else
-                {
-                    // We still need to check the other actors
+                    XMFLOAT3 position3d = actor->GetPosition();
+                    float range = actor->GetRange();
+                    // TODOXX this is copied from ProximityChecker in gamecore, if that function starts failing thisone needs changing too
+                    // It should be safe though
+                    XMVECTOR vecBetweenEntities = XMLoadFloat3(&position3d) - XMLoadFloat3(&p_position);
+                    XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
+                    float distance = *distanceVec.m128_f32;
+                    if(distance <= range)
+                    {
+                        // we dont really care if multiple actors are in range
+                        return true;
+                    }
+                    else
+                    {
+                        // We still need to check the other actors
+                    }
                 }
             }
             return false;
