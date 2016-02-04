@@ -182,6 +182,9 @@ namespace Doremi
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
+            // Has an extra drain follow it around
+            blueprint[ComponentType::ExtraDrain];
+
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
             TIME_FUNCTION_STOP
         }
@@ -233,6 +236,9 @@ namespace Doremi
             // Network object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(2.0f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
+
+            // Has an extra drain follow it around
+            blueprint[ComponentType::ExtraDrain];
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);

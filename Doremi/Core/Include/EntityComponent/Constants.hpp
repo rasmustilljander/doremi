@@ -39,6 +39,7 @@ enum class ComponentType : int
     Trigger = 0x1000000,
     DamageInflictors = 0x2000000,
     EntitySpawner = 0x4000000,
+    ExtraDrain = 0x8000000,
 };
 
 /**
