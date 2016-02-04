@@ -18,7 +18,7 @@ namespace DoremiEngine
 
             /**
             Sweeps a given object in the desired direction and returns the first object hit by the sweep*/
-            virtual int CastSweep(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, const float& p_range) = 0;
+            virtual int CastSweep(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range) = 0;
         };
     }
 }
