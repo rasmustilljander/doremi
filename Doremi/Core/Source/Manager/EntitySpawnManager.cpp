@@ -13,6 +13,7 @@
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/HealthComponent.hpp>
 // Events
 #include <EventHandler/Events/EntityCreatedEvent.hpp>
 
@@ -104,14 +105,17 @@ namespace Doremi
                     XMFLOAT3 spawnPosition = transComp->position;
                     int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
                     int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(newID)->p_materialID;
-                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
+                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(5.1f, 5.5f));
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetDrain(newID, true);
                     Core::PotentialFieldComponent* potentialComponent =
                         Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
                     potentialComponent->ChargedActor =
                         m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false,
                                                                                                   DoremiEngine::AI::AIActorType::Enemy);
-
+                    HealthComponent* healthComp = entityHandler.GetComponentFromStorage<HealthComponent>(p_spawnerID);
+                    // TODOCONFIG HP pool for monsters
+                    // healthComp->maxHealth = 200;
+                    // healthComp->currentHealth = 200;
                     EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
                     EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     break;

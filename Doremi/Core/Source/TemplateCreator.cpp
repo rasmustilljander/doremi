@@ -204,7 +204,7 @@ namespace Doremi
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
             healthComponent->maxHealth = 100;
-            healthComponent->currentHealth = healthComponent->maxHealth;
+            healthComponent->currentHealth = 100;
             blueprint[ComponentType::Health] = healthComponent;
             // Enemy ai agent comp
             blueprint[ComponentType::AIAgent];

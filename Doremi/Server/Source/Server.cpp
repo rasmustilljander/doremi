@@ -146,6 +146,8 @@ namespace Doremi
         {
             XMFLOAT3 position = DirectX::XMFLOAT3(-2 * (int)i + 0, 0 * (int)i + 4, -2 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
+
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
@@ -154,7 +156,6 @@ namespace Doremi
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
             potentialComponent->ChargedActor =
                 sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, -1.0f, 3.0f, false, DoremiEngine::AI::AIActorType::Enemy);
-
             Core::EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
