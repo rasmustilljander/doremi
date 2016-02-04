@@ -24,7 +24,8 @@
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 // AI
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
-#include<DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+#include <DoremiEngine/AI/Include/AIModule.hpp>
 /// Third party
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -107,7 +108,8 @@ namespace Doremi
                     Core::PotentialFieldComponent* potentialComponent =
                         Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
                     potentialComponent->ChargedActor =
-                        m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false);
+                        m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(spawnPosition, -1.0f, 3.0f, false,
+                                                                                                  DoremiEngine::AI::AIActorType::Enemy);
 
                     EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
                     EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
