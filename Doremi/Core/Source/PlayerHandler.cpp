@@ -17,12 +17,15 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
-#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
+#include <Doremi/Core/Include/NetworkEventSender.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 #include <Doremi/Core/Include/InputHandler.hpp>
-#include <Doremi/Core/Include/AddRemoveSyncHandler.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
+
+#include <Doremi/Core/Include/EventHandler/Events/Event.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 
 /// Engine
 // AI
@@ -46,7 +49,12 @@ namespace Doremi
 {
     namespace Core
     {
-        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        {
+            EventHandler* t_EventHandler = EventHandler::GetInstance();
+            t_EventHandler->Subscribe(EventType::RemoveEntity, this);
+            t_EventHandler->Subscribe(EventType::EntityCreated, this);
+        }
 
         PlayerHandler::~PlayerHandler() {}
 
@@ -99,15 +107,15 @@ namespace Doremi
             return outPointer;
         }
 
-        AddRemoveSyncHandler* PlayerHandler::GetAddRemoveSyncHandlerForPlayer(uint32_t p_playerID)
+        NetworkEventSender* PlayerHandler::GetNetworkEventSenderForPlayer(uint32_t p_playerID)
         {
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
 
-            AddRemoveSyncHandler* outPointer = nullptr;
+            NetworkEventSender* outPointer = nullptr;
 
             if(iter != m_playerMap.end())
             {
-                outPointer = iter->second->m_addRemoveSyncHandler;
+                outPointer = iter->second->m_networkEventSender;
             }
 
             return outPointer;
@@ -194,11 +202,11 @@ namespace Doremi
             // TODOCM hard coded entityID for new players
             EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
 
-            AddRemoveSyncHandler* newAddRemoveSyncHandler = new AddRemoveSyncHandler();
+            NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
             NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
 
-            Player* NewPlayer = new Player(t_EntityID, p_inputHandler, newAddRemoveSyncHandler, newFrequencyHandler, newNetworkPriorityHandler);
+            Player* NewPlayer = new Player(t_EntityID, p_inputHandler, newNetworkEventSender, newFrequencyHandler, newNetworkPriorityHandler);
 
             m_playerMap[p_playerID] = NewPlayer;
 
@@ -531,6 +539,7 @@ namespace Doremi
 
         void PlayerHandler::QueueAddObjectToPlayers(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
         {
+            // Fix because there is a difference between "myPlayer" and "otherplayers" for the client
             if(p_blueprint == (uint32_t)Blueprints::PlayerEntity)
             {
                 p_blueprint = (uint32_t)Blueprints::NetworkPlayerEntity;
@@ -540,7 +549,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                iter->second->m_addRemoveSyncHandler->QueueAddObject(p_blueprint, p_position);
+                iter->second->m_networkEventSender->QueueAddObject(p_blueprint, p_position);
             }
         }
 
@@ -550,7 +559,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                iter->second->m_addRemoveSyncHandler->QueueRemoveObject(p_entityID);
+                iter->second->m_networkEventSender->QueueRemoveObject(p_entityID);
             }
         }
 
@@ -559,7 +568,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                iter->second->m_addRemoveSyncHandler->AddRemoveQueuedObjects();
+                iter->second->m_networkEventSender->AddRemoveQueuedObjects();
             }
         }
 
@@ -581,6 +590,41 @@ namespace Doremi
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 iter->second->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
+            }
+        }
+
+        void PlayerHandler::OnEvent(Event* p_event)
+        {
+            switch(p_event->eventType)
+            {
+                case Doremi::Core::EventType::EntityCreated:
+                {
+                    EntityCreatedEvent* t_entityCreatedEvent = static_cast<EntityCreatedEvent*>(p_event);
+
+                    // If the object is a Netobject we need to add those components to each seperate player, a solution by the cause that we want
+                    // dynamic amount of players
+                    // and individual components for each of them
+                    if(EntityHandler::GetInstance().HasComponents(t_entityCreatedEvent->entityID, (int)ComponentType::NetworkObject))
+                    {
+                        AddNetObjectToPlayers(t_entityCreatedEvent->entityID);
+                    }
+
+                    QueueAddObjectToPlayers((uint32_t)t_entityCreatedEvent->bluepirnt, GetComponent<TransformComponent>(t_entityCreatedEvent->entityID)->position);
+
+                    break;
+                }
+                case Doremi::Core::EventType::RemoveEntity:
+                {
+
+                    RemoveEntityEvent* p_removeEvent = static_cast<RemoveEntityEvent*>(p_event);
+
+                    PlayerHandler::GetInstance()->QueueRemoveObjectToPlayers(p_removeEvent->entityID);
+                    // m_sinceGameStartAddRemoves.push_back(AddRemoveStruct(false, p_removeEvent->entityID));
+
+                    break;
+                }
+                default:
+                    break;
             }
         }
     }

@@ -1,5 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
 namespace Doremi
 {
@@ -8,7 +9,7 @@ namespace Doremi
         /**
         TODOCM doc
         */
-        class EntityHandlerServer : public EntityHandler
+        class EntityHandlerServer : public EntityHandler, public Subscriber
         {
         public:
             /**
@@ -38,6 +39,11 @@ namespace Doremi
                 Removes the entire entity at the specific location
             */
             void RemoveEntity(int p_entityID) override;
+
+            /**
+                Checks events for add and remove objects
+            */
+            void OnEvent(Event* p_event) override;
 
         private:
             /**

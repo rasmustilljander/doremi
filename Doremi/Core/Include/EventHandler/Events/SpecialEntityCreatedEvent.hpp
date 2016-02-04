@@ -11,15 +11,10 @@ namespace Doremi
         COntains information on a entity id, the event type decides what subscribers that
         are interested in that particular entity.
         */
-        struct EntityCreatedEvent : public Event
+        struct SpecialEntityCreatedEvent : public Event
         {
-            EntityCreatedEvent(size_t p_playerEntityID, Blueprints p_blueprint)
-                : Event(EventType::EntityCreated), entityID(p_playerEntityID), bluepirnt(p_blueprint)
-            {
-            }
-            EntityCreatedEvent() : Event(EventType::Undefined) {}
+            SpecialEntityCreatedEvent(size_t p_playerEntityID, EventType p_eventType) : Event(p_eventType), entityID(p_playerEntityID) {}
             size_t entityID;
-            Blueprints bluepirnt;
         };
     }
 }

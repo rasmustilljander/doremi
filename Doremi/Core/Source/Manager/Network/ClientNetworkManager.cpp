@@ -10,7 +10,7 @@
 #include <PlayerHandler.hpp>
 #include <AudioHandler.hpp>
 #include <InputHandlerClient.hpp>
-#include <AddRemoveSyncHandler.hpp>
+#include <NetworkEventSender.hpp>
 #include <SequenceMath.hpp>
 #include <FrequencyBufferHandler.hpp>
 #include <PositionCorrectionHandler.hpp>
@@ -262,7 +262,7 @@ namespace Doremi
                 ReadOffset += sizeof(uint8_t);
 
                 // Check add/remove items
-                PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data), ReadOffset);
+                PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data), ReadOffset);
 
                 uint32_t ReadOffset2 = ReadOffset;
 
@@ -495,7 +495,7 @@ namespace Doremi
             bytesWritten += sizeof(float) * 3;
 
             // Write last sequence used for add remove
-            uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetAddRemoveSyncHandlerForPlayer(m_playerID)->GetNextSequenceUsed();
+            uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->GetNextSequenceUsed();
 
             Streamer.WriteUnsignedInt8(lastSequenceUsed);
             bytesWritten += sizeof(uint8_t);

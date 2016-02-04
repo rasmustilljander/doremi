@@ -13,7 +13,7 @@
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 // Events
 #include <EventHandler/EventHandler.hpp>
-#include <EventHandler/Events/EntityCreatedEvent.hpp>
+#include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
 #include <EventHandler/Events/PlayerCreationEvent.hpp>
 // Force Equations
 #include <AIHelper/ForceImpactFunctions.hpp>
@@ -142,7 +142,7 @@ namespace Doremi
             {
                 case Doremi::Core::EventType::PotentialFieldActorCreation:
                 {
-                    EntityCreatedEvent* realEvent = static_cast<EntityCreatedEvent*>(p_event);
+                    SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);
                     if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField)) // Make sure the entity
                     // contains the needed
                     // stuff
@@ -159,7 +159,7 @@ namespace Doremi
                 }
                 case Doremi::Core::EventType::AiGroupActorCreation:
                 {
-                    EntityCreatedEvent* realEvent = static_cast<EntityCreatedEvent*>(p_event);
+                    SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);
                     if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField | (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
                     {
                         std::function<float(float, float, float)> chargeEquation = ForceEquations::Standard;
