@@ -32,6 +32,7 @@ using namespace DirectX;
 
 // DEBUG
 #include <iostream>
+#include <Doremi/Core/Include/EntityComponent/Components/RenderComponent.hpp>
 using namespace std;
 
 namespace Doremi

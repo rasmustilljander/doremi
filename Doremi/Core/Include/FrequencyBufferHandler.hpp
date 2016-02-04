@@ -40,6 +40,8 @@ namespace Doremi
             */
             void UpdateBufferFromSequence(uint8_t p_sequence);
 
+            void Update();
+
             /**
                 Read incomming frequencies from a buffer
             */

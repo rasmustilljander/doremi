@@ -11,11 +11,14 @@
 // Handlers
 #include <EntityComponent/EntityHandler.hpp>
 #include <AudioHandler.hpp>
+#include <PlayerHandler.hpp>
+#include <FrequencyBufferHandler.hpp>
 // Components
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
+
 
 // Third party
 #include <DirectXMath.h>
@@ -28,12 +31,12 @@ namespace Doremi
         GunController::GunController() {}
         GunController::~GunController() {}
 
-        void GunController::FireGun(int p_playerID, const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void GunController::FireGun(int p_playerID, Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             /// This is very temporary code to show that we can use frequency to affect beam width
             float width;
             // Get current frequency (seems laggy?)
-            float freq = AudioHandler::GetInstance()->GetFrequency();
+            float freq = p_player->m_frequencyBufferHandler->GetFrequencyForFrame();
             // If there is no frequency, we set the beam to be singular
             if(freq == 0)
             {

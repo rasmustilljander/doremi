@@ -260,6 +260,16 @@ namespace Doremi
             UpdatePlayerRotationsServer();
             UpdateFiring();
             UpdateNetworkObjectPriority(p_dt);
+
+            // Hotfix
+            std::map<uint32_t, Player*>::iterator iter;
+
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                iter->second->m_frequencyBufferHandler->Update();
+            }
+
+
             TIME_FUNCTION_STOP
         }
 
@@ -416,7 +426,7 @@ namespace Doremi
                 {
                     if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
                     {
-                        m_gunController.FireGun(entityID, m_sharedContext);
+                        m_gunController.FireGun(entityID, iter->second, m_sharedContext);
                     }
                     else
                     {
@@ -503,7 +513,7 @@ namespace Doremi
                 {
                     if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
                     {
-                        m_gunController.FireGun(entityID, m_sharedContext);
+                        m_gunController.FireGun(entityID, iter->second, m_sharedContext);
                     }
                     else
                     {
