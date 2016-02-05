@@ -53,6 +53,7 @@ namespace DoremiEngine
             void LoadAIModule(SharedContextImplementation& o_sharedContext);
             void LoadLoggingModule(SharedContextImplementation& o_sharedContext);
             void LoadTimingModule(SharedContextImplementation& o_sharedContext);
+            void LoadConfigurationModule(SharedContextImplementation& o_sharedContext);
 
             // Shared context
             SharedContextImplementation* m_sharedContext;
@@ -66,6 +67,7 @@ namespace DoremiEngine
             void* m_aiLibrary;
             void* m_loggingLibrary;
             void* m_timingLibrary;
+            void* m_configurationLibrary;
 
             // Pointers to the interfaces
             Audio::AudioModule* m_audioModule;
@@ -76,6 +78,7 @@ namespace DoremiEngine
             AI::AIModule* m_aiModule;
             Logging::LoggingModule* m_loggingModule;
             Timing::TimingModule* m_timingModule;
+            Configuration::ConfigurationModule* m_configurationModule;
 
             // Logging variables
             Logging::Logger* m_logger;
