@@ -108,9 +108,6 @@ namespace Doremi
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(newID, matID, spawnPosition, XMFLOAT2(0.1f, 0.5f));
                     m_sharedContext.GetPhysicsModule().GetCharacterControlManager().SetDrain(newID, true);
 
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddSphereBodyDynamic(newID, spawnPosition, 2);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetIgnoredDEBUG(newID);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(newID, true);
                     Core::PotentialFieldComponent* potentialComponent =
                         Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(newID);
                     potentialComponent->ChargedActor =
