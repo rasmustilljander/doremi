@@ -8,6 +8,7 @@ namespace Doremi
         enum class CharacterControlFlags : int
         {
             none,
+            drain,
         };
         /**
         Contains information about a character controller*/
