@@ -94,10 +94,7 @@ namespace Doremi
                                 // RigidBodyComponent* rbComp = t_entityHandler.GetComponentFromStorage<RigidBodyComponent>(id);
                                 PhysicsMaterialComponent* matComp = t_entityHandler.GetComponentFromStorage<PhysicsMaterialComponent>(id);
                                 EntityTypeComponent* typeComp = t_entityHandler.GetComponentFromStorage<EntityTypeComponent>(id);
-                                // Create a new dynamic rigid body TODOXX The blueprint uses a halved unitbox thats why dim in the function below is
-                                // 0.25f
-                                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(id, rayOriginFloat, XMFLOAT4(0, 0, 0, 1),
-                                                                                                           XMFLOAT3(0.25, 0.25, 0.25), matComp->p_materialID);
+
                                 // Add a force to the body TODOXX should not be hard coded the force amount
                                 direction *= 1500.0f;
                                 XMFLOAT3 force;
