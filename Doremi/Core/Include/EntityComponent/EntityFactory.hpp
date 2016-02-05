@@ -8,6 +8,14 @@
 #include <vector>
 #include <DirectXMath.h>
 
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
+
 using namespace std;
 namespace Doremi
 {
@@ -17,9 +25,12 @@ namespace Doremi
         {
         public:
             /**
-            TODORT docs
-            */
+            MAKE SURE that startup has been called BEFORE calling GetInstance*/
             static EntityFactory* GetInstance();
+
+            /**
+            Starts the entity factory*/
+            static void StartupEntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
             TODORT docs
@@ -49,11 +60,16 @@ namespace Doremi
 
 
         private:
-            EntityFactory();
+            EntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~EntityFactory();
             static EntityFactory* mSingleton;
             EntityFactory(EntityFactory const&) = delete;
             void operator=(EntityFactory const&) = delete;
+
+            // This creates all the components
+            void CreateComponents(EntityID p_entityID, Blueprints p_blueprintID);
+
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             std::map<Blueprints, EntityBlueprint> mEntityBlueprints;
         };
