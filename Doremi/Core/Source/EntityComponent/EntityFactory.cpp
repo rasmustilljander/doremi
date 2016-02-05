@@ -26,6 +26,7 @@
 #include <EntityComponent/Components/DamageInflictorsComponent.hpp>
 #include <EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
+#include <EntityComponent/Components/CharacterControlComponen.hpp>
 
 /// Engine
 // Core
@@ -34,6 +35,7 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 namespace Doremi
 {
@@ -148,6 +150,31 @@ namespace Doremi
                     if(((int)bodyComp->flags & (int)RigidBodyFlags::ignoredDEBUG) == (int)RigidBodyFlags::ignoredDEBUG)
                     {
                         rigidBodyManager.SetIgnoredDEBUG(p_entityID);
+                    }
+                }
+
+                else if(iter->first == ComponentType::CharacterController)
+                {
+                    // Get the transform component
+                    TransformComponent* transComp = GetComponent<TransformComponent>(p_entityID);
+                    // Get the character control manager
+                    DoremiEngine::Physics::CharacterControlManager& characterControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+                    // Copy the data
+                    memcpy(GetComponent<CharacterControlComponent>(p_entityID), iter->second, sizeof(CharacterControlComponent));
+                    // Get our body comp
+                    CharacterControlComponent* controlComp = reinterpret_cast<CharacterControlComponent*>(iter->second);
+
+                    /// Create the body
+                    // Get the material. This is haxxy. It probably works most of the time
+                    PhysicsMaterialComponent* matComp =
+                        reinterpret_cast<PhysicsMaterialComponent*>(mEntityBlueprints[p_blueprintID][ComponentType::PhysicalMaterial]);
+                    // Create the controller
+                    characterControlManager.AddController(p_entityID, matComp->p_materialID, transComp->position, controlComp->dims);
+
+                    // Apply flags
+                    if(((int)controlComp->flags & (int)CharacterControlFlags::drain) == (int)CharacterControlFlags::drain)
+                    {
+                        characterControlManager.SetDrain(p_entityID, true);
                     }
                 }
                 else if(iter->first == ComponentType::PhysicalMaterial)
