@@ -1,7 +1,6 @@
 #pragma once
 #include <Measurement/TimeMeasurement.hpp>
-#include <Internal/Timer/TimerImpl.hpp>
-
+#include <Utility/Utilities/Include/Chrono/Timer.hpp> // TODORT forward declare ?
 #include <string>
 
 namespace DoremiEngine
@@ -50,7 +49,7 @@ namespace DoremiEngine
             std::string m_name;
             double m_accumulatedTime;
             size_t m_startCount, m_stopCount;
-            TimerImpl m_timer;
+            Doremi::Utilities::Chrono::Timer m_timer; // TODORT forward declare ?
         };
     }
 }
