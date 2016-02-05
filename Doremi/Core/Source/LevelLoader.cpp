@@ -237,38 +237,31 @@ namespace Doremi
 
         void LevelLoader::LoadTriggers()
         {
-            // Triggering ;) TODOKO should only be done on server and the server should send the events to the client. Event sending is not supported
-            // yet though
-            int entityIDTrigger = EntityFactory::GetInstance()->CreateEntity(Blueprints::TriggerEntity);
-            EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody);
+            //// Triggering ;) TODOKO should only be done on server and the server should send the events to the client. Event sending is not
+            /// supported
+            //// yet though
+            // int entityIDTrigger = EntityFactory::GetInstance()->CreateEntity(Blueprints::TriggerEntity);
+            // EntityHandler::GetInstance().AddComponent(entityIDTrigger, (int)ComponentType::Trigger | (int)ComponentType::Transform |
+            // (int)ComponentType::RigidBody);
 
-            // Transform for trigger
-            TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
-            transComp->position = XMFLOAT3(-420.4f, 151.5f, -110.3f);
-            transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            //// Transform for trigger
+            // TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityIDTrigger);
+            // transComp->position = XMFLOAT3(-420.4f, 151.5f, -110.3f);
+            // transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-            // The actual trigger component
-            TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
-            triggComp->dimensions = XMFLOAT3(7.0f, 10.0f, 34.0f);
-            triggComp->triggerType = TriggerType::GoalTrigger;
+            //// The actual trigger component
+            // TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(entityIDTrigger);
+            // triggComp->dimensions = XMFLOAT3(7.0f, 10.0f, 34.0f);
+            // triggComp->triggerType = TriggerType::GoalTrigger;
 
-            // The rigid body for the trigger
-            RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(entityIDTrigger);
-            int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
-
-            // Get the rigidbody manager
-            DoremiEngine::Physics::RigidBodyManager& rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
-
-            // Create the physics version of the trigger
-            rigidComp->p_bodyID =
-                rigidBodyManager.AddBoxBodyStatic(entityIDTrigger, transComp->position, transComp->rotation, triggComp->dimensions, materialTriggID);
-            rigidBodyManager.SetTrigger(rigidComp->p_bodyID, true);
+            //// Create material
+            // int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
         }
 
 
-        std::vector<DoremiEngine::Graphic::Vertex> LevelLoader::ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
-                                                                                                 std::vector<DirectX::XMFLOAT3>& o_positionPX,
-                                                                                                 std::vector<int>& o_indexPX)
+        std::vector<DoremiEngine::Graphic::Vertex>
+        LevelLoader::ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
+                                                      std::vector<DirectX::XMFLOAT3>& o_positionPX, std::vector<int>& o_indexPX)
         {
             vector<DoremiEngine::Graphic::Vertex> vertexBuffer;
 
