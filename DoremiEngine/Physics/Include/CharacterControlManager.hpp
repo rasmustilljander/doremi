@@ -37,7 +37,10 @@ namespace DoremiEngine
             Sets whether or not the controller is a drain, which means that it
             will remove particles upon contact*/
             virtual void SetDrain(int p_id, bool p_isDrain) = 0;
-
+            /**
+            Removes the character controller
+            */
+            virtual void RemoveCharacterController(int p_bodyID) = 0;
             /**
             Gets the orientation of the character controller, as a quaternion*/
             virtual XMFLOAT4 GetOrientation(int p_id) = 0;
