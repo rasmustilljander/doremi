@@ -149,5 +149,12 @@ namespace DoremiEngine
             return PxControllerBehaviorFlags(0);
         }
         PxControllerBehaviorFlags CharacterControlManagerImpl::getBehaviorFlags(const PxObstacle& obstacle) { return PxControllerBehaviorFlags(0); }
+
+        void CharacterControlManagerImpl::RemoveCharacterController(int p_bodyID)
+        {
+            // Erases the character controller in both maps.
+            m_IDsByControllers.erase(m_controllers[p_bodyID]);
+            m_controllers.erase(p_bodyID);
+        }
     }
 }

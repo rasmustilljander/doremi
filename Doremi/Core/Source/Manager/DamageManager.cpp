@@ -13,6 +13,7 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 // Third Party
 #include <DirectXMath.h>
@@ -110,7 +111,7 @@ namespace Doremi
                         if(t_drainsHit[o] != -1)
                         {
                             if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], (int)ComponentType::Health | (int)ComponentType::AIAgent |
-                                                                                              (int)ComponentType::Transform))
+                                                                                              (int)ComponentType::Transform | (int)ComponentType::CharacterController))
                             {
                                 HealthComponent* drainHitHpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(t_drainsHit[o]);
                                 // TODOEA Make it related to the guns damage and not hard coded
@@ -119,13 +120,15 @@ namespace Doremi
 
                                 if(drainHitHpComp->currentHealth <= 0)
                                 {
-                                    //    // u ded TODOKO
-                                    EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
-                                    std::cout << "Enemy DED!!!" << std::endl;
+                                    // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
+                                    // EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
+                                    // DEBUG
+                                    // std::cout << "Enemy DED!!!" << std::endl;
                                 }
                                 else
                                 {
-                                    std::cout << "Enemy Hit!!" << std::endl;
+                                    // DEBUG
+                                    // std::cout << "Enemy Hit!!" << std::endl;
                                 }
                             }
                         }
