@@ -94,6 +94,7 @@ namespace Doremi
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::ExperimentalPressureParticleEntity, blueprint);
         }
 
+        // UNUSED TODOJB check with KO and Remove
         void CreatePotentialFieldDebugServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityBlueprint blueprint;
@@ -107,8 +108,8 @@ namespace Doremi
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
-            RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
-            blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            //RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            //blueprint[ComponentType::RigidBody] = rigidBodyComp;
             // Network object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
             blueprint[ComponentType::NetworkObject] = netObjComp;
@@ -117,6 +118,7 @@ namespace Doremi
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
         }
 
+        // UNUSED TODOJB check with KO and Remove
         void CreatePotentialFieldDebugClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             EntityBlueprint blueprint;
@@ -146,37 +148,12 @@ namespace Doremi
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
             blueprint[ComponentType::Render] = renderComp;
-            // PhysicsMaterialComp
-            // PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            // t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
-            // blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
-            // Rigid body comp
-            // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
-            // blueprint[ComponentType::RigidBody] = rigidBodyComp;
-            // Character control comp label
-            // blueprint[ComponentType::CharacterController];
+
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
             healthComponent->maxHealth = 100;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
-            // Enemy ai agent comp
-            // blueprint[ComponentType::AIAgent];
-            // Range comp
-            /*RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 4;
-            blueprint[ComponentType::Range] = rangeComp;*/
-            // PotentialField component
-            /*PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            blueprint[ComponentType::PotentialField] = potentialComp;*/
-            // AI group component
-            /* AIGroupComponent* group = new AIGroupComponent();
-             group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
-             blueprint[ComponentType::AIGroup] = group;*/
-            // Movement comp
-            /* MovementComponent* movementcomp = new MovementComponent();
-             blueprint[ComponentType::Movement] = movementcomp;*/
-            // Register blueprint
 
             // Network object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
@@ -237,9 +214,6 @@ namespace Doremi
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(2.0f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
-            // Has an extra drain follow it around
-            blueprint[ComponentType::ExtraDrain];
-
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
             TIME_FUNCTION_STOP
@@ -265,6 +239,8 @@ namespace Doremi
 
             // Rigid body comp
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            rigidBodyComp->boxDims = XMFLOAT3(0.25, 0.25, 0.25);
+            rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
 
             // Entity type comp
@@ -332,6 +308,10 @@ namespace Doremi
 
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+            float factor = 2.5; //TODOJB fix. I was lazy. It was 20:16
+            t_rigidBodyComp->boxDims = XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor);
+            t_rigidBodyComp->flags = RigidBodyFlags::kinematic;
+            t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
             t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Add label for frequency Check
@@ -377,10 +357,6 @@ namespace Doremi
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_platform[ComponentType::PhysicalMaterial] = t_physMatComp;
-
-            // Rigid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Audio comp
             AudioComponent* t_audioComponent = new AudioComponent();
@@ -433,10 +409,6 @@ namespace Doremi
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
-
-            // Rigid body comp
-            // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Character Controller
             t_avatarBlueprint[ComponentType::CharacterController];
@@ -515,10 +487,6 @@ namespace Doremi
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
-
-            // Rigid body comp
-            // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Controller component
             t_avatarBlueprint[ComponentType::CharacterController];
@@ -652,9 +620,6 @@ namespace Doremi
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
             t_triggerBlueprint[ComponentType::Transform] = t_transformComp;
-            // RIgid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_triggerBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
             // Trigger comp
             TriggerComponent* t_triggerComp = new TriggerComponent();
             t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
@@ -670,9 +635,6 @@ namespace Doremi
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
             t_triggerBlueprint[ComponentType::Transform] = t_transformComp;
-            // RIgid body comp
-            RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            t_triggerBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
             // Trigger comp
             TriggerComponent* t_triggerComp = new TriggerComponent();
             t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
