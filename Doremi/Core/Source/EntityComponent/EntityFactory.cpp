@@ -28,6 +28,11 @@
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
 
+// Events
+#include <EventHandler/Events/EntityCreatedEvent.hpp>
+// Handlers
+#include <EventHandler/EventHandler.hpp>
+
 /// Engine
 // Core
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
@@ -36,6 +41,10 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+// AI
+#include <DoremiEngine/AI/Include/AIModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+#include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 
 namespace Doremi
 {
@@ -195,7 +204,19 @@ namespace Doremi
                 }
                 else if(iter->first == ComponentType::PotentialField)
                 {
+                    // Get the transform component
+                    TransformComponent* transComp = GetComponent<TransformComponent>(p_entityID);
+                    // Get potential field submodule
+                    DoremiEngine::AI::PotentialFieldSubModule& fieldModule = m_sharedContext.GetAIModule().GetPotentialFieldSubModule();
                     memcpy(GetComponent<PotentialFieldComponent>(p_entityID), iter->second, sizeof(PotentialFieldComponent));
+                    PotentialFieldComponent* thisComp = GetComponent<PotentialFieldComponent>(p_entityID);
+                    thisComp->ChargedActor =
+                        fieldModule.CreateNewActor(transComp->position, thisComp->charge, thisComp->range, thisComp->isStatic, thisComp->type);
+                    if(false) // thisComp->type == DoremiEngine::AI::AIActorType::Enemy)
+                    {
+                        EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(p_entityID, Core::EventType::AiGroupActorCreation);
+                        EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
+                    }
                 }
                 else if(iter->first == ComponentType::AIGroup)
                 {
