@@ -225,6 +225,10 @@ namespace Doremi
 
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->charge = -1;
+            potentialComp->range = 3;
+            potentialComp->type = DoremiEngine::AI::AIActorType::Enemy;
+            potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
 
             // AI group component
@@ -473,6 +477,10 @@ namespace Doremi
 
             // Potential field component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->charge = 20;
+            potentialComp->range = 60;
+            potentialComp->isStatic = false;
+            potentialComp->type = DoremiEngine::AI::AIActorType::Player;
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
 
             // Gravity component
