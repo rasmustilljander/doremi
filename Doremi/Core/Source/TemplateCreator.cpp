@@ -22,6 +22,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/TriggerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/EntitySpawnerComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/CharacterControlComponen.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -204,7 +205,10 @@ namespace Doremi
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Character control comp label
-            blueprint[ComponentType::CharacterController];
+            CharacterControlComponent* charControlComp = new CharacterControlComponent();
+            charControlComp->dims = XMFLOAT2(0.1, 0.5);
+            charControlComp->flags = CharacterControlFlags::drain;
+            blueprint[ComponentType::CharacterController] = charControlComp;
 
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
@@ -447,7 +451,9 @@ namespace Doremi
             // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Character Controller
-            t_avatarBlueprint[ComponentType::CharacterController];
+            CharacterControlComponent* charControlComp = new CharacterControlComponent();
+            charControlComp->dims = XMFLOAT2(1, 1);
+            t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
@@ -529,7 +535,9 @@ namespace Doremi
             // t_avatarBlueprint[ComponentType::RigidBody] = t_rigidBodyComp;
 
             // Controller component
-            t_avatarBlueprint[ComponentType::CharacterController];
+            CharacterControlComponent* charControlComp = new CharacterControlComponent();
+            charControlComp->dims = XMFLOAT2(1, 1);
+            t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
             PlayerComponent* t_playerComp = new PlayerComponent();
