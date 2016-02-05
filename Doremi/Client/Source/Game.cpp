@@ -102,6 +102,7 @@ namespace Doremi
         Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
         Core::CameraHandler::StartCameraHandler(sharedContext);
         Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
+        Core::EntityFactory::StartupEntityFactory(sharedContext);
         // Initialize 2d drawer class
         m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, XMFLOAT2(800, 800));
 
@@ -186,16 +187,9 @@ namespace Doremi
         for(size_t i = 0; i < 1; i++)
         {
             int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f), XMFLOAT4(0, 0, 0, 1));
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f); // why not pass as parameter in above method?
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
-            float factor = 2.5;
-            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
-                                                                                         XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor), matID);
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
             Core::PlatformPatrolComponent* t_platformPatrolComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
             t_platformPatrolComponent->startPosition = position;
