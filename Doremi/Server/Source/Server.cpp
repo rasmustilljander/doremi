@@ -64,6 +64,7 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
 
+        Core::EntityFactory::StartupEntityFactory(sharedContext);
         Core::EntityHandlerServer::StartupEntityHandlerServer();
         Core::PlayerHandler::StartPlayerHandler(sharedContext);
 
@@ -126,17 +127,13 @@ namespace Doremi
 
         for(size_t i = 0; i < 1; i++)
         {
-            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity);
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
             DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-            int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            Core::RigidBodyComponent* rigidComp = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::RigidBodyComponent>(entityID);
-            float factor = 2.5f;
-            rigidComp->p_bodyID =
-                sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(entityID, position, orientation,
-                                                                                         XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor), matID);
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0.0f, 0.0f, 0.0f));
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, position, orientation);
+
+
+            // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0.0f, 0.0f, 0.0f));
+            // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
 
             Core::PlatformPatrolComponent* t_platformPatrolComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
@@ -150,15 +147,10 @@ namespace Doremi
             XMFLOAT3 position = DirectX::XMFLOAT3(-2 * (int)i + 0, 0 * (int)i + 4, -2 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
             sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
             sharedContext.GetPhysicsModule().GetCharacterControlManager().SetDrain(entityID, true);
-
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().AddSphereBodyDynamic(entityID, position, 2);
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetIgnoredDEBUG(entityID);
-            sharedContext.GetPhysicsModule().GetRigidBodyManager().SetDrain(entityID, true);
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
