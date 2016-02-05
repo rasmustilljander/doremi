@@ -149,8 +149,8 @@ namespace Doremi
 
             int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
             int matID = Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(entityID)->p_materialID;
-            sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
-            sharedContext.GetPhysicsModule().GetCharacterControlManager().SetDrain(entityID, true);
+            // sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(entityID, matID, position, XMFLOAT2(0.1f, 0.5f));
+            // sharedContext.GetPhysicsModule().GetCharacterControlManager().SetDrain(entityID, true);
 
             Core::PotentialFieldComponent* potentialComponent =
                 Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PotentialFieldComponent>(entityID);
