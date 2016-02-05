@@ -8,7 +8,6 @@ namespace DoremiEngine
 {
     namespace Timing
     {
-
         class TimeMeasurementManagerImpl : public TimeMeasurementManager
         {
         public:

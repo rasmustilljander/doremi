@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
 #define FILE_AND_FUNC std::string(__FILE__) + ":" + std::string(__func__)
 
