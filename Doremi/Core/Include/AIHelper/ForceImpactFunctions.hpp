@@ -1,5 +1,8 @@
 #pragma once
 #include <algorithm>
+#include <DirectXMath.h>
+#define _USE_MATH_DEFINES // TODOXX Might be dangerous to define
+#include <math.h>
 namespace Doremi
 {
     namespace Core
@@ -13,6 +16,10 @@ namespace Doremi
             static float Standard(float p_actorCharge, float p_distance, float p_actorRange)
             {
                 return p_actorCharge * std::fmaxf(1.0f - p_distance / p_actorRange, 0.0f);
+            }
+            static float DistPowWithRange(float p_actorCharge, float p_distance, float p_actorRange)
+            {
+                return -std::powf(p_distance - p_actorRange, 2) * 0.05f + p_actorCharge;
             }
         }
     }

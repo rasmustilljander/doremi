@@ -10,6 +10,7 @@
 #include <DoremiEngine/Logging/Include/LoggingModule.hpp>
 #include <DoremiEngine/Timing/Include/TimingModule.hpp>
 #include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
 
 #include <Internal/SharedContextImplementation.hpp>
@@ -29,6 +30,7 @@ namespace DoremiEngine
               m_aiLibrary(nullptr),
               m_loggingLibrary(nullptr),
               m_timingLibrary(nullptr),
+              m_configurationLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
               m_networkModule(nullptr),
@@ -37,7 +39,8 @@ namespace DoremiEngine
               m_aiModule(nullptr),
               m_loggingModule(nullptr),
               m_timingModule(nullptr),
-              m_logger(nullptr)
+              m_logger(nullptr),
+              m_configurationModule(nullptr)
         {
         }
 
@@ -78,6 +81,11 @@ namespace DoremiEngine
                 delete m_timingModule;
             }
 
+            if(m_configurationModule != nullptr)
+            {
+                delete m_configurationModule;
+            }
+
             if(m_audioLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_audioLibrary);
@@ -108,6 +116,11 @@ namespace DoremiEngine
             {
                 DynamicLoader::FreeSharedLibrary(m_timingLibrary);
             }
+
+            if(m_configurationLibrary != nullptr)
+            {
+                DynamicLoader::FreeSharedLibrary(m_configurationLibrary);
+            }
         }
 
         SharedContext& DoremiEngineImplementation::Start(const size_t& p_flags)
@@ -118,7 +131,7 @@ namespace DoremiEngine
 
             LoadLoggingModule(*m_sharedContext);
             LoadTimingModule(*m_sharedContext);
-
+            LoadConfigurationModule(*m_sharedContext);
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
                 LoadAudioModule(*m_sharedContext);
@@ -186,6 +199,11 @@ namespace DoremiEngine
             if(m_timingModule != nullptr)
             {
                 m_timingModule->Shutdown();
+            }
+
+            if(m_configurationModule != nullptr)
+            {
+                m_configurationModule->Shutdown();
             }
         }
 
@@ -443,6 +461,36 @@ namespace DoremiEngine
             else
             {
                 m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll - Failed");
+            }
+        }
+        void DoremiEngineImplementation::LoadConfigurationModule(SharedContextImplementation& o_sharedContext)
+        {
+            using namespace Logging;
+            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll");
+            m_configurationLibrary = DynamicLoader::LoadSharedLibrary("Configuration.dll");
+
+            if(m_configurationLibrary != nullptr)
+            {
+                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Success");
+                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll");
+                CREATE_CONFIGURATION_MODULE functionCreateConfigurationModule =
+                    (CREATE_CONFIGURATION_MODULE)DynamicLoader::LoadProcess(m_configurationLibrary, "CreateConfigurationModule");
+                if(functionCreateConfigurationModule != nullptr)
+                {
+                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Success");
+
+                    m_configurationModule = static_cast<Configuration::ConfigurationModule*>(functionCreateConfigurationModule(o_sharedContext));
+                    m_configurationModule->Startup();
+                    o_sharedContext.SetConfigurationModule(m_configurationModule);
+                }
+                else
+                {
+                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Failed");
+                }
+            }
+            else
+            {
+                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Failed");
             }
         }
     }
