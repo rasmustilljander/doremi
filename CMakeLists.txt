@@ -76,6 +76,7 @@ set(EXTERNAL_INCLUDE_DIRECTORY
 # Set global compiler options
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
+add_definitions(-DNOMINMAX)
 
 if(BUILD_CUSTOM_MEASUREMENT_TIMING)
 	add_definitions(-DCUSTOM_TIMING_MEASUREMENT)
