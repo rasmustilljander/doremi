@@ -2,7 +2,7 @@
 #include <Manager/Network/ClientNetworkManager.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <Manager/Network/NetMessage.hpp>
-#include <Manager/Network/BitStreamer.h>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <InterpolationHandler.hpp>
@@ -152,7 +152,7 @@ namespace Doremi
                                 m_serverConnectionState = ConnectionState::CONNECTED;
 
                                 // Get the player ID
-                                BitStreamer Streamer = BitStreamer();
+                                NetworkStreamer Streamer = NetworkStreamer();
                                 unsigned char* DataPointer = Message.Data;
                                 Streamer.SetTargetBuffer(DataPointer, sizeof(Message.Data));
                                 m_playerID = Streamer.ReadUnsignedInt32();
@@ -185,7 +185,7 @@ namespace Doremi
                             m_serverLastResponse = 0;
                             m_updateInterval = 1.0f;
 
-                            PlayerHandler::GetInstance()->RemoveAllPlayers();
+                            // TODOCM remove world
 
                             break;
                         default:
@@ -198,7 +198,7 @@ namespace Doremi
 
         void ClientNetworkManager::RecieveConnected(NetMessage& Message)
         {
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             unsigned char* BufferPointer = Message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
@@ -216,7 +216,7 @@ namespace Doremi
             {
                 EntityHandler& entityHandler = EntityHandler::GetInstance();
 
-                BitStreamer Streamer = BitStreamer();
+                NetworkStreamer Streamer = NetworkStreamer();
                 unsigned char* dataPointer = p_message.Data;
                 Streamer.SetTargetBuffer(dataPointer, sizeof(p_message.Data));
 
@@ -249,7 +249,7 @@ namespace Doremi
             if(m_serverConnectionState == ConnectionState::IN_GAME)
             {
                 // Read and translate message, for each position we update buffer array?
-                BitStreamer Streamer = BitStreamer();
+                NetworkStreamer Streamer = NetworkStreamer();
                 unsigned char* BufferPointer = p_message.Data;
                 Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
 
@@ -262,7 +262,8 @@ namespace Doremi
                 ReadOffset += sizeof(uint8_t);
 
                 // Check add/remove items
-                PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data), ReadOffset);
+                // PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data),
+                // ReadOffset);
 
                 uint32_t ReadOffset2 = ReadOffset;
 
@@ -446,7 +447,7 @@ namespace Doremi
             Message.MessageID = MessageID::VERSION_CHECK;
 
             // TODOCM Write bits for stuff
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             unsigned char* BufferPointer = Message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
@@ -463,7 +464,7 @@ namespace Doremi
             InputHandler* inputHandler = PlayerHandler::GetInstance()->GetDefaultInputHandler();
 
             // Create a stream
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
 
             // Set message buffer to stream
             unsigned char* BufferPointer = p_message.Data;
@@ -541,7 +542,7 @@ namespace Doremi
 
         void ClientNetworkManager::SendDisconnectMessage()
         {
-            PlayerHandler::GetInstance()->RemoveAllPlayers();
+            // TODOCM remove world
 
             // Create disconnection message
             NetMessage NewMessage = NetMessage();

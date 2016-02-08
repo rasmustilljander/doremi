@@ -7,7 +7,7 @@ namespace Doremi
 {
     namespace Core
     {
-        class BitStreamer;
+        class NetworkStreamer;
 
         /**
             Used to buffer frequency for send, and recieve
@@ -45,12 +45,12 @@ namespace Doremi
             /**
                 Read incomming frequencies from a buffer
             */
-            void ReadNewFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
+            void ReadNewFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
 
             /**
                 Write outgoing frequencies to a buffer
             */
-            void WriteFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
+            void WriteFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
 
             /**
                 Initialize the sequence

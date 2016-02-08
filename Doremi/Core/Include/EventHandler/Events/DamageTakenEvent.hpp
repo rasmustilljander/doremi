@@ -11,6 +11,16 @@ namespace Doremi
             {
             }
             DamageTakenEvent() : damage(0), Event(EventType::DamageTaken) {}
+
+            /**
+                Write object to stream
+            */
+            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override {}
+
+            /**
+                Read object from stream
+            */
+            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
         };
     }
 }

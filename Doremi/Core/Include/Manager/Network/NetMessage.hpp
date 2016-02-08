@@ -30,7 +30,7 @@ namespace Doremi
     60 messages a second will give 0.5 Mbit/s usage
 */
 
-#define NET_MESSAGE_DATA_SIZE 1023
+#define NET_MESSAGE_DATA_SIZE 1024
 
         struct NetMessage
         {

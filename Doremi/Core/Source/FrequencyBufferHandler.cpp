@@ -1,8 +1,9 @@
 #include <FrequencyBufferHandler.hpp>
-#include <Manager/Network/BitStreamer.h>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <SequenceMath.hpp>
 #include <AudioHandler.hpp>
 #include <iostream>
+#include <Windows.h>
 
 namespace Doremi
 {
@@ -51,7 +52,20 @@ namespace Doremi
 
         void FrequencyBufferHandler::UpdateBufferFromSequence(uint8_t p_sequence)
         {
-            uint32_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence, 255);
+            int16_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence - 1, 255);
+
+            if(numOfRemoves <= 0)
+            {
+                return;
+            }
+
+            if(numOfRemoves > m_bufferedFrequencies.size())
+            {
+                std::cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << std::endl;
+            }
+
+            // Check if we can remove (error check), then remove the number of accs in difference
+            numOfRemoves = min(numOfRemoves, m_bufferedFrequencies.size());
 
             // Check if we can remove (error check), then remove the number of accs in difference
             if(numOfRemoves <= m_bufferedFrequencies.size())
@@ -65,7 +79,7 @@ namespace Doremi
             }
         }
 
-        void FrequencyBufferHandler::ReadNewFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead)
+        void FrequencyBufferHandler::ReadNewFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead)
         {
             // Read how many frequencies we got buffered
             uint8_t NumOfSequences = p_streamer.ReadUnsignedInt8();
@@ -125,7 +139,7 @@ namespace Doremi
             p_streamer.SetReadWritePosition(op_BytesRead);
         }
 
-        void FrequencyBufferHandler::WriteFrequencies(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
+        void FrequencyBufferHandler::WriteFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
         {
             // Check how many bytes we have left to write
             uint32_t bytesLeftToWrite = p_bufferSize - op_BytesWritten;

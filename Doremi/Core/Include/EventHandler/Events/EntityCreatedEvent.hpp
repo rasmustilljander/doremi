@@ -13,10 +13,23 @@ namespace Doremi
         */
         struct EntityCreatedEvent : public Event
         {
+            EntityCreatedEvent() : Event(EventType::Undefined) {}
+
             EntityCreatedEvent(size_t p_playerEntityID, Blueprints p_blueprint)
                 : Event(EventType::EntityCreated), entityID(p_playerEntityID), bluepirnt(p_blueprint)
             {
             }
+
+            /**
+                Write object to stream
+            */
+            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override {}
+
+            /**
+                Read object from stream
+            */
+            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
+
             size_t entityID;
             Blueprints bluepirnt;
         };
