@@ -1,22 +1,35 @@
 // Project specific
+
+// Managers
 #include <Manager/Network/ClientNetworkManager.hpp>
-#include <DoremiEngine/Network/Include/NetworkModule.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+
 #include <Manager/Network/NetMessage.hpp>
+
+// Modules
+#include <DoremiEngine/Network/Include/NetworkModule.hpp>
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
+
+// Handlers
 #include <EntityComponent/EntityHandler.hpp>
-#include <EntityComponent/Components/TransformComponent.hpp>
 #include <InterpolationHandler.hpp>
-#include <iostream> // TODOCM remove after test
-#include <PlayerHandler.hpp>
 #include <AudioHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <InputHandlerClient.hpp>
-#include <NetworkEventSender.hpp>
-#include <SequenceMath.hpp>
 #include <FrequencyBufferHandler.hpp>
 #include <PositionCorrectionHandler.hpp>
 
-#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
-#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+#include <Doremi/Core/Include/NetworkEventReceiver.hpp>
+
+#include <Doremi/Core/Include/EventHandler/Events/Event.hpp>
+
+// Components
+#include <EntityComponent/Components/TransformComponent.hpp>
+
+#include <iostream> // TODOCM remove after test
+#include <SequenceMath.hpp>
 
 namespace Doremi
 {
@@ -248,6 +261,9 @@ namespace Doremi
         {
             if(m_serverConnectionState == ConnectionState::IN_GAME)
             {
+                // Update last response
+                m_serverLastResponse = 0;
+
                 // Read and translate message, for each position we update buffer array?
                 NetworkStreamer Streamer = NetworkStreamer();
                 unsigned char* BufferPointer = p_message.Data;
@@ -261,34 +277,49 @@ namespace Doremi
                 PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->UpdateBufferFromSequence(Streamer.ReadUnsignedInt8());
                 ReadOffset += sizeof(uint8_t);
 
-                // Check add/remove items
-                // PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->CheckNewAddRemoves(Streamer, sizeof(p_message.Data),
-                // ReadOffset);
-
-                uint32_t ReadOffset2 = ReadOffset;
-
                 // Create new snapshot
                 Snapshot* NewSnapshot = new Snapshot();
 
                 // Read sequence of snapshot
                 NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
+                ReadOffset += sizeof(uint8_t);
+
+                // Read events
+                NetworkEventReceiver* t_eventReciever =
+                    static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetNetworkEventReceiverForPlayer(m_playerID);
+                t_eventReciever->ReadEvents(Streamer, sizeof(p_message.Data), ReadOffset);
+
+                // Save events to snapshot
+                NewSnapshot->Events = t_eventReciever->GetEventsReceivedFromServer();
 
                 if(p_initial)
                 {
                     InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
                 }
 
+                // Check if we can read the next
+                if(sizeof(p_message.Data) - ReadOffset < sizeof(uint8_t) + sizeof(float) * 3)
+                {
+                    return;
+                }
+
                 // Read sequence of incomming position
-                // uint8_t PositionCheckSequence = Streamer.ReadUnsignedInt8();
                 NewSnapshot->SequenceToCheckPosAgainst = Streamer.ReadUnsignedInt8();
 
                 // Read position to check against
-                // DirectX::XMFLOAT3 PositionToCheck = Streamer.ReadFloat3();
-
                 NewSnapshot->PlayerPositionToCheck = Streamer.ReadFloat3();
+
+                ReadOffset += sizeof(uint8_t) + sizeof(float) * 3;
+
+                // Check if we can read the next
+                if(sizeof(p_message.Data) - ReadOffset <= sizeof(uint8_t))
+                {
+                    return;
+                }
 
                 // Read how many objects we got in the message
                 NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
+                ReadOffset += sizeof(uint8_t);
 
                 // Add objects to snapshot
                 for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
@@ -303,14 +334,6 @@ namespace Doremi
 
                 // Queue snapshot
                 InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
-
-                // Update last response
-                m_serverLastResponse = 0;
-
-                // TODOCM notify a handler or something that new buffer exists
-
-                // Check the position we got from server
-                // PositionCorrectionHandler::GetInstance()->CheckPositionFromServer(m_playerID, PositionToCheck, PositionCheckSequence);
             }
             else
             {
@@ -496,7 +519,8 @@ namespace Doremi
             bytesWritten += sizeof(float) * 3;
 
             // Write last sequence used for add remove
-            uint8_t lastSequenceUsed = PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(m_playerID)->GetNextSequenceUsed();
+            uint8_t lastSequenceUsed =
+                (static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance()))->GetNetworkEventReceiverForPlayer(m_playerID)->GetNextSequenceUsed();
 
             Streamer.WriteUnsignedInt8(lastSequenceUsed);
             bytesWritten += sizeof(uint8_t);

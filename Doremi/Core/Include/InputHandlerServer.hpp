@@ -24,7 +24,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            InputHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            InputHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT3 p_startingPosition);
 
             /**
                 TODOCM doc

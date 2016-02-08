@@ -27,8 +27,8 @@
 
 // Handlers
 #include <Doremi/Core/Include/EntityComponent/EntityHandlerServer.hpp>
-#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandlerServer.hpp>
+#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 
 // Managers
@@ -79,9 +79,13 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
 
+<<<<<<< HEAD
         Core::EntityFactory::StartupEntityFactory(sharedContext);
+=======
+        Core::EventHandlerServer::StartupEventHandlerServer();
+>>>>>>> Refactor Eventhandler and Playerhandler
         Core::EntityHandlerServer::StartupEntityHandlerServer();
-        Core::PlayerHandler::StartPlayerHandler(sharedContext);
+        Core::PlayerHandlerServer::StartPlayerHandlerServer(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager
@@ -234,16 +238,16 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         // Deliver basic events
-        Core::EventHandler::GetInstance()->DeliverBasicEvents();
+        static_cast<Core::EventHandlerServer*>(Core::EventHandler::GetInstance())->DeliverBasicEvents();
 
         // Check add removes of events health low etc..
         Core::HealthChecker::GetInstance()->Update();
 
-        // Deliver add remove events
-        Core::EventHandler::GetInstance()->DeliverRemoveEvents();
+        // Deliver remove events
+        static_cast<Core::EventHandlerServer*>(Core::EventHandler::GetInstance())->DeliverRemoveEvents();
 
 
-        Core::PlayerHandler::GetInstance()->UpdateServer(p_deltaTime);
+        Core::PlayerHandler::GetInstance()->Update(p_deltaTime);
 
         // TODORT
         // TODOLOG

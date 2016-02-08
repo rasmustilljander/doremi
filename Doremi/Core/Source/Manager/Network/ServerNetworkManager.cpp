@@ -1,17 +1,29 @@
 // Project specific
+
+// Managers
 #include <Manager/Network/ServerNetworkManager.hpp>
+
+// Modules
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
+
+
 #include <Manager/Network/NetMessage.hpp>
 #include <Manager/Network/Connection.hpp>
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
-#include <EntityComponent/EntityHandler.hpp>
+
+// Compnoents
 #include <EntityComponent/Components/TransformComponent.hpp>
-#include <PlayerHandler.hpp>
+
+// Handlers
+#include <PlayerHandlerServer.hpp>
 #include <InputHandlerServer.hpp>
-#include <NetworkEventSender.hpp>
 #include <FrequencyBufferHandler.hpp>
-#include <SequenceMath.hpp>
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
+#include <EntityComponent/EntityHandler.hpp>
+
+#include <NetworkEventSender.hpp>
+
+#include <SequenceMath.hpp>
 
 #include <iostream> // TODOCM remove after test
 #include <vector>
@@ -163,11 +175,14 @@ namespace Doremi
             DirectX::XMFLOAT3 pos = Streamer.ReadFloat3();
             bytesRead += sizeof(float) * 3;
 
-            // Save add/remove sequence
-            uint8_t clientSequence = Streamer.ReadUnsignedInt8();
+            // Save event sequence
+            uint8_t clientEventSequence = Streamer.ReadUnsignedInt8();
             bytesRead += sizeof(uint8_t);
 
-            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->UpdateBufferWithRecievedClientSequenceAcc(clientSequence);
+            // Update event queue with acc sequence
+            (static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance()))
+                ->GetNetworkEventSenderForPlayer(p_connection->PlayerID)
+                ->UpdateBufferWithRecievedClientSequenceAcc(clientEventSequence);
 
             // Read frequency
             frequencyHandler->ReadNewFrequencies(Streamer, sizeof(p_message.Data), bytesRead);
@@ -314,7 +329,8 @@ namespace Doremi
                         // TODOCM maybe crete player again
                         PlayerID = rand();
 
-                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext);
+                        // TODOXX setting the position of inputhandler here.. shouldn't do that...
+                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                         // Create player
                         PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
@@ -326,7 +342,7 @@ namespace Doremi
                         // TODOCM need to change this to some other method to get a unique ID, like gametime
                         PlayerID = rand();
 
-                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext);
+                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                         // Create player
                         PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
@@ -388,15 +404,26 @@ namespace Doremi
 
             // Write sequence acc for frequence
             uint8_t sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
+
+            // Write snapshot sequence
             Streamer.WriteUnsignedInt8(sequenceAcc);
+            BytesWritten += sizeof(uint8_t);
+
+            // Write snapshot ID (1 byte
+            Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
             BytesWritten += sizeof(uint8_t);
 
             // Add new Add/Remove items
             bool wroteAllEvents = false;
-            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->WriteEvents(Streamer, p_bufferSize, BytesWritten, wroteAllEvents);
+            static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())
+                ->GetNetworkEventSenderForPlayer(p_connection->PlayerID)
+                ->WriteEvents(Streamer, p_bufferSize, BytesWritten, wroteAllEvents);
 
-            // Write snapshot ID (1 byte
-            Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
+            // If we have enough to write snapshot with player
+            if(p_bufferSize - BytesWritten < sizeof(uint8_t) + sizeof(float) * 3)
+            {
+                return;
+            }
 
             // Write client last sequence (1 byte
             Streamer.WriteUnsignedInt8(inputHandler->GetSequenceByLastInput());
@@ -404,10 +431,11 @@ namespace Doremi
             // Write position of that sequence ( 12 byte
             Streamer.WriteFloat3(inputHandler->GetPositionByLastInput());
 
-            BytesWritten += 14;
+            BytesWritten += sizeof(uint8_t) + sizeof(float) * 3;
 
             // Get networkPriorityHandler
-            NetworkPriorityHandler* netPrioHandler = PlayerHandler::GetInstance()->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
+            NetworkPriorityHandler* netPrioHandler =
+                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
 
             // Write objects from priority
             netPrioHandler->WriteObjectsByPriority(Streamer, p_bufferSize, BytesWritten);

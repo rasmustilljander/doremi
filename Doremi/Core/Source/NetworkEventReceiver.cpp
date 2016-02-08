@@ -13,11 +13,13 @@
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
+#include <iostream>
+
 namespace Doremi
 {
     namespace Core
     {
-        NetworkEventReceiver::NetworkEventReceiver() : m_currentSequence(-1) {}
+        NetworkEventReceiver::NetworkEventReceiver() : m_currentSequence(0) {}
 
         NetworkEventReceiver::~NetworkEventReceiver() {}
 
@@ -89,7 +91,7 @@ namespace Doremi
         void NetworkEventReceiver::InterpetEventAndThrow(NetworkStreamer& p_streamer, uint32_t& op_bitsRead)
         {
             // Read number of new items
-            uint8_t NumOfNewItems = p_streamer.ReadUnsignedInt16();
+            uint8_t NumOfNewItems = p_streamer.ReadUnsignedInt8();
             op_bitsRead += sizeof(uint8_t) * 8;
 
             // Read the items
@@ -197,6 +199,8 @@ namespace Doremi
                 NumOfSequencesLeft--;
             }
         }
+
+        uint8_t NetworkEventReceiver::GetNextSequenceUsed() { return m_currentSequence; }
 
         std::list<Event*> NetworkEventReceiver::GetEventsReceivedFromServer()
         {

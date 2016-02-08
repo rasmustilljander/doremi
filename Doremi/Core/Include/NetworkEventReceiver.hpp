@@ -2,13 +2,13 @@
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <DirectXMath.h>
 #include <list>
+#include <Doremi/Core/Include/EventHandler/Events/Event.hpp>
 
 namespace Doremi
 {
     namespace Core
     {
         class NetworkStreamer;
-        class Event;
         struct NetMessage;
 
         /**
@@ -38,12 +38,27 @@ namespace Doremi
             */
             uint8_t GetNextSequenceUsed();
 
+            /**
+                TODMCM doc
+            */
             std::list<Event*> GetEventsReceivedFromServer();
 
         private:
+            /**
+            TODOCM doc
+            */
             Event* InterpetEvent(NetworkStreamer& p_streamer, uint32_t& op_BytesRead);
+
+            /**
+                TODOCM doc
+            */
             void InterpetEventAndThrow(NetworkStreamer& p_streamer, uint32_t& op_bitsRead);
+
+            /**
+                TODOCM doc
+            */
             void InterpetEventAndQueue(NetworkStreamer& p_streamer, uint32_t& op_bitsRead);
+
             /**
                 TODOCM doc
             */
