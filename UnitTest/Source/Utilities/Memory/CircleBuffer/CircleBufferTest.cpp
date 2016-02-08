@@ -232,3 +232,145 @@ TEST_F(CircleBufferTest, twoBuffersPointingOnSameMemory)
     delete returnHeader;
     delete returnData;
 }
+
+TEST_F(CircleBufferTest, twoBuffersUsingOneFileMapToMemory)
+{
+    using namespace Doremi::Utilities::IO;
+    FileMap m_fileMap;
+    void* memory = m_fileMap.Initialize("test", 200);
+    ASSERT_NE(nullptr, memory); // Assert not null
+
+    CircleBufferHeader* returnHeader = new CircleBufferHeader();
+    TestStruct64* returnData = new TestStruct64();
+
+    m_circleBuffer->Initialize(memory, 200);
+
+    CircleBuffer<TestStruct64>* otherBuffer = new CircleBuffer<TestStruct64>();
+    otherBuffer->Initialize(memory, 200);
+
+    // Build package
+    CircleBufferHeader sendHeader = CircleBufferHeader();
+    sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
+    sendHeader.packageSize = sizeof(TestStruct64);
+    TestStruct64 sendData = TestStruct64();
+    bool res;
+
+    // Produce with first buffer
+    sendData.f1 = 98;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // 1
+    ASSERT_TRUE(res);
+
+    // Produce with second buffer
+    sendData.f1 = 62;
+    res = otherBuffer->Produce(sendHeader, sendData); // 2
+    ASSERT_TRUE(res);
+
+    // Produce with first buffer
+    sendData.f1 = 4;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    ASSERT_FALSE(res);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 1
+    ASSERT_TRUE(res);
+    ASSERT_EQ(98, returnData->f1);
+
+    // Produce with first buffer
+    sendData.f1 = 33;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    ASSERT_TRUE(res);
+
+    // Consume with second  buffer
+    res = otherBuffer->Consume(returnHeader, returnData); // 1
+    ASSERT_TRUE(res);
+    ASSERT_EQ(62, returnData->f1);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 0
+    ASSERT_TRUE(res);
+    ASSERT_EQ(33, returnData->f1);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 0
+    ASSERT_FALSE(res);
+
+    delete otherBuffer;
+    delete returnHeader;
+    delete returnData;
+}
+
+TEST_F(CircleBufferTest, twoBuffersUsingTwoFileMapsTMemory)
+{
+    using namespace Doremi::Utilities::IO;
+
+    // Allocate memory via filemap
+    FileMap m_fileMap;
+    void* memory = m_fileMap.Initialize("test", 200);
+    ASSERT_NE(nullptr, memory); // Assert not null
+
+    // Allocate another filemap
+    FileMap m_fileMap2;
+    void* memory2 = m_fileMap.Initialize("test", 200);
+    ASSERT_NE(nullptr, memory2); // Assert not null
+
+    CircleBufferHeader* returnHeader = new CircleBufferHeader();
+    TestStruct64* returnData = new TestStruct64();
+
+    m_circleBuffer->Initialize(memory, 200);
+
+    CircleBuffer<TestStruct64>* otherBuffer = new CircleBuffer<TestStruct64>();
+    otherBuffer->Initialize(memory2, 200);
+
+    // Build package
+    CircleBufferHeader sendHeader = CircleBufferHeader();
+    sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
+    sendHeader.packageSize = sizeof(TestStruct64);
+    TestStruct64 sendData = TestStruct64();
+    bool res;
+
+    // Produce with first buffer
+    sendData.f1 = 98;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // should succeed
+    // Memory now contains 1 object
+    ASSERT_TRUE(res);
+
+    // Produce with second buffer
+    sendData.f1 = 62;
+    res = otherBuffer->Produce(sendHeader, sendData); // should succeed
+    // Memory now contains 2 object
+    ASSERT_TRUE(res);
+
+    // Produce with first buffer
+    sendData.f1 = 4;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // should fail
+    // Memory now contains 2 object
+    ASSERT_FALSE(res);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 1
+    ASSERT_TRUE(res);
+    ASSERT_EQ(98, returnData->f1);
+
+    // Produce with first buffer
+    sendData.f1 = 33;
+    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    ASSERT_TRUE(res);
+
+    // Consume with second  buffer
+    res = otherBuffer->Consume(returnHeader, returnData); // 1
+    ASSERT_TRUE(res);
+    ASSERT_EQ(62, returnData->f1);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 0
+    ASSERT_TRUE(res);
+    ASSERT_EQ(33, returnData->f1);
+
+    // Consume with first buffer
+    res = m_circleBuffer->Consume(returnHeader, returnData); // 0
+    ASSERT_FALSE(res);
+
+    delete otherBuffer;
+    delete returnHeader;
+    delete returnData;
+}
