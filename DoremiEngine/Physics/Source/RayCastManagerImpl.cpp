@@ -70,7 +70,7 @@ namespace DoremiEngine
             PxSweepBuffer hit; // Used to save the hit
             /// Paramters for the sweep
             // PxGeometry* geometry
-            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(p_width), PxTransform(origin), direction, p_range, hit);
+            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(p_width), PxTransform(origin), direction, p_range, hit, PxHitFlag::eMESH_BOTH_SIDES);
             // hit.block.position;
             if(!status && !hit.hasBlock)
             {
