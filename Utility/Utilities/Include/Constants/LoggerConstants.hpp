@@ -14,7 +14,7 @@ namespace Doremi
             const size_t LONGEST_MESSAGE_NAME = 256;
             const size_t LONGEST_LINE_NAME = 256;
             const std::string FILEMAP_MUTEX_NAME = std::string("doremi_filemap_mutex");
-            const std::string LOGGING_PROCESS_NAME = std::string("LoggerProcess");
+            const std::string LOGGING_PROCESS_NAME = std::string("LoggerProcess.exe");
         }
     }
 }
