@@ -76,7 +76,7 @@ namespace Doremi
                 /**
                 Threadsafe, internal loackage
                 */
-                bool Produce(const CircleBufferHeader& p_Header, const T const p_data)
+                bool Produce(const CircleBufferHeader& p_Header, const T* const p_data) // TODORT, does this not trigger
                 {
                     // Internal lockage
                     std::lock_guard<std::mutex> lock(m_produceLock);
@@ -104,7 +104,7 @@ namespace Doremi
                         head = PointerArithmetic::Addition(head, sizeof(CircleBufferHeader));
 
                         // Copy data to head
-                        memcpy(head, &p_data, p_Header.packageSize);
+                        memcpy(head, p_data, p_Header.packageSize);
 
                         // Move head to after data
                         head = PointerArithmetic::Addition(head, p_Header.packageSize);

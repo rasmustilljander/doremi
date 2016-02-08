@@ -27,9 +27,9 @@ TEST_F(CircleBufferTest, toManyProduce)
 
     CircleBufferHeader sendHeader = CircleBufferHeader();
     TestStruct64 sendData = TestStruct64();
-    bool res = m_circleBuffer->Produce(sendHeader, sendData);
+    bool res = m_circleBuffer->Produce(sendHeader, &sendData);
     ASSERT_TRUE(res);
-    res = m_circleBuffer->Produce(sendHeader, sendData);
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
     ASSERT_FALSE(res);
 }
 
@@ -42,7 +42,7 @@ TEST_F(CircleBufferTest, basicProduceAndConsume)
     sendHeader.packageSize = sizeof(TestStruct64);
     TestStruct64 sendData = TestStruct64();
     sendData.f1 = 4;
-    m_circleBuffer->Produce(sendHeader, sendData);
+    m_circleBuffer->Produce(sendHeader, &sendData);
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
@@ -67,10 +67,10 @@ TEST_F(CircleBufferTest, twoProduceAndConsume)
     sendData.f1 = 4;
 
     // Produce
-    m_circleBuffer->Produce(sendHeader, sendData);
+    m_circleBuffer->Produce(sendHeader, &sendData);
     sendData.f2 = 19;
     sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::COMMAND);
-    m_circleBuffer->Produce(sendHeader, sendData);
+    m_circleBuffer->Produce(sendHeader, &sendData);
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
@@ -109,28 +109,28 @@ TEST_F(CircleBufferTest, twoBuffersUsingDifferentPartOfSameExternalMemory)
     //// Produce
     // Produce first buffer
     sendData.f1 = 4;
-    res = m_circleBuffer->Produce(sendHeader, sendData);
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
     ASSERT_TRUE(res);
 
     sendData.f1 = 19;
-    res = m_circleBuffer->Produce(sendHeader, sendData);
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
     ASSERT_TRUE(res);
 
     sendData.f1 = 78;
-    res = m_circleBuffer->Produce(sendHeader, sendData);
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
     ASSERT_FALSE(res);
 
     // Produce second buffer
     sendData.f1 = 62;
-    res = otherBuffer->Produce(sendHeader, sendData);
+    res = otherBuffer->Produce(sendHeader, &sendData);
     ASSERT_TRUE(res);
 
     sendData.f1 = 775;
-    res = otherBuffer->Produce(sendHeader, sendData);
+    res = otherBuffer->Produce(sendHeader, &sendData);
     ASSERT_TRUE(res);
 
     sendData.f1 = 95;
-    res = otherBuffer->Produce(sendHeader, sendData);
+    res = otherBuffer->Produce(sendHeader, &sendData);
     ASSERT_FALSE(res);
 
 
@@ -190,17 +190,17 @@ TEST_F(CircleBufferTest, twoBuffersPointingOnSameMemory)
 
     // Produce with first buffer
     sendData.f1 = 98;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 1
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 1
     ASSERT_TRUE(res);
 
     // Produce with second buffer
     sendData.f1 = 62;
-    res = otherBuffer->Produce(sendHeader, sendData); // 2
+    res = otherBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_TRUE(res);
 
     // Produce with first buffer
     sendData.f1 = 4;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_FALSE(res);
 
     // Consume with first buffer
@@ -210,7 +210,7 @@ TEST_F(CircleBufferTest, twoBuffersPointingOnSameMemory)
 
     // Produce with first buffer
     sendData.f1 = 33;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_TRUE(res);
 
     // Consume with second  buffer
@@ -257,17 +257,17 @@ TEST_F(CircleBufferTest, twoBuffersUsingOneFileMapToMemory)
 
     // Produce with first buffer
     sendData.f1 = 98;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 1
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 1
     ASSERT_TRUE(res);
 
     // Produce with second buffer
     sendData.f1 = 62;
-    res = otherBuffer->Produce(sendHeader, sendData); // 2
+    res = otherBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_TRUE(res);
 
     // Produce with first buffer
     sendData.f1 = 4;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_FALSE(res);
 
     // Consume with first buffer
@@ -277,7 +277,7 @@ TEST_F(CircleBufferTest, twoBuffersUsingOneFileMapToMemory)
 
     // Produce with first buffer
     sendData.f1 = 33;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_TRUE(res);
 
     // Consume with second  buffer
@@ -330,19 +330,19 @@ TEST_F(CircleBufferTest, twoBuffersUsingTwoFileMapsTMemory)
 
     // Produce with first buffer
     sendData.f1 = 98;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // should succeed
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // should succeed
     // Memory now contains 1 object
     ASSERT_TRUE(res);
 
     // Produce with second buffer
     sendData.f1 = 62;
-    res = otherBuffer->Produce(sendHeader, sendData); // should succeed
+    res = otherBuffer->Produce(sendHeader, &sendData); // should succeed
     // Memory now contains 2 object
     ASSERT_TRUE(res);
 
     // Produce with first buffer
     sendData.f1 = 4;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // should fail
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // should fail
     // Memory now contains 2 object
     ASSERT_FALSE(res);
 
@@ -353,7 +353,7 @@ TEST_F(CircleBufferTest, twoBuffersUsingTwoFileMapsTMemory)
 
     // Produce with first buffer
     sendData.f1 = 33;
-    res = m_circleBuffer->Produce(sendHeader, sendData); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
     ASSERT_TRUE(res);
 
     // Consume with second  buffer
