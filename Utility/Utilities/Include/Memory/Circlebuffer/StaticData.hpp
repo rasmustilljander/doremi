@@ -13,13 +13,13 @@ namespace Doremi
             {
                 StaticData()
                 {
-                    currentTail = nullptr;
-                    currentHead = nullptr;
+                    currentTailOffset = 0;
+                    currentHeadOffset = 0;
                     currentObjectCount = 0;
                     started = STARTED;
                 }
-                void* currentTail;
-                void* currentHead;
+                size_t currentTailOffset;
+                size_t currentHeadOffset;
                 size_t currentObjectCount;
                 uint8_t started;
             };
