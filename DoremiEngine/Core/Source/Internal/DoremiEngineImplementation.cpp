@@ -234,7 +234,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadTimingModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll");
             m_timingLibrary = DynamicLoader::LoadSharedLibrary("Timing.dll");
 
@@ -266,7 +266,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadAudioModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll");
             m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
 
@@ -297,7 +297,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadGraphicModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll");
             m_graphicLibrary = DynamicLoader::LoadSharedLibrary("Graphic.dll");
 
@@ -327,7 +327,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll");
             m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
 
@@ -357,7 +357,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll");
             m_physicsLibrary = DynamicLoader::LoadSharedLibrary("Physics.dll");
 
@@ -387,7 +387,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll");
             m_inputLibrary = DynamicLoader::LoadSharedLibrary("Input.dll");
 
@@ -416,7 +416,7 @@ namespace DoremiEngine
 
         void DoremiEngineImplementation::LoadAIModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll");
             m_aiLibrary = DynamicLoader::LoadSharedLibrary("AI.dll");
 

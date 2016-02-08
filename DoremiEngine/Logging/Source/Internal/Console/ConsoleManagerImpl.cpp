@@ -1,5 +1,7 @@
 #include <Internal/Console/ConsoleManagerImpl.hpp>
 #include <Internal/Console/ConsoleImpl.hpp>
+#include <Utility/Utilities/Include/Logging/LogTag.hpp>
+using namespace Doremi::Utilities::Logging;
 
 namespace DoremiEngine
 {

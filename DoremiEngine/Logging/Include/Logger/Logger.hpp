@@ -1,6 +1,6 @@
 #pragma once
-#include <DoremiEngine/Logging/Include/Logger/LogTag.hpp>
-#include <DoremiEngine/Logging/Include/Logger/LogLevel.hpp>
+#include <Utility/Utilities/Include/Logging/LogTag.hpp>
+#include <Utility/Utilities/Include/Logging/LogLevel.hpp>
 #include <string>
 
 namespace DoremiEngine
@@ -19,7 +19,8 @@ namespace DoremiEngine
                 If this metod is called directly the call should looke something like:
                 Logger.LT(__FUNCTION__, __LINE__, LogTag::Level, LogLevel::Level, "formatstring %d %d", 1, 2);"
             */
-            virtual void LT(const std::string& p_function, const size_t& p_line, const LogTag& p_tag, const LogLevel& p_vLevel, const char* p_format, ...) = 0;
+            virtual void LT(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
+                            const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) = 0;
         };
     }
 }

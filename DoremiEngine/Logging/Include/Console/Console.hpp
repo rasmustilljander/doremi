@@ -1,5 +1,5 @@
 #pragma once
-#include <DoremiEngine/Logging/Include/Logger/LogLevel.hpp>
+#include <Utility/Utilities/Include/Logging/LogLevel.hpp>
 
 namespace DoremiEngine
 {
@@ -11,7 +11,7 @@ namespace DoremiEngine
             /**
             Sends data to console
             */
-            virtual void WriteToConsole(const LogLevel& p_vLevel, const char* p_format, ...) = 0;
+            virtual void WriteToConsole(const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) = 0;
         };
     }
 }

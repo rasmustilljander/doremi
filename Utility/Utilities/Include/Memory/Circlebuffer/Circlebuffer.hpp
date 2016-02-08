@@ -8,22 +8,6 @@
 #include <Utility/Utilities/Include/Memory/Circlebuffer/CircleBufferHeader.hpp>
 #include <string>
 
-// Move to Logging lib
-struct LogText
-{
-    int8_t consoleId;
-    //	enum logFlag;
-    //	enum logLevel;
-    int8_t messageLength;
-    char message[256];
-};
-
-// Move to Logging lib
-struct CustomCommand
-{
-    char message[256];
-};
-
 namespace Doremi
 {
     namespace Utilities

@@ -1,7 +1,9 @@
 #include <Internal/Console/ConsoleImpl.hpp>
 #include <Internal/VA_LISTHelper.hpp>
 #include <iostream>
-#include <Internal/Logger/LogginData.hpp>
+#include <Utility/Utilities/Include/Logging/LogLevel.hpp>
+#include <Utility/Utilities/Include/Logging/LogTag.hpp>
+using namespace Doremi::Utilities::Logging;
 
 namespace DoremiEngine
 {
@@ -20,9 +22,9 @@ namespace DoremiEngine
             // TODOLOG
             va_list args;
             va_start(args, p_format);
-            LoggingData* threadData = new LoggingData();
-            threadData->logLevel = p_vLevel;
-            toString(threadData->p_message, p_format, args);
+            //  LoggingData* threadData = new LoggingData();
+            //  threadData->logLevel = p_vLevel;
+            // toString(threadData->p_message, p_format, args);
             va_end(args);
         }
     }
