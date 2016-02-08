@@ -206,7 +206,7 @@ namespace Doremi
 
             // Character control comp label
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(0.1, 0.5);
+            charControlComp->dims = XMFLOAT2(5, 0.5);
             charControlComp->flags = CharacterControlFlags::drain;
             blueprint[ComponentType::CharacterController] = charControlComp;
 
