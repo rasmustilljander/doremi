@@ -8,7 +8,13 @@ namespace Doremi
         {
             FileMap::FileMap() : m_mapHandle(nullptr), m_fileMapSize(0), m_rawMemoryOfMappedFile(nullptr) {}
 
-            FileMap::~FileMap() { CloseHandle(m_mapHandle); }
+            FileMap::~FileMap()
+            {
+                if(m_mapHandle != nullptr)
+                {
+                    CloseHandle(m_mapHandle);
+                }
+            }
 
             void* FileMap::Initialize(const std::string& p_name, const size_t& p_fileMapSize)
             {
