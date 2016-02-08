@@ -125,11 +125,13 @@ namespace Doremi
                                     EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
                                     // DEBUG
                                     // std::cout << "Enemy DED!!!" << std::endl;
+                                    // TODOSOUND Deathsound.
                                 }
                                 else
                                 {
                                     // DEBUG
                                     // std::cout << "Enemy Hit!!" << std::endl;
+                                    // TODOSOUND DamageSound
                                 }
                             }
                         }
