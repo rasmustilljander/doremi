@@ -113,6 +113,17 @@ namespace Doremi
                     EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
                     EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     break;
+
+                    // case Blueprints::PlayerEntity:
+                    //    TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
+                    //    // Spawn inside the spawner. This might be changed in the future
+                    //    XMFLOAT3 spawnPosition = transComp->position;
+                    //    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::PlayerEntity, spawnPosition);
+
+                    //    // Send event that enemy has been created
+                    //    EntityCreatedEvent* PlayerCreated = new Core::EntityCreatedEvent(newID, Core::EventType::PlayerCreation);
+                    //    EventHandler::GetInstance()->BroadcastEvent(PlayerCreated);
+                    //    break;
             }
         }
     }
