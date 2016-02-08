@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 
 
 namespace Doremi
@@ -287,6 +288,10 @@ namespace Doremi
                     // We set the sequence we're using and remove it from the list
                     m_snapshotSequenceUsed = SnapshotToUse->SnapshotSequence;
                     m_DelayedSnapshots.pop_back();
+
+                    // Add events from snapshot to event handler
+                    EventHandler::GetInstance()->BroadcastEvent(SnapshotToUse->Events);
+
                     delete SnapshotToUse;
                 }
                 else // If we dont have any snapshots we will lagg, this is 2 missed packages for now, ask Christian if this might change

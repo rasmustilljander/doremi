@@ -11,6 +11,8 @@ namespace Doremi
 {
     namespace Core
     {
+        struct Event;
+
         struct SnapshotObject
         {
             uint32_t EntityID;
@@ -24,6 +26,7 @@ namespace Doremi
             DirectX::XMFLOAT3 PlayerPositionToCheck;
             uint8_t SequenceToCheckPosAgainst;
             SnapshotObject Objects[MAX_OBJECTS_IN_SNAPSHOT];
+            std::list<Event*> Events;
         };
 
         static bool SnapObjIDMoreRecent(const SnapshotObject& p_1, const SnapshotObject& p_2) { return p_1.EntityID < p_2.EntityID; }

@@ -19,8 +19,8 @@
 /// Game
 // handlers
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
-#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandlerClient.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
@@ -94,8 +94,9 @@ namespace Doremi
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
+        EventHandlerClient::StartupEventHandlerClient();
         Core::EntityHandler::StartupEntityHandler();
-        Core::PlayerHandler::StartPlayerHandler(sharedContext);
+        Core::PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
         Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);
         Core::StateHandler::StartStateHandler(sharedContext);
@@ -254,10 +255,14 @@ namespace Doremi
             // Loop as many update-steps we will take this frame
             while(Accum >= UpdateStepLen)
             {
+                // Update game based on state
                 Update(UpdateStepLen);
+
                 // Update interpolation transforms from snapshots
                 Core::InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
+                // Deliver events
+                static_cast<Core::EventHandlerClient*>(Core::EventHandler::GetInstance())->DeliverEvents();
 
                 // Remove time from accumulator
                 // Accumulator -= UpdateTimeStepLength;
@@ -294,7 +299,7 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         size_t length = m_managers.size();
-        PlayerHandler::GetInstance()->UpdateClient();
+        PlayerHandler::GetInstance()->Update(p_deltaTime);
         AudioHandler::GetInstance()->Update(p_deltaTime);
         // TODORT
         // TODOLOG
@@ -322,9 +327,7 @@ namespace Doremi
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
-        Core::PlayerHandler::GetInstance()->UpdatePlayerInputsClient();
-        Core::EventHandler::GetInstance()->DeliverBasicEvents();
-        Core::EventHandler::GetInstance()->DeliverRemoveEvents();
+        Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
 
         Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
 

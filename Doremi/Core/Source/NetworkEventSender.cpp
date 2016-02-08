@@ -16,7 +16,7 @@ namespace Doremi
 
         void NetworkEventSender::UpdateBufferWithRecievedClientSequenceAcc(uint8_t p_sequence)
         {
-            int16_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence - 1, 255);
+            int16_t numOfRemoves = sequence_difference(p_sequence, m_nextSequence, 255);
 
             if(numOfRemoves <= 0)
             {

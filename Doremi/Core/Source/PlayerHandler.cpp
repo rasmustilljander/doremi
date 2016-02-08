@@ -14,7 +14,7 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
-#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
@@ -23,9 +23,7 @@
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 
-#include <Doremi/Core/Include/EventHandler/Events/Event.hpp>
-#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
-#include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 
 /// Engine
 // AI
@@ -49,25 +47,12 @@ namespace Doremi
 {
     namespace Core
     {
-        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
-        {
-            EventHandler* t_EventHandler = EventHandler::GetInstance();
-            t_EventHandler->Subscribe(EventType::RemoveEntity, this);
-            t_EventHandler->Subscribe(EventType::EntityCreated, this);
-        }
+        PlayerHandler::PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
         PlayerHandler::~PlayerHandler() {}
 
         PlayerHandler* PlayerHandler::m_singleton = nullptr;
 
-        void PlayerHandler::StartPlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-        {
-            if(m_singleton != nullptr)
-            {
-                std::runtime_error("PlayerHandler StartPlayerHandler called multiple times.");
-            }
-            m_singleton = new PlayerHandler(p_sharedContext);
-        }
 
         PlayerHandler* PlayerHandler::GetInstance()
         {
@@ -107,20 +92,6 @@ namespace Doremi
             return outPointer;
         }
 
-        NetworkEventSender* PlayerHandler::GetNetworkEventSenderForPlayer(uint32_t p_playerID)
-        {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-            NetworkEventSender* outPointer = nullptr;
-
-            if(iter != m_playerMap.end())
-            {
-                outPointer = iter->second->m_networkEventSender;
-            }
-
-            return outPointer;
-        }
-
         FrequencyBufferHandler* PlayerHandler::GetDefaultFrequencyBufferHandler()
         {
             FrequencyBufferHandler* OutPointer = nullptr;
@@ -147,19 +118,6 @@ namespace Doremi
             return outPointer;
         }
 
-        NetworkPriorityHandler* PlayerHandler::GetNetworkPriorityHandlerForplayer(uint32_t p_playerID)
-        {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-            NetworkPriorityHandler* outPointer = nullptr;
-
-            if(iter != m_playerMap.end())
-            {
-                outPointer = iter->second->m_networkPriorityHandler;
-            }
-
-            return outPointer;
-        }
 
         bool PlayerHandler::GetDefaultPlayerEntityID(EntityID& o_outID)
         {
@@ -187,116 +145,6 @@ namespace Doremi
             {
                 return false;
             }
-        }
-
-        void PlayerHandler::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
-        {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-
-            if(iter != m_playerMap.end())
-            {
-                std::runtime_error("Creating player twice with same ID.");
-            }
-
-            // TODOCM hard coded entityID for new players
-            EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
-
-            NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
-            FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
-            NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
-
-            Player* NewPlayer = new Player(t_EntityID, p_inputHandler, newNetworkEventSender, newFrequencyHandler, newNetworkPriorityHandler);
-
-            m_playerMap[p_playerID] = NewPlayer;
-
-
-            int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-
-            /// Create the gun
-            // Check if we have the gun
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
-            {
-                ParticlePressureComponent* particleComp =
-                    EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
-                particleComp->data.m_active = false;
-                particleComp->data.m_density = 2.0f;
-                particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-                particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
-                particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-                particleComp->data.m_emissionRate = 0.05;
-                particleComp->data.m_launchPressure = 100;
-                particleComp->data.m_numParticlesX = 5;
-                particleComp->data.m_numParticlesY = 1;
-                particleComp->data.m_size = 1;
-                particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
-                m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
-            }
-
-
-            // Create event
-            PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
-
-            // Broadcast event
-            EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
-        }
-
-        void PlayerHandler::UpdateClient()
-        {
-            TIME_FUNCTION_START
-            
-            UpdatePlayerPositions();
-            UpdatePlayerRotationsClient();
-            TIME_FUNCTION_STOP
-        }
-
-        void PlayerHandler::UpdateServer(double p_dt)
-        {
-            TIME_FUNCTION_START
-            UpdatePlayerInputsServer();
-            UpdatePlayerPositions();
-            UpdatePlayerRotationsServer();
-            UpdateFiring();
-            UpdateNetworkObjectPriority(p_dt);
-
-            // Hotfix
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_frequencyBufferHandler->Update();
-            }
-
-
-            TIME_FUNCTION_STOP
-        }
-
-        void PlayerHandler::UpdatePlayerInputsClient()
-        {
-            TIME_FUNCTION_START
-            m_sharedContext.GetInputModule().Update();
-
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
-            }
-            TIME_FUNCTION_STOP
-        }
-
-        void PlayerHandler::UpdatePlayerInputsServer()
-        {
-            TIME_FUNCTION_START
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for (iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                ((InputHandlerServer*)iter->second->m_inputHandler)->Update(iter->second->m_playerEntityID);
-            }
-            TIME_FUNCTION_STOP
         }
 
         // TODOEA fix this code up with comments
@@ -527,126 +375,6 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandler::UpdateNetworkObjectPriority(double p_dt)
-        {
-            // For each player we update their networkobj priorities
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_networkPriorityHandler->Update(iter->second->m_playerEntityID, p_dt);
-            }
-        }
-
-        void PlayerHandler::QueueAddObjectToPlayers(EntityID p_entityID, uint32_t p_blueprint, DirectX::XMFLOAT3 p_position)
-        {
-            // Fix because there is a difference between "myPlayer" and "otherplayers" for the client
-            if(p_blueprint == (uint32_t)Blueprints::PlayerEntity)
-            {
-                p_blueprint = (uint32_t)Blueprints::NetworkPlayerEntity;
-            }
-
-            // For each player we queue
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                // TODOCM remove, we currently exclude player when we send it
-                if(iter->second->m_playerEntityID != p_entityID)
-                {
-                    // iter->second->m_networkEventSender->QueueAddObject(p_blueprint, p_position);
-                }
-            }
-        }
-
-        void PlayerHandler::QueueRemoveObjectToPlayers(uint32_t p_entityID)
-        {
-            // For each player we queue
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                // iter->second->m_networkEventSender->QueueRemoveObject(p_entityID);
-            }
-        }
-
-
         uint32_t PlayerHandler::GetNumOfPlayers() { return m_playerMap.size(); }
-
-        void PlayerHandler::AddNetObjectToPlayers(const EntityID& p_entityID)
-        {
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
-            }
-        }
-
-        void PlayerHandler::QueueEntityCreatedEventToPlayers(EntityCreatedEvent* p_entityCreatedEvent)
-        {
-            // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(*p_entityCreatedEvent));
-            }
-
-            // Save it for later joins
-            m_allQueuedEvents.push_back(new EntityCreatedEvent(*p_entityCreatedEvent));
-        }
-
-        void PlayerHandler::QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent)
-        {
-            // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                iter->second->m_networkEventSender->QueueEventToFrame(new RemoveEntityEvent(*p_removeEvent));
-            }
-
-            // Save it for later joins
-            m_allQueuedEvents.push_back(new RemoveEntityEvent(*p_removeEvent));
-        }
-
-        void PlayerHandler::OnEvent(Event* p_event)
-        {
-            switch(p_event->eventType)
-            {
-                case Doremi::Core::EventType::EntityCreated:
-                {
-                    EntityCreatedEvent* t_entityCreatedEvent = static_cast<EntityCreatedEvent*>(p_event);
-
-                    // If the object is a Netobject we need to add those components to each seperate player, a solution by the cause that we want
-                    // dynamic amount of players
-                    // and individual components for each of them
-                    // if(EntityHandler::GetInstance().HasComponents(t_entityCreatedEvent->entityID, (int)ComponentType::NetworkObject))
-                    //{
-                    //    AddNetObjectToPlayers(t_entityCreatedEvent->entityID);
-                    //}
-
-                    // QueueAddObjectToPlayers(t_entityCreatedEvent->entityID, (uint32_t)t_entityCreatedEvent->bluepirnt,
-                    //                        GetComponent<TransformComponent>(t_entityCreatedEvent->entityID)->position);
-
-
-                    // Send the event to all players
-                    QueueEntityCreatedEventToPlayers(t_entityCreatedEvent);
-
-
-                    break;
-                }
-                case Doremi::Core::EventType::RemoveEntity:
-                {
-
-                    RemoveEntityEvent* t_removeEvent = static_cast<RemoveEntityEvent*>(p_event);
-
-                    // QueueRemoveObjectToPlayers(t_removeEvent->entityID);
-                    // m_sinceGameStartAddRemoves.push_back(AddRemoveStruct(false, p_removeEvent->entityID));
-
-                    // Queue the event to all players
-                    QueueRemoveEntityEventToPlayers(t_removeEvent);
-
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
     }
 }

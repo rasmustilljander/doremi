@@ -122,6 +122,12 @@ namespace Doremi
 
         void NetworkPriorityHandler::WriteObjectsByPriority(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
         {
+            // If we have enough memory to write first
+            if(p_bufferSize - op_BytesWritten < sizeof(uint8_t))
+            {
+                return;
+            }
+
             // Set position so we can get here later
             uint32_t positionToWriteNumOfObjects = op_BytesWritten;
 
