@@ -17,8 +17,11 @@ namespace DoremiEngine
             void Startup() override;
             void Shutdown() override;
 
+            const ConfiguartionInfo& GetAllConfigurationValues();
+
         private:
             const Core::SharedContext& m_sharedContext;
+            ConfiguartionInfo m_configInfo;
         };
     }
 }

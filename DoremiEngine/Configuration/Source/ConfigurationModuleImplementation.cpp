@@ -13,6 +13,8 @@ namespace DoremiEngine
         void ConfigurationModuleImplementation::Startup() {}
 
         void ConfigurationModuleImplementation::Shutdown() {}
+
+        const ConfiguartionInfo& ConfigurationModuleImplementation::GetAllConfigurationValues() {}
     }
 }
 
