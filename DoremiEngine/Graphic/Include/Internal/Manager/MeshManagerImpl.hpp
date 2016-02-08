@@ -25,6 +25,7 @@ namespace DoremiEngine
             MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName) override;
             MeshInfo* BuildSphereMeshInfo(const std::string& p_fileName, int p_latLines, int p_longLines) override;
             MeshInfo* BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName) override;
+            MeshInfo* BuildSkeletalMeshInfoFromBuffer(const std::vector<SkeletalVertex>& p_buffer, const std::string& p_meshName) override;
             MeshInfo* GetMeshInfo(const std::string& p_meshName) override;
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;
             MaterialInfo* BuildMaterialInfo(MaterialData p_materialData) override;

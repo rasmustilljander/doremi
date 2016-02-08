@@ -73,6 +73,38 @@ namespace DoremiEngine
             m_meshInfo[p_fileName] = newMesh;
             return newMesh;
         }
+        MeshInfo* MeshManagerImpl::BuildSkeletalMeshInfoFromBuffer(const std::vector<SkeletalVertex>& p_buffer, const std::string& p_meshName)
+        {
+            if(m_meshInfo.find(p_meshName) != m_meshInfo.end())
+            {
+                return m_meshInfo[p_meshName];
+            }
+            MeshInfo* newMesh = new MeshInfoImpl();
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.ByteWidth = p_buffer.size() * sizeof(SkeletalVertex);
+            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            ID3D11Buffer* buffer;
+            HRESULT res = m_directX.GetDevice()->CreateBuffer(&bd, NULL, &buffer);
+            if(!CheckHRESULT(res, "Error when creating mesh buffer"))
+            {
+                // TODOKO log error
+                return nullptr;
+            }
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_directX.GetDeviceContext()->Map(buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, p_buffer.data(), bd.ByteWidth);
+            m_directX.GetDeviceContext()->Unmap(buffer, NULL);
+            newMesh->SetBufferHandle(buffer);
+            newMesh->SetFileName(p_meshName);
+            newMesh->SetVerticeCount(p_buffer.size());
+            m_meshInfo[p_meshName] = newMesh;
+            return newMesh;
+        }
 
         MeshInfo* MeshManagerImpl::BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName)
         {

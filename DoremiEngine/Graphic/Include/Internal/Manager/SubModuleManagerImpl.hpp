@@ -14,6 +14,7 @@ namespace DoremiEngine
         class CameraManagerImpl;
         class LightManagerImpl;
         class ComputeShaderManagerImpl;
+        class SkeletalAnimationManagerImpl;
         struct GraphicModuleContext;
         class SubModuleManagerImpl : public SubModuleManager
         {
@@ -29,6 +30,7 @@ namespace DoremiEngine
             CameraManager& GetCameraManager() override;
             LightManager& GetLightManager() override;
             ComputeShaderManager& GetComputeShaderManager() override;
+            SkeletalAnimationManager& GetSkeletalAnimationManager() override;
 
             MeshManagerImpl& GetMeshManagerImpl();
             ParticleSystemManagerImpl& GetParticleSystemManagerImpl();
@@ -37,6 +39,7 @@ namespace DoremiEngine
             DirectXManagerImpl& GetDirectXManagerImpl();
             CameraManagerImpl& GetCameraManagerImpl();
             LightManagerImpl& GetLightManagerImpl();
+            SkeletalAnimationManagerImpl& GetSkeletalAnimationManagerImpl();
 
         private:
             const GraphicModuleContext& m_graphicContext;
@@ -48,6 +51,7 @@ namespace DoremiEngine
             CameraManagerImpl* m_cameraManager;
             LightManagerImpl* m_lightManager;
             ComputeShaderManagerImpl* m_computeShaderManager;
+            SkeletalAnimationManagerImpl* m_skeletalInformationManager;
         };
     }
 }

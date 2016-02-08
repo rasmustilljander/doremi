@@ -42,6 +42,8 @@ namespace DoremiEngine
             virtual RasterizerState* GetDefaultRasterizerState() = 0;
             virtual DepthStencilState* GetDefaultDepthStencilState() = 0;
             virtual void DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) = 0;
+
+            virtual void DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) = 0;
         };
     }
 }

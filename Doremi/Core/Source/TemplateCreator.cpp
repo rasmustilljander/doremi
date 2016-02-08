@@ -23,10 +23,11 @@
 #include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/CharacterControlComponen.hpp>
-
+#include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SkeletalAnimationManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -35,6 +36,7 @@
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -541,12 +543,35 @@ namespace Doremi
 
             CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
+            DoremiEngine::Graphic::SkeletalInformation* t_skeletalInformation =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+
+            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KebabPizza.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKubGrejTest.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KubEttBen.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKub2.drm", *t_skeletalInformation);
+
+
             /// Fill with components
             // Render
-            RenderComponent* t_renderComp = new RenderComponent();
+            /*RenderComponent* t_renderComp = new RenderComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
+            t_renderComp->material =
+            sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
+            t_avatarBlueprint[ComponentType::Render] = t_renderComp;*/
+
+            RenderComponent* t_renderComp = new RenderComponent();
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
+            t_renderComp->material =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerSkeletalCharData.materialName);
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
+
+            // SkeletalAnimation
+            SkeletalAnimationComponent* t_skeletalAnimationComp = new SkeletalAnimationComponent();
+            t_avatarBlueprint[ComponentType::SkeletalAnimation] = t_skeletalAnimationComp;
+            t_skeletalAnimationComp->skeletalInformation = t_skeletalInformation;
+            t_skeletalAnimationComp->clipName = "Run";
+            t_skeletalAnimationComp->timePosition = 0;
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();

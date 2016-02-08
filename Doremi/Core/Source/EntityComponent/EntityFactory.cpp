@@ -46,7 +46,7 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
-
+#include <EntityComponent/Components/SkeletalAnimationComponent.hpp>
 
 namespace Doremi
 {
@@ -288,9 +288,14 @@ namespace Doremi
                 {
                     memcpy(GetComponent<EntitySpawnComponent>(p_entityID), iter->second, sizeof(EntitySpawnComponent));
                 }
+                else if (iter->first == ComponentType::SkeletalAnimation)
+                {
+                    memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
+                }
 
                 // Add bitmask. This is now done last due to transform being a dick
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
+                
             }
         }
 

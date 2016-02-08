@@ -40,6 +40,7 @@ enum class ComponentType : int
     DamageInflictors = 0x2000000,
     EntitySpawner = 0x4000000,
     ExtraDrain = 0x8000000,
+    SkeletalAnimation = 0x10000000,
 };
 
 /**

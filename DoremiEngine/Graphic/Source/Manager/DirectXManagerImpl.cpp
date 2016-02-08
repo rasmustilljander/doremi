@@ -353,6 +353,116 @@ namespace DoremiEngine
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+            if (renderData[0].indexData != nullptr)
+            {
+                m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
+            }
+            else
+            {
+                m_deviceContext->Draw(renderData[0].vertexCount, 0);
+            }
+
+            // TODO Can be upgraded with instanced drawing
+            const size_t vectorSize = renderData.size();
+            for (size_t i = 1; i < vectorSize; ++i)
+            {
+                if (renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                {
+                    vertexData = renderData[i].vertexData;
+                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+                }
+
+                if (renderData[i].samplerState != renderData[i - 1].samplerState)
+                {
+                    samplerState = renderData[i].samplerState;
+                    if (samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+                    }
+                    else
+                    {
+                        std::cout << "Something went wrong with the sampler in DirXmanagerImpl.cpp" << std::endl;
+                    }
+                }
+
+                if (renderData[i].diffuseTexture != renderData[i - 1].diffuseTexture) // Check if texture has been changed
+                {
+                    texture = renderData[i].diffuseTexture;
+                    if (texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(0, 1, &texture);
+                    }
+                }
+                if (renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
+                {
+                    glowtexture = renderData[i].glowTexture;
+                    if (glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+                    }
+                }
+
+                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+
+                WorldMatrices t_worldMatrices;
+
+                DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
+                DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
+                t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
+                DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
+                t_worldMatrices.worldMat = renderData[i].worldMatrix;
+                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
+                m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+                if (renderData[i].indexData != nullptr)
+                {
+                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                    m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
+                }
+                else
+                {
+                    m_deviceContext->Draw(renderData[i].vertexCount, 0);
+                }
+            }
+            renderData.clear(); // Empty the vector
+        }
+        void DirectXManagerImpl::DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState)
+        {
+            m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
+            m_deviceContext->RSSetState(p_rasterizerState);
+            RenderSkeletalMesh();
+        }
+
+        void DirectXManagerImpl::RenderAllMeshs()
+        {
+            // Sort the data according after mesh then texture
+            std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
+            // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
+
+            // Setup required variables
+            const uint32_t stride = sizeof(Vertex);
+            const uint32_t offset = 0;
+            ID3D11Buffer* vertexData = renderData[0].vertexData;
+            ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
+            ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
+            ID3D11SamplerState* samplerState = renderData[0].samplerState;
+
+            // Iterate all the entries and do the smallest amount of changes to the GPU
+            // Render the first entry outside of the loop because it's a specialcase
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
+            m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+            m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+            m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+            m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
             if(renderData[0].indexData != nullptr)
             {
                 m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
@@ -428,8 +538,94 @@ namespace DoremiEngine
             }
             renderData.clear(); // Empty the vector
         }
+        void DirectXManagerImpl::RenderSkeletalMesh()
+        {
+            // Sort the data according after mesh then texture
+            std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
+            // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
-        void DirectXManagerImpl::RenderAllMeshs()
+            // Setup required variables
+            const uint32_t stride = sizeof(SkeletalVertex);
+            const uint32_t offset = 0;
+            ID3D11Buffer* vertexData = renderData[0].vertexData;
+            ID3D11ShaderResourceView* texture = renderData[0].texture;
+            ID3D11SamplerState* samplerState = renderData[0].samplerState;
+
+            // Iterate all the entries and do the smallest amount of changes to the GPU
+            // Render the first entry outside of the loop because it's a specialcase
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
+            m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+            m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+            m_deviceContext->CSSetSamplers(0, 1, &samplerState);
+            m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+            if(renderData[0].indexData != nullptr)
+            {
+                m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
+            }
+            else
+            {
+                m_deviceContext->Draw(renderData[0].vertexCount, 0);
+            }
+
+            // TODO Can be upgraded with instanced drawing
+            const size_t vectorSize = renderData.size();
+            for(size_t i = 1; i < vectorSize; ++i)
+            {
+                if(renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                {
+                    vertexData = renderData[i].vertexData;
+                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+                }
+
+                if(renderData[i].samplerState != renderData[i - 1].samplerState)
+                {
+                    samplerState = renderData[i].samplerState;
+                    if(samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+                    }
+                    else
+                    {
+                        std::cout << "Something went wrong with the sampler in DirXmanagerImpl.cpp" << std::endl;
+                    }
+                }
+
+                if(renderData[i].texture != renderData[i - 1].texture) // Check if texture has been changed
+                {
+                    texture = renderData[i].texture;
+                    if(texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(0, 1, &texture);
+                    }
+                }
+                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                memcpy(tMS.pData, &renderData[i].worldMatrix, sizeof(DirectX::XMFLOAT4X4)); // Copy matrix to buffer
+                m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+                if(renderData[i].indexData != nullptr)
+                {
+                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                    m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
+                }
+                else
+                {
+                    m_deviceContext->Draw(renderData[i].vertexCount, 0);
+                }
+            }
+            renderData.clear(); // Empty the vector
+        }
+
+
+        void DirectXManagerImpl::SwapRasterizerState(RasterizerState* p_rasterizerState)
         {
 
             // Dispatch light culling compute shader

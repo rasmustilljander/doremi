@@ -12,6 +12,7 @@ namespace DoremiEngine
     namespace Graphic
     {
         struct Vertex;
+        struct SkeletalVertex;
         class MeshInfo;
         class MaterialInfo;
 
@@ -48,6 +49,10 @@ namespace DoremiEngine
             virtual MeshInfo* BuildSphereMeshInfo(const std::string& p_fileName, int p_latLines, int p_longLines) = 0;
             // Builds a mesh from the given vector of vertices, the given string becomes the mesh's id
             virtual MeshInfo* BuildMeshInfoFromBuffer(const std::vector<Vertex>& p_buffer, const std::string& p_meshName) = 0;
+            /**
+                Builds a mesh from the given vector of vertices. Special implementation for skeletalanimation
+            */
+            virtual MeshInfo* BuildSkeletalMeshInfoFromBuffer(const std::vector<SkeletalVertex>& p_buffer, const std::string& p_meshName) = 0;
             /**
             Returns a pointer to the mesh info for the given mesh name, if no mesh exists a nullptr will be returned
             */

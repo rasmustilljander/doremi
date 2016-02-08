@@ -15,6 +15,14 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 textureCoordinate;
             DirectX::XMFLOAT3 normal;
         };
+
+        struct SkeletalVertex
+        {
+            DirectX::XMFLOAT3 position;
+            DirectX::XMFLOAT2 textureCoordinate;
+            DirectX::XMFLOAT3 normal;
+            int jointID;
+        };
         struct VertexPos;
     }
 }

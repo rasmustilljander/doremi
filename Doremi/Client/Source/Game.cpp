@@ -37,6 +37,7 @@
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
+#include <Doremi/Core/Include/Manager/SkeletalAnimationCoreManager.hpp>
 #include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
 #include <Doremi/Core/Include/Manager/MovementManagerClient.hpp>
 #include <Doremi/Core/Include/Manager/AudioManager.hpp>
@@ -138,6 +139,9 @@ namespace Doremi
 
         m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
+        Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
+        // Add manager to list of managers
+        //m_graphicalManagers.push_back(t_skeletalAnimationManager);
         m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);
         // m_managers.push_back(t_playerManager);

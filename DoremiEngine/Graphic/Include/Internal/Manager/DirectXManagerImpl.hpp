@@ -52,10 +52,12 @@ namespace DoremiEngine
             RasterizerState* GetDefaultRasterizerState() override { return m_defaultRasterizerState; };
             DepthStencilState* GetDefaultDepthStencilState() override { return m_defaultDepthStencilState; };
             void DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
+            void DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
         private:
             void RenderAllMeshs();
             void DispatchCompute();
+            void RenderSkeletalMesh();
             void BuildWorldMatrix();
 
             std::vector<MeshRenderData> renderData;

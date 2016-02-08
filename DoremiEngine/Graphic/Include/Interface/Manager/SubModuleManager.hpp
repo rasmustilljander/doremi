@@ -12,6 +12,7 @@ namespace DoremiEngine
         class CameraManager;
         class LightManager;
         class ComputeShaderManager;
+        class SkeletalAnimationManager;
         class SubModuleManager
         {
         public:
@@ -23,6 +24,7 @@ namespace DoremiEngine
             virtual CameraManager& GetCameraManager() = 0;
             virtual LightManager& GetLightManager() = 0;
             virtual ComputeShaderManager& GetComputeShaderManager() = 0;
+            virtual SkeletalAnimationManager& GetSkeletalAnimationManager() = 0;
         };
     }
 }
