@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Windows.h>
-#include <Utility/Utilities/Include/String/StringHelper.hpp>
 #include <Utility/Utilities/Include/IO/FileMap/FileMapMutex.hpp>
 #include <cstdint>
 
@@ -52,7 +50,7 @@ namespace Doremi
                 bool MapFileMapIntoMemory();
 
             private:
-                HANDLE m_mapHandle;
+                void* m_mapHandle;
                 std::string m_name;
                 size_t m_fileMapSize;
                 void* m_rawMemoryOfMappedFile;
