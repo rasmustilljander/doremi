@@ -1,6 +1,8 @@
 #pragma once
 #include <Utility/Utilities/Include/Logging/LogLevelInfo.hpp>
-#include <Utility/Utilities/Include/Logging/LogTag.hpp>
+#include <Utility/Utilities/Include/Logging/LogLevel.hpp>
+
+#include <exception>
 #include <map>
 
 namespace Doremi
@@ -13,30 +15,30 @@ namespace Doremi
             {
                 namespace Internal
                 {
-                    static std::map<LogTag, LogLevelInfo> createMap()
+                    static std::map<LogLevel, LogLevelInfo> createMap()
                     {
-                        std::map<LogTag, LogLevelInfo> map;
-                        map[LogTag::GRAPHIC] = LogLevelInfo("GRAPHIC");
-                        map[LogTag::NETWORK] = LogLevelInfo("NETWORK");
-                        map[LogTag::CLIENT] = LogLevelInfo("CLIENT");
-                        map[LogTag::SERVER] = LogLevelInfo("SERVER");
-                        map[LogTag::GENERAL] = LogLevelInfo("GENERAL");
-                        map[LogTag::NOTAG] = LogLevelInfo("NOTAG");
-                        map[LogTag::PHYSICS] = LogLevelInfo("PHYSICS");
-                        map[LogTag::GAME] = LogLevelInfo("GAME");
-                        map[LogTag::COMPONENT] = LogLevelInfo("COMPONENT");
-                        map[LogTag::GUI] = LogLevelInfo("GUI");
-                        map[LogTag::INPUT] = LogLevelInfo("INPUT");
-                        map[LogTag::RESOURCE] = LogLevelInfo("RESOURCE");
-                        map[LogTag::ANIMATION] = LogLevelInfo("ANIMATION");
-                        map[LogTag::PARTICLE] = LogLevelInfo("PARTICLE");
+                        std::map<LogLevel, LogLevelInfo> map;
+                        map[LogLevel::FATAL_ERROR] = LogLevelInfo("FATAL_ERROR");
+                        map[LogLevel::NON_FATAL_ERROR] = LogLevelInfo("NON_FATAL_ERROR");
+                        map[LogLevel::WARNING] = LogLevelInfo("WARNING");
+                        map[LogLevel::DEBUG] = LogLevelInfo("DEBUG");
+                        map[LogLevel::INFO] = LogLevelInfo("INFO");
+                        map[LogLevel::MASS_DATA_PRINT] = LogLevelInfo("MASS_DATA_PRINT");
+                        map[LogLevel::NOLEVEL] = LogLevelInfo("NOLEVEL");
 
                         return map;
                     }
-                    const std::map<LogTag, LogLevelInfo>& info = createMap();
+                    const std::map<LogLevel, LogLevelInfo>& info = createMap();
                 }
 
-                static LogLevelInfo getStringValue(LogTag p_logTag) { return Internal::info.at(p_logTag); };
+                static LogLevelInfo convert(LogLevel p_logLevel)
+                {
+                    if(Internal::info.count(p_logLevel) == 1)
+                    {
+                        return Internal::info.at(p_logLevel);
+                    }
+                    throw std::runtime_error("The given loglevel does not exist.");
+                };
             }
         }
     }
