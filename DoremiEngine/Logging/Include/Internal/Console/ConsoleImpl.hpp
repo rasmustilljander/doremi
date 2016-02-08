@@ -5,11 +5,22 @@
 #include <string>
 #include <map>
 
+namespace Doremi
+{
+    namespace Utilities
+    {
+        namespace Logging
+        {
+            enum class LogTag;
+            enum class LogLevel;
+        }
+    }
+}
+
 namespace DoremiEngine
 {
     namespace Logging
     {
-        enum class LogTag;
 
         class ConsoleImpl : public Console
         {
@@ -19,7 +30,8 @@ namespace DoremiEngine
             TODORT
             TODOMEM Convert into empty constructor and add init function for easier memory overwrite.
             */
-            ConsoleImpl(const std::string& p_consoleName, LogTag p_logTag, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor);
+            ConsoleImpl(const std::string& p_consoleName, Doremi::Utilities::Logging::LogTag p_logTag, const ConsoleColor& p_textColor,
+                        const ConsoleColor& p_backgroundColor);
 
             /**
             Destructor
@@ -29,7 +41,7 @@ namespace DoremiEngine
             /**
                 The actual method called when calling LogText
             */
-            void WriteToConsole(const LogLevel& p_vLevel, const char* p_format, ...) override;
+            void WriteToConsole(const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
 
         private:
             std::string m_consoleName;

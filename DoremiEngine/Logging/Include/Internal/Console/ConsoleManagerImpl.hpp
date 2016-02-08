@@ -1,9 +1,20 @@
 #pragma once
-
 #include <DoremiEngine/Logging/Include/Console/ConsoleManager.hpp>
 
 #include <unordered_map>
 #include <string>
+
+namespace Doremi
+{
+    namespace Utilities
+    {
+        namespace Logging
+        {
+            enum class LogTag;
+        }
+    }
+}
+
 namespace DoremiEngine
 {
     namespace Logging
@@ -24,8 +35,8 @@ namespace DoremiEngine
             /**
                 Create a new console with the given parameters, returns an already existing console if one exists with the given name.
             */
-            Console& CreateNewConsole(const std::string& p_consoleName, const LogTag& p_logtag, const ConsoleColor& p_textColor,
-                                      const ConsoleColor& p_backgroundColor) override;
+            Console& CreateNewConsole(const std::string& p_consoleName, const Doremi::Utilities::Logging::LogTag& p_logtag,
+                                      const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor) override;
 
             /**
                 Returns an already existing console, throws exception if no console exists.
