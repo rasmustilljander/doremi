@@ -21,6 +21,7 @@ namespace DoremiEngine
             m_particleSystem = m_utils.m_physics->createParticleSystem(PARTICLE_MAX_COUNT);
             m_particleSystem->setMaxMotionDistance(PARTICLE_MAX_MOTION_DISTANCE);
             m_particleSystem->setParticleReadDataFlag(PxParticleReadDataFlag::eVELOCITY_BUFFER, true);
+            m_particleSystem->setContactOffset(m_this.m_size);
             // m_particleSystem->setSimulationFilterData(PxFilterData(1, 0, 0, 0));
             m_utils.m_worldScene->addActor(*m_particleSystem);
             // Might be necessary to set flag to collide with dynamics
