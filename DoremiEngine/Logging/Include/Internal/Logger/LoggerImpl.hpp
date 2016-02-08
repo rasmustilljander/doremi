@@ -1,11 +1,18 @@
 #pragma once
 #include <Logger/Logger.hpp>
 #include <map>
+#include <Utility/Utilities/Include/Memory/Circlebuffer/Circlebuffer.hpp>
+#include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 
 namespace Doremi
 {
     namespace Utilities
     {
+        namespace IO
+        {
+            class FileMap;
+            class Mutex;
+        }
         namespace Logging
         {
             enum class LogTag;
@@ -28,6 +35,11 @@ namespace DoremiEngine
             LoggerImpl();
 
             /**
+            TODORT docs
+            */
+            void Initialize(const std::string& p_workingDirectory);
+
+            /**
            Destuctor
             */
             virtual ~LoggerImpl();
@@ -39,8 +51,15 @@ namespace DoremiEngine
                     const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
 
         private:
-            //         std::map<LogTag, TagLevelInfo> m_tagInfo;
-            //        std::map<LogLevel, TagLevelInfo> m_levelInfo;
+            void* InitializeFileMap(const std::size_t& p_size);
+            void StartLoggingProcess(const std::string& p_workingDirectory);
+
+            Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_localBuffer;
+            Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_outGoingBuffer;
+            Doremi::Utilities::IO::FileMap* m_fileMap;
+            Doremi::Utilities::IO::Mutex* m_mutex;
+            Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
+            bool* m_applicationRunning;
         };
     }
 }

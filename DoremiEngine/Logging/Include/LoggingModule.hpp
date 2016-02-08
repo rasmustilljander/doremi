@@ -18,7 +18,7 @@ namespace DoremiEngine
             /**
 
             */
-            virtual SubmoduleManager& GetSubModuleManager() = 0;
+            virtual SubmoduleManager& GetSubModuleManager() const = 0;
         };
     }
 }

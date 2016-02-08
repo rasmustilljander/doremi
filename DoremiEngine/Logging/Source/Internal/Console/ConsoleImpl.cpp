@@ -1,14 +1,14 @@
 #include <Internal/Console/ConsoleImpl.hpp>
-#include <Internal/VA_LISTHelper.hpp>
-#include <iostream>
+#include <Utility/Utilities/Include/String/VA_ListToString.hpp>
 #include <Utility/Utilities/Include/Logging/LogLevel.hpp>
 #include <Utility/Utilities/Include/Logging/LogTag.hpp>
-using namespace Doremi::Utilities::Logging;
+#include <iostream>
 
 namespace DoremiEngine
 {
     namespace Logging
     {
+        using namespace Doremi::Utilities::Logging;
         ConsoleImpl::ConsoleImpl(const std::string& p_consoleName, LogTag p_logTag, const ConsoleColor& p_textColor, const ConsoleColor& p_backgroundColor)
             : m_consoleName(p_consoleName), m_textColor(p_textColor), m_backgroundColor(p_backgroundColor)
         {
