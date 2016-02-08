@@ -13,7 +13,7 @@ namespace DoremiEngine
             /**
                 Constructor, should only be called by core.
             */
-            LoggingModuleImplementation();
+            LoggingModuleImplementation(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 Destructor, should only be called by core.
@@ -33,10 +33,16 @@ namespace DoremiEngine
             /**
               Fetches the submodulemanager which manages different parts within the logging module.
             */
-            SubmoduleManager& GetSubModuleManager() override;
+            SubmoduleManager& GetSubModuleManager() const override;
+
+            /**
+            Fetches the the sharedcontext for the engine.
+            */
+            const DoremiEngine::Core::SharedContext& GetEngineSharedContext() const;
 
         private:
             SubmoduleManager* m_submoduleManager;
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
         };
     }
 }

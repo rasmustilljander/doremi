@@ -13,12 +13,12 @@ namespace DoremiEngine
             /**
             Fetches the main application logger.
             */
-            virtual Logger& GetLogger() = 0;
+            virtual Logger& GetLogger() const = 0;
 
             /**
             Fetches the consolemanager which manages theoretical external consoles.
             */
-            virtual ConsoleManager& GetConsoleManager() = 0;
+            virtual ConsoleManager& GetConsoleManager() const = 0;
         };
     }
 }

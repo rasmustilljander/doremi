@@ -4,6 +4,8 @@ namespace DoremiEngine
 {
     namespace Logging
     {
+        class LoggingModuleImplementation;
+
         class SubmoduleManagerImpl : public SubmoduleManager
         {
         public:
@@ -18,18 +20,26 @@ namespace DoremiEngine
             virtual ~SubmoduleManagerImpl();
 
             /**
+            Init the submodule manager with information regarding the rest of the logging module.
+            */
+            void Initialize(LoggingModuleImplementation& p_loggingModule);
+
+            /**
             Fetches the main application logger.
             */
-            Logger& GetLogger() override;
+            Logger& GetLogger() const override;
 
             /**
             Fetches the consolemanager which manages theoretical external consoles.
             */
-            ConsoleManager& GetConsoleManager() override;
+            ConsoleManager& GetConsoleManager() const override;
+
+            LoggingModuleImplementation GetLoggingModule() const;
 
         private:
             Logger* m_logger;
             ConsoleManager* m_consoleManager;
+            LoggingModuleImplementation* m_loggingModule;
         };
     }
 }
