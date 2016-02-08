@@ -116,6 +116,7 @@ namespace Doremi
                                 HealthComponent* drainHitHpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(t_drainsHit[o]);
                                 // TODOEA Make it related to the guns damage and not hard coded
                                 // std::cout << drainHitHpComp->currentHealth << std::endl;
+                                // TODOCONFIG
                                 drainHitHpComp->currentHealth -= 5; // TODOKO change to getting from comp
 
                                 if(drainHitHpComp->currentHealth <= 0)
