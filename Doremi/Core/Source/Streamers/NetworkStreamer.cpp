@@ -1,5 +1,6 @@
 // Project specific
-#include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
+#include <Windows.h>
 
 // Third party
 #include <DirectXMath.h>
@@ -12,15 +13,15 @@ namespace Doremi
 {
     namespace Core
     {
-        BitStreamer::BitStreamer()
+        NetworkStreamer::NetworkStreamer()
         {
             m_IsReading = true;
             m_IsWriting = true;
         }
 
-        BitStreamer::~BitStreamer() {}
+        NetworkStreamer::~NetworkStreamer() {}
 
-        void BitStreamer::SetTargetBuffer(unsigned char*& p_buffer, uint32_t p_bufferSize)
+        void NetworkStreamer::SetTargetBuffer(unsigned char*& p_buffer, uint32_t p_bufferSize)
         {
             // Save buffer and size
             m_buffer = p_buffer;
@@ -36,14 +37,15 @@ namespace Doremi
             m_IsWriting = false;
         }
 
-        void BitStreamer::SetReadWritePosition(uint32_t p_bytePosition)
+        void NetworkStreamer::SetReadWritePosition(uint32_t p_bytePosition)
         {
             m_writtenBits = 0;
-            m_currentByte = p_bytePosition;
+
+            m_currentByte = min(m_bufferSize, p_bytePosition);
             m_readBits = 0;
         }
 
-        uint32_t BitStreamer::WriteBits(void* p_buffer, uint32_t p_numberOfBitsToWrite)
+        uint32_t NetworkStreamer::WriteBits(void* p_buffer, uint32_t p_numberOfBitsToWrite)
         {
             // If we already entered another mode
             if(m_IsReading)
@@ -53,10 +55,19 @@ namespace Doremi
             m_IsWriting = true;
 
             // Check if enough memory left on message
-            if(p_numberOfBitsToWrite > m_bufferSize * 8 - m_currentByte * 8 - m_writtenBits)
+            if(!m_writtenBits)
+            {
+                // If we have 0 bits, we will initialize a new byte
+                if(p_numberOfBitsToWrite > m_bufferSize * 8 - m_currentByte * 8)
+                {
+                    return 0;
+                }
+            }
+            else if(p_numberOfBitsToWrite > m_bufferSize * 8 - (m_currentByte - 1) * 8 - m_writtenBits)
             {
                 return 0;
             }
+
 
             // If we will write exactly one byte we can do a bit speedup
             if(p_numberOfBitsToWrite == sizeof(unsigned char) * 8 && m_writtenBits == 0)
@@ -116,7 +127,7 @@ namespace Doremi
             return OutBitAmount;
         }
 
-        uint32_t BitStreamer::ReadBits(void* p_buffer, uint32_t p_numberOfBitsToRead)
+        uint32_t NetworkStreamer::ReadBits(void* p_buffer, uint32_t p_numberOfBitsToRead)
         {
             // If we already entered another mode
             if(m_IsWriting)
@@ -126,11 +137,26 @@ namespace Doremi
 
             m_IsReading = true;
 
+
             // Check if enough memory left on message
-            if(p_numberOfBitsToRead > m_bufferSize * 8 - m_currentByte * 8 - m_readBits)
+            if(!m_readBits)
+            {
+                // If we have 0 bits, we will initialize a new byte
+                if(p_numberOfBitsToRead > m_bufferSize * 8 - m_currentByte * 8)
+                {
+                    return 0;
+                }
+            }
+            else if(p_numberOfBitsToRead > m_bufferSize * 8 - (m_currentByte - 1) * 8 - m_readBits)
             {
                 return 0;
             }
+
+            //// Check if enough memory left on message
+            // if(p_numberOfBitsToRead > m_bufferSize * 8 - m_currentByte * 8 - m_readBits)
+            //{
+            //    return 0;
+            //}
 
             // If we will read exactly one byte we can do a bit speedup
             if(p_numberOfBitsToRead == sizeof(unsigned char) * 8 && m_readBits == 0)
@@ -192,7 +218,7 @@ namespace Doremi
             return OutBitAmount;
         }
 
-        bool BitStreamer::WriteInt8(int8_t p_Value)
+        bool NetworkStreamer::WriteInt8(int8_t p_Value)
         {
             int32_t Value = p_Value;
 
@@ -201,7 +227,7 @@ namespace Doremi
             return AmountWritten == sizeof(int8_t) * 8;
         }
 
-        int8_t BitStreamer::ReadInt8()
+        int8_t NetworkStreamer::ReadInt8()
         {
             int32_t Value = 0;
 
@@ -210,7 +236,7 @@ namespace Doremi
             return Value;
         }
 
-        bool BitStreamer::WriteInt16(int16_t p_Value)
+        bool NetworkStreamer::WriteInt16(int16_t p_Value)
         {
             int32_t Value = p_Value;
 
@@ -219,7 +245,7 @@ namespace Doremi
             return AmountWritten == sizeof(int16_t) * 8;
         }
 
-        int16_t BitStreamer::ReadInt16()
+        int16_t NetworkStreamer::ReadInt16()
         {
             int32_t Value = 0;
 
@@ -228,14 +254,14 @@ namespace Doremi
             return Value;
         }
 
-        bool BitStreamer::WriteInt32(int32_t p_Value)
+        bool NetworkStreamer::WriteInt32(int32_t p_Value)
         {
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(int32_t) * 8);
 
             return AmountWritten == sizeof(int32_t) * 8;
         }
 
-        int32_t BitStreamer::ReadInt32()
+        int32_t NetworkStreamer::ReadInt32()
         {
             int32_t Out = 0;
 
@@ -244,7 +270,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteInt64(int64_t p_Value)
+        bool NetworkStreamer::WriteInt64(int64_t p_Value)
         {
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(int64_t) * 4);
 
@@ -253,7 +279,7 @@ namespace Doremi
             return AmountWritten == sizeof(int64_t) * 8;
         }
 
-        int64_t BitStreamer::ReadInt64()
+        int64_t NetworkStreamer::ReadInt64()
         {
             int64_t Out = 0;
 
@@ -264,7 +290,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteUnsignedInt8(uint8_t p_Value)
+        bool NetworkStreamer::WriteUnsignedInt8(uint8_t p_Value)
         {
             uint32_t Value = p_Value;
 
@@ -273,7 +299,7 @@ namespace Doremi
             return AmountWritten == sizeof(uint8_t) * 8;
         }
 
-        uint8_t BitStreamer::ReadUnsignedInt8()
+        uint8_t NetworkStreamer::ReadUnsignedInt8()
         {
             uint32_t Value = 0;
 
@@ -282,7 +308,7 @@ namespace Doremi
             return Value;
         }
 
-        bool BitStreamer::WriteUnsignedInt16(uint16_t p_Value)
+        bool NetworkStreamer::WriteUnsignedInt16(uint16_t p_Value)
         {
             uint32_t Value = p_Value;
 
@@ -291,7 +317,7 @@ namespace Doremi
             return AmountWritten == sizeof(uint16_t) * 8;
         }
 
-        uint16_t BitStreamer::ReadUnsignedInt16()
+        uint16_t NetworkStreamer::ReadUnsignedInt16()
         {
             uint32_t Out = 0;
 
@@ -300,14 +326,14 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteUnsignedInt32(uint32_t p_Value)
+        bool NetworkStreamer::WriteUnsignedInt32(uint32_t p_Value)
         {
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(int32_t) * 8);
 
             return AmountWritten == sizeof(int32_t) * 8;
         }
 
-        uint32_t BitStreamer::ReadUnsignedInt32()
+        uint32_t NetworkStreamer::ReadUnsignedInt32()
         {
             uint32_t Out = 0;
 
@@ -316,7 +342,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteUnsignedInt64(uint64_t p_Value)
+        bool NetworkStreamer::WriteUnsignedInt64(uint64_t p_Value)
         {
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(uint64_t) * 4);
 
@@ -325,7 +351,7 @@ namespace Doremi
             return AmountWritten == sizeof(uint64_t) * 8;
         }
 
-        uint64_t BitStreamer::ReadUnsignedInt64()
+        uint64_t NetworkStreamer::ReadUnsignedInt64()
         {
             uint64_t Out = 0;
 
@@ -336,7 +362,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteFloat(float p_Value)
+        bool NetworkStreamer::WriteFloat(float p_Value)
         {
             // TODOCM because we know its equal size on our compiler... if not we will get error in memory
             // Could case it to an int, but if float is larger then int32 we still have problem
@@ -345,7 +371,7 @@ namespace Doremi
             return AmountWritten == sizeof(float) * 8;
         }
 
-        float BitStreamer::ReadFloat()
+        float NetworkStreamer::ReadFloat()
         {
             int32_t Out = 0;
 
@@ -354,7 +380,7 @@ namespace Doremi
             return *(float*)&Out;
         }
 
-        bool BitStreamer::WriteDouble(double p_Value)
+        bool NetworkStreamer::WriteDouble(double p_Value)
         {
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(double) * 4);
 
@@ -363,7 +389,7 @@ namespace Doremi
             return AmountWritten == sizeof(double) * 8;
         }
 
-        double BitStreamer::ReadDouble()
+        double NetworkStreamer::ReadDouble()
         {
             uint64_t Out = 0;
 
@@ -374,7 +400,7 @@ namespace Doremi
             return *(double*)&Out;
         }
 
-        bool BitStreamer::WriteBool(bool p_Value)
+        bool NetworkStreamer::WriteBool(bool p_Value)
         {
             uint32_t BoolInt = (uint32_t)p_Value;
 
@@ -383,7 +409,7 @@ namespace Doremi
             return AmountWritten == 1;
         }
 
-        bool BitStreamer::ReadBool()
+        bool NetworkStreamer::ReadBool()
         {
             uint32_t Value = 0;
 
@@ -392,14 +418,14 @@ namespace Doremi
             return (bool)Value;
         }
 
-        bool BitStreamer::WriteFloat2(DirectX::XMFLOAT2 p_Value)
+        bool NetworkStreamer::WriteFloat2(DirectX::XMFLOAT2 p_Value)
         {
             WriteFloat(p_Value.x);
             WriteFloat(p_Value.y);
             return true;
         }
 
-        DirectX::XMFLOAT2 BitStreamer::ReadFloat2()
+        DirectX::XMFLOAT2 NetworkStreamer::ReadFloat2()
         {
             DirectX::XMFLOAT2 Out;
             Out.x = ReadFloat();
@@ -408,7 +434,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteFloat3(DirectX::XMFLOAT3 p_Value)
+        bool NetworkStreamer::WriteFloat3(DirectX::XMFLOAT3 p_Value)
         {
             WriteFloat(p_Value.x);
             WriteFloat(p_Value.y);
@@ -417,7 +443,7 @@ namespace Doremi
             return true;
         }
 
-        DirectX::XMFLOAT3 BitStreamer::ReadFloat3()
+        DirectX::XMFLOAT3 NetworkStreamer::ReadFloat3()
         {
             DirectX::XMFLOAT3 Out;
             Out.x = ReadFloat();
@@ -427,7 +453,7 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteFloat4(DirectX::XMFLOAT4 p_Value)
+        bool NetworkStreamer::WriteFloat4(DirectX::XMFLOAT4 p_Value)
         {
             WriteFloat(p_Value.x);
             WriteFloat(p_Value.y);
@@ -437,7 +463,7 @@ namespace Doremi
             return true;
         }
 
-        DirectX::XMFLOAT4 BitStreamer::ReadFloat4()
+        DirectX::XMFLOAT4 NetworkStreamer::ReadFloat4()
         {
             DirectX::XMFLOAT4 Out;
             Out.x = ReadFloat();
@@ -448,11 +474,11 @@ namespace Doremi
             return Out;
         }
 
-        bool BitStreamer::WriteRotationQuaternion(DirectX::XMFLOAT4 p_Value) { return WriteFloat4(p_Value); }
+        bool NetworkStreamer::WriteRotationQuaternion(DirectX::XMFLOAT4 p_Value) { return WriteFloat4(p_Value); }
 
-        DirectX::XMFLOAT4 BitStreamer::ReadRotationQuaternion() { return ReadFloat4(); }
+        DirectX::XMFLOAT4 NetworkStreamer::ReadRotationQuaternion() { return ReadFloat4(); }
 
-        bool BitStreamer::WriteString(std::string p_Value)
+        bool NetworkStreamer::WriteString(std::string p_Value)
         {
             uint32_t AmountWritten = 0;
 
@@ -474,7 +500,7 @@ namespace Doremi
             return AmountWritten == StringLength * sizeof(unsigned char) * 8;
         }
 
-        std::string BitStreamer::ReadString()
+        std::string NetworkStreamer::ReadString()
         {
             std::string OutString;
 
@@ -498,7 +524,7 @@ namespace Doremi
             return OutString;
         }
 
-        bool BitStreamer::WriteBuffer(void* p_buffer, uint32_t p_bufferSize)
+        bool NetworkStreamer::WriteBuffer(void* p_buffer, uint32_t p_bufferSize)
         {
             uint32_t AmountWritten = 0;
             for(size_t i = 0; i < p_bufferSize; i++)
@@ -509,7 +535,7 @@ namespace Doremi
             return AmountWritten == p_bufferSize * 8;
         }
 
-        void BitStreamer::ReadBuffer(void* p_buffer, uint32_t p_bufferSize)
+        void NetworkStreamer::ReadBuffer(void* p_buffer, uint32_t p_bufferSize)
         {
             for(size_t i = 0; i < p_bufferSize; i++)
             {
@@ -519,7 +545,7 @@ namespace Doremi
             }
         }
 
-        void BitStreamer::WriteMemcpy(void* p_buffer, uint32_t p_bufferSize)
+        void NetworkStreamer::WriteMemcpy(void* p_buffer, uint32_t p_bufferSize)
         {
             // Check if we're in wrong mode
             if(m_IsReading)
@@ -546,7 +572,7 @@ namespace Doremi
             m_currentByte += p_bufferSize;
         }
 
-        void BitStreamer::ReadMemcpy(void* p_buffer, uint32_t p_bufferSize)
+        void NetworkStreamer::ReadMemcpy(void* p_buffer, uint32_t p_bufferSize)
         {
             // Check if we're in wrong mode
             if(m_IsWriting)

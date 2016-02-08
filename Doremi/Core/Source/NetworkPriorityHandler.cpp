@@ -120,7 +120,7 @@ namespace Doremi
             memcpy(&m_netPriorityObjects[p_entityID], GetComponent<NetworkObjectComponent>(p_entityID), sizeof(NetworkObjectComponent));
         }
 
-        void NetworkPriorityHandler::WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
+        void NetworkPriorityHandler::WriteObjectsByPriority(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
         {
             // Set position so we can get here later
             uint32_t positionToWriteNumOfObjects = op_BytesWritten;

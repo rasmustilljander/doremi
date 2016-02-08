@@ -8,6 +8,7 @@
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 
 // Game
 #include <Doremi/Core/Include/GameCore.hpp>

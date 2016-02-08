@@ -13,6 +13,17 @@ namespace Doremi
         struct ChangeMenuState : public Event
         {
             ChangeMenuState() : Event(EventType::ChangeMenuState) {}
+
+            /**
+                Write object to stream
+            */
+            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override {}
+
+            /**
+                Read object from stream
+            */
+            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
+
             DoremiStates state;
         };
     }

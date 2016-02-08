@@ -7,7 +7,8 @@ namespace Doremi
 {
     namespace Core
     {
-        class BitStreamer;
+        class NetworkStreamer;
+        class Event;
         struct NetMessage;
 
         /**
@@ -36,25 +37,18 @@ namespace Doremi
             */
             ~NetworkEventSender();
 
-            /**
-                TODOCM doc
-            */
             void AddRemoveQueuedObjects();
 
-            /**
-                TODOCM doc
-            */
-            void QueueAddObject(uint32_t p_blueprint, DirectX::XMFLOAT3 p_position);
+            void UpdateBufferWithRecievedClientSequenceAcc(uint8_t p_sequence);
+
 
             /**
                 TODOCM doc
             */
-            void UpdateQueueWithSequence(uint8_t p_sequence);
+            void QueueEventToFrame(Event* p_frameEvent);
 
-            /**
-                TODOCM doc
-            */
-            void QueueObjectsFromFrame();
+
+            void AddFrameQueuedObjectsToBuffer();
 
             /**
                 TODOCM doc
@@ -64,12 +58,9 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void CheckNewAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
+            void CheckNewAddRemoves(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
 
-            /**
-                TODOCM doc
-            */
-            void WriteAddRemoves(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
+            void WriteEvents(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten, bool& p_finished);
 
             /**
                 TODOCM doc
@@ -80,7 +71,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            std::list<ObjectToAddOrRemove> m_frameQueuedObjects;
+            std::list<Event*> m_frameQueuedEvents;
 
             /**
                 TODOCM doc
@@ -90,7 +81,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            std::list<std::list<ObjectToAddOrRemove>> m_BufferedAddRemoveObjects;
+            std::list<std::list<Event*>> m_bufferedQueuesOfEvent;
         };
     }
 }

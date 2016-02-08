@@ -1,7 +1,7 @@
 #pragma once
 #include <Doremi/Core/Include/EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
-#include <Doremi/Core/Include/Manager/Network/BitStreamer.h>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <list>
 #include <vector>
 
@@ -68,7 +68,7 @@ namespace Doremi
             /**
                 Write objects by priority to a buffer, also removes their priority if sent. Update should've been called between.
             */
-            void WriteObjectsByPriority(BitStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
+            void WriteObjectsByPriority(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
 
         private:
             /**

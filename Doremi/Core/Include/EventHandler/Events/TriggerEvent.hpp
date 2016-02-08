@@ -12,6 +12,17 @@ namespace Doremi
         struct TriggerEventStruct : public Event
         {
             TriggerEventStruct() : Event(EventType::Trigger) { entityID = 0, triggerType = TriggerType::NoTrigger; }
+
+            /**
+                Write object to stream
+            */
+            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override {}
+
+            /**
+                Read object from stream
+            */
+            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
+
             int entityID;
             TriggerType triggerType;
         };

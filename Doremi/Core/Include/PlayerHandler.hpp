@@ -26,6 +26,8 @@ namespace Doremi
         class NetworkEventSender;
         class FrequencyBufferHandler;
         class NetworkPriorityHandler;
+        struct EntityCreatedEvent;
+        struct RemoveEntityEvent;
 
 
         /**
@@ -206,10 +208,6 @@ namespace Doremi
             */
             void QueueRemoveObjectToPlayers(uint32_t p_entityID);
 
-            /**
-                TODOCM doc
-            */
-            void UpdateAddRemoveObjects();
 
             /**
                 TODOCM doc
@@ -234,12 +232,19 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void RemoveAllPlayers();
+            void AddNetObjectToPlayers(const EntityID& p_entityID);
 
             /**
                 TODOCM doc
             */
-            void AddNetObjectToPlayers(const EntityID& p_entityID);
+            void QueueEntityCreatedEventToPlayers(EntityCreatedEvent* p_entityCreatedEvent);
+
+
+            /**
+                TODOCM doc
+            */
+            void QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent);
+
 
             /**
                 TODOCM doc
@@ -293,6 +298,7 @@ namespace Doremi
             */
             std::vector<AddRemoveStruct> m_sinceGameStartAddRemoves;
 
+            std::list<Event*> m_allQueuedEvents;
 
             // TODOEA add these attributes?
             // int m_bodyID;

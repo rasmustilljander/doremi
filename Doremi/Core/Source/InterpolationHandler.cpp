@@ -179,6 +179,10 @@ namespace Doremi
                     if(sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
                     {
                         m_NumOfSequencesToInterpolate = sequence_difference(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255);
+                        if(m_NumOfSequencesToInterpolate < 0) // TODOCM check if this is wrong
+                        {
+                            cout << "ERROR ON SEQUENCE DIFFERENCE" << endl;
+                        }
                     }
                     else
                     {

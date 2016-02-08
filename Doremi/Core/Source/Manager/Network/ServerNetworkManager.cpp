@@ -3,7 +3,7 @@
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 #include <Manager/Network/NetMessage.hpp>
 #include <Manager/Network/Connection.hpp>
-#include <Manager/Network/BitStreamer.h>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <PlayerHandler.hpp>
@@ -127,7 +127,7 @@ namespace Doremi
             FrequencyBufferHandler* frequencyHandler = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
 
             // Create a stream
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
 
             // Set message buffer to stream
             unsigned char* BufferPointer = p_message.Data;
@@ -167,7 +167,7 @@ namespace Doremi
             uint8_t clientSequence = Streamer.ReadUnsignedInt8();
             bytesRead += sizeof(uint8_t);
 
-            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->UpdateQueueWithSequence(clientSequence);
+            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->UpdateBufferWithRecievedClientSequenceAcc(clientSequence);
 
             // Read frequency
             frequencyHandler->ReadNewFrequencies(Streamer, sizeof(p_message.Data), bytesRead);
@@ -296,7 +296,7 @@ namespace Doremi
                     connection->ConnectionState = ConnectionState::VERSION_CHECK;
                     connection->LastResponse = 0;
 
-                    BitStreamer Streamer = BitStreamer();
+                    NetworkStreamer Streamer = NetworkStreamer();
                     unsigned char* DataPOinter = m_message.Data;
                     Streamer.SetTargetBuffer(DataPOinter, sizeof(m_message.Data));
                     uint32_t PlayerID = Streamer.ReadUnsignedInt32();
@@ -381,7 +381,7 @@ namespace Doremi
             // We put info to render
             InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
 
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
 
             uint32_t BytesWritten = 0;
@@ -392,7 +392,8 @@ namespace Doremi
             BytesWritten += sizeof(uint8_t);
 
             // Add new Add/Remove items
-            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->WriteAddRemoves(Streamer, p_bufferSize, BytesWritten);
+            bool wroteAllEvents = false;
+            PlayerHandler::GetInstance()->GetNetworkEventSenderForPlayer(p_connection->PlayerID)->WriteEvents(Streamer, p_bufferSize, BytesWritten, wroteAllEvents);
 
             // Write snapshot ID (1 byte
             Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
@@ -507,7 +508,7 @@ namespace Doremi
             NewMessage.MessageID = MessageID::CONNECT;
 
             // TODOCM add info - like port etc...
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             Streamer.WriteUnsignedInt32(connection->PlayerID);
 
             // Send connect message
@@ -522,7 +523,7 @@ namespace Doremi
 
             Message.MessageID = MessageID::CONNECTED;
 
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             unsigned char* BufferPointer = Message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
@@ -545,7 +546,7 @@ namespace Doremi
 
 
             // TODOCM send all add/removed stuff here
-            BitStreamer Streamer = BitStreamer();
+            NetworkStreamer Streamer = NetworkStreamer();
             unsigned char* bufferPointer = Message.Data;
             Streamer.SetTargetBuffer(bufferPointer, sizeof(Message.Data));
 

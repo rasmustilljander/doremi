@@ -313,7 +313,7 @@ namespace Doremi
         CameraHandler::GetInstance()->UpdateInput(p_deltaTime);
 
 
-        PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
+        // PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
 
         TIME_FUNCTION_STOP
     }
