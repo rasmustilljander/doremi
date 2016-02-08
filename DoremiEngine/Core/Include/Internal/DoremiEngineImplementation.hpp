@@ -43,7 +43,6 @@ namespace DoremiEngine
 
         private:
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
-            void SetLoggingVariables();
 
             // Loading .dll
             void LoadAudioModule(SharedContextImplementation& o_sharedContext);

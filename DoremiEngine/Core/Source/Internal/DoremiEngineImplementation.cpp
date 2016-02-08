@@ -117,7 +117,6 @@ namespace DoremiEngine
             BuildWorkingDirectory(*m_sharedContext);
 
             LoadLoggingModule(*m_sharedContext);
-            SetLoggingVariables();
             LoadTimingModule(*m_sharedContext);
 
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
@@ -199,8 +198,6 @@ namespace DoremiEngine
             o_sharedContext.SetWorkingDirectory(directoryPath->substr(0, directoryPath->length() - 10));
         }
 
-        void DoremiEngineImplementation::SetLoggingVariables() { m_logger = &m_loggingModule->GetSubModuleManager().GetLogger(); }
-
         void DoremiEngineImplementation::LoadLoggingModule(SharedContextImplementation& o_sharedContext)
         {
             std::cout << "Loading Logging.dll" << std::endl;
@@ -220,6 +217,11 @@ namespace DoremiEngine
                     m_loggingModule = static_cast<Logging::LoggingModule*>(functionCreateLoggingModule(o_sharedContext));
                     m_loggingModule->Startup();
                     o_sharedContext.SetLoggingModule(m_loggingModule);
+
+                    using namespace Doremi::Utilities::Logging;
+                    m_logger = &m_loggingModule->GetSubModuleManager().GetLogger();
+                    std::cout << "Logger system is now online, all other logging will be directed to the logfile." << std::endl;
+                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Logger system is now online.");
                 }
                 else
                 {
