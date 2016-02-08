@@ -1,4 +1,7 @@
 #include <IO/FileMap/FileMap.hpp>
+#include <Utility/Utilities/Include/String/StringHelper.hpp>
+
+#include <Windows.h>
 
 namespace Doremi
 {
