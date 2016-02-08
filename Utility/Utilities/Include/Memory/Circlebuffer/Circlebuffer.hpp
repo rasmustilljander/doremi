@@ -104,7 +104,7 @@ namespace Doremi
                     if(m_data->currentObjectCount < m_maxContainedObjects)
                     {
                         // Local head
-                        void* head = m_data->currentHead;
+                        void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
 
                         // Check if current pointer is outside our scope.
                         if(PointerArithmetic::AssertAdresstInside(head, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
@@ -126,7 +126,7 @@ namespace Doremi
                         head = PointerArithmetic::Addition(head, p_Header.packageSize);
 
                         // Update global head
-                        m_data->currentHead = head;
+                        m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
 
                         // Filemap lock
                         LockMetaData();
@@ -162,7 +162,7 @@ namespace Doremi
                     if(m_data->currentObjectCount > 0)
                     {
                         // Local tail
-                        void* tail = m_data->currentTail;
+                        void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentTailOffset);
 
                         // Check if current pointer is outside our scope.
                         if(PointerArithmetic::AssertAdresstInside(tail, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
@@ -184,7 +184,7 @@ namespace Doremi
                         tail = PointerArithmetic::Addition(tail, out_header->packageSize);
 
                         // Update global tail
-                        m_data->currentTail = tail;
+                        m_data->currentTailOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
 
                         // Filemap lock
                         LockMetaData();
@@ -264,8 +264,8 @@ namespace Doremi
                     if(m_data->started != STARTED)
                     {
                         *m_data = StaticData();
-                        m_data->currentTail = m_adjustedBufferPointerStart;
-                        m_data->currentHead = m_adjustedBufferPointerStart;
+                        m_data->currentTailOffset = 0;
+                        m_data->currentHeadOffset = 0;
                     }
                     // TODORT
                     // UnLockMetaData
