@@ -21,7 +21,7 @@ namespace Doremi
                 return (reinterpret_cast<size_t>(p_high) - reinterpret_cast<size_t>(p_low));
             }
 
-            bool AssertAdresstInside(void* const p_adressToAssert, void* const p_low, void* const p_high)
+            static bool AssertAdresstInside(void* const p_adressToAssert, void* const p_low, void* const p_high)
             {
                 if(p_adressToAssert >= p_low && p_adressToAssert < p_high)
                 {
