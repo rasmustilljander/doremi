@@ -161,27 +161,51 @@ namespace Doremi
 
                     // SPara ner keyframesen i boneanimaiton som sedan sparas ner i animationclip å mappas mot animationclipnamnet
                     DoremiEngine::Graphic::BoneAnimation t_boneAnimation;
-
+                    DoremiEngine::Graphic::BoneAnimation t_boneAnimationtemp;
                     for(int y = 0; y < nrKeyFrames; y++) // skriv keyframsen
                     {
                         DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
                         int t_frame;
+                        XMFLOAT3 t_eulerAngles;
                         ifs.read((char*)&t_keyFrameTemp.position, sizeof(float) * 3);
                         ifs.read((char*)&t_keyFrameTemp.quaternion, sizeof(float) * 4);
+                        ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
                         ifs.read((char*)&t_keyFrameTemp.scale, sizeof(float) * 3);
-                        // t_keyFrameTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
                         ifs.read((char*)&t_frame, sizeof(int));
-                        t_keyFrameTemp.position.z *= -1.0f; // test
-                        // t_keyFrameTemp.quaternion.x *= -1;
-                        // t_keyFrameTemp.quaternion.y *= -1;
-                        // t_keyFrameTemp.quaternion.z *= -1;
-                        // t_keyFrameTemp.quaternion.w *= -1;
+                        XMFLOAT4 t_quaterTemp;
+                        // t_quaterTemp.x = t_keyFrameTemp.quaternion.z;
+                        // t_quaterTemp.y = t_keyFrameTemp.quaternion.y;
+                        // t_quaterTemp.z = t_keyFrameTemp.quaternion.x;
+                        // t_quaterTemp.w = t_keyFrameTemp.quaternion.w;
+                        // t_keyFrameTemp.quaternion = t_quaterTemp;
+                        // t_keyFrameTemp.quaternion = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-                        float t_timeMax = 2.0f;
+                        // XMStoreFloat4(&t_keyFrameTemp.quaternion, XMQuaternionRotationRollPitchYaw(t_eulerAngles.x, t_eulerAngles.y,
+                        // t_eulerAngles.z));
 
+                        t_quaterTemp = XMFLOAT4(0.0f, 0.0f, t_keyFrameTemp.quaternion.z, 1.0f);
+                        // t_keyFrameTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+                        // t_keyFrameTemp.quaternion = t_quaterTemp;
+                        if(i == 1)
+                        {
+                            XMStoreFloat4(&t_quaterTemp, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 1.0f)), y * (3.1415 / 10)));
+                        }
+                        if(i == 0)
+                        {
+                            // XMStoreFloat4(&t_keyFrameTemp.quaternion, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 1.0f)), y *
+                            // (3.1415 / 10)));
+                        }
+
+
+                        // t_keyFrameTemp.position.z *= -1.0f; // test
+
+                        float t_timeMax = 10.0f;
+                        // t_keyFrameTemp.quaternion.w = 1.0f;
                         float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
                         t_keyFrameTemp.time = t_currentTime;
                         t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
+                        t_keyFrameTemp.quaternion = t_quaterTemp;
+                        t_boneAnimationtemp.Keyframes.push_back(t_keyFrameTemp);
                     }
 
                     t_animationClip.BoneAnimations.push_back(t_boneAnimation);
@@ -217,8 +241,10 @@ namespace Doremi
 
                     // Fetch the data we are interested in
                     TransformData transformDataTemp;
+                    XMFLOAT3 t_eulerAngles;
                     ifs.read((char*)&transformDataTemp.pos, sizeof(float) * 3);
                     ifs.read((char*)&transformDataTemp.rot, sizeof(float) * 4);
+                    ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
                     ifs.read((char*)&transformDataTemp.scale, sizeof(float) * 3);
                     // transformDataTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
                     // Make a matrix from it and store it as XMFLOAT4x4
@@ -227,10 +253,21 @@ namespace Doremi
                     // transformDataTemp.rot.x *= -1;
                     // transformDataTemp.rot.y *= -1;
                     // transformDataTemp.rot.z *= -1;
+                    XMFLOAT4 t_quaterTemp;
+                    // t_quaterTemp.x = transformDataTemp.rot.z;
+                    // t_quaterTemp.y = transformDataTemp.rot.y;
+                    // t_quaterTemp.z = transformDataTemp.rot.z;
+                    // t_quaterTemp.w = transformDataTemp.rot.w;
+                    // transformDataTemp.rot = t_quaterTemp;
+                    t_quaterTemp = XMFLOAT4(0.0f, transformDataTemp.rot.y, 0.0f, 1.0f);
+                    XMStoreFloat4(&transformDataTemp.rot, XMQuaternionRotationRollPitchYaw(t_eulerAngles.x, t_eulerAngles.y, t_eulerAngles.z));
+                    // transformDataTemp.rot = t_quaterTemp;
+
+
                     XMVECTOR t_translation = XMLoadFloat3(&transformDataTemp.pos);
                     XMVECTOR t_quaternion = XMLoadFloat4(&transformDataTemp.rot);
                     XMVECTOR t_scale = XMLoadFloat3(&transformDataTemp.scale);
-                    XMVECTOR t_zero = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f));
+                    XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 
                     XMFLOAT4X4 t_transformationMatrix;
                     XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
@@ -298,6 +335,10 @@ namespace Doremi
                     int jointID;
                     ifs.read((char*)&jointID, sizeof(int)); // här kommer jointID som ska vara för alla denna meshens vertiser, kom på att jag inte
                     // bygger vertiserna på denna sidan.
+                    if(jointID == -200)
+                    {
+                        jointID = 0;
+                    }
                     // Så du får sätta alla vertiser till detta värde när du bygger dem!!
 
                     // Nu måte verticerna från "Meshspace" till "joint space" som jag kallar det. Basicly byt koordinatsystem från meshens till

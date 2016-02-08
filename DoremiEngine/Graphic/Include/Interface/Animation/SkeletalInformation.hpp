@@ -85,12 +85,13 @@ namespace DoremiEngine
                             // Use vectorlerp to interpolate between two vectors
                             XMVECTOR t_interpolatedScale = XMVectorLerp(t_scale0, t_scale1, t_lerpPercent);
                             XMVECTOR t_interpolatedPosition = XMVectorLerp(t_position0, t_position1, t_lerpPercent);
-                            XMVECTOR t_interpolatedQuaternion = XMVectorLerp(t_quaternion0, t_quaternion1, t_lerpPercent);
+                            XMVECTOR t_interpolatedQuaternion = XMQuaternionSlerp(t_quaternion0, t_quaternion1, t_lerpPercent);
 
                             // Get a zeroVector for rotation orientation.
                             XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
                             // Store the matrix in the inparameter. Use the XMMatrixAffineTransformation to get a matrix from the vectors we have
                             // created.
+                            // t_interpolatedScale = XMLoadFloat3(&XMFLOAT3( 1.0f, 1.0f, 1.0f));
                             XMStoreFloat4x4(&p_matrix, XMMatrixAffineTransformation(t_interpolatedScale, t_zero, t_interpolatedQuaternion, t_interpolatedPosition));
 
                             break;

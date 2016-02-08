@@ -89,17 +89,18 @@ namespace Doremi
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(j);
-                    t_skeletalAnimationComponent->timePosition += (float)p_dt;
+                    t_skeletalAnimationComponent->timePosition += p_dt;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
                     if(t_skeletalAnimationComponent->timePosition >
                        t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName))
                     {
                         t_skeletalAnimationComponent->timePosition = 0.0f;
                     }
+
                     int t_numberOfTransformationMatrices = t_skeletalAnimationComponent->skeletalInformation->GetBoneCount();
                     std::vector<DirectX::XMFLOAT4X4> t_finalTransformations(t_numberOfTransformationMatrices);
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().GetFinalTransforms(
-                        t_skeletalAnimationComponent->clipName, t_skeletalAnimationComponent->timePosition, t_finalTransformations,
+                        t_skeletalAnimationComponent->clipName, (float)t_skeletalAnimationComponent->timePosition, t_finalTransformations,
                         t_skeletalAnimationComponent->skeletalInformation);
 
                     // TODOLH ANIM use transformations!
