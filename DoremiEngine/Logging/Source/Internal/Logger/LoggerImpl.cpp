@@ -153,8 +153,6 @@ namespace DoremiEngine
             ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
             startupInfo.cb = sizeof(STARTUPINFO);
 
-            // TODORT
-            // TODOXX
             const std::string applicationPath = std::string(p_workingDirectory + Constants::LOGGING_PROCESS_NAME);
 
             if(!CreateProcess(String::s2ws(applicationPath).c_str(), NULL, 0, 0, 0, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &startupInfo, &processInformation))
