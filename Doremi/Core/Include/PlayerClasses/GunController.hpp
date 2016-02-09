@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
 namespace DoremiEngine
 {
@@ -19,9 +19,9 @@ namespace Doremi
             GunController();
             virtual ~GunController();
 
-            void StartFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void StartFireGun(EntityID p_entityID, const DoremiEngine::Core::SharedContext& p_sharedContext);
 
-            void StopFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void StopFireGun(EntityID p_entityID, const DoremiEngine::Core::SharedContext& p_sharedContext);
 
 
             void Update(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);

@@ -31,18 +31,16 @@ namespace Doremi
         GunController::GunController() {}
         GunController::~GunController() {}
 
-        void GunController::StartFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void GunController::StartFireGun(EntityID p_entityID, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_active = true;
-            p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_player->m_playerEntityID,
-                                                                                        GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data);
+            GetComponent<ParticlePressureComponent>(p_entityID)->data.m_active = true;
+            p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_entityID, GetComponent<ParticlePressureComponent>(p_entityID)->data);
         }
 
-        void GunController::StopFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void GunController::StopFireGun(EntityID p_entityID, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_active = false;
-            p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_player->m_playerEntityID,
-                                                                                        GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data);
+            GetComponent<ParticlePressureComponent>(p_entityID)->data.m_active = false;
+            p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_entityID, GetComponent<ParticlePressureComponent>(p_entityID)->data);
         }
 
         void GunController::Update(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext)

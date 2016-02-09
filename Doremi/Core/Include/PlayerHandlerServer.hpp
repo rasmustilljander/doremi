@@ -7,6 +7,7 @@ namespace Doremi
     {
         class NetworkEventSender;
         class NetworkPriorityHandler;
+        struct GunFireToggleEvent;
 
         /**
             TODOCM doc
@@ -91,6 +92,7 @@ namespace Doremi
                 TODOCM doc
             */
             void QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawn);
+            void QueueGunFireToggleEventToPlayers(GunFireToggleEvent* t_gunFireToggleEvent);
         };
     }
 }

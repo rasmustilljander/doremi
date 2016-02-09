@@ -24,6 +24,7 @@
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 
 /// Engine
 // AI
@@ -337,7 +338,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                InputHandlerServer* inputHandler = (InputHandlerServer*)iter->second->m_inputHandler;
+                InputHandler* inputHandler = iter->second->m_inputHandler;
 
                 EntityID entityID = iter->second->m_playerEntityID;
                 // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
@@ -348,11 +349,15 @@ namespace Doremi
 
                     if(inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick))
                     {
-                        m_gunController.StartFireGun(iter->second, m_sharedContext);
+                        m_gunController.StartFireGun(entityID, m_sharedContext);
+                        GunFireToggleEvent* gunFireEvent = new GunFireToggleEvent(iter->second->m_playerEntityID, true);
+                        EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
                     }
                     else if(inputHandler->CheckForRelease((int)UserCommandPlaying::LeftClick))
                     {
-                        m_gunController.StopFireGun(iter->second, m_sharedContext);
+                        m_gunController.StopFireGun(entityID, m_sharedContext);
+                        GunFireToggleEvent* gunFireEvent = new GunFireToggleEvent(iter->second->m_playerEntityID, false);
+                        EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
                     }
                 }
             }

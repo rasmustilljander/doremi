@@ -17,6 +17,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -267,6 +268,23 @@ namespace Doremi
             m_allQueuedEvents.push_back(new PlayerRespawnEvent(*p_playerRespawnEvent));
         }
 
+        void PlayerHandlerServer::QueueGunFireToggleEventToPlayers(GunFireToggleEvent* t_gunFireToggleEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                if(iter->second->m_playerEntityID == t_gunFireToggleEvent->entityID)
+                {
+                    continue;
+                }
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new GunFireToggleEvent(*t_gunFireToggleEvent));
+            }
+
+            // Save it for later joins
+            m_allQueuedEvents.push_back(new GunFireToggleEvent(*t_gunFireToggleEvent));
+        }
+
         void PlayerHandlerServer::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -295,6 +313,14 @@ namespace Doremi
 
                     // Queue the event to all players
                     QueuePlayerRespawnEventToPlayers(t_playerRespawnEvent);
+
+                    break;
+                }
+                case Doremi::Core::EventType::GunFireToggle:
+                {
+                    GunFireToggleEvent* t_gunFireToggleEvent = static_cast<GunFireToggleEvent*>(p_event);
+
+                    QueueGunFireToggleEventToPlayers(t_gunFireToggleEvent);
 
                     break;
                 }
