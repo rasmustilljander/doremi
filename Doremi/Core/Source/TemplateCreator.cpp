@@ -625,6 +625,12 @@ namespace Doremi
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
+            // Pressure particle comp
+            ParticlePressureComponent* particleComp = new ParticlePressureComponent();
+            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
+            t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::NetworkPlayerEntity, t_avatarBlueprint);
 

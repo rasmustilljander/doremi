@@ -88,9 +88,12 @@ namespace Doremi
             bool CheckBitMaskInputFromGame(int p_bitMask);
 
             /**
-                Check if one key is pressed and returns true when the key is first pressed. The next check if the key still is pressed will return a false.
+                Check if one key is pressed and returns true when the key is first pressed. The next check if the key still is pressed will return a
+               false.
             */
             bool CheckForOnePress(int p_bitMask);
+
+            bool CheckForRelease(int p_bitMask);
 
             /*
                 Returns the keys being pressed.

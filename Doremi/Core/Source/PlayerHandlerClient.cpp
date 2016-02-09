@@ -55,6 +55,7 @@ namespace Doremi
             TIME_FUNCTION_START
             UpdatePlayerPositions();
             UpdatePlayerRotationsClient();
+            UpdateFiring();
             TIME_FUNCTION_STOP
         }
 
