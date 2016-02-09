@@ -131,7 +131,7 @@ namespace DoremiEngine
                 XMFLOAT3 velocity = XMFLOAT3(velocities[i].x, velocities[i].y, velocities[i].z);
                 XMVECTOR velVec = XMLoadFloat3(&velocity);
                 XMVECTOR posVec = XMLoadFloat3(&position);
-                posVec -= velVec;
+                // posVec -= velVec; this should be necessary but somehow it isn't. Possibly related to m_this.size?
                 velVec = XMVector3Normalize(velVec);
                 XMStoreFloat3(&velocity, velVec); // TODOJB Remove normalization once it's fixed in CastRay
                 XMStoreFloat3(&position, posVec);
