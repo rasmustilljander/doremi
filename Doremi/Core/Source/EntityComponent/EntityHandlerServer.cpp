@@ -10,7 +10,7 @@ namespace Doremi
 {
     namespace Core
     {
-        EntityHandlerServer::EntityHandlerServer() 
+        EntityHandlerServer::EntityHandlerServer()
         {
             // Subscribing on remove entity
             EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
