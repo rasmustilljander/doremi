@@ -9,6 +9,7 @@ namespace Doremi
         {
             dynamicSphere,
             dynamicBox,
+            dynamicCapsule,
             staticBox,
             staticSphere,
             mesh,
@@ -28,8 +29,10 @@ namespace Doremi
         {
             // Used for boxes
             XMFLOAT3 boxDims;
-            // Used for spheres
-            float sphereRadius;
+            // Used for spheres and capsule
+            float radius;
+            // Used only for capsule
+            float height;
             RigidBodyGeometry geometry;
             RigidBodyFlags flags = RigidBodyFlags::none;
         };

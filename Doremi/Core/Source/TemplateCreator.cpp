@@ -166,8 +166,9 @@ namespace Doremi
 
             // Extra drain and rigid comp
             RigidBodyComponent* rigidComp = new RigidBodyComponent();
-            rigidComp->sphereRadius = 4;
-            rigidComp->geometry = RigidBodyGeometry::dynamicSphere;
+            rigidComp->radius = 5;
+            rigidComp->height = 5;
+            rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
             rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
             blueprint[ComponentType::RigidBody] = rigidComp;
             blueprint[ComponentType::ExtraDrain];
