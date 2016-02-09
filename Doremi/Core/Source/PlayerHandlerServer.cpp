@@ -6,6 +6,7 @@
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
@@ -209,6 +210,12 @@ namespace Doremi
 
         void PlayerHandlerServer::QueueEntityCreatedEventToPlayers(EntityCreatedEvent* p_entityCreatedEvent)
         {
+            // If object have network component, we add it to the all players
+            if(EntityHandler::GetInstance().HasComponents(p_entityCreatedEvent->entityID, static_cast<int>(ComponentType::NetworkObject)))
+            {
+                AddNetObjectToPlayers(p_entityCreatedEvent->entityID);
+            }
+
             // Go through all players
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
