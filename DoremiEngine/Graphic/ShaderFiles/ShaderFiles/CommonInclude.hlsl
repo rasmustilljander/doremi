@@ -1,5 +1,7 @@
 #define NUM_LIGHTS 6
 #define BLOCK_SIZE 16
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 800
 
 struct Material
 {

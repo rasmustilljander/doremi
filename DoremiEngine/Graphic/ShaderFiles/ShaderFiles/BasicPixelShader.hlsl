@@ -10,6 +10,12 @@ struct PixelInputType
     float3 cameraPos : CAMERAPOS;
 };
 
+struct PixelOutputType
+{
+    float4 diffuse : SV_Target0;
+    float4 glow : SV_Target1;
+};
+
 struct LightGridInfo
 {
     uint offset;
@@ -45,6 +51,8 @@ StructuredBuffer<uint> o_LightIndexList : register(t1);
 StructuredBuffer<uint> t_LightIndexList : register(t2);
 StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
 StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
+
+RWTexture2D<float4> glowMap : register(u1);
 
 cbuffer LightInfo : register(b0)
 {
@@ -105,23 +113,27 @@ float3 CalcPointLight(PixelInputType input, Light l)
 
 float4 PS_main(PixelInputType input) : SV_TARGET
 {
+    PixelOutputType output;
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
     screenPos.y = -screenPos.y;
     screenPos = (screenPos + 1) * 400;
 
+    glowMap[screenPos] = float4(0, 0, 0, 0);
+
     //calculate which thread group this pixel was in the compute shader stage
-    float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16); 
+    float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
     float groupID = groupID2.x + (groupID2.y * 50);
     //extract data from light grid
     int index = o_LightGrid[groupID].offset;
     int value = o_LightGrid[groupID].value;
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
-    //float4 texcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
+    float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
+
     texcolor = saturate(texcolor);
     //return texcolor;
     //texcolor = float4(0.9, 0.9, 0.9, 1);
-    
+
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
@@ -137,7 +149,17 @@ float4 PS_main(PixelInputType input) : SV_TARGET
             rgb += CalcPointLight(input, l);
 
     }
+    if (glowcolor.r < 0.5 && glowcolor.g < 0.5 && glowcolor.b < 0.5)
+        output.glow = float4(0, 0, 0, 0);
+    else
+        output.glow = texcolor;
+
+    output.diffuse = float4(rgb, 1) * glowcolor * 3;
+
+    //return output;
+
     return float4(rgb, 1) * texcolor * 3;
+    //return glowcolor;
     //return float4(screenPos.x/800.f, screenPos.y/800.f, 0, 1);
     //return float4((t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, 1);
     //return float4(4.f/6.f, 4.f/6.f, 4.f/6.f, 1);
