@@ -2,6 +2,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 #include <EntityComponent/EntityManager.hpp>
 
 namespace Doremi
@@ -27,7 +28,11 @@ namespace Doremi
 
         EntityHandlerClient::~EntityHandlerClient() {}
 
-        void EntityHandlerClient::RemoveEntity(int p_entityID) { EntityManager::GetInstance()->RemoveEntity(p_entityID); }
+        void EntityHandlerClient::RemoveEntity(int p_entityID)
+        {
+            EntityFactory::GetInstance()->ScrapEntity(p_entityID);
+            EntityManager::GetInstance()->RemoveEntity(p_entityID);
+        }
 
         void EntityHandlerClient::OnEvent(Event* p_event)
         {
