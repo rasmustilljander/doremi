@@ -154,7 +154,7 @@ namespace DoremiEngine
         void ParticleEmitter::UpdateParticleEmission(float p_dt)
         {
             // Factor to cause some more spray
-            float sprayFactor = 0.1;
+            float sprayFactor = 0.1; // TODOCONFIG
             if(m_this.m_active)
             {
                 // Update time since last particle wave was spawned
