@@ -31,6 +31,9 @@
 #include <iostream> // TODOCM remove after test
 #include <SequenceMath.hpp>
 
+// Temporary should be removed
+#include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
+
 namespace Doremi
 {
     namespace Core
@@ -238,7 +241,24 @@ namespace Doremi
 
                 for(size_t i = 0; i < numPlayers; ++i)
                 {
-                    entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity);
+                    uint32_t entityID = entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity);
+
+                    if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
+                    {
+                        ParticlePressureComponent* particleComp = EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(entityID);
+                        particleComp->data.m_active = false;
+                        particleComp->data.m_density = 2.0f;
+                        particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
+                        particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->rotation;
+                        particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
+                        particleComp->data.m_emissionRate = 0.05;
+                        particleComp->data.m_launchPressure = 100;
+                        particleComp->data.m_numParticlesX = 5;
+                        particleComp->data.m_numParticlesY = 1;
+                        particleComp->data.m_size = 1;
+                        particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
+                        m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, particleComp->data);
+                    }
                 }
 
                 // TODOCM add real loadworld code here
