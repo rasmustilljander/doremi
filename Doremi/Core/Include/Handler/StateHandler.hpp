@@ -20,7 +20,7 @@ namespace Doremi
 {
     namespace Core
     {
-        struct TriggerEventStruct;
+        struct TriggerEvent;
         class InputHandler;
         class StateHandler : public Subscriber
         {
@@ -36,7 +36,7 @@ namespace Doremi
             StateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             static StateHandler* m_singleton;
             void OnEvent(Event* p_event) override;
-            void CheckTrigger(TriggerEventStruct* p_event);
+            void CheckTrigger(TriggerEvent* p_event);
             DoremiStates m_state;
         };
     }

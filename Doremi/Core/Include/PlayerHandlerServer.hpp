@@ -86,6 +86,11 @@ namespace Doremi
                 TODOCM doc
             */
             void QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent);
+
+            /**
+                TODOCM doc
+            */
+            void QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawn);
         };
     }
 }

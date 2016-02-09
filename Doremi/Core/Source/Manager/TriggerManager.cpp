@@ -46,10 +46,9 @@ namespace Doremi
                         if(i == collisionTriggerPairs[k].firstID)
                         {
                             // setting up an event to broadcast the triggertype from the component trigger.
-                            TriggerEventStruct* myEvent = new TriggerEventStruct();
                             TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(i);
-                            myEvent->triggerType = triggComp->triggerType;
-                            myEvent->entityID = collisionTriggerPairs[k].secondID;
+                            TriggerEvent* myEvent =
+                                new TriggerEvent(triggComp->triggerType, collisionTriggerPairs[k].secondID, collisionTriggerPairs[k].firstID);
                             EventHandler::GetInstance()->BroadcastEvent(myEvent);
                         }
                         else
