@@ -41,6 +41,7 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
+#include <DoremiEngine/Physics/Include/FluidManager.hpp>
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
@@ -69,6 +70,25 @@ namespace Doremi
         {
             delete mSingleton;
             mSingleton = nullptr;
+        }
+
+        void EntityFactory::ScrapEntity(int p_entityID)
+        {
+            DoremiEngine::Physics::PhysicsModule& physicsModule = m_sharedContext.GetPhysicsModule();
+            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            ComponentTable* tComponentTable = tComponentTable->GetInstance();
+            if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::RigidBody))
+            {
+                physicsModule.GetRigidBodyManager().RemoveBody(p_entityID);
+            }
+            if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::CharacterController))
+            {
+                physicsModule.GetCharacterControlManager().RemoveCharacterController(p_entityID);
+            }
+            if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::PressureParticleSystem))
+            {
+                // physicsModule.GetFluidManager() //Remove particle system here TODOJB actually do this
+            }
         }
 
         EntityFactory::EntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
