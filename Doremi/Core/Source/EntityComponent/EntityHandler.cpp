@@ -55,15 +55,13 @@ namespace Doremi
 
         void EntityHandler::RemoveComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask); }
 
-        void EntityHandler::RemoveEntity(int p_entityID) { EntityManager::GetInstance()->RemoveEntity(p_entityID); }
-
         void EntityHandler::OnEvent(Event* p_event)
         {
             if(p_event->eventType == EventType::RemoveEntity)
             {
                 RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
 
-                EntityHandler::RemoveEntity(p_removeEvent->entityID);
+                RemoveEntity(p_removeEvent->entityID);
             }
         }
     }

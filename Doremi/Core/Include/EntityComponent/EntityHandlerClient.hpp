@@ -15,6 +15,11 @@ namespace Doremi
             static void StartupEntityHandlerClient();
 
             /**
+            Removes the entire entity at the specific location
+            */
+            void RemoveEntity(int p_entityID);
+
+            /**
             Checks events for add and remove objects
             */
             void OnEvent(Event* p_event) override;

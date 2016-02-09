@@ -47,6 +47,7 @@
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
+#include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
 
 // other
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
@@ -79,11 +80,9 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
 
-<<<<<<< HEAD
+
         Core::EntityFactory::StartupEntityFactory(sharedContext);
-=======
         Core::EventHandlerServer::StartupEventHandlerServer();
->>>>>>> Refactor Eventhandler and Playerhandler
         Core::EntityHandlerServer::StartupEntityHandlerServer();
         Core::PlayerHandlerServer::StartPlayerHandlerServer(sharedContext);
 

@@ -4,6 +4,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/SequenceMath.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/Event.hpp>
+#include <algorithm>
 #include <iostream>
 
 namespace Doremi
@@ -29,7 +30,7 @@ namespace Doremi
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
-            numOfRemoves = min(numOfRemoves, m_bufferedQueuesOfEvent.size());
+            numOfRemoves = std::min(static_cast<uint32_t>(numOfRemoves), m_bufferedQueuesOfEvent.size());
 
 
             // TODOCM check if you can remove this in one call

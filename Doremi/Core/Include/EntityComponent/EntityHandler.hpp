@@ -55,7 +55,7 @@ namespace Doremi
             /**
                 Removes the entire entity at the specific location
             */
-            virtual void RemoveEntity(int p_entityID);
+            virtual void RemoveEntity(int p_entityID) = 0;
 
             /**
                 Checks events for add and remove objects

@@ -7,6 +7,7 @@
 
 // Standard library
 #include <iostream>
+#include <algorithm>
 
 
 namespace Doremi
@@ -41,7 +42,7 @@ namespace Doremi
         {
             m_writtenBits = 0;
 
-            m_currentByte = min(m_bufferSize, p_bytePosition);
+            m_currentByte = std::min(static_cast<uint32_t>(m_bufferSize), p_bytePosition);
             m_readBits = 0;
         }
 
