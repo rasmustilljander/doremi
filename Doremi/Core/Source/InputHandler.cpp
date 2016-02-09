@@ -55,6 +55,27 @@ namespace Doremi
             return false;
         }
 
+        bool InputHandler::CheckForRelease(int p_bitMask)
+        {
+            // Check if we pressed previous frame
+            if((m_lastUpdateMaskWithInput & p_bitMask) == p_bitMask)
+            {
+                // If we didn't press this frame, it's a release
+                if(!CheckBitMaskInputFromGame(p_bitMask))
+                {
+                    return true;
+                }
+                else // We still be pressin
+                {
+                    return false;
+                }
+            }
+            else // We didn't press to begin with
+            {
+                return false;
+            }
+        }
+
         uint32_t InputHandler::GetInputBitMask() { return m_maskWithInput; }
     }
 }

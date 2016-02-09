@@ -19,7 +19,12 @@ namespace Doremi
             GunController();
             virtual ~GunController();
 
-            void FireGun(int p_playerID, Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void StartFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            void StopFireGun(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+
+            void Update(Player* p_player, const DoremiEngine::Core::SharedContext& p_sharedContext);
         };
     }
 }

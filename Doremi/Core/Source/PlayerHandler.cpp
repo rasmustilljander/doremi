@@ -269,22 +269,6 @@ namespace Doremi
                         XMStoreFloat4(&transComp->rotation, orientationVec);
                     }
                 }
-
-                if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
-                {
-                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
-                    {
-                        m_gunController.FireGun(entityID, iter->second, m_sharedContext);
-                    }
-                    else
-                    {
-                        // Set the particle emitter to not be active if we are not firing
-                        GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
-                        m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID,
-                                                                                                    GetComponent<ParticlePressureComponent>(entityID)->data);
-                    }
-                }
-
                 // Fire weapon TODOJB move this someplace that makes sense. Also fix input. Scroll wheel is silly...
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
                 {
@@ -359,16 +343,16 @@ namespace Doremi
                 // Check if player fires the gun. TODOJB strange to have it in this method? Refactor into overall UpdatePlayerServer method?
                 if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
                 {
-                    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
+                    // Update position of emitter
+                    m_gunController.Update(iter->second, m_sharedContext);
+
+                    if(inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick))
                     {
-                        m_gunController.FireGun(entityID, iter->second, m_sharedContext);
+                        m_gunController.StartFireGun(iter->second, m_sharedContext);
                     }
-                    else
+                    else if(inputHandler->CheckForRelease((int)UserCommandPlaying::LeftClick))
                     {
-                        // Set the particle emitter to not be active if we are not firing
-                        GetComponent<ParticlePressureComponent>(entityID)->data.m_active = false;
-                        m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(entityID,
-                                                                                                    GetComponent<ParticlePressureComponent>(entityID)->data);
+                        m_gunController.StopFireGun(iter->second, m_sharedContext);
                     }
                 }
             }
