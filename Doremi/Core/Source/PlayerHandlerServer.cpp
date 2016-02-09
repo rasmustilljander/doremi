@@ -15,6 +15,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -45,6 +46,7 @@ namespace Doremi
             EventHandler* t_EventHandler = EventHandler::GetInstance();
             t_EventHandler->Subscribe(EventType::RemoveEntity, this);
             t_EventHandler->Subscribe(EventType::EntityCreated, this);
+            t_EventHandler->Subscribe(EventType::PlayerRespawn, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
@@ -245,6 +247,19 @@ namespace Doremi
             m_allQueuedEvents.push_back(new RemoveEntityEvent(*p_removeEvent));
         }
 
+        void PlayerHandlerServer::QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawnEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new PlayerRespawnEvent(*p_playerRespawnEvent));
+            }
+
+            // Save it for later joins
+            m_allQueuedEvents.push_back(new PlayerRespawnEvent(*p_playerRespawnEvent));
+        }
+
         void PlayerHandlerServer::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -253,34 +268,26 @@ namespace Doremi
                 {
                     EntityCreatedEvent* t_entityCreatedEvent = static_cast<EntityCreatedEvent*>(p_event);
 
-                    // If the object is a Netobject we need to add those components to each seperate player, a solution by the cause that we want
-                    // dynamic amount of players
-                    // and individual components for each of them
-                    // if(EntityHandler::GetInstance().HasComponents(t_entityCreatedEvent->entityID, (int)ComponentType::NetworkObject))
-                    //{
-                    //    AddNetObjectToPlayers(t_entityCreatedEvent->entityID);
-                    //}
-
-                    // QueueAddObjectToPlayers(t_entityCreatedEvent->entityID, (uint32_t)t_entityCreatedEvent->bluepirnt,
-                    //                        GetComponent<TransformComponent>(t_entityCreatedEvent->entityID)->position);
-
-
                     // Send the event to all players
                     QueueEntityCreatedEventToPlayers(t_entityCreatedEvent);
-
 
                     break;
                 }
                 case Doremi::Core::EventType::RemoveEntity:
                 {
-
                     RemoveEntityEvent* t_removeEvent = static_cast<RemoveEntityEvent*>(p_event);
-
-                    // QueueRemoveObjectToPlayers(t_removeEvent->entityID);
-                    // m_sinceGameStartAddRemoves.push_back(AddRemoveStruct(false, p_removeEvent->entityID));
 
                     // Queue the event to all players
                     QueueRemoveEntityEventToPlayers(t_removeEvent);
+
+                    break;
+                }
+                case Doremi::Core::EventType::PlayerRespawn:
+                {
+                    PlayerRespawnEvent* t_playerRespawnEvent = static_cast<PlayerRespawnEvent*>(p_event);
+
+                    // Queue the event to all players
+                    QueuePlayerRespawnEventToPlayers(t_playerRespawnEvent);
 
                     break;
                 }

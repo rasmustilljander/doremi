@@ -27,6 +27,7 @@ namespace Doremi
 
         struct EntityCreatedEvent;
         struct RemoveEntityEvent;
+        struct PlayerRespawnEvent;
 
 
         /**

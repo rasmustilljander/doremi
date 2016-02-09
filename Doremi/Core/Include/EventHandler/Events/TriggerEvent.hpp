@@ -1,4 +1,5 @@
 #pragma once
+#include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <EventHandler/Events/Event.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TriggerComponent.hpp>
 /**
@@ -9,9 +10,14 @@ namespace Doremi
 {
     namespace Core
     {
-        struct TriggerEventStruct : public Event
+        struct TriggerEvent : public Event
         {
-            TriggerEventStruct() : Event(EventType::Trigger) { entityID = 0, triggerType = TriggerType::NoTrigger; }
+            TriggerEvent() : Event(EventType::Trigger), triggerEntityID(0), objectEntityID(0), triggerType(TriggerType::NoTrigger) {}
+
+            TriggerEvent(TriggerType p_triggerType, EntityID p_objectEntityID, EntityID p_triggerEntityID)
+                : Event(EventType::Trigger), objectEntityID(p_objectEntityID), triggerEntityID(p_triggerEntityID), triggerType(p_triggerType)
+            {
+            }
 
             /**
                 Write object to stream
@@ -23,7 +29,8 @@ namespace Doremi
             */
             void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
 
-            int entityID;
+            EntityID triggerEntityID;
+            EntityID objectEntityID;
             TriggerType triggerType;
         };
     }

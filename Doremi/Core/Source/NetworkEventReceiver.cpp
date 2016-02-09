@@ -12,6 +12,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 
 #include <iostream>
 
@@ -63,7 +64,7 @@ namespace Doremi
 
                     break;
                 case Doremi::Core::EventType::Trigger:
-                    p_newEvent = new TriggerEventStruct();
+                    p_newEvent = new TriggerEvent();
 
                     break;
                 case Doremi::Core::EventType::ChangeMenuState:
@@ -74,6 +75,8 @@ namespace Doremi
                     p_newEvent = new DamageTakenEvent();
 
                     break;
+                case Doremi::Core::EventType::PlayerRespawn:
+                    p_newEvent = new PlayerRespawnEvent();
                 default:
                     p_newEvent = new ExampleEvent();
                     break;

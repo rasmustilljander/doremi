@@ -65,11 +65,11 @@ namespace Doremi
             }
             else if(p_event->eventType == EventType::Trigger)
             {
-                TriggerEventStruct* realEvent = static_cast<TriggerEventStruct*>(p_event);
+                TriggerEvent* realEvent = static_cast<TriggerEvent*>(p_event);
                 CheckTrigger(realEvent);
             }
         }
-        void StateHandler::CheckTrigger(TriggerEventStruct* p_event)
+        void StateHandler::CheckTrigger(TriggerEvent* p_event)
         {
             // Does this work?
             TriggerType type = p_event->triggerType;
