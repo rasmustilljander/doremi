@@ -29,7 +29,7 @@
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
 
 // Events
-#include <EventHandler/Events/EntityCreatedEvent.hpp>
+#include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
 // Handlers
 #include <EventHandler/EventHandler.hpp>
 
@@ -215,7 +215,7 @@ namespace Doremi
                         fieldModule.CreateNewActor(transComp->position, thisComp->charge, thisComp->range, thisComp->isStatic, thisComp->type);
                     if(false) // thisComp->type == DoremiEngine::AI::AIActorType::Enemy)
                     {
-                        EntityCreatedEvent* AIGroupActorCreated = new Core::EntityCreatedEvent(p_entityID, Core::EventType::AiGroupActorCreation);
+                        SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(p_entityID, Core::EventType::AiGroupActorCreation);
                         EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     }
                 }

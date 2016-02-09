@@ -121,7 +121,7 @@ namespace Doremi
 
                                 if(drainHitHpComp->currentHealth <= 0)
                                 {
-                                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
+                                    // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
                                     EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
                                     // DEBUG
                                     // std::cout << "Enemy DED!!!" << std::endl;

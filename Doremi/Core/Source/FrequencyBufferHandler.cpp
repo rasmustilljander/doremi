@@ -2,8 +2,9 @@
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <SequenceMath.hpp>
 #include <AudioHandler.hpp>
+#include <algorithm>
 #include <iostream>
-#include <Windows.h>
+
 
 namespace Doremi
 {
@@ -65,7 +66,7 @@ namespace Doremi
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
-            numOfRemoves = min(numOfRemoves, m_bufferedFrequencies.size());
+            numOfRemoves = std::min(static_cast<uint32_t>(numOfRemoves), m_bufferedFrequencies.size());
 
             // Check if we can remove (error check), then remove the number of accs in difference
             if(numOfRemoves <= m_bufferedFrequencies.size())
