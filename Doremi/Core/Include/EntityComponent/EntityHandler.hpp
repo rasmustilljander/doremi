@@ -43,6 +43,13 @@ namespace Doremi
             */
             virtual int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
 
+            /**
+                Creates an entity according to the provided blueprint id
+                Also returns EntityID of newly created entity
+            */
+            virtual int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale);
+
+
             /** Returns desired component. Example: GetComponentFromStorage<ComponentName>(id);*/
             template <class T> T* GetComponentFromStorage(EntityID p_id) { return GetComponent<T>(p_id); }
 

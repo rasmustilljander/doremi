@@ -49,6 +49,15 @@ namespace Doremi
             return outID;
         }
 
+        int EntityHandlerServer::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale)
+        {
+            EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation, p_scale);
+
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
+
+            return outID;
+        }
+
         void EntityHandlerServer::RemoveEntity(int p_entityID) { EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(p_entityID)); }
 
         void EntityHandlerServer::OnEvent(Event* p_event)

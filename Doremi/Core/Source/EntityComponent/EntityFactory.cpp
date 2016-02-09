@@ -318,6 +318,7 @@ namespace Doremi
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
             transComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            transComp->scale = XMFLOAT3(0, 0, 0);
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
@@ -338,6 +339,27 @@ namespace Doremi
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
             transComp->rotation = p_orientation;
+            transComp->scale = XMFLOAT3(1, 1, 1);
+
+            memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
+            memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
+            *GetComponent<TransformComponentSnapshotNext>(tNewEntityID) = TransformComponentSnapshotNext(*GetComponent<TransformComponentNext>(tNewEntityID));
+            *GetComponent<TransformComponentSnapshotPrevious>(tNewEntityID) =
+                TransformComponentSnapshotPrevious(*GetComponent<TransformComponentNext>(tNewEntityID));
+
+            CreateComponents(tNewEntityID, p_blueprintID);
+
+            return tNewEntityID;
+        }
+        EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale)
+        {
+            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            EntityID tNewEntityID = tEntityManager->AddEntity();
+
+            TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
+            transComp->position = p_position;
+            transComp->rotation = p_orientation;
+            transComp->scale = p_scale;
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));

@@ -47,6 +47,12 @@ namespace Doremi
             return EntityFactory::GetInstance()->CreateEntity(p_blueprintID, p_position, p_orientation);
         }
 
+        int EntityHandler::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale)
+        {
+            return EntityFactory::GetInstance()->CreateEntity(p_blueprintID, p_position, p_orientation, p_scale);
+        }
+
+
         void EntityHandler::AddComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->AddComponent(p_entityID, p_mask); }
 
         void EntityHandler::RemoveComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask); }

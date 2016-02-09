@@ -59,6 +59,11 @@ namespace Doremi
             EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
 
             /**
+            TODOCM doc
+            */
+            EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale);
+
+            /**
             Clears the entity of all values which cannot be ignored (physical bodies mostly).
             WARNING! Do NOT call this method manually! Only to be used internally by entity
             handler*/
