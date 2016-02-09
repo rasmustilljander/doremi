@@ -145,7 +145,7 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager); // Must be after movement
         m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
 
-        // m_managers.push_back(t_extraDrainManager);
+        m_graphicalManagers.push_back(t_extraDrainManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
         // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
