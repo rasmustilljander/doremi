@@ -224,7 +224,7 @@ namespace DoremiEngine
             // Hard coded flag so that we trigger the onSleep and onAwake callbacks for all dynamic bodies
             body->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
             // Create a shape for the body
-            body->createShape(PxCapsuleGeometry(p_radius, p_height), *m_utils.m_physics->createMaterial(0, 0, 0));
+            body->createShape(PxCapsuleGeometry(p_radius, p_height / 2), *m_utils.m_physics->createMaterial(0, 0, 0));
             // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
             PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
             // Add the now fully created body to the scene
