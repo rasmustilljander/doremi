@@ -153,6 +153,7 @@ namespace DoremiEngine
         void CharacterControlManagerImpl::RemoveCharacterController(int p_bodyID)
         {
             // Erases the character controller in both maps.
+            m_controllers[p_bodyID]->release();
             m_IDsByControllers.erase(m_controllers[p_bodyID]);
             m_controllers.erase(p_bodyID);
         }
