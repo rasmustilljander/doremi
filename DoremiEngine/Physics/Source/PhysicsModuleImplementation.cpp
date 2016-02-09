@@ -85,9 +85,13 @@ namespace DoremiEngine
 
 
             // Filter out collisions with ignore-bodies REALLY UGLY TODOJB Improve
-            if(filterData0.word3 == 1 || filterData1.word3 == 1) // been an ignore collision
+            if(filterData0.word3 == 1) // been an ignore collision
             {
-                if(filterData0.word0 == 1 || filterData1.word0 == 1) return PxFilterFlag::eKILL;
+                if(filterData0.word0 == 1) return PxFilterFlag::eKILL;
+            }
+            else if(filterData1.word3 == 1)
+            {
+                if(filterData0.word0 == 1) return PxFilterFlag::eKILL;
             }
 
             // Trigger collisions
