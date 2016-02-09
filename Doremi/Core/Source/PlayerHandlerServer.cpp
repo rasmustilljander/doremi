@@ -207,7 +207,21 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(*p_entityCreatedEvent));
+                Blueprints blueprint = p_entityCreatedEvent->bluepirnt;
+                // If it is ourselves, skip
+                // TODOCM remove this when we introduce late join or something
+                if(p_entityCreatedEvent->entityID == iter->second->m_playerEntityID)
+                {
+                    continue;
+                }
+
+                // If we create a player entity, we want to create a network player on the clients
+                if(blueprint == Blueprints::PlayerEntity)
+                {
+                    blueprint = Blueprints::NetworkPlayerEntity;
+                }
+                (static_cast<PlayerServer*>(iter->second))
+                    ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint, p_entityCreatedEvent->position));
             }
 
             // Save it for later joins

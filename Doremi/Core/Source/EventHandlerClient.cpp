@@ -4,6 +4,8 @@
 #include <EventHandler/EventHandlerClient.hpp>
 #include <EventHandler/Subscriber.hpp>
 
+#include <iostream>
+
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
@@ -60,7 +62,6 @@ namespace Doremi
                     }
                     // Cleanup all data in event payload
                 }
-
                 delete m_eventBox[i];
             }
 

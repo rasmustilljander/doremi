@@ -46,6 +46,7 @@
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 
+
 namespace Doremi
 {
     namespace Core

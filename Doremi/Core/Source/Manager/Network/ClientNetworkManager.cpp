@@ -321,6 +321,8 @@ namespace Doremi
                 NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
                 ReadOffset += sizeof(uint8_t);
 
+                cout << (uint32_t)NewSnapshot->NumOfObjects << endl;
+
                 // Add objects to snapshot
                 for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
                 {

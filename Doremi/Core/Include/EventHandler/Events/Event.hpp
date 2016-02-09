@@ -12,7 +12,8 @@ namespace Doremi
         enum class EventType
         {
             Undefined,
-            EntityCreated,
+            EntityCreated, // TODO This is currently Created on server, and ToCreate on client, might split in two and convert from one to other in
+            // playerHandler
             RemoveEntity,
             Example, // Only an example
             PlayerCreation,

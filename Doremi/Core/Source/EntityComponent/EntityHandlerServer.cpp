@@ -1,18 +1,14 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandlerServer.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 
 namespace Doremi
 {
     namespace Core
     {
-        EntityHandlerServer::EntityHandlerServer()
-        {
-            // Subscribing on add and remove entity
-            EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
-        }
+        EntityHandlerServer::EntityHandlerServer() {}
 
         EntityHandlerServer::~EntityHandlerServer() {}
 
@@ -37,7 +33,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position);
 
-            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID));
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
 
             return outID;
         }
@@ -46,21 +42,11 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation);
 
-            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID));
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
 
             return outID;
         }
 
         void EntityHandlerServer::RemoveEntity(int p_entityID) { EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(p_entityID)); }
-
-        void EntityHandlerServer::OnEvent(Event* p_event)
-        {
-            if(p_event->eventType == EventType::RemoveEntity)
-            {
-                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
-
-                EntityHandler::RemoveEntity(p_removeEvent->entityID);
-            }
-        }
     }
 }
