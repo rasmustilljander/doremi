@@ -27,59 +27,48 @@ namespace Doremi
         class NetworkEventSender
         {
         public:
-            /**
-                TODOCM doc
-            */
             NetworkEventSender();
 
-            /**
-                TODOCM doc
-            */
             ~NetworkEventSender();
 
-            void AddRemoveQueuedObjects();
-
+            /**
+                Remove buffered events with a acc sequence input
+            */
             void UpdateBufferWithRecievedClientSequenceAcc(uint8_t p_sequence);
 
-
             /**
-                TODOCM doc
+                Queue a event to a frame queue to later be sent
             */
             void QueueEventToFrame(Event* p_frameEvent);
 
-
+            /**
+                Take the frame queu and add it to big buffer
+            */
             void AddFrameQueuedObjectsToBuffer();
 
             /**
-                TODOCM doc
+                Write events to a streamer
             */
-            void QueueRemoveObject(uint32_t p_id);
-
-            /**
-                TODOCM doc
-            */
-            void CheckNewAddRemoves(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
-
             void WriteEvents(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten, bool& p_finished);
 
             /**
-                TODOCM doc
+                Get the latest sequence we're useing
             */
             uint8_t GetNextSequenceUsed();
 
         private:
             /**
-                TODOCM doc
+                Queued events for the current frame
             */
             std::list<Event*> m_frameQueuedEvents;
 
             /**
-                TODOCM doc
+                The sequence we're using
             */
             uint8_t m_nextSequence;
 
             /**
-                TODOCM doc
+                Buffer of framequeued events
             */
             std::list<std::list<Event*>> m_bufferedQueuesOfEvent;
         };

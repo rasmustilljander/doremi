@@ -17,55 +17,48 @@ namespace Doremi
         class NetworkEventReceiver
         {
         public:
-            /**
-                TODOCM doc
-            */
             NetworkEventReceiver();
 
-            /**
-                TODOCM doc
-            */
             ~NetworkEventReceiver();
 
-
             /**
-                TODOCM doc
+                Read events from a streamer and buffer them to a frame
             */
             void ReadEvents(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
 
             /**
-                TODOCM doc
+                Get the next sequence
             */
             uint8_t GetNextSequenceUsed();
 
             /**
-                TODMCM doc
+                Return all eventes queued on server and
             */
             std::list<Event*> GetEventsReceivedFromServer();
 
         private:
             /**
-            TODOCM doc
+                Interpets event from read stream and returns it
             */
             Event* InterpetEvent(NetworkStreamer& p_streamer, uint32_t& op_BytesRead);
 
             /**
-                TODOCM doc
+                Interpet events and remove them, used when we already have used the events
             */
             void InterpetEventAndThrow(NetworkStreamer& p_streamer, uint32_t& op_bitsRead);
 
             /**
-                TODOCM doc
+                Interpet events and queue them to our frame queue
             */
             void InterpetEventAndQueue(NetworkStreamer& p_streamer, uint32_t& op_bitsRead);
 
             /**
-                TODOCM doc
+                Our queued events for the frame
             */
             std::list<Event*> m_frameQueuedEvents;
 
             /**
-                TODOCM doc
+                The sequence we've currently used
             */
             uint8_t m_currentSequence;
         };
