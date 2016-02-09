@@ -268,7 +268,7 @@ namespace Doremi
                 }
                 else if(iter->first == ComponentType::PlatFormPatrolComponent)
                 {
-                    memcpy(GetComponent<ParticlePressureComponent>(p_entityID), iter->second, sizeof(PlatformPatrolComponent));
+                    memcpy(GetComponent<PlatformPatrolComponent>(p_entityID), iter->second, sizeof(PlatformPatrolComponent));
                 }
                 else if(iter->first == ComponentType::Trigger)
                 {
