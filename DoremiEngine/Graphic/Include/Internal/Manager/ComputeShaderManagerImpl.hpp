@@ -61,6 +61,7 @@ namespace DoremiEngine
             T_LIGHTINDEXLIST,
             O_LIGHTGRID,
             T_LIGHTGRID,
+            COLOR_INFO,
 
             NUM_BUFFERS
         };
@@ -78,6 +79,7 @@ namespace DoremiEngine
             ID3D11UnorderedAccessView* GetUAV(int i) override;
             void DispatchFrustum() override;
             void DispatchCulling() override;
+            void DispatchPostEffects() override;
             void CopyCullingData() override;
             void CopyData(BufferType index);
 
@@ -97,6 +99,7 @@ namespace DoremiEngine
             ID3D11Buffer* m_bufferResult[NUM_BUFFERS];
             ComputeShader* m_frustumShader;
             ComputeShader* m_cullingShader;
+            ComputeShader* m_postEffectsShader;
         };
     }
 }

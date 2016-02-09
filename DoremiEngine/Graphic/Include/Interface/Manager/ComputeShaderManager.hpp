@@ -17,6 +17,7 @@ namespace DoremiEngine
             virtual ID3D11UnorderedAccessView* GetUAV(int i) = 0;
             virtual void DispatchFrustum() = 0;
             virtual void DispatchCulling() = 0;
+            virtual void DispatchPostEffects() = 0;
             virtual void CopyCullingData() = 0;
         };
     }

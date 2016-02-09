@@ -85,8 +85,7 @@ void CS_main(ComputeShaderInput input)
     // Calculate min & max depth in threadgroup / tile.
     int2 texCoord = input.dispatchThreadID.xy;
     float fDepth = DepthTextureVS.Load(int3(texCoord, 0)).r;
-    //float2 texCoord = float2((float)input.dispatchThreadID.x/(float)numTrheads.x, (float)input.dispatchThreadID.y / (float)numTrheads.y);
-    //float fDepth = DepthTextureVS.Sample(ObjSamplerState, texCoord);
+
 
     
 
@@ -117,6 +116,7 @@ void CS_main(ComputeShaderInput input)
 
     //render depth to back buffer
     //backbuffer[input.dispatchThreadID.xy] = float4(fMinDepth, 0, fMaxDepth, 1);
+    //backbuffer[input.dispatchThreadID.xy] = float4(fMinDepth, fMinDepth, fMinDepth, 1); b
     //float fMinDepth = 0;
     //float fMaxDepth = 100;
 
@@ -141,7 +141,7 @@ void CS_main(ComputeShaderInput input)
             switch (light.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 50.f}; //TODORK change intensity to light range
+                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 40.f}; //TODORK change intensity to light range
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
