@@ -318,7 +318,7 @@ namespace Doremi
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
             transComp->rotation = XMFLOAT4(0, 0, 0, 1);
-            transComp->scale = XMFLOAT3(0, 0, 0);
+            transComp->scale = XMFLOAT3(1, 1, 1);
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
