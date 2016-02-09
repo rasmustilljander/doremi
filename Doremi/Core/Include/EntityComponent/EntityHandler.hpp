@@ -60,7 +60,7 @@ namespace Doremi
             /**
                 Checks events for add and remove objects
             */
-            virtual void OnEvent(Event* p_event) override;
+            virtual void OnEvent(Event* p_event) = 0;
 
         protected:
             EntityHandler();

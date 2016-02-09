@@ -13,11 +13,7 @@ namespace Doremi
     {
         EntityHandler* EntityHandler::m_singleton = nullptr;
 
-        EntityHandler::EntityHandler()
-        {
-            // Subscribing on remove entity
-            EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
-        }
+        EntityHandler::EntityHandler() {}
 
         EntityHandler::~EntityHandler() {}
 
@@ -54,15 +50,5 @@ namespace Doremi
         void EntityHandler::AddComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->AddComponent(p_entityID, p_mask); }
 
         void EntityHandler::RemoveComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask); }
-
-        void EntityHandler::OnEvent(Event* p_event)
-        {
-            if(p_event->eventType == EventType::RemoveEntity)
-            {
-                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
-
-                RemoveEntity(p_removeEvent->entityID);
-            }
-        }
     }
 }

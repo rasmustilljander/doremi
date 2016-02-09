@@ -41,6 +41,11 @@ namespace Doremi
             */
             void RemoveEntity(int p_entityID) override;
 
+            /**
+                On event for removes
+            */
+            void OnEvent(Event* p_event);
+
 
         private:
             /**
