@@ -1,5 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/LevelLoader.hpp>
+#include <DirectXMath.h>
 
 namespace DoremiEngine
 {
@@ -30,6 +31,15 @@ namespace Doremi
             bool BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;
             void BuildLights();
             void LoadFileInternal(const std::string& p_fileName);
+
+        private:
+            struct TransformInformation
+            {
+                DirectX::XMFLOAT3 position;
+                DirectX::XMFLOAT4 quaternion;
+                DirectX::XMFLOAT3 euler;
+                DirectX::XMFLOAT3 scale;
+            };
         };
     }
 }

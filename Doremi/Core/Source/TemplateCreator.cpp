@@ -546,11 +546,11 @@ namespace Doremi
             DoremiEngine::Graphic::SkeletalInformation* t_skeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
 
-            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KebabPizza.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KebabPizza.drm", *t_skeletalInformation);
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKubGrejTest.drm", *t_skeletalInformation);
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KubEttBen.drm", *t_skeletalInformation);
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKub2.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros8.drm", *t_skeletalInformation);
+            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros12.drm", *t_skeletalInformation);
 
 
             /// Fill with components

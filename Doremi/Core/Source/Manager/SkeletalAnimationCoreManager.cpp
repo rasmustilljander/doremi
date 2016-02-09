@@ -90,6 +90,7 @@ namespace Doremi
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(j);
                     t_skeletalAnimationComponent->timePosition += p_dt;
+                    // t_skeletalAnimationComponent->timePosition = 0.0f;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
                     if(t_skeletalAnimationComponent->timePosition >
                        t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName))

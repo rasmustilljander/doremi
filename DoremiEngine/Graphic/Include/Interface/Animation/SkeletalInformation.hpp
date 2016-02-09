@@ -21,6 +21,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT3 position;
             DirectX::XMFLOAT3 scale;
             DirectX::XMFLOAT4 quaternion;
+            DirectX::XMFLOAT4 jointRotation;
         };
         struct BoneAnimation
         {
@@ -44,9 +45,17 @@ namespace DoremiEngine
                     XMVECTOR t_scale = XMLoadFloat3(&Keyframes.front().scale);
                     XMVECTOR t_position = XMLoadFloat3(&Keyframes.front().position);
                     XMVECTOR t_quaternion = XMLoadFloat4(&Keyframes.front().quaternion);
+                    XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f); // gör för de andra
+                    XMVECTOR t_jointQuaternion = XMLoadFloat4(&Keyframes.front().jointRotation);
+                    XMMATRIX t_jointRotationMatrix = XMMatrixRotationQuaternion(t_jointQuaternion);
+                    // XMStoreFloat4x4(&p_matrix, XMMatrixMultiply(t_jointRotationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion,
+                    // t_position)));
 
-                    XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-                    XMStoreFloat4x4(&p_matrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_position));
+                    t_position = XMVector3Rotate(t_position, t_jointQuaternion);
+                    t_position = XMVector3Rotate(t_position, t_quaternion);
+
+                    XMStoreFloat4x4(&p_matrix, XMMatrixScalingFromVector(t_scale) * XMMatrixRotationQuaternion(t_quaternion) *
+                                                   XMMatrixTranslationFromVector(t_position));
                 }
                 // Check if we are after or at the last frame If so use the last frame.
                 else if(p_time >= Keyframes.back().time)
@@ -56,7 +65,15 @@ namespace DoremiEngine
                     XMVECTOR t_quaternion = XMLoadFloat4(&Keyframes.back().quaternion);
 
                     XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-                    XMStoreFloat4x4(&p_matrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_position));
+                    XMVECTOR t_jointQuaternion = XMLoadFloat4(&Keyframes.front().jointRotation);
+                    XMMATRIX t_jointRotationMatrix = XMMatrixRotationQuaternion(t_jointQuaternion);
+                    // XMStoreFloat4x4(&p_matrix, XMMatrixMultiply(t_jointRotationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion,
+                    // t_position)));
+                    t_position = XMVector3Rotate(t_position, t_jointQuaternion);
+                    t_position = XMVector3Rotate(t_position, t_quaternion);
+
+                    XMStoreFloat4x4(&p_matrix, XMMatrixScalingFromVector(t_scale) * XMMatrixRotationQuaternion(t_quaternion) *
+                                                   XMMatrixTranslationFromVector(t_position));
                 }
                 // If we are in the middle of the animation. We need to interpolate between frames most likely
                 else
@@ -82,6 +99,16 @@ namespace DoremiEngine
                             XMVECTOR t_quaternion0 = XMLoadFloat4(&Keyframes[i].quaternion);
                             XMVECTOR t_quaternion1 = XMLoadFloat4(&Keyframes[i + 1].quaternion);
 
+                            XMVECTOR t_jointQuaternion0 = XMLoadFloat4(&Keyframes[i].jointRotation);
+                            XMVECTOR t_jointQuaternion1 = XMLoadFloat4(&Keyframes[i + 1].jointRotation);
+
+                            // t_quaternion0 = XMQuaternionMultiply(t_quaternion0, t_jointQuaternion0);
+                            // t_quaternion1 = XMQuaternionMultiply(t_quaternion1, t_jointQuaternion1);
+
+
+                            t_position0 = XMVector3Rotate(t_position0, t_jointQuaternion0);
+                            t_position1 = XMVector3Rotate(t_position1, t_jointQuaternion0);
+
                             // Use vectorlerp to interpolate between two vectors
                             XMVECTOR t_interpolatedScale = XMVectorLerp(t_scale0, t_scale1, t_lerpPercent);
                             XMVECTOR t_interpolatedPosition = XMVectorLerp(t_position0, t_position1, t_lerpPercent);
@@ -92,6 +119,17 @@ namespace DoremiEngine
                             // Store the matrix in the inparameter. Use the XMMatrixAffineTransformation to get a matrix from the vectors we have
                             // created.
                             // t_interpolatedScale = XMLoadFloat3(&XMFLOAT3( 1.0f, 1.0f, 1.0f));
+                            // XMMATRIX t_jointRotationMatrix = XMMatrixRotationQuaternion(t_jointQuaternion0);
+                            // t_interpolatedPosition = XMVector3Rotate(t_interpolatedPosition, t_jointQuaternion0);
+                            // t_interpolatedPosition = XMVector3Rotate(t_interpolatedPosition, t_interpolatedQuaternion);
+
+                            /* XMStoreFloat4x4(&p_matrix,
+                                 XMMatrixScalingFromVector(t_interpolatedScale) *
+                                 XMMatrixRotationQuaternion(t_interpolatedQuaternion)*
+                                 XMMatrixTranslationFromVector(t_interpolatedPosition));*/
+
+                            // XMStoreFloat4x4(&p_matrix, XMMatrixMultiply(t_jointRotationMatrix, XMMatrixAffineTransformation(t_interpolatedScale,
+                            // t_zero, t_interpolatedQuaternion, t_interpolatedPosition)));
                             XMStoreFloat4x4(&p_matrix, XMMatrixAffineTransformation(t_interpolatedScale, t_zero, t_interpolatedQuaternion, t_interpolatedPosition));
 
                             break;
