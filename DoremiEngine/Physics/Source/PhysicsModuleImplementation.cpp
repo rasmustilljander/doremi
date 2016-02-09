@@ -67,6 +67,16 @@ namespace DoremiEngine
             // generate contacts for all that were not filtered above
             pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
+            // controller vs. controller collisions TODOJB Verify fix
+            bool kinematic0 = PxFilterObjectIsKinematic(attributes0);
+            bool kinematic1 = PxFilterObjectIsKinematic(attributes1);
+
+            if(kinematic0 && kinematic1)
+            {
+                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+                return PxFilterFlag::eDEFAULT;
+            }
+
             // General filter if they match
             if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
             {

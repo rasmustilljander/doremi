@@ -466,7 +466,7 @@ namespace DoremiEngine
         }
         void DoremiEngineImplementation::LoadConfigurationModule(SharedContextImplementation& o_sharedContext)
         {
-            using namespace Logging;
+            using namespace Doremi::Utilities::Logging;
             m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll");
             m_configurationLibrary = DynamicLoader::LoadSharedLibrary("Configuration.dll");
 
