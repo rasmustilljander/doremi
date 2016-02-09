@@ -26,7 +26,7 @@ namespace Doremi
             */
             void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override
             {
-                p_streamer->WriteBool(true);
+                p_streamer->ReadBool();
                 op_bitsRead += 1;
             }
 

@@ -1,15 +1,16 @@
 #pragma once
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
-#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
+
 
 namespace Doremi
 {
     namespace Core
     {
+        struct Event;
         /**
         TODOCM doc
         */
-        class EntityHandlerServer : public EntityHandler, public Subscriber
+        class EntityHandlerServer : public EntityHandler
         {
         public:
             /**
@@ -40,10 +41,6 @@ namespace Doremi
             */
             void RemoveEntity(int p_entityID) override;
 
-            /**
-                Checks events for add and remove objects
-            */
-            void OnEvent(Event* p_event) override;
 
         private:
             /**

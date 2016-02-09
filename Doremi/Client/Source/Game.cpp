@@ -21,7 +21,7 @@
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandlerClient.hpp>
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
-#include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityHandlerClient.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
@@ -95,7 +95,7 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
         EventHandlerClient::StartupEventHandlerClient();
-        Core::EntityHandler::StartupEntityHandler();
+        Core::EntityHandlerClient::StartupEntityHandlerClient();
         Core::PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
         Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);

@@ -26,7 +26,7 @@ namespace Doremi
 
         ComponentTable::~ComponentTable() {}
 
-        bool ComponentTable::HasComponent(int pEntityID, int pMask)
+        bool ComponentTable::HasComponent(EntityID pEntityID, int pMask)
         {
             int tLineToCheck = mComponentTable[pEntityID];
 
@@ -40,7 +40,7 @@ namespace Doremi
             }
         }
 
-        void ComponentTable::AddComponent(int pEntityID, int pMask)
+        void ComponentTable::AddComponent(EntityID pEntityID, int pMask)
         {
             // Adds a new component to the bit mask in the component table
             int tLineToAddTo = mComponentTable[pEntityID];
@@ -49,7 +49,7 @@ namespace Doremi
             mComponentTable[pEntityID] = tLineToAddTo;
         }
 
-        void ComponentTable::RemoveComponent(int pEntityID, int pMask)
+        void ComponentTable::RemoveComponent(EntityID pEntityID, int pMask)
         {
             int tLineToRemoveFrom = mComponentTable[pEntityID];
 
@@ -59,6 +59,6 @@ namespace Doremi
             mComponentTable[pEntityID] = tLineToRemoveFrom;
         }
 
-        void ComponentTable::RemoveEntity(int pEntityID) { mComponentTable[pEntityID] = 0; }
+        void ComponentTable::RemoveEntity(EntityID pEntityID) { mComponentTable[pEntityID] = 0; }
     }
 }

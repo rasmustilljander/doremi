@@ -4,18 +4,17 @@
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/EntityComponent/ComponentTable.hpp>
 #include <Doremi/Core/Include/EntityComponent/StorageShelf.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 #include <DirectXMath.h>
 
 namespace Doremi
 {
     namespace Core
     {
-        class EntityHandler
+        class EntityHandler : public Subscriber
         {
         public:
             static EntityHandler& GetInstance();
-
-            static void StartupEntityHandler();
 
             /** Registers a blueprint for entity creation with an ID*/
             void RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint);
@@ -57,6 +56,11 @@ namespace Doremi
                 Removes the entire entity at the specific location
             */
             virtual void RemoveEntity(int p_entityID);
+
+            /**
+                Checks events for add and remove objects
+            */
+            virtual void OnEvent(Event* p_event) override;
 
         protected:
             EntityHandler();

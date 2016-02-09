@@ -4,6 +4,8 @@
 #include <EntityComponent/EntityManager.hpp>
 #include <EntityComponent/StorageShelf.hpp>
 #include <EntityComponent/ComponentTable.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 
 namespace Doremi
 {
@@ -11,7 +13,11 @@ namespace Doremi
     {
         EntityHandler* EntityHandler::m_singleton = nullptr;
 
-        EntityHandler::EntityHandler() {}
+        EntityHandler::EntityHandler()
+        {
+            // Subscribing on remove entity
+            EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
+        }
 
         EntityHandler::~EntityHandler() {}
 
@@ -22,14 +28,6 @@ namespace Doremi
                 std::runtime_error("Get instance used on unitialized EntityHandler");
             }
             return *m_singleton;
-        }
-
-        void EntityHandler::StartupEntityHandler()
-        {
-            if(m_singleton == nullptr)
-            {
-                m_singleton = new EntityHandler();
-            }
         }
 
         void EntityHandler::RegisterEntityBlueprint(Blueprints p_blueprintID, EntityBlueprint p_blueprint)
@@ -58,5 +56,15 @@ namespace Doremi
         void EntityHandler::RemoveComponent(int p_entityID, int p_mask) { ComponentTable::GetInstance()->RemoveComponent(p_entityID, p_mask); }
 
         void EntityHandler::RemoveEntity(int p_entityID) { EntityManager::GetInstance()->RemoveEntity(p_entityID); }
+
+        void EntityHandler::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::RemoveEntity)
+            {
+                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
+
+                EntityHandler::RemoveEntity(p_removeEvent->entityID);
+            }
+        }
     }
 }
