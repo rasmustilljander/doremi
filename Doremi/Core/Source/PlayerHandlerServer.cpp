@@ -102,7 +102,8 @@ namespace Doremi
             }
 
             // TODOCM hard coded entityID for new players
-            EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity);
+            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
+            EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position);
 
             NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
@@ -113,10 +114,10 @@ namespace Doremi
             m_playerMap[p_playerID] = NewPlayer;
 
 
-            int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-            m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1.0f, 1.0f));
+            // int materialID = EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
+            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
+            // DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position, XMFLOAT2(1.0f, 1.0f));
 
             /// Add a new potential field actor to the player
             // Check if we have a actor, different from server and client...
