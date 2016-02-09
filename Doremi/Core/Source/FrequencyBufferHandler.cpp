@@ -62,7 +62,7 @@ namespace Doremi
 
             if(numOfRemoves > m_bufferedFrequencies.size())
             {
-                std::cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << std::endl;
+                // std::cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << std::endl;
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
