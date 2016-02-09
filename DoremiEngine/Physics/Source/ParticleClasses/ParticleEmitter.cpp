@@ -22,16 +22,8 @@ namespace DoremiEngine
             m_particleSystem->setMaxMotionDistance(PARTICLE_MAX_MOTION_DISTANCE);
             m_particleSystem->setParticleReadDataFlag(PxParticleReadDataFlag::eVELOCITY_BUFFER, true);
             m_particleSystem->setContactOffset(m_this.m_size);
-            // m_particleSystem->setSimulationFilterData(PxFilterData(1, 0, 0, 0));
             m_utils.m_worldScene->addActor(*m_particleSystem);
-            // Might be necessary to set flag to collide with dynamics
-            // m_particleSystem->setParticleBaseFlag(PxParticleBaseFlag::eCOLLISION_WITH_DYNAMIC_ACTORS, true);
             m_particleSystem->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true); // Should not be here
-
-            //// silly code...
-            // int matID = m_utils.m_physicsMaterialManager->CreateMaterial(0, 0, 0);
-            // m_utils.m_rigidBodyManager->AddBoxBodyDynamic(99999, XMFLOAT3(0, 10, 0), XMFLOAT4(0, 0, 0, 1), XMFLOAT3(5, 5, 5), matID);
-            // m_utils.m_rigidBodyManager->SetDrain(99999, true);
         }
         ParticleEmitter::~ParticleEmitter() {}
 
