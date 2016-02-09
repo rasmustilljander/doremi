@@ -3,6 +3,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/EntityCreatedEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityManager.hpp>
 
 namespace Doremi
 {
@@ -48,5 +49,15 @@ namespace Doremi
         }
 
         void EntityHandlerServer::RemoveEntity(int p_entityID) { EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(p_entityID)); }
+
+        void EntityHandlerServer::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::RemoveEntity)
+            {
+                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
+
+                EntityManager::GetInstance()->RemoveEntity(p_removeEvent->entityID);
+            }
+        }
     }
 }
