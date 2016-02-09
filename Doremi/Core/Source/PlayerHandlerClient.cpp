@@ -85,7 +85,8 @@ namespace Doremi
 
             // TODOCM hard coded entityID for new players
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position);
+            EntityID t_EntityID =
+                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
 
             NetworkEventReceiver* newNetworkEventReceiver = new NetworkEventReceiver();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
