@@ -58,6 +58,12 @@ namespace Doremi
             */
             EntityID CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation);
 
+            /**
+            Clears the entity of all values which cannot be ignored (physical bodies mostly).
+            WARNING! Do NOT call this method manually! Only to be used internally by entity
+            handler*/
+            void ScrapEntity(int p_entityID);
+
 
         private:
             EntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext);
