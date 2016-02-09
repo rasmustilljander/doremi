@@ -213,6 +213,30 @@ namespace DoremiEngine
             return p_id;
         }
 
+        int RigidBodyManagerImpl::AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, float p_height, float p_radius)
+        {
+            PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
+            // Creates the actual body.
+            PxTransform transform = PxTransform(position);
+            // This body is dynamic
+            PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
+            // Hard coded flag so that we trigger the onSleep and onAwake callbacks for all dynamic bodies
+            body->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
+            // Create a shape for the body
+            body->createShape(PxCapsuleGeometry(p_radius, p_height), *m_utils.m_physics->createMaterial(0, 0, 0));
+            // Give the body some mass (since it is dynamic. Static objects probably don't need mass)
+            PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+            // Add the now fully created body to the scene
+            m_utils.m_worldScene->addActor(*body);
+
+            // Finally add the body to our list
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
+
+            SetCallback(p_id, (1 << 0), (1 << 0));
+            return p_id;
+        }
+
         void RigidBodyManagerImpl::SetTrigger(int p_id, bool p_isTrigger)
         {
             if(m_bodies.find(p_id) == m_bodies.end())
