@@ -159,7 +159,7 @@ namespace Doremi
                             rigidBodyManager.AddSphereBodyDynamic(p_entityID, transComp->position, bodyComp->radius);
                             break;
                         case RigidBodyGeometry::dynamicCapsule:
-                            rigidBodyManager.AddCapsuleBodyDynamic(p_entityID, transComp->position, bodyComp->height, bodyComp->radius);
+                            rigidBodyManager.AddCapsuleBodyDynamic(p_entityID, transComp->position, transComp->rotation, bodyComp->height, bodyComp->radius);
                             break;
                         case RigidBodyGeometry::staticBox:
                             rigidBodyManager.AddBoxBodyStatic(p_entityID, transComp->position, transComp->rotation, bodyComp->boxDims, matComp->p_materialID);

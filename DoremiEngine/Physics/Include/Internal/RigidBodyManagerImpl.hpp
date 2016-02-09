@@ -34,7 +34,7 @@ namespace DoremiEngine
                                     vector<int>& p_indices, int p_materialID) override;
 
             int AddSphereBodyDynamic(int p_id, XMFLOAT3 p_position, float p_radius) override;
-            int AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, float p_height, float p_radius) override;
+            int AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, float p_height, float p_radius) override;
             void SetTrigger(int p_id, bool p_isTrigger) override;
             void SetDrain(int p_id, bool p_isDrain) override;
 

@@ -213,11 +213,12 @@ namespace DoremiEngine
             return p_id;
         }
 
-        int RigidBodyManagerImpl::AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, float p_height, float p_radius)
+        int RigidBodyManagerImpl::AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, float p_height, float p_radius)
         {
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
+            PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
             // Creates the actual body.
-            PxTransform transform = PxTransform(position);
+            PxTransform transform = PxTransform(position, orientation);
             // This body is dynamic
             PxRigidDynamic* body = m_utils.m_physics->createRigidDynamic(transform);
             // Hard coded flag so that we trigger the onSleep and onAwake callbacks for all dynamic bodies
