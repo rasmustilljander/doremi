@@ -51,7 +51,6 @@ namespace Doremi
                 return true; // Got mutex
             }
 
-
             void FileMapMutex::Lock()
             {
                 DWORD check;
