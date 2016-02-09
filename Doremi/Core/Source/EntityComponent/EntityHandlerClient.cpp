@@ -31,9 +31,6 @@ namespace Doremi
 
         void EntityHandlerClient::OnEvent(Event* p_event)
         {
-            // Call base
-            EntityHandler::OnEvent(p_event);
-
             if(p_event->eventType == EventType::EntityCreated)
             {
                 EntityCreatedEvent* p_entityCreated = (EntityCreatedEvent*)p_event;
