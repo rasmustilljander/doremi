@@ -45,9 +45,9 @@ namespace Doremi
 
             DoremiEngine::Graphic::Camera* freecamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
             DoremiEngine::Graphic::Camera* thirdPersonCamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
-            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera);
+            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera, 5, -1, 0);
             m_freeLookCamera = new FreeLookCamera(freecamera);
-            m_currentCamera = CameraType::FREELOOK;
+            m_currentCamera = CameraType::THIRDPERSON;
         }
 
         CameraHandler::~CameraHandler() {}
@@ -81,7 +81,7 @@ namespace Doremi
                         break;
                     case CameraType::THIRDPERSON:
                         inputHandler->SetCursorInvisibleAndMiddle(true);
-
+                        m_thirdPersonCamera->UpdateInput(p_dt);
                         break;
                     default:
                         break;
