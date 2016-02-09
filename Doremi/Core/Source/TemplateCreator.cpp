@@ -150,9 +150,9 @@ namespace Doremi
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
             blueprint[ComponentType::Render] = renderComp;
             // PhysicsMaterialComp
-            // PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            // t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
-            // blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             // blueprint[ComponentType::RigidBody] = rigidBodyComp;
@@ -163,6 +163,16 @@ namespace Doremi
             healthComponent->maxHealth = 100;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
+
+            // Extra drain and rigid comp
+            RigidBodyComponent* rigidComp = new RigidBodyComponent();
+            rigidComp->sphereRadius = 4;
+            rigidComp->geometry = RigidBodyGeometry::dynamicSphere;
+            rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
+            blueprint[ComponentType::RigidBody] = rigidComp;
+            blueprint[ComponentType::ExtraDrain];
+
+
             // Enemy ai agent comp
             // blueprint[ComponentType::AIAgent];
             // Range comp
