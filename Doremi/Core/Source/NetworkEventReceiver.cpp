@@ -13,6 +13,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 
 #include <iostream>
 
@@ -77,6 +78,10 @@ namespace Doremi
                     break;
                 case Doremi::Core::EventType::PlayerRespawn:
                     p_newEvent = new PlayerRespawnEvent();
+
+                case Doremi::Core::EventType::GunFireToggle:
+                    p_newEvent = new GunFireToggleEvent();
+
                 default:
                     p_newEvent = new ExampleEvent();
                     break;

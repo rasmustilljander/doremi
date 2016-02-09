@@ -7,6 +7,7 @@
 
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
@@ -152,6 +153,21 @@ namespace Doremi
             }
 
             return outPointer;
+        }
+        void PlayerHandlerClient::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::GunFireToggle)
+            {
+                GunFireToggleEvent* t_gunFireToggleEvent = static_cast<GunFireToggleEvent*>(p_event);
+                if(t_gunFireToggleEvent->isFiring)
+                {
+                    m_gunController.StartFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
+                }
+                else
+                {
+                    m_gunController.StopFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
+                }
+            }
         }
     }
 }

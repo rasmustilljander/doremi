@@ -25,7 +25,7 @@ namespace Doremi
             NetworkEventReceiver* m_networkEventReceiver;
         };
 
-        class PlayerHandlerClient : public PlayerHandler
+        class PlayerHandlerClient : public PlayerHandler, public Subscriber
         {
         public:
             PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -41,6 +41,8 @@ namespace Doremi
             void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) override;
 
             NetworkEventReceiver* GetNetworkEventReceiverForPlayer(uint32_t p_playerID);
+
+            void OnEvent(Event* p_event) override;
 
         private:
         };
