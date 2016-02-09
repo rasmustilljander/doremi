@@ -272,7 +272,7 @@ namespace DoremiEngine
             }
             PxShape* shape;
             m_bodies.find(p_bodyID)->second->getShapes(&shape, 1);
-            PxFilterData data = PxFilterData(0, 0, 0, 1);
+            PxFilterData data = PxFilterData(1, 0, 0, 1);
             shape->setSimulationFilterData(data);
             shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
             m_bodies.find(p_bodyID)->second->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
@@ -434,8 +434,8 @@ namespace DoremiEngine
                 cout << "Physics: couldn't remove rigid body ID: " << p_bodyID << " since it did not exist" << endl;
                 return;
             }
-            m_IDsByBodies.erase(m_bodies[p_bodyID]);
             m_bodies[p_bodyID]->release();
+            m_IDsByBodies.erase(m_bodies[p_bodyID]);
             m_bodies.erase(p_bodyID);
         }
 
