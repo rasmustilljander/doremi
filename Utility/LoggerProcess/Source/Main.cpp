@@ -3,6 +3,7 @@
 #include <Utility/Utilities/Include/IO/FileMap/FileMap.hpp>
 #include <Utility/Utilities/Include/Memory/Circlebuffer/Circlebuffer.hpp>
 #include <Utility/Utilities/Include/Constants/LoggerConstants.hpp>
+#include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 
 #include <windows.h>
 #include <time.h>
@@ -10,6 +11,8 @@
 
 #include <iostream>
 #include <fstream>
+
+using namespace Doremi::Utilities;
 
 std::string getTwoDigit(const int& value)
 {
@@ -43,66 +46,104 @@ std::string buildLogFileName(const std::string& p_consoleName)
 class LoggerProcess
 {
 public:
-    LoggerProcess() {}
+    LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr) {}
 
     virtual ~LoggerProcess() {}
 
-    void Initialize() {}
+
+    void Initialize()
+    {
+        SetupCircleBuffer();
+        void* fileMapMemory = InitializeFileMap(Constants::FILEMAP_SIZE);
+        m_mutex = CreateFileMapMutex();
+
+        m_ingoingBuffer->Initialize(fileMapMemory, Constants::FILEMAP_SIZE, m_mutex);
+    }
 
     void Run()
     {
         using namespace Doremi::Utilities;
 
+        Logging::LogTextData* data = new Logging::LogTextData();
+        Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
+        bool messageExist = false;
+        double elapsedTime = 0;
         while(true)
         {
-            if(true)
+            m_timer.Tick();
+            messageExist = m_ingoingBuffer->Consume(header, data);
+            if(messageExist)
             {
-                m_timer.Tick();
-                //  if (m_timer.GetElapsedTimeInSeconds() > Constants::FILEMAP_TIMEOUT)
-                {
-                    //    break;
-                }
+                std::cout << data->message << std::endl;
+                elapsedTime = 0;
+            }
+
+            elapsedTime += m_timer.GetElapsedTimeInSeconds();
+            if(elapsedTime > Constants::FILEMAP_TIMEOUT)
+            {
+                break;
             }
         }
+        delete data;
+        delete header;
     }
 
 private:
-    Doremi::Utilities::Chrono::Timer m_timer;
-    Doremi::Utilities::IO::FileMap m_fileMap;
-    Doremi::Utilities::Memory::CircleBuffer<int> m_circleBuffer; // todo, real package data
+    Chrono::Timer m_timer;
+    IO::FileMap* m_fileMap;
+    Memory::CircleBuffer<Logging::LogTextData>* m_ingoingBuffer;
+    Doremi::Utilities::IO::Mutex* m_mutex;
 
-    void* InitializeFileMap()
+    void* InitializeFileMap(const std::size_t& p_size)
     {
-        using namespace Doremi::Utilities;
-        // m_fileMap = IO::FileMap(); // TODORT
-        return m_fileMap.Initialize(Constants::FILEMAP_NAME, Constants::FILEMAP_SIZE);
+        m_fileMap = new IO::FileMap();
+        void* memory = m_fileMap->Initialize(Constants::FILEMAP_NAME, p_size);
+        if(memory != nullptr)
+        {
+            return memory;
+        }
+        else
+        {
+            throw std::runtime_error("Failed to initialize filemap.");
+        }
     }
 
-    void SetupCircleBuffer()
+    void SetupCircleBuffer() { m_ingoingBuffer = new Memory::CircleBuffer<Logging::LogTextData>(); }
+
+    IO::Mutex* CreateFileMapMutex()
     {
-        // m_circleBuffer.
+        IO::Mutex* mutex = new IO::FileMapMutex();
+        const bool success = mutex->Initialize(Constants::FILEMAP_MUTEX_NAME);
+        if(success)
+        {
+            return mutex;
+        }
+        else
+        {
+            delete mutex;
+            throw std::runtime_error("Failed to initialize filemap mutex.");
+        }
     }
 };
 
 int main(int argc, char** argv)
 {
-    return 0;
     using namespace Doremi::Utilities;
     using namespace std;
 
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     HANDLE fileHandle;
 
     // Build logfilename
-    const string& fileName = buildLogFileName("Doremi");
+    // const string& fileName = buildLogFileName("Doremi");
 
     // Create the file
-    CreateDirectory(L"logs", NULL);
-    fileHandle = CreateFile(String::s2ws(fileName).c_str(), GENERIC_WRITE, FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
+    // CreateDirectory(L"logs", NULL);
+    // fileHandle = CreateFile(String::s2ws(fileName).c_str(), GENERIC_WRITE, FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
 
     //	SetConsoleTitle(s2ws(consoleName).c_str());
     //	SetConsoleTextAttribute(out, color);
     LoggerProcess application;
+    application.Initialize();
     application.Run();
 
     return 0;
