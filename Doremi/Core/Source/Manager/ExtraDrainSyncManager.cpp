@@ -44,8 +44,13 @@ namespace Doremi
                     // Get rigid body manager
                     DoremiEngine::Physics::RigidBodyManager& rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
+                    // Calculate a rotated orientation
+                    XMFLOAT4 newOrientation;
+                    XMVECTOR rotationModVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), 3.1415 / 2);
+
+                    XMStoreFloat4(&newOrientation, XMQuaternionMultiply(XMLoadFloat4(&transComp->rotation), rotationModVec));
                     // Set position of drain so it follows us around
-                    rigidManager.SetBodyPosition(i, transComp->position, transComp->rotation);
+                    rigidManager.SetBodyPosition(i, transComp->position, newOrientation);
                 }
             }
         }
