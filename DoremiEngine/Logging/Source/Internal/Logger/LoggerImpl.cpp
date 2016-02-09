@@ -98,7 +98,7 @@ namespace DoremiEngine
             data.line = p_line;
 
             // Message
-            const std::size_t messageLength = p_function.copy(data.message, std::max(message.size(), Constants::LONGEST_FUNCTION_NAME), 0);
+            const std::size_t messageLength = message.copy(data.message, std::max(message.size(), Constants::LONGEST_FUNCTION_NAME), 0);
             data.message[messageLength] = '\0';
 
             // Level and tag
