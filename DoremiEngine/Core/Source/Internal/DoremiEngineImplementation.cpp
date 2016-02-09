@@ -132,6 +132,7 @@ namespace DoremiEngine
             LoadLoggingModule(*m_sharedContext);
             LoadTimingModule(*m_sharedContext);
             LoadConfigurationModule(*m_sharedContext);
+            m_sharedContext->GetConfigurationModule().ReadConfigurationValuesFromFile("Configuration.txt");
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
                 LoadAudioModule(*m_sharedContext);

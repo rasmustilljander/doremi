@@ -11,8 +11,11 @@ namespace DoremiEngine
             None = 0,
             Player = 1,
             Enemy = 2,
-            Wall = 4,
-            Goal = 8
+            RangedEnemy = 4,
+            MeleeEnemy = 8,
+            BigEnemy = 16,
+            Wall = 32,
+            Goal = 64
         };
         struct PotentialChargeInformation
         {

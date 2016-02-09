@@ -17,7 +17,10 @@ namespace DoremiEngine
             void Startup() override;
             void Shutdown() override;
 
-            const ConfiguartionInfo& GetAllConfigurationValues();
+            const ConfiguartionInfo& GetAllConfigurationValues() const override { return m_configInfo; };
+            void ReadConfigurationValuesFromFile(const std::string p_fileName) override;
+            void WriteConfigurationValuesToFile(const std::string p_fileName) override;
+            virtual ConfiguartionInfo& GetModifiableConfigurationInfo() override { return m_configInfo; };
 
         private:
             const Core::SharedContext& m_sharedContext;
