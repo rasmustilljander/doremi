@@ -2,6 +2,7 @@
 #include <PlayerHandler.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <InputHandlerClient.hpp>
 // Engine
 #include <DoremiEngine/Graphic/Include/Interface/Camera/Camera.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/CameraManager.hpp>
@@ -12,7 +13,11 @@ namespace Doremi
 {
     namespace Core
     {
-        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera) : m_camera(p_camera) {}
+        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer, const float& p_minAngle, const float& p_maxAngle)
+            : m_camera(p_camera), m_distanceFromPlayer(p_distanceFromPlayer), m_maxAngle(p_maxAngle), m_minAngle(p_minAngle)
+        {
+            m_angle = (p_minAngle + p_maxAngle) * 0.5f;
+        }
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
 
@@ -25,39 +30,44 @@ namespace Doremi
             {
                 return;
             }
-
+            // m_angle = 0;
             TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
             XMFLOAT4 orientation = playerTransform->rotation;
+            XMVECTOR position = XMLoadFloat3(&playerTransform->position);
             XMVECTOR quater = XMLoadFloat4(&orientation);
-            XMFLOAT3 direction;
-            XMStoreFloat3(&direction, XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(0, -5, 1))));
-            XMFLOAT3 up = XMFLOAT3(0, 1, 0);
-            XMVECTOR vup = XMLoadFloat3(&up);
-            XMVECTOR dir = XMLoadFloat3(&direction);
-            XMMATRIX t = XMMatrixRotationQuaternion(quater);
-            dir = XMVector3Transform(dir, t);
-            // vup = XMVector3Transform(vup, t);
-            XMVECTOR pos = XMLoadFloat3(&playerTransform->position);
+            XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0)); // The upvector of the character should always be this
+            XMVECTOR forward = XMLoadFloat3(&XMFLOAT3(0, 0, 1)); // Standard forward vector
+            forward = XMVector3Rotate(forward, quater); // Rotate forward vector with player orientation TODOKO Should maybe disregard some rotations?
+            forward = XMVector3Normalize(forward);
+            XMVECTOR right = XMVector3Cross(forward, up);
+            XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
+            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
+            forward = XMVector3Normalize(forward);
+            XMVECTOR cameraPosition = position - forward * m_distanceFromPlayer;
+            // float offsetY = 5 * cosf(m_angle); // Get offset in Y
+            // cameraPosition += XMLoadFloat3(&XMFLOAT3(0, offsetY, 0)); // Set offset in Y
 
-
-            // mat = XMMatrixInverse(&XMMatrixDeterminant(mat), mat);
+            XMMATRIX worldMatrix =
+                XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position, up)); // vup is added to position so you look abit above the player
+            // XMVECTOR forwardQuater = XMQuaternionRotationNormal(forward,0);
             XMFLOAT4X4 viewMat;
-            // creates a projection matrix which makes vectors into the ordinary plane. this is made so it wont flip when you rotate
-            XMFLOAT4 plane = XMFLOAT4(0, 1, 0, 0);
-            XMFLOAT4 light = XMFLOAT4(0, 1, 0, 0);
-            XMVECTOR vecPlane = XMLoadFloat4(&plane);
-            XMVECTOR veclight = XMLoadFloat4(&light);
-            XMMATRIX projMat = XMMatrixShadow(vecPlane, veclight); // creates a projection matrix
-            XMVECTOR camDir = XMVector3Transform(dir, projMat);
-            camDir = XMVector3Normalize(camDir);
-            XMVECTOR finalDir = (pos - camDir * 3.5f) + XMLoadFloat3(&XMFLOAT3(0, 1, 0)) * 1.0;
-            XMMATRIX mat =
-                XMMatrixTranspose(XMMatrixLookAtLH(finalDir, pos + vup, vup)); // vup is added to position so you look abit above the player
-            XMFLOAT3 t_positionOfCamera;
-            XMStoreFloat3(&t_positionOfCamera, finalDir);
-            m_camera->SetCameraPosition(t_positionOfCamera);
-            XMStoreFloat4x4(&viewMat, mat);
+            XMStoreFloat4x4(&viewMat, worldMatrix);
             m_camera->SetViewMatrix(viewMat);
+            XMFLOAT3 t_camPos;
+            XMStoreFloat3(&t_camPos, cameraPosition);
+
+            m_camera->SetCameraPosition(t_camPos);
+        }
+
+        void ThirdPersonCamera::UpdateInput(const double& p_dt)
+        {
+            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            float wantedAngle = m_angle; // the angle we want to reach
+            wantedAngle += inputHandler->GetMouseMovementY() * 0.001;
+            if(wantedAngle < m_maxAngle && wantedAngle > m_minAngle)
+            {
+                m_angle = wantedAngle;
+            }
         }
     }
 }
