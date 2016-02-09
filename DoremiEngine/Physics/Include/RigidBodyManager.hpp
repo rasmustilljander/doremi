@@ -36,7 +36,7 @@ namespace DoremiEngine
 
             /**
             Adds a dynamic capsule to the world. This method creates a standard material (0,0,0)*/
-            virtual int AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, float p_height, float p_radius) = 0;
+            virtual int AddCapsuleBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, float p_height, float p_radius) = 0;
 
             /**
             This can be used to make a body into a trigger. Triggers are not affected
