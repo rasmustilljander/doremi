@@ -12,8 +12,20 @@ namespace Doremi
         {
             /**
                 TODO docs
+                TODO remove
             */
             inline std::wstring s2ws(const std::string& str)
+            {
+                using namespace std;
+                typedef codecvt_utf8<wchar_t> convert_typeX;
+                wstring_convert<convert_typeX, wchar_t> converterX;
+                return converterX.from_bytes(str);
+            }
+
+            /**
+            TODO docs
+            */
+            inline std::wstring StringToWideString(const std::string& str)
             {
                 using namespace std;
                 typedef codecvt_utf8<wchar_t> convert_typeX;
