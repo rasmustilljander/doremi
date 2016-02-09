@@ -26,7 +26,7 @@ namespace Doremi
 
             if(numOfRemoves > m_bufferedQueuesOfEvent.size())
             {
-                cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << endl;
+                // cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << endl;
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
