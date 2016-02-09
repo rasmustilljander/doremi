@@ -37,6 +37,12 @@ namespace Doremi
             int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation) override;
 
             /**
+                Creates an entity according to the provided blueprint id
+                Also returns EntityID of newly created entity
+            */
+            int CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale) override;
+
+            /**
                 Removes the entire entity at the specific location
             */
             void RemoveEntity(int p_entityID) override;
