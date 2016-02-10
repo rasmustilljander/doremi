@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 namespace Doremi
 {
     namespace Core
@@ -6,11 +7,16 @@ namespace Doremi
         /**
         The audio component contains the handle to the soundchannel and a handle to the sound
         */
+        enum class AudioCompEnum : int
+        {
+            Jump,
+            DebugSound,
+        };
         struct AudioComponent
         {
-            int soundID;
-            AudioComponent(int p_soundID) { soundID = p_soundID; }
-            AudioComponent() : soundID(-1) {}
+            std::map<AudioCompEnum, int> m_enumToSoundID;
+            AudioComponent() {}
+            
         };
     }
 }

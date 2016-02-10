@@ -53,11 +53,43 @@ namespace Doremi
                 {
                     // Get component
                     AudioActiveComponent* t_audio = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(i);
-                    t_isPlaying = t_audioModule.GetChannelPlaying(t_audio->channelID);
-                    if(!t_isPlaying)
+                    //Looping through the map of soundschannels.
+                    typedef std::map<int, int>::iterator iteratorForLoop;
+                    int sizeOfSoundEnumToChannelID = 0;
+                    int amountOfInactiveChannels = 0;
+                    std::vector<int> t_placesToRemove;
+                    for (iteratorForLoop iterator = t_audio->m_soundEnumToChannelID.begin(); iterator != t_audio->m_soundEnumToChannelID.end(); iterator++) 
                     {
+                        ++sizeOfSoundEnumToChannelID;
+                        t_isPlaying = t_audioModule.GetChannelPlaying(iterator->second);
+                        if (!t_isPlaying)
+                        {
+
+                            ++amountOfInactiveChannels;
+                            t_placesToRemove.push_back(iterator->first);
+                            //t_audio->m_soundEnumToChannelID.erase(iterator);
+                            //EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
+                        }
+                        else
+                        {
+                            // Nothing
+                        }
+                    }
+                    int placeToRemoveSizeForLoop = t_placesToRemove.size();
+                    for (size_t k = 0; k < placeToRemoveSizeForLoop; k++)
+                    {
+                        t_audio->m_soundEnumToChannelID.erase(t_placesToRemove[k]);
+                    }
+                    if (sizeOfSoundEnumToChannelID == amountOfInactiveChannels)
+                    {
+
                         EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
                     }
+                    else
+                    {
+                        // Nothing
+                    }
+
                 }
                 // Check if entity will be affected by the frequencyanalyser.
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::FrequencyAffected))

@@ -413,15 +413,16 @@ namespace Doremi
 
             // Audio comp
             AudioComponent* t_audioComponent = new AudioComponent();
-            t_audioComponent->soundID =
+            t_audioComponent->m_enumToSoundID[AudioCompEnum::DebugSound]=
                 sharedContext.GetAudioModule().LoadSound("Sounds/Test sounds/1 amp som har låg frekv sen hög, Human made!372hz till 643hz.wav", 0.5f, 5000.0f);
             t_platform[ComponentType::Audio] = t_audioComponent;
 
             // ActiveAudiocomp
             AudioActiveComponent* t_audioActiveComponent = new AudioActiveComponent();
             AudioHandler::GetInstance()->Initialize();
-            sharedContext.GetAudioModule().PlayASound(t_audioComponent->soundID, true, t_audioActiveComponent->channelID);
-            sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
+            // TODOEALH
+            // sharedContext.GetAudioModule().PlayASound(t_audioComponent->m_enumToSoundID[], true, t_audioActiveComponent->channelID);
+            // sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
             t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
             AudioHandler::GetInstance()->SetupContinuousRecording();
             AudioHandler::GetInstance()->StartContinuousRecording();
@@ -611,6 +612,10 @@ namespace Doremi
             // Net object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
+
+            // Audio comp
+            AudioComponent* audioComp = new AudioComponent();
+            audioComp->m_enumToSoundID[AudioCompEnum::Jump] = sharedContext.GetAudioModule().LoadSound("JumpSound.wav", 0.5f, 5000.0f);
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
