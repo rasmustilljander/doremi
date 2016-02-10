@@ -69,11 +69,9 @@ namespace Doremi
             TIME_FUNCTION_START
             m_sharedContext.GetInputModule().Update();
 
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& input : m_playerMap)
             {
-                ((InputHandlerClient*)iter->second->m_inputHandler)->Update();
+                static_cast<InputHandlerClient*>(input.second->m_inputHandler)->Update();
             }
             TIME_FUNCTION_STOP
         }
