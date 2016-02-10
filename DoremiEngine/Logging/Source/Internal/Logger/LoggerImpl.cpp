@@ -169,6 +169,7 @@ namespace DoremiEngine
             bool messageExist = true;
             LogTextData* data = new LogTextData();
             Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
+            bool succeed = false;
 
             // As long as the application is running or if there are some messages ongoing
             while(*p_applicationOnline || messageExist) // TODORT, this might crash on crash....
@@ -177,7 +178,11 @@ namespace DoremiEngine
                 messageExist = p_localBuffer->Consume(header, data);
                 if(messageExist)
                 {
-                    m_outGoingBuffer->Produce(*header, data);
+                    succeed = false;
+                    while(!succeed)
+                    {
+                        succeed = m_outGoingBuffer->Produce(*header, data);
+                    }
                 }
                 // std::this_thread::sleep_for(2s);
             }
