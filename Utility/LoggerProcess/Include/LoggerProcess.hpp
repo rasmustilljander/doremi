@@ -36,7 +36,7 @@ public:
     /**
     TODO docs
     */
-    void Initialize();
+    void Initialize(const int& p_uniqueId);
 
     /**
     TODO docs
@@ -44,7 +44,7 @@ public:
     void Run();
 
 private:
-    void* InitializeFileMap(const std::size_t& p_size);
+    void* InitializeFileMap(const std::size_t& p_size, const int& p_uniqueId);
     void SetupCircleBuffer();
     Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
     void SetupFolderStructure();

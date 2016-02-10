@@ -20,12 +20,12 @@ LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m
 
 LoggerProcess::~LoggerProcess() {}
 
-void LoggerProcess::Initialize()
+void LoggerProcess::Initialize(const int& p_uniqueId)
 {
     SetupFolderStructure();
     BuildLogFiles();
     SetupCircleBuffer();
-    void* fileMapMemory = InitializeFileMap(Constants::FILEMAP_SIZE);
+    void* fileMapMemory = InitializeFileMap(Constants::FILEMAP_SIZE, p_uniqueId);
     m_mutex = CreateFileMapMutex();
 
     m_ingoingBuffer->Initialize(fileMapMemory, Constants::FILEMAP_SIZE, m_mutex);
@@ -60,10 +60,22 @@ void LoggerProcess::Run()
     delete header;
 }
 
-void* LoggerProcess::InitializeFileMap(const std::size_t& p_size)
+void* LoggerProcess::InitializeFileMap(const std::size_t& p_size, const int& p_uniqueId)
 {
     m_fileMap = new IO::FileMap();
-    void* memory = m_fileMap->Initialize(Constants::IPC_DEFAULT_FILEMAP_NAME, p_size);
+    std::string fileMapName;
+
+    // If id is zero, default, otherwise build uniquename.
+    if(p_uniqueId == 0)
+    {
+        fileMapName = Constants::IPC_DEFAULT_FILEMAP_NAME;
+    }
+    else
+    {
+        fileMapName = Logging::BuildFileMapName(p_uniqueId);
+    }
+
+    void* memory = m_fileMap->Initialize(fileMapName, p_size);
     if(memory != nullptr)
     {
         return memory;

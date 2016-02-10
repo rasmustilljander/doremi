@@ -16,7 +16,7 @@ namespace Doremi
             static std::string BuildFileMapName(const uint32_t& p_uniqueId)
             {
                 using namespace std;
-                return string(Constants::DEFAULT_FILEMAP_NAME + to_string(p_uniqueId));
+                return string(Constants::IPC_DEFAULT_FILEMAP_NAME + to_string(p_uniqueId));
             }
 
             /**
