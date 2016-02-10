@@ -30,7 +30,7 @@ namespace Doremi
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
-            numOfRemoves = std::min(static_cast<uint32_t>(numOfRemoves), m_bufferedQueuesOfEvent.size());
+            numOfRemoves = std::min(static_cast<size_t>(numOfRemoves), m_bufferedQueuesOfEvent.size());
 
 
             // TODOCM check if you can remove this in one call

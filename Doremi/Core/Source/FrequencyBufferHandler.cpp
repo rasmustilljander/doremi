@@ -66,7 +66,7 @@ namespace Doremi
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
-            numOfRemoves = std::min(static_cast<uint32_t>(numOfRemoves), m_bufferedFrequencies.size());
+            numOfRemoves = std::min(static_cast<size_t>(numOfRemoves), m_bufferedFrequencies.size());
 
             // Check if we can remove (error check), then remove the number of accs in difference
             if(numOfRemoves <= m_bufferedFrequencies.size())
