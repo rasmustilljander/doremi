@@ -71,7 +71,7 @@ namespace DoremiEngine
             // TODOXX
             // TODOCONFIG our hardcode better value from empirical tests
             // Create localbuffer
-            m_localBuffer->Initialize(1000, nullptr);
+            m_localBuffer->Initialize(10000, nullptr);
 
             // Create mutex
             m_mutex = CreateFileMapMutex();
