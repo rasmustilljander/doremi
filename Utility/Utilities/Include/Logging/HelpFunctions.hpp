@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+#include <Utility/Utilities/Include/Constants/LoggerConstants.hpp> // TODORT can move to cpp
+#include <string> // TODORT can move to cpp
 
 namespace Doremi
 {
@@ -6,6 +9,16 @@ namespace Doremi
     {
         namespace Logging
         {
+            /**
+            TODORT, can move to cpp
+            TODORT, docs
+            */
+            static std::string BuildFileMapName(const uint32_t& p_uniqueId)
+            {
+                using namespace std;
+                return string(Constants::DEFAULT_FILEMAP_NAME + to_string(p_uniqueId));
+            }
+
             /**
             TODORT, can move to cpp
             TODORT, docs
