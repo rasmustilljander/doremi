@@ -39,7 +39,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position);
 
-            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position, DirectX::XMFLOAT4(0, 0, 0, 1)));
 
             return outID;
         }
@@ -48,7 +48,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation);
 
-            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position, p_orientation));
 
             return outID;
         }
@@ -57,7 +57,7 @@ namespace Doremi
         {
             EntityID outID = EntityHandler::CreateEntity(p_blueprintID, p_position, p_orientation, p_scale);
 
-            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position));
+            EventHandler::GetInstance()->BroadcastEvent(new EntityCreatedEvent(outID, p_blueprintID, p_position, p_orientation));
 
             return outID;
         }
