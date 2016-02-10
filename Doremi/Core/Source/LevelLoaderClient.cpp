@@ -111,7 +111,13 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 const std::string meshName = m_meshCoupling[0].meshName;
                 std::string textureName;
-                textureName = m_materials[m_meshCoupling[0].materialName];
+                textureName = m_materials[m_meshCoupling[0].materialName].diffuseTextureName;
+                // textureName = m_materials[m_meshCoupling[0].materialName];
+                if(textureName.length() < 5 || textureName[0] == -3 || textureName[0] == -35)
+                {
+                    textureName = "debug.dds";
+                    m_materials[m_meshCoupling[0].materialName].diffuseTextureName = "debug.dds";
+                }
 
                 // Compute vertexdata for graphics, discard data for physics.
                 DirectX::XMFLOAT3 scale = {1.0f, 1.0f, 1.0f}; // TODOXX Should the scale for the player always be one?
@@ -161,7 +167,7 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
 
-                std::string textureName = m_materials[meshCoupling.materialName];
+                std::string textureName = m_materials[meshCoupling.materialName].diffuseTextureName;
                 if(textureName.length() < 5 || textureName[0] == -3)
                 {
                     textureName = "debug.dds";
@@ -171,7 +177,6 @@ namespace Doremi
 
             // If non physic object
             if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 || transformationData.attributes.startOrEndPoint == 2)
-
             {
                 r_shouldBuildPhysics = false;
             }

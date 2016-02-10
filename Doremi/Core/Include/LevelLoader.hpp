@@ -96,9 +96,9 @@ namespace Doremi
             std::map<std::string, DoremiEditor::Core::TransformData> m_transforms;
 
             std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!
-            std::map<std::string, std::string> m_materials;
 
-            //std::map<std::string, DoremiEngine::Graphic::MaterialData> m_materials;
+            // std::map<std::string, std::string> m_materials;
+            std::map<std::string, DoremiEngine::Graphic::MaterialData> m_materials;
 
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;

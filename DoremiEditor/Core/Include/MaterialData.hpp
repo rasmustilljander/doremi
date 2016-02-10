@@ -31,6 +31,8 @@ namespace DoremiEditor
             float specCosine;
             float specEccentricity;
             float specRollOff;
+            char* diffuseTextureName;
+            char* glowTextureName;
         };
     }
 }

@@ -63,13 +63,17 @@ namespace Doremi
                 ifs.read((char*)&materialData.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
+                m_materials[materialName].diffuseTextureName = "debug.dds";
+                m_materials[materialName].glowTextureName = "glow.dds";
+
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
-                
+                if(diffuseTextureNameSize != 0) m_materials[materialName].diffuseTextureName = diffuseTextureName;
+                // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+
                 // Glow texture
                 int glowTextureNameSize;
                 ifs.read((char*)&glowTextureNameSize, sizeof(int));
@@ -105,12 +109,16 @@ namespace Doremi
                 ifs.read((char*)&materialData.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
+                m_materials[materialName].diffuseTextureName = "debug.dds";
+                m_materials[materialName].glowTextureName = "glow.dds";
+
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                if(diffuseTextureNameSize != 0) m_materials[materialName].diffuseTextureName = diffuseTextureName;
+                // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
 
                 delete diffuseTextureName;
                 delete materialName;
