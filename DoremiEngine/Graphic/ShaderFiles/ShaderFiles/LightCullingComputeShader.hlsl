@@ -80,7 +80,7 @@ void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
     uint3 numThreadGroups = uint3(50, 50, 1);
-    uint3 numThreads = uint3(800, 800, 1);
+    uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 
     // Calculate min & max depth in threadgroup / tile.
     int2 texCoord = input.dispatchThreadID.xy;
@@ -141,7 +141,7 @@ void CS_main(ComputeShaderInput input)
             switch (light.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 40.f}; //TODORK change intensity to light range
+                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 50.f}; //TODORK change intensity to light range
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.

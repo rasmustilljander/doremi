@@ -25,11 +25,11 @@ namespace DoremiEngine
                 {
                     // TODO logger maybe
                 }
-            } 
+            }
             // checks if there is an active window.
             if(GetActiveWindow() == nullptr)
             {
-                CreateWindowSDL(800, 800); // TODOCONFIG
+                CreateWindowSDL(1920, 1080); // TODOCONFIG
             }
         }
 

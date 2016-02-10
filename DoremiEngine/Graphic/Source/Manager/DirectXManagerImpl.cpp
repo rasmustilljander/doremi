@@ -20,7 +20,7 @@ namespace DoremiEngine
     {
         DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_screenResolution = DirectX::XMFLOAT2(800, 800);   //TODOCONFIG
+            m_screenResolution = DirectX::XMFLOAT2(1920, 1080); // TODOCONFIG
         }
         DirectXManagerImpl::~DirectXManagerImpl() {}
 
@@ -46,7 +46,7 @@ namespace DoremiEngine
 
             if(GetActiveWindow() == nullptr)
             {
-                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 800, 100, m_screenResolution.x, m_screenResolution.y,
+                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 0, 0, m_screenResolution.x, m_screenResolution.y,
                                                    SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
                 if(!win)
                 {
@@ -109,16 +109,16 @@ namespace DoremiEngine
             dbdesc.CPUAccessFlags = 0;
             dbdesc.MiscFlags = 0;
 
-            //m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_scene);
-
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_scene);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
+
+
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_glowmap);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
@@ -142,14 +142,9 @@ namespace DoremiEngine
             {
                 int a = 3;
             }
-/*
-            D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
-            renderTargetViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-            renderTargetViewDesc.Texture2D.MipSlice = 0;*/
 
             res = m_device->CreateRenderTargetView(m_scene, NULL, &m_postEffectRT);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
@@ -327,10 +322,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderAllMeshs()
         {
-            //Dispatch light culling compute shader
-            DispatchCompute();
-
-
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -446,9 +437,7 @@ namespace DoremiEngine
             m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &nullUAV, 0);
 
-            // Add depth bind to OM
-            ID3D11RenderTargetView* t_RTArray[2] = { m_postEffectRT, m_backBuffer[1] };
-            m_deviceContext->OMSetRenderTargets(2, t_RTArray, m_depthView);
+            SetRenderTargetGlow();
         }
 
         void DirectXManagerImpl::SwapRasterizerState(RasterizerState* p_rasterizerState)
@@ -461,6 +450,18 @@ namespace DoremiEngine
             m_deviceContext->OMSetDepthStencilState(p_depthStencilState->GetDepthStencilState(), 0);
         }
 
+        void DirectXManagerImpl::SetRenderTargetNormal()
+        {
+            // Bind render target to backbuffer again
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
+        }
+
+        void DirectXManagerImpl::SetRenderTargetGlow()
+        {
+            // Add depth bind to OM
+            ID3D11RenderTargetView* t_RTArray[2] = {m_postEffectRT, m_backBuffer[0]};
+            m_deviceContext->OMSetRenderTargets(2, t_RTArray, m_depthView);
+        }
 
         void DirectXManagerImpl::EndDraw()
         {
@@ -474,8 +475,8 @@ namespace DoremiEngine
             m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
 
             //////BLUR HORIZONAL
-            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[1]);
-            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_backbufferUAV, 0);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[0]);
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_glowmapUAV, 0);
 
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurHorizontal();
 
@@ -484,15 +485,22 @@ namespace DoremiEngine
 
             /////////BLUR VERTICAL
 
-            //shader resource m_renderTargetSRV[0]
-            //uav m_glowmapUAV
-            //dispatch
-            //clear srv and uav
+            // shader resource m_renderTargetSRV[0] and scene
+            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[1]);
+            m_deviceContext->CSSetShaderResources(1, 1, &m_sceneSRV);
 
-            // Add depth bind to OM
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[1], m_depthView);
-            //m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[1], m_depthView);
+            // uav m_glowmapUAV
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_backbufferUAV, 0);
+            // dispatch
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurVertical();
+            // clear srv and uav
+            m_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
+            m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
+
             //////////////////SLUT PÅ GLOWY STUFF//////////////////////
+
+            SetRenderTargetNormal();
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
@@ -501,6 +509,10 @@ namespace DoremiEngine
             m_deviceContext->ClearRenderTargetView(m_postEffectRT, color);
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+
+            // Dispatch light culling compute shader
+            DispatchCompute();
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

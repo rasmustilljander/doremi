@@ -15,6 +15,9 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+// GRAPHICS
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 
 /// Game
 // handlers
@@ -108,7 +111,8 @@ namespace Doremi
         Core::EntityFactory::StartupEntityFactory(sharedContext);
         Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         // Initialize 2d drawer class
-        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, XMFLOAT2(800, 800));
+        m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
+        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, m_screenRes);
 
         ////////////////Example only////////////////
         // Create manager
@@ -161,7 +165,7 @@ namespace Doremi
         t_textureNamesForMenuButtons.push_back("PlaybuttonHighlighted.dds");
         t_textureNamesForMenuButtons.push_back("OptionsbuttonHighlighted.dds");
         t_textureNamesForMenuButtons.push_back("ExitbuttonHighlighted.dds");
-        MenuHandler::StartMenuHandler(sharedContext, DirectX::XMFLOAT2(800.0f, 800.0f));
+        MenuHandler::StartMenuHandler(sharedContext, m_screenRes);
         MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
         // initialize menudraw
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);

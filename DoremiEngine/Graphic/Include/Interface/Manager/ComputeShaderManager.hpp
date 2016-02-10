@@ -18,6 +18,7 @@ namespace DoremiEngine
             virtual void DispatchFrustum() = 0;
             virtual void DispatchCulling() = 0;
             virtual void DispatchBlurHorizontal() = 0;
+            virtual void DispatchBlurVertical() = 0;
             virtual void CopyCullingData() = 0;
         };
     }

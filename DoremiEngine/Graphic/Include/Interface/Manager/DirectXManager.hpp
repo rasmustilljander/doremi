@@ -34,6 +34,8 @@ namespace DoremiEngine
             virtual void SwapDepthStencilState(DepthStencilState* p_depthStencilState) = 0;
             virtual RasterizerState* CreateRasterizerState(D3D11_RASTERIZER_DESC p_rasterizerDesc) = 0;
             virtual void SwapRasterizerState(RasterizerState* p_rasterizerState) = 0;
+            virtual void SetRenderTargetGlow() = 0;
+            virtual void SetRenderTargetNormal() = 0;
             virtual void EndDraw() = 0;
             virtual ID3D11SamplerState* GetDefaultSamplerState() = 0;
             virtual RasterizerState* GetDefaultRasterizerState() = 0;
