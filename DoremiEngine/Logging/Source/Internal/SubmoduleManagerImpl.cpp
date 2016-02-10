@@ -34,7 +34,6 @@ namespace DoremiEngine
         {
             m_loggingModule = &p_loggingModule;
             m_logger = new LoggerImpl();
-            static_cast<LoggerImpl*>(m_logger)->Initialize(m_loggingModule->GetEngineSharedContext().GetWorkingDirectory());
         }
 
         Logger& SubmoduleManagerImpl::GetLogger() const { return *m_logger; }

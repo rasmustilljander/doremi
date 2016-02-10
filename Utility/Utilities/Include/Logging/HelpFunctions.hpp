@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <Utility/Utilities/Include/Constants/LoggerConstants.hpp> // TODORT can move to cpp
+#include <Utility/Utilities/Include/String/StringHelper.hpp> // TODORT can move to cpp
 #include <string> // TODORT can move to cpp
 
 namespace Doremi

@@ -37,7 +37,7 @@ namespace DoremiEngine
             /**
             TODORT docs
             */
-            void Initialize(const std::string& p_workingDirectory);
+            void Initialize();
 
             /**
            Destuctor
@@ -52,7 +52,8 @@ namespace DoremiEngine
 
         private:
             void* InitializeFileMap(const std::size_t& p_size);
-            void StartLoggingProcess(const std::string& p_workingDirectory);
+            std::wstring BuildLoggingProcessArgumentString();
+            void StartLoggingProcess();
 
             Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_localBuffer;
             Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_outGoingBuffer;
@@ -60,6 +61,7 @@ namespace DoremiEngine
             Doremi::Utilities::IO::Mutex* m_mutex;
             Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
             bool* m_applicationRunning;
+            int m_uniqueId;
         };
     }
 }
