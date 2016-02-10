@@ -1,12 +1,9 @@
 #include "CommonInclude.hlsl"
 //#define BLUR_SIZE 5
-#define BLOCK_SIZE 32
+#define BLOCK_SIZE 256
 
-Texture2D scene : register (t0);
-Texture2D glowmap : register (t1);
-//RWTexture2D<float4> halfblur : register (u2);
+Texture2D glowmap : register (t0);
 RWTexture2D<float4> output : register (u0);
-RWStructuredBuffer<float4> horizonalValues : register(u1);
 
 groupshared float4 gCache[BLOCK_SIZE*BLOCK_SIZE];
 cbuffer cbFixed
@@ -24,7 +21,7 @@ cbuffer cbWeights
 
 
 
-[numthreads(BLOCK_SIZE, BLOCK_SIZE, 1)]
+[numthreads(BLOCK_SIZE, 1, 1)]
 void CS_main(ComputeShaderInput input)
 {
     float2 index2d = input.dispatchThreadID.xy;
@@ -47,22 +44,6 @@ void CS_main(ComputeShaderInput input)
         blurColor += gWeights[i + BLUR_SIZE] * glowmap[texcoords];
     }
 
-
-    horizonalValues[index] = blurColor;
-
-    GroupMemoryBarrierWithGroupSync();
-    
-    ///////// BLUR VERTICAL
-    
-    blurColor = float4(0, 0, 0, 0);
-    
-    for (int i = -BLUR_SIZE; i <= BLUR_SIZE; ++i)
-    {
-        //int k = index2d.y + BLUR_SIZE + i;
-        int k = index2d.y + i;
-        float index2 = index2d.x + k * SCREEN_WIDTH;
-        blurColor += gWeights[i + BLUR_SIZE] * horizonalValues[index2];
-    }
-    output[index2d.xy] = saturate(scene[index2d.xy] + blurColor);
+    output[index2d.xy] = blurColor;
 
 }

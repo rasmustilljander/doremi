@@ -52,7 +52,7 @@ StructuredBuffer<uint> t_LightIndexList : register(t2);
 StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
 StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 
-RWTexture2D<float4> glowMap : register(u1);
+//RWTexture2D<float4> glowMap : register(u1);
 
 cbuffer LightInfo : register(b0)
 {
@@ -111,14 +111,14 @@ float3 CalcPointLight(PixelInputType input, Light l)
     return float3(0, 0, 0);
 }
 
-float4 PS_main(PixelInputType input) : SV_TARGET
+PixelOutputType PS_main(PixelInputType input)
 {
     PixelOutputType output;
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
     screenPos.y = -screenPos.y;
     screenPos = (screenPos + 1) * 400;
 
-    glowMap[screenPos] = float4(0, 0, 0, 0);
+    //glowMap[screenPos] = float4(0, 0, 0, 0);
 
     //calculate which thread group this pixel was in the compute shader stage
     float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
@@ -154,11 +154,11 @@ float4 PS_main(PixelInputType input) : SV_TARGET
     else
         output.glow = texcolor;
 
-    output.diffuse = float4(rgb, 1) * glowcolor * 3;
+    output.diffuse = float4(rgb, 1) * texcolor;
 
-    //return output;
+    return output;
 
-    return float4(rgb, 1) * texcolor * 3;
+    //return float4(rgb, 1) * texcolor * 3;
     //return glowcolor;
     //return float4(screenPos.x/800.f, screenPos.y/800.f, 0, 1);
     //return float4((t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, 1);
