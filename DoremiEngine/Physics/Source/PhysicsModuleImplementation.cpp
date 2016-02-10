@@ -45,6 +45,7 @@ namespace DoremiEngine
             // Start by clearing the list of collision pairs (WARNING potentially bad idea)
             m_collisionPairs.clear();
             m_triggerPairs.clear();
+            m_leftCollisionPairs.clear();
             m_utils.m_fluidManager->Update(p_dt);
             m_utils.m_worldScene->simulate(p_dt);
             m_utils.m_rigidBodyManager->ClearRecentlyWakeStatusLists();
@@ -59,6 +60,7 @@ namespace DoremiEngine
 
         vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
         vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
+        vector<CollisionPair> PhysicsModuleImplementation::GetLeftCollisionPairs() { return m_leftCollisionPairs; }
 
         // New fancier collision filter
         PxFilterFlags TestFilter2(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
