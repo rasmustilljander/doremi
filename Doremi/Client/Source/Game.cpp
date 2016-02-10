@@ -327,6 +327,7 @@ namespace Doremi
     }
 
     void GameMain::UpdateMenu(double p_deltaTime) {}
+
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
