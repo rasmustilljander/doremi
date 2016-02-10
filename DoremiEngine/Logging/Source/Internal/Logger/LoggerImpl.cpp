@@ -133,7 +133,7 @@ namespace DoremiEngine
         IO::Mutex* LoggerImpl::CreateFileMapMutex()
         {
             IO::Mutex* mutex = new IO::FileMapMutex();
-            const bool success = mutex->Initialize(Constants::FILEMAP_MUTEX_NAME);
+            const bool success = mutex->Initialize(Constants::IPC_FILEMAP_MUTEX_NAME);
             if(success)
             {
                 return mutex;
