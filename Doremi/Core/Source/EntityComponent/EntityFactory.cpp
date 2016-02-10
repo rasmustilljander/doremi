@@ -131,7 +131,7 @@ namespace Doremi
                     // We we already got one from the position CreateEntity overload, we don't need to copy the blueprint's
                     if(!tComponentTable->HasComponent(p_entityID, (int)ComponentType::Transform))
                     {
-                        memcpy(GetComponent<TransformComponent>(p_entityID), iter->second, sizeof(TransformComponent));
+                        // memcpy(GetComponent<TransformComponent>(p_entityID), iter->second, sizeof(TransformComponent));
                     }
                 }
                 else if(iter->first == ComponentType::RigidBody)
@@ -305,6 +305,13 @@ namespace Doremi
 
             // create a new ID
             EntityID tNewEntityID = tEntityManager->AddEntity();
+            // Special case for transform component
+            ComponentTable::GetInstance()->AddComponent(tNewEntityID, (int)ComponentType::Transform);
+            TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
+            transComp->position = XMFLOAT3(0, 0, 0);
+            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
+            transComp->scale = XMFLOAT3(1, 1, 1);
+
             CreateComponents(tNewEntityID, p_blueprintID);
             return tNewEntityID;
         }
