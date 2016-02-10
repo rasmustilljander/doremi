@@ -57,14 +57,14 @@ namespace Doremi
             // Testar TODOEA
             Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
             PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
+            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
             std::cout << "Physical field 1 done";
-            m_field->Update();
+            // m_field->Update();
             std::cout << "Potential field 1 done";
 
-            t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_topField);
+            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_topField);
             std::cout << "Physical field 2 done";
-            m_topField->Update();
+            // m_topField->Update();
             std::cout << "Potential field 2 done";
             /// debugskit
 
