@@ -113,10 +113,9 @@ namespace Doremi
                 std::string textureName;
                 textureName = m_materials[m_meshCoupling[0].materialName].diffuseTextureName;
                 // textureName = m_materials[m_meshCoupling[0].materialName];
-                if(textureName.length() < 5 || textureName[0] == -3 || textureName[0] == -35)
+                if(textureName.length() < 5 || textureName[0] == -3)
                 {
                     textureName = "debug.dds";
-                    m_materials[m_meshCoupling[0].materialName].diffuseTextureName = "debug.dds";
                 }
 
                 // Compute vertexdata for graphics, discard data for physics.

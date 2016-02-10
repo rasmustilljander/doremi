@@ -191,7 +191,7 @@ namespace Doremi
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         Core::LevelLoaderClient t_levelLoader = LevelLoaderClient(sharedContext);
 
-        t_levelLoader.LoadLevel("Levels/IntroLevelTest.drm");
+        t_levelLoader.LoadLevel("Levels/IntroScene.drm");
 
         // Create platforms
         for(size_t i = 0; i < 1; i++)

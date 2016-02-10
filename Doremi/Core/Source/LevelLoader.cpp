@@ -63,43 +63,53 @@ namespace Doremi
                 ifs.read((char*)&materialData.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
-                m_materials[materialName].diffuseTextureName = "debug.dds";
-                m_materials[materialName].glowTextureName = "glow.dds";
+                materialData.diffuseTextureName = "debug.dds";
+                materialData.glowTextureName = "glow.dds";
 
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
-                char* diffuseTextureName = new char[diffuseTextureNameSize];
-                ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if(diffuseTextureNameSize != 0) m_materials[materialName].diffuseTextureName = diffuseTextureName;
-                // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                if(diffuseTextureNameSize != 0)
+                {
+                    char* diffuseTextureName = new char[diffuseTextureNameSize];
+                    ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
+                    materialData.diffuseTextureName = diffuseTextureName;
+                    // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                    // delete diffuseTextureName;
+                }
 
                 // Glow texture
                 int glowTextureNameSize;
                 ifs.read((char*)&glowTextureNameSize, sizeof(int));
-                char* glowTextureName = new char[glowTextureNameSize];
-                ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
-                //if (glowTextureNameSize != 0) m_materials[materialName].glowTextureName = glowTextureName;
-                // TODOKO save the texture name
+                if(glowTextureNameSize != 0)
+                {
+                    char* glowTextureName = new char[glowTextureNameSize];
+                    ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
+                    materialData.glowTextureName = glowTextureName;
+                    // delete glowTextureName;
+                }
+                // TODOKO save the texture name<
 
-                delete diffuseTextureName;
-                delete glowTextureName;                
-                delete materialName;
+                m_materials[materialName] = materialData;
+
+
+                // delete materialName;
             }
         }
 
-        void LevelLoader::LoadMaterialCharacter(std::ifstream& ifs, int nrMats)// TODOKO SHOULD BE REMOVED LATER ugly hax because character drm dont have glow map yet
+        void LevelLoader::LoadMaterialCharacter(std::ifstream& ifs,
+                                                int nrMats) // TODOKO SHOULD BE REMOVED LATER ugly hax because character drm dont have glow map yet
         {
             using namespace DoremiEditor::Core;
             // ladda material
-            for (int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
+            for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
             {
                 int materialNameSize;
                 ifs.read((char*)&materialNameSize, sizeof(int));
                 char* materialName = new char[materialNameSize];
                 ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                MaterialData materialData;
+                DoremiEngine::Graphic::MaterialData materialData;
                 ifs.read((char*)&materialData.mapMasks, sizeof(int));
                 ifs.read((char*)&materialData.diffuse, sizeof(float));
                 ifs.read((char*)&materialData.color, sizeof(float) * 3);
@@ -109,18 +119,20 @@ namespace Doremi
                 ifs.read((char*)&materialData.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
-                m_materials[materialName].diffuseTextureName = "debug.dds";
-                m_materials[materialName].glowTextureName = "glow.dds";
+                materialData.diffuseTextureName = "debug.dds";
+                materialData.glowTextureName = "glow.dds";
 
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if(diffuseTextureNameSize != 0) m_materials[materialName].diffuseTextureName = diffuseTextureName;
+                if(diffuseTextureNameSize != 0) materialData.diffuseTextureName = diffuseTextureName;
                 // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
 
-                delete diffuseTextureName;
+                m_materials[materialName] = materialData;
+
+                // delete diffuseTextureName;
                 delete materialName;
             }
         }
