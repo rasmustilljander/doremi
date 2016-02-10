@@ -509,6 +509,15 @@ namespace Doremi
 
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
+            particleComp->data.m_active = false;
+            particleComp->data.m_density = 2.0f;
+            particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
+            particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
+            particleComp->data.m_emissionRate = 0.05;
+            particleComp->data.m_launchPressure = 100;
+            particleComp->data.m_numParticlesX = 5;
+            particleComp->data.m_numParticlesY = 1;
+            particleComp->data.m_size = 1;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // HP component
@@ -586,6 +595,15 @@ namespace Doremi
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
+            particleComp->data.m_active = false;
+            particleComp->data.m_density = 2.0f;
+            particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
+            particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
+            particleComp->data.m_emissionRate = 0.05;
+            particleComp->data.m_launchPressure = 100;
+            particleComp->data.m_numParticlesX = 5;
+            particleComp->data.m_numParticlesY = 1;
+            particleComp->data.m_size = 1;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // Net object
@@ -629,6 +647,15 @@ namespace Doremi
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
             particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
+            particleComp->data.m_active = false;
+            particleComp->data.m_density = 2.0f;
+            particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
+            particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
+            particleComp->data.m_emissionRate = 0.05;
+            particleComp->data.m_launchPressure = 100;
+            particleComp->data.m_numParticlesX = 5;
+            particleComp->data.m_numParticlesY = 1;
+            particleComp->data.m_size = 1;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // Register blueprint
