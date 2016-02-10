@@ -34,7 +34,6 @@ namespace DoremiEngine
             SetUAV(BufferType::T_LIGHTINDEXLIST);
             SetUAV(BufferType::O_LIGHTGRID);
             SetUAV(BufferType::T_LIGHTGRID);
-            SetUAV(BufferType::COLOR_INFO);
         }
 
         void ComputeShaderManagerImpl::CreateComputeShaders()
@@ -42,8 +41,8 @@ namespace DoremiEngine
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             m_frustumShader = shaderManager.BuildComputeShader("FrustumComputeShader.hlsl");
             m_cullingShader = shaderManager.BuildComputeShader("LightCullingComputeShader.hlsl");
-            m_postEffectsShader = shaderManager.BuildComputeShader("BlurHoriComputeShader.hlsl");
-
+            m_blurHoriShader = shaderManager.BuildComputeShader("BlurHoriComputeShader.hlsl");
+            m_blurVertShader = shaderManager.BuildComputeShader("BlurVertComputeShader.hlsl");
         }
 
         ComputeShaderManagerImpl::~ComputeShaderManagerImpl() {}
@@ -89,11 +88,6 @@ namespace DoremiEngine
                     t_size = sizeof(LightGridInfo) * NUM_THREAD_BLOCKS;
                     t_stride = sizeof(LightGridInfo);
                     t_numElements = NUM_THREAD_BLOCKS;
-                    break;
-                case BufferType::COLOR_INFO:
-                    t_size = 16 * 800*800;
-                    t_stride = 16;
-                    t_numElements = 800 * 800;
                     break;
             }
 
@@ -211,17 +205,20 @@ namespace DoremiEngine
 
         void ComputeShaderManagerImpl::DispatchBlurHorizontal()
         {
-            ID3D11UnorderedAccessView* nullUAV[] = { NULL };
-            ID3D11ShaderResourceView* nullSRV[] = { NULL };
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
-            shaderManager.SetActiveComputeShader(m_postEffectsShader);
+            shaderManager.SetActiveComputeShader(m_blurHoriShader);
 
-            m_deviceContext->PSSetShaderResources(1, 1, nullSRV);
+            int numGroupsX = ceil(1920.f / 256.f); // TODOCONFIG take width from config
+            m_deviceContext->Dispatch(numGroupsX, 1080, 1);
+        }
 
-            int numGroupsX = ceil(800.f / 256.f);   //TODOCONFIG take width from config
-            m_deviceContext->Dispatch(numGroupsX, 800, 1);
+        void ComputeShaderManagerImpl::DispatchBlurVertical()
+        {
+            ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
+            shaderManager.SetActiveComputeShader(m_blurVertShader);
 
-            m_deviceContext->CSSetUnorderedAccessViews(1, 1, nullUAV, 0);
+            int numGroupsY = ceil(1080.f / 256.f); // TODOCONFIG take height from config
+            m_deviceContext->Dispatch(1920, numGroupsY, 1);
         }
 
         void ComputeShaderManagerImpl::CopyCullingData()

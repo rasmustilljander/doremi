@@ -1,6 +1,7 @@
 #pragma once
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <vector>
+#include <DirectXMath.h>
 
 namespace Doremi
 {
@@ -83,5 +84,7 @@ namespace Doremi
         std::vector<Core::Manager*> m_graphicalManagers;
 
         Core::ScreenSpaceDrawer* m_screenSpaceDrawer;
+
+        DirectX::XMFLOAT2 m_screenRes;
     };
 }

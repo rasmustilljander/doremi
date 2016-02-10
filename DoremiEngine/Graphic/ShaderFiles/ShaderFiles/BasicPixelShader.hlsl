@@ -154,7 +154,7 @@ PixelOutputType PS_main(PixelInputType input)
     else
         output.glow = texcolor;
 
-    output.diffuse = float4(rgb, 1) * texcolor;
+    output.diffuse = float4(rgb, 1) * texcolor * 3;
 
     return output;
 

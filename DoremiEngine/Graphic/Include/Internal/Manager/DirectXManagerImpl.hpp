@@ -32,6 +32,8 @@ namespace DoremiEngine
             void SetScreenResolution(DirectX::XMFLOAT2) override;
             DirectX::XMFLOAT2 GetScreenResolution() override;
             ID3D11DeviceContext* GetDeviceContext() override;
+            void SetRenderTargetNormal() override;
+            void SetRenderTargetGlow() override;
             // TODOKO should end draw be here?
             void EndDraw() override;
 

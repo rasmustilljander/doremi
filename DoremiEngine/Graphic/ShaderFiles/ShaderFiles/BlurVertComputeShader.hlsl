@@ -3,6 +3,7 @@
 #define BLOCK_SIZE 256
 
 Texture2D glowmap : register (t0);
+Texture2D scene : register (t1);
 RWTexture2D<float4> output : register (u0);
 
 groupshared float4 gCache[BLOCK_SIZE*BLOCK_SIZE];
@@ -21,7 +22,7 @@ cbuffer cbWeights
 
 
 
-[numthreads(BLOCK_SIZE, 1, 1)]
+[numthreads(1, BLOCK_SIZE, 1)]
 void CS_main(ComputeShaderInput input)
 {
     float2 index2d = input.dispatchThreadID.xy;
@@ -39,11 +40,11 @@ void CS_main(ComputeShaderInput input)
     [unroll]
     for (int i = -BLUR_SIZE; i < BLUR_SIZE; i++)
     {
-        int k = index2d.x + i;
-        float2 texcoords = float2(k, index2d.y);
+        int k = index2d.y + i;
+        float2 texcoords = float2(index2d.x, k);
         blurColor += gWeights[i + BLUR_SIZE] * glowmap[texcoords];
     }
 
-    output[index2d.xy] = blurColor;
+    output[index2d.xy] = saturate(scene[index2d] + blurColor);
 
 }

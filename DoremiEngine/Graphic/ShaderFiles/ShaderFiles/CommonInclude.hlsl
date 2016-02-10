@@ -1,7 +1,7 @@
 #define NUM_LIGHTS 6
 #define BLOCK_SIZE 16
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 800
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 struct Material
 {
@@ -87,7 +87,7 @@ float4 ClipToView(float4 clip)
 
 float4 ScreenToView(float4 screen)
 {
-    float2 ScreenDimensions = float2(800, 800);
+    float2 ScreenDimensions = float2(SCREEN_WIDTH, SCREEN_HEIGHT);
     // Convert to normalized texture coordinates
     float2 texCoord = screen.xy / ScreenDimensions;
 

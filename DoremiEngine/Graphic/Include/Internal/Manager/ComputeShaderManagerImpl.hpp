@@ -80,6 +80,7 @@ namespace DoremiEngine
             void DispatchFrustum() override;
             void DispatchCulling() override;
             void DispatchBlurHorizontal() override;
+            void DispatchBlurVertical() override;
             void CopyCullingData() override;
             void CopyData(BufferType index);
 
@@ -99,7 +100,8 @@ namespace DoremiEngine
             ID3D11Buffer* m_bufferResult[NUM_BUFFERS];
             ComputeShader* m_frustumShader;
             ComputeShader* m_cullingShader;
-            ComputeShader* m_postEffectsShader;
+            ComputeShader* m_blurHoriShader;
+            ComputeShader* m_blurVertShader;
         };
     }
 }
