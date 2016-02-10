@@ -34,16 +34,26 @@
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 #include <iostream>
 
+// Logging
+#include <DoremiEngine/Logging/Include/LoggingModule.hpp>
+#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
+#include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
+
 namespace Doremi
 {
     namespace Core
     {
-        PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : PlayerHandler(p_sharedContext)
+        PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : PlayerHandler(p_sharedContext), m_logger(nullptr)
         {
             EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
+            m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
         }
 
-        PlayerHandlerClient::~PlayerHandlerClient() {}
+        PlayerHandlerClient::~PlayerHandlerClient()
+        {
+            // Do not delete m_logger, internally handled by loggingmodule
+        }
 
         void PlayerHandlerClient::StartPlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
@@ -70,7 +80,11 @@ namespace Doremi
 
             for(auto& input : m_playerMap)
             {
-                static_cast<InputHandlerClient*>(input.second->m_inputHandler)->Update();
+                using namespace Doremi::Utilities::Logging;
+                InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(input.second->m_inputHandler);
+                inputHandler->Update();
+                m_logger->LogText(LogTag::INPUT, LogLevel::INFO, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
+                                  inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
             }
             TIME_FUNCTION_STOP
         }
