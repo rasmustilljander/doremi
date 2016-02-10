@@ -197,6 +197,9 @@ namespace Doremi
                 PlatformPatrolComponent* platComp = GetComponent<PlatformPatrolComponent>(p_entityId);
                 platComp->startPosition = transformationData.attributes.interactableStartPos;
                 platComp->endPosition = transformationData.attributes.interactableEndPos;
+                platComp->startPosition.z *= -1.0f;
+                platComp->endPosition.z *= -1.0f;
+
 
                 // Physical material comp
                 PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -223,6 +226,10 @@ namespace Doremi
                 // ADd net comp
                 NetworkObjectComponent* netComp = GetComponent<NetworkObjectComponent>(p_entityId);
                 *netComp = NetworkObjectComponent(1);
+            }
+            if(transformationData.attributes.checkPointID > -1)
+            {
+                r_shouldBuildPhysics = false;
             }
 
             return r_shouldBuildPhysics;

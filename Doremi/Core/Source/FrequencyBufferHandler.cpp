@@ -19,18 +19,16 @@ namespace Doremi
             m_realSequence++;
 
             // Current Sequence saved
-            uint8_t CurrentSequence = m_nextSequence - m_bufferedFrequencies.size();
+
 
             float returnFrequency = 0.0f;
 
             // If we got stuff to get from, should only be a initialize problem
-            if(CurrentSequence == m_realSequence)
+            if(m_bufferedFrequencies.size())
             {
-                if(m_bufferedFrequencies.size())
-                {
-                    returnFrequency = *m_bufferedFrequencies.begin();
-                }
+                returnFrequency = *m_bufferedFrequencies.begin();
             }
+
 
             return returnFrequency;
         }
@@ -40,12 +38,9 @@ namespace Doremi
             uint8_t CurrentSequence = m_nextSequence - m_bufferedFrequencies.size();
 
             // If we got stuff to get from, should only be a initialize problem
-            if(CurrentSequence == m_realSequence)
+            if(m_bufferedFrequencies.size())
             {
-                if(m_bufferedFrequencies.size())
-                {
-                    m_bufferedFrequencies.pop_front();
-                }
+                m_bufferedFrequencies.pop_front();
             }
         }
 

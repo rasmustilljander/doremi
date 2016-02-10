@@ -174,14 +174,22 @@ namespace Doremi
                 renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
             }
 
+            // if frequency platform
+            if(transformationData.attributes.frequencyAffected)
+            {
+                r_shouldBuildPhysics = false;
+                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::NetworkObject));
+            }
+
             // If non physic object
-            if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 || transformationData.attributes.startOrEndPoint == 2)
+            if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 ||
+               transformationData.attributes.startOrEndPoint == 2 || transformationData.attributes.checkPointID > -1)
             {
                 r_shouldBuildPhysics = false;
             }
 
-            return r_shouldBuildPhysics;
 
+            return r_shouldBuildPhysics;
         }
 
         void LevelLoaderClient::BuildLights()
