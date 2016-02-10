@@ -4,6 +4,7 @@
 #include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 #include <Utility/Utilities/Include/Logging/LogLevelConverter.hpp>
 #include <Utility/Utilities/Include/Logging/LogTagConverter.hpp>
+#include <Utility/Utilities/Include/Logging/HelpFunctions.hpp>
 #include <Utility/Utilities/Include/IO/FileMap/FileMap.hpp>
 
 #include <Utility/Utilities/Include/String/VA_ListToString.hpp>
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
+#include <random>
 #include <Windows.h>
 
 namespace DoremiEngine
@@ -25,6 +27,14 @@ namespace DoremiEngine
         LoggerImpl::LoggerImpl()
             : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr)
         {
+            // http://en.cppreference.com/w/cpp/numeric/random
+            std::random_device randomDevice;
+            std::mt19937 randomEngine(randomDevice());
+            const std::uniform_int_distribution<int> distribution(1, INT_MAX);
+            m_uniqueId = distribution(randomEngine);
+            std::cout << "Filemap uniqueId: " << m_uniqueId << std::endl;
+
+            Initialize();
         }
 
         LoggerImpl::~LoggerImpl()
@@ -52,7 +62,7 @@ namespace DoremiEngine
             }
         }
 
-        void LoggerImpl::Initialize(const std::string& p_workingDirectory)
+        void LoggerImpl::Initialize()
         {
             m_localBuffer = new Memory::CircleBuffer<LogTextData>();
             m_outGoingBuffer = new Memory::CircleBuffer<LogTextData>();
@@ -76,7 +86,7 @@ namespace DoremiEngine
             std::thread outGoingLoggingThread(threadWork, m_applicationRunning, m_localBuffer, m_outGoingBuffer);
             outGoingLoggingThread.detach();
 
-            StartLoggingProcess(p_workingDirectory);
+            StartLoggingProcess();
         }
 
         void LoggerImpl::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel, const char* p_format, ...)
@@ -119,7 +129,7 @@ namespace DoremiEngine
         void* LoggerImpl::InitializeFileMap(const std::size_t& p_size)
         {
             m_fileMap = new IO::FileMap();
-            void* memory = m_fileMap->Initialize(Constants::IPC_DEFAULT_FILEMAP_NAME, p_size);
+            void* memory = m_fileMap->Initialize(Logging::BuildFileMapName(m_uniqueId), p_size);
             if(memory != nullptr)
             {
                 return memory;
@@ -145,17 +155,23 @@ namespace DoremiEngine
             }
         }
 
-        void LoggerImpl::StartLoggingProcess(const std::string& p_workingDirectory)
+        std::wstring LoggerImpl::BuildLoggingProcessArgumentString()
+        {
+            const std::wstring applicationPathW = String::s2ws(Constants::LOGGING_PROCESS_NAME).c_str();
+            const std::wstring arguments = std::wstring(applicationPathW + std::wstring(L" ") + std::to_wstring(m_uniqueId));
+            return arguments;
+        }
+
+        void LoggerImpl::StartLoggingProcess()
         {
             PROCESS_INFORMATION processInformation;
             STARTUPINFO startupInfo;
             ZeroMemory(&processInformation, sizeof(PROCESS_INFORMATION));
             ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
             startupInfo.cb = sizeof(STARTUPINFO);
+            std::wstring& arguments = BuildLoggingProcessArgumentString();
 
-            const std::string applicationPath = std::string(p_workingDirectory + Constants::LOGGING_PROCESS_NAME);
-
-            if(!CreateProcess(String::s2ws(applicationPath).c_str(), NULL, 0, 0, 0, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &startupInfo, &processInformation))
+            if(!CreateProcess(NULL, &arguments[0], 0, 0, 0, CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT, 0, 0, &startupInfo, &processInformation))
             {
                 std::cout << GetLastError() << std::endl;
                 throw std::runtime_error("Creating loggingprocess failed.");
