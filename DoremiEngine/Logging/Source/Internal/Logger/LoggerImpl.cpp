@@ -67,10 +67,10 @@ namespace DoremiEngine
             m_mutex = CreateFileMapMutex();
 
             // Fetch shared memory from fileMap
-            void* fileMapMemory = InitializeFileMap(Constants::FILEMAP_SIZE);
+            void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
 
             // Intiailize outgoing buffer with shared memory and mutex
-            m_outGoingBuffer->Initialize(fileMapMemory, Constants::FILEMAP_SIZE, m_mutex);
+            m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
             m_applicationRunning = new bool(true);
 
             std::thread outGoingLoggingThread(threadWork, m_applicationRunning, m_localBuffer, m_outGoingBuffer);

@@ -7,8 +7,8 @@ namespace Doremi
     {
         namespace Constants
         {
-            const size_t FILEMAP_SIZE = 1024;
             const std::string IPC_DEFAULT_FILEMAP_NAME = std::string("doremi_filemap");
+            const size_t IPC_FILEMAP_SIZE = 1024;
             const double FILEMAP_TIMEOUT = 10;
             const size_t LONGEST_FUNCTION_NAME = 256;
             const size_t LONGEST_MESSAGE_NAME = 256;
