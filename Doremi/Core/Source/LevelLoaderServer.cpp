@@ -11,6 +11,8 @@
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/PlatformPatrolComponent.hpp>
+#include <EntityComponent/Components/NetworkObjectComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
@@ -181,12 +183,43 @@ namespace Doremi
             }
             if(transformationData.attributes.frequencyAffected)
             {
-                // Add component
-                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::FrequencyAffected));
+                /////////////////////////////////////////////////////////////// IF YOU ADD THIS CODE THE POINTERS OF PHYSICS MODULE WILL SWAP FOR SOME
+                /// WIERD REASON //////////////////////////////////////////////////////////////
+                //// Add component
+                // EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::FrequencyAffected) |
+                // static_cast<uint32_t>(ComponentType::PlatFormPatrolComponent) |
+                //        static_cast<uint32_t>(ComponentType::NetworkObject) | static_cast<uint32_t>(ComponentType::RigidBody) |
+                //        static_cast<uint32_t>(ComponentType::PhysicalMaterial));
 
-                PlatformPatrolComponent* platComp = GetComponent<PlatformPatrolComponent>(p_entityId);
-                platComp->startPosition = transformationData.attributes.interactableStartPos;
-                platComp->endPosition = transformationData.attributes.interactableEndPos;
+                //// add platform
+                // PlatformPatrolComponent* platComp = GetComponent<PlatformPatrolComponent>(p_entityId);
+                // platComp->startPosition = transformationData.attributes.interactableStartPos;
+                // platComp->endPosition = transformationData.attributes.interactableEndPos;
+
+                //// Physical material comp
+                // PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+                // t_physMatComp->p_materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+
+                // XMFLOAT3 centerPoint, minPoint, maxPoint;
+                //// calulate aab
+                // CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                // XMFLOAT3 dimension = XMFLOAT3(abs(minPoint.x - maxPoint.x) / 2.0f, abs(minPoint.y - maxPoint.y) / 2.0f, abs(minPoint.z -
+                // maxPoint.z) / 2.0f);
+
+                //// Rigid body comp
+                // RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
+
+                // t_rigidBodyComp->boxDims = dimension;
+                // t_rigidBodyComp->flags = RigidBodyFlags::kinematic;
+                // t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
+
+                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(p_entityId, transComp->position, transComp->rotation,
+                // t_rigidBodyComp->boxDims, t_physMatComp->p_materialID);
+
+                //// ADd net comp
+                // NetworkObjectComponent* netComp = GetComponent<NetworkObjectComponent>(p_entityId);
+                //*netComp = NetworkObjectComponent(1);
             }
 
             return r_shouldBuildPhysics;
