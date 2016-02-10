@@ -2,8 +2,22 @@
 #include <iostream> // cin
 #include <exception> // std::set_unexpected
 
+void PrintArguments(int argc, char** argv)
+{
+    using namespace std;
+    const int limit = argc;
+    for(int i = 0; i < limit; ++i)
+    {
+        cout << argv[i] << endl;
+    }
+}
+
 int main(int argc, char** argv)
 {
+#ifdef _DEBUG
+    PrintArguments(argc, argv);
+#endif
+
     int uniqueIdentifier = 0;
     if(argc == 1)
     {
