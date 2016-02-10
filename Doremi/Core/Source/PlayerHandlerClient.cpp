@@ -45,7 +45,6 @@ namespace Doremi
 
         PlayerHandlerClient::~PlayerHandlerClient() {}
 
-
         void PlayerHandlerClient::StartPlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             if(m_singleton != nullptr)
@@ -80,7 +79,6 @@ namespace Doremi
         {
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
 
-
             if(iter != m_playerMap.end())
             {
                 std::runtime_error("Creating player twice with same ID.");
@@ -97,7 +95,6 @@ namespace Doremi
             Player* NewPlayer = new PlayerClient(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
 
             m_playerMap[p_playerID] = NewPlayer;
-
 
             // int materialID =
             // EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
@@ -136,7 +133,6 @@ namespace Doremi
                 // m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
             }
 
-
             // Create event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
 
@@ -157,6 +153,7 @@ namespace Doremi
 
             return outPointer;
         }
+
         void PlayerHandlerClient::OnEvent(Event* p_event)
         {
             if(p_event->eventType == EventType::GunFireToggle)
