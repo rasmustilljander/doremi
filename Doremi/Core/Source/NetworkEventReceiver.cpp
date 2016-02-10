@@ -78,9 +78,11 @@ namespace Doremi
                     break;
                 case Doremi::Core::EventType::PlayerRespawn:
                     p_newEvent = new PlayerRespawnEvent();
+                    break;
 
                 case Doremi::Core::EventType::GunFireToggle:
                     p_newEvent = new GunFireToggleEvent();
+                    break;
 
                 default:
                     p_newEvent = new ExampleEvent();
