@@ -31,9 +31,6 @@ namespace Doremi
             DoremiEngine::Graphic::VertexShader* m_skyBoxVertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
             DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
-
-
-            DirectX::XMMATRIX m_sphereWorldMatrix;
         };
     }
 }
