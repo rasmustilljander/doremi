@@ -52,9 +52,25 @@ namespace DoremiEngine
 
 
             /**
-            TODOJB figure out what to do, and how to describe it in a comment
+            DEPRICATED!! Does still work however...
             */
             virtual void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) = 0;
+
+            /**
+            Big and kinda difficult-to-understand method to specify filtering for a given rigid body:
+            p_thisIdMask - defines the body by assigning flags. When a collision occurs, the filtering
+            checks for matches between the objects masks, and this mask
+
+            p_notifyTouchOthersMask - defines which bodies we want to be notified when touching. All
+            such collision pairs will be put in <insert appropriate list>
+
+            p_notifyLeaveOthersmask - defines whcih bodies we want to be notified when leaving after a 
+            touch has occured. All such collision pairs are put in <insert appropriate list>
+
+            p_ignoreOthersMask - defines which objects we want the object to completely ignore. If a
+            match is found, the collision will simply not occur (kinda like a trigger. Except only
+            against specific objects)*/ // TODOJB don't forget to update list
+            virtual void SetCallbackFiltering(int p_bodyID, int p_thisIdMask, int p_notifyTouchOthersMask, int p_notifyLeaveOthersMask, int p_ignoreOthersMask) = 0;
 
             /**
             Makes the body ignored by lots of thingies. This is just an experimental
