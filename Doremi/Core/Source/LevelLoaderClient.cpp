@@ -135,8 +135,10 @@ namespace Doremi
         void LevelLoaderClient::LoadFileInternal(const std::string& p_fileName) {}
 
 
-        void LevelLoaderClient::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
+        bool LevelLoaderClient::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
         {
+            bool r_shouldBuildPhysics = true;
+
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
 
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Render | (int)ComponentType::Transform);
@@ -156,6 +158,8 @@ namespace Doremi
                 textureName = "debug.dds";
             }
             renderComp->material = meshManager.BuildMaterialInfo(textureName);
+
+            return true;
         }
 
         void LevelLoaderClient::BuildLights()

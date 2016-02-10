@@ -2,6 +2,7 @@
 #include <LevelLoaderServer.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/EntityFactory.hpp>
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
@@ -82,8 +83,10 @@ namespace Doremi
             }
         }
 
-        void LevelLoaderServer::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
+        bool LevelLoaderServer::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
         {
+            bool r_shouldBuildPhysics = true;
+
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
             // Adds transform components to the world
             EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Transform);
@@ -111,6 +114,8 @@ namespace Doremi
             }
             if(transformationData.attributes.isSpawner)
             {
+                r_shouldBuildPhysics = false;
+
                 EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::EntitySpawner);
                 EntitySpawnComponent* entitySpawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(p_entityId);
                 entitySpawnComp->entityBlueprint = Blueprints::EnemyEntity; //(Blueprints)transformationData.attributes.typeBlueprint;
@@ -119,15 +124,70 @@ namespace Doremi
                 entitySpawnComp->timeBetweenSpawns = 10;
                 entitySpawnComp->spawnRadius = 100;
             }
+            // If spawnpoint
+            if(transformationData.attributes.spawnPointID > -1)
+            {
+                r_shouldBuildPhysics = false;
+
+                // If start point, we also set this as starting respawn
+                if(transformationData.attributes.startOrEndPoint == 1)
+                {
+                    PlayerSpawnerHandler::GetInstance()->SetCurrentSpawner(p_entityId);
+                }
+                // Add component
+                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::Trigger));
+
+                // Set spawn point values
+                TriggerComponent* t_triggerComp = GetComponent<TriggerComponent>(p_entityId);
+                t_triggerComp->triggerType = TriggerType::NewSpawnPointTrigger;
+
+                XMFLOAT3 centerPoint, minPoint, maxPoint;
+                // calulate aab
+                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                XMFLOAT3 dimension = XMFLOAT3(abs(minPoint.x - maxPoint.x) / 2.0f, abs(minPoint.y - maxPoint.y) / 2.0f, abs(minPoint.z - maxPoint.z) / 2.0f);
+
+                //// Create material
+                int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
+
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(p_entityId, centerPoint, XMFLOAT4(0, 0, 0, 1), dimension, materialTriggID);
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(p_entityId, true);
+            }
+            // If endpoint
+            if(transformationData.attributes.startOrEndPoint == 2)
+            {
+                r_shouldBuildPhysics = false;
+
+                // Add component
+                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::Trigger));
+
+                // Set spawn point values
+                TriggerComponent* t_triggerComp = GetComponent<TriggerComponent>(p_entityId);
+                t_triggerComp->triggerType = TriggerType::GoalTrigger;
+
+                XMFLOAT3 centerPoint, minPoint, maxPoint;
+                // calulate aab
+                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                XMFLOAT3 dimension = XMFLOAT3(abs(minPoint.x - maxPoint.x) / 2.0f, abs(minPoint.y - maxPoint.y) / 2.0f, abs(minPoint.z - maxPoint.z) / 2.0f);
+
+                //// Create material
+                int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
+
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(p_entityId, centerPoint, XMFLOAT4(0, 0, 0, 1), dimension, materialTriggID);
+                m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(p_entityId, true);
+            }
+
+            return r_shouldBuildPhysics;
         }
 
-        void LevelLoaderServer::CreatePotentialfieldAroundMesh(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
-                                                               const DoremiEditor::Core::TransformData& p_transformationData)
+        void LevelLoaderServer::CalculateAABBBoundingBox(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
+                                                         const DoremiEditor::Core::TransformData& p_transformationData, DirectX::XMFLOAT3& o_max,
+                                                         DirectX::XMFLOAT3& o_min, DirectX::XMFLOAT3& o_center)
         {
-            using namespace DirectX;
-            XMFLOAT3 maxPosition =
-                XMFLOAT3(-100000, -100000, -100000); // Hard coded low maxpos value TODOXX dangerous if maps is outside this scope...
-            XMFLOAT3 minPosition = XMFLOAT3(100000, 100000, 100000);
+            DirectX::XMFLOAT3 maxPosition =
+                DirectX::XMFLOAT3(-100000, -100000, -100000); // Hard coded low maxpos value TODOXX dangerous if maps is outside this scope...
+            DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(100000, 100000, 100000);
             size_t length = p_vertexBuffer.size();
             for(size_t i = 0; i < length; i++)
             {
@@ -160,11 +220,11 @@ namespace Doremi
                 }
             }
             // Max and min are now centered around origo with no scale and no rotation...
-            XMVECTOR maxVector = XMLoadFloat3(&maxPosition);
-            XMVECTOR minVector = XMLoadFloat3(&minPosition);
-            XMMATRIX rotation = XMMatrixRotationQuaternion(XMLoadFloat4(&p_transformationData.rotation));
-            XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
-            XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
+            DirectX::XMVECTOR maxVector = XMLoadFloat3(&maxPosition);
+            DirectX::XMVECTOR minVector = XMLoadFloat3(&minPosition);
+            DirectX::XMMATRIX rotation = XMMatrixRotationQuaternion(XMLoadFloat4(&p_transformationData.rotation));
+            DirectX::XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
+            DirectX::XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
             maxVector = XMVector3Transform(maxVector, scale);
             maxVector = XMVector3Transform(maxVector, translation);
 
@@ -172,16 +232,23 @@ namespace Doremi
             minVector = XMVector3Transform(minVector, translation);
             // minVector = XMVector3Transform(minVector, translation * rotation * scale);
             // maxVector = XMVector3Rotate(maxVector, XMLoadFloat4(&p_transformationData.rotation));
-            XMFLOAT3 centerPoint;
-            XMStoreFloat3(&centerPoint, (maxVector + minVector) / 2);
-            XMStoreFloat3(&maxPosition, maxVector);
-            XMStoreFloat3(&minPosition, minVector);
+            DirectX::XMFLOAT3 centerPoint;
+            XMStoreFloat3(&o_center, (maxVector + minVector) / 2);
+            XMStoreFloat3(&o_max, maxVector);
+            XMStoreFloat3(&o_min, minVector);
+        }
 
-            centerPoint.y = maxPosition.y;
+        void LevelLoaderServer::CreatePotentialfieldAroundMesh(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
+                                                               const DoremiEditor::Core::TransformData& p_transformationData)
+        {
+            using namespace DirectX;
+            XMFLOAT3 centerPoint, minPoint, maxPoint;
+            CalculateAABBBoundingBox(p_vertexBuffer, p_transformationData, maxPoint, minPoint, centerPoint);
+
+            centerPoint.y = maxPoint.y;
             PotentialFieldGridCreator t_gridCreator = PotentialFieldGridCreator(m_sharedContext);
             DoremiEngine::AI::PotentialField* field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPosition.x - minPosition.x,
-                                                                                          maxPosition.z - minPosition.z, 1, 1, centerPoint);
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 1, 1, centerPoint);
             t_gridCreator.BuildGridUsingPhysicXAndGrid(field);
         }
     }

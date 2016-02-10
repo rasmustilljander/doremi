@@ -20,7 +20,7 @@ namespace Doremi
         */
         class PlayerSpawnerHandler : public Subscriber
         {
-
+        public:
             static PlayerSpawnerHandler* GetInstance();
 
             static void StartupPlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);

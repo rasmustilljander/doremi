@@ -7,6 +7,7 @@
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
@@ -107,10 +108,19 @@ namespace Doremi
                 std::runtime_error("Creating player twice with same ID.");
             }
 
+            uint32_t t_spawnerEntityID = PlayerSpawnerHandler::GetInstance()->GetCurrentSpawnerEntityID();
+
+            DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+            // Get position and orientation of the trigger..
+            DirectX::XMFLOAT3 t_triggerPosition = t_rigidBodyManager.GetBodyPosition(t_spawnerEntityID);
+            DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(t_spawnerEntityID);
+
+
             // TODOCM hard coded entityID for new players
             DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
             EntityID t_EntityID =
-                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
+                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation, XMFLOAT3(0.25, 0.25, 0.25));
 
             NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();

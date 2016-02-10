@@ -298,9 +298,11 @@ namespace Doremi
                 const int entityID = EntityFactory::GetInstance()->CreateEntity(Blueprints::EmptyEntity);
 
                 // Create components
-                BuildComponents(entityID, i, vertexBuffer);
-
-                SetPhysicalAttributesOnMesh(entityID, positionPX, indexPX);
+                bool shouldBuildPhysics = BuildComponents(entityID, i, vertexBuffer);
+                if(shouldBuildPhysics)
+                {
+                    SetPhysicalAttributesOnMesh(entityID, positionPX, indexPX);
+                }
             }
         }
 

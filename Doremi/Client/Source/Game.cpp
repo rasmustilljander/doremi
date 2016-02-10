@@ -30,6 +30,7 @@
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -105,6 +106,7 @@ namespace Doremi
         Core::CameraHandler::StartCameraHandler(sharedContext);
         Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         Core::EntityFactory::StartupEntityFactory(sharedContext);
+        Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         // Initialize 2d drawer class
         m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, XMFLOAT2(800, 800));
 

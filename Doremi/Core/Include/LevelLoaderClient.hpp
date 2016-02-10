@@ -17,7 +17,7 @@ namespace Doremi
             CharacterDataNames LoadCharacter(const std::string& p_fileName);
 
         protected:
-            void BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;
+            bool BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;
             void BuildLights();
             void LoadFileInternal(const std::string& p_fileName);
         };
