@@ -30,6 +30,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandlerServer.hpp>
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/Manager.hpp>
@@ -86,6 +87,7 @@ namespace Doremi
         Core::EventHandlerServer::StartupEventHandlerServer();
         Core::EntityHandlerServer::StartupEntityHandlerServer();
         Core::PlayerHandlerServer::StartPlayerHandlerServer(sharedContext);
+        Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager
