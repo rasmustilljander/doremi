@@ -10,6 +10,8 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
+#include <EntityComponent/Components/PlatformPatrolComponent.hpp>
+
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
@@ -176,6 +178,15 @@ namespace Doremi
 
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(p_entityId, centerPoint, XMFLOAT4(0, 0, 0, 1), dimension, materialTriggID);
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(p_entityId, true);
+            }
+            if(transformationData.attributes.frequencyAffected)
+            {
+                // Add component
+                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::FrequencyAffected));
+
+                PlatformPatrolComponent* platComp = GetComponent<PlatformPatrolComponent>(p_entityId);
+                platComp->startPosition = transformationData.attributes.interactableStartPos;
+                platComp->endPosition = transformationData.attributes.interactableEndPos;
             }
 
             return r_shouldBuildPhysics;
