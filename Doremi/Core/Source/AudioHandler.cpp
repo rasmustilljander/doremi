@@ -13,6 +13,11 @@
 #include <PlayerHandler.hpp>
 #include <FrequencyBufferHandler.hpp>
 
+// Logging
+#include <DoremiEngine/Logging/Include/LoggingModule.hpp>
+#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
+#include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
+
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
@@ -20,9 +25,15 @@ namespace Doremi
 {
     namespace Core
     {
-        AudioHandler::AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        AudioHandler::AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext), m_logger(nullptr)
+        {
+            m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
+        }
 
-        AudioHandler::~AudioHandler() {}
+        AudioHandler::~AudioHandler()
+        {
+            // Do not delete m_logger, internally handled by loggingmodule
+        }
 
         void AudioHandler::StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
@@ -238,6 +249,8 @@ namespace Doremi
             if(freqBufferHandler != nullptr)
             {
                 freqBufferHandler->BufferFrequency(m_currentFrequency);
+                using namespace Doremi::Utilities::Logging;
+                m_logger->LogText(LogTag::AUDIO, LogLevel::INFO, "F, %f", m_currentFrequency);
             }
 
             TIME_FUNCTION_STOP

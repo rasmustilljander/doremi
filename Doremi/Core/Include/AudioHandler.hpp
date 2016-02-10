@@ -12,6 +12,11 @@ namespace DoremiEngine
     {
         class SharedContext;
     }
+
+    namespace Logging
+    {
+        class Logger;
+    }
 }
 
 namespace Doremi
@@ -85,6 +90,9 @@ namespace Doremi
 
             };
             SoundState m_SoundState;
+
+            // Logger
+            DoremiEngine::Logging::Logger* m_logger;
         };
     }
 }

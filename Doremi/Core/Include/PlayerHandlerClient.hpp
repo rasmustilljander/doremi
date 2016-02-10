@@ -1,6 +1,14 @@
 #pragma once
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 
+namespace DoremiEngine
+{
+    namespace Logging
+    {
+        class Logger;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -45,6 +53,7 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
+            DoremiEngine::Logging::Logger* m_logger;
         };
     }
 }
