@@ -51,7 +51,6 @@ int main(int argc, char** argv)
     {
         using namespace std;
         cout << "Unknown error." << endl;
-        // TODORT debug info
     }
 
     return 0;
