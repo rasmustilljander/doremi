@@ -14,7 +14,23 @@ using namespace Doremi::Utilities;
 
 LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr) {}
 
-LoggerProcess::~LoggerProcess() {}
+LoggerProcess::~LoggerProcess()
+{
+    if(m_fileMap != nullptr)
+    {
+        delete m_fileMap;
+    }
+
+    if(m_ingoingBuffer != nullptr)
+    {
+        delete m_ingoingBuffer;
+    }
+
+    if(m_mutex != nullptr)
+    {
+        delete m_mutex;
+    }
+}
 
 void LoggerProcess::Initialize(const int& p_uniqueId)
 {
