@@ -261,6 +261,19 @@ namespace DoremiEngine
             shape->setFlag(PxShapeFlag::ePARTICLE_DRAIN, p_isDrain);
         }
 
+        void RigidBodyManagerImpl::SetCallbackFiltering(int p_bodyID, int p_thisIdMask, int p_notifyTouchOthersMask, int p_notifyLeaveOthersMask, int p_ignoreOthersMask)
+        {
+            if(m_bodies.find(p_bodyID) == m_bodies.end())
+            {
+                cout << "Physics. Rigid bodies. SetCallBackFiltering. No such body exists with ID: " << p_bodyID << endl;
+                return;
+            }
+            PxFilterData filterData = PxFilterData(p_thisIdMask, p_notifyTouchOthersMask, p_notifyLeaveOthersMask, p_ignoreOthersMask);
+            PxShape* shape;
+            m_bodies.at(p_bodyID)->getShapes(&shape, 1);
+            shape->setSimulationFilterData(filterData);
+        }
+
         void RigidBodyManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
         {
             if(m_bodies.find(p_bodyID) == m_bodies.end())

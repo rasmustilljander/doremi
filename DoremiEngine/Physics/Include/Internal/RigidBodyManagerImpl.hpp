@@ -38,7 +38,7 @@ namespace DoremiEngine
             void SetTrigger(int p_id, bool p_isTrigger) override;
             void SetDrain(int p_id, bool p_isDrain) override;
 
-
+            void SetCallbackFiltering(int p_body, int p_thisIdMask, int p_notifyTouchOthersMask, int p_notifyLeaveOthersMask, int p_ignoreOthersMask) override;
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
             void SetIgnoredDEBUG(int p_bodyID) override;
 
