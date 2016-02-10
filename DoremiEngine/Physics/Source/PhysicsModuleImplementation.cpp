@@ -84,8 +84,13 @@ namespace DoremiEngine
             {
                 pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
             }
+            // Touch lost check
+            if((filterData0.word0 & filterData1.word2) && (filterData1.word0 & filterData1.word2))
+            {
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
+            }
 
-
+            // TODOJB fix so it uses generic words. NOT hard-coded
             // Filter out collisions with ignore-bodies REALLY UGLY TODOJB Improve
             if(filterData0.word3 == 1) // been an ignore collision
             {
@@ -187,38 +192,92 @@ namespace DoremiEngine
                 const PxContactPair& cp = pairs[i];
                 CollisionPair collisionPair;
 
-                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                // Check if this was a touch found collision callback
+                if(cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
                 {
-                    collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
-                }
-                else
-                {
-                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
-                    for(auto const& controller : idsByControllers)
+                    /// Add first ID to collision pair
+                    // Check if the first actor was a rigid body
+                    if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
                     {
-                        if(controller.first->getActor() == pairHeader.actors[0])
+                        collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
+                    }
+                    /*
+                    Wasn't a rigid body. Assume it is a character controller (pretty risky but should be fine as long as no one decides
+                    to assign a bunch of flags to particle systems. But that shouldn't happen. That's my country! Get out!)*/
+                    else
+                    {
+                        unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                        for(auto const& controller : idsByControllers)
                         {
-                            collisionPair.firstID = controller.second;
+                            if(controller.first->getActor() == pairHeader.actors[0])
+                            {
+                                collisionPair.firstID = controller.second;
+                            }
                         }
                     }
-                }
-
-                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
-                {
-                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
-                }
-                else
-                {
-                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
-                    for(auto const& controller : idsByControllers)
+                    /// Add second ID to collision pair
+                    // Check if the first actor was a rigid body
+                    if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
                     {
-                        if(controller.first->getActor() == pairHeader.actors[1])
+                        collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
+                    }
+                    // Wasn't rigid body. Assume it is a character controller. Again, this should be fine
+                    else
+                    {
+                        unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                        for(auto const& controller : idsByControllers)
                         {
-                            collisionPair.secondID = controller.second;
+                            if(controller.first->getActor() == pairHeader.actors[1])
+                            {
+                                collisionPair.secondID = controller.second;
+                            }
                         }
                     }
+                    m_collisionPairs.push_back(collisionPair);
                 }
-                m_collisionPairs.push_back(collisionPair);
+                // Check if it was a touch lost collision (copy paste, yo!)
+                else if(cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+                {
+                    /// Add first ID to collision pair
+                    // Check if the first actor was a rigid body
+                    if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                    {
+                        collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[0])->second;
+                    }
+                    /*
+                    Wasn't a rigid body. Assume it is a character controller (pretty risky but should be fine as long as no one decides
+                    to assign a bunch of flags to particle systems. But that shouldn't happen. That's my country! Get out!)*/
+                    else
+                    {
+                        unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                        for(auto const& controller : idsByControllers)
+                        {
+                            if(controller.first->getActor() == pairHeader.actors[0])
+                            {
+                                collisionPair.firstID = controller.second;
+                            }
+                        }
+                    }
+                    /// Add second ID to collision pair
+                    // Check if the first actor was a rigid body
+                    if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1]) != m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                    {
+                        collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairHeader.actors[1])->second;
+                    }
+                    // Wasn't rigid body. Assume it is a character controller. Again, this should be fine
+                    else
+                    {
+                        unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                        for(auto const& controller : idsByControllers)
+                        {
+                            if(controller.first->getActor() == pairHeader.actors[1])
+                            {
+                                collisionPair.secondID = controller.second;
+                            }
+                        }
+                    }
+                    m_leftCollisionPairs.push_back(collisionPair);
+                }
             }
         }
 
