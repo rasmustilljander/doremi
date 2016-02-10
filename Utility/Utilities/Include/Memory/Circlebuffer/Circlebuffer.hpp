@@ -78,57 +78,58 @@ namespace Doremi
                 */
                 bool Produce(const CircleBufferHeader& p_Header, const T* const p_data) // TODORT, does this not trigger
                 {
-                    // Internal lockage
-                    std::lock_guard<std::mutex> lock(m_produceLock);
+                    //// Internal lockage
+                    // std::lock_guard<std::mutex> lock(m_produceLock);
 
-                    // Find if it is possible to produce more
-                    // Does not require to lock metadata under the assumption that when circlebuffers communicate via IPC one side is only producer
-                    // and the other side is only comsumer.
-                    // And as this part is already locked with internal lockage above
-                    if(m_data->currentObjectCount < m_maxContainedObjects)
-                    {
-                        // Local head
-                        void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
+                    //// Find if it is possible to produce more
+                    //// Does not require to lock metadata under the assumption that when circlebuffers communicate via IPC one side is only producer
+                    //// and the other side is only comsumer.
+                    //// And as this part is already locked with internal lockage above
+                    // if(m_data->currentObjectCount < m_maxContainedObjects)
+                    //{
+                    //    // Local head
+                    //    void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
 
-                        // Check if current pointer is outside our scope.
-                        if(PointerArithmetic::AssertAdresstInside(head, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
-                        {
-                            head = m_adjustedBufferPointerStart; // If so, reset to first part.
-                        }
+                    //    // Check if current pointer is outside our scope.
+                    //    if(PointerArithmetic::AssertAdresstInside(head, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
+                    //    {
+                    //        head = m_adjustedBufferPointerStart; // If so, reset to first part.
+                    //    }
 
-                        //// Produce is ok
-                        // Copy metaheader to current_head
-                        memcpy(head, &p_Header, sizeof(CircleBufferHeader));
+                    //    //// Produce is ok
+                    //    // Copy metaheader to current_head
+                    //    memcpy(head, &p_Header, sizeof(CircleBufferHeader));
 
-                        // Move head to after metaheader
-                        head = PointerArithmetic::Addition(head, sizeof(CircleBufferHeader));
+                    //    // Move head to after metaheader
+                    //    head = PointerArithmetic::Addition(head, sizeof(CircleBufferHeader));
 
-                        // Copy data to head
-                        memcpy(head, p_data, p_Header.packageSize);
+                    //    // Copy data to head
+                    //    memcpy(head, p_data, p_Header.packageSize);
 
-                        // Move head to after data
-                        head = PointerArithmetic::Addition(head, p_Header.packageSize);
+                    //    // Move head to after data
+                    //    head = PointerArithmetic::Addition(head, p_Header.packageSize);
 
-                        // Update global head
-                        m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
+                    //    // Update global head
+                    //    m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
 
-                        // Filemap lock
-                        LockMetaData();
+                    //    // Filemap lock
+                    //    LockMetaData();
 
-                        // Update object count
-                        m_data->currentObjectCount++;
+                    //    // Update object count
+                    //    m_data->currentObjectCount++;
 
-                        // Unlock filemap
-                        UnLockMetaData();
+                    //    // Unlock filemap
+                    //    UnLockMetaData();
 
-                        // Complete
-                        return true;
-                    }
-                    else
-                    {
-                        // Failed
-                        return false;
-                    }
+                    //    // Complete
+                    //    return true;
+                    //}
+                    // else
+                    //{
+                    //    // Failed
+                    //    return false;
+                    //}
+                    return true;
                 }
 
                 /**
@@ -136,56 +137,57 @@ namespace Doremi
                 */
                 bool Consume(CircleBufferHeader*& out_header, T*& out_data)
                 {
-                    // Internal lockage
-                    std::lock_guard<std::mutex> lock(m_consumeLock);
+                    //// Internal lockage
+                    // std::lock_guard<std::mutex> lock(m_consumeLock);
 
-                    // Find if it is possible to consume anything
-                    // Does not require to lock metadata under the assumption that when circlebuffers communicate via IPC one side is only producer
-                    // and the other side is only comsumer.
-                    // And as this part is already locked with internal lockage above
-                    if(m_data->currentObjectCount > 0)
-                    {
-                        // Local tail
-                        void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentTailOffset);
+                    //// Find if it is possible to consume anything
+                    //// Does not require to lock metadata under the assumption that when circlebuffers communicate via IPC one side is only producer
+                    //// and the other side is only comsumer.
+                    //// And as this part is already locked with internal lockage above
+                    // if(m_data->currentObjectCount > 0)
+                    //{
+                    //    // Local tail
+                    //    void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentTailOffset);
 
-                        // Check if current pointer is outside our scope.
-                        if(PointerArithmetic::AssertAdresstInside(tail, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
-                        {
-                            tail = m_adjustedBufferPointerStart; // If so, reset to first part.
-                        }
+                    //    // Check if current pointer is outside our scope.
+                    //    if(PointerArithmetic::AssertAdresstInside(tail, m_adjustedBufferPointerStart, m_adjustedBufferPointerEnd) == false)
+                    //    {
+                    //        tail = m_adjustedBufferPointerStart; // If so, reset to first part.
+                    //    }
 
-                        //// Produce is ok
-                        // Copy metaheader to current_head
-                        memcpy(out_header, tail, sizeof(CircleBufferHeader));
+                    //    //// Produce is ok
+                    //    // Copy metaheader to current_head
+                    //    memcpy(out_header, tail, sizeof(CircleBufferHeader));
 
-                        // Move header to after metaheader
-                        tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
+                    //    // Move header to after metaheader
+                    //    tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
 
-                        // Copy data to current:_head
-                        memcpy(out_data, tail, out_header->packageSize);
+                    //    // Copy data to current:_head
+                    //    memcpy(out_data, tail, out_header->packageSize);
 
-                        // Move header to after data
-                        tail = PointerArithmetic::Addition(tail, out_header->packageSize);
+                    //    // Move header to after data
+                    //    tail = PointerArithmetic::Addition(tail, out_header->packageSize);
 
-                        // Update global tail
-                        m_data->currentTailOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
+                    //    // Update global tail
+                    //    m_data->currentTailOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
 
-                        // Filemap lock
-                        LockMetaData();
+                    //    // Filemap lock
+                    //    LockMetaData();
 
-                        // Update object count
-                        m_data->currentObjectCount--;
+                    //    // Update object count
+                    //    m_data->currentObjectCount--;
 
-                        // Unlock filemap
-                        UnLockMetaData();
+                    //    // Unlock filemap
+                    //    UnLockMetaData();
 
-                        return true;
-                    }
-                    else
-                    {
-                        // Nothing to do
-                        return false;
-                    }
+                    //    return true;
+                    //}
+                    // else
+                    //{
+                    //    // Nothing to do
+                    //    return false;
+                    //}
+                    return true;
                 }
 
             protected:
