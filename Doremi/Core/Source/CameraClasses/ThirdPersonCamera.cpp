@@ -41,7 +41,8 @@ namespace Doremi
             forward = XMVector3Normalize(forward);
             XMVECTOR right = XMVector3Cross(forward, up);
             XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
-            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
+            //XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
+            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector 
             forward = XMVector3Normalize(forward);
             XMVECTOR cameraPosition = position - forward * m_distanceFromPlayer;
             // float offsetY = 5 * cosf(m_angle); // Get offset in Y

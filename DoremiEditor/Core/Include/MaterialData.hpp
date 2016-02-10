@@ -5,7 +5,13 @@ namespace DoremiEditor
 {
     namespace Core
     {
-
+        enum class ActiveTextures : int
+        {
+            COLORMAP = 0x01,
+            GLOWMAP = 0x02,
+            SPECMAP = 0x04,
+            BUMPMAP = 0x08
+        };
         struct MaterialData
         {
             MaterialData()

@@ -23,6 +23,10 @@ namespace DoremiEngine
             // Graphic stuff
             float ScreenWidth = 800;
             float ScreenHeight = 600;
+            float CameraDistanceFromPlayer = 5.0f;
+            float CameraSpeedY = 0.001f;
+            int CameraViewDistance = 1000;
+            int CameraFieldOfView = 60;
 
             // Audio stuff
             float Volume = 0.5f;
