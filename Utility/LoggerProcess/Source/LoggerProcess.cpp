@@ -9,6 +9,7 @@
 #include <time.h>
 #include <Windows.h>
 #include <iostream>
+#include <thread>
 
 using namespace Doremi::Utilities;
 
@@ -70,6 +71,13 @@ void LoggerProcess::Run()
 
             // Reset elapsed time
             elapsedTime = 0;
+        }
+        else
+        {
+            using namespace std::literals;
+            // TODORT
+            // TODOXX is 10ms good?
+            std::this_thread::sleep_for(10ms);
         }
 
         // Compute elapsed time
