@@ -245,19 +245,22 @@ namespace Doremi
 
                     if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
                     {
-                        ParticlePressureComponent* particleComp = EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(entityID);
-                        particleComp->data.m_active = false;
-                        particleComp->data.m_density = 2.0f;
-                        particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-                        particleComp->data.m_direction = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->rotation;
-                        particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-                        particleComp->data.m_emissionRate = 0.05;
-                        particleComp->data.m_launchPressure = 100;
-                        particleComp->data.m_numParticlesX = 5;
-                        particleComp->data.m_numParticlesY = 1;
-                        particleComp->data.m_size = 1;
-                        particleComp->data.m_position = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
-                        m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, particleComp->data);
+                        // ParticlePressureComponent* particleComp =
+                        // EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(entityID);
+                        // particleComp->data.m_active = false;
+                        // particleComp->data.m_density = 2.0f;
+                        // particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
+                        // particleComp->data.m_direction =
+                        // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->rotation;
+                        // particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
+                        // particleComp->data.m_emissionRate = 0.05;
+                        // particleComp->data.m_launchPressure = 100;
+                        // particleComp->data.m_numParticlesX = 5;
+                        // particleComp->data.m_numParticlesY = 1;
+                        // particleComp->data.m_size = 1;
+                        // particleComp->data.m_position =
+                        // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
+                        // m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, particleComp->data);
                     }
                 }
 
