@@ -97,19 +97,18 @@ namespace Doremi
                     {
                         t_skeletalAnimationComponent->timePosition = 0.0f;
                     }
-
+                    // Make a transformationmatrix per bone
                     int t_numberOfTransformationMatrices = t_skeletalAnimationComponent->skeletalInformation->GetBoneCount();
+                    // Declare and define a vector to the length of the number of joints/bones
                     std::vector<DirectX::XMFLOAT4X4> t_finalTransformations(t_numberOfTransformationMatrices);
+                    // Send to graphicmodule to compute the final transformationmatrices for this timeinstant.
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().GetFinalTransforms(
                         t_skeletalAnimationComponent->clipName, (float)t_skeletalAnimationComponent->timePosition, t_finalTransformations,
                         t_skeletalAnimationComponent->skeletalInformation);
-
-                    // TODOLH ANIM use transformations!
+                    // Push the matrices to the gpu
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().PushMatricesToDevice(t_finalTransformations);
 
                     // Start draw pipeline Copypasted from graphic manager
-
-
                     RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(j);
                     TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(j);
                     DirectX::XMFLOAT4X4 transMat;
@@ -119,11 +118,11 @@ namespace Doremi
                         DirectX::XMMatrixRotationQuaternion(quaternion) *
                         DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z));
                     DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-                    submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material,
-                                                                      transMat); // BYta till skeletalmeshinfo
-
+                    submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+                    // Set the Raster and depthstencilstate
                     m_rasterizerState->GetRasterizerState();
                     m_depthStencilState->GetDepthStencilState();
+                    // Draw the skeletalmesh uses another drawmethod than the common one. Since now we have more information in the vertex
                     submoduleManager.GetDirectXManager().DrawCurrentRenderListSkeletal(m_rasterizerState->GetRasterizerState(),
                                                                                        m_depthStencilState->GetDepthStencilState());
                 }

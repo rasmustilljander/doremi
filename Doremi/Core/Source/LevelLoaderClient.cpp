@@ -80,39 +80,41 @@ namespace Doremi
 
         CharacterDataNames LevelLoaderClient::LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_skeletalInformation)
         {
+            // Get the full path
             string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
 
-            // fileName.append((string)fileNameArg.asChar());
-            // fileName.append(".drm");
             ifstream ifs;
-            ifs.open(fileName, ifstream::in | ifstream::binary); //ändra till ascii??
+            ifs.open(fileName, ifstream::in | ifstream::binary);
             if(ifs.is_open() == true)
             {
+                // Read the Name of the skeletalanimationmodel (This is set in maya, I use the name to have an identifier for meshname)
                 int sceneNameSize;
                 ifs.read((char*)&sceneNameSize, sizeof(int));
                 char* sceneName = new char[sceneNameSize];
                 ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
                 std::string t_sceneName = sceneName;
 
+                // Read how many joints, materials, transforms and meshes we will read. Used for forloops
                 int nrJoints, nrMats, nrTransforms, nrMeshes;
                 ifs.read((char*)&nrJoints, sizeof(int));
                 ifs.read((char*)&nrMats, sizeof(int));
                 ifs.read((char*)&nrTransforms, sizeof(int));
                 ifs.read((char*)&nrMeshes, sizeof(int));
 
-                // int idleAnimationStart = GetAnimationAttribute("StartFramesIdle");
                 // Per skelettmesh
+                // The heirachy of the skeleton. Index = jointID. Value = ParentID
                 std::vector<int> t_jointHeirarchy;
+                // All the animations
                 std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_animations;
-                std::vector<std::vector<DirectX::XMFLOAT4X4>> t_boneTransformsAll;
+                // Debug todolh remove
                 std::vector<std::vector<std::string>> t_transformNamesAll;
 
                 // Per animationsclip
+                // Fill this variable with data and push it into the map of animationclips
                 DoremiEngine::Graphic::AnimationClip t_animationClip;
                 std::vector<std::string> t_childTransformNames;
 
                 // Per joint
-                std::vector<XMFLOAT3> t_jointOrientationPerJoint;
                 int nrKeyFrames;
                 for(int i = 0; i < nrJoints; i++)
                 {
@@ -121,7 +123,7 @@ namespace Doremi
                     // int nrKeyFrames;
                     int nameSize;
 
-
+                    // Read ID parentID nrChildrenTransforms, nrKeyframes and How long the name is
                     ifs.read((char*)&ID, sizeof(int));
                     ifs.read((char*)&parentID, sizeof(int));
                     ifs.read((char*)&nrChildrenTransforms, sizeof(int));
@@ -130,47 +132,29 @@ namespace Doremi
 
                     char* name = new char[nameSize]; // namnet på jointen
                     ifs.read((char*)name, sizeof(char) * nameSize);
-
                     t_jointHeirarchy.push_back(parentID);
+
                     std::vector<std::string> t_transformNames;
                     for(int y = 0; y < nrChildrenTransforms;
                         y++) // skriv alla transforms (förutom joints) som är children till denna joint, dvs transforms till meshes
                     {
+                        // Detta har ingen funktion atm men kan inte ta bort reads då fakkarprogrammet
                         static int legbotCount = 0;
                         int childNameSize;
                         ifs.read((char*)&childNameSize, sizeof(int));
                         char* childTransformName = new char[childNameSize]; // namn på transform som skall vara till mesh, dvs INGEN joint
                         ifs.read((char*)childTransformName, sizeof(char) * childNameSize);
-                        // Den här här svårast att få in. Det ska vara Bonetransformsen men jag måste mappa namnen på nåt vänster till vilken joint
-                        // som är intressant
                         t_transformNames.push_back(childTransformName); // Kanske ska bort om den under funkar
-                        std::string childName(childTransformName);
-                        if(!std::strcmp(childTransformName, "LegBot1"))
-                        {
-                            if(legbotCount == 0)
-                            {
-                                legbotCount++;
-                                t_childTransformNames.push_back(childTransformName); // PRovar attköra med denna Finns 2 legbot1!!
-                            }
-                        }
-                        else
-                        {
-                            t_childTransformNames.push_back(childTransformName); // PRovar attköra med denna Finns 2 legbot1!!
-                        }
                         delete childTransformName;
                     }
                     t_transformNamesAll.push_back(t_transformNames); // ska bort om den övre funkar
 
                     // SPara ner keyframesen i boneanimaiton som sedan sparas ner i animationclip å mappas mot animationclipnamnet
                     DoremiEngine::Graphic::BoneAnimation t_boneAnimation;
-                    DoremiEngine::Graphic::BoneAnimation t_boneAnimationtemp;
+                    // Använd jointorientation för att lägga på rotation i alla keyframes. Betyder att alla rotationer på jointen i keyframes utgår
+                    // från att jointen redan är roterad så här
                     XMFLOAT3 t_jointOrientation;
                     ifs.read((char*)&t_jointOrientation, sizeof(float) * 3); // jointorientationen måste användas för att få det rätt...
-                    t_jointOrientationPerJoint.push_back(t_jointOrientation);
-                    if(t_jointOrientationPerJoint.size() > 1)
-                    {
-                        t_jointOrientation = t_jointOrientationPerJoint[i - 1];
-                    }
                     for(int y = 0; y < nrKeyFrames; y++) // skriv keyframsen
                     {
                         DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
@@ -179,37 +163,25 @@ namespace Doremi
                         ifs.read((char*)&t_keyFrameTemp.position, sizeof(float) * 3);
                         ifs.read((char*)&t_keyFrameTemp.quaternion, sizeof(float) * 4);
                         ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
-                        ifs.read((char*)&t_keyFrameTemp.scale, sizeof(float) * 3);
+                        ifs.read((char*)&t_keyFrameTemp.scale, sizeof(float) * 3); // TODOLH TODOSH bör ta bort antingen euler eller quaternion. De
+                        // ska va likadana å fylla samma funktion
                         ifs.read((char*)&t_frame, sizeof(int));
 
-
-                        XMVECTOR t_jointRotation = XMLoadFloat3(&t_jointOrientation);
-
-                        // XMMATRIX t_transRotMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&t_keyFrameTemp.quaternion));
-                        XMMATRIX t_transRotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&t_eulerAngles));
-                        XMMATRIX t_jointRotMatrix = XMMatrixRotationRollPitchYawFromVector(t_jointRotation);
-                        // XMMatrixInverse(&XMMatrixDeterminant(t_jointRotMatrix), t_jointRotMatrix);
-                        // t_transRotMatrix = XMMatrixMultiply(t_transRotMatrix, t_jointRotMatrix);
-
-
+                        // Som skrivet över forloopen. Addera alla keyframerotationer på ursprungsjointorientationen.
+                        XMStoreFloat3(&t_eulerAngles, XMVectorAdd(XMLoadFloat3(&t_eulerAngles), XMLoadFloat3(&t_jointOrientation)));
+                        XMVECTOR t_finalRotation = XMLoadFloat3(&t_eulerAngles);
                         XMVECTOR quat = XMLoadFloat4(&XMFLOAT4(0, 0, 0, 1));
-                        quat = XMQuaternionRotationMatrix(t_jointRotMatrix);
-                        XMStoreFloat4(&t_keyFrameTemp.jointRotation, quat);
-                        // XMStoreFloat4(&t_keyFrameTemp.quaternion, quat);
-                        // t_keyFrameTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
-                        // t_keyFrameTemp.quaternion = t_quaterTemp;
+                        quat = XMQuaternionRotationRollPitchYawFromVector(t_finalRotation);
+                        XMStoreFloat4(&t_keyFrameTemp.quaternion, quat);
 
-                        // t_keyFrameTemp.position.z *= -1.0f; // test
-
+                        // Hårdkodat värde atm. Bör komma från maya (?) TODOLH. Bör iaf inte vara en variabel här
                         float t_timeMax = 10.0f;
-                        // t_keyFrameTemp.quaternion.w = 1.0f;
+                        // Räkna ut vilken timestamp som ska sättas på denna frame.
                         float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
                         t_keyFrameTemp.time = t_currentTime;
                         t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
                     }
-
                     t_animationClip.BoneAnimations.push_back(t_boneAnimation);
-
                     delete name; // name isnt used atm
                 }
 
@@ -249,16 +221,9 @@ namespace Doremi
                     // transformDataTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
                     // Make a matrix from it and store it as XMFLOAT4x4
                     transformDataTemp.pos.z *= -1.0f;
-                    // transformDataTemp.rot.w *= -1;
-                    // transformDataTemp.rot.x *= -1;
-                    // transformDataTemp.rot.y *= -1;
-                    // transformDataTemp.rot.z *= -1;
+
+
                     XMFLOAT4 t_quaterTemp;
-                    // t_quaterTemp.x = transformDataTemp.rot.z;
-                    // t_quaterTemp.y = transformDataTemp.rot.y;
-                    // t_quaterTemp.z = transformDataTemp.rot.z;
-                    // t_quaterTemp.w = transformDataTemp.rot.w;
-                    // transformDataTemp.rot = t_quaterTemp;
                     t_quaterTemp = XMFLOAT4(0.0f, transformDataTemp.rot.y, 0.0f, 1.0f);
                     XMStoreFloat4(&transformDataTemp.rot, XMQuaternionRotationRollPitchYaw(t_eulerAngles.x, t_eulerAngles.y, t_eulerAngles.z));
                     // transformDataTemp.rot = t_quaterTemp;
@@ -277,11 +242,7 @@ namespace Doremi
                     t_transInfo.position = transformDataTemp.pos;
                     t_transInfo.quaternion = transformDataTemp.rot;
                     t_transInfo.scale = transformDataTemp.scale;
-                    // t_transformMap[t_transformName] = t_transformationMatrix;
                     t_transformMap[t_transformName] = t_transInfo;
-                    // t_transformMap[t_childTransformNames[16 -i]] = t_transformationMatrix; //test
-
-                    //// Fråga simon! Nrtransforms = 17 men childtransformnames = 18
                 }
                 // This buffer is used to combine all the meshes into one. And convert the vertexstruct to skeletalvertex from the computevertex thing
                 vector<DoremiEngine::Graphic::SkeletalVertex> t_skeletalVertexBuffer;
@@ -346,10 +307,6 @@ namespace Doremi
                     XMFLOAT3 t_jointOrientation;
                     ifs.read((char*)&t_jointOrientation, sizeof(float) * 3); // jointorientationen måste användas för att få det rätt...
                     t_jointOrientationList.push_back(t_jointOrientation);
-                    if(t_jointOrientationList.size() > 1)
-                    {
-                        t_jointOrientation = t_jointOrientationList[i - 1];
-                    }
                     // bygger vertiserna på denna sidan.
                     if(jointID == -200)
                     {
@@ -362,44 +319,17 @@ namespace Doremi
                     XMVECTOR t_scale = XMLoadFloat3(&t_transformInfo.scale);
                     XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
                     XMVECTOR t_jointRotation = XMLoadFloat3(&t_jointOrientation);
-                    XMFLOAT4 t_pissQuat;
-                    XMStoreFloat4(&t_pissQuat, XMQuaternionRotationRollPitchYawFromVector(t_rotation));
-                    for(size_t o = 0; o < nrKeyFrames; o++)
-                    {
-                        t_pissQuat.w = t_pissQuat.w * -1;
-                        if(i < nrMeshes - 1)
-                        {
-                            t_animations["Run"].BoneAnimations[i + 1].Keyframes[o].jointRotation = t_pissQuat;
-                        }
-                    }
 
-                    XMMATRIX t_transRotMatrix = XMMatrixRotationRollPitchYawFromVector(t_rotation);
-                    XMMATRIX t_jointRotMatrix = XMMatrixRotationRollPitchYawFromVector(t_jointRotation);
-                    // t_transRotMatrix = XMMatrixMultiply( t_jointRotMatrix, t_transRotMatrix);
+                    XMVECTOR t_finalRotation = XMVectorAdd(t_rotation, t_jointRotation);
 
-
-                    XMVECTOR quat = XMLoadFloat4(&XMFLOAT4(0, 0, 0, 1));
-                    // quat = XMVector4Transform(quat, t_transRotMatrix);
-                    // quat = XMQuaternionRotationMatrix(t_jointRotMatrix * t_transRotMatrix);
-
-                    // Undersök hur det här funkar. Känns som det är väldigt skumt
-
-                    // XMVECTOR t_quaternion = XMQuaternionRotationMatrix(t_transRotMatrix);
 
                     XMVECTOR t_quaternion = XMQuaternionRotationRollPitchYawFromVector(t_rotation);
                     XMVECTOR t_jointQuaternion = XMQuaternionRotationRollPitchYawFromVector(t_jointRotation);
                     XMFLOAT4X4 t_transformationMatrix;
 
-                    XMMATRIX t_jointTransMatrix =
-                        XMMatrixAffineTransformation(XMLoadFloat3(&XMFLOAT3(1.0f, 1.0f, 1.0f)), XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f)),
-                                                     t_jointQuaternion, XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f)));
-                    // XMStoreFloat4x4(&t_transformationMatrix, XMMatrixMultiply(XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion,
-                    // t_translation), t_jointTransMatrix));
-                    XMStoreFloat4x4(&t_transformationMatrix,
-                                    XMMatrixAffineTransformation(t_scale, t_zero, XMLoadFloat4(&XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)), t_translation)); // börjar här
-                    /*XMStoreFloat4x4(&t_transformationMatrix,
-                        XMMatrixScalingFromVector(t_scale) *
-                        XMMatrixTranslationFromVector(t_translation));*/
+                    t_translation = XMVector3Rotate(t_translation, t_jointQuaternion);
+                    XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
+
                     // Nu måte verticerna från "Meshspace" till "joint space" som jag kallar det. Basicly byt koordinatsystem från meshens till
                     // jointens. Jointens origo mitten av jointen
                     // Osäker på om det är invers eller vanlig multi. Jag tror det är vanlig multi
@@ -420,10 +350,6 @@ namespace Doremi
                     {
                         XMVECTOR t_vertexPosition = XMLoadFloat3(&vertexBuffer[j].position);
                         XMMATRIX t_translationMatrix = XMLoadFloat4x4(&t_transformationMatrix);
-                        XMVECTOR t_determinant = XMMatrixDeterminant(t_translationMatrix);
-                        // t_vertexPosition = XMVector3Transform(t_vertexPosition, XMMatrixInverse(&t_determinant, t_translationMatrix));
-                        // t_translationMatrix = XMMatrixInverse(&t_determinant, t_translationMatrix);
-                        // t_vertexPosition = XMVector3Transform(t_vertexPosition, XMMatrixTranspose(t_translationMatrix));
                         t_vertexPosition = XMVector3Transform(t_vertexPosition, t_translationMatrix);
                         DoremiEngine::Graphic::SkeletalVertex t_vertex;
                         XMStoreFloat3(&t_vertex.position, t_vertexPosition);

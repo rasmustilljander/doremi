@@ -545,22 +545,12 @@ namespace Doremi
 
             DoremiEngine::Graphic::SkeletalInformation* t_skeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KebabPizza.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKubGrejTest.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/KubEttBen.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/FulKub2.drm", *t_skeletalInformation);
-            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros12.drm", *t_skeletalInformation);
+            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros14MedTranslateradeMeshTransforms.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/BigRobot.drm", *t_skeletalInformation);
 
 
             /// Fill with components
             // Render
-            /*RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
-            t_renderComp->material =
-            sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
-            t_avatarBlueprint[ComponentType::Render] = t_renderComp;*/
-
             RenderComponent* t_renderComp = new RenderComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
             t_renderComp->material =
