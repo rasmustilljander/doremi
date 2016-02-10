@@ -51,7 +51,7 @@ void LoggerProcess::Run()
         }
 
         elapsedTime += m_timer.GetElapsedTimeInSeconds();
-        if(elapsedTime > Constants::FILEMAP_TIMEOUT)
+        if(elapsedTime > Constants::IPC_FILEMAP_TIMEOUT)
         {
             break;
         }
