@@ -239,7 +239,8 @@ namespace Doremi
                     blueprint = Blueprints::NetworkPlayerEntity;
                 }
                 (static_cast<PlayerServer*>(iter->second))
-                    ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint, p_entityCreatedEvent->position));
+                    ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint,
+                                                                                     p_entityCreatedEvent->position, p_entityCreatedEvent->orientation));
             }
 
             // Save it for later joins
