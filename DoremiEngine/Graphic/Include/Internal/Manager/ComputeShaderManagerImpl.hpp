@@ -79,7 +79,7 @@ namespace DoremiEngine
             ID3D11UnorderedAccessView* GetUAV(int i) override;
             void DispatchFrustum() override;
             void DispatchCulling() override;
-            void DispatchPostEffects() override;
+            void DispatchBlurHorizontal() override;
             void CopyCullingData() override;
             void CopyData(BufferType index);
 

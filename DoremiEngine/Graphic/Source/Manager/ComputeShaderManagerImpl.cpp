@@ -42,7 +42,7 @@ namespace DoremiEngine
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             m_frustumShader = shaderManager.BuildComputeShader("FrustumComputeShader.hlsl");
             m_cullingShader = shaderManager.BuildComputeShader("LightCullingComputeShader.hlsl");
-            m_postEffectsShader = shaderManager.BuildComputeShader("PostEffectsComputeShader.hlsl");
+            m_postEffectsShader = shaderManager.BuildComputeShader("BlurHoriComputeShader.hlsl");
 
         }
 
@@ -209,7 +209,7 @@ namespace DoremiEngine
             CopyCullingData();
         }
 
-        void ComputeShaderManagerImpl::DispatchPostEffects()
+        void ComputeShaderManagerImpl::DispatchBlurHorizontal()
         {
             ID3D11UnorderedAccessView* nullUAV[] = { NULL };
             ID3D11ShaderResourceView* nullSRV[] = { NULL };
@@ -217,12 +217,11 @@ namespace DoremiEngine
             shaderManager.SetActiveComputeShader(m_postEffectsShader);
 
             m_deviceContext->PSSetShaderResources(1, 1, nullSRV);
-            m_deviceContext->CSSetUnorderedAccessViews(1, 1, &m_uav[BufferType::COLOR_INFO], 0);
 
-            m_deviceContext->Dispatch(25, 25, 1);
+            int numGroupsX = ceil(800.f / 256.f);   //TODOCONFIG take width from config
+            m_deviceContext->Dispatch(numGroupsX, 800, 1);
 
             m_deviceContext->CSSetUnorderedAccessViews(1, 1, nullUAV, 0);
-            m_deviceContext->PSSetShaderResources(1, 1, &m_srv[BufferType::COLOR_INFO]);
         }
 
         void ComputeShaderManagerImpl::CopyCullingData()

@@ -20,7 +20,7 @@ namespace DoremiEngine
     {
         DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_screenResolution = DirectX::XMFLOAT2(800, 800);
+            m_screenResolution = DirectX::XMFLOAT2(800, 800);   //TODOCONFIG
         }
         DirectXManagerImpl::~DirectXManagerImpl() {}
 
@@ -78,12 +78,17 @@ namespace DoremiEngine
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
          
-            res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_renderedSceneSRV);
+            res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_renderTargetSRV[0]);
             if (FAILED(res))
             {
                 int a = 3;
             }
-            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer);
+            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer[0]);
+            if (FAILED(res))
+            {
+                int a = 3;
+            }
+            res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
             if (FAILED(res))
             {
                 int a = 3;
@@ -104,7 +109,8 @@ namespace DoremiEngine
             dbdesc.CPUAccessFlags = 0;
             dbdesc.MiscFlags = 0;
 
-            m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_scene);
+            //m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_scene);
+
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_scene);
             if (FAILED(res))
@@ -116,26 +122,43 @@ namespace DoremiEngine
             {
                 int a = 3;
             }
+            res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_backBuffer[1]);
+            if (FAILED(res))
+            {
+                int a = 3;
+            }
             res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowmapUAV);
             if (FAILED(res))
             {
                 int a = 3;
             }
-            res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_glowmapSRV);
+            res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_renderTargetSRV[1]);
             if (FAILED(res))
             {
                 int a = 3;
             }
-            res = m_device->CreateUnorderedAccessView(m_scene, NULL, &m_backbufferUAV);
+            res = m_device->CreateShaderResourceView(m_scene, NULL, &m_sceneSRV);
             if (FAILED(res))
-            { 
+            {
                 int a = 3;
             }
+/*
+            D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+            renderTargetViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+            renderTargetViewDesc.Texture2D.MipSlice = 0;*/
+
             res = m_device->CreateRenderTargetView(m_scene, NULL, &m_postEffectRT);
             if (FAILED(res))
             {
                 int a = 3;
             }
+
+            D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+            shaderResourceViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+            shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
             // Depth buffer
             // Might want this in a class for readability and easy changing between states
@@ -187,7 +210,7 @@ namespace DoremiEngine
                 int a = 3;
             }
 
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
 
             // Viewport
             // TODOKO change so width and height is modifiable and taken from some smarter place
@@ -407,10 +430,9 @@ namespace DoremiEngine
 
             ID3D11ShaderResourceView* nullSRV = { NULL };
             ID3D11UnorderedAccessView* nullUAV = { NULL };
-            ID3D11RenderTargetView* nullRTV = { NULL };
+            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
             // Remove depth bind to OM
-            //m_deviceContext->OMSetRenderTargets(1, &nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
-            m_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, &nullRTV, nullptr, 1, 1, &nullUAV, 0);
+            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
 
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
             m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
@@ -425,8 +447,8 @@ namespace DoremiEngine
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &nullUAV, 0);
 
             // Add depth bind to OM
-            //m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthView);
-            m_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, &m_backBuffer, m_depthView, 1, 1, &m_glowmapUAV, 0);
+            ID3D11RenderTargetView* t_RTArray[2] = { m_postEffectRT, m_backBuffer[1] };
+            m_deviceContext->OMSetRenderTargets(2, t_RTArray, m_depthView);
         }
 
         void DirectXManagerImpl::SwapRasterizerState(RasterizerState* p_rasterizerState)
@@ -447,28 +469,37 @@ namespace DoremiEngine
 
             ID3D11ShaderResourceView* nullSRV = { NULL };
             ID3D11UnorderedAccessView* nullUAV = { NULL };
-            ID3D11RenderTargetView* nullRTV = { NULL };
+            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
 
-            m_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, &nullRTV, nullptr, 1, 1, &nullUAV, 0);
+            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
 
-            m_deviceContext->CSSetShaderResources(0, 1, &m_renderedSceneSRV);
-            m_deviceContext->CSSetShaderResources(1, 1, &m_glowmapSRV);
+            //////BLUR HORIZONAL
+            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[1]);
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_backbufferUAV, 0);
 
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchPostEffects();
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurHorizontal();
 
             m_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
-            m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
 
+            /////////BLUR VERTICAL
+
+            //shader resource m_renderTargetSRV[0]
+            //uav m_glowmapUAV
+            //dispatch
+            //clear srv and uav
+
             // Add depth bind to OM
-            //m_deviceContext->OMSetRenderTargets(1, &m_postEffectRT, m_depthView);
-            m_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, &m_postEffectRT, m_depthView, 1, 1, &m_glowmapUAV, 0);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[1], m_depthView);
+            //m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[1], m_depthView);
             //////////////////SLUT PÅ GLOWY STUFF//////////////////////
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.3f, 0.0f, 0.5f, 1.0f};
-            m_deviceContext->ClearRenderTargetView(m_backBuffer, color);
+            m_deviceContext->ClearRenderTargetView(m_backBuffer[0], color);
+            m_deviceContext->ClearRenderTargetView(m_backBuffer[1], color);
+            m_deviceContext->ClearRenderTargetView(m_postEffectRT, color);
+            m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         }
 
