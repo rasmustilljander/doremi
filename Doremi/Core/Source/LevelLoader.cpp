@@ -44,7 +44,7 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             // ladda material
-            for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats
+            for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
             {
                 int materialNameSize;
                 ifs.read((char*)&materialNameSize, sizeof(int));
@@ -61,13 +61,56 @@ namespace Doremi
                 ifs.read((char*)&materialData.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialData.specRollOff, sizeof(float));
 
+                // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if(diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
-                delete materialName;
+                if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                
+                // Glow texture
+                int glowTextureNameSize;
+                ifs.read((char*)&glowTextureNameSize, sizeof(int));
+                char* glowTextureName = new char[glowTextureNameSize];
+                ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
+                // TODOKO save the texture name
+
                 delete diffuseTextureName;
+                delete glowTextureName;                
+                delete materialName;
+            }
+        }
+
+        void LevelLoader::LoadMaterialCharacter(std::ifstream& ifs, int nrMats)// TODOKO SHOULD BE REMOVED LATER ugly hax because character drm dont have glow map yet
+        {
+            using namespace DoremiEditor::Core;
+            // ladda material
+            for (int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
+            {
+                int materialNameSize;
+                ifs.read((char*)&materialNameSize, sizeof(int));
+                char* materialName = new char[materialNameSize];
+                ifs.read((char*)materialName, sizeof(char) * materialNameSize);
+
+                MaterialData materialData;
+                ifs.read((char*)&materialData.mapMasks, sizeof(int));
+                ifs.read((char*)&materialData.diffuse, sizeof(float));
+                ifs.read((char*)&materialData.color, sizeof(float) * 3);
+                ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
+                ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
+                ifs.read((char*)&materialData.specCosine, sizeof(float));
+                ifs.read((char*)&materialData.specEccentricity, sizeof(float));
+                ifs.read((char*)&materialData.specRollOff, sizeof(float));
+
+                // load Diffuse texture
+                int diffuseTextureNameSize;
+                ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
+                char* diffuseTextureName = new char[diffuseTextureNameSize];
+                ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
+                if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+
+                delete diffuseTextureName;
+                delete materialName;
             }
         }
 
@@ -92,6 +135,32 @@ namespace Doremi
                 ifs.read((char*)&transformData, sizeof(transformData));
 
                 m_transforms[transformName] = transformData;
+                delete parentName;
+                delete transformName;
+            }
+        }
+
+        void LevelLoader::LoadTransformsCharacter(std::ifstream& ifs, int nrTransforms) // TODOKO Remove and replase when cahracte have own format
+        {
+            using namespace DoremiEditor::Core;
+            for (int i = 0; i < nrTransforms; i++)
+            {
+                int parentNameSize;
+                int transformNameSize;
+
+                ifs.read((char*)&parentNameSize, sizeof(int));
+                ifs.read((char*)&transformNameSize, sizeof(int));
+
+                char* parentName = new char[parentNameSize]; // TODOKO Not supported yet
+                char* transformName = new char[transformNameSize];
+
+                ifs.read((char*)parentName, sizeof(char) * parentNameSize);
+                ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+
+                CharacterTransformData transformData;
+                ifs.read((char*)&transformData, sizeof(transformData));
+
+                m_transformsCharacter[transformName] = transformData;
                 delete parentName;
                 delete transformName;
             }

@@ -63,6 +63,7 @@ namespace Doremi
 
             // Help functions
             std::map<std::string, DoremiEditor::Core::TransformData> m_transforms;
+            std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!
             std::map<std::string, std::string> m_materials;
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;
@@ -74,7 +75,9 @@ namespace Doremi
             DirectX::XMFLOAT4 m_currentOrientation;
 
             void LoadMaterial(std::ifstream& ifs, int nrMats);
+            void LoadMaterialCharacter(std::ifstream& ifs, int nrMats); // TODOKO SHOULD BE REMOVED LATER
             void LoadTransforms(std::ifstream& ifs, int nrTransforms);
+            void LoadTransformsCharacter(std::ifstream& ifs, int nrTransforms); // TODOKO Remove and replase when cahracte have own format
             void LoadMeshes(std::ifstream& ifs, int nrMeshes);
             void LoadLights(std::ifstream& ifs, int nrLights);
             void BuildEntities();
@@ -84,6 +87,7 @@ namespace Doremi
             std::vector<DoremiEngine::Graphic::Vertex> ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
                                                                                         std::vector<DirectX::XMFLOAT3>& o_positionPX, std::vector<int>& o_indexPX);
             void SetPhysicalAttributesOnMesh(int p_entityID, std::vector<DirectX::XMFLOAT3>& p_positionPX, std::vector<int>& p_indexPX);
+
         };
     }
 }

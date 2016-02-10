@@ -58,6 +58,22 @@ namespace DoremiEngine
             {
                 o_info.ExitGame = std::stoi(p_mapToInterpret.at("ExitGame"));
             }
+            if (p_mapToInterpret.count("CameraDistanceFromPlayer"))
+            {
+                o_info.CameraDistanceFromPlayer = std::stof(p_mapToInterpret.at("CameraDistanceFromPlayer"));
+            }
+            if (p_mapToInterpret.count("CameraSpeedY"))
+            {
+                o_info.CameraSpeedY = std::stof(p_mapToInterpret.at("CameraSpeedY"));
+            }
+            if (p_mapToInterpret.count("CameraViewDistance"))
+            {
+                o_info.CameraViewDistance = std::stoi(p_mapToInterpret.at("CameraViewDistance"));
+            }
+            if (p_mapToInterpret.count("CameraFieldOfView"))
+            {
+                o_info.CameraFieldOfView = std::stoi(p_mapToInterpret.at("CameraFieldOfView"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -76,6 +92,10 @@ namespace DoremiEngine
             returnMap["StartRepeatingAudioRecording"] = std::to_string(p_info.StartRepeatingAudioRecording);
             returnMap["PlayRepeatableAudioRecording"] = std::to_string(p_info.PlayRepeatableAudioRecording);
             returnMap["ExitGame"] = std::to_string(p_info.ExitGame);
+            returnMap["CameraDistanceFromPlayer"] = std::to_string(p_info.ExitGame);
+            returnMap["CameraSpeedY"] = std::to_string(p_info.ExitGame);
+            returnMap["CameraViewDistance"] = std::to_string(p_info.ExitGame);
+            returnMap["CameraFieldOfView"] = std::to_string(p_info.ExitGame);
             return returnMap;
         }
     }

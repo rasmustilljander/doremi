@@ -9,6 +9,8 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/CameraManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 // Third party
 
 
@@ -39,13 +41,14 @@ namespace Doremi
             using namespace DirectX;
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
             XMFLOAT4X4 projection;
+            DoremiEngine::Configuration::ConfiguartionInfo configInfo = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
             XMMATRIX mat =
-                XMMatrixTranspose(XMMatrixPerspectiveFovLH(90.0f * 3.14f / 180.0f, 800.0f / 600.0f, 0.1f, 100000.0f)); // TODOKO use config values
+                XMMatrixTranspose(XMMatrixPerspectiveFovLH(configInfo.CameraFieldOfView * XM_PI / 180.0f, configInfo.ScreenWidth / configInfo.ScreenHeight, 0.1f, configInfo.CameraViewDistance));
             XMStoreFloat4x4(&projection, mat);
 
             DoremiEngine::Graphic::Camera* freecamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
             DoremiEngine::Graphic::Camera* thirdPersonCamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
-            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera, 5, -1, 0);
+            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera, configInfo.CameraDistanceFromPlayer, -1, 0);
             m_freeLookCamera = new FreeLookCamera(freecamera);
             m_currentCamera = CameraType::THIRDPERSON;
         }
