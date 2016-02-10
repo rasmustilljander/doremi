@@ -182,6 +182,8 @@ namespace DoremiEngine
 
             // Hax to get callbacks to work (Set a common flag on every object)
             // SetCallback(p_id, (1 << 0), (1 << 0));
+            // TODOJB don't hard-code this
+            SetCallbackFiltering(p_id, 1, 0, 1, 0);
         }
         void RigidBodyManagerImpl::AddMeshBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, vector<XMFLOAT3>& p_vertexPositions,
                                                       vector<int>& p_indices, int p_materialID)
