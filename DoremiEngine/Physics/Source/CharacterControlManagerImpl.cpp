@@ -1,6 +1,9 @@
 #include <Internal/CharacterControlManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
 #include <cstdint>
+
+#include <iostream>
+using namespace std;
 namespace DoremiEngine
 {
     namespace Physics
@@ -93,6 +96,20 @@ namespace DoremiEngine
             }
 
             m_controllers[p_id]->setPosition(PxExtendedVec3(p_position.x, p_position.y, p_position.z));
+        }
+
+        void CharacterControlManagerImpl::SetCallbackFiltering(int p_bodyID, int p_thisIdMask, int p_notifyTouchOthersMask,
+                                                               int p_notifyLeaveOthersMask, int p_ignoreOthersMask)
+        {
+            if(m_controllers.find(p_bodyID) == m_controllers.end())
+            {
+                cout << "Physics. Character Controllers. SetCallBackFiltering. No such controller exists with ID: " << p_bodyID << endl;
+                return;
+            }
+            PxFilterData filterData = PxFilterData(p_thisIdMask, p_notifyTouchOthersMask, p_notifyLeaveOthersMask, p_ignoreOthersMask);
+            PxShape* shape;
+            m_controllers.at(p_bodyID)->getActor()->getShapes(&shape, 1);
+            shape->setSimulationFilterData(filterData);
         }
 
         void CharacterControlManagerImpl::SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask)
