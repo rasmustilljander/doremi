@@ -241,7 +241,8 @@ namespace Doremi
 
                 for(size_t i = 0; i < numPlayers; ++i)
                 {
-                    uint32_t entityID = entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity);
+                    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
+                    uint32_t entityID = entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
 
                     if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
                     {

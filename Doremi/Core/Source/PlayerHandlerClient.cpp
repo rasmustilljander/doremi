@@ -32,12 +32,16 @@
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <iostream>
 
 namespace Doremi
 {
     namespace Core
     {
-        PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : PlayerHandler(p_sharedContext) {}
+        PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : PlayerHandler(p_sharedContext)
+        {
+            EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
+        }
 
         PlayerHandlerClient::~PlayerHandlerClient() {}
 
@@ -161,13 +165,20 @@ namespace Doremi
             if(p_event->eventType == EventType::GunFireToggle)
             {
                 GunFireToggleEvent* t_gunFireToggleEvent = static_cast<GunFireToggleEvent*>(p_event);
-                if(t_gunFireToggleEvent->isFiring)
+
+                // If it's not ourselves we fire
+                EntityID t_entityID = 0;
+                GetDefaultPlayerEntityID(t_entityID);
+                if(t_gunFireToggleEvent->entityID != t_entityID)
                 {
-                    m_gunController.StartFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
-                }
-                else
-                {
-                    m_gunController.StopFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
+                    if(t_gunFireToggleEvent->isFiring)
+                    {
+                        m_gunController.StartFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
+                    }
+                    else
+                    {
+                        m_gunController.StopFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
+                    }
                 }
             }
         }

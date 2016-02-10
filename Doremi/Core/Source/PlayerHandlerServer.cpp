@@ -50,6 +50,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::RemoveEntity, this);
             t_EventHandler->Subscribe(EventType::EntityCreated, this);
             t_EventHandler->Subscribe(EventType::PlayerRespawn, this);
+            t_EventHandler->Subscribe(EventType::GunFireToggle, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
