@@ -63,7 +63,7 @@ void LoggerProcess::Run()
 void* LoggerProcess::InitializeFileMap(const std::size_t& p_size)
 {
     m_fileMap = new IO::FileMap();
-    void* memory = m_fileMap->Initialize(Constants::FILEMAP_NAME, p_size);
+    void* memory = m_fileMap->Initialize(Constants::IPC_DEFAULT_FILEMAP_NAME, p_size);
     if(memory != nullptr)
     {
         return memory;
