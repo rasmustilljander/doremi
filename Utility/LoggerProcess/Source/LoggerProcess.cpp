@@ -25,10 +25,10 @@ void LoggerProcess::Initialize(const int& p_uniqueId)
     SetupFolderStructure();
     BuildLogFiles();
     SetupCircleBuffer();
-    void* fileMapMemory = InitializeFileMap(Constants::FILEMAP_SIZE, p_uniqueId);
+    void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE, p_uniqueId);
     m_mutex = CreateFileMapMutex();
 
-    m_ingoingBuffer->Initialize(fileMapMemory, Constants::FILEMAP_SIZE, m_mutex);
+    m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
 }
 
 void LoggerProcess::Run()
