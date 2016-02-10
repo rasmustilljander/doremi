@@ -261,6 +261,8 @@ namespace Doremi
                 else if(iter->first == ComponentType::PressureParticleSystem)
                 {
                     memcpy(GetComponent<ParticlePressureComponent>(p_entityID), iter->second, sizeof(ParticlePressureComponent));
+                    ParticlePressureComponent* thisComp = GetComponent<ParticlePressureComponent>(p_entityID);
+                    m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(p_entityID, thisComp->data);
                 }
                 else if(iter->first == ComponentType::Light)
                 {
