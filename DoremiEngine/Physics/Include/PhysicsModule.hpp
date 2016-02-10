@@ -70,6 +70,10 @@ namespace DoremiEngine
             id of the trigger, and the secondID is always the id of the actor which
             collided with the trigger. It's awesome that way*/
             virtual std::vector<CollisionPair> GetTriggerPairs() = 0;
+
+            /**
+            Gets a vector of all objects which have recently left contact with eachother*/
+            virtual std::vector<CollisionPair> GetLeftCollisionPairs() = 0;
         };
     }
 }
