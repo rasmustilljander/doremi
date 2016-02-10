@@ -42,6 +42,7 @@
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
 #include <Doremi/Core/Include/Manager/SkyBoxManager.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
+#include <Doremi/Core/Include/Manager/PressureParticleGraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 #include <Doremi/Core/Include/Manager/LightManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
@@ -120,15 +121,16 @@ namespace Doremi
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
-        Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
+        Core::Manager* t_pressureParticleGraphicManager = new Core::PressureParticleGraphicManager(sharedContext);
         Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
         Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
         Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
+        Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
 
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
         // Add manager to list of managers
 
-        m_graphicalManagers.push_back(t_pressureParticleManager);
+        m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
         m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);
@@ -136,6 +138,7 @@ namespace Doremi
         m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
+        m_managers.push_back(t_pressureParticleManager);
 
         m_managers.push_back(t_lightManager);
         // m_managers.push_back(t_jumpManager);
