@@ -141,25 +141,40 @@ namespace Doremi
 
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
 
-            EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Render | (int)ComponentType::Transform);
+            EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Transform);
             TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityId);
-            RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(p_entityId);
 
             transComp->position = m_transforms[meshCoupling.transformName].translation;
             transComp->rotation = m_transforms[meshCoupling.transformName].rotation;
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
-            DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
+            DoremiEditor::Core::TransformData transformationData = m_transforms[meshCoupling.transformName];
 
-            std::string textureName = m_materials[meshCoupling.materialName];
-            if(textureName.length() < 5 || textureName[0] == -3)
+            // If render, create grapic properties
+            if(transformationData.attributes.isRendered)
             {
-                textureName = "debug.dds";
-            }
-            renderComp->material = meshManager.BuildMaterialInfo(textureName);
+                EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Render);
 
-            return true;
+                RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(p_entityId);
+
+                DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+                renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
+
+                std::string textureName = m_materials[meshCoupling.materialName];
+                if(textureName.length() < 5 || textureName[0] == -3)
+                {
+                    textureName = "debug.dds";
+                }
+                renderComp->material = meshManager.BuildMaterialInfo(textureName);
+            }
+
+            // If non physic object
+            if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 || transformationData.attributes.startOrEndPoint == 2)
+            {
+                r_shouldBuildPhysics = false;
+            }
+
+            return r_shouldBuildPhysics;
         }
 
         void LevelLoaderClient::BuildLights()
