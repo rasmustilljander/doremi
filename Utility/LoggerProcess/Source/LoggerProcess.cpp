@@ -53,7 +53,7 @@ void LoggerProcess::Run()
     Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
 
     bool messageExist = false;
-    double elapsedTime = 0;
+    double elapsedTimeSinceLastEntry = 0;
     m_timer.Tick();
     while(true)
     {
@@ -70,7 +70,7 @@ void LoggerProcess::Run()
             std::cout << data->message << "\n";
 
             // Reset elapsed time
-            elapsedTime = 0;
+            elapsedTimeSinceLastEntry = 0;
         }
         else
         {
@@ -82,10 +82,10 @@ void LoggerProcess::Run()
 
         // Compute elapsed time
         m_timer.Tick();
-        elapsedTime += m_timer.GetElapsedTimeInSeconds();
+        elapsedTimeSinceLastEntry += m_timer.GetElapsedTimeInSeconds();
 
         // If elapsed time since last log is greater than a timeout
-        if(elapsedTime > Constants::IPC_FILEMAP_TIMEOUT)
+        if(elapsedTimeSinceLastEntry > Constants::IPC_FILEMAP_TIMEOUT)
         {
             // Shutdown
             break;
