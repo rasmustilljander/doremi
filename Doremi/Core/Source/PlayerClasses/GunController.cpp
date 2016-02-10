@@ -59,15 +59,15 @@ namespace Doremi
             //    // We want a width between 0 and 3.14/2 (90 degrees) sortof. This calculation is VERY non-finished
             //    width = (400 - freq) / 200;
             //}
-            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_emissionAreaDimensions.x = 0.05f;
+            // GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_emissionAreaDimensions.x = 0.05f;
 
-            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_position =
-                GetComponent<TransformComponent>(p_player->m_playerEntityID)->position;
-            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_direction =
-                GetComponent<TransformComponent>(p_player->m_playerEntityID)->rotation;
+            // GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_position =
+            //    GetComponent<TransformComponent>(p_player->m_playerEntityID)->position;
+            // GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data.m_direction =
+            //    GetComponent<TransformComponent>(p_player->m_playerEntityID)->rotation;
 
-            p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_player->m_playerEntityID,
-                                                                                        GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data);
+            // p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_player->m_playerEntityID,
+            //                                                                            GetComponent<ParticlePressureComponent>(p_player->m_playerEntityID)->data);
         }
     }
 }

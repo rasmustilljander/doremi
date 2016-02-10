@@ -9,16 +9,11 @@
 #include <EntityComponent/Components/RenderComponent.hpp>
 
 /// Engine
+// Core
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Physics
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
-// Render
-#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 
 // 3rd party
 #include <DirectXMath.h>
@@ -38,41 +33,19 @@ namespace Doremi
 
         void PressureParticleManager::Update(double p_dt)
         {
-            int derp = 5;
-            static int frame = 0;
-            frame++;
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            int mask = (int)ComponentType::Transform || (int)ComponentType::PressureParticleSystem;
-
-            RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(14);
-            DirectX::XMFLOAT4X4 transMat;
-            DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(5, 5, 5));
-            DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
-
-
             for(size_t i = 0; i < length; i++)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Transform) &&
-                   EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PressureParticleSystem) &&
-                   EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Render))
+                   EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PressureParticleSystem))
                 {
-                    // Read thingies
-                    vector<XMFLOAT3> returnPositions;
-                    m_sharedContext.GetPhysicsModule().GetFluidManager().GetParticlePositions(i, returnPositions);
-                    ParticlePressureComponent* particleComp = EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(i);
+                    // TODOJB Hard-coded since we cannot read beam width properly
+                    GetComponent<ParticlePressureComponent>(i)->data.m_emissionAreaDimensions.x = 0.05f;
 
-                    // Render thingies
-                    RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
-                    for(size_t j = 0; j < returnPositions.size(); j++)
-                    {
-                        DirectX::XMFLOAT4X4 transMat;
-                        DirectX::XMMATRIX tempTransMat =
-                            DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(returnPositions[j].x, returnPositions[j].y, returnPositions[j].z));
-                        DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
-                                                                                                                  *particleComp->material, transMat);
-                    }
+                    GetComponent<ParticlePressureComponent>(i)->data.m_position = GetComponent<TransformComponent>(i)->position;
+                    GetComponent<ParticlePressureComponent>(i)->data.m_direction = GetComponent<TransformComponent>(i)->rotation;
+
+                    m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(i, GetComponent<ParticlePressureComponent>(i)->data);
                 }
             }
         }
