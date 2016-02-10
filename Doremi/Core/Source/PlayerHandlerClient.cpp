@@ -64,7 +64,6 @@ namespace Doremi
             TIME_FUNCTION_STOP
         }
 
-
         void PlayerHandlerClient::UpdatePlayerInputs()
         {
             TIME_FUNCTION_START
