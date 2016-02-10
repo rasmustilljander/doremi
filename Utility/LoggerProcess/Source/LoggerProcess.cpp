@@ -12,11 +12,7 @@
 
 using namespace Doremi::Utilities;
 
-LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr)
-{
-    // TODORT
-    // TODOXX
-}
+LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr) {}
 
 LoggerProcess::~LoggerProcess() {}
 
