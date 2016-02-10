@@ -47,27 +47,44 @@ void LoggerProcess::Run()
 {
     using namespace Doremi::Utilities;
 
+    // Create temporary data/header memory
     Logging::LogTextData* data = new Logging::LogTextData();
     Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
+
     bool messageExist = false;
     double elapsedTime = 0;
+    m_timer.Tick();
     while(true)
     {
-        m_timer.Tick();
+        // Consume data from shared memory
         messageExist = m_ingoingBuffer->Consume(header, data);
+
+        // If any data existed
         if(messageExist)
         {
+            // Send data to logfile
             m_logfiles[data->logTag].Write(*data);
+
+            // Print data to console
             std::cout << data->message << "\n";
+
+            // Reset elapsed time
             elapsedTime = 0;
         }
 
+        // Compute elapsed time
+        m_timer.Tick();
         elapsedTime += m_timer.GetElapsedTimeInSeconds();
+
+        // If elapsed time since last log is greater than a timeout
         if(elapsedTime > Constants::IPC_FILEMAP_TIMEOUT)
         {
+            // Shutdown
             break;
         }
     }
+
+    // Release temporary memory
     delete data;
     delete header;
 }
