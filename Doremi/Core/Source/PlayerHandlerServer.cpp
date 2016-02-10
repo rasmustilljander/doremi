@@ -18,6 +18,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -325,6 +326,10 @@ namespace Doremi
                     QueueGunFireToggleEventToPlayers(t_gunFireToggleEvent);
 
                     break;
+                }
+                case Doremi::Core::EventType::Trigger:
+                {
+                    TriggerEvent* t_triggerEvent = static_cast<TriggerEvent*>(p_event);
                 }
                 default:
                     break;
