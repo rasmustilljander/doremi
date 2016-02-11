@@ -35,10 +35,11 @@ LoggerProcess::~LoggerProcess()
 
 void LoggerProcess::Initialize(const int& p_uniqueId)
 {
+    m_processIdOfGame = p_uniqueId;
     SetupFolderStructure();
     BuildLogFiles();
     SetupCircleBuffer();
-    void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE, p_uniqueId);
+    void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
     m_mutex = CreateFileMapMutex();
 
     m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
@@ -53,13 +54,15 @@ void LoggerProcess::Run()
     Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
 
     bool messageExist = false;
+    bool gameIsRunning = true;
     double elapsedTimeSinceLastEntry = 0;
     double flushTimer = 0;
     m_timer.Tick();
-    while(true)
+    while(gameIsRunning || messageExist)
     {
         // Consume data from shared memory
         messageExist = m_ingoingBuffer->Consume(header, data);
+        gameIsRunning = IsGameRunning();
 
         // If any data existed
         if(messageExist)
@@ -100,7 +103,7 @@ void LoggerProcess::Run()
         if(elapsedTimeSinceLastEntry > Constants::IPC_FILEMAP_TIMEOUT)
         {
             // Shutdown
-            break;
+            // break; //TODORT Not sure that the loggerprocess must have a hard timeout
         }
     }
 
@@ -109,19 +112,19 @@ void LoggerProcess::Run()
     delete header;
 }
 
-void* LoggerProcess::InitializeFileMap(const std::size_t& p_size, const int& p_uniqueId)
+void* LoggerProcess::InitializeFileMap(const std::size_t& p_size)
 {
     m_fileMap = new IO::FileMap();
     std::string fileMapName;
 
     // If id is zero, default, otherwise build uniquename.
-    if(p_uniqueId == 0)
+    if(m_processIdOfGame == 0)
     {
         fileMapName = Constants::IPC_DEFAULT_FILEMAP_NAME;
     }
     else
     {
-        fileMapName = Logging::BuildFileMapName(p_uniqueId);
+        fileMapName = Logging::BuildFileMapName(m_processIdOfGame);
     }
 
     void* memory = m_fileMap->Initialize(fileMapName, p_size);
@@ -174,4 +177,19 @@ void LoggerProcess::BuildLogFiles()
         m_logfiles[tag] = SpecificLogFile();
         m_logfiles[tag].Initialize(tag);
     }
+}
+
+bool LoggerProcess::IsGameRunning()
+{
+    bool returnValue = false;
+
+    HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, m_processIdOfGame);
+    if(processHandle != NULL)
+    {
+        returnValue = true;
+    }
+
+    CloseHandle(processHandle);
+
+    return returnValue;
 }
