@@ -175,7 +175,7 @@ namespace Doremi
 
             // If non physic object
             if(transformationData.attributes.isSpawner || transformationData.attributes.spawnPointID > -1 ||
-               transformationData.attributes.startOrEndPoint == 2 || transformationData.attributes.checkPointID > -1)
+               transformationData.attributes.startOrEndPoint == 2 || transformationData.attributes.checkPointID > -1 || transformationData.attributes.isDangerous)
             {
                 r_shouldBuildPhysics = false;
             }

@@ -28,7 +28,7 @@ namespace Doremi
 {
     namespace Core
     {
-        DamageManager::DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "DamageManager") 
+        DamageManager::DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "DamageManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
         }
@@ -152,15 +152,15 @@ namespace Doremi
                 }
             }
         }
-        void DamageManager::OnEvent(Event * p_event)
+        void DamageManager::OnEvent(Event* p_event)
         {
-            if (p_event->eventType == EventType::Trigger)
+            if(p_event->eventType == EventType::Trigger)
             {
                 TriggerEvent* t_triggerEvent = static_cast<TriggerEvent*>(p_event);
 
-                if (t_triggerEvent->triggerType == TriggerType::DeathTrigger)
+                if(t_triggerEvent->triggerType == TriggerType::DeathTrigger)
                 {
-                    if (EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
+                    if(EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
                     {
                         PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
                     }
