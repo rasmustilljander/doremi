@@ -18,8 +18,11 @@ namespace Doremi
 
             void StartJump()
             {
-                active = true;
-                movementRemaining = intensity;
+                if(!active)
+                {
+                    active = true;
+                    movementRemaining = intensity;
+                }
             }
         };
     }
