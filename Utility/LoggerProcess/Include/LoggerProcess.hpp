@@ -43,8 +43,13 @@ public:
     */
     void Run();
 
+    /**
+    TODO docs
+    */
+    bool IsGameRunning();
+
 private:
-    void* InitializeFileMap(const std::size_t& p_size, const int& p_uniqueId);
+    void* InitializeFileMap(const std::size_t& p_size);
     void SetupCircleBuffer();
     Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
     void SetupFolderStructure();
@@ -55,4 +60,5 @@ private:
     Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_ingoingBuffer;
     Doremi::Utilities::IO::Mutex* m_mutex;
     std::map<Doremi::Utilities::Logging::LogTag, SpecificLogFile> m_logfiles;
+    int m_processIdOfGame;
 };
