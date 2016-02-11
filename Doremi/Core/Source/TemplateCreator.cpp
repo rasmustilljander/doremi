@@ -483,7 +483,7 @@ namespace Doremi
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 0.3f;
+            jumpComp->intensity = 0.45f;
 
             // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;

@@ -101,7 +101,7 @@ namespace DoremiEngine
             dbdesc.Height = m_screenResolution.y;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
-            dbdesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
             dbdesc.SampleDesc.Count = 1;
             dbdesc.SampleDesc.Quality = 0;
             dbdesc.Usage = D3D11_USAGE_DEFAULT;
@@ -150,7 +150,7 @@ namespace DoremiEngine
             }
 
             D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-            shaderResourceViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
             shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
             shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
             shaderResourceViewDesc.Texture2D.MipLevels = 1;
@@ -545,7 +545,7 @@ namespace DoremiEngine
             ID3D11UnorderedAccessView* nullUAV = {NULL};
             ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
             // Remove depth bind to OM
-            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV_
+            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
 
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
             m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
@@ -578,7 +578,7 @@ namespace DoremiEngine
 
             ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
             m_deviceContext->OMSetRenderTargets(2, nullRTV, m_depthView);
-            m_deviceContext->OMSetRenderTargets(1, &m_postEffectRT, m_depthView);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
         }
 
         void DirectXManagerImpl::SetRenderTargetGlow()
