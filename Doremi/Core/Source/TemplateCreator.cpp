@@ -238,8 +238,8 @@ namespace Doremi
 
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->charge = -1;
-            potentialComp->range = 3;
+            potentialComp->charge = -2;
+            potentialComp->range = 4;
             potentialComp->type = DoremiEngine::AI::AIActorType::Enemy;
             potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
