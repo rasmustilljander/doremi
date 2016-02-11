@@ -389,6 +389,15 @@ namespace DoremiEngine
                         m_deviceContext->PSSetShaderResources(0, 1, &texture);
                     }
                 }
+                if(renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
+                {
+                    glowtexture = renderData[i].glowTexture;
+                    if(glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+                    }
+                }
+
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 
                 WorldMatrices t_worldMatrices;
