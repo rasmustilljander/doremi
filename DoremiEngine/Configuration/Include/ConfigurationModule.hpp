@@ -31,6 +31,9 @@ namespace DoremiEngine
             // Audio stuff
             float Volume = 0.5f;
 
+            // Network stuff
+            std::string IPToServer = "127.0.0.1";
+
             // Key binds TODOKO ask how this works
             int Forward = 119;
             int Backward = 115;

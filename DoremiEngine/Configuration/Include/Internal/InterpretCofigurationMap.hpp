@@ -74,6 +74,10 @@ namespace DoremiEngine
             {
                 o_info.CameraFieldOfView = std::stoi(p_mapToInterpret.at("CameraFieldOfView"));
             }
+            if(p_mapToInterpret.count("IPToServer"))
+            {
+                o_info.IPToServer = p_mapToInterpret.at("IPToServer");
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -96,6 +100,7 @@ namespace DoremiEngine
             returnMap["CameraSpeedY"] = std::to_string(p_info.ExitGame);
             returnMap["CameraViewDistance"] = std::to_string(p_info.ExitGame);
             returnMap["CameraFieldOfView"] = std::to_string(p_info.ExitGame);
+            returnMap["IPToServer"] = p_info.IPToServer;
             return returnMap;
         }
     }

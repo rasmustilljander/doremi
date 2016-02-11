@@ -339,10 +339,6 @@ namespace Doremi
 
                     break;
                 }
-                case Doremi::Core::EventType::Trigger:
-                {
-                    TriggerEvent* t_triggerEvent = static_cast<TriggerEvent*>(p_event);
-                }
                 default:
                     break;
             }
