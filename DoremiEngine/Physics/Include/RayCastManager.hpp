@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <vector>
 using namespace DirectX;
 namespace DoremiEngine
 {
@@ -19,6 +20,11 @@ namespace DoremiEngine
             /**
             Sweeps a given object in the desired direction and returns the first object hit by the sweep*/
             virtual int CastSweep(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range) = 0;
+
+            /**
+            Sweeps towards a given direction and return every object hit
+            */
+            virtual std::vector<int> CastSweepWithMutipleHits(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range) = 0;
         };
     }
 }

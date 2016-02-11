@@ -82,6 +82,14 @@ namespace Doremi
                 LoadMeshes(ifs, nrMeshes);
                 LoadLights(ifs, nrLights);
                 BuildEntities();
+                std::vector<DoremiEngine::AI::PotentialField*>& potentialFields =
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().GetAllActiveFields();
+                size_t length = potentialFields.size();
+                PotentialFieldGridCreator t_gridCreator = PotentialFieldGridCreator(m_sharedContext);
+                for(size_t i = 0; i < length; i++)
+                {
+                    t_gridCreator.BuildGridUsingPhysicXAndGrid(potentialFields[i]);
+                }
                 LoadTriggers();
             }
             else
@@ -381,12 +389,9 @@ namespace Doremi
             XMFLOAT3 centerPoint, minPoint, maxPoint;
             CalculateAABBBoundingBox(p_vertexBuffer, p_transformationData, maxPoint, minPoint, centerPoint);
 
-            centerPoint.y = maxPoint.y;
-            PotentialFieldGridCreator t_gridCreator = PotentialFieldGridCreator(m_sharedContext);
-            DoremiEngine::AI::PotentialField* field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x,
-                maxPoint.z - minPoint.z, 50, 50, centerPoint);
-
-            t_gridCreator.BuildGridUsingPhysicXAndGrid(field);
+            centerPoint.y = maxPoint.y + 0.7f;
+            DoremiEngine::AI::PotentialField* field =
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
         }
     }
 }

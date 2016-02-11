@@ -53,19 +53,6 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
             //////////////////////// Fixa PotFält
-
-            // Testar TODOEA
-            Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
-            PotentialFieldGridCreator t_potentialFieldGridCreator = PotentialFieldGridCreator(m_sharedContext);
-            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_field);
-            std::cout << "Physical field 1 done";
-            // m_field->Update();
-            std::cout << "Potential field 1 done";
-
-            // t_potentialFieldGridCreator.BuildGridUsingPhysicXAndGrid(m_topField);
-            std::cout << "Physical field 2 done";
-            // m_topField->Update();
-            std::cout << "Potential field 2 done";
         }
 
         AIPathManager::~AIPathManager() {}
@@ -106,11 +93,14 @@ namespace Doremi
                             // if we are still standing on the same quad as the last update we do nothing 
                             // TODOKO if we have been standing stil for 2 long something might be wrong, Force him to move!!!
                         }
-                        else 
-                        {                        
+                        else
+                        {
                             XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
-                            currentActor->SetPrevGridPosition(newPrevPos);
-                            currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
+                            if(newPrevPos.x > -1 && newPrevPos.y > -1)
+                            {
+                                currentActor->SetPrevGridPosition(newPrevPos);
+                                currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
+                            }
                         }
 
                         desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
@@ -164,7 +154,7 @@ namespace Doremi
                         DoremiEngine::AI::PotentialChargeInformation t_newSpecial =
                             DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, false, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
                         DoremiEngine::AI::PotentialChargeInformation t_newSpecial2 =
-                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, false, true, false, DoremiEngine::AI::AIActorType::Player, chargeEquation);
+                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, false, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
                         actor->AddPotentialVsOther(t_newSpecial);
                         actor->AddPotentialVsOther(t_newSpecial2);
                         DoremiEngine::AI::PotentialField* field;

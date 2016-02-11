@@ -145,9 +145,11 @@ namespace Doremi
 
             blueprint[ComponentType::Transform] = transComp;
             // Render
+            LevelLoaderClient loader = LevelLoaderClient(sharedContext);
+            CharacterDataNames enemyCharData = loader.LoadCharacter("Models/RobotSmall.drm");
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
             blueprint[ComponentType::Render] = renderComp;
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -166,8 +168,8 @@ namespace Doremi
 
             // Extra drain and rigid comp
             RigidBodyComponent* rigidComp = new RigidBodyComponent();
-            rigidComp->radius = 5;
-            rigidComp->height = 5;
+            rigidComp->radius = 3;
+            rigidComp->height = 1.5;
             rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
             rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
             blueprint[ComponentType::RigidBody] = rigidComp;
@@ -217,7 +219,7 @@ namespace Doremi
 
             // Character control comp label
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(5, 5);
+            charControlComp->dims = XMFLOAT2(3, 1.5);
             charControlComp->flags = CharacterControlFlags::drain;
             blueprint[ComponentType::CharacterController] = charControlComp;
 
@@ -539,7 +541,7 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/SuperCoolMainCharacter.drm");
 
             /// Fill with components
             // Render
@@ -625,7 +627,7 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/testCharCoolGuy.drm");
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/SuperCoolMainCharacter.drm");
 
             /// Fill with components
             // Render
