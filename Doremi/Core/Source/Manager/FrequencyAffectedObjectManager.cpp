@@ -112,8 +112,17 @@ namespace Doremi
 
             // Calculate the desiredposition if frequency is held steady: take the vector between start and end. multiply with frequencyvalue 0 to 1.
             // And add the start position
-            XMStoreFloat3(&t_desiredPosition, p_currentFrequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
+            // XMStoreFloat3(&t_desiredPosition, p_currentFrequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
 
+
+            if(p_currentFrequency > 0.2)
+            {
+                t_desiredPosition = t_platformPatrolComp->endPosition;
+            }
+            else
+            {
+                t_desiredPosition = t_platformPatrolComp->startPosition;
+            }
             // Get the direction again. This is from desired position to actual position. So we know what way to move
             XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
 
@@ -128,7 +137,9 @@ namespace Doremi
             // If statement so that it doesnt "miss" the start position and wobbles around it. Same with end position
             if(t_distanceBetweenDesiredAndActualPosition.x > 0.4)
             {
-                XMStoreFloat3(&t_velocityVector, XMVector3Normalize(t_newDirection) /** t_distanceBetweenDesiredAndActualPosition.x */ * 0.3);
+                // XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
+                float t_velo = p_currentFrequency * 100;
+                XMStoreFloat3(&t_velocityVector, (XMVector3Normalize(t_newDirection) /** t_distanceBetweenDesiredAndActualPosition.x */ * (0.3 + t_velo)));
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().MoveKinematicActor(p_entityID,
                                                                                             t_velocityVector); // TODOLH This removes the update
             }

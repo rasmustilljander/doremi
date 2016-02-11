@@ -53,22 +53,24 @@ namespace Doremi
                 {
                     // Get component
                     AudioActiveComponent* t_audio = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(i);
-                    //Looping through the map of soundschannels.
-                    typedef std::map<int, int>::iterator iteratorForLoop;
-                    int sizeOfSoundEnumToChannelID = 0;
+                    // Looping through the map of soundschannels.
+                    // typedef std::map<int, int>::iterator iteratorForLoop;
+                    int sizeOfSoundEnumToChannelID = sizeof(t_audio->m_soundEnumToChannelID);
                     int amountOfInactiveChannels = 0;
                     std::vector<int> t_placesToRemove;
-                    for (iteratorForLoop iterator = t_audio->m_soundEnumToChannelID.begin(); iterator != t_audio->m_soundEnumToChannelID.end(); iterator++) 
+                    // for (iteratorForLoop iterator = t_audio->m_soundEnumToChannelID.begin(); iterator != t_audio->m_soundEnumToChannelID.end();
+                    // iterator++)
+                    for(int k = 0; k < sizeOfSoundEnumToChannelID; ++k)
                     {
-                        ++sizeOfSoundEnumToChannelID;
-                        t_isPlaying = t_audioModule.GetChannelPlaying(iterator->second);
-                        if (!t_isPlaying)
+                        //++sizeOfSoundEnumToChannelID;
+                        t_isPlaying = t_audioModule.GetChannelPlaying(t_audio->m_soundEnumToChannelID[k]);
+                        if(!t_isPlaying)
                         {
 
                             ++amountOfInactiveChannels;
-                            t_placesToRemove.push_back(iterator->first);
-                            //t_audio->m_soundEnumToChannelID.erase(iterator);
-                            //EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
+                            t_placesToRemove.push_back(k);
+                            // t_audio->m_soundEnumToChannelID.erase(iterator);
+                            // EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
                         }
                         else
                         {
@@ -76,11 +78,11 @@ namespace Doremi
                         }
                     }
                     int placeToRemoveSizeForLoop = t_placesToRemove.size();
-                    for (size_t k = 0; k < placeToRemoveSizeForLoop; k++)
+                    for(size_t k = 0; k < placeToRemoveSizeForLoop; k++)
                     {
-                        t_audio->m_soundEnumToChannelID.erase(t_placesToRemove[k]);
+                        t_audio->m_soundEnumToChannelID[t_placesToRemove[k]] = -1;
                     }
-                    if (sizeOfSoundEnumToChannelID == amountOfInactiveChannels)
+                    if(sizeOfSoundEnumToChannelID == amountOfInactiveChannels)
                     {
 
                         EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
