@@ -301,8 +301,9 @@ namespace Doremi
 
             centerPoint.y = maxPoint.y;
             PotentialFieldGridCreator t_gridCreator = PotentialFieldGridCreator(m_sharedContext);
-            DoremiEngine::AI::PotentialField* field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 1, 1, centerPoint);
+            DoremiEngine::AI::PotentialField* field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x,
+                maxPoint.z - minPoint.z, 50, 50, centerPoint);
+
             t_gridCreator.BuildGridUsingPhysicXAndGrid(field);
         }
     }

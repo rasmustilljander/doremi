@@ -110,7 +110,6 @@ namespace DoremiEngine
             {
                 return XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             }
-
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
             float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad

@@ -79,7 +79,7 @@ namespace Doremi
                 }
             }
             // Någon fysikclass ska in
-
+            op_field->Update();
             // op_field->
         }
     }

@@ -58,7 +58,7 @@ namespace DoremiEngine
             return newActor;
         }
         void PotentialFieldSubModuleImpl::AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) { o_field.AddActor(p_actor); }
-        int PotentialFieldSubModuleImpl::GetNextStep() { return 0; }
+
         PotentialField* PotentialFieldSubModuleImpl::FindBestPotentialField(const DirectX::XMFLOAT3& p_position)
         {
             // Take out all PF that you are within
@@ -76,10 +76,10 @@ namespace DoremiEngine
                 float fieldHalfHeight = quadSize.y * (float)quadsY * 0.5f;
                 float fieldLeftBoundary = fieldCenter.x - fieldHalfWidth; // takes out the fields left, right and top, bottom boundary positions 
                 float fieldRightBoundary = fieldCenter.x + fieldHalfWidth;
-                float fieldTopBoundary = fieldCenter.y + fieldHalfHeight;
-                float fieldBottomBoundary = fieldCenter.y - fieldHalfHeight;
+                float fieldTopBoundary = fieldCenter.z + fieldHalfHeight;
+                float fieldBottomBoundary = fieldCenter.z - fieldHalfHeight;
                 if (p_position.x <= fieldRightBoundary && p_position.x >= fieldLeftBoundary &&
-                    p_position.y <= fieldTopBoundary && p_position.y >= fieldBottomBoundary) // If inside the field
+                    p_position.z <= fieldTopBoundary && p_position.z >= fieldBottomBoundary) // If inside the field
                 {
                     possibleMatches.push_back(m_fields[i]); // Still need to check which field is closest in Y
                 }
@@ -101,6 +101,14 @@ namespace DoremiEngine
                 // TODOKO log error / message
             }
             return returnField;
+        }
+        void PotentialFieldSubModuleImpl::AddActorToEveryPotentialField(PotentialFieldActor* p_actor)
+        {
+            size_t length = m_fields.size();
+            for (size_t i = 0; i < length; i++)
+            {
+                m_fields[i]->AddActor(p_actor);
+            }
         }
     }
 }
