@@ -306,6 +306,9 @@ namespace Doremi
                 if(((int)bodyComp->flags & (int)RigidBodyFlags::kinematic) == (int)RigidBodyFlags::kinematic)
                 {
                     rigidBodyManager.SetKinematicActor(p_entityId, true);
+
+                    // TODOJB TODOXX haxy callback filtering. Read comment in LevelLoader::SetPhysicalAttributesOnMesh
+                    rigidBodyManager.SetCallbackFiltering(p_entityId, 3, 0, 0, 2);
                 }
                 if(((int)bodyComp->flags & (int)RigidBodyFlags::trigger) == (int)RigidBodyFlags::trigger)
                 {
