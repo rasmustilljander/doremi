@@ -59,6 +59,8 @@ namespace DoremiEditor
             DirectX::XMFLOAT3 interactableStartPos;
             DirectX::XMFLOAT3 interactableEndPos;
             DirectX::XMFLOAT2 interactableOffset;
+            float interactableStartSpeed;
+            float interactableEndSpeed;
             bool isPotentialFieldCollidable;
             int potentialFieldID;
             int potentialFieldNeighbour[5];

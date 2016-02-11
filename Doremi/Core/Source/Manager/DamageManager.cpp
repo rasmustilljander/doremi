@@ -5,9 +5,14 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
+
 // Events
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/DamageTakenEvent.hpp>
+#include <EventHandler/Events/TriggerEvent.hpp>
+
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
+
 /// Engine
 // Physics
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
@@ -23,7 +28,11 @@ namespace Doremi
 {
     namespace Core
     {
-        DamageManager::DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "DamageManager") {}
+        DamageManager::DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "DamageManager") 
+        {
+            EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
+        }
+
         DamageManager::~DamageManager() {}
         void DamageManager::Update(double p_dt)
         {
@@ -139,6 +148,21 @@ namespace Doremi
                         {
                             // nothing
                         }
+                    }
+                }
+            }
+        }
+        void DamageManager::OnEvent(Event * p_event)
+        {
+            if (p_event->eventType == EventType::Trigger)
+            {
+                TriggerEvent* t_triggerEvent = static_cast<TriggerEvent*>(p_event);
+
+                if (t_triggerEvent->triggerType == TriggerType::DeathTrigger)
+                {
+                    if (EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
+                    {
+                        PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
                     }
                 }
             }
