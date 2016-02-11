@@ -69,7 +69,6 @@ namespace DoremiEditor
             int spawnMaxAlive;
             int spawnTypeBlueprint;
             float spawnFrequency;
-            bool isPlayerStart; // TODOKO should this be here? Not in doc
             bool isStatic;
             int physicsType;
             int typeBlueprint;
