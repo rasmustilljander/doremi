@@ -33,14 +33,7 @@ namespace Doremi
             static int debug = 0;
             static double totTime = 0;
             totTime += p_dt;
-            if(totTime > 3.0f)
-            {
-                totTime -= 3.0f;
-            }
-            else
-            {
-                return;
-            }
+
             using namespace DirectX;
             // gets all the players in the world, used to see if we can see anyone of them
             std::map<uint32_t, Player*> t_players = PlayerHandler::GetInstance()->GetPlayerMap();
@@ -76,6 +69,22 @@ namespace Doremi
                             // Calculate direction
                             XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
                             direction = XMVector3Normalize(direction);
+                            if(!XMVector3Equal(direction, XMVectorZero()))
+                            {
+                                XMMATRIX mat = XMMatrixInverse(nullptr, XMMatrixLookAtLH(AIPos, AIPos + direction, XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
+                                XMVECTOR rotation = XMQuaternionRotationMatrix(mat);
+                                XMFLOAT4 quater;
+                                XMStoreFloat4(&quater, rotation);
+                                AITransform->rotation = quater;
+                            }
+                            if(totTime > 3.0f) // TODOKO this shit shouldnt be here, only here to make the rotation work
+                            {
+                                totTime -= 3.0f;
+                            }
+                            else
+                            {
+                                break;
+                            }
                             XMFLOAT3 directionFloat;
                             XMStoreFloat3(&directionFloat, direction);
                             // Offset origin of ray so we dont hit ourself

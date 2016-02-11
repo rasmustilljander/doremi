@@ -122,12 +122,6 @@ namespace Doremi
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
-
-                    // XMVECTOR rotation = XMQuaternionRotationNormal(dirVec, 0);
-                    // rotation = XMQuaternionRotationAxis(dirVec, 45);
-                    // XMFLOAT4 quater;
-                    // XMStoreFloat4(&quater, rotation);
-                    // transComp->rotation = quater;
                 }
             }
         }
