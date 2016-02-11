@@ -86,7 +86,10 @@ namespace DoremiEngine
             std::thread outGoingLoggingThread(threadWork, m_applicationRunning, m_localBuffer, m_outGoingBuffer);
             outGoingLoggingThread.detach();
 
+#ifdef NO_LOGGER
+#else
             StartLoggingProcess();
+#endif
         }
 
         void LoggerImpl::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel, const char* p_format, ...)
@@ -120,10 +123,16 @@ namespace DoremiEngine
             header.packageSize = sizeof(LogTextData);
             header.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
             bool succeed = false;
+
+
+#ifdef NO_LOGGER
+            m_localBuffer->Produce(header, &data);
+#else
             while(!succeed) // TODORT Might not need while loop
             {
                 succeed = m_localBuffer->Produce(header, &data);
             }
+#endif
         }
 
         void* LoggerImpl::InitializeFileMap(const std::size_t& p_size)
@@ -194,11 +203,16 @@ namespace DoremiEngine
                 messageExist = p_localBuffer->Consume(header, data);
                 if(messageExist)
                 {
+
+#ifdef NO_LOGGER
+                    m_outGoingBuffer->Produce(*header, data);
+#else
                     succeed = false;
                     while(!succeed)
                     {
                         succeed = m_outGoingBuffer->Produce(*header, data);
                     }
+#endif
                 }
                 // std::this_thread::sleep_for(2s);
             }

@@ -16,6 +16,7 @@ set(LIBRARIES Utilities)
 # Set preprocessor definitions
 SET(DEFINITIONS 
 	_WINDLL
+	${LOGGER_STATUS}
 )
 
 # Add the target

@@ -10,6 +10,13 @@ option(BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OF
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
 option(BUILD_CUSTOM_MEASUREMENT_TIMING "Unckeched is off" ON)
 option(BUILD_DRM_EDITOR_PLUGIN "Must be runned in 64 bit." OFF)
+option(BUILD_ENABLE_LOGGER "Otherwise throw away logdata." OFF)
+
+if(BUILD_ENABLE_LOGGER)
+	set(LOGGER_STATUS USE_LOGGER)
+else()
+	set(LOGGER_STATUS NO_LOGGER)
+endif()
 
 if(BUILD_UNIT_TEST_BUILD)
 	set(ENGINE_LINK_TYPE STATIC)
