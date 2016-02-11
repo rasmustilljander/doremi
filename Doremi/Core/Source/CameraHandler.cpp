@@ -51,7 +51,7 @@ namespace Doremi
 
             DoremiEngine::Graphic::Camera* freecamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
             DoremiEngine::Graphic::Camera* thirdPersonCamera = t_graphicModuleCameraManager.BuildNewCamera(projection);
-            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera, configInfo.CameraDistanceFromPlayer, -1, 0);
+            m_thirdPersonCamera = new ThirdPersonCamera(thirdPersonCamera, configInfo.CameraDistanceFromPlayer, -1, 0.7f);
             m_freeLookCamera = new FreeLookCamera(freecamera);
             m_currentCamera = CameraType::THIRDPERSON;
         }

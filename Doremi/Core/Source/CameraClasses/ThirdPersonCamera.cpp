@@ -40,16 +40,18 @@ namespace Doremi
             forward = XMVector3Rotate(forward, quater); // Rotate forward vector with player orientation TODOKO Should maybe disregard some rotations?
             forward = XMVector3Normalize(forward);
             XMVECTOR right = XMVector3Cross(forward, up);
+
             XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
-            //XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
-            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector 
+            // XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
+            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
             forward = XMVector3Normalize(forward);
             XMVECTOR cameraPosition = position - forward * m_distanceFromPlayer;
             // float offsetY = 5 * cosf(m_angle); // Get offset in Y
-            // cameraPosition += XMLoadFloat3(&XMFLOAT3(0, offsetY, 0)); // Set offset in Y
-
-            XMMATRIX worldMatrix =
-                XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position, up)); // vup is added to position so you look abit above the player
+            XMVECTOR realUp =
+                XMVector3Cross(right, forward); // Get the real upvector to have the camera focus on a point a bit above the players focus
+            realUp = XMVector3Normalize(realUp);
+            cameraPosition += realUp * 3; // Set offset in Y TODOCONFIG
+            XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position + realUp * 3, up)); // TODOCONFIG
             // XMVECTOR forwardQuater = XMQuaternionRotationNormal(forward,0);
             XMFLOAT4X4 viewMat;
             XMStoreFloat4x4(&viewMat, worldMatrix);
@@ -64,7 +66,7 @@ namespace Doremi
         {
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
             float wantedAngle = m_angle; // the angle we want to reach
-            wantedAngle += inputHandler->GetMouseMovementY() * 0.001;
+            wantedAngle -= inputHandler->GetMouseMovementY() * 0.001;
             if(wantedAngle < m_maxAngle && wantedAngle > m_minAngle)
             {
                 m_angle = wantedAngle;
