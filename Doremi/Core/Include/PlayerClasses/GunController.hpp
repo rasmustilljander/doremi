@@ -12,7 +12,7 @@ namespace Doremi
 {
     namespace Core
     {
-        class Player;
+        struct Player;
         class GunController
         {
         public:

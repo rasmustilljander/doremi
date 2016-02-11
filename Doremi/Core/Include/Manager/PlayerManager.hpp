@@ -7,7 +7,7 @@ namespace Doremi
 {
     namespace Core
     {
-        class PlayerHandler;
+        struct PlayerHandler;
         /**
         Only an example of what a manager might look like
         Doesn't do anything, and could be removed once examples are no longer necessary*/
