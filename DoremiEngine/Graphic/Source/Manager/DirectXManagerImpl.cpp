@@ -20,7 +20,7 @@ namespace DoremiEngine
     {
         DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_screenResolution = DirectX::XMFLOAT2(800, 800); // TODOCONFIG
+            m_screenResolution = DirectX::XMFLOAT2(1280, 720); // TODOCONFIG
         }
         DirectXManagerImpl::~DirectXManagerImpl() {}
 
@@ -46,8 +46,8 @@ namespace DoremiEngine
 
             if(GetActiveWindow() == nullptr)
             {
-                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 500, 100, m_screenResolution.x, m_screenResolution.y,
-                                                   SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
+                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
+                                                   SDL_WINDOW_FULLSCREEN); // TODOKO Get height and width form reliable source
                 if(!win)
                 {
                     std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
