@@ -71,7 +71,7 @@ namespace Doremi
                             direction = XMVector3Normalize(direction);
                             if(!XMVector3Equal(direction, XMVectorZero()))
                             {
-                                XMMATRIX mat = XMMatrixInverse(nullptr, XMMatrixLookAtLH(AIPos, AIPos + direction, XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
+                                XMMATRIX mat = XMMatrixInverse(nullptr, XMMatrixLookAtLH(AIPos, AIPos - direction, XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
                                 XMVECTOR rotation = XMQuaternionRotationMatrix(mat);
                                 XMFLOAT4 quater;
                                 XMStoreFloat4(&quater, rotation);
