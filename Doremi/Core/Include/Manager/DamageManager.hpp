@@ -8,7 +8,7 @@ namespace Doremi
         Is in controll of seeing if a hit should produce damage or not, if it should it'll push a event to the managers that is in charge of removing
         health. This manager is also in charge of removing the enemies bullets
         */
-        class DamageManager : public Manager , public Subscriber
+        class DamageManager : public Manager, public Subscriber
         {
         public:
             DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
