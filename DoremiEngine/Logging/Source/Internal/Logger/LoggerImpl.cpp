@@ -12,7 +12,6 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
-#include <random>
 #include <Windows.h>
 
 namespace DoremiEngine
@@ -27,13 +26,7 @@ namespace DoremiEngine
         LoggerImpl::LoggerImpl()
             : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr)
         {
-            // http://en.cppreference.com/w/cpp/numeric/random
-            std::random_device randomDevice;
-            std::mt19937 randomEngine(randomDevice());
-            const std::uniform_int_distribution<int> distribution(1, INT_MAX);
-            m_uniqueId = distribution(randomEngine);
-            std::cout << "Filemap uniqueId: " << m_uniqueId << std::endl;
-
+            m_uniqueId = GetCurrentProcessId();
             Initialize();
         }
 
