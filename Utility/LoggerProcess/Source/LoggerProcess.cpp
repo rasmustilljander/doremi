@@ -54,6 +54,7 @@ void LoggerProcess::Run()
 
     bool messageExist = false;
     double elapsedTimeSinceLastEntry = 0;
+    double flushTimer = 0;
     m_timer.Tick();
     while(true)
     {
@@ -80,11 +81,22 @@ void LoggerProcess::Run()
             std::this_thread::sleep_for(10ms);
         }
 
-        // Compute elapsed time
+        // Compute delta time
         m_timer.Tick();
-        elapsedTimeSinceLastEntry += m_timer.GetElapsedTimeInSeconds();
+        const double deltaTime = m_timer.GetElapsedTimeInSeconds();
+
+        // Check if time for flush
+        flushTimer += deltaTime;
+        if(flushTimer > Constants::LOGFILE_FLUSH_INTERVAL)
+        {
+            for(auto& logfile : m_logfiles)
+            {
+                logfile.second.Flush();
+            }
+        }
 
         // If elapsed time since last log is greater than a timeout
+        elapsedTimeSinceLastEntry += deltaTime;
         if(elapsedTimeSinceLastEntry > Constants::IPC_FILEMAP_TIMEOUT)
         {
             // Shutdown
