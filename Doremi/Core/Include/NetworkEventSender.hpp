@@ -8,7 +8,7 @@ namespace Doremi
     namespace Core
     {
         class NetworkStreamer;
-        class Event;
+        struct Event;
         struct NetMessage;
 
         /**
