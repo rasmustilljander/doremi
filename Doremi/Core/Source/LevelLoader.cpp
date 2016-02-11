@@ -437,6 +437,15 @@ namespace Doremi
             const int material = physicsMaterialManager.CreateMaterial(0.5, 0.5, 0.5);
             rigidBodyManager.AddMeshBodyStatic(p_entityID, m_currentPos, m_currentOrientation, p_positionPX, p_indexPX, material);
             rigidBodyManager.SetDrain(p_entityID, true);
+            /*
+            TODOJB TODOXX haxy callback filtering. Basically we want the kinematic objects (elevators)
+            to ignore the world (every static mesh) and each other. Specifically:
+            All objects have the bitmask 0001 and ignore nothing
+            Kinematic objects have the bitmask 0011 and ignore the bit 0010
+            Static objects have the bitmask 0011 and ignore nothing.
+            Thus, kinematic object ignores each other, and ignore the world,
+            but collides with everything else (enemies, projectiles etc.)*/
+            rigidBodyManager.SetCallbackFiltering(p_entityID, 3, 0, 0, 0);
         }
     }
 }
