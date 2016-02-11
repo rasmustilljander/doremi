@@ -40,8 +40,17 @@ namespace Doremi
             {
                 EntityCreatedEvent* p_entityCreated = (EntityCreatedEvent*)p_event;
 
-                // Create entity
-                EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
+                if(p_entityCreated->bluepirnt == Blueprints::NetworkPlayerEntity)
+                {
+                    // Create entity
+                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
+                                                DirectX::XMFLOAT3(0.25f, 0.25f, 0.25f));
+                }
+                else
+                {
+                    // Create entity
+                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
+                }
             }
             else if(p_event->eventType == EventType::RemoveEntity)
             {
