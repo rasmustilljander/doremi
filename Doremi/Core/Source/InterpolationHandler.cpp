@@ -10,7 +10,8 @@
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 
 namespace Doremi
 {
@@ -51,6 +52,7 @@ namespace Doremi
             TIME_FUNCTION_START
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
+            DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
             // All objects that is sent over network with transform should be inteprolated
             uint32_t Mask = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
@@ -111,9 +113,11 @@ namespace Doremi
             // cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
             //     << ((int)m_snapshotSequenceReal - (int)m_snapshotSequenceUsed) << endl;
 
+            DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             size_t NumEntities = entityHandler.GetLastEntityIndex();
             int mask = (int)ComponentType::NetworkObject | (int)ComponentType::Transform;
+
 
             for(size_t entityID = 0; entityID < NumEntities; entityID++)
             {
@@ -231,6 +235,14 @@ namespace Doremi
                                     *GetComponent<TransformComponentSnapshotNext>(entityID) =
                                         TransformComponentSnapshotNext(SnapshotToUse->Objects[objectCounter].Component);
                                     *GetComponent<TransformComponentNext>(entityID) = TransformComponentNext(SnapshotToUse->Objects[objectCounter].Component);
+
+                                    // TODOXX if we add free rigid bodys this might break
+                                    // Set position for elevators
+                                    if(entityHandler.HasComponents(entityID, static_cast<uint32_t>(ComponentType::RigidBody)))
+                                    {
+                                        t_rigidBodyManager.SetBodyPosition(entityID, SnapshotToUse->Objects[objectCounter].Component.position,
+                                                                           SnapshotToUse->Objects[objectCounter].Component.rotation);
+                                    }
                                 }
 
                                 // Increase counter
