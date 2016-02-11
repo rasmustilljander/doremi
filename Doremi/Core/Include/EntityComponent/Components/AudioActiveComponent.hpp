@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <EntityComponent/Components/AudioComponent.hpp>
 namespace Doremi
 {
     namespace Core
@@ -10,7 +11,8 @@ namespace Doremi
 
         struct AudioActiveComponent
         {
-            std::map<int, int> m_soundEnumToChannelID;
+            int m_soundEnumToChannelID[(int)(AudioCompEnum::Num_Sounds) + 1];
+            // std::map<int, int> m_soundEnumToChannelID;
             AudioActiveComponent() {}
         };
     }
