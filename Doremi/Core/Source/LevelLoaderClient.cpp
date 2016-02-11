@@ -6,6 +6,7 @@
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
+#include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
@@ -170,7 +171,18 @@ namespace Doremi
             if(transformationData.attributes.frequencyAffected)
             {
                 r_shouldBuildPhysics = false;
-                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::NetworkObject));
+                EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::NetworkObject) |
+                                                                          static_cast<uint32_t>(ComponentType::RigidBody) |
+                                                                          static_cast<uint32_t>(ComponentType::PhysicalMaterial));
+
+
+                // Rigid body comp
+                RigidBodyComponent* t_rigidBodyComp = GetComponent<RigidBodyComponent>(p_entityId);
+
+                // t_rigidBodyComp->boxDims = dimension;
+                t_rigidBodyComp->flags =
+                    static_cast<RigidBodyFlags>(static_cast<uint32_t>(RigidBodyFlags::kinematic) | static_cast<uint32_t>(RigidBodyFlags::drain));
+                t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
             }
 
             // If non physic object
@@ -178,6 +190,63 @@ namespace Doremi
                transformationData.attributes.startOrEndPoint == 2 || transformationData.attributes.checkPointID > -1 || transformationData.attributes.isDangerous)
             {
                 r_shouldBuildPhysics = false;
+            }
+
+
+            // If we're rigid body
+            if(EntityHandler::GetInstance().HasComponents(p_entityId, static_cast<uint32_t>(ComponentType::RigidBody)))
+            {
+                // Get us our rigid body manager
+                DoremiEngine::Physics::RigidBodyManager& rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+                // calulate aab
+                XMFLOAT3 centerPoint, minPoint, maxPoint;
+                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                XMFLOAT3 dimension = XMFLOAT3(abs(minPoint.x - maxPoint.x) / 2.0f, abs(minPoint.y - maxPoint.y) / 2.0f, abs(minPoint.z - maxPoint.z) / 2.0f);
+                RigidBodyComponent* bodyComp = GetComponent<RigidBodyComponent>(p_entityId);
+                bodyComp->boxDims = dimension;
+
+                int materialTriggID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
+
+                // Get the material. This is haxxy. It probably works most of the time
+                PhysicsMaterialComponent* matComp = GetComponent<PhysicsMaterialComponent>(p_entityId);
+                matComp->p_materialID = materialTriggID;
+
+                switch(bodyComp->geometry)
+                {
+                    case RigidBodyGeometry::dynamicBox:
+                        rigidBodyManager.AddBoxBodyDynamic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->boxDims, matComp->p_materialID);
+                        break;
+                    case RigidBodyGeometry::dynamicSphere:
+                        rigidBodyManager.AddSphereBodyDynamic(p_entityId, transComp->position, bodyComp->radius);
+                        break;
+                    case RigidBodyGeometry::dynamicCapsule:
+                        rigidBodyManager.AddCapsuleBodyDynamic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->height, bodyComp->radius);
+                        break;
+                    case RigidBodyGeometry::staticBox:
+                        rigidBodyManager.AddBoxBodyStatic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->boxDims, matComp->p_materialID);
+                        break;
+                    default:
+                        break;
+                }
+                // Apply flags
+                if(((int)bodyComp->flags & (int)RigidBodyFlags::kinematic) == (int)RigidBodyFlags::kinematic)
+                {
+                    rigidBodyManager.SetKinematicActor(p_entityId, true);
+                }
+                if(((int)bodyComp->flags & (int)RigidBodyFlags::trigger) == (int)RigidBodyFlags::trigger)
+                {
+                    rigidBodyManager.SetTrigger(p_entityId, true);
+                }
+                if(((int)bodyComp->flags & (int)RigidBodyFlags::drain) == (int)RigidBodyFlags::drain)
+                {
+                    rigidBodyManager.SetDrain(p_entityId, true);
+                }
+                if(((int)bodyComp->flags & (int)RigidBodyFlags::ignoredDEBUG) == (int)RigidBodyFlags::ignoredDEBUG)
+                {
+                    rigidBodyManager.SetIgnoredDEBUG(p_entityId);
+                }
             }
 
 

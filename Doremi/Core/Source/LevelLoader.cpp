@@ -447,5 +447,63 @@ namespace Doremi
             but collides with everything else (enemies, projectiles etc.)*/
             rigidBodyManager.SetCallbackFiltering(p_entityID, 3, 0, 0, 0);
         }
+
+
+        void LevelLoader::CalculateAABBBoundingBox(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
+                                                   const DoremiEditor::Core::TransformData& p_transformationData, DirectX::XMFLOAT3& o_max,
+                                                   DirectX::XMFLOAT3& o_min, DirectX::XMFLOAT3& o_center)
+        {
+            DirectX::XMFLOAT3 maxPosition =
+                DirectX::XMFLOAT3(-100000, -100000, -100000); // Hard coded low maxpos value TODOXX dangerous if maps is outside this scope...
+            DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(100000, 100000, 100000);
+            size_t length = p_vertexBuffer.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                // Finding max value
+                if(p_vertexBuffer[i].position.x > maxPosition.x)
+                {
+                    maxPosition.x = p_vertexBuffer[i].position.x;
+                }
+                if(p_vertexBuffer[i].position.y > maxPosition.y)
+                {
+                    maxPosition.y = p_vertexBuffer[i].position.y;
+                }
+                if(p_vertexBuffer[i].position.z > maxPosition.z)
+                {
+                    maxPosition.z = p_vertexBuffer[i].position.z;
+                }
+
+                // FInding min value
+                if(p_vertexBuffer[i].position.x < minPosition.x)
+                {
+                    minPosition.x = p_vertexBuffer[i].position.x;
+                }
+                if(p_vertexBuffer[i].position.y < minPosition.y)
+                {
+                    minPosition.y = p_vertexBuffer[i].position.y;
+                }
+                if(p_vertexBuffer[i].position.z < minPosition.z)
+                {
+                    minPosition.z = p_vertexBuffer[i].position.z;
+                }
+            }
+            // Max and min are now centered around origo with no scale and no rotation...
+            DirectX::XMVECTOR maxVector = XMLoadFloat3(&maxPosition);
+            DirectX::XMVECTOR minVector = XMLoadFloat3(&minPosition);
+            DirectX::XMMATRIX rotation = XMMatrixRotationQuaternion(XMLoadFloat4(&p_transformationData.rotation));
+            DirectX::XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
+            DirectX::XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
+            maxVector = XMVector3Transform(maxVector, scale);
+            maxVector = XMVector3Transform(maxVector, translation);
+
+            minVector = XMVector3Transform(minVector, scale);
+            minVector = XMVector3Transform(minVector, translation);
+            // minVector = XMVector3Transform(minVector, translation * rotation * scale);
+            // maxVector = XMVector3Rotate(maxVector, XMLoadFloat4(&p_transformationData.rotation));
+            DirectX::XMFLOAT3 centerPoint;
+            XMStoreFloat3(&o_center, (maxVector + minVector) / 2);
+            XMStoreFloat3(&o_max, maxVector);
+            XMStoreFloat3(&o_min, minVector);
+        }
     }
 }

@@ -124,6 +124,8 @@ namespace Doremi
             ComputeVertexAndPositionAndIndex(const DoremiEditor::Core::MeshData& p_data, const DirectX::XMFLOAT3& p_scale,
                                              std::vector<DirectX::XMFLOAT3>& o_positionPX, std::vector<int>& o_indexPX);
             void SetPhysicalAttributesOnMesh(int p_entityID, std::vector<DirectX::XMFLOAT3>& p_positionPX, std::vector<int>& p_indexPX);
+            void CalculateAABBBoundingBox(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer, const DoremiEditor::Core::TransformData& p_transformationData,
+                                          DirectX::XMFLOAT3& o_max, DirectX::XMFLOAT3& o_min, DirectX::XMFLOAT3& o_center);
         };
     }
 }
