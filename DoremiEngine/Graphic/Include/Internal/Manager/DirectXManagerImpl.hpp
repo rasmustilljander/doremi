@@ -34,6 +34,7 @@ namespace DoremiEngine
             ID3D11DeviceContext* GetDeviceContext() override;
             void SetRenderTargetNormal() override;
             void SetRenderTargetGlow() override;
+            void Render2D(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
             // TODOKO should end draw be here?
             void EndDraw() override;
 

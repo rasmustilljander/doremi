@@ -83,8 +83,8 @@ namespace Doremi
                                                                                                           *p_buttonsToDraw[i].m_materialInfo,
                                                                                                           p_buttonsToDraw[i].m_transformMatrix);
             }
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(),
-                                                                                                               m_depthStencilState->GetDepthStencilState());
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(m_rasterizerState->GetRasterizerState(),
+                                                                                                  m_depthStencilState->GetDepthStencilState());
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         }
     }

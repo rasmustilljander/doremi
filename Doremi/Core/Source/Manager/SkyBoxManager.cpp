@@ -45,14 +45,11 @@ namespace Doremi
                 DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(t_cameraPosition.x, t_cameraPosition.y, t_cameraPosition.z));
             DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
 
-            // Change rendertarget to render to backbuffer
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetRenderTargetNormal();
 
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*m_meshInfo, *m_materialInfo, transMat);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(),
-                                                                                                               m_depthStencilState->GetDepthStencilState());
-            // Change rendertarget to render to 2 textures
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetRenderTargetGlow();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(m_rasterizerState->GetRasterizerState(),
+                                                                                                  m_depthStencilState->GetDepthStencilState());
+
 
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOLH this should not be here. Make another
             // manager that runs this. Has to be last and this
