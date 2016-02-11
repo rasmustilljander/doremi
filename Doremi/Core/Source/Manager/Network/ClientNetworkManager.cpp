@@ -30,6 +30,7 @@
 
 #include <iostream> // TODOCM remove after test
 #include <SequenceMath.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
 // Temporary should be removed
 #include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
@@ -47,46 +48,61 @@ namespace Doremi
               m_timeoutInterval(3.0f),
               m_playerID(0)
         {
-            m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
-            m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 4050);
+            LoadIPFromConfigFile(p_sharedContext);
 
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
 
             NetMessage Message = NetMessage();
             Message.MessageID = MessageID::CONNECT_REQUEST;
             p_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
-
-            cout << "Change IP? Enter each byte with enter. (if other local is assumed)" << endl;
-
-            int a, b, c, d;
-            cin >> a;
-            if(0 > a || a > 255)
-            {
-                return;
-            }
-            cin >> b;
-            if(0 > b || b > 255)
-            {
-                return;
-            }
-            cin >> c;
-            if(0 > c || c > 255)
-            {
-                return;
-            }
-            cin >> d;
-            if(0 > d || d > 255)
-            {
-                return;
-            }
-            SetServerIP(a, b, c, d);
         }
 
         ClientNetworkManager::~ClientNetworkManager() {}
 
+        void ClientNetworkManager::LoadIPFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+
+            // Get IP from config file
+            std::string IPString = t_configInfo.IPToServer;
+            char* IPCharPointer = new char[IPString.size() + 1];
+
+            // We need it as a char pointer
+            IPString.copy(IPCharPointer, IPString.size());
+
+            int* IPArray = new int[4];
+
+            char* ToCheck;
+
+            ToCheck = strtok(IPCharPointer, ".");
+
+            size_t counter = 0;
+            while(ToCheck != NULL && counter < 4)
+            {
+                IPArray[counter] = std::stoi(std::string(ToCheck));
+                ToCheck = strtok(NULL, ".");
+                counter++;
+            }
+
+            // If we got values for all
+            if(counter == 4)
+            {
+                m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(IPArray[0], IPArray[1], IPArray[2], IPArray[3], 5050); // TODOCM remove test code
+                m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(IPArray[0], IPArray[1], IPArray[2], IPArray[3], 4050);
+            }
+            else
+            {
+                m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
+                m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 4050);
+            }
+
+            delete IPCharPointer;
+            delete IPArray;
+        }
+
         void ClientNetworkManager::Update(double p_dt)
         {
-            //std::cout << "Real: " << (uint32_t)(InterpolationHandler::GetInstance()->GetRealSnapshotSequence()) << std::endl;
+            // std::cout << "Real: " << (uint32_t)(InterpolationHandler::GetInstance()->GetRealSnapshotSequence()) << std::endl;
 
             // Recieve Messages
             RecieveMessages(p_dt);

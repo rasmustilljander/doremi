@@ -36,6 +36,11 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void LoadIPFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            /**
+                TODOCM doc
+            */
             void Update(double p_dt) override;
 
             /**
