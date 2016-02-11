@@ -8,6 +8,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
@@ -27,6 +28,7 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/HealthComponent.hpp>
 
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 
@@ -47,6 +49,7 @@ namespace Doremi
             : PlayerHandler(p_sharedContext), m_logger(nullptr)
         {
             EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
+            EventHandler::GetInstance()->Subscribe(EventType::PlayerRespawn, this);
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
         }
 
@@ -188,6 +191,14 @@ namespace Doremi
                         m_gunController.StopFireGun(t_gunFireToggleEvent->entityID, m_sharedContext);
                     }
                 }
+            }
+            else if(p_event->eventType == EventType::PlayerRespawn)
+            {
+                PlayerRespawnEvent* t_playerSpawnerEvent = static_cast<PlayerRespawnEvent*>(p_event);
+
+                // Reset health for show
+                HealthComponent* t_healthComp = GetComponent<HealthComponent>(t_playerSpawnerEvent->entityID);
+                t_healthComp->currentHealth = t_healthComp->maxHealth;
             }
         }
     }

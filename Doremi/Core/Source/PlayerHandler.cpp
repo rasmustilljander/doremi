@@ -368,5 +368,17 @@ namespace Doremi
         }
 
         uint32_t PlayerHandler::GetNumOfPlayers() { return m_playerMap.size(); }
+
+        bool PlayerHandler::IsPlayer(EntityID p_entityID)
+        {
+            for(std::map<uint32_t, Player*>::iterator iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                if(iter->second->m_playerEntityID == p_entityID)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
