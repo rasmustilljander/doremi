@@ -7,6 +7,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <iostream>
 
 namespace Doremi
@@ -60,6 +61,11 @@ namespace Doremi
             TransformComponent* t_transComp = GetComponent<TransformComponent>(p_entityID);
             t_transComp->position = t_triggerPosition;
             t_transComp->rotation = t_triggerOrientation;
+
+            // Reset health
+            HealthComponent* t_healthComp = GetComponent<HealthComponent>(p_entityID);
+            t_healthComp->currentHealth = t_healthComp->maxHealth;
+
 
             // Create event for other purposes
             PlayerRespawnEvent* t_playerRespawn = new PlayerRespawnEvent(p_entityID, t_triggerPosition, t_triggerOrientation);

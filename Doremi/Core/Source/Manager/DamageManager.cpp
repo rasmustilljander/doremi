@@ -77,12 +77,16 @@ namespace Doremi
                         if(EntityHandler::GetInstance().HasComponents(pairs.second->m_playerEntityID, (int)ComponentType::Health))
                         {
                             HealthComponent* hpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(pairs.second->m_playerEntityID);
-                            hpComp->currentHealth -= 10; // TODOKO change to getting from comp
-                            if(hpComp->currentHealth <= 0)
-                            {
-                                // u ded TODOKO
-                                std::cout << "U DED!!!" << std::endl;
-                            }
+
+                            DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(10, pairs.second->m_playerEntityID);
+
+                            EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
+                            // hpComp->currentHealth -= 10; // TODOKO change to getting from comp
+                            // if(hpComp->currentHealth <= 0)
+                            //{
+                            //    // u ded TODOKO
+                            //    std::cout << "U DED!!!" << std::endl;
+                            //}
                         }
                     }
                 }
@@ -128,20 +132,24 @@ namespace Doremi
                                 // TODOCONFIG
                                 drainHitHpComp->currentHealth -= 2; // TODOKO change to getting from comp
 
-                                if(drainHitHpComp->currentHealth <= 0)
-                                {
-                                    // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
-                                    EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
-                                    // DEBUG
-                                    // std::cout << "Enemy DED!!!" << std::endl;
-                                    // TODOSOUND Deathsound.
-                                }
-                                else
-                                {
-                                    // DEBUG
-                                    // std::cout << "Enemy Hit!!" << std::endl;
-                                    // TODOSOUND DamageSound
-                                }
+                                DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(2, t_drainsHit[o]);
+
+                                EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
+
+                                // if(drainHitHpComp->currentHealth <= 0)
+                                //{
+                                //    // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
+                                //    EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
+                                //    // DEBUG
+                                //    // std::cout << "Enemy DED!!!" << std::endl;
+                                //    // TODOSOUND Deathsound.
+                                //}
+                                // else
+                                //{
+                                //    // DEBUG
+                                //    // std::cout << "Enemy Hit!!" << std::endl;
+                                //    // TODOSOUND DamageSound
+                                //}
                             }
                         }
                         else

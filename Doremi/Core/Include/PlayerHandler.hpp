@@ -162,6 +162,11 @@ namespace Doremi
             uint32_t GetNumOfPlayers();
 
             /**
+                Check if entityID belongs to player
+            */
+            bool IsPlayer(EntityID p_entityID);
+
+            /**
                 Returns the map of players
             */
             std::map<uint32_t, Player*>& GetPlayerMap();

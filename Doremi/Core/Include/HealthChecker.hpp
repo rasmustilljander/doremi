@@ -1,10 +1,11 @@
 #pragma once
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
 namespace Doremi
 {
     namespace Core
     {
-        class HealthChecker
+        class HealthChecker : public Subscriber
         {
         public:
             static HealthChecker* GetInstance();
@@ -13,6 +14,8 @@ namespace Doremi
                 TODOCM doc
             */
             void Update();
+
+            void OnEvent(Event* p_event) override;
 
         private:
             HealthChecker();

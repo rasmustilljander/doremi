@@ -3,6 +3,9 @@
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
 namespace Doremi
 {
@@ -19,13 +22,16 @@ namespace Doremi
             return m_singleton;
         }
 
-        HealthChecker::HealthChecker() {}
+        HealthChecker::HealthChecker() { EventHandler::GetInstance()->Subscribe(EventType::DamageTaken, this); }
 
         HealthChecker::~HealthChecker() {}
 
         void HealthChecker::Update()
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            PlayerHandler* t_playerHandler = PlayerHandler::GetInstance();
+            PlayerSpawnerHandler* t_playerRespawnHandler = PlayerSpawnerHandler::GetInstance();
+
             size_t NumEntities = t_entityHandler.GetLastEntityIndex();
 
             // Loop over all entities, find health and check if remove
@@ -35,9 +41,27 @@ namespace Doremi
                 {
                     if(GetComponent<HealthComponent>(entityID)->currentHealth <= 0)
                     {
-                        // EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(entityID));
+                        // If we are not player, we should be removed
+                        if(!t_playerHandler->IsPlayer(entityID))
+                        {
+                            EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(entityID));
+                        }
+                        else // if we're player we should respawn
+                        {
+                            t_playerRespawnHandler->RespawnPlayer(entityID);
+                        }
                     }
                 }
+            }
+        }
+        void HealthChecker::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::DamageTaken)
+            {
+                DamageTakenEvent* t_dmgTakenEvent = static_cast<DamageTakenEvent*>(p_event);
+
+                HealthComponent* t_healthComp = GetComponent<HealthComponent>(t_dmgTakenEvent->entityId);
+                t_healthComp->currentHealth -= t_dmgTakenEvent->damage;
             }
         }
     }
