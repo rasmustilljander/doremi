@@ -30,6 +30,11 @@ SpecificLogFile::~SpecificLogFile()
         m_fileStream->close();
         delete m_fileStream;
     }
+
+    if(m_timer != nullptr)
+    {
+        delete m_timer;
+    }
 }
 
 void SpecificLogFile::Initialize(const Logging::LogTag& p_logTag)
