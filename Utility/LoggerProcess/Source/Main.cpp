@@ -5,15 +5,27 @@
 void PrintArguments(int argc, char** argv)
 {
     using namespace std;
+    cout << "Printing arguments" << endl;
+
     const int limit = argc;
     for(int i = 0; i < limit; ++i)
     {
-        cout << argv[i] << endl;
+        cout << "Argument[" << i << "] = " << argv[i] << endl;
     }
+}
+
+void PrintUseage()
+{
+    using namespace std;
+    std::cout << "Logger process is now online." << endl;
+    std::cout << "If this crashes (or is shutdown manually) and the game is still running the game will be blocked." << endl;
+    std::cout << "This process can safely be shutdown manually when the game has ended." << endl;
+    std::cout << "This process shuts down automatically after a set timeout after not receiving any messages for a while." << endl;
 }
 
 int main(int argc, char** argv)
 {
+    PrintUseage();
 #ifdef _DEBUG
     PrintArguments(argc, argv);
 #endif
