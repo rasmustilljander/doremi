@@ -16,6 +16,7 @@ namespace Doremi
             const size_t LONGEST_MESSAGE_NAME = 256;
             const size_t LONGEST_LINE_NAME = 256;
             const std::string LOGGING_PROCESS_NAME = std::string("LoggerProcess.exe");
+            const double LOGFILE_FLUSH_INTERVAL = 3.0;
         }
     }
 }

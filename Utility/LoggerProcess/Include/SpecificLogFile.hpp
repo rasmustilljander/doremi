@@ -27,6 +27,11 @@ public:
 
     void Write(const Doremi::Utilities::Logging::LogTextData& p_data);
 
+    /**
+    TODO DOCS
+    */
+    void Flush();
+
 private:
     void BuildLogFile(const std::string& p_fileName);
     void OpenFileStream(const std::string& p_fileName);

@@ -65,9 +65,16 @@ void SpecificLogFile::Write(const Doremi::Utilities::Logging::LogTextData& p_dat
 {
     *m_fileStream << p_data.message << "\n";
     m_elapsedTime += m_timer->Tick().GetElapsedTimeInSeconds();
+
+    // If called often, flush
     if(m_elapsedTime > m_flushTimerLimit)
     {
-        m_elapsedTime = 0;
-        m_fileStream->flush();
+        Flush();
     }
+}
+
+void SpecificLogFile::Flush()
+{
+    m_elapsedTime = 0;
+    m_fileStream->flush();
 }
