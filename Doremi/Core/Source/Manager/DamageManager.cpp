@@ -170,7 +170,14 @@ namespace Doremi
                 {
                     if(EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
                     {
-                        PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
+                        if(PlayerHandler::GetInstance()->IsPlayer(t_triggerEvent->objectEntityID))
+                        {
+                            PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
+                        }
+                        else
+                        {
+                            EntityHandler::GetInstance().RemoveEntity(t_triggerEvent->objectEntityID);
+                        }
                     }
                 }
             }
