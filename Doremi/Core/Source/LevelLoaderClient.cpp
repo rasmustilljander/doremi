@@ -113,7 +113,6 @@ namespace Doremi
                 // Fill this variable with data and push it into the map of animationclips
                 DoremiEngine::Graphic::AnimationClip t_animationClip;
                 std::vector<std::string> t_childTransformNames;
-
                 // Per joint
                 int nrKeyFrames;
                 for(int i = 0; i < nrJoints; i++)
@@ -134,7 +133,10 @@ namespace Doremi
                     ifs.read((char*)name, sizeof(char) * nameSize);
                     t_jointHeirarchy.push_back(parentID);
 
+
                     std::vector<std::string> t_transformNames;
+
+
                     for(int y = 0; y < nrChildrenTransforms;
                         y++) // skriv alla transforms (förutom joints) som är children till denna joint, dvs transforms till meshes
                     {
@@ -155,6 +157,8 @@ namespace Doremi
                     // från att jointen redan är roterad så här
                     XMFLOAT3 t_jointOrientation;
                     ifs.read((char*)&t_jointOrientation, sizeof(float) * 3); // jointorientationen måste användas för att få det rätt...
+
+
                     for(int y = 0; y < nrKeyFrames; y++) // skriv keyframsen
                     {
                         DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
@@ -167,7 +171,6 @@ namespace Doremi
                         // ska va likadana å fylla samma funktion
                         ifs.read((char*)&t_frame, sizeof(int));
 
-                        // Som skrivet över forloopen. Addera alla keyframerotationer på ursprungsjointorientationen.
                         XMStoreFloat3(&t_eulerAngles, XMVectorAdd(XMLoadFloat3(&t_eulerAngles), XMLoadFloat3(&t_jointOrientation)));
                         XMVECTOR t_finalRotation = XMLoadFloat3(&t_eulerAngles);
                         XMVECTOR quat = XMLoadFloat4(&XMFLOAT4(0, 0, 0, 1));
@@ -180,8 +183,10 @@ namespace Doremi
                         float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
                         t_keyFrameTemp.time = t_currentTime;
                         t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
+                        // Som skrivet över forloopen. Addera alla keyframerotationer på ursprungsjointorientationen.
                     }
                     t_animationClip.BoneAnimations.push_back(t_boneAnimation);
+
                     delete name; // name isnt used atm
                 }
 
@@ -325,9 +330,14 @@ namespace Doremi
 
                     XMVECTOR t_quaternion = XMQuaternionRotationRollPitchYawFromVector(t_rotation);
                     XMVECTOR t_jointQuaternion = XMQuaternionRotationRollPitchYawFromVector(t_jointRotation);
+                    XMMATRIX t_jointRotMat = XMMatrixRotationRollPitchYawFromVector(t_jointRotation);
                     XMFLOAT4X4 t_transformationMatrix;
 
+                    // XMVECTOR t_finalQuart = XMQuaternionRotationRollPitchYawFromVector(t_finalRotation);
+
                     t_translation = XMVector3Rotate(t_translation, t_jointQuaternion);
+                    // XMStoreFloat4x4(&t_transformationMatrix, XMMatrixMultiply(XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion,
+                    // t_translation), t_jointRotMat));
                     XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
 
                     // Nu måte verticerna från "Meshspace" till "joint space" som jag kallar det. Basicly byt koordinatsystem från meshens till

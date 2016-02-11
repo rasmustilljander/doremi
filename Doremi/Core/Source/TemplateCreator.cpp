@@ -545,8 +545,12 @@ namespace Doremi
 
             DoremiEngine::Graphic::SkeletalInformation* t_skeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros14MedTranslateradeMeshTransforms.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/BigRobot.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros15TvåJointsunderEN.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros16TommaJoints.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros14MedTranslateradeMeshTransforms.drm",
+            // *t_skeletalInformation);
+
+            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/RobotSmallTest.drm", *t_skeletalInformation);
 
 
             /// Fill with components
