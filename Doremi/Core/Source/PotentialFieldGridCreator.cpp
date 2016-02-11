@@ -45,34 +45,36 @@ namespace Doremi
             {
                 for(size_t z = 0; z < gridSizeZ; ++z)
                 {
-                    XMFLOAT3 quadCenter = XMFLOAT3(grid[x][z].position.x, centerGridY, grid[x][z].position.y);
+                    XMFLOAT3 sweepOrigin = XMFLOAT3(grid[x][z].position.x, centerGridY, grid[x][z].position.y);
+                    XMFLOAT3 boxHalfExtents = XMFLOAT3(quadSize.x * 0.5f, 2, quadSize.y * 0.5);
                     int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
-                                                                                               XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f), materialID);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                    m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
-                    std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs(); // GetCollisionPairs();
 
-                    size_t collisionListLength = collisionPairs.size();
+                    std::vector<int> sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(sweepOrigin, boxHalfExtents);
+
+                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
+                    //                                                                           XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),
+                    //                                                                           materialID);
+                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                    // m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
+                    // std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs(); //
+                    // GetCollisionPairs();
+
+                    // size_t collisionListLength = collisionPairs.size();
+                    size_t numberOfHits = sweepHits.size();
                     // int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
-                    for(size_t i = 0; i < collisionListLength; ++i)
+                    for(size_t i = 0; i < numberOfHits; ++i)
                     {
-                        if(myID == collisionPairs[i].firstID)
+                        int objectID = sweepHits[i];
+
+                        if(EntityHandler::GetInstance().HasComponents(objectID, (int)ComponentType::PotentialField))
                         {
-                            int objectID = collisionPairs[i].secondID;
-
-
-                            if(EntityHandler::GetInstance().HasComponents(objectID, (int)ComponentType::PotentialField))
-                            {
-                                DoremiEngine::AI::PotentialFieldActor* actor =
-                                    EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(objectID)->ChargedActor;
-                                actor->AddOccupiedQuad(XMINT2(x, z));
-                                op_field->AddActor(actor);
-                                break; // If more than on collision occures, fuck it >D
-                            }
+                            DoremiEngine::AI::PotentialFieldActor* actor =
+                                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(objectID)->ChargedActor;
+                            actor->AddOccupiedQuad(XMINT2(x, z));
+                            op_field->AddActor(actor);
+                            break; // If more than on collision occures, fuck it >D
                         }
                     }
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(myID);
                 }
             }
             // Någon fysikclass ska in

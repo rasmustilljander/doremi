@@ -255,10 +255,12 @@ namespace DoremiEngine
                     XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 
                     XMVECTOR distance = phermonePosVec - quadPosVec;
+                    XMVECTOR quadSize = XMLoadFloat2(&m_quadSize);
+                    float quadLength = *XMVector2Length(quadSize).m128_f32; // Sort of quad length, from center to corner
                     float dist = *XMVector3Length(distance).m128_f32;
                     float force = 0;
                     force = -(m_phermoneEffect + i) *
-                            std::fmaxf(1.0f - dist / 1.0f, 0.0f); // TODOCONFIG TODOKO division by 1.0f is range of phermone charge
+                            std::fmaxf(1.0f - dist / quadLength * 2, 0.0f); // the phermone will effect all quads around the phemoned quad
                     totalCharge += force; // The phermone force shouldnt be that high
                     //}
                 }

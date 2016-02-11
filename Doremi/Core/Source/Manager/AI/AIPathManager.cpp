@@ -80,17 +80,21 @@ namespace Doremi
                 {
                     // Get the needed components
                     XMFLOAT2 desiredPos;
-                    XMFLOAT3 unitPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
+                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
+                    XMFLOAT3 unitPos = transComp->position;
                     DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
-                    DoremiEngine::AI::PotentialFieldActor* currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
+                    DoremiEngine::AI::PotentialFieldActor* currentActor =
+                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
                     // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
-                    if (field != nullptr)
+                    if(field != nullptr)
                     {
-                        if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
+                        if(currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x &&
+                           currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
                         {
-                            // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
-                            // if we are still standing on the same quad as the last update we do nothing 
+                            // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon
+                            // står still.
+                            // if we are still standing on the same quad as the last update we do nothing
                             // TODOKO if we have been standing stil for 2 long something might be wrong, Force him to move!!!
                         }
                         else
@@ -118,6 +122,11 @@ namespace Doremi
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
+
+                    // XMVECTOR rotation = XMQuaternionRotationNormal(dirVec, 0);
+                    // XMFLOAT4 quater;
+                    // XMStoreFloat4(&quater, rotation);
+                    // transComp->rotation = quater;
                 }
             }
         }

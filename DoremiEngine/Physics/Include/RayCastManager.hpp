@@ -24,7 +24,7 @@ namespace DoremiEngine
             /**
             Sweeps towards a given direction and return every object hit
             */
-            virtual std::vector<int> CastSweepWithMutipleHits(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range) = 0;
+            virtual std::vector<int> OverlapBoxMultipleHits(const XMFLOAT3& p_origin, const XMFLOAT3& p_halfExtents) = 0;
         };
     }
 }

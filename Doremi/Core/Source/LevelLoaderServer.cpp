@@ -120,7 +120,7 @@ namespace Doremi
                 // Should build a potential field around this mesh
                 CreatePotentialfieldAroundMesh(p_vertexBuffer, transformationData);
             }
-            else
+            else if(transformationData.attributes.isPotentialFieldCollidable)
             {
                 // Adds potential field components to the world that is not AI ground
                 EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);
@@ -389,7 +389,7 @@ namespace Doremi
             XMFLOAT3 centerPoint, minPoint, maxPoint;
             CalculateAABBBoundingBox(p_vertexBuffer, p_transformationData, maxPoint, minPoint, centerPoint);
 
-            centerPoint.y = maxPoint.y + 0.7f;
+            centerPoint.y = maxPoint.y;
             DoremiEngine::AI::PotentialField* field =
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
         }

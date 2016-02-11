@@ -101,21 +101,18 @@ namespace DoremiEngine
             return -1;
         }
 
-        std::vector<int> RayCastManagerImpl::CastSweepWithMutipleHits(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range)
+        std::vector<int> RayCastManagerImpl::OverlapBoxMultipleHits(const XMFLOAT3& p_origin, const XMFLOAT3& p_halfExtents)
         {
             std::vector<int> returnVec;
-            if(p_range <= 0.0f)
-            {
-                cout << "Physcs. Raytracer. Sweep. Range of sweep was zero or below" << endl;
-                return returnVec;
-            }
             PxVec3 origin = PxVec3(p_origin.x, p_origin.y, p_origin.z);
-            PxVec3 direction = PxVec3(p_direction.x, p_direction.y, p_direction.z);
-            direction.normalize();
-            PxSweepBuffer hit; // Used to save the hit
+            PxVec3 halfExtents = PxVec3(p_halfExtents.x, p_halfExtents.y, p_halfExtents.z);
+            PxTransform position = PxTransform(origin);
+            PxOverlapHit hitBuffer[256]; // Max 256 hits will be stored?
+            PxOverlapBuffer hit(hitBuffer, 256); // Used to save the hit
+            PxBoxGeometry box = PxBoxGeometry(halfExtents);
             /// Paramters for the sweep
             // PxGeometry* geometry
-            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(p_width), PxTransform(origin), direction, p_range, hit, PxHitFlag::eMESH_BOTH_SIDES);
+            bool status = m_utils.m_worldScene->overlap(box, position, hit);
             size_t numberOfHits = hit.getNbAnyHits();
             for(size_t i = 0; i < numberOfHits; i++)
             {
