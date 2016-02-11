@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 6
+#define NUM_LIGHTS 30
 
 struct PixelInputType
 {
@@ -136,9 +136,11 @@ PixelOutputType PS_main(PixelInputType input)
 
     float3 rgb = float3(0, 0, 0);
 
-    for (int i = index; i < index + value; i++)
+    //for (int i = index; i < index + value; i++)
+    for (int i = 0; i < NUM_LIGHTS; i++)
     {
-        Light l = light[o_LightIndexList[i]];
+        //Light l = light[o_LightIndexList[i]];
+        Light l = light[i];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
@@ -152,7 +154,7 @@ PixelOutputType PS_main(PixelInputType input)
     if (glowcolor.r < 0.5 && glowcolor.g < 0.5 && glowcolor.b < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
-        output.glow = texcolor;
+        output.glow = normalize(texcolor) * 2;
 
     output.diffuse = float4(rgb, 1) * texcolor * 3;
 
