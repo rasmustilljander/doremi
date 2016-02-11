@@ -17,7 +17,7 @@ namespace DoremiEngine
             virtual ~CharacterControlManagerImpl();
 
             int AddController(int p_id, int p_matID, XMFLOAT3 p_position, XMFLOAT2 p_dimensions) override;
-            int MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) override;
+            bool MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) override;
             void SetCallbackFiltering(int p_body, int p_thisIdMask, int p_notifyTouchOthersMask, int p_notifyLeaveOthersMask, int p_ignoreOthersMask) override;
             void SetCallback(int p_bodyID, int p_filterGroup, int p_filterMask) override;
             void SetDrain(int p_id, bool p_isDrain) override;

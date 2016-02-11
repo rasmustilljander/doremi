@@ -18,7 +18,7 @@ namespace DoremiEngine
 
             /**
             Moves the desired controller with the specified displacement*/
-            virtual int MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) = 0;
+            virtual bool MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) = 0;
 
             /**
             DEPRECATED!! Still works though*/
