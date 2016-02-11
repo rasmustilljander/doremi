@@ -43,7 +43,7 @@ namespace DoremiEngine
             return p_id;
         }
 
-        int CharacterControlManagerImpl::MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt)
+        bool CharacterControlManagerImpl::MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt)
         {
             /*
             Some variable that apperas to define when the controller stops moving
@@ -57,9 +57,13 @@ namespace DoremiEngine
                 // Controller did not exist
                 throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
-            m_controllers[p_id]->move(PxVec3(p_discplacement.x, p_discplacement.y, p_discplacement.z), 0, p_dt, filters);
+            PxControllerCollisionFlags flags = m_controllers[p_id]->move(PxVec3(p_discplacement.x, p_discplacement.y, p_discplacement.z), 0, p_dt, filters);
+            if(flags & PxControllerCollisionFlag::eCOLLISION_DOWN)
+            {
+                return true;
+            }
             // Redundant return?
-            return p_id;
+            return false;
         }
 
         XMFLOAT3 CharacterControlManagerImpl::GetPosition(int p_id)
