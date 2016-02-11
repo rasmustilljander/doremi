@@ -44,7 +44,7 @@ namespace Doremi
                         // If we are not player, we should be removed
                         if(!t_playerHandler->IsPlayer(entityID))
                         {
-                            EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(entityID));
+                            EntityHandler::GetInstance().RemoveEntity(entityID);
                         }
                         else // if we're player we should respawn
                         {

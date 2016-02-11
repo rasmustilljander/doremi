@@ -8,6 +8,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
+#include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <iostream>
 
 namespace Doremi
@@ -74,17 +75,20 @@ namespace Doremi
 
         void PlayerSpawnerHandler::OnEvent(Event* p_event)
         {
-            // if(p_event->eventType == EventType::Trigger)
-            //{
-            //    TriggerEvent* t_triggEvent = static_cast<TriggerEvent*>(p_event);
+            if(p_event->eventType == EventType::Trigger)
+            {
+                TriggerEvent* t_triggEvent = static_cast<TriggerEvent*>(p_event);
 
-            //    // If spawn point trigger
-            //    if(t_triggEvent->triggerType == TriggerType::NewSpawnPointTrigger)
-            //    {
-            //        // Could get who got the spawner here as well? If we want player specific spawners
-            //        m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
-            //    }
-            //}
+                // If spawn point trigger
+                if(t_triggEvent->triggerType == TriggerType::NewSpawnPointTrigger)
+                {
+                    if(PlayerHandler::GetInstance()->IsPlayer(t_triggEvent->objectEntityID))
+                    {
+                        // Could get who got the spawner here as well? If we want player specific spawners
+                        m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
+                    }
+                }
+            }
         }
     }
 }
