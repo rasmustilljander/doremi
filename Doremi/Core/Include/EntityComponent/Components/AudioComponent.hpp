@@ -11,6 +11,7 @@ namespace Doremi
         enum class AudioCompEnum : int32_t
         {
             Jump,
+            Death,
             DebugSound,
 
             Num_Sounds,

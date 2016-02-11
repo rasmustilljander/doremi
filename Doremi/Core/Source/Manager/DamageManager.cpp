@@ -5,11 +5,13 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/HealthComponent.hpp>
+#include <EntityComponent/Components/AudioComponent.hpp>
 
 // Events
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/DamageTakenEvent.hpp>
 #include <EventHandler/Events/TriggerEvent.hpp>
+#include <EventHandler/Events/PlaySoundEvent.hpp>
 
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
@@ -168,7 +170,8 @@ namespace Doremi
 
                 if(t_triggerEvent->triggerType == TriggerType::DeathTrigger)
                 {
-                    if(EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
+                    if(EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health) |
+                                                                                                      static_cast<uint32_t>(ComponentType::Audio)))
                     {
                         if(PlayerHandler::GetInstance()->IsPlayer(t_triggerEvent->objectEntityID))
                         {
@@ -178,6 +181,12 @@ namespace Doremi
                         {
                             EntityHandler::GetInstance().RemoveEntity(t_triggerEvent->objectEntityID);
                         }
+
+                        // Send soundevent for death.
+                        AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_triggerEvent->objectEntityID);
+                        PlaySoundEvent* playSoundEvent =
+                            new PlaySoundEvent(t_triggerEvent->objectEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Death]);
+                        EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
                     }
                 }
             }
