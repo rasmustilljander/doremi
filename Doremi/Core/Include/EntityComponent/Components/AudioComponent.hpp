@@ -8,7 +8,7 @@ namespace Doremi
         The audio component contains the handle to the soundchannel and a handle to the sound
         */
         // If you add someone,
-        enum class AudioCompEnum : int
+        enum class AudioCompEnum : int32_t
         {
             Jump,
             DebugSound,
@@ -19,7 +19,7 @@ namespace Doremi
         {
             // std::map<AudioCompEnum, int> m_enumToSoundID;
 
-            int m_enumToSoundID[(int)(AudioCompEnum::Num_Sounds) + 1];
+            int32_t m_enumToSoundID[(int32_t)(AudioCompEnum::Num_Sounds)]; // +1]; //Todo maybe bugs out
             // int mySoundID = sounds[(int)AudioCompEnum::Jump];
             AudioComponent() {}
         };

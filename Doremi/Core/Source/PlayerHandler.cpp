@@ -12,6 +12,7 @@
 #include <EntityComponent/Components/GravityComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/AudioComponent.hpp>
 #include <InputHandlerClient.hpp>
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
@@ -25,6 +26,7 @@
 
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 
 /// Engine
 // AI
@@ -208,10 +210,21 @@ namespace Doremi
 
                     if(inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                     {
+
                         if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
                         {
                             EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
+                            // Send jump event.
+                            AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
+                            PlaySoundEvent* playSoundEvent =
+                                new PlaySoundEvent(iter->second->m_playerEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Jump]);
+                            EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
+
+                            EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
                         }
+
+
+
                     }
 
                     // Store finished movement vec
