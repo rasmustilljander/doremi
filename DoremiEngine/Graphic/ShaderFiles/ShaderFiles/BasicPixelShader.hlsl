@@ -52,7 +52,6 @@ StructuredBuffer<uint> t_LightIndexList : register(t2);
 StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
 StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 
-//RWTexture2D<float4> glowMap : register(u1);
 
 cbuffer LightInfo : register(b0)
 {
