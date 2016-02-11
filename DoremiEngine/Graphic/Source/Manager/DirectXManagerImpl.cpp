@@ -541,15 +541,15 @@ namespace DoremiEngine
         {
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetLightManager().UpdateLights();
 
-            ID3D11ShaderResourceView* nullSRV = { NULL };
-            ID3D11UnorderedAccessView* nullUAV = { NULL };
-            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
+            ID3D11ShaderResourceView* nullSRV = {NULL};
+            ID3D11UnorderedAccessView* nullUAV = {NULL};
+            ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
             // Remove depth bind to OM
-            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
+            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV_
 
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
             m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
-            
+
 
             // dispatch frustum shader
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
