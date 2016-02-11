@@ -68,17 +68,17 @@ namespace Doremi
 
         void PlayerSpawnerHandler::OnEvent(Event* p_event)
         {
-            if(p_event->eventType == EventType::Trigger)
-            {
-                TriggerEvent* t_triggEvent = static_cast<TriggerEvent*>(p_event);
+            // if(p_event->eventType == EventType::Trigger)
+            //{
+            //    TriggerEvent* t_triggEvent = static_cast<TriggerEvent*>(p_event);
 
-                // If spawn point trigger
-                if(t_triggEvent->triggerType == TriggerType::NewSpawnPointTrigger)
-                {
-                    // Could get who got the spawner here as well? If we want player specific spawners
-                    m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
-                }
-            }
+            //    // If spawn point trigger
+            //    if(t_triggEvent->triggerType == TriggerType::NewSpawnPointTrigger)
+            //    {
+            //        // Could get who got the spawner here as well? If we want player specific spawners
+            //        m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
+            //    }
+            //}
         }
     }
 }
