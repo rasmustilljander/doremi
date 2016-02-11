@@ -27,9 +27,6 @@ namespace Doremi
         private:
             void CreatePotentialfieldAroundMesh(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
                                                 const DoremiEditor::Core::TransformData& p_transformationData);
-
-            void CalculateAABBBoundingBox(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer, const DoremiEditor::Core::TransformData& p_transformationData,
-                                          DirectX::XMFLOAT3& o_max, DirectX::XMFLOAT3& o_min, DirectX::XMFLOAT3& o_center);
         };
     }
 }
