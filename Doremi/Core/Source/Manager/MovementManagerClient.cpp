@@ -5,6 +5,7 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/GravityComponent.hpp>
 #include <PlayerHandler.hpp>
 #include <PositionCorrectionHandler.hpp>
 #include <InterpolationHandler.hpp>
@@ -46,10 +47,15 @@ namespace Doremi
                         XMFLOAT3 position = charControlManager.GetPosition(i);
                         XMFLOAT4 orientation = charControlManager.GetOrientation(i);
 
-                        PositionCorrectionHandler::GetInstance()->QueuePlayerPositionForCheck(position, orientation, movementComp->movement, InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
+                        PositionCorrectionHandler::GetInstance()->QueuePlayerPositionForCheck(position, orientation, movementComp->movement,
+                                                                                              InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
                     }
 
-                    charControlManager.MoveController(i, movementComp->movement, p_dt);
+                    bool hitGround = charControlManager.MoveController(i, movementComp->movement, p_dt);
+                    if(hitGround)
+                    {
+                        EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i)->travelSpeed = 0;
+                    }
                     movementComp->movement = XMFLOAT3(0, 0, 0);
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     // XMFLOAT3 currentVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(rigidBody->p_bodyID);

@@ -4,6 +4,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+#include <EntityComponent\Components\GravityComponent.hpp>
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -29,7 +30,11 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
-                    m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, movementComp->movement, p_dt);
+                    bool hitGround = m_sharedContext.GetPhysicsModule().GetCharacterControlManager().MoveController(i, movementComp->movement, p_dt);
+                    if(hitGround)
+                    {
+                        EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i)->travelSpeed = 0;
+                    }
                     movementComp->movement = XMFLOAT3(0, 0, 0);
 
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
