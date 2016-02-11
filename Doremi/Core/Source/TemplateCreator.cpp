@@ -146,7 +146,7 @@ namespace Doremi
             blueprint[ComponentType::Transform] = transComp;
             // Render
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
-            CharacterDataNames enemyCharData = loader.LoadCharacter("Models/RobotSmall.drm");
+            CharacterDataNames enemyCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
@@ -541,7 +541,7 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/SuperCoolMainCharacter.drm");
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
             /// Fill with components
             // Render
@@ -627,7 +627,7 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/SuperCoolMainCharacter.drm");
+            CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
             /// Fill with components
             // Render

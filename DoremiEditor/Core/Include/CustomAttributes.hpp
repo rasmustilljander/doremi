@@ -56,6 +56,7 @@ namespace DoremiEditor
             int startOrEndPoint;
             bool isAIground;
             bool frequencyAffected;
+            float interactableRange;
             DirectX::XMFLOAT3 interactableStartPos;
             DirectX::XMFLOAT3 interactableEndPos;
             DirectX::XMFLOAT2 interactableOffset;
