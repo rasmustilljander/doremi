@@ -46,7 +46,7 @@ namespace Doremi
 
                     // Calculate a rotated orientation
                     XMFLOAT4 newOrientation;
-                    XMVECTOR rotationModVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), 3.1415 / 2);
+                    XMVECTOR rotationModVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), XM_PIDIV2);
 
                     XMStoreFloat4(&newOrientation, XMQuaternionMultiply(XMLoadFloat4(&transComp->rotation), rotationModVec));
                     // Set position of drain so it follows us around
