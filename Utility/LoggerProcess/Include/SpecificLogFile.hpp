@@ -20,15 +20,28 @@ namespace Doremi
 class SpecificLogFile
 {
 public:
+    /**
+    Constructor
+    */
     SpecificLogFile();
+
+    /**
+    Destructor
+    */
     virtual ~SpecificLogFile();
 
+    /**
+    Initializes the logfile with a specific tag, each tag is one file.
+    */
     void Initialize(const Doremi::Utilities::Logging::LogTag& p_logTag);
 
+    /**
+    Writes to buffer for file, calls flush with regular intervalls.
+    */
     void Write(const Doremi::Utilities::Logging::LogTextData& p_data);
 
     /**
-    TODO DOCS
+    Forcily flushes the data in the buffer to a file on the disk.
     */
     void Flush();
 
