@@ -8,7 +8,8 @@ namespace Doremi
         {
             NoTrigger = 0x00,
             GoalTrigger = 0x01,
-            NewSpawnPointTrigger = 0x02
+            NewSpawnPointTrigger = 0x02,
+            DeathTrigger = 0x04
         };
         struct TriggerComponent
         {

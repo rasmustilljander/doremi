@@ -2,6 +2,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
@@ -45,6 +46,7 @@ namespace Doremi
 
         void PlayerSpawnerHandler::RespawnPlayer(EntityID p_entityID)
         {
+            DoremiEngine::Physics::CharacterControlManager& t_characterBodyManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
             DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
             // Get position and orientation of the trigger..
@@ -52,7 +54,7 @@ namespace Doremi
             DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(m_currentPlayerSpawner);
 
             // ..and set it to the players position, orientation
-            t_rigidBodyManager.SetBodyPosition(p_entityID, t_triggerPosition, t_triggerOrientation);
+            t_characterBodyManager.SetPosition(p_entityID, t_triggerPosition);
 
             // Since we don't know if this will be called befor sync or not, we set it to the transform as well
             TransformComponent* t_transComp = GetComponent<TransformComponent>(p_entityID);
