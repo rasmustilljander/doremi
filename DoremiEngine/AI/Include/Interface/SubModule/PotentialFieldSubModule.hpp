@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-
+#include <vector>
 namespace DoremiEngine
 {
     namespace AI
@@ -47,6 +47,11 @@ namespace DoremiEngine
             Adds the given actor to all active fields
             */
             virtual void AddActorToEveryPotentialField(PotentialFieldActor* p_actor) = 0;
+
+            /**
+            Returns a vector with pointers to all active fields.
+            */
+            virtual std::vector<PotentialField*>& GetAllActiveFields() = 0;
         };
     }
 }

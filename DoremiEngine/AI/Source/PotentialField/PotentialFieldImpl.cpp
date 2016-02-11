@@ -98,7 +98,14 @@ namespace DoremiEngine
             position2D.y -= bottomLeft.y - 0.5f;
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
-            return XMINT2(quadNrX, quadNrY);
+            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
+            {
+                return XMINT2(quadNrX, quadNrY);
+            }
+            else
+            {
+                return XMINT2(-1, -1);
+            }
         }
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                                     const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)

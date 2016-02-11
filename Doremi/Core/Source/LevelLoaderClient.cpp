@@ -99,10 +99,10 @@ namespace Doremi
                 ifs.read((char*)&nrMeshes, sizeof(int));
                 ifs.read((char*)&nrLights, sizeof(int));
 
-                LoadMaterialCharacter(ifs, nrMats);
-                // LoadMaterial(ifs, nrMats); TODOKO THis should be instead of the ugly shit above
-                LoadTransformsCharacter(ifs, nrTransforms);
-                // LoadTransforms(ifs, nrTransforms); TODOKO DOnt know... This or other shit when character is done...
+                // LoadMaterialCharacter(ifs, nrMats);
+                LoadMaterial(ifs, nrMats); // TODOKO THis should be instead of the ugly shit above
+                // LoadTransformsCharacter(ifs, nrTransforms);
+                LoadTransforms(ifs, nrTransforms); // TODOKO DOnt know... This or other shit when character is done...
                 LoadMeshes(ifs, nrMeshes);
                 LoadLights(ifs, nrLights);
                 // BuildEntities();

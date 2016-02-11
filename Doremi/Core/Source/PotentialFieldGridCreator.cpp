@@ -6,6 +6,7 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
+#include <DoremiEngine/Physics/Include/RayCastManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialField.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
@@ -14,6 +15,7 @@
 
 // General
 #include <DirectXMath.h>
+#include <iostream>
 
 namespace Doremi
 {
@@ -46,25 +48,20 @@ namespace Doremi
                     XMFLOAT3 quadCenter = XMFLOAT3(grid[x][z].position.x, centerGridY, grid[x][z].position.y);
                     int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
-                                                                                               XMFLOAT3(quadSize.x * 0.5f, 1, quadSize.y * 0.5f), materialID); 
+                                                                                               XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f), materialID);
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
                     m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
-                    std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();// GetCollisionPairs();
+                    std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs(); // GetCollisionPairs();
+
                     size_t collisionListLength = collisionPairs.size();
-                    //int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
+                    // int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
                     for(size_t i = 0; i < collisionListLength; ++i)
                     {
-                        if(myID == collisionPairs[i].firstID || myID == collisionPairs[i].secondID)
+                        if(myID == collisionPairs[i].firstID)
                         {
-                            int objectID;
-                            if(myID == collisionPairs[i].firstID)
-                            {
-                                objectID = collisionPairs[i].secondID;
-                            }
-                            else
-                            {
-                                objectID = collisionPairs[i].firstID;
-                            }
+                            int objectID = collisionPairs[i].secondID;
+
+
                             if(EntityHandler::GetInstance().HasComponents(objectID, (int)ComponentType::PotentialField))
                             {
                                 DoremiEngine::AI::PotentialFieldActor* actor =
@@ -80,6 +77,7 @@ namespace Doremi
             }
             // Någon fysikclass ska in
             op_field->Update();
+            std::cout << "Field done " << std::endl;
             // op_field->
         }
     }

@@ -79,7 +79,7 @@ namespace Doremi
                             XMFLOAT3 directionFloat;
                             XMStoreFloat3(&directionFloat, direction);
                             // Offset origin of ray so we dont hit ourself
-                            XMVECTOR rayOrigin = AIPos + direction * 1.0f; // TODOXX x.xf is offset from the units body, might need to increase if
+                            XMVECTOR rayOrigin = AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
                             // the bodies radius is larger than x.x
                             XMFLOAT3 rayOriginFloat;
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);

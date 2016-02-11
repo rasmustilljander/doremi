@@ -100,5 +100,46 @@ namespace DoremiEngine
 
             return -1;
         }
+
+        std::vector<int> RayCastManagerImpl::CastSweepWithMutipleHits(const XMFLOAT3& p_origin, XMFLOAT3& p_direction, float p_width, const float& p_range)
+        {
+            std::vector<int> returnVec;
+            if(p_range <= 0.0f)
+            {
+                cout << "Physcs. Raytracer. Sweep. Range of sweep was zero or below" << endl;
+                return returnVec;
+            }
+            PxVec3 origin = PxVec3(p_origin.x, p_origin.y, p_origin.z);
+            PxVec3 direction = PxVec3(p_direction.x, p_direction.y, p_direction.z);
+            direction.normalize();
+            PxSweepBuffer hit; // Used to save the hit
+            /// Paramters for the sweep
+            // PxGeometry* geometry
+            bool status = m_utils.m_worldScene->sweep(PxSphereGeometry(p_width), PxTransform(origin), direction, p_range, hit, PxHitFlag::eMESH_BOTH_SIDES);
+            size_t numberOfHits = hit.getNbAnyHits();
+            for(size_t i = 0; i < numberOfHits; i++)
+            {
+                // Start with checking static and dynamic rigid bodies
+                unordered_map<PxRigidActor*, int> idsByRigidBody = m_utils.m_rigidBodyManager->GetIDsByBodies();
+                if(idsByRigidBody.find(hit.getAnyHit(i).actor) != idsByRigidBody.end())
+                {
+                    returnVec.push_back(idsByRigidBody.find(hit.getAnyHit(i).actor)->second);
+                }
+                else
+                {
+                    // Nothing
+                }
+                // Now comes the difficult task of checking vs character controllers
+                unordered_map<PxController*, int> idsByCharacterController = m_utils.m_characterControlManager->GetIdsByControllers();
+                for(auto pairs : idsByCharacterController) // Loop through every pair in the list
+                {
+                    if(pairs.first->getActor() == hit.getAnyHit(i).actor) // The first part contains the actor pointer
+                    {
+                        returnVec.push_back(pairs.second); // If this is true we found a hit vs character controller, second contains ID
+                    }
+                }
+            }
+            return returnVec;
+        }
     }
 }
