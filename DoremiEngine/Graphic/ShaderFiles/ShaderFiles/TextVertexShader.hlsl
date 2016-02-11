@@ -1,5 +1,5 @@
-#define SCREEN_WIDTH 800
-#define SCREENHEIGHT 800
+#define SCREEN_WIDTH 1280
+#define SCREENHEIGHT 720
 
 cbuffer MatrixBuffer : register(b0)
 {
