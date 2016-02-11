@@ -38,11 +38,15 @@ namespace DoremiEngine
             removes a actor from the given potentialfield TODOKO add func if needed
             */
 
-            virtual int GetNextStep() = 0;
             /**
             Finds the potential field that the given position probably should be in. Returns nullptr if no field were found
             */
             virtual PotentialField* FindBestPotentialField(const DirectX::XMFLOAT3& p_position) = 0;
+
+            /**
+            Adds the given actor to all active fields
+            */
+            virtual void AddActorToEveryPotentialField(PotentialFieldActor* p_actor) = 0;
         };
     }
 }

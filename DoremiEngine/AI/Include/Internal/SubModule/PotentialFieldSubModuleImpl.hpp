@@ -16,8 +16,8 @@ namespace DoremiEngine
             PotentialFieldActor* CreateNewActor(const DirectX::XMFLOAT3& p_position, const float& p_charge, const float& p_range,
                                                 const bool& p_static, const AIActorType& p_actorType) override;
             void AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) override;
-            int GetNextStep();
             PotentialField* FindBestPotentialField(const DirectX::XMFLOAT3& p_position) override;
+            void AddActorToEveryPotentialField(PotentialFieldActor* p_actor) override;
 
         private:
             std::vector<PotentialField*> m_fields;

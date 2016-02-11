@@ -165,7 +165,7 @@ namespace Doremi
         }
 
         // Create some enemies
-        for(size_t i = 0; i < 4; i++)
+        for(size_t i = 0; i < 0; i++)
         {
             XMFLOAT3 position = DirectX::XMFLOAT3(-2 * (int)i + 0, 0 * (int)i + 4, -2 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -177,12 +177,12 @@ namespace Doremi
         }
 
         // Create an enemy spawner
-        XMFLOAT3 position = XMFLOAT3(0, 15, 0);
-        int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
-        if(Core::EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::Transform))
-        {
-            Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position = position;
-        }
+        //XMFLOAT3 position = XMFLOAT3(0, 15, 0);
+        //int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
+        //if(Core::EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::Transform))
+        //{
+        //    Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position = position;
+        //}
         TIME_FUNCTION_STOP
     }
 

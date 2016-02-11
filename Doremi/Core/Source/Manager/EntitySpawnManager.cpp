@@ -73,8 +73,8 @@ namespace Doremi
                             if(PlayerHandler::GetInstance()->GetPlayerMap().size() > 0)
                             {
                                 // We should spawn something
-                                // CreateEntity(spawnComp->entityBlueprint, i);
-                                // spawnComp->currentNumSpawnedEntities++;
+                                 CreateEntity(spawnComp->entityBlueprint, i);
+                                 spawnComp->currentNumSpawnedEntities++;
                             }
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;

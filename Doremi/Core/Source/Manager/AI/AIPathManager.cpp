@@ -43,12 +43,12 @@ namespace Doremi
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
-            m_field =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 100, 100,
-                                                                                          XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
-            m_topField =
-                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
-                    XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
+            //m_field =
+            //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 100, 100,
+            //                                                                              XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
+            //m_topField =
+            //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
+            //        XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
@@ -66,10 +66,6 @@ namespace Doremi
             std::cout << "Physical field 2 done";
             // m_topField->Update();
             std::cout << "Potential field 2 done";
-            /// debugskit
-
-
-            //&& render pos rigidbody, potentialfield
         }
 
         AIPathManager::~AIPathManager() {}
@@ -102,21 +98,21 @@ namespace Doremi
                     DoremiEngine::AI::PotentialFieldActor* currentActor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
                     // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
+                    if (field != nullptr)
+                    {
+                        if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
+                        {
+                            // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
+                            // if we are still standing on the same quad as the last update we do nothing 
+                            // TODOKO if we have been standing stil for 2 long something might be wrong, Force him to move!!!
+                        }
+                        else 
+                        {                        
+                            XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
+                            currentActor->SetPrevGridPosition(newPrevPos);
+                            currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
+                        }
 
-                    if (currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x && currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
-                    {
-                        // Remove the first in the list om vi skulle använda oss av delta_T för att uppdatera trailen med hjälp av den om någon står still.
-                        // if we are still standing on the same quad as the last update we do nothing 
-                        // TODOKO if we have been standing stil for 2 long something might be wrong, Force him to move!!!
-                    }
-                    else 
-                    {                        
-                        XMINT2 newPrevPos = field->WhatGridPosAmIOn(currentActor->GetPosition());
-                        currentActor->SetPrevGridPosition(newPrevPos);
-                        currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
-                    }
-                    if(field != nullptr)
-                    {
                         desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
@@ -149,7 +145,7 @@ namespace Doremi
                     {
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
-                        m_field->AddActor(actor);
+                        //m_field->AddActor(actor);
                     }
                     else
                     {
@@ -183,7 +179,14 @@ namespace Doremi
                         // TODOKO should not be done here but in a more suitable event
                         field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->Field = field;
-                        field->AddActor(actor);
+                        if (field != nullptr)
+                        {
+                            field->AddActor(actor);
+                        }
+                        else
+                        {
+                            int a = 5;
+                        }
                     }
                     else
                     {
@@ -195,13 +198,11 @@ namespace Doremi
                 {
                     PlayerCreationEvent* realEvent = static_cast<PlayerCreationEvent*>(p_event);
                     if(EntityHandler::GetInstance().HasComponents(realEvent->playerEntityID, (int)ComponentType::PotentialField)) // Make sure the
-                    // entity contains
-                    // the needed stuff
+                    // entity contains the needed stuff
                     {
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->playerEntityID)->ChargedActor;
-                        m_field->AddActor(actor);
-                        m_topField->AddActor(actor);
+                        m_sharedContext.GetAIModule().GetPotentialFieldSubModule().AddActorToEveryPotentialField(actor);
                     }
                     else
                     {

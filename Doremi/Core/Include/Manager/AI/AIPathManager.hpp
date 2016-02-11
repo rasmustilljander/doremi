@@ -32,8 +32,8 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
-            DoremiEngine::AI::PotentialField* m_field;
-            DoremiEngine::AI::PotentialField* m_topField;
+            //DoremiEngine::AI::PotentialField* m_field;
+            //DoremiEngine::AI::PotentialField* m_topField;
             bool firstUpdate;
         };
     }
