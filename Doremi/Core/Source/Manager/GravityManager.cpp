@@ -23,7 +23,7 @@ namespace Doremi
 
         GravityManager::GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "GravityManager")
         {
-            m_gravityCoefficient = 1;
+            m_gravityCoefficient = 1.2;
         }
 
         GravityManager::~GravityManager() {}

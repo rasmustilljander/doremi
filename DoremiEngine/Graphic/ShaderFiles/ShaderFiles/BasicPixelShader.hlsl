@@ -72,7 +72,7 @@ float3 CalcDirectionalLight(PixelInputType input, Light l)
 
     lightDir = -l.direction;
     lightIntensity = saturate(dot(normal, lightDir));
-    return saturate(l.color * lightIntensity) * 0.3;
+    return saturate(l.color * lightIntensity) * 0.1;
 }
 
 float3 CalcSpotLight(PixelInputType input, Light l)
