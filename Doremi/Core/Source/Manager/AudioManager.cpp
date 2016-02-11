@@ -14,12 +14,14 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 
 #include <DirectXMath.h>
 // Third party
 
 // Standard
 #include <iostream>
+#include <stdint.h>
 
 using namespace std;
 
@@ -30,6 +32,7 @@ namespace Doremi
         AudioManager::AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AudioManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
+            EventHandler::GetInstance()->Subscribe(EventType::PlaySound, this);
             m_gunReloadButtonDown = false;
             m_timeThatGunButtonIsDown = 0;
         }
@@ -55,7 +58,7 @@ namespace Doremi
                     AudioActiveComponent* t_audio = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(i);
                     // Looping through the map of soundschannels.
                     // typedef std::map<int, int>::iterator iteratorForLoop;
-                    int sizeOfSoundEnumToChannelID = sizeof(t_audio->m_soundEnumToChannelID);
+                    int sizeOfSoundEnumToChannelID = (int)AudioCompEnum::Num_Sounds;
                     int amountOfInactiveChannels = 0;
                     std::vector<int> t_placesToRemove;
                     // for (iteratorForLoop iterator = t_audio->m_soundEnumToChannelID.begin(); iterator != t_audio->m_soundEnumToChannelID.end();
@@ -63,18 +66,21 @@ namespace Doremi
                     for(int k = 0; k < sizeOfSoundEnumToChannelID; ++k)
                     {
                         //++sizeOfSoundEnumToChannelID;
-                        t_isPlaying = t_audioModule.GetChannelPlaying(t_audio->m_soundEnumToChannelID[k]);
-                        if(!t_isPlaying)
+                        if(t_audio->m_soundEnumToChannelID[k] != -1)
                         {
+                            t_isPlaying = t_audioModule.GetChannelPlaying(t_audio->m_soundEnumToChannelID[k]);
+                            if(!t_isPlaying)
+                            {
 
-                            ++amountOfInactiveChannels;
-                            t_placesToRemove.push_back(k);
-                            // t_audio->m_soundEnumToChannelID.erase(iterator);
-                            // EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
-                        }
-                        else
-                        {
-                            // Nothing
+                                ++amountOfInactiveChannels;
+                                t_placesToRemove.push_back(k);
+                                // t_audio->m_soundEnumToChannelID.erase(iterator);
+                                // EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::AudioActive);
+                            }
+                            else
+                            {
+                                // Nothing
+                            }
                         }
                     }
                     int placeToRemoveSizeForLoop = t_placesToRemove.size();
@@ -153,16 +159,32 @@ namespace Doremi
         void AudioManager::OnEvent(Event* p_event)
         {
             // Check to see what event was received and do something with it (Might be changed to callback functions instead)
-            /*switch(p_event->eventType)
+            switch(p_event->eventType)
             {
-                case EventType::Example:
+                case EventType::PlaySound:
                     // Cast the event to the correct format
-                    ExampleEvent* t_event = (ExampleEvent*)p_event;
-                    int t_intFromEvent = t_event->myInt;
+                    PlaySoundEvent* t_event = (PlaySoundEvent*)p_event;
+                    uint32_t t_entityID = t_event->entityID;
+                    uint32_t t_soundType = t_event->soundType;
+                    if(EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::AudioActive))
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        EntityHandler::GetInstance().AddComponent(t_entityID, (int)ComponentType::AudioActive);
+                    }
+                    int;
+                    AudioActiveComponent* audioActiveComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID);
+                    AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_entityID);
+
+                    m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Jump], false,
+                                                                audioActiveComp->m_soundEnumToChannelID[(int32_t)AudioCompEnum::Jump]);
+                    m_sharedContext.GetAudioModule().SetVolumeOnChannel(audioActiveComp->m_soundEnumToChannelID[(int32_t)AudioCompEnum::Jump], 1.0f);
+                    // EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID)->m_soundEnumToChannelID =
+                    // m_sharedContext.GetAudioModule().PlayASound(t_soundType);
                     break;
             }
-
-            }*/
         }
     }
 }

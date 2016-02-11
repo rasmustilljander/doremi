@@ -1,5 +1,7 @@
 #pragma once
 #include <map>
+#include <algorithm>
+#include <array>
 #include <EntityComponent/Components/AudioComponent.hpp>
 namespace Doremi
 {
@@ -11,9 +13,9 @@ namespace Doremi
 
         struct AudioActiveComponent
         {
-            int m_soundEnumToChannelID[(int)(AudioCompEnum::Num_Sounds) + 1];
+            int32_t m_soundEnumToChannelID[(int32_t)(AudioCompEnum::Num_Sounds)]; // +1];
             // std::map<int, int> m_soundEnumToChannelID;
-            AudioActiveComponent() {}
+            AudioActiveComponent() { std::fill_n(m_soundEnumToChannelID, (int)(AudioCompEnum::Num_Sounds) /* + 1*/, -1); }
         };
     }
 }

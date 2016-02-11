@@ -14,6 +14,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 
 #include <iostream>
 
@@ -82,6 +83,10 @@ namespace Doremi
 
                 case Doremi::Core::EventType::GunFireToggle:
                     p_newEvent = new GunFireToggleEvent();
+                    break;
+
+                case Doremi::Core::EventType::PlaySound:
+                    p_newEvent = new PlaySoundEvent();
                     break;
 
                 default:
