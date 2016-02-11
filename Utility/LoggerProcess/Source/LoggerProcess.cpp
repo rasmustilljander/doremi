@@ -156,7 +156,8 @@ void LoggerProcess::SetupFolderStructure()
 {
     using namespace std;
     // Build logfilename
-    const string& folderName = Logging::BuildFolderNameBasedOnTime();
+    string& folderName = Logging::BuildFolderNameBasedOnTime();
+    folderName.append("_" + std::to_string(GetCurrentProcessId()));
 
     // Create the directory
     CreateDirectory(L"logs", NULL);
