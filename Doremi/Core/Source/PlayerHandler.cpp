@@ -209,9 +209,9 @@ namespace Doremi
                     if(inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                     {
                         // if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
-                        //{
-                        EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
-                        //}
+                        {
+                            EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
+                        }
                     }
 
                     // Store finished movement vec
