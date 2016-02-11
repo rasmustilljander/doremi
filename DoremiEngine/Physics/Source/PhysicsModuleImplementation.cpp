@@ -89,17 +89,22 @@ namespace DoremiEngine
             {
                 pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
             }
+            // Kill check (if 0 wants to ignore 1 or 1 wants to ignore 0)
+            if((filterData0.word3 & filterData1.word0) || (filterData1.word3 & filterData0.word0))
+            {
+                return PxFilterFlag::eKILL;
+            }
 
             // TODOJB fix so it uses generic words. NOT hard-coded
             // Filter out collisions with ignore-bodies REALLY UGLY TODOJB Improve
-            if(filterData0.word3 == 1) // been an ignore collision
-            {
-                if(filterData0.word0 == 1) return PxFilterFlag::eKILL;
-            }
-            else if(filterData1.word3 == 1)
-            {
-                if(filterData0.word0 == 1) return PxFilterFlag::eKILL;
-            }
+            // if(filterData0.word3 & 2) // been an ignore collision
+            //{
+            //    if(filterData0.word0 & 2) return PxFilterFlag::eKILL;
+            //}
+            // else if(filterData1.word3 & 2)
+            //{
+            //    if(filterData0.word0 & 2) return PxFilterFlag::eKILL;
+            //}
 
             // Trigger collisions
             if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
