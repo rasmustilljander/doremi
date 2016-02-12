@@ -175,18 +175,18 @@ namespace Doremi
                         if(PlayerHandler::GetInstance()->IsPlayer(t_triggerEvent->objectEntityID))
                         {
                             PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
+                            //// Send soundevent for death.
+                            //AudioComponent* audioComp =
+                            //EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_triggerEvent->objectEntityID);
+                            //PlaySoundEvent* playSoundEvent =
+                            //    new PlaySoundEvent(t_triggerEvent->objectEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Death]);
+                            //EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
                         }
                         else
                         {
                             EntityHandler::GetInstance().RemoveEntity(t_triggerEvent->objectEntityID);
                         }
 
-                        //  // Send soundevent for death.
-                        //  AudioComponent* audioComp =
-                        //  EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_triggerEvent->objectEntityID);
-                        //  PlaySoundEvent* playSoundEvent =
-                        //      new PlaySoundEvent(t_triggerEvent->objectEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Death]);
-                        //  EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
                     }
                 }
             }
