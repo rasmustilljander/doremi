@@ -43,8 +43,8 @@ namespace Doremi
             XMFLOAT4X4 projection;
 
             DoremiEngine::Configuration::ConfiguartionInfo configInfo = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
-            XMMATRIX mat =
-                XMMatrixTranspose(XMMatrixPerspectiveFovLH(configInfo.CameraFieldOfView * XM_PI / 180.0f, configInfo.ScreenWidth / configInfo.ScreenHeight, 0.1f, configInfo.CameraViewDistance));
+            XMMATRIX mat = XMMatrixTranspose(XMMatrixPerspectiveFovLH(configInfo.CameraFieldOfView * XM_PI / 180.0f,
+                                                                      configInfo.ScreenWidth / configInfo.ScreenHeight, 0.1f, configInfo.CameraViewDistance));
 
 
             XMStoreFloat4x4(&projection, mat);
