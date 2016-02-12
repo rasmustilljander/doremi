@@ -56,9 +56,9 @@ namespace Doremi
         {
             EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
             EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
-            //int audioID = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
-            //m_channel = -1;
-            //m_sharedContext.GetAudioModule().PlayASound(audioID, true, m_channel);
+            // int audioID = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
+            // m_channel = -1;
+            // m_sharedContext.GetAudioModule().PlayASound(audioID, true, m_channel);
             m_state = DoremiStates::MAINMENU;
         }
         void StateHandler::OnEvent(Event* p_event)
