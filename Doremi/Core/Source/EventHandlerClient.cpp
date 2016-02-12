@@ -47,22 +47,23 @@ namespace Doremi
 
             // Iterate through all events
             size_t length = m_eventBox.size();
-            for(size_t i = 0; i < length; i++) // need to check size if a new event is cast during delivery
+            for(std::vector<Doremi::Core::Event*>::iterator iter = m_eventBox.begin(); iter != m_eventBox.end(); ++iter)
+            // for(size_t i = 0; i < length; i++) // need to check size if a new event is cast during delivery
             {
                 // Iterate through all systems the event is to be broadcasted to
                 unordered_map<EventType, vector<Subscriber*>>::iterator t_iter =
-                    m_broadcastMap.find(m_eventBox[i]->eventType); // Gets the vector of systems to call OnEvent on
+                    m_broadcastMap.find((*iter)->eventType); // Gets the vector of systems to call OnEvent on
 
                 if(t_iter != m_broadcastMap.end())
                 {
                     size_t nrOfSystems = t_iter->second.size();
                     for(size_t j = 0; j < nrOfSystems; j++)
                     {
-                        t_iter->second[j]->OnEvent(m_eventBox[i]);
+                        t_iter->second[j]->OnEvent((*iter));
                     }
                     // Cleanup all data in event payload
                 }
-                delete m_eventBox[i];
+                delete(*iter);
             }
 
             m_eventBox.clear();

@@ -11,6 +11,8 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/AudioComponent.hpp>
 
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
@@ -199,6 +201,9 @@ namespace Doremi
                 // Reset health for show
                 HealthComponent* t_healthComp = GetComponent<HealthComponent>(t_playerSpawnerEvent->entityID);
                 t_healthComp->currentHealth = t_healthComp->maxHealth;
+
+                // Play respawn sound
+                EventHandler::GetInstance()->BroadcastEvent(new PlaySoundEvent(t_playerSpawnerEvent->entityID, static_cast<int32_t>(AudioCompEnum::Death)));
             }
         }
     }
