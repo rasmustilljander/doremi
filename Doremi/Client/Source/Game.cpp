@@ -314,7 +314,7 @@ namespace Doremi
 
         size_t length = m_managers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
-        //AudioHandler::GetInstance()->Update(p_deltaTime);
+        // AudioHandler::GetInstance()->Update(p_deltaTime);
         // TODORT
         // TODOLOG
         // Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
