@@ -424,9 +424,6 @@ namespace Doremi
             // sharedContext.GetAudioModule().PlayASound(t_audioComponent->m_enumToSoundID[], true, t_audioActiveComponent->channelID);
             // sharedContext.GetAudioModule().SetVolumeOnChannel(t_audioActiveComponent->channelID, 0.0f);
             // t_platform[ComponentType::AudioActive] = t_audioActiveComponent;
-            AudioHandler::GetInstance()->SetupContinuousRecording();
-            AudioHandler::GetInstance()->StartContinuousRecording();
-            AudioHandler::GetInstance()->SetupRepeatableRecording();
 
 
             // Add label for frequency Check

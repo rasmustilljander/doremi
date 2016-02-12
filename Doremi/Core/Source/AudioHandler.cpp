@@ -170,10 +170,12 @@ namespace Doremi
                             TODOLH Behövs nog uppdatera ljudposition till listener position.
                             */
                             t_audioModule.PlaySoundOnSpecificChannel(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID);
+                            t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 0.0f);
                         }
                         else
                         {
                             t_audioModule.PlayASound(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID);
+                            t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 0.0f);
                         }
                         t_audioModule.SetPriority(m_continuousFrequencyAnalyserChannelID, 0);
                         /** TODOLH osäker på om detta behövs.
