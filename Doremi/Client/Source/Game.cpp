@@ -182,6 +182,10 @@ namespace Doremi
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
 
+        AudioHandler::GetInstance()->SetupContinuousRecording();
+        AudioHandler::GetInstance()->StartContinuousRecording();
+        AudioHandler::GetInstance()->SetupRepeatableRecording();
+
         TIME_FUNCTION_STOP
     }
 
@@ -307,9 +311,10 @@ namespace Doremi
     void GameMain::UpdateGame(double p_deltaTime)
     {
         TIME_FUNCTION_START
+
         size_t length = m_managers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
-        AudioHandler::GetInstance()->Update(p_deltaTime);
+        //AudioHandler::GetInstance()->Update(p_deltaTime);
         // TODORT
         // TODOLOG
         // Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
@@ -338,6 +343,8 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
+
+        AudioHandler::GetInstance()->Update(p_deltaTime);
 
         Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
 
