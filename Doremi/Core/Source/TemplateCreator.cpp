@@ -562,11 +562,11 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
             // SkeletalAnimation
-            //SkeletalAnimationComponent* t_skeletalAnimationComp = new SkeletalAnimationComponent();
-            //t_avatarBlueprint[ComponentType::SkeletalAnimation] = t_skeletalAnimationComp;
-            //t_skeletalAnimationComp->skeletalInformation = t_skeletalInformation;
-            //t_skeletalAnimationComp->clipName = "Run";
-            //t_skeletalAnimationComp->timePosition = 0;
+            // SkeletalAnimationComponent* t_skeletalAnimationComp = new SkeletalAnimationComponent();
+            // t_avatarBlueprint[ComponentType::SkeletalAnimation] = t_skeletalAnimationComp;
+            // t_skeletalAnimationComp->skeletalInformation = t_skeletalInformation;
+            // t_skeletalAnimationComp->clipName = "Run";
+            // t_skeletalAnimationComp->timePosition = 0;
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
