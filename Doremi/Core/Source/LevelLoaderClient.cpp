@@ -81,11 +81,11 @@ namespace Doremi
         CharacterDataNames LevelLoaderClient::LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_skeletalInformation)
         {
             // Get the full path
-            //string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
+            // string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
 
-            //ifstream ifs;
-            //ifs.open(fileName, ifstream::in | ifstream::binary);
-            //if(ifs.is_open() == true)
+            // ifstream ifs;
+            // ifs.open(fileName, ifstream::in | ifstream::binary);
+            // if(ifs.is_open() == true)
             //{
             //    // Read the Name of the skeletalanimationmodel (This is set in maya, I use the name to have an identifier for meshname)
             //    int sceneNameSize;
@@ -249,7 +249,8 @@ namespace Doremi
             //        t_transInfo.scale = transformDataTemp.scale;
             //        t_transformMap[t_transformName] = t_transInfo;
             //    }
-            //    // This buffer is used to combine all the meshes into one. And convert the vertexstruct to skeletalvertex from the computevertex thing
+            //    // This buffer is used to combine all the meshes into one. And convert the vertexstruct to skeletalvertex from the computevertex
+            //    thing
             //    vector<DoremiEngine::Graphic::SkeletalVertex> t_skeletalVertexBuffer;
             //    vector<XMFLOAT3> t_jointOrientationList;
             //    for(int i = 0; i < nrMeshes; i++)
@@ -371,18 +372,18 @@ namespace Doremi
             //        delete transformName;
             //        delete meshName;
             //        delete materialName;
-                //}
+            //}
 
-                /*DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-                meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
-                meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);*/
-                CharacterDataNames o_charData;/*
-                o_charData.meshName = t_sceneName;
-                o_charData.materialName = m_materials[m_meshCoupling[0].materialName];
-                ifs.close();
+            /*DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
+            meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);*/
+            CharacterDataNames o_charData; /*
+             o_charData.meshName = t_sceneName;
+             o_charData.materialName = m_materials[m_meshCoupling[0].materialName];
+             ifs.close();
 
-                p_skeletalInformation.Set(t_jointHeirarchy, t_animations);*/
-                return o_charData;
+             p_skeletalInformation.Set(t_jointHeirarchy, t_animations);*/
+            return o_charData;
             //}
         }
 
