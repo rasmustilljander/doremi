@@ -550,15 +550,15 @@ namespace Doremi
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros14MedTranslateradeMeshTransforms.drm",
             // *t_skeletalInformation);
 
-            CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/RobotSmallTest.drm", *t_skeletalInformation);
+            //CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/RobotSmallTest.drm", *t_skeletalInformation);
 
 
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
             t_renderComp->material =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerSkeletalCharData.materialName);
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
             // SkeletalAnimation

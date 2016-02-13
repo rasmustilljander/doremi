@@ -167,7 +167,7 @@ namespace DoremiEngine
         {
             std::string fileLocation = m_sharedContext.GetWorkingDirectory() + p_soundName;
             std::string t_soundName = p_soundName;
-            char* t_name = new char;
+            char* t_name = new char[250]();
             for(size_t i = 0; i < m_fmodSoundBuffer.size(); i++)
             {
                 m_fmodSoundBuffer[i]->getName(t_name, 250);
@@ -191,6 +191,7 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
             int returnVal = m_fmodSoundBuffer.size() - 1;
+            delete t_name;
             return returnVal;
         }
 
