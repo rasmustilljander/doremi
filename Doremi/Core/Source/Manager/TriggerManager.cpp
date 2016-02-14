@@ -7,6 +7,7 @@
 #include <EventHandler/Events/TriggerEvent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 
 // Third party

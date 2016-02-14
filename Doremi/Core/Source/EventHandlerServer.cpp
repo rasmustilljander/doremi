@@ -4,6 +4,7 @@
 #include <EventHandler/EventHandlerServer.hpp>
 #include <EventHandler/Subscriber.hpp>
 
+#include <iostream>
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
@@ -59,25 +60,23 @@ namespace Doremi
             TIME_FUNCTION_START
 
             // Iterate through all events
-            size_t length = m_basicEventBox.size();
-            for(std::vector<Doremi::Core::Event*>::iterator iter = m_basicEventBox.begin(); iter != m_basicEventBox.end(); ++iter)
-            // for(size_t i = 0; i < length; i++) // need to check size if a new event is cast during delivery
+            for(size_t i = 0; i < m_basicEventBox.size(); i++) // need to check size if a new event is cast during delivery
             {
                 // Iterate through all systems the event is to be broadcasted to
                 unordered_map<EventType, vector<Subscriber*>>::iterator t_iter =
-                    m_broadcastMap.find((*iter)->eventType); // Gets the vector of systems to call OnEvent on
+                    m_broadcastMap.find(m_basicEventBox[i]->eventType); // Gets the vector of systems to call OnEvent on
 
                 if(t_iter != m_broadcastMap.end())
                 {
                     size_t nrOfSystems = t_iter->second.size();
                     for(size_t j = 0; j < nrOfSystems; j++)
                     {
-                        t_iter->second[j]->OnEvent((*iter));
+                        t_iter->second[j]->OnEvent(m_basicEventBox[i]);
                     }
                     // Cleanup all data in event payload
                 }
 
-                delete(*iter);
+                delete m_basicEventBox[i];
             }
 
             m_basicEventBox.clear();
@@ -89,25 +88,23 @@ namespace Doremi
             TIME_FUNCTION_START
 
             // Iterate through all events
-            size_t length = m_removeEventBox.size();
-            for(std::vector<Doremi::Core::Event*>::iterator iter = m_removeEventBox.begin(); iter != m_removeEventBox.end(); ++iter)
-            // for(size_t i = 0; i < length; i++) // need to check size if a new event is cast during delivery
+            for(size_t i = 0; i < m_removeEventBox.size(); i++) // need to check size if a new event is cast during delivery
             {
                 // Iterate through all systems the event is to be broadcasted to
                 unordered_map<EventType, vector<Subscriber*>>::iterator t_iter =
-                    m_broadcastMap.find((*iter)->eventType); // Gets the vector of systems to call OnEvent on
+                    m_broadcastMap.find(m_removeEventBox[i]->eventType); // Gets the vector of systems to call OnEvent on
 
                 if(t_iter != m_broadcastMap.end())
                 {
                     size_t nrOfSystems = t_iter->second.size();
                     for(size_t j = 0; j < nrOfSystems; j++)
                     {
-                        t_iter->second[j]->OnEvent((*iter));
+                        t_iter->second[j]->OnEvent(m_removeEventBox[i]);
                     }
                     // Cleanup all data in event payload
                 }
 
-                delete(*iter);
+                delete m_removeEventBox[i];
             }
 
             m_removeEventBox.clear();

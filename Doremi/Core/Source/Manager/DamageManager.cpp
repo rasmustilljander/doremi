@@ -164,6 +164,7 @@ namespace Doremi
         }
         void DamageManager::OnEvent(Event* p_event)
         {
+            // TODO not sure if dmg to ground trigger event should be placed here in damageManager
             if(p_event->eventType == EventType::Trigger)
             {
                 TriggerEvent* t_triggerEvent = static_cast<TriggerEvent*>(p_event);
@@ -175,6 +176,7 @@ namespace Doremi
                         if(PlayerHandler::GetInstance()->IsPlayer(t_triggerEvent->objectEntityID))
                         {
                             PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
+
                             // // Send soundevent for death.
                             // AudioComponent* audioComp =
                             // EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_triggerEvent->objectEntityID);
