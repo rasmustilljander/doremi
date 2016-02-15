@@ -30,10 +30,7 @@ namespace Doremi
             DirectX::XMFLOAT4 Orientation;
             DirectX::XMFLOAT3 Movement;
 
-            bool operator==(const uint8_t &p_sequence) const
-            {
-                return Sequence == p_sequence;
-            }
+            bool operator==(const uint8_t& p_sequence) const { return Sequence == p_sequence; }
         };
 
         /**

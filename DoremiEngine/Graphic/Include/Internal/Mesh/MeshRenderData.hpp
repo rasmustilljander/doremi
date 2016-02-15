@@ -9,7 +9,7 @@ namespace DoremiEngine
         struct MeshRenderData
         {
             MeshRenderData() : diffuseTexture(nullptr), samplerState(nullptr), vertexData(nullptr), indexData(nullptr) {}
-            MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture, 
+            MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture,
                            ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount)
                 : worldMatrix(p_worldMatrix),
                   diffuseTexture(p_texture),
@@ -24,8 +24,8 @@ namespace DoremiEngine
                 TODO Remove if not needed IE we only used indexdraw
                 */
             }
-            MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture, 
-                           ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount, ID3D11Buffer* p_indexData, 
+            MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture,
+                           ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount, ID3D11Buffer* p_indexData,
                            const size_t& p_indexCount)
                 : worldMatrix(p_worldMatrix),
                   diffuseTexture(p_texture),

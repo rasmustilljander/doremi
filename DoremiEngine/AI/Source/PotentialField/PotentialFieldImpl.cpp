@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl(): m_phermoneEffect(5) {}
+        PotentialFieldImpl::PotentialFieldImpl() : m_phermoneEffect(5) {}
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
@@ -34,7 +34,7 @@ namespace DoremiEngine
                         {
                             // Same quad
                             m_grid[x][y].occupied = true;
-                            //std::cout << "x " << x << " y " << y << std::endl;
+                            // std::cout << "x " << x << " y " << y << std::endl;
                         }
                         XMFLOAT2 actorQuadPosition = m_grid[closestQuad.x][closestQuad.y].position;
 
@@ -55,11 +55,11 @@ namespace DoremiEngine
                     m_grid[x][y].charge = totalCharge;
                 }
             }
-            for (size_t x = 0; x < nrOfQuadsX; x++)
+            for(size_t x = 0; x < nrOfQuadsX; x++)
             {
-                for (size_t y = 0; y < nrOfQuadsY; y++)
+                for(size_t y = 0; y < nrOfQuadsY; y++)
                 {
-                    if (m_grid[x][y].occupied==true)
+                    if(m_grid[x][y].occupied == true)
                     {
                         std::cout << "X";
                     }
@@ -67,7 +67,6 @@ namespace DoremiEngine
                     {
                         std::cout << " ";
                     }
-
                 }
                 std::cout << std::endl;
             }
@@ -79,12 +78,11 @@ namespace DoremiEngine
                 // The actor is static and not in list
                 m_staticActors.insert(p_newActor);
             }
-            else if (!p_newActor->IsStatic())
+            else if(!p_newActor->IsStatic())
             {
                 // TODOKO might need to check if it's in the list
                 m_dynamicActors.push_back(p_newActor);
             }
-
         }
         DirectX::XMINT2 PotentialFieldImpl::WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition)
         {
@@ -113,7 +111,7 @@ namespace DoremiEngine
             using namespace DirectX;
             // If there is no positive actor/goal to go to simply dont move!
             bool goalInRange = AnyPositiveGoalInRange(p_unitPosition);
-            if (!goalInRange)
+            if(!goalInRange)
             {
                 return XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             }
@@ -147,9 +145,10 @@ namespace DoremiEngine
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
-                highestCharge = CalculateCharge(quadNrX, quadNrY, p_currentActor) ; // +5 since that the max number of phermonetrails in the list TODOCONFIG
+                highestCharge =
+                    CalculateCharge(quadNrX, quadNrY, p_currentActor); // +5 since that the max number of phermonetrails in the list TODOCONFIG
                 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
-                if (m_grid[quadNrX][quadNrY].occupied)
+                if(m_grid[quadNrX][quadNrY].occupied)
                 {
                     // If the one we are in is occupied set highest charge to low just to get out
                     highestCharge = -100000;
@@ -188,28 +187,28 @@ namespace DoremiEngine
                 else
                 {
                     //// Tries to check outside the field
-                    //// Here we create a imaginary quad and checks if that quad have a greater charge than the last, 
-                    //// if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field transition
-                    //XMFLOAT2 newQuadPosition = m_grid[quadNrX][quadNrY].position;
-                    //if (x < 0)
+                    //// Here we create a imaginary quad and checks if that quad have a greater charge than the last,
+                    //// if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
+                    /// transition
+                    // XMFLOAT2 newQuadPosition = m_grid[quadNrX][quadNrY].position;
+                    // if (x < 0)
                     //{
                     //    newQuadPosition.x -= gridQuadWidth;
                     //}
-                    //else if (x > m_grid.size()-1) // TODOKO should it be -1?
+                    // else if (x > m_grid.size()-1) // TODOKO should it be -1?
                     //{
                     //    newQuadPosition.x += gridQuadWidth;
                     //}
-                    //else if (y<0)
+                    // else if (y<0)
                     //{
                     //    newQuadPosition.y -= gridQuadHeight;
                     //}
-                    //else if (y > m_grid[0].size() - 1)// TODOKO should it be -1?
+                    // else if (y > m_grid[0].size() - 1)// TODOKO should it be -1?
                     //{
                     //    newQuadPosition.y += gridQuadWidth;
                     //}
                     //
-                    //PotentialFieldGridPoint imaginaryQuad = PotentialFieldGridPoint(newQuadPosition, , false);
-
+                    // PotentialFieldGridPoint imaginaryQuad = PotentialFieldGridPoint(newQuadPosition, , false);
                 }
             }
 

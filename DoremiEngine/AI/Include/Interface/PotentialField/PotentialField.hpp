@@ -60,9 +60,9 @@ namespace DoremiEngine
             virtual DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                             const PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) = 0;
             /**
-            By sending in the units position you will get what gridpos it is on. 
+            By sending in the units position you will get what gridpos it is on.
             */
-            virtual DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3 & p_unitPosition) = 0;
+            virtual DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition) = 0;
             virtual const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const = 0;
         };
     }

@@ -50,7 +50,7 @@ namespace Doremi
 
         void EntitySpawnManager::Update(double p_dt)
         {
-			static int DEBUGcount = 0;
+            static int DEBUGcount = 0;
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             // Loop through all entities
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
@@ -73,8 +73,8 @@ namespace Doremi
                             if(PlayerHandler::GetInstance()->GetPlayerMap().size() > 0)
                             {
                                 // We should spawn something
-                                 CreateEntity(spawnComp->entityBlueprint, i);
-                                 spawnComp->currentNumSpawnedEntities++;
+                                CreateEntity(spawnComp->entityBlueprint, i);
+                                spawnComp->currentNumSpawnedEntities++;
                             }
                             // Reset timer
                             spawnComp->timeSinceLastSpawn = 0;

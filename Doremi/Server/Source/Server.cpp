@@ -177,9 +177,9 @@ namespace Doremi
         }
 
         // Create an enemy spawner
-        //XMFLOAT3 position = XMFLOAT3(0, 15, 0);
-        //int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
-        //if(Core::EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::Transform))
+        // XMFLOAT3 position = XMFLOAT3(0, 15, 0);
+        // int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
+        // if(Core::EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::Transform))
         //{
         //    Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position = position;
         //}

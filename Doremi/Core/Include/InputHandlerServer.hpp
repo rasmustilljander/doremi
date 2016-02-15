@@ -9,9 +9,9 @@ namespace Doremi
     {
         struct InputItem
         {
-            InputItem(uint32_t p_inputBitmask, DirectX::XMFLOAT4 p_orientation, uint8_t p_sequence) : InputBitmask(p_inputBitmask) , OrientationQuaternion(p_orientation), Sequence(p_sequence)
+            InputItem(uint32_t p_inputBitmask, DirectX::XMFLOAT4 p_orientation, uint8_t p_sequence)
+                : InputBitmask(p_inputBitmask), OrientationQuaternion(p_orientation), Sequence(p_sequence)
             {
-
             }
             uint32_t InputBitmask;
             DirectX::XMFLOAT4 OrientationQuaternion;
@@ -49,23 +49,14 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            uint8_t GetSequenceByLastInput()
-            {
-                return m_sequenceByLastInput;
-            }
+            uint8_t GetSequenceByLastInput() { return m_sequenceByLastInput; }
 
             /**
                 TODOCM doc
             */
-            DirectX::XMFLOAT3 GetPositionByLastInput()
-            {
-                return m_positionByLastInput;
-            }
+            DirectX::XMFLOAT3 GetPositionByLastInput() { return m_positionByLastInput; }
 
-            uint8_t GetSequence()
-            {
-                return m_realSequence;
-            }
+            uint8_t GetSequence() { return m_realSequence; }
 
         private:
             /**
@@ -77,7 +68,7 @@ namespace Doremi
                 TODOCM doc
             */
             DirectX::XMFLOAT4 m_orientationQuaternion;
-            
+
             /**
                 TODOCM doc
             */

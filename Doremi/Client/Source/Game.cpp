@@ -223,7 +223,7 @@ namespace Doremi
         }
 
         // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
-        //int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
+        // int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
 
 
         TIME_FUNCTION_STOP

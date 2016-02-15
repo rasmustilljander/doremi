@@ -7,9 +7,9 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldActorImpl::PotentialFieldActorImpl() 
+        PotentialFieldActorImpl::PotentialFieldActorImpl()
         {
-            //TODOEA FULT SOM FAN att sätat en hårdkodad fulposition så att listan inte är tom. bättre än att kolla varje gång att den är tom.
+            // TODOEA FULT SOM FAN att sätat en hårdkodad fulposition så att listan inte är tom. bättre än att kolla varje gång att den är tom.
             m_prevGridPos = DirectX::XMINT2(0, 0);
         }
         PotentialFieldActorImpl::~PotentialFieldActorImpl() {}
@@ -23,9 +23,7 @@ namespace DoremiEngine
             else
             {
                 m_position = p_position;
-
             }
-
         }
         void PotentialFieldActorImpl::AddOccupiedQuad(const DirectX::XMINT2& p_quad)
         {
@@ -68,10 +66,7 @@ namespace DoremiEngine
 
             m_phermoneTrail.push_back(p_gridPosToAdd);
         }
-        void PotentialFieldActorImpl::EraseLatestAddedToPhermoneList()
-        {
-            m_phermoneTrail.erase(m_phermoneTrail.begin());
-        }
+        void PotentialFieldActorImpl::EraseLatestAddedToPhermoneList() { m_phermoneTrail.erase(m_phermoneTrail.begin()); }
         void PotentialFieldActorImpl::AddPotentialVsOther(const PotentialChargeInformation& p_newPotential)
         {
             m_potentialsVsOther.push_back(p_newPotential);

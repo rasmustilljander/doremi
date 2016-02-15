@@ -15,9 +15,9 @@ namespace Doremi
     namespace Core
     {
         using namespace DirectX;
-        ScreenObject::ScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::MeshInfo* p_meshName, const XMFLOAT2& p_position, const XMFLOAT2& p_size) : 
-            m_materialInfo(p_materialInfo),
-            m_meshInfo(p_meshName), m_position(p_position), m_extent(p_size)
+        ScreenObject::ScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::MeshInfo* p_meshName,
+                                   const XMFLOAT2& p_position, const XMFLOAT2& p_size)
+            : m_materialInfo(p_materialInfo), m_meshInfo(p_meshName), m_position(p_position), m_extent(p_size)
         {
             // Building a transform matrix. needs no rotation or scaling orientation the variable can be reused. Scaling origin is 0,0,0 for the quad
             XMVECTOR t_origin = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -30,6 +30,5 @@ namespace Doremi
         }
         ScreenObject::ScreenObject() {}
         ScreenObject::~ScreenObject() {}
-       
     }
 }

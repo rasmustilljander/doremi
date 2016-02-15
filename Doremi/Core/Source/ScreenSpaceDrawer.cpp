@@ -38,7 +38,6 @@ namespace Doremi
 
 
             CreateVictoryScreen();
-
         }
         void ScreenSpaceDrawer::CreateVictoryScreen()
         {

@@ -14,7 +14,8 @@ namespace Doremi
         class ScreenObject
         {
         public:
-            ScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::MeshInfo* p_meshName, const XMFLOAT2& p_position, const XMFLOAT2& p_extent);
+            ScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::MeshInfo* p_meshName, const XMFLOAT2& p_position,
+                         const XMFLOAT2& p_extent);
             ScreenObject();
             virtual ~ScreenObject();
             XMFLOAT2 m_position;
@@ -26,7 +27,6 @@ namespace Doremi
             XMFLOAT4X4 m_transformMatrix;
 
         private:
-            
         };
     }
 }

@@ -77,19 +77,19 @@ namespace DoremiEngine
             }
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
-         
+
             res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_renderTargetSRV[0]);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
             res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer[0]);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
             res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
@@ -123,22 +123,22 @@ namespace DoremiEngine
                 int a = 3;
             }
             res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_backBuffer[1]);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
             res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowmapUAV);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
             res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_renderTargetSRV[1]);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
             res = m_device->CreateShaderResourceView(m_scene, NULL, &m_sceneSRV);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 int a = 3;
             }
@@ -159,7 +159,7 @@ namespace DoremiEngine
             // Might want this in a class for readability and easy changing between states
 
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = m_screenResolution.x; 
+            dbdesc.Width = m_screenResolution.x;
             dbdesc.Height = m_screenResolution.y;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
@@ -353,7 +353,7 @@ namespace DoremiEngine
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-            if (renderData[0].indexData != nullptr)
+            if(renderData[0].indexData != nullptr)
             {
                 m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
                 m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
@@ -365,18 +365,18 @@ namespace DoremiEngine
 
             // TODO Can be upgraded with instanced drawing
             const size_t vectorSize = renderData.size();
-            for (size_t i = 1; i < vectorSize; ++i)
+            for(size_t i = 1; i < vectorSize; ++i)
             {
-                if (renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                if(renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
                 {
                     vertexData = renderData[i].vertexData;
                     m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
                 }
 
-                if (renderData[i].samplerState != renderData[i - 1].samplerState)
+                if(renderData[i].samplerState != renderData[i - 1].samplerState)
                 {
                     samplerState = renderData[i].samplerState;
-                    if (samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    if(samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetSamplers(0, 1, &samplerState);
                     }
@@ -386,18 +386,18 @@ namespace DoremiEngine
                     }
                 }
 
-                if (renderData[i].diffuseTexture != renderData[i - 1].diffuseTexture) // Check if texture has been changed
+                if(renderData[i].diffuseTexture != renderData[i - 1].diffuseTexture) // Check if texture has been changed
                 {
                     texture = renderData[i].diffuseTexture;
-                    if (texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    if(texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetShaderResources(0, 1, &texture);
                     }
                 }
-                if (renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
+                if(renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
                 {
                     glowtexture = renderData[i].glowTexture;
-                    if (glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    if(glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
@@ -416,7 +416,7 @@ namespace DoremiEngine
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
                 m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-                if (renderData[i].indexData != nullptr)
+                if(renderData[i].indexData != nullptr)
                 {
                     m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
                     m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
@@ -681,9 +681,9 @@ namespace DoremiEngine
 
             //////////////////FIXA GLOWY STUFF//////////////////////
 
-            ID3D11ShaderResourceView* nullSRV = { NULL };
-            ID3D11UnorderedAccessView* nullUAV = { NULL };
-            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
+            ID3D11ShaderResourceView* nullSRV = {NULL};
+            ID3D11UnorderedAccessView* nullUAV = {NULL};
+            ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
 
             m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
 

@@ -111,8 +111,8 @@ namespace Doremi
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
-            //RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
-            //blueprint[ComponentType::RigidBody] = rigidBodyComp;
+            // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
+            // blueprint[ComponentType::RigidBody] = rigidBodyComp;
             // Network object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
             blueprint[ComponentType::NetworkObject] = netObjComp;
@@ -359,7 +359,7 @@ namespace Doremi
 
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
-            float factor = 2.5; //TODOJB fix. I was lazy. It was 20:16
+            float factor = 2.5; // TODOJB fix. I was lazy. It was 20:16
             t_rigidBodyComp->boxDims = XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor);
             t_rigidBodyComp->flags = RigidBodyFlags::kinematic;
             t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;

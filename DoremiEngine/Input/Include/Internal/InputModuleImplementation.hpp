@@ -64,10 +64,10 @@ namespace DoremiEngine
             Create a window using sdl. Returns 1 if a window is created
             */
             int CreateWindowSDL(int p_width, int p_height);
-                                                            /**
-                                                            Debug, Prints out the struct recieved form sdl.
-                                                            */
-            void PrintInputStructsDEBUG(); 
+            /**
+            Debug, Prints out the struct recieved form sdl.
+            */
+            void PrintInputStructsDEBUG();
             /**
             Debug, Prints out the struct recieved form sdl.
             */
@@ -87,7 +87,7 @@ namespace DoremiEngine
             /**
             The mousemovement in y since last update, this value is reset at the start of the update in Update();
             */
-            int GetMouseMovementY(); 
+            int GetMouseMovementY();
             /**
             Returns the mousewheelspins and resets the mwheelspins
             TODOXX if there is a problem with the mousewheelspins could be that we are getting it at several places form the module.
@@ -103,7 +103,8 @@ namespace DoremiEngine
             // SDL_Window *m_win;
             const Uint8* m_keyState;
             /**
-                We check for events using sdl if a mousebutton is pressed/released if the mousewheel is spun or if any keyboardkeys are pressed/released
+                We check for events using sdl if a mousebutton is pressed/released if the mousewheel is spun or if any keyboardkeys are
+               pressed/released
             */
             void SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable);
             /**

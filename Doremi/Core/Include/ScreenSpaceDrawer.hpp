@@ -20,7 +20,7 @@ namespace Doremi
     {
         class VictoryScreen;
 
-        class ScreenSpaceDrawer          
+        class ScreenSpaceDrawer
         {
         public:
             ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution);

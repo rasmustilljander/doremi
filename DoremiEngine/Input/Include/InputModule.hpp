@@ -34,15 +34,15 @@ namespace DoremiEngine
             /**
             Create a window using sdl. Returns 1 if a window is created
             */
-            virtual int CreateWindowSDL(int p_width, int p_height) = 0; 
+            virtual int CreateWindowSDL(int p_width, int p_height) = 0;
             /**
                 Debug, Prints out the struct recieved form sdl.
             */
-            virtual void PrintInputStructsDEBUG() = 0; 
+            virtual void PrintInputStructsDEBUG() = 0;
             /**
                 Debug, Prints out the struct recieved form sdl.
             */
-            virtual void PrintInputMouseMovement() = 0; 
+            virtual void PrintInputMouseMovement() = 0;
 
             /**
             Get function, so the input handler can get it.

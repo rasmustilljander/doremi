@@ -97,7 +97,6 @@ namespace Doremi
                     {
                         // Nothing
                     }
-
                 }
                 // Check if entity will be affected by the frequencyanalyser.
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::FrequencyAffected))
@@ -106,7 +105,6 @@ namespace Doremi
                     // float t_freq = AudioHandler::GetInstance()->GetFrequency();
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(
                     //    t_rigidComp->p_bodyID, XMFLOAT3(0, t_freq * 3, 0)); /**Far from complete TODOLH bör inte liogga i audio manager heller*/
-
                 }
             }
             m_dominantFrequency = AudioHandler::GetInstance()->GetFrequency();
@@ -127,11 +125,11 @@ namespace Doremi
                 // Check if the player is holding down the ä button If so add time to the variable used for cutting soundlength
                 else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
                 {
-                    if (m_timeThatGunButtonIsDown < 4.8f)
+                    if(m_timeThatGunButtonIsDown < 4.8f)
                     {
                         m_timeThatGunButtonIsDown += p_dt;
                     }
-                    else 
+                    else
                     {
                         m_timeThatGunButtonIsDown = 4.8f;
                     }

@@ -31,7 +31,7 @@ namespace Doremi
             void AddScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, const XMFLOAT2& p_position, const XMFLOAT2& p_extent);
 
         private:
-            std::vector<ScreenObject*>m_screenObjects;
+            std::vector<ScreenObject*> m_screenObjects;
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
         };
     }

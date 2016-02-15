@@ -15,7 +15,7 @@ namespace Doremi
 
         PositionCorrectionHandler* PositionCorrectionHandler::GetInstance()
         {
-            if (m_singleton == nullptr)
+            if(m_singleton == nullptr)
             {
                 std::runtime_error("PositionCorrectionHandler called GetInstance befor startup.");
             }
@@ -24,7 +24,7 @@ namespace Doremi
 
         void PositionCorrectionHandler::StartPositionCorrectionHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            if (m_singleton == nullptr)
+            if(m_singleton == nullptr)
             {
                 m_singleton = new PositionCorrectionHandler(p_sharedContext);
             }
@@ -34,15 +34,12 @@ namespace Doremi
             }
         }
 
-        PositionCorrectionHandler::PositionCorrectionHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        PositionCorrectionHandler::PositionCorrectionHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : m_sharedContext(p_sharedContext)
         {
-
         }
 
-        PositionCorrectionHandler::~PositionCorrectionHandler()
-        {
-
-        }
+        PositionCorrectionHandler::~PositionCorrectionHandler() {}
 
         void PositionCorrectionHandler::InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {

@@ -62,7 +62,7 @@ namespace Doremi
 
         void ServerNetworkManager::Update(double p_dt)
         {
-            //std::cout << "Real: " << (uint32_t)m_nextSnapshotSequence << std::endl;
+            // std::cout << "Real: " << (uint32_t)m_nextSnapshotSequence << std::endl;
 
             // Recieve Messages
             RecieveMessages(p_dt);

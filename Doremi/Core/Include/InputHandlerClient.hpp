@@ -51,7 +51,8 @@ namespace Doremi
             void UpdateInputsFromEngine();
 
             /**
-                Uses the mask recieved from the InputModule and checks if the values are of interest. The values of interest are the values in userCmdsPlaying.
+                Uses the mask recieved from the InputModule and checks if the values are of interest. The values of interest are the values in
+               userCmdsPlaying.
             */
             void BuildMaskFromEngineForGame();
 

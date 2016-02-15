@@ -191,8 +191,8 @@ namespace DoremiEngine
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
 
-            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(), p_mesh.GetBufferHandle(),
-                                          p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount());
+            MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(),
+                                          p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount());
             m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
         }
         void MeshManagerImpl::Draw() {}

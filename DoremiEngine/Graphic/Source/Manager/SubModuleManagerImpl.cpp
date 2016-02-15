@@ -40,7 +40,7 @@ namespace DoremiEngine
 
             ComputeShader* cshader = m_shaderManager->BuildComputeShader("FrustumComputeShader.hlsl");
             m_computeShaderManager->DispatchFrustum();
-            //m_computeShaderManager->DispatchCulling();
+            // m_computeShaderManager->DispatchCulling();
         }
 
         MeshManager& SubModuleManagerImpl::GetMeshManager() { return *m_meshManager; }

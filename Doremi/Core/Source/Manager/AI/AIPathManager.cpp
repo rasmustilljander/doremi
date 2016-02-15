@@ -43,10 +43,10 @@ namespace Doremi
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
             // TODOKO do this in a better place, might not work to have here in the future
-            //m_field =
+            // m_field =
             //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 100, 100,
             //                                                                              XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
-            //m_topField =
+            // m_topField =
             //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
             //        XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
             EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
@@ -73,10 +73,11 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
                 { // This is so the player updates his position too...
                     DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
-                    XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;                    actor->SetPosition(pos);
+                    XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
+                    actor->SetPosition(pos);
                 }
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform |
-                                                                     (int)ComponentType::Movement | (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Movement |
+                                                                     (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
                 {
                     // Get the needed components
                     XMFLOAT2 desiredPos;
@@ -110,14 +111,14 @@ namespace Doremi
                         desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
-                   // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
-                   // XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
+                    // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
+                    // XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
                     XMVECTOR dirVec = desiredPosVec - unitPosVec;
                     dirVec = XMVector3Normalize(dirVec);
-                   // dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
-                   //  dirVec = XMVector3Normalize(dirVec);
+                    // dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
+                    //  dirVec = XMVector3Normalize(dirVec);
                     XMFLOAT3 direction;
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
@@ -139,7 +140,7 @@ namespace Doremi
                     {
                         DoremiEngine::AI::PotentialFieldActor* actor =
                             EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
-                        //m_field->AddActor(actor);
+                        // m_field->AddActor(actor);
                     }
                     else
                     {
@@ -173,7 +174,7 @@ namespace Doremi
                         // TODOKO should not be done here but in a more suitable event
                         field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->Field = field;
-                        if (field != nullptr)
+                        if(field != nullptr)
                         {
                             field->AddActor(actor);
                         }

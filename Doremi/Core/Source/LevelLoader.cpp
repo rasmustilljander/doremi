@@ -167,7 +167,7 @@ namespace Doremi
         void LevelLoader::LoadTransformsCharacter(std::ifstream& ifs, int nrTransforms) // TODOKO Remove and replase when cahracte have own format
         {
             using namespace DoremiEditor::Core;
-            for (int i = 0; i < nrTransforms; i++)
+            for(int i = 0; i < nrTransforms; i++)
             {
                 int parentNameSize;
                 int transformNameSize;
@@ -194,7 +194,7 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             // ladda meshes. TODOSH Fixa så samma mesh itne läses in flera gånger, alltså så att samma mesh data inte finns på 2 ställen på GPU
-            for (int i = 0; i < nrMeshes; i++)
+            for(int i = 0; i < nrMeshes; i++)
             {
                 int transformNameSize;
                 int meshNameSize;
@@ -204,7 +204,7 @@ namespace Doremi
                 std::vector<char*> transformNames;
                 char* transformName = nullptr;
 
-                for (int t = 0; t < nrOfTransforms; t++) // läser in alla transforms för meshen, blir flera om instanciering skall användas
+                for(int t = 0; t < nrOfTransforms; t++) // läser in alla transforms för meshen, blir flera om instanciering skall användas
                 {
                     ifs.read((char*)&transformNameSize, sizeof(int));
                     transformName = new char[transformNameSize];
@@ -259,7 +259,7 @@ namespace Doremi
 
                 m_meshes[meshName] = meshData;
                 // All the transform that this mesh should be placed at and puts it in the coupling vector
-                for (size_t i = 0; i < nrOfTransforms; i++)
+                for(size_t i = 0; i < nrOfTransforms; i++)
                 {
                     m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
                 }
@@ -307,7 +307,7 @@ namespace Doremi
         void LevelLoader::BuildEntities()
         {
             const size_t length = m_meshCoupling.size();
-            for (size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < length; i++)
             {
                 // Get scale, pos and transform
                 const DirectX::XMFLOAT3 scale = m_transforms[m_meshCoupling[i].transformName].scale;

@@ -52,7 +52,7 @@ namespace Doremi
                         // Jump in progress, hence gravity isn't needed
                         gravComp->travelSpeed = 0;
                     }
-                    
+
                     // Add to movement component
                     GetComponent<MovementComponent>(i)->movement.y += -gravComp->travelSpeed;
                 }

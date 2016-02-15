@@ -154,8 +154,6 @@ namespace Doremi
                 TODOCM doc
             */
             uint8_t m_SequenceInterpolationOffset;
-
-            
         };
     }
 }

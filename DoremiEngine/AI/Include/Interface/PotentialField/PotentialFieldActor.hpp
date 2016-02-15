@@ -129,7 +129,7 @@ namespace DoremiEngine
             virtual void EraseLatestAddedToPhermoneList() = 0;
             /**
             Adds a new potential to be used when checking vs other actors. This is what makes ranged stay on range and melee go to melee.
-            If a actor contains one of these fields it will be used when checking vs other actors. For example a range unit might contain a 
+            If a actor contains one of these fields it will be used when checking vs other actors. For example a range unit might contain a
             potential which will only be used when checking against positive charges. This will make the enemy move against the player since
             the player have a strong attracting force. This ranged enemy will also add this potential to the total charge making it almost as
             though the player have 2 charges with different information enabling the ranged unit to stay at range.

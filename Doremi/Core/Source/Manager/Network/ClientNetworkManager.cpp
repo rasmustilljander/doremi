@@ -201,7 +201,7 @@ namespace Doremi
                                 m_serverReliableSocketHandle = NetworkModule.ConnectToReliable(m_reliableServerAdress);
 
                                 // TODOCM check if we need to save this adress or we can just bind it
-                                //delete m_reliableServerAdress;
+                                // delete m_reliableServerAdress;
                             }
 
                             break;
@@ -461,29 +461,28 @@ namespace Doremi
                 }
             }
 
-            
+
             // Always send if were connected
-            switch (m_serverConnectionState)
+            switch(m_serverConnectionState)
             {
-            case ConnectionState::CONNECTED:
+                case ConnectionState::CONNECTED:
 
-                // TODOCM Send ping to keep an update with server?
-                SendConnectedMessage();
-                break;
+                    // TODOCM Send ping to keep an update with server?
+                    SendConnectedMessage();
+                    break;
 
-            case ConnectionState::MAP_LOADING:
+                case ConnectionState::MAP_LOADING:
 
-                SendMapLoadingMessage();
-                break;
+                    SendMapLoadingMessage();
+                    break;
 
-            case ConnectionState::IN_GAME:
+                case ConnectionState::IN_GAME:
 
-                SendInGameMessage();
-                break;
-            default:
-                break;
+                    SendInGameMessage();
+                    break;
+                default:
+                    break;
             }
-            
         }
 
         void ClientNetworkManager::SendConnectRequestMessage()
@@ -539,7 +538,7 @@ namespace Doremi
             // Write sequence
             Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
             bytesWritten += sizeof(uint8_t);
-            //cout << "Writing " << (uint32_t)InterpolationHandler::GetInstance()->GetRealSnapshotSequence() << endl;
+            // cout << "Writing " << (uint32_t)InterpolationHandler::GetInstance()->GetRealSnapshotSequence() << endl;
 
             // Write input(position directions) to stream
             Streamer.WriteUnsignedInt32(inputHandler->GetInputBitMask());

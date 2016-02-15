@@ -48,7 +48,15 @@ namespace Doremi
             SetFrequency1000 = 524288, // 9 57
             RightClick = 1048576,
 
-            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton | StartRepeatableAudioRecording | PlayRepeatableAudioRecording | ExitGame | LeftClick | SetFrequency0 | SetFrequency500 | SetFrequency1000 | RightClick,
+            All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton |
+                  StartRepeatableAudioRecording |
+                  PlayRepeatableAudioRecording |
+                  ExitGame |
+                  LeftClick |
+                  SetFrequency0 |
+                  SetFrequency500 |
+                  SetFrequency1000 |
+                  RightClick,
         };
 
         // TODOEA Lägga in detta i en textfil.
@@ -102,7 +110,7 @@ namespace Doremi
 
             // TODOEA void ChangeKeyConfig();//Får se hur vi gör här kan göra på flera sätt.
             // Kan göra att jag har massa funktioner här eller att den menyn skickar in ett ID som
-            // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt 
+            // på vad som ska bytas så kan vi koppla det på något SKÖNT sätt
             // Behöver nog ta bort old entries eller ändra dem på något sätt.
 
         protected:
@@ -119,7 +127,8 @@ namespace Doremi
             uint32_t m_maskWithInput = 0;
 
             /**
-                Masken som används för att kolla vad som tycktes ner senaste updaten. Används för om man ska kolla om man tryckt ner något en gång och inte kontinuerligt.
+                Masken som används för att kolla vad som tycktes ner senaste updaten. Används för om man ska kolla om man tryckt ner något en gång och
+               inte kontinuerligt.
             */
             uint32_t m_lastUpdateMaskWithInput = 0;
         };

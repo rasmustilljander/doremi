@@ -120,7 +120,7 @@ namespace DoremiEngine
         }
         int InputModuleImplementation::GetMouseMovementY()
         {
-            // get function that returns the mousemovement in y. 
+            // get function that returns the mousemovement in y.
             // this value is reset every update in Update() then ResetMouseMovementStruct();
             int t_return = m_mouseMovementStruct.y;
             return t_return;
@@ -137,17 +137,17 @@ namespace DoremiEngine
             if(p_bool)
             {
                 // SDL_WarpMouseGlobal(int x, int y); skulle kunna använda detta för då kan nog musen synas!
-                SDL_SetRelativeMouseMode(SDL_TRUE); 
+                SDL_SetRelativeMouseMode(SDL_TRUE);
             }
             else
             {
                 // Disabla musen fungerar SDL_ShowCursor(SDL_DISABLE);, verkar inte riktigt fungera vid SDL_TRUE
-                SDL_SetRelativeMouseMode(SDL_FALSE); 
+                SDL_SetRelativeMouseMode(SDL_FALSE);
             }
         }
         void InputModuleImplementation::SwitchCaseEventsForPlaying(SDL_Event& p_eventVariable)
         {
-            // loops through ALL the events. 
+            // loops through ALL the events.
             while(SDL_PollEvent(&p_eventVariable))
             {
                 // Checks if the event type is relevant to what we are looking for.
@@ -157,24 +157,24 @@ namespace DoremiEngine
                     case SDL_KEYDOWN:
                         AddToList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                         break;
-                        // if a key is released we remove it form our list
+                    // if a key is released we remove it form our list
                     case SDL_KEYUP:
                         RemoveFromList(p_eventVariable.key.keysym.sym, m_keyboardButtonsDown);
                         break;
-                        // if a mousebutton is down
+                    // if a mousebutton is down
                     case SDL_MOUSEBUTTONDOWN:
                         AddToList(p_eventVariable.button.button, m_mouseButtonsDown);
                         break;
-                        // if a mousebutton is released
+                    // if a mousebutton is released
                     case SDL_MOUSEBUTTONUP:
                         RemoveFromList(p_eventVariable.button.button, m_mouseButtonsDown);
                         break;
-                        // if the mouse is moving we update our mousemovementstruct
+                    // if the mouse is moving we update our mousemovementstruct
                     case SDL_MOUSEMOTION:
                         m_mouseMovementStruct.x = m_mouseMovementStruct.x + p_eventVariable.motion.xrel;
                         m_mouseMovementStruct.y = m_mouseMovementStruct.y + p_eventVariable.motion.yrel;
                         break;
-                        // if the wheel is spun we add it to our int. 
+                    // if the wheel is spun we add it to our int.
                     case SDL_MOUSEWHEEL:
                         m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                         break;

@@ -175,7 +175,7 @@ namespace DoremiEngine
                     */
                     // Calculate matrix to rotate velocity to world space
                     XMMATRIX rotMatWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&m_this.m_direction));
-                    for (int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
+                    for(int x = -halfParticlesx; x < halfParticlesx + 1; x++) //+1 since we want at least one particle
                     {
                         // Calculate angle in local space
                         float xAngle = ((float)x / (float)m_this.m_numParticlesX) * m_this.m_emissionAreaDimensions.x;
@@ -209,13 +209,14 @@ namespace DoremiEngine
 
                             // Add index (silly way just to make it work atm)
                             indices.push_back(m_nextIndex);
-                            // Set the lifetime of this particle TODOLH maybe add support for particles without lifetime. Some kind of bool. Hopefully we dont have to do this. Seems hard at first glance
+                            // Set the lifetime of this particle TODOLH maybe add support for particles without lifetime. Some kind of bool. Hopefully
+                            // we dont have to do this. Seems hard at first glance
                             m_particlesLifeTime[m_nextIndex] = m_lifeTime;
                             m_nextIndex++;
                         }
                     }
 
-                    if (positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
+                    if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
                     {
                         // Cast into PhysX datatypes
                         PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);

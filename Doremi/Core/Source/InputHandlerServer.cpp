@@ -25,10 +25,10 @@ namespace Doremi
                 // Try to fill it
                 std::list<InputItem>::iterator iter = m_queuedInputs.begin();
 
-                for (; iter != m_queuedInputs.end(); ++iter)
+                for(; iter != m_queuedInputs.end(); ++iter)
                 {
                     // If we're more recent we put it here
-                    if (sequence_more_recent(p_sequence, iter->Sequence, 255))
+                    if(sequence_more_recent(p_sequence, iter->Sequence, 255))
                     {
                         break;
                     }
@@ -51,10 +51,10 @@ namespace Doremi
             std::list<InputItem>::reverse_iterator riter = m_queuedInputs.rbegin();
 
             // For all
-            for (; riter != m_queuedInputs.rend(); ++riter)
+            for(; riter != m_queuedInputs.rend(); ++riter)
             {
                 // If we're more recent
-                if (sequence_more_recent(riter->Sequence + 1, m_realSequence, 255))
+                if(sequence_more_recent(riter->Sequence + 1, m_realSequence, 255))
                 {
                     break;
                 }
@@ -64,10 +64,10 @@ namespace Doremi
             m_queuedInputs.erase(riter.base(), m_queuedInputs.end());
             riter = m_queuedInputs.rbegin();
 
-            if (m_queuedInputs.size())
+            if(m_queuedInputs.size())
             {
                 // Check if realsequence is same as last queued
-                if (riter->Sequence == m_realSequence)
+                if(riter->Sequence == m_realSequence)
                 {
                     // Set inputmask
                     newMaskWithInput = riter->InputBitmask;
@@ -91,10 +91,7 @@ namespace Doremi
             m_maskWithInput = newMaskWithInput;
         }
 
-        void InputHandlerServer::SetSequence(uint8_t p_sequence)
-        {
-            m_realSequence = p_sequence - m_sequenceDelay;
-        }
+        void InputHandlerServer::SetSequence(uint8_t p_sequence) { m_realSequence = p_sequence - m_sequenceDelay; }
 
         DirectX::XMFLOAT4 InputHandlerServer::GetOrientationFromInput() { return m_orientationQuaternion; }
     }

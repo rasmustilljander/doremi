@@ -20,7 +20,6 @@ namespace DoremiEngine
     namespace Graphic
     {
         class MeshInfo;
-        
     }
 }
 
@@ -30,8 +29,8 @@ namespace Doremi
     namespace Core
     {
         // Loads of structs
-        
-        //struct MaterialData
+
+        // struct MaterialData
         //{
         //    MaterialData()
         //    {

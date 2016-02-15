@@ -22,7 +22,10 @@ namespace Doremi
 {
     namespace Core
     {
-        MovementManagerClient::MovementManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "MovementManager") {}
+        MovementManagerClient::MovementManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : Manager(p_sharedContext, "MovementManager")
+        {
+        }
 
         MovementManagerClient::~MovementManagerClient() {}
 
@@ -34,15 +37,15 @@ namespace Doremi
             EntityID p_playerEntityID = 0;
             bool playerExist = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(p_playerEntityID);
 
-            for (size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < length; i++)
             {
-                if (EntityHandler::GetInstance().HasComponents(i, mask))
+                if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
-                    DoremiEngine::Physics::CharacterControlManager &charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+                    DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
 
                     // If player exist and we're player
-                    if (playerExist && p_playerEntityID == i)
+                    if(playerExist && p_playerEntityID == i)
                     {
                         XMFLOAT3 position = charControlManager.GetPosition(i);
                         XMFLOAT4 orientation = charControlManager.GetOrientation(i);

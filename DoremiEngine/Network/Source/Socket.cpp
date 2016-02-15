@@ -345,7 +345,8 @@ namespace DoremiEngine
             {
                 DWORD errorCode = WSAGetLastError();
                 /*std::string Out =
-                    "Failed to connect to socket with IP: " + p_connectAdress.GetIPToString() + " To port: " + std::to_string(p_connectAdress.GetPort());
+                    "Failed to connect to socket with IP: " + p_connectAdress.GetIPToString() + " To port: " +
+                std::to_string(p_connectAdress.GetPort());
                 throw std::runtime_error(Out.c_str());*/
             }
 

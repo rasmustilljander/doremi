@@ -21,30 +21,30 @@ namespace DoremiEditor
         };
         struct CustomAttributes
         {
-            //bool isRendered;
-            //bool isBBox;
-            //bool isCollider;
-            //bool isInteractable;
-            //int checkPointID;
-            //int startOrEndPoint;
-            //bool isAIGround;
-            //bool frequencyAffected;
-            //DirectX::XMFLOAT3 startPos;
-            //DirectX::XMFLOAT3 endPos;
-            //float frequencyOffsetX;
-            //float frequencyOffsetY;
-            //bool isPotentialFieldCollidable;
-            //int potentialFieldID;
-            //int potentialFieldNeighbours[5];
-            //bool isSpawner;
-            //int maxSpawn;
-            //int maxAlive;
-            //int spawnTypeBlueprint;
-            //float spawnFrequency;
-            //bool isStatic;
-            //int physicsType;
-            //int typeBlueprint;
-            //bool isDangerous;
+            // bool isRendered;
+            // bool isBBox;
+            // bool isCollider;
+            // bool isInteractable;
+            // int checkPointID;
+            // int startOrEndPoint;
+            // bool isAIGround;
+            // bool frequencyAffected;
+            // DirectX::XMFLOAT3 startPos;
+            // DirectX::XMFLOAT3 endPos;
+            // float frequencyOffsetX;
+            // float frequencyOffsetY;
+            // bool isPotentialFieldCollidable;
+            // int potentialFieldID;
+            // int potentialFieldNeighbours[5];
+            // bool isSpawner;
+            // int maxSpawn;
+            // int maxAlive;
+            // int spawnTypeBlueprint;
+            // float spawnFrequency;
+            // bool isStatic;
+            // int physicsType;
+            // int typeBlueprint;
+            // bool isDangerous;
 
 
             bool isRendered;

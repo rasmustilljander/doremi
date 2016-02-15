@@ -74,7 +74,7 @@ namespace Doremi
                 m_maskWithInput = m_maskWithInput | (int)userCmdsPlaying[m_musInputFromModule[i]];
             }
             // Just checks if the mousewheel has been scrolled. I think 999 and 998 is harc coded values that i reserved for mousewheel.
-            if(m_mouseWheelInput) 
+            if(m_mouseWheelInput)
             {
                 // if it is above zero it is considered as mwheel up
                 if(m_mouseWheelInput > 0)

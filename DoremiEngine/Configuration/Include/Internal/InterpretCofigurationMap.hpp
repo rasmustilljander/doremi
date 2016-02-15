@@ -58,19 +58,19 @@ namespace DoremiEngine
             {
                 o_info.ExitGame = std::stoi(p_mapToInterpret.at("ExitGame"));
             }
-            if (p_mapToInterpret.count("CameraDistanceFromPlayer"))
+            if(p_mapToInterpret.count("CameraDistanceFromPlayer"))
             {
                 o_info.CameraDistanceFromPlayer = std::stof(p_mapToInterpret.at("CameraDistanceFromPlayer"));
             }
-            if (p_mapToInterpret.count("CameraSpeedY"))
+            if(p_mapToInterpret.count("CameraSpeedY"))
             {
                 o_info.CameraSpeedY = std::stof(p_mapToInterpret.at("CameraSpeedY"));
             }
-            if (p_mapToInterpret.count("CameraViewDistance"))
+            if(p_mapToInterpret.count("CameraViewDistance"))
             {
                 o_info.CameraViewDistance = std::stoi(p_mapToInterpret.at("CameraViewDistance"));
             }
-            if (p_mapToInterpret.count("CameraFieldOfView"))
+            if(p_mapToInterpret.count("CameraFieldOfView"))
             {
                 o_info.CameraFieldOfView = std::stoi(p_mapToInterpret.at("CameraFieldOfView"));
             }

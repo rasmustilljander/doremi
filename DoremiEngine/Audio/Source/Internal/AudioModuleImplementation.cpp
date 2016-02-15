@@ -113,7 +113,7 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 44100 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
             ERRCHECK(m_fmodResult);
-            if (testest == nullptr)
+            if(testest == nullptr)
             {
                 int hejd = 0;
             }
@@ -158,7 +158,6 @@ namespace DoremiEngine
                 ERRCHECK(m_fmodResult);
                 m_fmodSoundBuffer[p_soundIDDestination] = t_fmodSound;
                 returnVal = p_soundIDDestination;
-
             }
             return returnVal;
         }
@@ -365,7 +364,7 @@ namespace DoremiEngine
                 }
             }
             float dominantHz = (float)highestFrequencyBand * m_binSize;
-            if (dominantHz < 20)
+            if(dominantHz < 20)
             {
                 dominantHz = 0;
             }
