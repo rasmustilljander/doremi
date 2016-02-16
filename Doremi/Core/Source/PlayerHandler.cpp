@@ -213,13 +213,16 @@ namespace Doremi
 
                         if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
                         {
-                            EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
-                            // Send jump event.
-                            AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
-                            PlaySoundEvent* playSoundEvent =
-                                new PlaySoundEvent(iter->second->m_playerEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Jump]);
-                            EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
-
+                            JumpComponent* t_jumpComponent = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID);
+                            if(!t_jumpComponent->active)
+                            {
+                                t_jumpComponent->StartJump();
+                                // Send jump event.
+                                AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
+                                PlaySoundEvent* playSoundEvent =
+                                    new PlaySoundEvent(iter->second->m_playerEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Jump]);
+                                EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
+                            }
                             // EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
                         }
                     }
