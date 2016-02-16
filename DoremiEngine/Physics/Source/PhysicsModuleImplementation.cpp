@@ -109,7 +109,7 @@ namespace DoremiEngine
             // Trigger collisions
             if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
             {
-                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+                pairFlags = PxPairFlag::eTRIGGER_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
                 return PxFilterFlag::eDEFAULT;
             }
 
@@ -292,32 +292,35 @@ namespace DoremiEngine
             for(size_t i = 0; i < count; i++)
             {
                 const PxTriggerPair& cp = pairs[i];
-                CollisionPair collisionPair;
-                // Get trigger ID
-                collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->triggerActor)->second;
-                // Determine whether other actor is controller or rigid body
-                if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor) == m_utils.m_rigidBodyManager->GetIDsByBodies().end())
+                if(cp.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
                 {
-                    /*
-                    Was controller
-                    Loop through all controllers to see which it is. This is silly, but because PxController and PxActor are two
-                    Entierly different things, we have to do it this way. I think...*/
-                    unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
-                    for(auto const& controller : idsByControllers)
+                    CollisionPair collisionPair;
+                    // Get trigger ID
+                    collisionPair.firstID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->triggerActor)->second;
+                    // Determine whether other actor is controller or rigid body
+                    if(m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor) == m_utils.m_rigidBodyManager->GetIDsByBodies().end())
                     {
-                        if(controller.first->getActor() == pairs->otherActor)
+                        /*
+                        Was controller
+                        Loop through all controllers to see which it is. This is silly, but because PxController and PxActor are two
+                        Entierly different things, we have to do it this way. I think...*/
+                        unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
+                        for(auto const& controller : idsByControllers)
                         {
-                            collisionPair.secondID = controller.second;
+                            if(controller.first->getActor() == pairs->otherActor)
+                            {
+                                collisionPair.secondID = controller.second;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    // Has to be a rigid body. Possibly dangerous to assume...
-                    collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
-                }
+                    else
+                    {
+                        // Has to be a rigid body. Possibly dangerous to assume...
+                        collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
+                    }
 
-                m_triggerPairs.push_back(collisionPair);
+                    m_triggerPairs.push_back(collisionPair);
+                }
             }
         }
 
