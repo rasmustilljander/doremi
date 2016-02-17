@@ -89,7 +89,6 @@ namespace Doremi
                     // delete glowTextureName;
                 }
                 // TODOKO save the texture name<
-
                 m_materials[materialName] = materialData;
 
 

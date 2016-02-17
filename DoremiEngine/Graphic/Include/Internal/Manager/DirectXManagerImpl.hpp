@@ -34,6 +34,8 @@ namespace DoremiEngine
             ID3D11DeviceContext* GetDeviceContext() override;
             void SetRenderTargetNormal() override;
             void SetRenderTargetGlow() override;
+            void EnableBlend() override;
+            void DisableBlend() override;
             void Render2D(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
             // TODOKO should end draw be here?
             void EndDraw() override;
@@ -74,7 +76,8 @@ namespace DoremiEngine
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
             ID3D11SamplerState* m_defaultSamplerState;
-            DirectX::XMFLOAT2 m_screenResolution;
+            ID3D11BlendState* m_enableBlendState;
+            ID3D11BlendState* m_disableBlendState;
             ID3D11ShaderResourceView* m_srv;
             ID3D11ShaderResourceView* m_renderTargetSRV[2];
             ID3D11ShaderResourceView* m_sceneSRV;
@@ -82,6 +85,7 @@ namespace DoremiEngine
             ID3D11UnorderedAccessView* m_glowmapUAV;
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;
+            DirectX::XMFLOAT2 m_screenResolution;
         };
     }
 }

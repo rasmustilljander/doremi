@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 30
+#define NUM_LIGHTS 50
 
 struct PixelInputType
 {
@@ -155,6 +155,7 @@ PixelOutputType PS_main(PixelInputType input)
     else
         output.glow = normalize(texcolor) * 2;
 
+    texcolor.a = 1.f;
     output.diffuse = float4(rgb, 1) * texcolor * 3;
 
     return output;

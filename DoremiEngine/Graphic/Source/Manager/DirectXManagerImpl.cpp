@@ -267,6 +267,37 @@ namespace DoremiEngine
             depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
             depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
             m_defaultDepthStencilState = CreateDepthStencilState(depthStencilDesc);
+
+            D3D11_BLEND_DESC t_blendDesc;
+            // Clear the blend state description.
+            ZeroMemory(&t_blendDesc, sizeof(D3D11_BLEND_DESC));
+
+
+            t_blendDesc.RenderTarget[0].BlendEnable = TRUE;
+            t_blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+            t_blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+            t_blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+            t_blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+            t_blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+            t_blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+            t_blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+            // Create the blend state using the description.
+            res = m_device->CreateBlendState(&t_blendDesc, &m_enableBlendState);
+            if (FAILED(res))
+            {
+                int a = 3;
+            }
+
+            // Modify the description to create an alpha disabled blend state description.
+            t_blendDesc.RenderTarget[0].BlendEnable = FALSE;
+
+            // Create the blend state using the description.
+            res = m_device->CreateBlendState(&t_blendDesc, &m_disableBlendState);
+            if (FAILED(res))
+            {
+                int a = 3;
+            }
         }
 
         void DirectXManagerImpl::SetScreenResolution(DirectX::XMFLOAT2 p_res) { m_screenResolution = p_res; }
@@ -437,6 +468,8 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderAllMeshs()
         {
+
+            DispatchCompute();
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -676,9 +709,40 @@ namespace DoremiEngine
             m_deviceContext->OMSetRenderTargets(2, t_RTArray, m_depthView);
         }
 
+        void DirectXManagerImpl::EnableBlend()
+        {
+            float blendFactor[4];
+
+
+            // Setup the blend factor.
+            blendFactor[0] = 0.0f;
+            blendFactor[1] = 0.0f;
+            blendFactor[2] = 0.0f;
+            blendFactor[3] = 0.0f;
+
+            // Turn on the alpha blending.
+            m_deviceContext->OMSetBlendState(m_enableBlendState, blendFactor, 0xffffffff);
+        }
+
+        void DirectXManagerImpl::DisableBlend()
+        {
+            float blendFactor[4];
+
+
+            // Setup the blend factor.
+            blendFactor[0] = 0.0f;
+            blendFactor[1] = 0.0f;
+            blendFactor[2] = 0.0f;
+            blendFactor[3] = 0.0f;
+
+            // Turn off the alpha blending.
+            m_deviceContext->OMSetBlendState(m_disableBlendState, blendFactor, 0xffffffff);
+        }
+
         void DirectXManagerImpl::EndDraw()
         {
 
+            
             //////////////////FIXA GLOWY STUFF//////////////////////
 
             ID3D11ShaderResourceView* nullSRV = {NULL};
@@ -713,8 +777,6 @@ namespace DoremiEngine
 
             //////////////////SLUT PÅ GLOWY STUFF//////////////////////
 
-            SetRenderTargetNormal();
-
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer[0], color);
@@ -722,6 +784,9 @@ namespace DoremiEngine
             m_deviceContext->ClearRenderTargetView(m_postEffectRT, color);
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+            EnableBlend();  //TODOXX kan ge konstiga resultat. Isåfall anropa innan alla saker som ska blendas
+            DisableBlend();     //TODOXX kan ge konstiga resultat. Isåfall anropa efter alla saker som ska blendas
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)
