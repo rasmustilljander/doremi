@@ -65,20 +65,25 @@ namespace DoremiEngine
             // Take out all PF that you are within
             using namespace std;
             using namespace DirectX;
+
             vector<PotentialField*> possibleMatches;
             PotentialField* returnField = nullptr;
             for(size_t i = 0; i < m_fields.size(); i++)
             {
                 XMFLOAT3 fieldCenter = m_fields[i]->GetCenter();
                 XMFLOAT2 quadSize = m_fields[i]->GetQuadSize();
+
                 int quadsX = m_fields[i]->GetGrid().size(); // Get number of quads in x and y
                 int quadsY = m_fields[i]->GetGrid()[0].size();
-                float fieldHalfWidth = quadSize.x * (float)quadsX * 0.5f; // Half the fields width and height
-                float fieldHalfHeight = quadSize.y * (float)quadsY * 0.5f;
+
+                float fieldHalfWidth = quadSize.x * static_cast<float>(quadsX) * 0.5f; // Half the fields width and height
+                float fieldHalfHeight = quadSize.y * static_cast<float>(quadsY) * 0.5f;
+
                 float fieldLeftBoundary = fieldCenter.x - fieldHalfWidth; // takes out the fields left, right and top, bottom boundary positions
                 float fieldRightBoundary = fieldCenter.x + fieldHalfWidth;
                 float fieldTopBoundary = fieldCenter.z + fieldHalfHeight;
                 float fieldBottomBoundary = fieldCenter.z - fieldHalfHeight;
+
                 if(p_position.x <= fieldRightBoundary && p_position.x >= fieldLeftBoundary && p_position.z <= fieldTopBoundary &&
                    p_position.z >= fieldBottomBoundary) // If inside the field
                 {
@@ -86,12 +91,14 @@ namespace DoremiEngine
                 }
             }
             // Check which possible field is closest in Y
-            float closestY = 1000000;
+            float closestY = numeric_limits<float>::max();
             for(size_t i = 0; i < possibleMatches.size(); i++)
             {
                 XMFLOAT3 fieldCenter = possibleMatches[i]->GetCenter();
+
                 float distanceY = p_position.y - fieldCenter.y;
                 distanceY = abs(distanceY);
+
                 if(distanceY < closestY)
                 {
                     returnField = possibleMatches[i];

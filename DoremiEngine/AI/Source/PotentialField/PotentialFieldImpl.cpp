@@ -88,8 +88,8 @@ namespace DoremiEngine
         {
             using namespace DirectX;
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
-            float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
-            float gridQuadHeight = m_height / (float)m_grid[0].size();
+            float gridQuadWidth = m_width / static_cast<float>(m_grid.size()); // Gets the width and hight of one quad
+            float gridQuadHeight = m_height / static_cast<float>(m_grid[0].size());
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
             position2D.x -= bottomLeft.x - 0.5f;
@@ -115,14 +115,17 @@ namespace DoremiEngine
             {
                 return XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
             }
+
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
-            float gridQuadWidth = m_width / (float)m_grid.size(); // Gets the width and hight of one quad
-            float gridQuadHeight = m_height / (float)m_grid[0].size();
+            float gridQuadWidth = m_width / static_cast<float>(m_grid.size()); // Gets the width and hight of one quad
+            float gridQuadHeight = m_height / static_cast<float>(m_grid[0].size());
+
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
             position2D.x -= bottomLeft.x - 0.5f;
             position2D.y -= bottomLeft.y - 0.5f;
+
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
 
@@ -132,16 +135,16 @@ namespace DoremiEngine
             {
                 for(int y = -1; y < 2; y++)
                 {
-
                     quadsToCheck.push_back(XMINT2(quadNrX + x, quadNrY + y));
                 }
             }
             // Remove the quad we are standing on since that one is our start value we dont need to check it again
             quadsToCheck.erase(quadsToCheck.begin() + 4);
+
             // Check for special cases
             size_t length = quadsToCheck.size();
-            XMFLOAT2 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // TODOEA KANSKE SKA VARA float3 om vi vill ha mer 3d
-            float highestCharge = 0; // A low value
+            XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // if we are outside the field we should walk to center
+            float highestCharge;
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
@@ -151,7 +154,7 @@ namespace DoremiEngine
                 if(m_grid[quadNrX][quadNrY].occupied)
                 {
                     // If the one we are in is occupied set highest charge to low just to get out
-                    highestCharge = -100000;
+                    highestCharge = std::numeric_limits<float>::min();
                     // THis might happen when the AI is cutting corners
                 }
             }
@@ -166,17 +169,16 @@ namespace DoremiEngine
                     // The quad exists!
                     float quadCharge;
 
+                    // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
+                    // This will probably never be used...
                     if(p_staticCheck)
                     {
                         quadCharge = m_grid[x][y].charge;
                     }
                     else
                     {
+                        // CalculateCharge takes both static and dynamic actors in to acount, and phermonetrails and stuff
                         quadCharge = CalculateCharge(x, y, p_currentActor);
-                        if(x == quadNrX && y == quadNrY)
-                        {
-                            // quadCharge -= 5; // TODOKO hardcoded - value because we want the unit to move
-                        }
                     }
                     if(quadCharge > highestCharge)
                     {
@@ -223,7 +225,7 @@ namespace DoremiEngine
             bool usePhermone = true;
             for(auto actor : m_dynamicActors)
             {
-                if(actor != p_currentActor) // this should mean that the current actor is skipped when calculating charge... still doesnt work...
+                if(actor != p_currentActor) // this mean that the current actor is skipped when calculating charge
                 {
                     // This is for the actors influence
                     totalCharge += GetChargeInfluenceFromActor(quadPos, *actor);
@@ -240,19 +242,12 @@ namespace DoremiEngine
                 size_t t_vecSize = phermoneVector.size();
                 for(size_t i = 0; i < t_vecSize; ++i)
                 {
-                    //// If the wuad we are checking is in the trail
-                    // if (p_quadX == phermoneVector[i].x && p_quadY == phermoneVector[i].y)
-                    //{
-                    //    // Reduce the totalcharge depening on i because thats a correlation to how new the trail point is
-                    //    totalCharge -= (m_phermoneEffect + i); // TODOCONFIG Hardcoded value on how much the phermonetrail should effect
-                    //}
-                    ////// Test might work TODOKO test
-                    // else
-                    //{
+                    // Create a smal charge on the phermone position
                     XMFLOAT2 phermonePos = m_grid[phermoneVector[i].x][phermoneVector[i].y].position;
                     XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
                     XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 
+                    // Get the distance
                     XMVECTOR distance = phermonePosVec - quadPosVec;
                     XMVECTOR quadSize = XMLoadFloat2(&m_quadSize);
                     float quadLength = *XMVector2Length(quadSize).m128_f32; // Sort of quad length, from center to corner
@@ -260,8 +255,7 @@ namespace DoremiEngine
                     float force = 0;
                     force = -(m_phermoneEffect + i) *
                             std::fmaxf(1.0f - dist / quadLength * 2, 0.0f); // the phermone will effect all quads around the phemoned quad
-                    totalCharge += force; // The phermone force shouldnt be that high
-                    //}
+                    totalCharge += force;
                 }
             }
 
@@ -301,6 +295,7 @@ namespace DoremiEngine
         float PotentialFieldImpl::GetChargeInfluenceFromActor(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actor)
         {
             using namespace DirectX;
+            // Get values from actor
             XMFLOAT3 actorPos3d = p_actor.GetPosition(); // Dont really care about the third dimension TODOKO review if 3d is needed
             XMFLOAT2 actorPos = XMFLOAT2(actorPos3d.x, actorPos3d.z);
             float actorCharge = p_actor.GetCharge();
@@ -312,6 +307,7 @@ namespace DoremiEngine
             XMVECTOR distance = actorPosVec - quadPosVec;
             float dist = *XMVector3Length(distance).m128_f32;
             float force = 0;
+            // Check if we are inside the range, not really needed due to std::fmax
             if(dist < actorRange)
             {
                 force = actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f), 0.0f);
@@ -352,8 +348,6 @@ namespace DoremiEngine
                     {
                         o_phermoneActive = false;
                     }
-                    // force += actorCharge * std::fmaxf(1.0f - dist / actorRange, 0.0f); // std::powf(dist, 2.0f) / std::powf(actorRange, 2.0f),
-                    // 0.0f);
                     force += t_specialCharges[i].forceEquation(actorCharge, dist, actorRange);
                 }
             }
