@@ -81,17 +81,20 @@ namespace DoremiEngine
             res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_renderTargetSRV[0]);
             if(FAILED(res))
             {
-                int a = 3;
+                // ERROR MESSAGE
+                std::cout << "Failed to create shader resource view" << std::endl;
             }
             res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer[0]);
             if(FAILED(res))
             {
-                int a = 3;
+                // ERROR MESSAGE
+                std::cout << "Failed to create render target view" << std::endl;
             }
             res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
             if(FAILED(res))
             {
-                int a = 3;
+                // ERROR MESSAGE
+                std::cout << "Failed to create unordered access view" << std::endl;
             }
             t_BackBuffer->Release();
 
@@ -113,40 +116,41 @@ namespace DoremiEngine
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_scene);
             if(FAILED(res))
             {
-                int a = 3;
+                // ERROR MESSAGE
+                std::cout << "Failed to create texture" << std::endl;
             }
 
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_glowmap);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create texture" << std::endl;
             }
             res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_backBuffer[1]);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create render target view" << std::endl;
             }
             res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowmapUAV);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create unordered access view" << std::endl;
             }
             res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_renderTargetSRV[1]);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create shader resource view" << std::endl;
             }
             res = m_device->CreateShaderResourceView(m_scene, NULL, &m_sceneSRV);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create shader resource view" << std::endl;
             }
 
             res = m_device->CreateRenderTargetView(m_scene, NULL, &m_postEffectRT);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create render target view" << std::endl;
             }
 
             D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -174,7 +178,7 @@ namespace DoremiEngine
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depthBuffer);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create texture" << std::endl;
             }
 
             D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -187,7 +191,7 @@ namespace DoremiEngine
             res = m_device->CreateDepthStencilView(m_depthBuffer, &descDSV, &m_depthView);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create depth stencil view" << std::endl;
             }
 
             m_srv = NULL;
@@ -202,7 +206,7 @@ namespace DoremiEngine
             res = m_device->CreateShaderResourceView(m_depthBuffer, &srvd, &m_srv);
             if(FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create shader resource view" << std::endl;
             }
 
             m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
@@ -286,7 +290,7 @@ namespace DoremiEngine
             res = m_device->CreateBlendState(&t_blendDesc, &m_enableBlendState);
             if (FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create blend state" << std::endl;
             }
 
             // Modify the description to create an alpha disabled blend state description.
@@ -296,7 +300,7 @@ namespace DoremiEngine
             res = m_device->CreateBlendState(&t_blendDesc, &m_disableBlendState);
             if (FAILED(res))
             {
-                int a = 3;
+                std::cout << "Failed to create blend state" << std::endl;
             }
         }
 
@@ -468,7 +472,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderAllMeshs()
         {
-
             DispatchCompute();
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
@@ -660,8 +663,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::DispatchCompute()
         {
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetLightManager().UpdateLights();
-
             ID3D11ShaderResourceView* nullSRV = {NULL};
             ID3D11UnorderedAccessView* nullUAV = {NULL};
             ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
@@ -715,10 +716,10 @@ namespace DoremiEngine
 
 
             // Setup the blend factor.
-            blendFactor[0] = 0.0f;
-            blendFactor[1] = 0.0f;
-            blendFactor[2] = 0.0f;
-            blendFactor[3] = 0.0f;
+            blendFactor[0] = 1.0f;
+            blendFactor[1] = 1.0f;
+            blendFactor[2] = 1.0f;
+            blendFactor[3] = 1.0f;
 
             // Turn on the alpha blending.
             m_deviceContext->OMSetBlendState(m_enableBlendState, blendFactor, 0xffffffff);
@@ -739,15 +740,11 @@ namespace DoremiEngine
             m_deviceContext->OMSetBlendState(m_disableBlendState, blendFactor, 0xffffffff);
         }
 
-        void DirectXManagerImpl::EndDraw()
+        void DirectXManagerImpl::ComputeGlow()
         {
-
-            
-            //////////////////FIXA GLOWY STUFF//////////////////////
-
-            ID3D11ShaderResourceView* nullSRV = {NULL};
-            ID3D11UnorderedAccessView* nullUAV = {NULL};
-            ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
+            ID3D11ShaderResourceView* nullSRV = { NULL };
+            ID3D11UnorderedAccessView* nullUAV = { NULL };
+            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
 
             m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
 
@@ -775,8 +772,11 @@ namespace DoremiEngine
             m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
 
-            //////////////////SLUT PÅ GLOWY STUFF//////////////////////
+        }
 
+        void DirectXManagerImpl::EndDraw()
+        {
+            ComputeGlow();
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBuffer[0], color);
@@ -785,8 +785,6 @@ namespace DoremiEngine
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-            EnableBlend();  //TODOXX kan ge konstiga resultat. Isåfall anropa innan alla saker som ska blendas
-            DisableBlend();     //TODOXX kan ge konstiga resultat. Isåfall anropa efter alla saker som ska blendas
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

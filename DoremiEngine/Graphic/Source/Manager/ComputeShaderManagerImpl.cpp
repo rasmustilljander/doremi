@@ -47,12 +47,12 @@ namespace DoremiEngine
 
         ComputeShaderManagerImpl::~ComputeShaderManagerImpl() {}
 
-        void ComputeShaderManagerImpl::SetUAV(BufferType index)
+        void ComputeShaderManagerImpl::SetUAV(BufferType p_index)
         {
             unsigned int t_size;
             unsigned int t_stride;
             unsigned int t_numElements;
-            switch(index)
+            switch(p_index)
             {
                 case BufferType::FRUSTUM:
                     t_size = sizeof(FrustumInfo) * NUM_THREAD_BLOCKS;
@@ -91,7 +91,7 @@ namespace DoremiEngine
                     break;
             }
 
-            m_uav[index] = NULL;
+            m_uav[p_index] = NULL;
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             D3D11_BUFFER_DESC outputDesc;
             outputDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -101,13 +101,13 @@ namespace DoremiEngine
             outputDesc.StructureByteStride = t_stride;
             outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-            HRESULT hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_buffer[index]));
+            HRESULT hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_buffer[p_index]));
 
             outputDesc.Usage = D3D11_USAGE_STAGING;
             outputDesc.BindFlags = 0;
             outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
-            hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_bufferResult[index]));
+            hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_bufferResult[p_index]));
 
             D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
             uavDesc.Buffer.FirstElement = 0;
@@ -123,7 +123,7 @@ namespace DoremiEngine
             t_SrvDesc.BufferEx.Flags = 0;
             t_SrvDesc.BufferEx.NumElements = t_numElements;
 
-            hr = m_directX.GetDevice()->CreateShaderResourceView(m_buffer[index], &t_SrvDesc, &m_srv[index]);
+            hr = m_directX.GetDevice()->CreateShaderResourceView(m_buffer[p_index], &t_SrvDesc, &m_srv[p_index]);
 
             if(FAILED(hr))
             {
@@ -131,7 +131,7 @@ namespace DoremiEngine
                 std::cout << "Failed to create shader resource view" << std::endl;
             }
 
-            hr = m_directX.GetDevice()->CreateUnorderedAccessView(m_buffer[index], &uavDesc, &m_uav[index]);
+            hr = m_directX.GetDevice()->CreateUnorderedAccessView(m_buffer[p_index], &uavDesc, &m_uav[p_index]);
         }
 
         void ComputeShaderManagerImpl::SetSRV() {}
@@ -207,18 +207,20 @@ namespace DoremiEngine
         {
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             shaderManager.SetActiveComputeShader(m_blurHoriShader);
+            DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            int numGroupsX = ceil(1920.f / 256.f); // TODOCONFIG take width from config
-            m_deviceContext->Dispatch(numGroupsX, 1080, 1);
+            int numGroupsX = ceil(t_screenRes.x / 256.f); // TODOCONFIG take width from config
+            m_deviceContext->Dispatch(numGroupsX, t_screenRes.y, 1);
         }
 
         void ComputeShaderManagerImpl::DispatchBlurVertical()
         {
             ShaderManager& shaderManager = m_graphicContext.m_graphicModule->GetSubModuleManager().GetShaderManager();
             shaderManager.SetActiveComputeShader(m_blurVertShader);
+            DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            int numGroupsY = ceil(1080.f / 256.f); // TODOCONFIG take height from config
-            m_deviceContext->Dispatch(1920, numGroupsY, 1);
+            int numGroupsY = ceil(t_screenRes.y / 256.f); // TODOCONFIG take height from config
+            m_deviceContext->Dispatch(t_screenRes.x, numGroupsY, 1);
         }
 
         void ComputeShaderManagerImpl::CopyCullingData()

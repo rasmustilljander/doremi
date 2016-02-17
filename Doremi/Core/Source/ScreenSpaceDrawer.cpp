@@ -113,6 +113,7 @@ namespace Doremi
 
         void ScreenSpaceDrawer::DrawMainMenu()
         {
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableBlend();
             std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_menuPixelShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);
@@ -129,6 +130,8 @@ namespace Doremi
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
                                                                                                                t_depthStencil->GetDepthStencilState());
+
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere
             // else too...
         }

@@ -21,10 +21,18 @@ namespace DoremiEngine
         public:
             LightManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~LightManagerImpl();
+            /**
+            Adds light ti light list
+            */
             Light* AddLight(int type, float intensity, DirectX::XMFLOAT3 color, float coneAngle, DirectX::XMFLOAT3 direction, float penumAngle,
                             DirectX::XMFLOAT3 position) override;
+            /**
+            initializes light manager
+            */
             void InitLightManager() override;
-            void TestFunc() override;
+            /**
+            Updates lights
+            */
             void UpdateLights() override;
 
         private:

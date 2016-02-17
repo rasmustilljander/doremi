@@ -576,6 +576,7 @@ namespace Doremi
                                       m_transforms[m_lightNames[i].first].translation);
                 ++i;
             }
+            lightManager.UpdateLights();
         }
     }
 }
