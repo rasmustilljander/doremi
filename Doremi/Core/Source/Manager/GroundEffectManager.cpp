@@ -41,7 +41,6 @@ namespace Doremi
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
                     m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
                     m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
-                    cout << m_groundEffectPoints.size();
                 }
             }
         }
