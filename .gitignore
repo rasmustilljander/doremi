@@ -5,6 +5,6 @@ tools/script/docs
 # Ignore log files
 logs
 
-# Ignore format cache
+# Ignore cache files
 .formatCache
-
+.staticTestCache

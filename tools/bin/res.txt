@@ -1,0 +1,358 @@
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:40]: (style) C-style pointer casting
+[..\..\Doremi\Client\Source\Game.cpp:241]: (style) The scope of the variable 'Frame' can be reduced.
+[..\..\Doremi\Client\Source\Game.cpp:109]: (style) Variable 't_entityHandler' is assigned a value that is never used.
+[..\..\Doremi\Client\Source\Game.cpp:142]: (style) Variable 't_skeletalAnimationManager' is assigned a value that is never used.
+[..\..\Doremi\Client\Source\Game.cpp:186]: (style) Variable 'inputHandler' is assigned a value that is never used.
+[..\..\Doremi\Client\Source\Game.cpp:222]: (style) Variable 'entityID' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\PlayerHandler.hpp:38]: (warning) Member variable 'Player::m_maxSpeed' is not initialized in the constructor.
+[..\..\DoremiEngine\Graphic\Include\Interface\Mesh\MaterialInfo.hpp:9]: (style) The class 'MaterialInfo' does not have a constructor.
+[..\..\Doremi\Core\Include\EntityComponent\Components\PotentialFieldComponent.hpp:33]: (warning) Member variable 'PotentialFieldComponent::isStatic' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EntityComponent\Components\PotentialFieldComponent.hpp:37]: (warning) Member variable 'PotentialFieldComponent::isStatic' is not initialized in the constructor.
+[..\..\DoremiEngine\Graphic\Include\Interface\Manager\MeshManager.hpp:21]: (warning) Member variable 'MaterialData::diffuseTextureName' is not initialized in the constructor.
+[..\..\DoremiEngine\Graphic\Include\Interface\Manager\MeshManager.hpp:21]: (warning) Member variable 'MaterialData::glowTextureName' is not initialized in the constructor.
+[..\..\DoremiEditor\Core\Include\MaterialData.hpp:17]: (warning) Member variable 'MaterialData::diffuseTextureName' is not initialized in the constructor.
+[..\..\DoremiEditor\Core\Include\MaterialData.hpp:17]: (warning) Member variable 'MaterialData::glowTextureName' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\PlayerHandler.hpp:42] -> [..\..\Doremi\Core\Include\PlayerHandler.hpp:62]: (style, inconclusive) Member variable 'Player::m_inputHandler' is in the wrong place in the initializer list.
+[..\..\Doremi\Core\Include\PositionCorrectionHandler.hpp:24] -> [..\..\Doremi\Core\Include\PositionCorrectionHandler.hpp:28]: (style, inconclusive) Member variable 'MovementStamp::Sequence' is in the wrong place in the initializer list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:60]: (performance) Variable 'position' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:61]: (performance) Variable 'rotation' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:62]: (performance) Variable 'scale' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:80]: (performance) Variable 'position' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:81]: (performance) Variable 'rotation' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:82]: (performance) Variable 'scale' is assigned in constructor body. Consider performing initialization in initialization list.
+[..\..\Doremi\Core\Include\EventHandler\EventHandler.hpp:46]: (warning, inconclusive) Class 'EventHandler' which has virtual members does not have a virtual destructor.
+[..\..\Doremi\Core\Include\PlayerHandler.hpp:109]: (warning, inconclusive) Class 'PlayerHandler' which has virtual members does not have a virtual destructor.
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:40] -> [..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:15]: (performance, inconclusive) Technically the member function 'StorageShelf<T>::SetSingleton' can be static.
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:8]: (style) 'class StorageShelf<T>' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:58]: (style) Struct 'TransformComponentSnapshotNext' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\EntityComponent\Components\TransformComponent.hpp:78]: (style) Struct 'TransformComponentSnapshotPrevious' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\EventHandler\Events\Event.hpp:34]: (style) Struct 'Event' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\PlayerHandler.hpp:104]: (style) Class 'PlayerHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\PlayerHandlerClient.hpp:39]: (style) Class 'PlayerHandlerClient' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\AudioHandler.hpp:35]: (style) Class 'AudioHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\InputHandler.hpp:86]: (style) Class 'InputHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\InputHandlerClient.hpp:14]: (style) Class 'InputHandlerClient' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\MenuClasses\MenuGraphicHandler.hpp:26]: (style) Class 'MenuGraphicHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\GraphicManager.hpp:24]: (style) Class 'GraphicManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\SkeletalAnimationCoreManager.hpp:29]: (style) Class 'SkeletalAnimationCoreManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\Network\ClientNetworkManager.hpp:29]: (style) Class 'ClientNetworkManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\MovementManagerClient.hpp:16]: (style) Class 'MovementManagerClient' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\AudioManager.hpp:16]: (style) Class 'AudioManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\AI\AIPathManager.hpp:25]: (style) Class 'AIPathManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\CharacterControlSyncManager.hpp:12]: (style) Class 'CharacterControlSyncManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\RigidTransformSyncManager.hpp:12]: (style) Class 'RigidTransformSyncManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\JumpManager.hpp:12]: (style) Class 'JumpManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\SkyBoxManager.hpp:22]: (style) Class 'SkyBoxManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\GravityManager.hpp:12]: (style) Class 'GravityManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\PressureParticleGraphicManager.hpp:18]: (style) Class 'PressureParticleGraphicManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\PressureParticleManager.hpp:18]: (style) Class 'PressureParticleManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\LightManager.hpp:12]: (style) Class 'LightManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\TriggerManager.hpp:16]: (style) Class 'TriggerManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\ExtraDrainSyncManager.hpp:14]: (style) Class 'ExtraDrainSyncManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\LevelLoader.hpp:82]: (style) Class 'LevelLoader' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\LevelLoaderClient.hpp:20]: (style) Class 'LevelLoaderClient' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Client\Source\Game.cpp:193]: (error) Memory leak: inputHandler
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:64]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:68]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:69]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:65]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:68]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:69]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:83]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:88]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:84]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:88]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:100]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:106]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:111]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:101]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:107]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:112]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:102]: (error) Uninitialized variable: tThirdShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:108]: (error) Uninitialized variable: tThirdShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:113]: (error) Uninitialized variable: tThirdShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:125]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:129]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:133]: (error) Uninitialized variable: tFirstShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:126]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:130]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:133]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:134]: (error) Uninitialized variable: tSecondShelf
+[..\..\Doremi\Core\Include\EntityComponent\StorageShelf.hpp:51]: (error) Uninitialized variable: tNeededShelf
+[..\..\Doremi\Core\Source\AudioHandler.cpp:232]: (style) C-style pointer casting
+[..\..\DoremiEngine\Graphic\Include\Interface\Camera\Camera.hpp:16]: (warning) Member variable 'CameraMatrices::pad' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\CameraHandler.cpp:63]: (style) Variable 't_graphicModuleCameraManager' is assigned a value that is never used.
+[..\..\DoremiEngine\Configuration\Include\ConfigurationModule.hpp:62]: (performance) Function parameter 'p_fileName' should be passed by reference.
+[..\..\DoremiEngine\Configuration\Include\ConfigurationModule.hpp:68]: (performance) Function parameter 'p_fileName' should be passed by reference.
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:78]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:79]: (error) Uninitialized variable: tComponentTable
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:101]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:102]: (error) Uninitialized variable: tComponentTable
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:297]: (error) Uninitialized variable: tComponentTable
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:310]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:313]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:327]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:328]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:349]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:350]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:369]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Source\EntityComponent\EntityFactory.cpp:370]: (error) Uninitialized variable: tEntityManager
+[..\..\Doremi\Core\Include\EventHandler\Events\RemoveEntityEvent.hpp:11]: (warning) Member variable 'RemoveEntityEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\RemoveEntityEvent.hpp:12]: (style) Struct 'RemoveEntityEvent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\EntityComponent\EntityHandlerClient.cpp:41]: (style) C-style pointer casting
+[..\..\Doremi\Core\Source\EntityComponent\EntityHandlerClient.cpp:57]: (style) C-style pointer casting
+[..\..\Doremi\Core\Include\EventHandler\Events\EntityCreatedEvent.hpp:16]: (warning) Member variable 'EntityCreatedEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\EntityCreatedEvent.hpp:16]: (warning) Member variable 'EntityCreatedEvent::bluepirnt' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\EntityComponent\EntityHandlerServer.cpp:71]: (style) C-style pointer casting
+[..\..\Doremi\Core\Include\EntityComponent\EntityManager.hpp:21]: (style, inconclusive) Technically the member function 'Doremi::Core::EntityManager::GetLastEntity' can be const.
+[..\..\Doremi\Core\Source\EntityComponent\EntityManager.cpp:45]: (error) Uninitialized variable: tCompTable
+[..\..\Doremi\Core\Source\EntityComponent\EntityManager.cpp:47]: (error) Uninitialized variable: tCompTable
+[..\..\Doremi\Core\Source\FrequencyBufferHandler.cpp:38]: (style) Variable 'CurrentSequence' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Handler\StateHandler.cpp:66]: (style) Variable 't_players' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\EventHandler\Events\TriggerEvent.hpp:18] -> [..\..\Doremi\Core\Include\EventHandler\Events\TriggerEvent.hpp:32]: (style, inconclusive) Member variable 'TriggerEvent::triggerEntityID' is in the wrong place in the initializer list.
+[..\..\Doremi\Core\Include\EventHandler\Events\DamageTakenEvent.hpp:13]: (warning) Member variable 'DamageTakenEvent::entityId' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\HealthChecker.cpp:29] -> [..\..\Doremi\Core\Include\HealthChecker.hpp:16]: (performance, inconclusive) Technically the member function 'Doremi::Core::HealthChecker::Update' can be static.
+[..\..\Doremi\Core\Source\InterpolationHandler.cpp:209]: (style) The scope of the variable 'objectCounter' can be reduced.
+[..\..\Doremi\Core\Source\InterpolationHandler.cpp:55]: (style) Variable 't_rigidBodyManager' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\LevelEditor\FileMappingReader.cpp:19] -> [..\..\Doremi\Core\Include\LevelEditor\FileMappingReader.hpp:25]: (performance, inconclusive) Technically the member function 'Doremi::Core::FileMappingReader::Initialize' can be static.
+[..\..\Doremi\Core\Source\LevelLoader.cpp:205]: (style) The scope of the variable 'transformName' can be reduced.
+[..\..\Doremi\Core\Source\LevelLoader.cpp:250]: (style) Unused variable: poss
+[..\..\Doremi\Core\Source\LevelLoader.cpp:371]: (style) Variable 'nrVertices' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\PotentialFieldGridCreator.hpp:22]: (style) Class 'PotentialFieldGridCreator' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\LevelLoader.cpp:136]: (error) Mismatching allocation and deallocation: materialName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:162]: (error) Mismatching allocation and deallocation: parentName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:163]: (error) Mismatching allocation and deallocation: transformName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:188]: (error) Mismatching allocation and deallocation: parentName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:189]: (error) Mismatching allocation and deallocation: transformName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:302]: (error) Mismatching allocation and deallocation: transformName
+[..\..\Doremi\Core\Source\LevelLoader.cpp:303]: (error) Mismatching allocation and deallocation: lightName
+[..\..\Doremi\Core\Source\LevelLoaderClient.cpp:475]: (style) Variable 'textureName' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\LevelLoaderServer.cpp:104]: (style) Variable 't_builtPhysics' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\LevelLoaderServer.cpp:341]: (style) Variable 'field' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AIPathManager.cpp:86]: (style) Variable 'group' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AIPathManager.cpp:142]: (style) Variable 'actor' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AIPathManager.cpp:183]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AITargetManager.cpp:33]: (style) Variable 'debug' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AITargetManager.cpp:64]: (style) Variable 'aiRange' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\AI\AITargetManager.cpp:104]: (style) Variable 'matComp' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\Manager\AI\AITargetManager.hpp:9]: (style) Class 'AITargetManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\Manager\AudioManager.cpp:114]: (style) C-style pointer casting
+[..\..\Doremi\Core\Source\Manager\AudioManager.cpp:164]: (style) C-style pointer casting
+[..\..\Doremi\Core\Include\EventHandler\Events\PlaySoundEvent.hpp:13]: (warning) Member variable 'PlaySoundEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\PlaySoundEvent.hpp:13]: (warning) Member variable 'PlaySoundEvent::soundType' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\Manager\DamageManager.cpp:42]: (style) Variable 't_entityHandler' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\DamageManager.cpp:81]: (style) Variable 'hpComp' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\EntitySpawnManager.cpp:53]: (style) Variable 'DEBUGcount' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\EntitySpawnManager.cpp:54]: (style) Variable 'entityHandler' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\ExampleManager.cpp:55]: (style) Variable 't_example2' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\ExampleManager.cpp:75]: (style) Variable 't_intFromEvent' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\Network\ClientNetworkManager.cpp:312]: (style) Variable 'EntityHandler' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\Network\ClientNetworkManager.cpp:362]: (style) Variable 'ReadOffset' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\Network\ClientNetworkManager.cpp:99]: (error) Mismatching allocation and deallocation: IPCharPointer
+[..\..\Doremi\Core\Source\Manager\Network\ClientNetworkManager.cpp:100]: (error) Mismatching allocation and deallocation: IPArray
+[..\..\Doremi\Core\Source\Manager\Network\ServerNetworkManager.cpp:272]: (error, inconclusive) Possible null pointer dereference: connection
+[..\..\Doremi\Core\Source\Manager\Network\ServerNetworkManager.cpp:275]: (error, inconclusive) Possible null pointer dereference: connection
+[..\..\Doremi\Core\Source\Manager\Network\ServerNetworkManager.cpp:300]: (style) Variable 'NetworkModule' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\EntityComponent\Components\NetworkObjectComponent.hpp:25]: (style, inconclusive) Technically the member function 'Doremi::Core::NetworkObjectComponent::GetFramePriority' can be const.
+[..\..\Doremi\Core\Include\EntityComponent\Components\NetworkObjectComponent.hpp:53]: (style, inconclusive) Technically the member function 'Doremi::Core::NetworkObjectComponent::GetNotRelevantTimer' can be const.
+[..\..\Doremi\Core\Include\EntityComponent\Components\NetworkObjectComponent.hpp:58]: (style, inconclusive) Technically the member function 'Doremi::Core::NetworkObjectComponent::GetRelevantTimer' can be const.
+[..\..\Doremi\Core\Include\EntityComponent\Components\NetworkObjectComponent.hpp:17]: (style) Struct 'NetworkObjectComponent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\NetworkPriorityHandler.hpp:26]: (style) Class 'FunctorPriority' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\NetworkPriorityHandler.hpp:54]: (style) Class 'NetworkPriorityHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\Manager\PressureParticleGraphicManager.cpp:66]: (style) Variable 'renderComp' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Manager\RigidTransformSyncManager.cpp:41]: (style) Variable 'rigidComp' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:18]: (warning) Member variable 'Button::m_mousePos' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:32]: (warning, inconclusive) Member variable 'Button::m_materialInfo' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:32]: (warning, inconclusive) Member variable 'Button::m_meshInfo' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:32]: (warning, inconclusive) Member variable 'Button::m_menuState' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:32]: (warning, inconclusive) Member variable 'Button::m_mousePos' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:32]: (warning, inconclusive) Member variable 'Button::m_buttonMaterials' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\Button.cpp:20] -> [..\..\Doremi\Core\Include\MenuClasses\Button.hpp:35]: (style, inconclusive) Member variable 'Button::m_meshInfo' is in the wrong place in the initializer list.
+[..\..\Doremi\Core\Source\MenuClasses\MenuHandler.cpp:22]: (warning) Member variable 'MenuHandler::m_currentButton' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\MenuHandler.cpp:22]: (warning) Member variable 'MenuHandler::m_inputHandler' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\MenuHandler.cpp:22]: (warning) Member variable 'MenuHandler::m_menuState' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\MenuHandler.cpp:92] -> [..\..\Doremi\Core\Include\MenuClasses\MenuHandler.hpp:27]: (style, inconclusive) Technically the member function 'Doremi::Core::MenuHandler::GetButtons' can be const.
+[..\..\Doremi\Core\Source\MenuClasses\MenuHandler.cpp:90] -> [..\..\Doremi\Core\Include\MenuClasses\MenuHandler.hpp:28]: (style, inconclusive) Technically the member function 'Doremi::Core::MenuHandler::GetCurrentButton' can be const.
+[..\..\Doremi\Core\Source\MenuClasses\ScreenObject.cpp:31]: (warning, inconclusive) Member variable 'ScreenObject::m_materialInfo' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\ScreenObject.cpp:31]: (warning, inconclusive) Member variable 'ScreenObject::m_meshInfo' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\MenuClasses\ScreenObject.cpp:20] -> [..\..\Doremi\Core\Include\MenuClasses\ScreenObject.hpp:21]: (style, inconclusive) Member variable 'ScreenObject::m_position' is in the wrong place in the initializer list.
+[..\..\Doremi\Core\Source\MenuClasses\VictoryScreen.cpp:22]: (warning, inconclusive) Member variable 'VictoryScreen::m_meshInfo' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\MenuClasses\VictoryScreen.hpp:27]: (style) Class 'VictoryScreen' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\EventHandler\Events\PlayerCreationEvent.hpp:14]: (warning) Member variable 'PlayerCreationEvent::playerEntityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\SpecialEntityCreatedEvent.hpp:16]: (warning) Member variable 'SpecialEntityCreatedEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\PlayerRespawnEvent.hpp:12]: (warning) Member variable 'PlayerRespawnEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\GunFireToggleEvent.hpp:13]: (warning) Member variable 'GunFireToggleEvent::entityID' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EventHandler\Events\GunFireToggleEvent.hpp:13]: (warning) Member variable 'GunFireToggleEvent::isFiring' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\NetworkEventReceiver.cpp:218] -> [..\..\Doremi\Core\Include\NetworkEventReceiver.hpp:32]: (style, inconclusive) Technically the member function 'Doremi::Core::NetworkEventReceiver::GetNextSequenceUsed' can be const.
+[..\..\Doremi\Core\Include\EventHandler\Events\PlayerCreationEvent.hpp:13]: (style) Struct 'PlayerCreationEvent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\Network\NetMessage.hpp:37]: (warning) Member variable 'NetMessage::MessageID' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\NetworkEventSender.cpp:332] -> [..\..\Doremi\Core\Include\NetworkEventSender.hpp:57]: (style, inconclusive) Technically the member function 'Doremi::Core::NetworkEventSender::GetNextSequenceUsed' can be const.
+[..\..\Doremi\Core\Source\PlayerHandler.cpp:333]: (style) C-style pointer casting
+[..\..\Doremi\Core\Source\PlayerHandler.cpp:161]: (style) Variable 't_checkIfWeHavePlayer' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\InputHandlerServer.hpp:52]: (style, inconclusive) Technically the member function 'Doremi::Core::InputHandlerServer::GetSequenceByLastInput' can be const.
+[..\..\Doremi\Core\Include\InputHandlerServer.hpp:57]: (style, inconclusive) Technically the member function 'Doremi::Core::InputHandlerServer::GetPositionByLastInput' can be const.
+[..\..\Doremi\Core\Include\InputHandlerServer.hpp:59]: (style, inconclusive) Technically the member function 'Doremi::Core::InputHandlerServer::GetSequence' can be const.
+[..\..\Doremi\Core\Include\EntityComponent\Components\AudioComponent.hpp:25]: (warning) Member variable 'AudioComponent::m_enumToSoundID' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\PlayerHandlerServer.cpp:96]: (style) C-style pointer casting
+[..\..\Doremi\Core\Include\PlayerHandlerServer.hpp:83]: (style) Unused private function: 'PlayerHandlerServer::QueueEntityCreatedEventToPlayers'
+[..\..\Doremi\Core\Include\PlayerHandlerServer.hpp:89]: (style) Unused private function: 'PlayerHandlerServer::QueueRemoveEntityEventToPlayers'
+[..\..\Doremi\Core\Include\PlayerHandlerServer.hpp:94]: (style) Unused private function: 'PlayerHandlerServer::QueuePlayerRespawnEventToPlayers'
+[..\..\Doremi\Core\Include\PlayerHandlerServer.hpp:95]: (style) Unused private function: 'PlayerHandlerServer::QueueGunFireToggleEventToPlayers'
+[..\..\Doremi\Core\Include\PlayerHandlerServer.hpp:48]: (style) Class 'PlayerHandlerServer' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\PlayerSpawnerHandler.cpp:45] -> [..\..\Doremi\Core\Include\PlayerSpawnerHandler.hpp:31]: (style, inconclusive) Technically the member function 'Doremi::Core::PlayerSpawnerHandler::GetCurrentSpawnerEntityID' can be const.
+[..\..\Doremi\Core\Include\PlayerSpawnerHandler.hpp:49]: (style) Class 'PlayerSpawnerHandler' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Source\PotentialFieldGridCreator.cpp:35]: (style) Variable 'materialID' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\PotentialFieldGridCreator.cpp:36]: (style) Variable 't_entityHandler' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\PotentialFieldGridCreator.cpp:50]: (style) Variable 'myID' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:81]: (style) The scope of the variable 'BitsToWrite' can be reduced.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:82]: (style) The scope of the variable 'LineToWrite' can be reduced.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:170]: (style) The scope of the variable 'BitsToRead' can be reduced.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:171]: (style) The scope of the variable 'LineToRead' can be reduced.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:224]: (style) Variable 'Value' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:235]: (style) Variable 'AmountRead' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:242]: (style) Variable 'Value' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:296]: (style) Variable 'Value' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:307]: (style) Variable 'AmountRead' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:314]: (style) Variable 'Value' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:417]: (style) Variable 'AmountRead' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:517]: (style) Variable 'AmountRead' is assigned a value that is never used.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:17]: (warning) Member variable 'NetworkStreamer::m_buffer' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:17]: (warning) Member variable 'NetworkStreamer::m_bufferSize' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:17]: (warning) Member variable 'NetworkStreamer::m_writtenBits' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:17]: (warning) Member variable 'NetworkStreamer::m_readBits' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:17]: (warning) Member variable 'NetworkStreamer::m_currentByte' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\Streamers\NetworkStreamer.hpp:217]: (style) Unused private function: 'NetworkStreamer::WriteBits'
+[..\..\Doremi\Core\Include\Streamers\NetworkStreamer.hpp:221]: (style) Unused private function: 'NetworkStreamer::ReadBits'
+[..\..\Doremi\Core\Source\Streamers\NetworkStreamer.cpp:523]: (error) Mismatching allocation and deallocation: StringArray
+[..\..\Doremi\Core\Source\TemplateCreator.cpp:547]: (style) Variable 't_skeletalInformation' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\EntityComponent\Components\PlayerComponent.hpp:12]: (warning, inconclusive) Member variable 'PlayerComponent::isControllable' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EntityComponent\Components\SkeletalAnimationComponent.hpp:24]: (warning) Member variable 'SkeletalAnimationComponent::timePosition' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\EntityComponent\Components\SkeletalAnimationComponent.hpp:27]: (warning) Member variable 'SkeletalAnimationComponent::timePosition' is not initialized in the constructor.
+[..\..\Doremi\Core\Source\TemplateCreator.cpp:805] -> [..\..\Doremi\Core\Include\TemplateCreator.hpp:26]: (performance, inconclusive) Technically the member function 'Doremi::Core::TemplateCreator::CreateTemplatesForClient' can be static.
+[..\..\Doremi\Core\Source\TemplateCreator.cpp:820] -> [..\..\Doremi\Core\Include\TemplateCreator.hpp:31]: (performance, inconclusive) Technically the member function 'Doremi::Core::TemplateCreator::CreateTemplatesForServer' can be static.
+[..\..\Doremi\Core\Include\EntityComponent\Components\PlayerComponent.hpp:13]: (style) Struct 'PlayerComponent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\EntityComponent\Components\AIGroupComponent.hpp:21]: (style) Struct 'AIGroupComponent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\EntityComponent\Components\SkeletalAnimationComponent.hpp:24]: (style) Struct 'SkeletalAnimationComponent' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Server\Source\Server.cpp:195]: (style) The scope of the variable 'Frame' can be reduced.
+[..\..\Doremi\Server\Source\Server.cpp:111]: (style) Variable 't_extraDrainManager' is assigned a value that is never used.
+[..\..\Doremi\Core\Include\LevelLoaderServer.hpp:12]: (style) Class 'LevelLoaderServer' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\Network\ServerNetworkManager.hpp:35]: (style) Class 'ServerNetworkManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\MovementManagerServer.hpp:16]: (style) Class 'MovementManagerServer' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\FrequencyAffectedObjectManager.hpp:19]: (style) Class 'FrequencyAffectedObjectManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\EntitySpawnManager.hpp:21]: (style) Class 'EntitySpawnManager' has a constructor with 1 argument that is not explicit.
+[..\..\Doremi\Core\Include\Manager\DamageManager.hpp:14]: (style) Class 'DamageManager' has a constructor with 1 argument that is not explicit.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:187]: (style, inconclusive) Consecutive return, break, continue, goto or throw statements are unnecessary.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:16]: (style) Unused variable: str
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:870]: (style) Unused variable: infoSize
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:894]: (style) Unused variable: infoSize
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:918]: (style) Unused variable: infoSize
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:942]: (style) Unused variable: infoSize
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:1111]: (style) Variable 'diffTexLength' is assigned a value that is never used.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:1112]: (style) Variable 'glowTexLength' is assigned a value that is never used.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:1113]: (style) Variable 'specTexLength' is assigned a value that is never used.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:848]: (error) Uninitialized variable: totalSize
+[..\..\DoremiEditor\DRMEditorPlugin\Source\FileMap.cpp:847]: (error) Uninitialized variable: padding
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1990]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:41]: (style) The scope of the variable 'totTris' can be reduced.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:42]: (style) The scope of the variable 'trisPerFace' can be reduced.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1606]: (style) The scope of the variable 'hasShapes' can be reduced.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1045]: (style) Variable 'nName' is assigned a value that is never used.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1490]: (style) Unused variable: oldName
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1530]: (style) Unused variable: oldName
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1569]: (style) Unused variable: oldName
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1466]: (performance) Inefficient usage of string::find() in condition; string::compare() would be faster.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1072]: (performance) Passing the result of c_str() to a function that takes std::string as argument no. 1 is slow and redundant.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:1072]: (performance) Passing the result of c_str() to a function that takes std::string as argument no. 2 is slow and redundant.
+[..\..\DoremiEditor\DRMEditorPlugin\Source\Plugin.cpp:2076]: (performance) Passing the result of c_str() to a function that takes std::string as argument no. 2 is slow and redundant.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:48]: (style) Variable 'derp' is assigned a value that is never used.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:57]: (style) Variable 'derp' is assigned a value that is never used.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:118]: (style) Variable 'hejd' is assigned a value that is never used.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:177]: (style) Variable 'derp' is assigned a value that is never used.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:182]: (error) Mismatching allocation and deallocation: t_name
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:195]: (error) Mismatching allocation and deallocation: t_name
+[..\..\DoremiEngine\Graphic\Source\Loaders\DDSTextureLoader.cpp:136]: (style, inconclusive) Technically the member function '::handle_closer::operator()' can be const.
+[..\..\DoremiEngine\Graphic\Source\Loaders\ModelLoader.cpp:57]: (style) The scope of the variable 'spherePitch' can be reduced.
+[..\..\DoremiEngine\Graphic\Source\Manager\ComputeShaderManagerImpl.cpp:104] -> [..\..\DoremiEngine\Graphic\Source\Manager\ComputeShaderManagerImpl.cpp:110]: (performance) Variable 'hr' is reassigned a value before the old one has been used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ComputeShaderManagerImpl.cpp:110] -> [..\..\DoremiEngine\Graphic\Source\Manager\ComputeShaderManagerImpl.cpp:126]: (performance) Variable 'hr' is reassigned a value before the old one has been used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ComputeShaderManagerImpl.cpp:134]: (style) Variable 'hr' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:84]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:89]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:94]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:116]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:123]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:128]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:133]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:138]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:143]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:149]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:177]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:190]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\DirectXManagerImpl.cpp:205]: (style) Variable 'a' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\LightManagerImpl.cpp:116]: (error) Address of an auto-variable returned.
+[..\..\DoremiEngine\Graphic\Source\Manager\MeshManagerImpl.cpp:26]: (style) Variable 'm_directX' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\MeshManagerImpl.cpp:40]: (style) Variable 'filePath' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\MeshManagerImpl.cpp:71]: (style) Variable 'filePath' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:75] -> [..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:76]: (performance) Variable 'res' is reassigned a value before the old one has been used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:95] -> [..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:96]: (performance) Variable 'res' is reassigned a value before the old one has been used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:77]: (style) Variable 'success' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\ShaderManagerImpl.cpp:97]: (style) Variable 'success' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\SkeletalAnimationManagerImpl.cpp:30]: (style) Variable 'res' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Manager\SubModuleManagerImpl.cpp:41]: (style) Variable 'cshader' is assigned a value that is never used.
+[..\..\DoremiEngine\Graphic\Source\Shader\ComputeShaderImpl.cpp:7]: (warning) Member variable 'ComputeShaderImpl::m_shaderHandle' is not initialized in the constructor.
+[..\..\DoremiEngine\Graphic\Source\State\DepthStencilStateImpl.cpp:8]: (warning) Member variable 'DepthStencilStateImpl::m_stencilState' is not initialized in the constructor.
+[..\..\DoremiEngine\Graphic\Source\State\RasterizerStateImpl.cpp:8]: (warning) Member variable 'RasterizerStateImpl::m_rasterizerState' is not initialized in the constructor.
+[..\..\Utility\Utilities\Include\Logging\LogLevelInfo.hpp:12]: (style) Struct 'LogLevelInfo' has a constructor with 1 argument that is not explicit.
+[..\..\Utility\Utilities\Include\Logging\LogTagInfo.hpp:12]: (style) Struct 'LogTagInfo' has a constructor with 1 argument that is not explicit.
+[..\..\DoremiEngine\Logging\Source\Internal\Logger\LoggerImpl.cpp:118]: (style) Variable 'succeed' is assigned a value that is never used.
+[..\..\DoremiEngine\Logging\Source\Internal\Logger\LoggerImpl.cpp:190]: (style) Variable 'succeed' is assigned a value that is never used.
+[..\..\DoremiEngine\Network\Source\NetworkModuleImplementation.cpp:112]: (style) Variable 'SendSuccessful' is assigned a value that is never used.
+[..\..\DoremiEngine\Network\Source\Socket.cpp:346]: (style) Variable 'errorCode' is assigned a value that is never used.
+[..\..\DoremiEngine\Network\Include\Socket.hpp:30]: (style) Class 'Socket' has a constructor with 1 argument that is not explicit.
+[..\..\DoremiEngine\Physics\Source\CharacterControlManagerImpl.cpp:51]: (style) Variable 'm_minDistTraveled' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\ParticleClasses\ParticleEmitter.cpp:157]: (style) The scope of the variable 'sprayFactor' can be reduced.
+[..\..\DoremiEngine\Physics\Source\ParticleClasses\ParticleEmitter.cpp:74]: (style) Variable 'length' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\ParticleClasses\ParticleEmitter.cpp:122]: (style) Unused variable: velocitiesVector
+[..\..\DoremiEngine\Physics\Source\PhysicsModuleImplementation.cpp:33]: (style) Variable 'failed' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\PhysicsModuleImplementation.cpp:294]: (style) Variable 'cp' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\PhysicsModuleImplementation.cpp:346]: (style) Variable 'first' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\PhysicsModuleImplementation.cpp:347]: (style) Variable 'second' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\RayCastManagerImpl.cpp:115]: (style) Variable 'status' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Include\Internal\RayCastManagerImpl.hpp:11]: (style) Class 'RayCastManagerImpl' has a constructor with 1 argument that is not explicit.
+[..\..\DoremiEngine\Physics\Include\Internal\PhysicsModuleImplementation.hpp:50]: (style) Class 'PhysicsModuleImplementation' has a constructor with 1 argument that is not explicit.
+[..\..\DoremiEngine\Physics\Source\RigidBodyManagerImpl.cpp:81]: (style) Variable 'material' is assigned a value that is never used.
+[..\..\DoremiEngine\Physics\Source\RigidBodyManagerImpl.cpp:163]: (style) Variable 'valid' is assigned a value that is never used.
+[..\..\UnitTest\Source\BitStreamerTest.cpp:12]: (style) Variable 'breakp' is assigned a value that is never used.
+[..\..\UnitTest\Source\BitStreamerTest.cpp:26]: (style) Variable 'breakp' is assigned a value that is never used.
+[..\..\UnitTest\Source\BitStreamerTest.cpp:51]: (style) Variable 'breakp' is assigned a value that is never used.
+[..\..\UnitTest\Source\BitStreamerTest.cpp:65]: (style) Variable 'breakp' is assigned a value that is never used.
+[..\..\UnitTest\Include\BitStreamerTest.hpp:9]: (warning) Member variable 'BitStreamerTest::m_streamer' is not initialized in the constructor.
+[..\..\UnitTest\Include\BitStreamerTest.hpp:9]: (warning) Member variable 'BitStreamerTest::m_netMessage' is not initialized in the constructor.
+[..\..\UnitTest\Include\BitStreamerTest.hpp:9]: (warning) Member variable 'BitStreamerTest::m_bytesWritten' is not initialized in the constructor.
+[..\..\UnitTest\Include\BitStreamerTest.hpp:9]: (warning) Member variable 'BitStreamerTest::m_bytesRead' is not initialized in the constructor.
+[..\..\UnitTest\Include\BitStreamerTest.hpp:9]: (warning) Member variable 'BitStreamerTest::m_finished' is not initialized in the constructor.
+[..\..\Doremi\Core\Include\InterpolationHandler.hpp:18] -> [..\..\Doremi\Core\Include\EntityComponent\Constants.hpp:6]: (style, inconclusive) The variable 'EntityID' hides a typedef with the same name.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_netEventSender' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_networkEventReceiver' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_streamer' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_streamerRead' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_netMessage' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_bytesWritten' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_bytesRead' is not initialized in the constructor.
+[..\..\UnitTest\Include\NetworkEventTest.hpp:11]: (warning) Member variable 'NetworkEventTest::m_finished' is not initialized in the constructor.
+[..\..\UnitTest\Include\Utilities\IO\FileMap\FileMapTest.hpp:10]: (warning) Member variable 'FileMapTest::m_fileMap' is not initialized in the constructor.
+[..\..\Utility\Utilities\Include\Memory\AllocationHeaderBuilder.hpp:195]: (error) Reference to auto variable returned.
+[..\..\Utility\Utilities\Source\IO\FileMap\FileMap.cpp:26] -> [..\..\Utility\Utilities\Source\IO\FileMap\FileMap.cpp:28]: (performance) Variable 'success' is reassigned a value before the old one has been used.
+[..\..\Utility\Utilities\Source\IO\Mutex\FileMapMutex.cpp:29] -> [..\..\Utility\Utilities\Source\IO\Mutex\FileMapMutex.cpp:32]: (performance) Variable 'success' is reassigned a value before the old one has been used.
+[..\..\Utility\Utilities\Source\IO\Mutex\FileMapMutex.cpp:56]: (style) The scope of the variable 'check' can be reduced.
+[..\..\DoremiEngine\AI\Source\AIModuleImplementation.cpp:35]: (style) The function 'CreateAIModule' is never used.
+[..\..\DoremiEngine\Audio\Source\Internal\AudioModuleImplementation.cpp:376]: (style) The function 'CreateAudioModule' is never used.
+[..\..\DoremiEngine\Configuration\Source\ConfigurationModuleImplementation.cpp:130]: (style) The function 'CreateConfigurationModule' is never used.
+[..\..\DoremiEngine\Graphic\Source\GraphicModuleImplementation.cpp:39]: (style) The function 'CreateGraphicModule' is never used.
+[..\..\DoremiEngine\Input\Source\Internal\InputModuleImplementation.cpp:259]: (style) The function 'CreateInputModule' is never used.
+[..\..\DoremiEngine\Logging\Source\Internal\LoggingModuleImplementation.cpp:36]: (style) The function 'CreateLoggingModule' is never used.
+[..\..\DoremiEngine\Network\Source\NetworkModuleImplementation.cpp:256]: (style) The function 'CreateNetworkModule' is never used.
+[..\..\DoremiEngine\Physics\Source\PhysicsModuleImplementation.cpp:356]: (style) The function 'CreatePhysicsModule' is never used.
+[..\..\DoremiEngine\Timing\Source\Internal\TimingModuleImplementation.cpp:20]: (style) The function 'CreateTimingModule' is never used.
+[..\..\DoremiEngine\Core\Source\Internal\DoremiEngineImplementation.cpp:505]: (style) The function 'StartEngine' is never used.
+[..\..\DoremiEngine\Core\Source\Internal\DoremiEngineImplementation.cpp:515]: (style) The function 'StopEngine' is never used.
+(information) Cppcheck cannot find all the include files (use --check-config for details)

@@ -3,9 +3,10 @@ cd $SSP_CODE_HOME
 logFile="logs/gitlogs.txt"
 mkdir -p logs
 touch logs/gitlogs.txt
-date=`date '+%Y-%m-%d %H:%M'`
+date=`date '+%Y-%m-%d	 %H:%M'`
 error=0
 > .formatCache
+> .staticTestCache
 
 # Find all files that has been changed
 files=`git diff --cached -p --diff-algorithm=minimal | grep -a "diff --git" | cut -d" " -f3 | cut -c 3- | grep -a ".cpp\|.hpp"`
@@ -29,7 +30,7 @@ do
 		echo "[$date] line = $line" >> $logFile
 		startLine=$(echo $line | cut -d"," -f1)
 		endLine=$(echo $line | cut -d"," -f2)
-		endLine=$((startLine + endLine))		
+		endLine=$((startLine + endLine))
 		echo "[$date] startLine = $startLine" >> $logFile
 		echo "[$date] endLine = $endLine" >> $logFile
 		newCode=`./tools/bin/clang-format.exe -lines=$startLine:$endLine $file`
@@ -53,12 +54,51 @@ if [ $error -ne 0 ]; then
 	echo -e "\t(Run './tools/script/formatFromCache.sh' to format these changes.)" 
 	echo -e "\t(Do not forget to add the same file using 'git add /../'.)"
 	echo -e ""
-	for faultyFile in $(cat .formatCache | cut -d"," -f1)
+	for faultyFile in $(cat .formatCache | cut -d"," -f1 | sort | uniq)
 	do
-	echo -e "${RED}\t$faultyFile"
+	echo -e "${RED}\t$faultyFile${NC}"
 	done
-	exit $error
+	#exit $error
 fi
 
-echo -e "Check complete. No problems detected."
-exit 0
+echo -e "\n"
+echo -e "Performing static tests. (This may take a couple of seconds)"
+
+# Check against static 
+./tools/script/runStaticTest.sh
+for file in $(echo $files)
+do
+	res=`grep "$file" .staticTestCache`
+	if [ ! -z "$res" ]; then
+		add=`echo -e "\n$res"`
+		totalRes+=$add
+		error=2
+	fi
+done
+#echo -e "$totalRes"
+
+if [ $error -ne 0 ]; then
+	RED='\033[0;31m'
+	PURPLE='\033[0;35m'
+	NC='\033[0m' # No Color
+	echo -e ""
+	echo -e "Static test failed, found problems in the following files:"	
+	echo -e "\t(Run './tools/script/formatFromCache.sh' to format these changes.)" 
+	echo -e "\t(Do not forget to add the same file using 'git add /../'.)"
+	echo -e ""
+	echo -e "$totalRes"
+	for res in $("$totalRes")
+	do
+	#	echo "hej"
+		echo -e "${RED}\t$res${NC}"
+	done
+	#exit $error
+fi
+
+
+if [ $error -eq 0 ]; then
+	echo -e "Check complete. No problems detected."
+	exit 0
+fi
+
+exit $error
