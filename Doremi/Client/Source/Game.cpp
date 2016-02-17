@@ -52,6 +52,7 @@
 #include <Doremi/Core/Include/Manager/LightManager.hpp>
 #include <Doremi/Core/Include/Manager/TriggerManager.hpp>
 #include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
+#include <Doremi/Core/Include/Manager/GroundEffectManagerClient.hpp>
 // Components
 #include <Doremi/Core/Include/EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
@@ -133,12 +134,14 @@ namespace Doremi
         Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
         Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
+        Core::Manager* t_groundZoneManagerClient = new Core::GroundEffectManagerClient(sharedContext);
 
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
         // Add manager to list of managers
 
         m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
+        m_graphicalManagers.push_back(t_groundZoneManagerClient);
         Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
         m_graphicalManagers.push_back(t_skeletalAnimationManager);
         // Add manager to list of managers
