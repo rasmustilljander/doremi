@@ -278,9 +278,6 @@ namespace Doremi
             {
                 (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new PlayerRespawnEvent(*p_playerRespawnEvent));
             }
-
-            // Save it for later joins
-            m_allQueuedEvents.push_back(new PlayerRespawnEvent(*p_playerRespawnEvent));
         }
 
         void PlayerHandlerServer::QueueGunFireToggleEventToPlayers(GunFireToggleEvent* t_gunFireToggleEvent)
@@ -295,9 +292,6 @@ namespace Doremi
                 }
                 (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new GunFireToggleEvent(*t_gunFireToggleEvent));
             }
-
-            // Save it for later joins
-            m_allQueuedEvents.push_back(new GunFireToggleEvent(*t_gunFireToggleEvent));
         }
 
         void PlayerHandlerServer::OnEvent(Event* p_event)

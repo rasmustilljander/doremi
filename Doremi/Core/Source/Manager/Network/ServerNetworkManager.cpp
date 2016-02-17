@@ -582,6 +582,10 @@ namespace Doremi
             uint32_t numPlayers = PlayerHandler::GetInstance()->GetNumOfPlayers();
             Streamer.WriteUnsignedInt32(numPlayers - 1);
 
+
+            // We should get all the events, and send them in some way simular to we send the other events...
+
+            // Should be done on acc instead
             p_connection->ConnectionState = ConnectionState::IN_GAME;
 
             // Send message
