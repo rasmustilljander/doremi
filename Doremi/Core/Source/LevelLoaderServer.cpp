@@ -138,7 +138,7 @@ namespace Doremi
 
                 EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::EntitySpawner);
                 EntitySpawnComponent* entitySpawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(p_entityId);
-                entitySpawnComp->entityBlueprint = Blueprints::RangedEnemyEntity; //(Blueprints)transformationData.attributes.typeBlueprint; TODOKO
+                entitySpawnComp->entityBlueprint = static_cast<Blueprints>(transformationData.attributes.spawnTypeBlueprint);
                 entitySpawnComp->maxNumSpawnedEntites = transformationData.attributes.spawnMax;
                 entitySpawnComp->type = SpawnerType::TimedSpawner;
                 entitySpawnComp->timeBetweenSpawns = 10;
