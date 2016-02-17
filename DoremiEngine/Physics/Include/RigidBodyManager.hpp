@@ -147,6 +147,13 @@ namespace DoremiEngine
             Releases the actor
             */
             virtual void RemoveBody(int p_bodyID) = 0;
+
+
+            /// A series of experimental methods specific for the game TODOJB ensure these do not make it into the final build
+            // Create an arbitrary body with no shapes
+            virtual void CreateArbitraryBody(int p_id) = 0;
+            // Add shapes to body
+            virtual void AddShapeToBody(int p_id, XMFLOAT3 p_position) = 0;
         };
     }
 }

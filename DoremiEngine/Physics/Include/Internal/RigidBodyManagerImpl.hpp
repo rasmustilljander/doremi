@@ -75,6 +75,10 @@ namespace DoremiEngine
             void ClearRecentlyWakeStatusLists();
 
 
+            // TODOJB these are experimental. Remove
+            void CreateArbitraryBody(int p_id) override;
+            void AddShapeToBody(int p_id, XMFLOAT3 p_position) override;
+
         private:
             InternalPhysicsUtils& m_utils;
             MeshCooker* m_meshCooker;

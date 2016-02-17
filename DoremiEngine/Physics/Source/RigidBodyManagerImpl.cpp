@@ -507,5 +507,28 @@ namespace DoremiEngine
             m_recentlySleepingObjects.clear();
             m_recentlyWokenObjects.clear();
         }
+        void RigidBodyManagerImpl::CreateArbitraryBody(int p_id)
+        {
+
+            // Create an arbitrary static body
+            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(PxTransform());
+            // Add to scene
+            m_utils.m_worldScene->addActor(*body);
+
+
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
+        }
+        void RigidBodyManagerImpl::AddShapeToBody(int p_id, XMFLOAT3 p_position)
+        {
+            // Create a shape. Set it as a trigger
+            PxShape* shape;
+            shape = m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+            // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
+            PxVec3 position(p_position.x, p_position.y, p_position.z);
+            shape->setLocalPose(PxTransform(position));
+            // Attach shape to body
+            m_bodies[p_id]->attachShape(*shape);
+        }
     }
 }
