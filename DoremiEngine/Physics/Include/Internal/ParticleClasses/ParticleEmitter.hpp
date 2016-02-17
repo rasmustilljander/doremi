@@ -48,6 +48,10 @@ namespace DoremiEngine
             step*/
             vector<int> GetDrainsHit();
 
+            /**
+            Returns a vector with the positions of all particles
+            that were recently removed*/
+            const vector<XMFLOAT3>& GetRemovedParticlesPositions();
 
             /**
             Sets all variables of the particle emitter*/
@@ -105,7 +109,10 @@ namespace DoremiEngine
             // Float to keep track of when last particle wave was emitted
             float m_timeSinceLast;
 
+            // IDs of all drains which were hit
             vector<int> m_drainsHit;
+            // Positions of particles at the time they were removed
+            vector<XMFLOAT3> m_removedParticlesPositions;
 
             // Temporary index variable to make sure things work
             int m_nextIndex;
