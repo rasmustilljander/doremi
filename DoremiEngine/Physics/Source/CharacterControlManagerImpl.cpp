@@ -99,8 +99,14 @@ namespace DoremiEngine
                 // Controller did not exist
                 throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
-
-            m_controllers[p_id]->setPosition(PxExtendedVec3(p_position.x, p_position.y, p_position.z));
+            if(p_id == 502)
+            {
+                m_controllers[p_id]->setFootPosition(PxExtendedVec3(p_position.x, p_position.y, p_position.z));
+            }
+            else
+            {
+                m_controllers[p_id]->setPosition(PxExtendedVec3(p_position.x, p_position.y, p_position.z));
+            }
         }
 
         void CharacterControlManagerImpl::SetCallbackFiltering(int p_bodyID, int p_thisIdMask, int p_notifyTouchOthersMask,

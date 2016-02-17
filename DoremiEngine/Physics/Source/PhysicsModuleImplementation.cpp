@@ -1,5 +1,4 @@
 #include <Internal/PhysicsModuleImplementation.hpp>
-#include <iostream>
 
 namespace DoremiEngine
 {
@@ -210,7 +209,6 @@ namespace DoremiEngine
             {
                 const PxContactPair& cp = pairs[i];
                 CollisionPair collisionPair;
-                std::cout << "Pair found!" << std::endl;
                 // Check if this was a touch found collision callback
                 if(cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
                 {
@@ -332,7 +330,6 @@ namespace DoremiEngine
                         // Has to be a rigid body. Possibly dangerous to assume...
                         collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
                     }
-
                     m_triggerPairs.push_back(collisionPair);
                 }
             }
