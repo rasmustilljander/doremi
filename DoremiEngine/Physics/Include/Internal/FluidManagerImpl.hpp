@@ -20,6 +20,7 @@ namespace DoremiEngine
 
             void CreateParticleEmitter(int p_id, ParticleEmitterData p_data) override;
             void GetParticlePositions(int p_id, vector<XMFLOAT3>& o_positions) override;
+            const vector<XMFLOAT3>& GetRemovedParticlesPositions(int p_id) override;
             void SetParticleEmitterData(int p_id, ParticleEmitterData p_data) override;
             vector<int> GetDrainsHit(int p_id) override;
             // void CreateFluid(int p_id) override;

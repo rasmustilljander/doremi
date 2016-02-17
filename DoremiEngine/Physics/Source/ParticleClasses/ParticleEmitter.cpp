@@ -57,6 +57,8 @@ namespace DoremiEngine
 
         vector<int> ParticleEmitter::GetDrainsHit() { return m_drainsHit; }
 
+        const vector<XMFLOAT3>& ParticleEmitter::GetRemovedParticlesPositions() { return m_removedParticlesPositions; }
+
         void ParticleEmitter::SetData(ParticleEmitterData p_data) { m_this = p_data; }
 
         void ParticleEmitter::LockParticleData() { m_readData = m_particleSystem->lockParticleReadData(); }
@@ -142,6 +144,8 @@ namespace DoremiEngine
                     indicesOfParticlesToBeReleased.push_back(i);
                     // m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
                     m_drainsHit.push_back(m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100));
+                    // Add the position to a the list of removed particles positions
+                    m_removedParticlesPositions.push_back(position);
                 }
             }
             if(indicesOfParticlesToBeReleased.size() != 0)
@@ -250,6 +254,7 @@ namespace DoremiEngine
 
         void ParticleEmitter::Update(float p_dt)
         {
+            m_removedParticlesPositions.clear();
             m_drainsHit.clear();
             // Lock the read data
             LockParticleData();

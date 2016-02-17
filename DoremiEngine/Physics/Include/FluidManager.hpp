@@ -48,6 +48,11 @@ namespace DoremiEngine
             // virtual void CreateFluid(int p_id) = 0;
             // virtual void CreateFluidParticles(int p_id, vector<XMFLOAT3>& p_positions, vector<XMFLOAT3>& p_velocities, vector<int>& p_indices) = 0;
             virtual void GetParticlePositions(int p_id, vector<XMFLOAT3>& o_positions) = 0;
+
+            /**
+            Returns a vector with positions of all recently removed particles*/
+            virtual const vector<XMFLOAT3>& GetRemovedParticlesPositions(int p_id) = 0;
+
             /**
             Creates a new particle system. Particle system will be a pressure emitter ONLY*/
             virtual void CreateParticleEmitter(int p_id, ParticleEmitterData p_data) = 0;

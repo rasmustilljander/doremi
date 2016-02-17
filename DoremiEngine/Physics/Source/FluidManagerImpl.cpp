@@ -1,6 +1,9 @@
 #include <Internal/FluidManagerImpl.hpp>
 #include <Internal/PhysicsModuleImplementation.hpp>
 #include <Internal/ParticleClasses/ParticleEmitter.hpp>
+
+#include <iostream>
+using namespace std;
 namespace DoremiEngine
 {
     namespace Physics
@@ -13,6 +16,17 @@ namespace DoremiEngine
             m_emitters[p_id] = new ParticleEmitter(p_data, m_utils);
         }
         void FluidManagerImpl::GetParticlePositions(int p_id, vector<XMFLOAT3>& o_positions) { m_emitters[p_id]->GetPositions(o_positions); }
+
+        const vector<XMFLOAT3>& FluidManagerImpl::GetRemovedParticlesPositions(int p_id)
+        {
+            // Check if the particle system exists
+            if(m_emitters.find(p_id) == m_emitters.end())
+            {
+                cout << "Physics. Particle systems. GetRemoveParticlesPositions. No particle system exists with id" << p_id << endl;
+                return vector<XMFLOAT3>();
+            }
+            return m_emitters.at(p_id)->GetRemovedParticlesPositions();
+        }
 
         void FluidManagerImpl::SetParticleEmitterData(int p_id, ParticleEmitterData p_data) { m_emitters[p_id]->SetData(p_data); }
 
