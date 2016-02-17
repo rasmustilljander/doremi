@@ -11,9 +11,6 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
 
-
-// debug
-#include <iostream>
 using namespace DirectX;
 namespace Doremi
 {
