@@ -523,7 +523,7 @@ namespace DoremiEngine
         {
 
             // Create an arbitrary static body
-            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(PxTransform());
+            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
             // Add to scene
             m_utils.m_worldScene->addActor(*body);
 
