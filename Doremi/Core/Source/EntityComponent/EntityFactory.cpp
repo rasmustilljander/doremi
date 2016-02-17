@@ -27,6 +27,7 @@
 #include <EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
+#include <EntityComponent/Components/AITimerComponent.hpp>
 
 // Events
 #include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
@@ -89,6 +90,7 @@ namespace Doremi
             {
                 // physicsModule.GetFluidManager() //Remove particle system here TODOJB actually do this
             }
+            // TODOKO Memory leak!! The potentialfield stuff needs to be removed
         }
 
         EntityFactory::EntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
@@ -291,6 +293,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::SkeletalAnimation)
                 {
                     memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
+                }
+                else if(iter->first == ComponentType::AITimer)
+                {
+                    memcpy(GetComponent<AITimerComponent>(p_entityID), iter->second, sizeof(AITimerComponent));
                 }
 
                 // Add bitmask. This is now done last due to transform being a dick

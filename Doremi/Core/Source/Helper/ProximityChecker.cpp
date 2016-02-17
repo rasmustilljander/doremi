@@ -53,12 +53,26 @@ namespace Doremi
             return retVector;
         }
 
+        float ProximityChecker::GetDistanceBetweenEntities(const size_t& p_firstEntityID, const size_t& p_secondEntityID)
+        {
+            // Make sure both entities have a transform
+            if(EntityHandler::GetInstance().HasComponents(p_firstEntityID, (int)ComponentType::Transform) ||
+               EntityHandler::GetInstance().HasComponents(p_secondEntityID, (int)ComponentType::Transform))
+            {
+                TransformComponent* firstTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_firstEntityID);
+                TransformComponent* secondTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_secondEntityID);
+                return CalculateDistance(firstTransform->position, secondTransform->position);
+            }
+            else
+            {
+                // TODOKO log error
+            }
+            return -1;
+        }
+
         bool ProximityChecker::IsInProximity(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2, const float& p_range)
         {
-            using namespace DirectX;
-            XMVECTOR vecBetweenEntities = XMLoadFloat3(&p_position2) - XMLoadFloat3(&p_position1);
-            XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
-            float distance = *distanceVec.m128_f32;
+            float distance = CalculateDistance(p_position1, p_position2);
             if(distance <= p_range)
             {
                 return true;
@@ -67,6 +81,14 @@ namespace Doremi
             {
                 return false;
             }
+        }
+        float ProximityChecker::CalculateDistance(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2)
+        {
+            using namespace DirectX;
+            XMVECTOR vecBetweenEntities = XMLoadFloat3(&p_position2) - XMLoadFloat3(&p_position1);
+            XMVECTOR distanceVec = XMVector3Length(vecBetweenEntities);
+            float distance = *distanceVec.m128_f32;
+            return distance;
         }
     }
 }

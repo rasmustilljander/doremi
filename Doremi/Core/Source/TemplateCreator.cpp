@@ -24,6 +24,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/CharacterControlComponen.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/AITimerComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -251,6 +252,10 @@ namespace Doremi
             group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
             blueprint[ComponentType::AIGroup] = group;
 
+            // AI timers
+            AITimerComponent* aiTimers = new AITimerComponent(0.5f, 0.025f);
+            blueprint[ComponentType::AITimer] = aiTimers;
+
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
             blueprint[ComponentType::Movement] = movementcomp;
@@ -296,6 +301,7 @@ namespace Doremi
 
             // Entity type comp
             EntityTypeComponent* typeComp = new EntityTypeComponent();
+            typeComp->type = EntityType::EnemyBullet;
             blueprint[ComponentType::EntityType] = typeComp;
 
             // Network object

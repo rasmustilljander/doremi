@@ -57,7 +57,8 @@ namespace Doremi
                         t_bulletPairs.push_back(XMINT2(t_collisionPairs[i].firstID, t_collisionPairs[i].secondID));
                     }
                 }
-                else if(EntityHandler::GetInstance().HasComponents(t_collisionPairs[i].secondID, (int)ComponentType::EntityType))
+                // If bullets collide a bullet could be in both and should be removed
+                if(EntityHandler::GetInstance().HasComponents(t_collisionPairs[i].secondID, (int)ComponentType::EntityType))
                 {
                     EntityTypeComponent* typeComp = EntityHandler::GetInstance().GetComponentFromStorage<EntityTypeComponent>(t_collisionPairs[i].secondID);
                     if(((int)typeComp->type & (int)EntityType::EnemyBullet) == (int)EntityType::EnemyBullet) // if second entity is bullet
@@ -95,7 +96,6 @@ namespace Doremi
                 if(removedBullets.count(t_bulletPairs[i].x) == 0)
                 {
                     EntityHandler::GetInstance().RemoveEntity(t_bulletPairs[i].x);
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(t_bulletPairs[i].x);
                     removedBullets.insert(t_bulletPairs[i].x);
                 }
                 else

@@ -41,6 +41,7 @@ enum class ComponentType : int
     EntitySpawner = 0x4000000,
     ExtraDrain = 0x8000000,
     SkeletalAnimation = 0x10000000,
+    AITimer = 0x20000000,
 };
 
 /**

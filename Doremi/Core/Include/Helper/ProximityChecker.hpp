@@ -24,6 +24,10 @@ namespace Doremi
             Returns a list of all entitys that are in proximity
             */
             std::vector<size_t> GetAllEntitysInProximity(size_t p_entityID);
+            /**
+            Returns the distance between 2 entities
+            */
+            float GetDistanceBetweenEntities(const size_t& p_firstEntityID, const size_t& p_secondEntityID);
 
         protected:
             static ProximityChecker* m_singleton;
@@ -31,6 +35,7 @@ namespace Doremi
 
             // Help functions
             bool IsInProximity(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2, const float& p_range);
+            float CalculateDistance(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2);
         };
     }
 }
