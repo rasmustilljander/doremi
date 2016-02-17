@@ -10,6 +10,7 @@
 // Physics
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 
 using namespace DirectX;
 namespace Doremi
@@ -20,6 +21,8 @@ namespace Doremi
         GroundEffectManager::GroundEffectManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "GroundEffectManager")
         {
+            // EXPERIMENTAL PHYSICS. Hard-coded ID works since I thought ahead and made it signed. Tru story
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().CreateArbitraryBody(-15);
         }
 
         GroundEffectManager::~GroundEffectManager() {}
