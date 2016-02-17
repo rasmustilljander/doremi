@@ -173,9 +173,9 @@ namespace Doremi
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
         // Add manager to list of managers
 
+        m_graphicalManagers.push_back(t_groundZoneManagerClient);
         m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
-        m_graphicalManagers.push_back(t_groundZoneManagerClient);
         Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
         m_graphicalManagers.push_back(t_skeletalAnimationManager);
         // Add manager to list of managers
