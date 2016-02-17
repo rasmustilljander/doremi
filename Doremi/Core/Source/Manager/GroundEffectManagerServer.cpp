@@ -19,7 +19,7 @@ namespace Doremi
     {
 
         GroundEffectManagerServer::GroundEffectManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "GroundEffectManager")
+            : Manager(p_sharedContext, "GroundEffectManagerServer")
         {
             // EXPERIMENTAL PHYSICS. Hard-coded ID works since I thought ahead and made it signed. Tru story
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().CreateArbitraryBody(-15);
