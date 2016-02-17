@@ -17,13 +17,7 @@ namespace Doremi
 
         TreeHandler::~TreeHandler() {}
 
-        void TreeHandler::Update()
-        {
-
-        }
-        void TreeHandler::OnEvent(Event* p_event)
-        {
-
-        }
+        void TreeHandler::Update() {}
+        void TreeHandler::OnEvent(Event* p_event) {}
     }
 }
