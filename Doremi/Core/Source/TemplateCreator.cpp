@@ -504,11 +504,6 @@ namespace Doremi
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(3);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
 
-            // Range Component
-            RangeComponent* t_rangeComponent = new RangeComponent();
-            t_rangeComponent->range = 20.0f;
-            t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
-
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->data.m_active = false;
@@ -604,11 +599,6 @@ namespace Doremi
             // Gravity component
             GravityComponent* t_gravComp = new GravityComponent();
             t_avatarBlueprint[ComponentType::Gravity] = t_gravComp;
-
-            // Range Component
-            RangeComponent* t_rangeComponent = new RangeComponent();
-            t_rangeComponent->range = 20.0f;
-            t_avatarBlueprint[ComponentType::Range] = t_rangeComponent;
 
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();

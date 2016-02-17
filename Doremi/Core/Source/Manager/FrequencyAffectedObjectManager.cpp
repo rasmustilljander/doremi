@@ -58,7 +58,7 @@ namespace Doremi
                             // Get the players current frequency
                             float t_currentFrequency = playerID.second->m_frequencyBufferHandler->GetFrequencyForFrame() / 1000.0f;
                             t_currentFrequency = std::min(t_currentFrequency, 1.0f);
-                            if(ProximityChecker::GetInstance().CheckProximityToEntity(playerID.second->m_playerEntityID, j))
+                            if(ProximityChecker::GetInstance().CheckProximityToEntity(j, playerID.second->m_playerEntityID))
                             {
                                 t_gatheredFrequency += t_currentFrequency;
                             }

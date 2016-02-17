@@ -3,6 +3,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/EntityFactory.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
+
 // Components
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
@@ -14,6 +15,7 @@
 #include <EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
+#include <EntityComponent/Components/RangeComponent.hpp>
 
 /// Engine side
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
@@ -185,6 +187,7 @@ namespace Doremi
                 t_rigidBody->flags = RigidBodyFlags::trigger;
                 t_rigidBody->geometry = RigidBodyGeometry::staticBox;
             }
+
             if(transformationData.attributes.frequencyAffected)
             {
                 r_shouldCookStaticPhysics = false;
@@ -195,7 +198,8 @@ namespace Doremi
                                                                           static_cast<uint32_t>(ComponentType::PlatFormPatrolComponent) |
                                                                           static_cast<uint32_t>(ComponentType::NetworkObject) |
                                                                           static_cast<uint32_t>(ComponentType::RigidBody) |
-                                                                          static_cast<uint32_t>(ComponentType::PhysicalMaterial));
+                                                                          static_cast<uint32_t>(ComponentType::PhysicalMaterial) |
+                                                                          static_cast<uint32_t>(ComponentType::Range));
 
                 // add platform
                 PlatformPatrolComponent* platComp = GetComponent<PlatformPatrolComponent>(p_entityId);
@@ -218,9 +222,13 @@ namespace Doremi
                     static_cast<RigidBodyFlags>(static_cast<uint32_t>(RigidBodyFlags::kinematic) | static_cast<uint32_t>(RigidBodyFlags::drain));
                 t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
 
-                // ADd net comp
+                // Add net comp
                 NetworkObjectComponent* netComp = GetComponent<NetworkObjectComponent>(p_entityId);
                 *netComp = NetworkObjectComponent(1);
+
+                // Add range component
+                RangeComponent* t_rangeComp = GetComponent<RangeComponent>(p_entityId);
+                t_rangeComp->range = transformationData.attributes.interactableRange;
             }
             // WARNING need to be after all others to check against what kind of rigid body it is
             if(transformationData.attributes.isDangerous)
