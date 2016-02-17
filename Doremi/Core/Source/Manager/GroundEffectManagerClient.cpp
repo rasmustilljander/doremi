@@ -54,12 +54,17 @@ namespace Doremi
                     ParticlePressureComponent* particleComp = entityHandler.GetComponentFromStorage<ParticlePressureComponent>(i);
                     // Iterate through all positions
                     size_t size = m_groundEffectPoints.size();
-                    for(size_t j = 0; j < size; j++)
+                    if(size > 0)
                     {
-                        XMFLOAT4X4 transMat;
-                        XMStoreFloat4x4(&transMat, XMMatrixTranslation(m_groundEffectPoints[j].x, m_groundEffectPoints[j].y, m_groundEffectPoints[j].z));
-                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
-                                                                                                                  *particleComp->material, transMat);
+                        for(size_t j = 0; j < size; j++)
+                        {
+                            XMFLOAT4X4 transMat;
+                            // DX oneliner: create a translation matrix, then transpose it, then store it
+                            XMStoreFloat4x4(&transMat, XMMatrixTranspose(XMMatrixTranslation(m_groundEffectPoints[j].x, m_groundEffectPoints[j].y,
+                                                                                             m_groundEffectPoints[j].z)));
+                            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
+                                                                                                                      *particleComp->material, transMat);
+                        }
                     }
                 }
             }
