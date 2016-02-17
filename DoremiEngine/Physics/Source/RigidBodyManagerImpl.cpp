@@ -533,11 +533,61 @@ namespace DoremiEngine
         }
         void RigidBodyManagerImpl::AddShapeToBody(int p_id, XMFLOAT3 p_position)
         {
+
+            PxVec3 position(p_position.x, p_position.y, p_position.z);
+            // Check if there's another trigger close by. Shouldn't be done in engine...
+            PxRigidActor* actor = m_bodies[p_id];
+            uint32_t numShapes = actor->getNbShapes();
+            // Magic allocation of memory (i think)
+            PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
+            actor->getShapes(shapes, numShapes);
+            bool isDone = false;
+            for(uint32_t i = 0; i < numShapes; i++)
+            {
+                PxShape* shape = shapes[i];
+                // Get how long we want the distance to be checked. Based on already existing trigger radius
+                PxSphereGeometry geometry;
+                shape->getSphereGeometry(geometry);
+                float mergeDistance = geometry.radius; // Hard coded 1 here can be tweaked of course
+
+                // Calculate distance
+                PxVec3 shapePos = shape->getLocalPose().p;
+                float distanceBetweenPositions = (shape->getLocalPose().p - position).magnitude();
+                // Check if distance is big enough to justify a merge
+                if(distanceBetweenPositions > mergeDistance)
+                {
+                    // Create a new shape between the current positions
+                    PxVec3 newPosition = 0.5 * (position + shapePos);
+                    PxShape* newShape;
+                    newShape = m_utils.m_physics->createShape(PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8)),
+                                                              *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+                    // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
+                    newShape->setLocalPose(PxTransform(newPosition));
+                    // Attach shape to body
+                    m_bodies[p_id]->attachShape(*newShape);
+                    // Detach old shape
+                    actor->detachShape(*shape);
+                    isDone = true;
+                    break;
+                }
+            }
+            // Cleanup
+            if(shapes)
+            {
+                m_utils.m_allocator.deallocate(shapes);
+                shapes = NULL;
+            }
+            if(isDone)
+            {
+                return;
+            }
+
+            // We didn't return yet so there wasn't a merge. Create new trigger
             // Create a shape. Set it as a trigger
             PxShape* shape;
             shape = m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
             // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
-            PxVec3 position(p_position.x, p_position.y, p_position.z);
+
             shape->setLocalPose(PxTransform(position));
             // Attach shape to body
             m_bodies[p_id]->attachShape(*shape);
