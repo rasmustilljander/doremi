@@ -83,12 +83,6 @@ namespace Doremi
                             DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(10, pairs.second->m_playerEntityID);
 
                             EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
-                            // hpComp->currentHealth -= 10; // TODOKO change to getting from comp
-                            // if(hpComp->currentHealth <= 0)
-                            //{
-                            //    // u ded TODOKO
-                            //    std::cout << "U DED!!!" << std::endl;
-                            //}
                         }
                     }
                 }
@@ -110,48 +104,30 @@ namespace Doremi
                 }
             }
             // Check if the player hit any enemies
-
             // Look through our entities for the enemies
-
             size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
             for(size_t i = 0; i < entitiesLength; i++)
             {
+                // Getting our particlesystem
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PressureParticleSystem))
                 {
+                    // checking if the particles in the particle system hit any drains.
                     std::vector<int> t_drainsHit = m_sharedContext.GetPhysicsModule().GetFluidManager().GetDrainsHit(i);
                     size_t particleVecLength = t_drainsHit.size();
-
                     for(size_t o = 0; o < particleVecLength; o++)
                     {
                         if(t_drainsHit[o] != -1)
                         {
+                            // if the drains hit is an enemy
                             if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], (int)ComponentType::Health | (int)ComponentType::AIAgent |
                                                                                               (int)ComponentType::Transform | (int)ComponentType::CharacterController))
                             {
                                 HealthComponent* drainHitHpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(t_drainsHit[o]);
                                 // TODOEA Make it related to the guns damage and not hard coded
-                                // std::cout << drainHitHpComp->currentHealth << std::endl;
                                 // TODOCONFIG
-                                drainHitHpComp->currentHealth -= 2; // TODOKO change to getting from comp
-
                                 DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(2, t_drainsHit[o]);
 
                                 EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
-
-                                // if(drainHitHpComp->currentHealth <= 0)
-                                //{
-                                //    // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().RemoveCharacterController(t_drainsHit[o]);
-                                //    EntityHandler::GetInstance().RemoveEntity(t_drainsHit[o]);
-                                //    // DEBUG
-                                //    // std::cout << "Enemy DED!!!" << std::endl;
-                                //    // TODOSOUND Deathsound.
-                                //}
-                                // else
-                                //{
-                                //    // DEBUG
-                                //    // std::cout << "Enemy Hit!!" << std::endl;
-                                //    // TODOSOUND DamageSound
-                                //}
                             }
                         }
                         else
