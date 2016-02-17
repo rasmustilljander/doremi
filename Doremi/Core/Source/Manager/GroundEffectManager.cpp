@@ -39,8 +39,18 @@ namespace Doremi
                 {
                     // Merge new positions into already existing positions
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
-                    m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
-                    m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
+                    // m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
+                    // m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
+
+                    // Loop through new positions
+                    size_t size = newPositions.size();
+                    if(size > 0)
+                    {
+                        for(size_t j = 0; j < size; j++)
+                        {
+                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
+                        }
+                    }
                 }
             }
         }
