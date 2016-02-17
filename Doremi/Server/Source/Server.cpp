@@ -50,6 +50,7 @@
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
+#include <Doremi/Core/Include/Manager/GroundEffectManager.hpp>
 
 // other
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
@@ -111,6 +112,7 @@ namespace Doremi
         Core::Manager* t_damageManager = new Core::DamageManager(sharedContext);
         Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
+        Core::Manager* t_groundEffectManager = new Core::GroundEffectManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -119,6 +121,7 @@ namespace Doremi
         // m_managers.push_back(t_extraDrainManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_pressureParticleManager);
+        m_managers.push_back(t_groundEffectManager);
         m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_aiTargetManager); // Must be before movement
         m_managers.push_back(t_jumpManager);
