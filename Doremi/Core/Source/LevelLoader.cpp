@@ -457,35 +457,43 @@ namespace Doremi
             int minInt = std::numeric_limits<int>::min();
             DirectX::XMFLOAT3 maxPosition = DirectX::XMFLOAT3(minInt, minInt, minInt); // THe lowest possible position a int can have
             DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(maxInt, maxInt, maxInt); // The highest possible position a int can have
+            DirectX::XMVECTOR rotation = DirectX::XMLoadFloat4(&p_transformationData.rotation);
             size_t length = p_vertexBuffer.size();
             for(size_t i = 0; i < length; i++)
             {
+                // Rotate positions
+                DirectX::XMVECTOR positionVec = XMLoadFloat3(&p_vertexBuffer[i].position);
+
+                positionVec = XMVector3Rotate(positionVec, rotation);
+                XMFLOAT3 rotatedPos;
+                XMStoreFloat3(&rotatedPos, positionVec);
                 // Finding max value
-                if(p_vertexBuffer[i].position.x > maxPosition.x)
+
+                if(rotatedPos.x > maxPosition.x)
                 {
-                    maxPosition.x = p_vertexBuffer[i].position.x;
+                    maxPosition.x = rotatedPos.x;
                 }
-                if(p_vertexBuffer[i].position.y > maxPosition.y)
+                if(rotatedPos.y > maxPosition.y)
                 {
-                    maxPosition.y = p_vertexBuffer[i].position.y;
+                    maxPosition.y = rotatedPos.y;
                 }
-                if(p_vertexBuffer[i].position.z > maxPosition.z)
+                if(rotatedPos.z > maxPosition.z)
                 {
-                    maxPosition.z = p_vertexBuffer[i].position.z;
+                    maxPosition.z = rotatedPos.z;
                 }
 
                 // FInding min value
-                if(p_vertexBuffer[i].position.x < minPosition.x)
+                if(rotatedPos.x < minPosition.x)
                 {
-                    minPosition.x = p_vertexBuffer[i].position.x;
+                    minPosition.x = rotatedPos.x;
                 }
-                if(p_vertexBuffer[i].position.y < minPosition.y)
+                if(rotatedPos.y < minPosition.y)
                 {
-                    minPosition.y = p_vertexBuffer[i].position.y;
+                    minPosition.y = rotatedPos.y;
                 }
-                if(p_vertexBuffer[i].position.z < minPosition.z)
+                if(rotatedPos.z < minPosition.z)
                 {
-                    minPosition.z = p_vertexBuffer[i].position.z;
+                    minPosition.z = rotatedPos.z;
                 }
             }
             // Max and min are now centered around origo with no scale and no rotation...
