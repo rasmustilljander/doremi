@@ -1,5 +1,7 @@
 #include <Internal/PhysicsModuleImplementation.hpp>
 
+#include <iostream>
+using namespace std;
 
 namespace DoremiEngine
 {
@@ -318,7 +320,7 @@ namespace DoremiEngine
                         // Has to be a rigid body. Possibly dangerous to assume...
                         collisionPair.secondID = m_utils.m_rigidBodyManager->GetIDsByBodies().find(pairs->otherActor)->second;
                     }
-
+                    cout << "trigger id: " << collisionPair.firstID << endl;
                     m_triggerPairs.push_back(collisionPair);
                 }
             }

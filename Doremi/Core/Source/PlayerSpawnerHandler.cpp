@@ -1,3 +1,6 @@
+#include <Doremi\Core\Include\EntityComponent\Components\GravityComponent.hpp>
+
+#include <Doremi\Core\Include\EntityComponent\Components\MovementComponent.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
@@ -57,7 +60,7 @@ namespace Doremi
 
             // ..and set it to the players position, orientation
             t_characterBodyManager.SetPosition(p_entityID, t_triggerPosition);
-
+            // t_characterBodyManager.MoveController(p_entityID, XMFLOAT3(0, 0, 0), 0.017);
             // Since we don't know if this will be called befor sync or not, we set it to the transform as well
             TransformComponent* t_transComp = GetComponent<TransformComponent>(p_entityID);
             t_transComp->position = t_triggerPosition;

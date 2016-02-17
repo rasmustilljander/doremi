@@ -1,6 +1,6 @@
 /// Project specific
 // This class
-#include <Manager/GroundEffectManager.hpp>
+#include <Manager/GroundEffectManagerClient.hpp>
 // Handles
 #include <EntityComponent/EntityHandler.hpp>
 // Components
@@ -18,16 +18,16 @@ namespace Doremi
     namespace Core
     {
 
-        GroundEffectManager::GroundEffectManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        GroundEffectManagerClient::GroundEffectManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "GroundEffectManager")
         {
             // EXPERIMENTAL PHYSICS. Hard-coded ID works since I thought ahead and made it signed. Tru story
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().CreateArbitraryBody(-15);
         }
 
-        GroundEffectManager::~GroundEffectManager() {}
+        GroundEffectManagerClient::~GroundEffectManagerClient() {}
 
-        void GroundEffectManager::Update(double p_dt)
+        void GroundEffectManagerClient::Update(double p_dt)
         {
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             const size_t length = entityHandler.GetLastEntityIndex();
@@ -55,6 +55,6 @@ namespace Doremi
             }
         }
 
-        void GroundEffectManager::OnEvent(Event* p_event) {}
+        void GroundEffectManagerClient::OnEvent(Event* p_event) {}
     }
 }

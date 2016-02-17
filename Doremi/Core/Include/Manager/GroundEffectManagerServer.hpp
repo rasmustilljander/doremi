@@ -16,11 +16,11 @@ namespace Doremi
     {
         /**
         This manager handles ground effects. It is a work in progress*/
-        class GroundEffectManager : public Manager, public Subscriber
+        class GroundEffectManagerServer : public Manager, public Subscriber
         {
         public:
-            GroundEffectManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            virtual ~GroundEffectManager();
+            GroundEffectManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            virtual ~GroundEffectManagerServer();
 
             /**
             Updates a local list of positions that particles have collided on*/
