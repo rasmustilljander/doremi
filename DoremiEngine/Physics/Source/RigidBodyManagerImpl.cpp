@@ -511,13 +511,36 @@ namespace DoremiEngine
 
         void RigidBodyManagerImpl::SetGravity(int p_bodyID, bool p_useGravity)
         {
-            if(m_bodies.count(p_bodyID) == 0)
+            if (m_bodies.count(p_bodyID) == 0)
             {
                 // No body with that id, log error!
                 cout << "Physics: couldn't set gravity on rigid body ID: " << p_bodyID << " since it did not exist" << endl;
             }
             // !p_useGravity since we want to disable gravity if p_usegravity is false. Double negativity and shit
             m_bodies.find(p_bodyID)->second->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !p_useGravity);
+        }
+        void RigidBodyManagerImpl::CreateArbitraryBody(int p_id)
+        {
+
+            // Create an arbitrary static body
+            PxRigidStatic* body = m_utils.m_physics->createRigidStatic(PxTransform());
+            // Add to scene
+            m_utils.m_worldScene->addActor(*body);
+
+
+            m_bodies[p_id] = body;
+            m_IDsByBodies[body] = p_id;
+        }
+        void RigidBodyManagerImpl::AddShapeToBody(int p_id, XMFLOAT3 p_position)
+        {
+            // Create a shape. Set it as a trigger
+            PxShape* shape;
+            shape = m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+            // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
+            PxVec3 position(p_position.x, p_position.y, p_position.z);
+            shape->setLocalPose(PxTransform(position));
+            // Attach shape to body
+            m_bodies[p_id]->attachShape(*shape);
         }
     }
 }

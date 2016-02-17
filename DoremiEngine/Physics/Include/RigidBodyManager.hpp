@@ -152,6 +152,12 @@ namespace DoremiEngine
             Sets if the body should use gravity or not. Only works with dynamic rigid bodies
             */
             virtual void SetGravity(int p_bodyID, bool p_useGravity) = 0;
+
+            /// A series of experimental methods specific for the game TODOJB ensure these do not make it into the final build
+            // Create an arbitrary body with no shapes
+            virtual void CreateArbitraryBody(int p_id) = 0;
+            // Add shapes to body
+            virtual void AddShapeToBody(int p_id, XMFLOAT3 p_position) = 0;
         };
     }
 }
