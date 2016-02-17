@@ -17,8 +17,8 @@ namespace Doremi
             RemoveEntity,
             Example, // Only an example
             PlayerCreation,
-            PotentialFieldActorCreation,
-            AiGroupActorCreation,
+            RangedEnemyCreated,
+            MeleeEnemyCreated,
             Trigger,
             ChangeMenuState,
             DamageTaken,

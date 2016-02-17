@@ -170,9 +170,9 @@ namespace Doremi
             XMFLOAT3 position = DirectX::XMFLOAT3(-2 * (int)i + 0, 0 * (int)i + 4, -2 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
             XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-            int entityID = t_entityFactory.CreateEntity(Blueprints::EnemyEntity, position, orientation);
+            int entityID = t_entityFactory.CreateEntity(Blueprints::RangedEnemyEntity, position, orientation);
 
-            Core::SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(entityID, Core::EventType::AiGroupActorCreation);
+            Core::SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(entityID, Core::EventType::RangedEnemyCreated);
             Core::EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
         }
 

@@ -99,22 +99,15 @@ namespace Doremi
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             switch(p_blueprint)
             {
-                case Blueprints::EnemyEntity:
+                case Blueprints::RangedEnemyEntity:
                     TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
                     // Spawn inside the spawner. This might be changed in the future
                     XMFLOAT3 spawnPosition = transComp->position;
-                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::EnemyEntity, spawnPosition);
+                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::RangedEnemyEntity, spawnPosition);
 
+                    SpecialEntityCreatedEvent* RangedEnemyCreatedEvent = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::RangedEnemyCreated);
 
-                    // TODOCONFIG HP pool for monsters
-                    // healthComp->maxHealth = 200;
-                    // healthComp->currentHealth = 200;
-
-                    // Send event that enemy has been created
-
-                    SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::AiGroupActorCreation);
-
-                    EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
+                    EventHandler::GetInstance()->BroadcastEvent(RangedEnemyCreatedEvent);
                     break;
 
                     // case Blueprints::PlayerEntity:

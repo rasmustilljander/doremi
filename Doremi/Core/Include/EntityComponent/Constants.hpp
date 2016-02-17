@@ -57,7 +57,9 @@ enum class Blueprints : uint32_t
     NetworkPlayerEntity,
     PlatformEntity,
     BulletEntity,
-    EnemyEntity,
+    // EnemyEntity,
+    RangedEnemyEntity,
+    MeleeEnemyEntity,
     JawsDebugEntity, // TODOCM remove
     JawsDebugEntity2, // TODOCM remove
     StaticEnviromentEntity,

@@ -240,7 +240,8 @@ namespace Doremi
                         fieldModule.CreateNewActor(transComp->position, thisComp->charge, thisComp->range, thisComp->isStatic, thisComp->type);
                     if(false) // thisComp->type == DoremiEngine::AI::AIActorType::Enemy)
                     {
-                        SpecialEntityCreatedEvent* AIGroupActorCreated = new Core::SpecialEntityCreatedEvent(p_entityID, Core::EventType::AiGroupActorCreation);
+                        SpecialEntityCreatedEvent* AIGroupActorCreated =
+                            new Core::SpecialEntityCreatedEvent(p_entityID, Core::EventType::RangedEnemyCreated); // SHOULDNT BE HERE TODO
                         EventHandler::GetInstance()->BroadcastEvent(AIGroupActorCreated);
                     }
                 }

@@ -49,8 +49,8 @@ namespace Doremi
             // m_topField =
             //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
             //        XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
-            EventHandler::GetInstance()->Subscribe(EventType::AiGroupActorCreation, this);
-            EventHandler::GetInstance()->Subscribe(EventType::PotentialFieldActorCreation, this);
+            EventHandler::GetInstance()->Subscribe(EventType::RangedEnemyCreated, this);
+            EventHandler::GetInstance()->Subscribe(EventType::MeleeEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
             //////////////////////// Fixa PotFält
         }
@@ -131,7 +131,7 @@ namespace Doremi
         {
             switch(p_event->eventType)
             {
-                case Doremi::Core::EventType::PotentialFieldActorCreation:
+                case Doremi::Core::EventType::MeleeEnemyCreated:
                 {
                     SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);
                     if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField)) // Make sure the entity
@@ -148,7 +148,7 @@ namespace Doremi
                     }
                     break;
                 }
-                case Doremi::Core::EventType::AiGroupActorCreation: // TODOKO change to be for enemy type instead
+                case Doremi::Core::EventType::RangedEnemyCreated:
                 {
                     // Cast the event
                     SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);

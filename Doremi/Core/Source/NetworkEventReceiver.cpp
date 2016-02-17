@@ -57,11 +57,11 @@ namespace Doremi
                     p_newEvent = new PlayerCreationEvent();
 
                     break;
-                case Doremi::Core::EventType::PotentialFieldActorCreation:
+                case Doremi::Core::EventType::RangedEnemyCreated:
                     p_newEvent = new SpecialEntityCreatedEvent();
 
                     break;
-                case Doremi::Core::EventType::AiGroupActorCreation:
+                case Doremi::Core::EventType::MeleeEnemyCreated:
                     p_newEvent = new SpecialEntityCreatedEvent();
 
                     break;

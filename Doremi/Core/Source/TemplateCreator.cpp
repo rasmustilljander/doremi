@@ -139,7 +139,7 @@ namespace Doremi
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::DebugPotentialFieldActor, blueprint);
         }
 
-        void CreateEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        void CreateRangedEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             TIME_FUNCTION_START
             EntityBlueprint blueprint;
@@ -204,11 +204,11 @@ namespace Doremi
             // Has an extra drain follow it around
             blueprint[ComponentType::ExtraDrain];
 
-            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
             TIME_FUNCTION_STOP
         }
 
-        void CreateEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        void CreateRangedEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             TIME_FUNCTION_START
             EntityBlueprint blueprint;
@@ -243,7 +243,7 @@ namespace Doremi
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
             potentialComp->charge = -2;
             potentialComp->range = 4;
-            potentialComp->type = DoremiEngine::AI::AIActorType::Enemy;
+            potentialComp->type = DoremiEngine::AI::AIActorType::RangedEnemy;
             potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
 
@@ -271,7 +271,115 @@ namespace Doremi
             // blueprint[ComponentType::ExtraDrain];
 
             // Register blueprint
-            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemyEntity, blueprint);
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
+            TIME_FUNCTION_STOP
+        }
+
+        void CreateMeleeEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            TIME_FUNCTION_START
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+
+
+            blueprint[ComponentType::Transform] = transComp;
+            // Render
+            LevelLoaderClient loader = LevelLoaderClient(sharedContext);
+            CharacterDataNames enemyCharData = loader.LoadCharacter("Models/RobotSmall.drm");
+            RenderComponent* renderComp = new RenderComponent();
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
+            blueprint[ComponentType::Render] = renderComp;
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            // Health comp
+            HealthComponent* healthComponent = new HealthComponent();
+            healthComponent->maxHealth = 200;
+            healthComponent->currentHealth = healthComponent->maxHealth;
+            blueprint[ComponentType::Health] = healthComponent;
+
+            // Extra drain and rigid comp
+            RigidBodyComponent* rigidComp = new RigidBodyComponent();
+            rigidComp->radius = 3;
+            rigidComp->height = 1.5;
+            rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
+            rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
+            blueprint[ComponentType::RigidBody] = rigidComp;
+            blueprint[ComponentType::ExtraDrain];
+
+            // Network object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
+
+            // Has an extra drain follow it around
+            blueprint[ComponentType::ExtraDrain];
+
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);
+            TIME_FUNCTION_STOP
+        }
+
+        void CreateMeleeEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
+        {
+            TIME_FUNCTION_START
+            EntityBlueprint blueprint;
+            TransformComponent* transComp = new TransformComponent();
+            blueprint[ComponentType::Transform] = transComp;
+
+            // PhysicsMaterialComp
+            PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
+
+            // Character control comp label
+            CharacterControlComponent* charControlComp = new CharacterControlComponent();
+            charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->flags = CharacterControlFlags::drain;
+            blueprint[ComponentType::CharacterController] = charControlComp;
+
+            // Health comp
+            HealthComponent* healthComponent = new HealthComponent();
+            healthComponent->maxHealth = 200;
+            healthComponent->currentHealth = healthComponent->maxHealth;
+            blueprint[ComponentType::Health] = healthComponent;
+            // Enemy ai agent comp
+            blueprint[ComponentType::AIAgent];
+
+            // Range comp
+            RangeComponent* rangeComp = new RangeComponent();
+            rangeComp->range = 5;
+            blueprint[ComponentType::Range] = rangeComp;
+
+            // PotentialField component
+            PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
+            potentialComp->charge = -2;
+            potentialComp->range = 4;
+            potentialComp->type = DoremiEngine::AI::AIActorType::MeleeEnemy;
+            potentialComp->isStatic = false;
+            blueprint[ComponentType::PotentialField] = potentialComp;
+
+            // AI timers
+            AITimerComponent* aiTimers = new AITimerComponent(0.5f, 0.025f);
+            blueprint[ComponentType::AITimer] = aiTimers;
+
+            // Movement comp
+            MovementComponent* movementcomp = new MovementComponent();
+            blueprint[ComponentType::Movement] = movementcomp;
+
+            // Gravity comp
+            GravityComponent* gravComp = new GravityComponent();
+            blueprint[ComponentType::Gravity] = gravComp;
+            // Network object
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(2.0f);
+            blueprint[ComponentType::NetworkObject] = netObjComp;
+
+            //// Has an extra drain follow it around
+            // blueprint[ComponentType::ExtraDrain];
+
+            // Register blueprint
+            EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);
             TIME_FUNCTION_STOP
         }
 
@@ -778,7 +886,7 @@ namespace Doremi
             t_blueprint[ComponentType::Transform] = t_transformComp;
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemySpawnerEntity, t_blueprint);
         }
-        void CreateSpawnerEntityServer()
+        void CreateSpawnerEntityServer() // Should be obsolete with the new way with level editor
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             EntityBlueprint t_blueprint;
@@ -789,7 +897,7 @@ namespace Doremi
 
             // Spawn component
             EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
-            t_entitySpawnComp->entityBlueprint = Blueprints::EnemyEntity;
+            t_entitySpawnComp->entityBlueprint = Blueprints::RangedEnemyEntity;
             t_entitySpawnComp->spawnRadius = 2;
             t_entitySpawnComp->timeBetweenSpawns = 2;
             t_entitySpawnComp->type = SpawnerType::TimedSpawner;
@@ -804,7 +912,8 @@ namespace Doremi
             CreateBulletBlueprintClient(sharedContext);
             CreatePlayerClient(sharedContext);
             CreateNetworkPlayerClient(sharedContext);
-            CreateEnemyBlueprintClient(sharedContext);
+            CreateRangedEnemyBlueprintClient(sharedContext);
+            CreateMeleeEnemyBlueprintClient(sharedContext);
             CreateJawsDebugObjectClient(sharedContext);
             CreateEmpty();
             CreateExperimentalParticlePressureBlueprintClient(sharedContext);
@@ -818,7 +927,8 @@ namespace Doremi
             CreateDebugPlatformsServer(sharedContext);
             CreateBulletBlueprintServer(sharedContext);
             CreatePlayerServer(sharedContext);
-            CreateEnemyBlueprintServer(sharedContext);
+            CreateRangedEnemyBlueprintServer(sharedContext);
+            CreateMeleeEnemyBlueprintServer(sharedContext);
             CreateJawsDebugObjectServer(sharedContext);
             CreateEmpty();
             CreateExperimentalParticlePressureBlueprintServer(sharedContext);
