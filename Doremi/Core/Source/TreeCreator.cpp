@@ -15,9 +15,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        TreeCreator::~TreeCreator() 
-        {
-        }
+        TreeCreator::~TreeCreator() {}
 
         void TreeCreator::CreateTree()
         {
@@ -25,20 +23,19 @@ namespace Doremi
             // Root checks eight boxes(its children) for anycollision.
 
             BuildIt(treeRoot);
-
         }
 
         void TreeCreator::BuildIt(OctNode& o_treeNode)
         {
-            for (size_t i = 0; i < 8; i++)
+            for(size_t i = 0; i < 8; i++)
             {
-                // if there is a collision set bool empty to false 
-                if (true)
+                // if there is a collision set bool empty to false
+                if(true)
                 {
 
                     o_treeNode.empty = false;
                     // If max depth isnt reached
-                    if (true)
+                    if(true)
                     {
                         // If there is a collision we split the node to 8 smaller nodes if we havent reached max depth
                         BuildIt(o_treeNode);
@@ -55,17 +52,10 @@ namespace Doremi
                     // Set the node to empty = true;
                     o_treeNode.empty = true;
                 }
-
             }
         }
 
-        void TreeCreator::Update()
-        {
-
-        }
-        void TreeCreator::OnEvent(Event* p_event)
-        {
-
-        }
+        void TreeCreator::Update() {}
+        void TreeCreator::OnEvent(Event* p_event) {}
     }
 }
