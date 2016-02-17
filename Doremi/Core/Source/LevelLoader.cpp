@@ -454,7 +454,7 @@ namespace Doremi
         {
             // Max and min that a int can have
             int maxInt = std::numeric_limits<int>::max();
-            int minInt = std::numeric_limits<int>::max();
+            int minInt = std::numeric_limits<int>::min();
             DirectX::XMFLOAT3 maxPosition = DirectX::XMFLOAT3(minInt, minInt, minInt); // THe lowest possible position a int can have
             DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(maxInt, maxInt, maxInt); // The highest possible position a int can have
             size_t length = p_vertexBuffer.size();
