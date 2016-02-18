@@ -43,12 +43,12 @@ namespace Doremi
                 DWORD check;
                 check = WaitForSingleObject(m_handle, p_timeout);
 
-                if(check == WAIT_ABANDONED)
+                if(check == WAIT_OBJECT_0)
                 {
-                    return false; // Did not get mutex
+                    return true; // Got mutex
                 }
 
-                return true; // Got mutex
+                return false; // Did not get mutex
             }
 
             void FileMapMutex::Lock()
@@ -58,9 +58,22 @@ namespace Doremi
                 {
                     // TODORT Define better than 1000?
                     check = WaitForSingleObject(m_handle, 1000);
-                    if(check == WAIT_OBJECT_0)
+                    if(check == WAIT_TIMEOUT)
                     {
+                        continue; // Timeouted
+                    }
+                    else if(check == WAIT_OBJECT_0)
+                    {
+                        break; //
+                    }
+                    else if(check == WAIT_ABANDONED)
+                    {
+                        // TODORT Check data, but ownership is mine.
                         break;
+                    }
+                    else if(check == WAIT_FAILED)
+                    {
+                        throw std::runtime_error("Failed to lock filemapmutex. Errorcode: " + std::to_string(GetLastError()));
                     }
                 }
             }
