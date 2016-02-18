@@ -71,7 +71,10 @@ void LoggerProcess::Run()
             m_logfiles[data->logTag].Write(*data);
 
             // Print data to console
-            // std::cout << data->message << "\n";
+            if(data->logLevel == Logging::LogLevel::INFO)
+            {
+                std::cout << data->message << "\n";
+            }
 
             // Reset elapsed time
             elapsedTimeSinceLastEntry = 0;
