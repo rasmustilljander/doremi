@@ -38,6 +38,8 @@ namespace Doremi
             ~TreeCreator();
             void CreateTree();
 
+            void BuildIt(OctNode& o_treeNode);
+
             static TreeCreator* m_singleton;
         };
     }
