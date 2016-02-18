@@ -9,10 +9,10 @@ TEST_F(FileMapTest, basicInit)
 
 TEST_F(FileMapTest, basicMultipleInit)
 {
-    FileMap a = FileMap();
+    FileMap a;
     void* first = a.Initialize("test", 1000000);
 
-    FileMap b = FileMap();
+    FileMap b;
     void* second = b.Initialize("test", 1000000);
 
     ASSERT_NE(nullptr, first);
@@ -21,10 +21,10 @@ TEST_F(FileMapTest, basicMultipleInit)
 
 TEST_F(FileMapTest, basicMultipleWriteAndRead)
 {
-    FileMap a = FileMap();
+    FileMap a;
     void* first = a.Initialize("test", 1000000);
 
-    FileMap b = FileMap();
+    FileMap b;
     void* second = b.Initialize("test", 1000000);
 
     ASSERT_NE(nullptr, first);
