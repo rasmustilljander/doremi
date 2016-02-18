@@ -38,11 +38,6 @@ namespace Doremi
 
         private:
             /**
-                Interpets event from read stream and returns it
-            */
-            Event* InterpetEvent(NetworkStreamer& p_streamer, uint32_t& op_BytesRead);
-
-            /**
                 Interpet events and remove them, used when we already have used the events
             */
             void InterpetEventAndThrow(NetworkStreamer& p_streamer, uint32_t& op_bitsRead);

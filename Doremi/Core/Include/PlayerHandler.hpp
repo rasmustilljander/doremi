@@ -212,10 +212,6 @@ namespace Doremi
             */
             std::map<uint32_t, Player*> m_playerMap;
 
-            /**
-                TODOCM doc
-            */
-            std::list<Event*> m_allQueuedEvents;
 
             // TODOEA add these attributes?
             // int m_bodyID;

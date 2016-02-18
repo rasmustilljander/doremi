@@ -10,6 +10,7 @@
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp
 
 // Events
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -40,6 +41,8 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+
+#include <iostream>
 
 namespace Doremi
 {
@@ -223,6 +226,103 @@ namespace Doremi
             }
         }
 
+        void PlayerHandlerServer::SetupRejoin(uint32_t t_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
+            if(iter == m_playerMap.end())
+            {
+                // Something really wrong
+                cout << "Error when setup rejoin, playerID missing." << endl;
+                std::runtime_error("Error when setup rejoin, playerID missing.");
+            }
+            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+
+            t_player->m_StartEvent = 0; // Well... if we rejoin we want to reset
+            t_player->m_EndEvent = m_lateJoinEventQueue.size(); // Size of current queue
+        }
+
+        bool PlayerHandlerServer::UpdateRejoinQueueForPlayer(uint32_t p_EventSlot, uint32_t t_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
+            if(iter == m_playerMap.end())
+            {
+                // Something really wrong
+                cout << "Error when setup rejoin, playerID missing." << endl;
+                std::runtime_error("Error when setup rejoin, playerID missing.");
+            }
+            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+
+            // If we acc something larger or same (case of 0), then our start
+            if(p_EventSlot >= t_player->m_StartEvent)
+            {
+                // Set new start
+                t_player->m_StartEvent = p_EventSlot;
+
+                // If we reached the end, all events sent
+                if(t_player->m_StartEvent == t_player->m_EndEvent)
+                {
+                    return true;
+                }
+                else if(t_player->m_StartEvent > t_player->m_EndEvent)
+                {
+                    cout << "Error acc on updateRejoinQueue... consider disconnecting client" << endl;
+                }
+            }
+            return false;
+        }
+
+        void PlayerHandlerServer::WriteQueuedEventsFromLateJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesWritten, uint32_t t_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
+            if(iter == m_playerMap.end())
+            {
+                // Something really wrong
+                cout << "Error when sending events on rejoin, playerID missing." << endl;
+                std::runtime_error("Error when sending events on rejoin, playerID missing.");
+            }
+            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+
+            // Write start event
+            uint32_t t_eventStart = t_player->m_StartEvent;
+            size_t t_eventEnd = t_player->m_EndEvent;
+            p_streamer.WriteUnsignedInt32(t_eventStart);
+            op_bytesWritten += sizeof(uint32_t);
+
+            // Save position to wirte number of events
+            uint32_t t_numOfEvents = 0;
+            uint32_t t_posToWriteNumEvents = op_bytesWritten;
+            op_bytesWritten = +sizeof(uint32_t);
+            p_streamer.SetReadWritePosition(op_bytesWritten);
+
+            uint32_t t_bitsWritten = 0;
+            uint32_t t_bitIncrement = 0;
+            uint32_t t_bitsLeftToWrite = (p_bufferSize - op_bytesWritten) * 8;
+
+
+            // While we got events left to send and we have space left to wirte
+            for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; i++)
+            {
+                m_lateJoinEventQueue[i]->Write(&p_streamer, t_bitIncrement);
+                t_bitsWritten += t_bitIncrement;
+                t_numOfEvents++;
+            }
+
+            // if we overdid it, take a step back
+            if(t_bitsWritten > t_bitsLeftToWrite)
+            {
+                t_bitsWritten -= t_bitIncrement;
+                t_numOfEvents--;
+            }
+            op_bytesWritten += ceil(t_bitsWritten / 8.0f);
+
+            // Write num of events sent
+            p_streamer.SetReadWritePosition(t_posToWriteNumEvents);
+            p_streamer.WriteUnsignedInt32(t_numOfEvents);
+
+            // Set position back
+            p_streamer.SetReadWritePosition(op_bytesWritten);
+        }
+
         void PlayerHandlerServer::QueueEntityCreatedEventToPlayers(EntityCreatedEvent* p_entityCreatedEvent)
         {
             // If object have network component, we add it to the all players
@@ -253,8 +353,16 @@ namespace Doremi
                                                                                      p_entityCreatedEvent->position, p_entityCreatedEvent->orientation));
             }
 
+            // For less if checks later on we change all playerEntities created to networkPlayers
+            // The real player will be sent in the "normal" event queue to the clients, and therefor skip this one
+            // TODOXX If there is any other OnEvent that explicity checks for PlayerEntity to be created.. this might fuck up
+            if(p_entityCreatedEvent->bluepirnt == Blueprints::PlayerEntity)
+            {
+                p_entityCreatedEvent->bluepirnt = Blueprints::NetworkPlayerEntity;
+            }
+
             // Save it for later joins
-            m_allQueuedEvents.push_back(new EntityCreatedEvent(*p_entityCreatedEvent));
+            m_lateJoinEventQueue.push_back(new EntityCreatedEvent(*p_entityCreatedEvent));
         }
 
         void PlayerHandlerServer::QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent)
@@ -267,7 +375,7 @@ namespace Doremi
             }
 
             // Save it for later joins
-            m_allQueuedEvents.push_back(new RemoveEntityEvent(*p_removeEvent));
+            m_lateJoinEventQueue.push_back(new RemoveEntityEvent(*p_removeEvent));
         }
 
         void PlayerHandlerServer::QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawnEvent)

@@ -133,6 +133,31 @@ namespace Doremi
             delete IncommingAdress;
         }
 
+        void ServerNetworkManager::ReceiveLoadWorldMessage(NetMessage& p_message, Connection* p_connection)
+        {
+            // Create a stream
+            NetworkStreamer Streamer = NetworkStreamer();
+
+            // Set message buffer to stream
+            unsigned char* BufferPointer = p_message.Data;
+            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
+
+            // Amount read
+            uint32_t bytesRead = 0;
+
+            // Read acced event
+            uint32_t eventAcc = Streamer.ReadUnsignedInt32();
+
+            // Acc rejoin event
+            bool FullyLoaded = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->UpdateRejoinQueueForPlayer(eventAcc, p_connection->PlayerID);
+
+            // If fully loaded, set player to be in game
+            if(FullyLoaded)
+            {
+                p_connection->ConnectionState = ConnectionState::IN_GAME;
+            }
+        }
+
         void ServerNetworkManager::RecieveInputMessage(NetMessage& p_message, Connection* p_connection)
         {
             InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
@@ -216,6 +241,7 @@ namespace Doremi
                             case MessageID::LOAD_WORLD:
 
                                 // Add code here
+                                ReceiveLoadWorldMessage(Message, iter->second);
                                 break;
 
                             case MessageID::INPUT:
@@ -578,15 +604,11 @@ namespace Doremi
             unsigned char* bufferPointer = Message.Data;
             Streamer.SetTargetBuffer(bufferPointer, sizeof(Message.Data));
 
-            // Send created players
-            uint32_t numPlayers = PlayerHandler::GetInstance()->GetNumOfPlayers();
-            Streamer.WriteUnsignedInt32(numPlayers - 1);
+            uint32_t t_bytesWritten = 0;
 
-
-            // We should get all the events, and send them in some way simular to we send the other events...
-
-            // Should be done on acc instead
-            p_connection->ConnectionState = ConnectionState::IN_GAME;
+            // Write events
+            static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())
+                ->WriteQueuedEventsFromLateJoin(Streamer, sizeof(Message.Data), t_bytesWritten, p_connection->PlayerID);
 
             // Send message
             NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);

@@ -14,6 +14,7 @@ namespace Doremi
     namespace Core
     {
         class NetworkEventReceiver;
+        class NetworkStreamer;
 
         /**
             TODOCM doc
@@ -50,10 +51,25 @@ namespace Doremi
 
             NetworkEventReceiver* GetNetworkEventReceiverForPlayer(uint32_t p_playerID);
 
+            /**
+                TODOCM doc
+            */
+            void ReadEventsForJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesRead);
+
             void OnEvent(Event* p_event) override;
 
         private:
             DoremiEngine::Logging::Logger* m_logger;
+
+            /**
+                Last event read in range of 0-N
+            */
+            uint32_t m_lastJoinEventRead;
+
+            /**
+                Maximum events to read in range of 0-N
+            */
+            uint32_t m_maxNumEvents;
         };
     }
 }

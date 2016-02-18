@@ -8,6 +8,7 @@ namespace Doremi
         class NetworkEventSender;
         class NetworkPriorityHandler;
         struct GunFireToggleEvent;
+        class NetworkStreamer;
 
         /**
             TODOCM doc
@@ -18,7 +19,10 @@ namespace Doremi
                          NetworkPriorityHandler* p_networkPriorityHandler, NetworkEventSender* p_networkEventSender)
                 : Player(p_EntityID, p_inputHandler, p_frequencyBufferHandler),
                   m_networkPriorityHandler(p_networkPriorityHandler),
-                  m_networkEventSender(p_networkEventSender)
+                  m_networkEventSender(p_networkEventSender),
+                  m_StartEvent(0),
+                  m_EndEvent(0)
+
             {
             }
             ~PlayerServer()
@@ -37,6 +41,16 @@ namespace Doremi
                 TODOCM doc
             */
             NetworkEventSender* m_networkEventSender;
+
+            /**
+                TODOCM doc
+            */
+            uint32_t m_StartEvent;
+
+            /**
+                TODOCM doc
+            */
+            uint32_t m_EndEvent;
         };
 
         /**
@@ -69,6 +83,19 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void SetupRejoin(uint32_t t_playerID);
+
+            bool UpdateRejoinQueueForPlayer(uint32_t p_EventSlot, uint32_t t_playerID);
+
+
+            /**
+                TODOCM doc
+            */
+            void WriteQueuedEventsFromLateJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesWritten, uint32_t t_playerID);
+
+            /**
+                TODOCM doc
+            */
             void OnEvent(Event* p_event) override;
 
         private:
@@ -76,6 +103,7 @@ namespace Doremi
                 TODOCM doc
             */
             void AddNetObjectToPlayers(const EntityID& p_entityID);
+
 
             /**
                 TODOCM doc
@@ -92,7 +120,13 @@ namespace Doremi
                 TODOCM doc
             */
             void QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawn);
+
             void QueueGunFireToggleEventToPlayers(GunFireToggleEvent* t_gunFireToggleEvent);
+
+            /**
+                TODOCM doc
+            */
+            std::vector<Event*> m_lateJoinEventQueue;
         };
     }
 }

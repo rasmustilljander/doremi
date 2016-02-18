@@ -34,6 +34,9 @@
 
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
+#include <Doremi/Core/Include/EventInterpeter.hpp>
+
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 #include <iostream>
@@ -171,6 +174,53 @@ namespace Doremi
             }
 
             return outPointer;
+        }
+
+        void PlayerHandlerClient::ReadEventsForJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesRead)
+        {
+            // Get eventhandler for later use
+            EventHandler* t_eventHandler = EventHandler::GetInstance();
+
+            // Read the first event to be read
+            uint32_t t_messageStartEvent = p_streamer.ReadUnsignedInt32();
+            op_bytesRead += sizeof(uint32_t);
+
+            // Read the number of events to be read
+            uint32_t t_numOfEvents = p_streamer.ReadUnsignedInt32();
+            op_bytesRead = +sizeof(uint32_t);
+
+            // Here is a thing, because we know all event exists beforehand, and because they are bunched to be sent according to acks
+            // We can make the assumption that if we've already read the first one here, we've read all in the message
+            uint32_t t_bitsRead = 0;
+            if(t_messageStartEvent < m_lastJoinEventRead)
+            {
+                for(size_t i = 0; i < t_numOfEvents; i++)
+                {
+                    // Read but ignore all events
+                    Event* t_newEvent = InterpetEvent(p_streamer, t_bitsRead);
+
+                    // TODO better way of creating, destroying events?(not just this place)
+                    // delete them right away
+                    delete t_newEvent;
+                }
+            }
+            else
+            {
+                for(size_t i = 0; i < t_numOfEvents; i++)
+                {
+                    // Read but ignore all events
+                    Event* t_newEvent = InterpetEvent(p_streamer, t_bitsRead);
+
+                    t_eventHandler->BroadcastEvent(t_newEvent);
+                }
+                m_lastJoinEventRead += t_numOfEvents;
+            }
+
+            // Exclude duplicates
+            op_bytesRead += ceil(t_bitsRead / 8.0f);
+
+            // Set position back
+            p_streamer.SetReadWritePosition(op_bytesRead);
         }
 
         void PlayerHandlerClient::OnEvent(Event* p_event)

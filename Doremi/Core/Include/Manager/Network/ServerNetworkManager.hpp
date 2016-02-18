@@ -61,6 +61,11 @@ namespace Doremi
             void RecieveUnreliableMessages();
 
             /**
+                TODOCM doc
+            */
+            void ReceiveLoadWorldMessage(NetMessage& p_message, Connection* p_connection);
+
+            /**
                 Check for incomming reliable messages
             */
             void RecieveReliableMessages();

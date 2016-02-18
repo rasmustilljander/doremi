@@ -252,41 +252,10 @@ namespace Doremi
                 unsigned char* dataPointer = p_message.Data;
                 Streamer.SetTargetBuffer(dataPointer, sizeof(p_message.Data));
 
-                // Read number of existing players
-                uint32_t numPlayers = Streamer.ReadUnsignedInt32();
+                uint32_t t_bytesWritten = 0;
 
-                for(size_t i = 0; i < numPlayers; ++i)
-                {
-                    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-                    uint32_t entityID = entityHandler.CreateEntity(Blueprints::NetworkPlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
-
-                    if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::PressureParticleSystem))
-                    {
-                        // ParticlePressureComponent* particleComp =
-                        // EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(entityID);
-                        // particleComp->data.m_active = false;
-                        // particleComp->data.m_density = 2.0f;
-                        // particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-                        // particleComp->data.m_direction =
-                        // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->rotation;
-                        // particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-                        // particleComp->data.m_emissionRate = 0.05;
-                        // particleComp->data.m_launchPressure = 100;
-                        // particleComp->data.m_numParticlesX = 5;
-                        // particleComp->data.m_numParticlesY = 1;
-                        // particleComp->data.m_size = 1;
-                        // particleComp->data.m_position =
-                        // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID)->position;
-                        // m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(entityID, particleComp->data);
-                    }
-                }
-
-                // TODOCM add real loadworld code here
-                InputHandlerClient* NewInputHandler = new InputHandlerClient(m_sharedContext);
-
-                PlayerHandler::GetInstance()->CreateNewPlayer(m_playerID, NewInputHandler);
-
-                m_serverConnectionState = ConnectionState::IN_GAME;
+                // Write events
+                static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->ReadEventsForJoin(Streamer, sizeof(p_message.Data), t_bytesWritten);
 
                 // Update last response
                 m_serverLastResponse = 0;
