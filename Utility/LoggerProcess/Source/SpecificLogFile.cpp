@@ -13,15 +13,7 @@
 
 using namespace Doremi::Utilities;
 
-SpecificLogFile::SpecificLogFile() : m_fileStream(nullptr), m_timer(nullptr), m_flushTimerLimit(0), m_elapsedTime(0)
-{
-    m_timer = new Chrono::Timer();
-
-    // TODORT
-    // TODOXX Might decrease / increase the performance
-    // TODOCONF ??
-    m_flushTimerLimit = 1.0;
-}
+SpecificLogFile::SpecificLogFile() : m_fileStream(nullptr), m_timer(nullptr), m_flushTimerLimit(0), m_elapsedTime(0) {}
 
 SpecificLogFile::~SpecificLogFile()
 {
@@ -39,6 +31,8 @@ SpecificLogFile::~SpecificLogFile()
 
 void SpecificLogFile::Initialize(const Logging::LogTag& p_logTag)
 {
+    m_flushTimerLimit = 1.0;
+    m_timer = new Chrono::Timer();
     Logging::LogTagInfo fileNameInfo = Logging::LogTagConverter::convert(p_logTag);
     fileNameInfo.name.append(".txt");
     BuildLogFile(fileNameInfo.name);
