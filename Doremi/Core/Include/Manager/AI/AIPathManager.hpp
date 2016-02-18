@@ -3,12 +3,15 @@
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
+// Standard
+#include <vector>
 
 namespace DoremiEngine
 {
     namespace AI
     {
         class PotentialField;
+        struct PotentialChargeInformation;
     }
 }
 
@@ -32,8 +35,8 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
-            // DoremiEngine::AI::PotentialField* m_field;
-            // DoremiEngine::AI::PotentialField* m_topField;
+            void SetEnemyPotentialFieldStuff(const size_t& p_entityID, const std::vector<DoremiEngine::AI::PotentialChargeInformation>& p_specialCharges);
+
             bool firstUpdate;
         };
     }

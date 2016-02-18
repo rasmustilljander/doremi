@@ -134,71 +134,30 @@ namespace Doremi
                 case Doremi::Core::EventType::MeleeEnemyCreated:
                 {
                     SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);
-                    if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField)) // Make sure the entity
-                    // contains the needed
-                    // stuff
-                    {
-                        DoremiEngine::AI::PotentialFieldActor* actor =
-                            EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
-                        // m_field->AddActor(actor);
-                    }
-                    else
-                    {
-                        // TODOKO Log error
-                    }
+                    std::vector<DoremiEngine::AI::PotentialChargeInformation> specialCharges;
+                    SetEnemyPotentialFieldStuff(realEvent->entityID, specialCharges);
                     break;
                 }
                 case Doremi::Core::EventType::RangedEnemyCreated:
                 {
                     // Cast the event
                     SpecialEntityCreatedEvent* realEvent = static_cast<SpecialEntityCreatedEvent*>(p_event);
-                    if(EntityHandler::GetInstance().HasComponents(realEvent->entityID, (int)ComponentType::PotentialField | (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
-                    {
-                        // Save a function to use for PF equation
-                        std::function<float(float, float, float)> chargeEquation = ForceEquations::Standard;
-                        // Make the special PF charges to be used when checking impact from specific actors
-                        DoremiEngine::AI::PotentialChargeInformation newSpecial =
-                            DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
-                        DoremiEngine::AI::PotentialChargeInformation newSpecial2 =
-                            DoremiEngine::AI::PotentialChargeInformation(0, 12, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
-                        // Get the actor from the component
-                        DoremiEngine::AI::PotentialFieldActor* actor =
-                            EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->ChargedActor;
 
-                        // Add the newly created special charges
-                        actor->AddPotentialVsOther(newSpecial);
-                        actor->AddPotentialVsOther(newSpecial2);
+                    // Save a function to use for PF equation
+                    std::function<float(float, float, float)> chargeEquation = ForceEquations::Standard;
 
-                        // If we are to use PF instead of group when calculating enemies this is unecessary
-                        // The enemy should have a group before it enters this function, otherwise create a new
-                        DoremiEngine::AI::PotentialGroup* group =
-                            EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(realEvent->entityID)->Group;
-                        if(group == nullptr)
-                        {
-                            // TODOKO Log error and what happens
-                            group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
-                        }
-                        group->AddActor(actor);
-                        // If we are to use groups instead of PF when calculating enemies this is unecessary
-                        DoremiEngine::AI::PotentialField* field;
-                        // Find the best suited field
-                        field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
-                        // set the best suited field
-                        EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(realEvent->entityID)->Field = field;
-                        if(field != nullptr)
-                        {
-                            // Add the actor to the field, if not nullptr
-                            field->AddActor(actor);
-                        }
-                        else
-                        {
-                            // TODOKO log that a enemy started outside a field
-                        }
-                    }
-                    else
-                    {
-                        // TODOKO Log error
-                    }
+                    // Make the special PF charges to be used when checking impact from specific actors
+                    std::vector<DoremiEngine::AI::PotentialChargeInformation> specialCharges;
+                    DoremiEngine::AI::PotentialChargeInformation newSpecial =
+                        DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
+                    specialCharges.push_back(newSpecial);
+                    DoremiEngine::AI::PotentialChargeInformation newSpecial2 =
+                        DoremiEngine::AI::PotentialChargeInformation(0, 12, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
+                    specialCharges.push_back(newSpecial2);
+                    DoremiEngine::AI::PotentialChargeInformation newSpecial3 =
+                        DoremiEngine::AI::PotentialChargeInformation(-100, 3, true, true, DoremiEngine::AI::AIActorType::MeleeEnemy, chargeEquation);
+                    specialCharges.push_back(newSpecial3);
+                    SetEnemyPotentialFieldStuff(realEvent->entityID, specialCharges);
                     break;
                 }
                 case Doremi::Core::EventType::PlayerCreation:
@@ -219,6 +178,56 @@ namespace Doremi
                 }
                 default:
                     break;
+            }
+        }
+
+        void AIPathManager::SetEnemyPotentialFieldStuff(const size_t& p_entityID, const std::vector<DoremiEngine::AI::PotentialChargeInformation>& p_specialCharges)
+        {
+            if(EntityHandler::GetInstance().HasComponents(p_entityID,
+                                                          (int)ComponentType::PotentialField |
+                                                              (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
+            {
+
+                // Get the actor from the component
+                DoremiEngine::AI::PotentialFieldActor* actor =
+                    EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityID)->ChargedActor;
+
+                // Add the special charges
+                size_t length = p_specialCharges.size();
+                for(size_t i = 0; i < length; i++)
+                {
+                    actor->AddPotentialVsOther(p_specialCharges[i]);
+                }
+
+                // If we are to use PF instead of group when calculating enemies this is unecessary
+                // The enemy should have a group before it enters this function, otherwise create a new
+                DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(p_entityID)->Group;
+                if(group == nullptr)
+                {
+                    // TODOKO Log error and what happens
+                    group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+                }
+                group->AddActor(actor);
+
+                // If we are to use groups instead of PF when calculating enemies this is unecessary
+                DoremiEngine::AI::PotentialField* field;
+                // Find the best suited field
+                field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
+                // set the best suited field
+                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityID)->Field = field;
+                if(field != nullptr)
+                {
+                    // Add the actor to the field, if not nullptr
+                    field->AddActor(actor);
+                }
+                else
+                {
+                    // TODOKO log that a enemy started outside a field
+                }
+            }
+            else
+            {
+                // TODOKO Log error no PF comp
             }
         }
     }
