@@ -533,6 +533,7 @@ namespace DoremiEngine
         }
         void RigidBodyManagerImpl::AddShapeToBody(int p_id, XMFLOAT3 p_position)
         {
+            float maxWidth = 4;
 
             PxVec3 position(p_position.x, p_position.y, p_position.z);
             // Check if there's another trigger close by. Shouldn't be done in engine...
@@ -549,25 +550,28 @@ namespace DoremiEngine
                 PxSphereGeometry geometry;
                 shape->getSphereGeometry(geometry);
                 float mergeDistance = geometry.radius; // Hard coded 1 here can be tweaked of course
-
+                float newWidth = mergeDistance * 1.05;
                 // Calculate distance
                 PxVec3 shapePos = shape->getLocalPose().p;
                 float distanceBetweenPositions = (shape->getLocalPose().p - position).magnitude();
                 // Check if distance is big enough to justify a merge
                 if(distanceBetweenPositions < mergeDistance)
                 {
-                    // Create a new shape between the current positions
-                    PxVec3 newPosition = 0.5 * (position + shapePos);
-                    PxShape* newShape;
-                    // PxSphereGeometry newGeometry = PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8));
-                    PxSphereGeometry newGeometry = PxSphereGeometry(mergeDistance);
-                    newShape = m_utils.m_physics->createShape(newGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
-                    // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
-                    newShape->setLocalPose(PxTransform(newPosition));
-                    // Attach shape to body
-                    m_bodies[p_id]->attachShape(*newShape);
-                    // Detach old shape
-                    actor->detachShape(*shape);
+                    if(newWidth < maxWidth)
+                    {
+                        // Create a new shape between the current positions
+                        PxVec3 newPosition = 0.5 * (position + shapePos);
+                        PxShape* newShape;
+                        // PxSphereGeometry newGeometry = PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8));
+                        PxSphereGeometry newGeometry = PxSphereGeometry(newWidth);
+                        newShape = m_utils.m_physics->createShape(newGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+                        // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
+                        newShape->setLocalPose(PxTransform(newPosition));
+                        // Attach shape to body
+                        m_bodies[p_id]->attachShape(*newShape);
+                        // Detach old shape
+                        actor->detachShape(*shape);
+                    }
                     isDone = true;
                     break;
                 }
