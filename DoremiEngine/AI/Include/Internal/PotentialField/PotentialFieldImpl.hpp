@@ -20,6 +20,7 @@ namespace DoremiEngine
             const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const override { return m_grid; }
             void Update() override;
             void AddActor(PotentialFieldActor* p_newActor) override;
+            void RemoveActor(PotentialFieldActor* p_newActor) override;
             DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition);
             DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr,
                                                     const bool& p_staticCheck = true) override;

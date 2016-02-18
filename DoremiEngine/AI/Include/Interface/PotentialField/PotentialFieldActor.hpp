@@ -42,6 +42,9 @@ namespace DoremiEngine
         class PotentialFieldActor
         {
         public:
+            
+            virtual ~PotentialFieldActor() {}
+
             /**
             Sets the actor position
             */

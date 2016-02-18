@@ -100,6 +100,7 @@ namespace Doremi
             switch(p_blueprint)
             {
                 case Blueprints::RangedEnemyEntity:
+                {
                     TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
                     // Spawn inside the spawner. This might be changed in the future
                     XMFLOAT3 spawnPosition = transComp->position;
@@ -109,6 +110,19 @@ namespace Doremi
 
                     EventHandler::GetInstance()->BroadcastEvent(RangedEnemyCreatedEvent);
                     break;
+                }
+                case Blueprints::MeleeEnemyEntity:
+                {
+                    TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
+                    // Spawn inside the spawner. This might be changed in the future
+                    XMFLOAT3 spawnPosition = transComp->position;
+                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::MeleeEnemyEntity, spawnPosition);
+
+                    SpecialEntityCreatedEvent* MeleeEnemyCreatedEvent = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::MeleeEnemyCreated);
+
+                    EventHandler::GetInstance()->BroadcastEvent(MeleeEnemyCreatedEvent);
+                    break;
+                }
 
                     // case Blueprints::PlayerEntity:
                     //    TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);

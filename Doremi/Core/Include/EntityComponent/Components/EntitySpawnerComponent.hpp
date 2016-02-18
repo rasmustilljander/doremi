@@ -30,7 +30,10 @@ namespace Doremi
             int maxNumSpawnedEntites;
             // Current number of entities that have been spawned
             int currentNumSpawnedEntities = 0;
-
+            // How many that can be alive at once
+            int maxAlive = 0;
+            // How many that are alive
+            int currentNumAlive = 0;
             // Used by timed spawner
             float timeBetweenSpawns;
             float timeSinceLastSpawn = 0;

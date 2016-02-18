@@ -139,10 +139,11 @@ namespace Doremi
                 EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::EntitySpawner);
                 EntitySpawnComponent* entitySpawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(p_entityId);
                 entitySpawnComp->entityBlueprint = static_cast<Blueprints>(transformationData.attributes.spawnTypeBlueprint);
-                entitySpawnComp->maxNumSpawnedEntites = transformationData.attributes.spawnMax;
+                entitySpawnComp->maxNumSpawnedEntites = 1;
+                entitySpawnComp->maxAlive = transformationData.attributes.spawnMaxAlive;
                 entitySpawnComp->type = SpawnerType::TimedSpawner;
-                entitySpawnComp->timeBetweenSpawns = 10;
-                entitySpawnComp->spawnRadius = 100;
+                entitySpawnComp->timeBetweenSpawns = transformationData.attributes.spawnFrequency;
+                entitySpawnComp->spawnRadius = 10000;
             }
 
             // If spawnpoint, set physic properties

@@ -77,13 +77,13 @@ namespace Doremi
                     actor->SetPosition(pos);
                 }
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Movement |
-                                                                     (int)ComponentType::AIGroup | (int)ComponentType::PotentialField))
+                                                                      (int)ComponentType::PotentialField))
                 {
                     // Get the needed components
                     XMFLOAT2 desiredPos;
                     TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
                     XMFLOAT3 unitPos = transComp->position;
-                    DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
+                    // DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
                     DoremiEngine::AI::PotentialFieldActor* currentActor =
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
@@ -184,8 +184,7 @@ namespace Doremi
         void AIPathManager::SetEnemyPotentialFieldStuff(const size_t& p_entityID, const std::vector<DoremiEngine::AI::PotentialChargeInformation>& p_specialCharges)
         {
             if(EntityHandler::GetInstance().HasComponents(p_entityID,
-                                                          (int)ComponentType::PotentialField |
-                                                              (int)ComponentType::AIGroup)) // Make sure the entity contains the needed stuff
+                                                          (int)ComponentType::PotentialField)) // Make sure the entity contains the needed stuff
             {
 
                 // Get the actor from the component
@@ -201,13 +200,13 @@ namespace Doremi
 
                 // If we are to use PF instead of group when calculating enemies this is unecessary
                 // The enemy should have a group before it enters this function, otherwise create a new
-                DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(p_entityID)->Group;
-                if(group == nullptr)
-                {
-                    // TODOKO Log error and what happens
-                    group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
-                }
-                group->AddActor(actor);
+                //DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(p_entityID)->Group;
+                //if(group == nullptr)
+                //{
+                //    // TODOKO Log error and what happens
+                //    group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
+                //}
+                //group->AddActor(actor);
 
                 // If we are to use groups instead of PF when calculating enemies this is unecessary
                 DoremiEngine::AI::PotentialField* field;

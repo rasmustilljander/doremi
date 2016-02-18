@@ -3,6 +3,7 @@
 #include <Internal/PotentialField/PotentialFieldImpl.hpp>
 #include <Internal/PotentialField/PotentialGroupImpl.hpp>
 #include <Internal/PotentialField/PotentialFieldActorImpl.hpp>
+#include <iostream>
 namespace DoremiEngine
 {
     namespace AI
@@ -59,6 +60,22 @@ namespace DoremiEngine
             return newActor;
         }
         void PotentialFieldSubModuleImpl::AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) { o_field.AddActor(p_actor); }
+
+        void PotentialFieldSubModuleImpl::EraseActor(PotentialFieldActor* op_actor)
+        {
+            size_t length = m_fields.size();
+            for (size_t i = 0; i < length; i++)
+            {
+                m_fields[i]->RemoveActor(op_actor);
+            }
+            std::cout << "Will delete Actor now...";
+            delete op_actor;
+        }
+        void PotentialFieldSubModuleImpl::EraseActor(PotentialFieldActor* op_actor, PotentialField* op_field)
+        {
+            op_field->RemoveActor(op_actor);
+            delete op_actor;
+        }
 
         PotentialField* PotentialFieldSubModuleImpl::FindBestPotentialField(const DirectX::XMFLOAT3& p_position)
         {

@@ -49,6 +49,7 @@
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <EntityComponent/Components/SkeletalAnimationComponent.hpp>
 
+#include <iostream>
 namespace Doremi
 {
     namespace Core
@@ -90,7 +91,11 @@ namespace Doremi
             {
                 // physicsModule.GetFluidManager() //Remove particle system here TODOJB actually do this
             }
-            // TODOKO Memory leak!! The potentialfield stuff needs to be removed
+            if (tComponentTable->HasComponent(p_entityID, (int)ComponentType::PotentialField))
+            {
+                PotentialFieldComponent* potentialField = GetComponent<PotentialFieldComponent>(p_entityID);
+                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().EraseActor(potentialField->ChargedActor);
+            }
         }
 
         EntityFactory::EntityFactory(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}

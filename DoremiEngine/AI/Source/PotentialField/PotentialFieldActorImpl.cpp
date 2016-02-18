@@ -12,7 +12,10 @@ namespace DoremiEngine
             // TODOEA FULT SOM FAN att sätat en hårdkodad fulposition så att listan inte är tom. bättre än att kolla varje gång att den är tom.
             m_prevGridPos = DirectX::XMINT2(0, 0);
         }
-        PotentialFieldActorImpl::~PotentialFieldActorImpl() {}
+        PotentialFieldActorImpl::~PotentialFieldActorImpl() 
+        {
+            std::cout << "PF actor removed";
+        }
         void PotentialFieldActorImpl::SetPosition(const DirectX::XMFLOAT3& p_position)
         {
             if(m_static)

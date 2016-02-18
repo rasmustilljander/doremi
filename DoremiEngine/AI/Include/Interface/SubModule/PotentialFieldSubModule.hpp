@@ -11,7 +11,7 @@ namespace DoremiEngine
         class PotentialField;
         class PotentialGroup;
         class PotentialFieldActor;
-        enum class AIActorType : size_t; // TODOXX TODOKO Might not work to predeclare enums
+        enum class AIActorType : size_t;
         class PotentialFieldSubModule
         {
         public:
@@ -31,12 +31,18 @@ namespace DoremiEngine
                                                         const bool& p_static, const AIActorType& p_actorType) = 0;
             /**
             Attaches a actor to the given potentialfield. This can be done by going straight to the potential field to
-            TODOKO review if it should be doable in this class or only in the field
             */
             virtual void AttachActor(PotentialField& o_field, PotentialFieldActor* p_actor) = 0;
+
             /**
-            removes a actor from the given potentialfield TODOKO add func if needed
+            Removes a actor from every field it's in and also deletes the actor
             */
+            virtual void EraseActor(PotentialFieldActor* op_actor) = 0;
+
+            /**
+            Removes a actor from the given field also deletes the actor
+            */
+            virtual void EraseActor(PotentialFieldActor* op_actor, PotentialField* op_field) = 0;
 
             /**
             Finds the potential field that the given position probably should be in. Returns nullptr if no field were found

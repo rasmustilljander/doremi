@@ -10,7 +10,7 @@ namespace DoremiEngine
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
             // m_grid = p_grid;
-            m_grid = std::move(p_grid); // TODOKO Might not work...
+            m_grid = std::move(p_grid);
         }
         void PotentialFieldImpl::Update()
         {
@@ -82,6 +82,25 @@ namespace DoremiEngine
             {
                 // TODOKO might need to check if it's in the list
                 m_dynamicActors.push_back(p_newActor);
+            }
+        }
+        void PotentialFieldImpl::RemoveActor(PotentialFieldActor* p_newActor)
+        {
+            if(m_staticActors.count(p_newActor) != 0)
+            {
+                m_staticActors.erase(p_newActor);
+            }
+            else
+            {
+                size_t length = m_dynamicActors.size();
+                for (size_t i = 0; i < length; i++)
+                {
+                    if (m_dynamicActors[i] == p_newActor)
+                    {
+                        m_dynamicActors.erase(m_dynamicActors.begin() + i);
+                        length = m_dynamicActors.size();
+                    }
+                }
             }
         }
         DirectX::XMINT2 PotentialFieldImpl::WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition)
