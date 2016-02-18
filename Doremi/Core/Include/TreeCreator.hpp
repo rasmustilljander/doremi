@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <cstdint>
+
 namespace Doremi
 {
     namespace Core
@@ -11,36 +12,37 @@ namespace Doremi
         {
             struct OctNode
             {
-                OctNode();
+                OctNode(uint8_t p_depth, bool p_empty, DirectX::XMFLOAT3 p_boxDimensions)
+                {
+                    empty = p_empty;
+                    depth = p_depth;
+                    boxDimensions = p_boxDimensions;
+                };
+                OctNode()
+                {
+                    empty = true;
+                    depth = 0;
+                    boxDimensions = DirectX::XMFLOAT3(0, 0, 0);
+                };
                 ~OctNode(){};
-                DirectX::XMVECTOR boxDimensions;
-                OctNode* children[8];
+                DirectX::XMFLOAT3 boxDimensions;
+                std::vector<OctNode> children;
                 // Keep them so we can check against them in the kid to this node.
                 std::vector<uint32_t> objectsInTheArea;
-                bool empty = true;
+                bool empty;
+                uint8_t depth;
             };
-            // struct OctLeaf
-            //{
-            //    OctLeaf();
-            //    ~OctLeaf() {};
-            //    DirectX::XMVECTOR boxDimensions;
-            //    bool empty = true;
-            //};
-        public:
-            static TreeCreator* GetInstance();
 
+        public:
+            TreeCreator();
+            ~TreeCreator();
             void Update();
             void OnEvent(Event* p_event) override;
             OctNode treeRoot;
-
-        private:
-            TreeCreator();
-            ~TreeCreator();
             void CreateTree();
 
+        private:
             void BuildIt(OctNode& o_treeNode);
-
-            static TreeCreator* m_singleton;
         };
     }
 }

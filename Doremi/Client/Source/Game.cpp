@@ -35,6 +35,7 @@
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/Handler/TreeHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -127,7 +128,9 @@ namespace Doremi
         PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         EntityFactory::StartupEntityFactory(sharedContext);
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
+        Core::TreeHandler::StartupTreeHandler(sharedContext);
 
+        Core::TreeHandler::GetInstance()->BuildTheTree();
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
         m_screenSpaceDrawer = new ScreenSpaceDrawer(sharedContext, m_screenRes);

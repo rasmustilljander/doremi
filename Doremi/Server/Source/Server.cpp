@@ -32,6 +32,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/TreeCreator.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/Manager.hpp>
