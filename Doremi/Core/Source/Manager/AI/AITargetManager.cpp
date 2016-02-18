@@ -10,6 +10,7 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/AITimerComponent.hpp>
+#include <EntityComponent/Components/PotentialFieldComponent.hpp>
 // Helper
 #include <Helper/ProximityChecker.hpp>
 
@@ -118,32 +119,42 @@ namespace Doremi
                             }
                         }
                     }
-                    if(closestVisiblePlayer != -1 && shouldFire)
+                    if(closestVisiblePlayer != -1)
                     {
                         // We now know what player is closest and visible
-                        TransformComponent* playerTransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(closestVisiblePlayer);
-                        // Get things in to vectors
-                        XMVECTOR playerPos = XMLoadFloat3(&playerTransform->position);
-                        XMVECTOR AIPos = XMLoadFloat3(&AITransform->position);
+                        if(shouldFire)
+                        {
+                            TransformComponent* playerTransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(closestVisiblePlayer);
+                            // Get things in to vectors
+                            XMVECTOR playerPos = XMLoadFloat3(&playerTransform->position);
+                            XMVECTOR AIPos = XMLoadFloat3(&AITransform->position);
 
-                        // calculate direction again...
-                        XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
-                        direction = XMVector3Normalize(direction);
-                        XMFLOAT3 directionFloat;
-                        XMStoreFloat3(&directionFloat, direction);
+                            // calculate direction again...
+                            XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
+                            direction = XMVector3Normalize(direction);
+                            XMFLOAT3 directionFloat;
+                            XMStoreFloat3(&directionFloat, direction);
 
-                        XMVECTOR bulletOrigin = AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
-                        // the bodies radius is larger than x.x
-                        XMFLOAT3 bulletOriginFloat;
-                        XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
+                            XMVECTOR bulletOrigin =
+                                AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
+                            // the bodies radius is larger than x.x
+                            XMFLOAT3 bulletOriginFloat;
+                            XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
+                            int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
 
-                        int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
-
-                        // Add a force to the body TODOXX should not be hard coded the force amount
-                        direction *= 1500.0f;
-                        XMFLOAT3 force;
-                        XMStoreFloat3(&force, direction);
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
+                            // Add a force to the body TODOXX should not be hard coded the force amount
+                            direction *= 1500.0f;
+                            XMFLOAT3 force;
+                            XMStoreFloat3(&force, direction);
+                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
+                        }
+                        // If we see a player turn off the phermonetrail
+                        if(t_entityHandler.HasComponents(i, (int)ComponentType::PotentialField))
+                        {
+                            PotentialFieldComponent* pfComp = t_entityHandler.GetComponentFromStorage<PotentialFieldComponent>(i);
+                            pfComp->ChargedActor->SetUsePhermonetrail(false);
+                            pfComp->ChargedActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player, true);
+                        }
                     }
                 }
             }

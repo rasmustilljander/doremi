@@ -123,6 +123,10 @@ namespace Doremi
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
+
+                    currentActor->SetUsePhermonetrail(true); // set it to active so it's active as standard
+                    currentActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player,
+                                                           false); // We dont know if we see the enemy so dont use this field
                 }
             }
         }
@@ -149,13 +153,10 @@ namespace Doremi
                     // Make the special PF charges to be used when checking impact from specific actors
                     std::vector<DoremiEngine::AI::PotentialChargeInformation> specialCharges;
                     DoremiEngine::AI::PotentialChargeInformation newSpecial =
-                        DoremiEngine::AI::PotentialChargeInformation(-100, 10, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
+                        DoremiEngine::AI::PotentialChargeInformation(-100, 15, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
                     specialCharges.push_back(newSpecial);
-                    DoremiEngine::AI::PotentialChargeInformation newSpecial2 =
-                        DoremiEngine::AI::PotentialChargeInformation(0, 12, true, true, DoremiEngine::AI::AIActorType::Player, chargeEquation);
-                    specialCharges.push_back(newSpecial2);
                     DoremiEngine::AI::PotentialChargeInformation newSpecial3 =
-                        DoremiEngine::AI::PotentialChargeInformation(-100, 3, true, true, DoremiEngine::AI::AIActorType::MeleeEnemy, chargeEquation);
+                        DoremiEngine::AI::PotentialChargeInformation(-100, 4, true, true, DoremiEngine::AI::AIActorType::MeleeEnemy, chargeEquation);
                     specialCharges.push_back(newSpecial3);
                     SetEnemyPotentialFieldStuff(realEvent->entityID, specialCharges);
                     break;

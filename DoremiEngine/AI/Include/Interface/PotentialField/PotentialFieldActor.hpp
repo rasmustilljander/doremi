@@ -129,6 +129,19 @@ namespace DoremiEngine
             Gets the list with potentials vs others
             */
             virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const = 0;
+            /**
+            Activates or deactivates all special charges that are affecting the given ai type
+            */
+            virtual void SetActivePotentialVsType(const AIActorType& p_type, bool p_active) = 0;
+            ;
+            /**
+            Gets wheter or not the phermonetrail is active
+            */
+            virtual bool GetUsePhermonetrail() const = 0;
+            /**
+            Sets wheter or not the phermonetrail should be active
+            */
+            virtual void SetUsePhermonetrail(const bool& p_active) = 0;
         };
     }
 }

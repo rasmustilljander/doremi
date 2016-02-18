@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl() : m_phermoneEffect(5) {}
+        PotentialFieldImpl::PotentialFieldImpl() : m_phermoneEffect(10) {}
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
@@ -254,7 +254,7 @@ namespace DoremiEngine
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
             // Only do the phermonetrail thingie if we have a actor
-            if(p_currentActor != nullptr && usePhermone == true)
+            if(p_currentActor != nullptr && usePhermone && p_currentActor->GetUsePhermonetrail())
             {
                 // Going through the phermone trail and adding them to the corresponding gridpos.
                 std::vector<XMINT2> phermoneVector = p_currentActor->GetPhermoneTrail();

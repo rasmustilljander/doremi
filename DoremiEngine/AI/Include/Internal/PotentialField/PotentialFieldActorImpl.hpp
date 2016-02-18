@@ -33,6 +33,9 @@ namespace DoremiEngine
             void EraseLatestAddedToPhermoneList() override;
             void AddPotentialVsOther(const PotentialChargeInformation& p_newPotential) override;
             virtual const std::vector<PotentialChargeInformation>& GetPotentialVsOthers() const { return m_potentialsVsOther; };
+            void SetActivePotentialVsType(const AIActorType& p_type, bool p_active) override;
+            bool GetUsePhermonetrail() const override { return m_usePhermonetrail; }
+            void SetUsePhermonetrail(const bool& p_active) override { m_usePhermonetrail = p_active; }
 
         private:
             std::vector<DirectX::XMINT2> m_phermoneTrail;
@@ -45,6 +48,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT3 m_position;
             AIActorType m_actorType;
             bool m_static;
+            bool m_usePhermonetrail;
         };
     }
 }

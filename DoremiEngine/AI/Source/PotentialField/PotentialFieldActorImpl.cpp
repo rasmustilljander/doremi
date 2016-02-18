@@ -11,11 +11,9 @@ namespace DoremiEngine
         {
             // TODOEA FULT SOM FAN att sätat en hårdkodad fulposition så att listan inte är tom. bättre än att kolla varje gång att den är tom.
             m_prevGridPos = DirectX::XMINT2(0, 0);
+            m_usePhermonetrail = true;
         }
-        PotentialFieldActorImpl::~PotentialFieldActorImpl() 
-        {
-            std::cout << "PF actor removed";
-        }
+        PotentialFieldActorImpl::~PotentialFieldActorImpl() { std::cout << "PF actor removed"; }
         void PotentialFieldActorImpl::SetPosition(const DirectX::XMFLOAT3& p_position)
         {
             if(m_static)
@@ -62,7 +60,7 @@ namespace DoremiEngine
             // if it is greater than 10 we remove the last before we add this one
             // TODOCONFIG HÅRDKODAT VÄRDE ATT DET ÄR en trail på 10
 
-            if(vectorSize >= 10)
+            if(vectorSize >= 15)
             {
                 m_phermoneTrail.erase(m_phermoneTrail.begin());
             }
@@ -73,6 +71,17 @@ namespace DoremiEngine
         void PotentialFieldActorImpl::AddPotentialVsOther(const PotentialChargeInformation& p_newPotential)
         {
             m_potentialsVsOther.push_back(p_newPotential);
+        }
+        void PotentialFieldActorImpl::SetActivePotentialVsType(const AIActorType& p_type, bool p_active)
+        {
+            size_t length = m_potentialsVsOther.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                if(((size_t)m_potentialsVsOther[i].actorToBeAddedTo & (size_t)p_type) == (size_t)p_type)
+                {
+                    m_potentialsVsOther[i].active = p_active;
+                }
+            }
         }
     }
 }
