@@ -10,6 +10,9 @@ namespace Doremi
         namespace IO
         {
 
+            // TODORT Define better than 1000?
+            const uint32_t DEFAULT_TIMEOUT = 1000;
+
             FileMapMutex::FileMapMutex() : m_handle(nullptr)
             {
                 // TODORT
@@ -38,7 +41,9 @@ namespace Doremi
                 return success;
             }
 
-            bool FileMapMutex::AttemptLock(const uint32_t& p_timeout)
+            bool FileMapMutex::try_lock() { return try_lock(DEFAULT_TIMEOUT); }
+
+            bool FileMapMutex::try_lock(const uint32_t& p_timeout)
             {
                 DWORD check;
                 check = WaitForSingleObject(m_handle, p_timeout);
@@ -51,13 +56,12 @@ namespace Doremi
                 return false; // Did not get mutex
             }
 
-            void FileMapMutex::Lock()
+            void FileMapMutex::lock()
             {
                 DWORD check;
                 while(true)
                 {
-                    // TODORT Define better than 1000?
-                    check = WaitForSingleObject(m_handle, 1000);
+                    check = WaitForSingleObject(m_handle, DEFAULT_TIMEOUT);
                     if(check == WAIT_TIMEOUT)
                     {
                         continue; // Timeouted
@@ -78,7 +82,7 @@ namespace Doremi
                 }
             }
 
-            void FileMapMutex::Unlock() { ReleaseMutex(m_handle); }
+            void FileMapMutex::unlock() { ReleaseMutex(m_handle); }
 
             bool FileMapMutex::InitializeExternalMutex()
             {

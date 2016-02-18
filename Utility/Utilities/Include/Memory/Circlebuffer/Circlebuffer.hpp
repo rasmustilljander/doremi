@@ -213,7 +213,7 @@ namespace Doremi
                 {
                     if(m_mutex != nullptr)
                     {
-                        m_mutex->AttemptLock();
+                        m_mutex->lock();
                     }
                 }
 
@@ -221,7 +221,7 @@ namespace Doremi
                 {
                     if(m_mutex != nullptr)
                     {
-                        m_mutex->Unlock();
+                        m_mutex->unlock();
                     }
                 }
 

@@ -10,7 +10,6 @@ namespace Doremi
     {
         namespace IO
         {
-
             class FileMapMutex : public Mutex
             {
             public:
@@ -26,17 +25,22 @@ namespace Doremi
                 /**
                 TODO docs
                 */
-                bool AttemptLock(const uint32_t& p_timeout) override;
+                bool try_lock() override;
+
+                /**
+                TODO docs
+                */
+                bool try_lock(const uint32_t& p_timeout) override;
 
                 /**
                     Will only return if locked.
                 */
-                void Lock();
+                void lock() override;
 
                 /**
                     TODO docs
                */
-                void Unlock() override;
+                void unlock() override;
 
             protected:
                 bool InitializeExternalMutex();

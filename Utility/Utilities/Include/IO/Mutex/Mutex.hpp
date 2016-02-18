@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 namespace Doremi
 {
@@ -6,7 +7,7 @@ namespace Doremi
     {
         namespace IO
         {
-            class Mutex
+            class Mutex : public std::mutex
             {
             public:
                 /**
@@ -14,18 +15,13 @@ namespace Doremi
                 */
                 virtual bool Initialize(const std::string& p_name) = 0;
 
-                /**
-                TODO docs
-                */
-                // TODOCONFIG
-                // TODOXX
-                // TODORT
-                virtual bool AttemptLock(const uint32_t& p_timeout = 1000) = 0;
+                virtual void lock() = 0;
 
-                /**
-                TODO docs
-                */
-                virtual void Unlock() = 0;
+                virtual bool try_lock() = 0;
+
+                virtual bool try_lock(const uint32_t& p_timeout) = 0;
+
+                virtual void unlock() = 0;
             };
         }
     }

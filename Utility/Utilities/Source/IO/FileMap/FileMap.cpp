@@ -42,11 +42,11 @@ namespace Doremi
                 return m_rawMemoryOfMappedFile;
             }
 
-            void FileMap::AttemptLock(const uint32_t& p_timeOut) { m_mutex.AttemptLock(p_timeOut); }
+            void FileMap::AttemptLock(const uint32_t& p_timeOut) { m_mutex.try_lock(p_timeOut); }
 
-            void FileMap::Lock() { m_mutex.Lock(); }
+            void FileMap::Lock() { m_mutex.lock(); }
 
-            void FileMap::UnLock() { m_mutex.Unlock(); }
+            void FileMap::UnLock() { m_mutex.unlock(); }
 
             bool FileMap::OpenFileMap()
             {
