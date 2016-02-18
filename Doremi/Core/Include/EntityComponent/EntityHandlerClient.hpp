@@ -5,6 +5,14 @@
 
 #include <DirectXMath.h>
 
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -12,7 +20,7 @@ namespace Doremi
         class EntityHandlerClient : public EntityHandler
         {
         public:
-            static void StartupEntityHandlerClient();
+            static void StartupEntityHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
             Removes the entire entity at the specific location
@@ -25,8 +33,10 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         protected:
-            EntityHandlerClient();
+            EntityHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~EntityHandlerClient();
+
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
         };
     }
 }

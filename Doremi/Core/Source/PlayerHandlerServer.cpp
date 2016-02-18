@@ -10,7 +10,7 @@
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
-#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp
+#include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
 // Events
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -103,79 +103,53 @@ namespace Doremi
 
         void PlayerHandlerServer::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
         {
+            // Check if we already have a ID
+            // TODOCM maybe we ignore here and if we find one, we know there actually was one before, and can use that position etc..
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
 
             if(iter != m_playerMap.end())
             {
                 std::runtime_error("Creating player twice with same ID.");
             }
 
+            // Get the spawner ID and spawn the new player there
+            // TODO could change this to checkpoint when we get checkpoints in the game
             uint32_t t_spawnerEntityID = PlayerSpawnerHandler::GetInstance()->GetCurrentSpawnerEntityID();
-
             DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
             // Get position and orientation of the trigger..
             DirectX::XMFLOAT3 t_triggerPosition = t_rigidBodyManager.GetBodyPosition(t_spawnerEntityID);
             DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(t_spawnerEntityID);
 
-
-            // TODOCM hard coded entityID for new players
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            EntityID t_EntityID =
-                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation, XMFLOAT3(0.25, 0.25, 0.25));
-
+            // Create new stuff needed for a Player
             NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
             NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
 
-            Player* NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
+            // Create the actual playerentity
+            EntityID t_EntityID =
+                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation, XMFLOAT3(0.25, 0.25, 0.25));
 
+            // Create a new player
+            PlayerServer* NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
+
+            // Add player to map
             m_playerMap[p_playerID] = NewPlayer;
 
-
-            // int materialID =
-            // EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            // DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-            // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position,
-            // XMFLOAT2(1.0f, 1.0f));
+            // Set start and endEvent for client
+            SetupRejoin(p_playerID);
 
             /// Add a new potential field actor to the player
             // Check if we have a actor, different from server and client...
             if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
             {
                 PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
-                pfComponent->ChargedActor =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, 30, 60, false, DoremiEngine::AI::AIActorType::Player);
-            }
-            /// Create the gun
-            // Check if we have the gun
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
-            {
-                // ParticlePressureComponent* particleComp =
-                //    EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
-                // particleComp->data.m_active = false;
-                // particleComp->data.m_density = 2.0f;
-                // particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-                // particleComp->data.m_direction =
-                // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
-                // particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-                // particleComp->data.m_emissionRate = 0.05;
-                // particleComp->data.m_launchPressure = 100;
-                // particleComp->data.m_numParticlesX = 5;
-                // particleComp->data.m_numParticlesY = 1;
-                // particleComp->data.m_size = 1;
-                // particleComp->data.m_position =
-                // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
-                // m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
+                pfComponent->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(t_triggerPosition, 30, 60, false,
+                                                                                                                      DoremiEngine::AI::AIActorType::Player);
             }
 
-
-            // Create event
+            // Create event & broadcast event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
-
-            // Broadcast event
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
@@ -291,7 +265,7 @@ namespace Doremi
             // Save position to wirte number of events
             uint32_t t_numOfEvents = 0;
             uint32_t t_posToWriteNumEvents = op_bytesWritten;
-            op_bytesWritten = +sizeof(uint32_t);
+            op_bytesWritten += sizeof(uint32_t);
             p_streamer.SetReadWritePosition(op_bytesWritten);
 
             uint32_t t_bitsWritten = 0;
@@ -302,6 +276,9 @@ namespace Doremi
             // While we got events left to send and we have space left to wirte
             for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; i++)
             {
+                p_streamer.WriteUnsignedInt32(static_cast<uint32_t>(m_lateJoinEventQueue[i]->eventType));
+                t_bitIncrement += sizeof(uint32_t) * 8;
+
                 m_lateJoinEventQueue[i]->Write(&p_streamer, t_bitIncrement);
                 t_bitsWritten += t_bitIncrement;
                 t_numOfEvents++;
@@ -336,18 +313,13 @@ namespace Doremi
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
                 Blueprints blueprint = p_entityCreatedEvent->bluepirnt;
-                // If it is ourselves, skip
-                // TODOCM remove this when we introduce late join or something
-                if(p_entityCreatedEvent->entityID == iter->second->m_playerEntityID)
-                {
-                    continue;
-                }
 
-                // If we create a player entity, we want to create a network player on the clients
-                if(blueprint == Blueprints::PlayerEntity)
+                // If we create a player entity, we want to create a network player on other clients
+                if(blueprint == Blueprints::PlayerEntity && !p_entityCreatedEvent->entityID == iter->second->m_playerEntityID)
                 {
                     blueprint = Blueprints::NetworkPlayerEntity;
                 }
+
                 (static_cast<PlayerServer*>(iter->second))
                     ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint,
                                                                                      p_entityCreatedEvent->position, p_entityCreatedEvent->orientation));

@@ -102,8 +102,6 @@ namespace Doremi
 
         void ClientNetworkManager::Update(double p_dt)
         {
-            // std::cout << "Real: " << (uint32_t)(InterpolationHandler::GetInstance()->GetRealSnapshotSequence()) << std::endl;
-
             // Recieve Messages
             RecieveMessages(p_dt);
 
@@ -244,10 +242,16 @@ namespace Doremi
 
         void ClientNetworkManager::RecieveMapLoading(NetMessage& p_message)
         {
-            if(m_serverConnectionState == ConnectionState::MAP_LOADING)
+            // If we're not in game, we care
+            if(m_serverConnectionState <= ConnectionState::IN_GAME)
             {
-                EntityHandler& entityHandler = EntityHandler::GetInstance();
+                // If we just connected, and receive this we move into map loading state
+                if(m_serverConnectionState == ConnectionState::CONNECTED)
+                {
+                    m_serverConnectionState = ConnectionState::MAP_LOADING;
+                }
 
+                // Create streamer
                 NetworkStreamer Streamer = NetworkStreamer();
                 unsigned char* dataPointer = p_message.Data;
                 Streamer.SetTargetBuffer(dataPointer, sizeof(p_message.Data));
@@ -263,13 +267,26 @@ namespace Doremi
             else
             {
                 // TODOCM If reliable messge is wrong?
+                // Could be that we receive a late package.. so shouldn't be a problem.. and we're the client, so w/e...
             }
         }
 
         void ClientNetworkManager::RecieveSnapshot(NetMessage& p_message, bool p_initial = false)
         {
-            if(m_serverConnectionState == ConnectionState::IN_GAME)
+            if(m_serverConnectionState >= ConnectionState::MAP_LOADING)
             {
+                if(m_serverConnectionState == ConnectionState::MAP_LOADING)
+                {
+                    m_serverConnectionState = ConnectionState::IN_GAME;
+
+                    // Create inputhandler used for client
+                    InputHandlerClient* t_newInputHandler = new InputHandlerClient(m_sharedContext);
+
+                    // Create player
+                    PlayerHandler::GetInstance()->CreateNewPlayer(m_playerID, t_newInputHandler);
+                }
+
+
                 // Update last response
                 m_serverLastResponse = 0;
 
@@ -361,7 +378,6 @@ namespace Doremi
                 // Attempt recieve reliable message
                 while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle))
                 {
-                    // std::cout << "Recieved snapshot." << std::endl; // TODOCM logg instead
 
                     switch(Message.MessageID)
                     {
@@ -462,9 +478,6 @@ namespace Doremi
             // Set message ID to connection request
             Message.MessageID = MessageID::CONNECT_REQUEST;
 
-            // TODOCM Write bits for stuff
-
-            // std::cout << "Sending Connect request message." << std::endl; // TODOCM logg instead
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
@@ -507,17 +520,16 @@ namespace Doremi
             // Write sequence
             Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
             bytesWritten += sizeof(uint8_t);
-            // cout << "Writing " << (uint32_t)InterpolationHandler::GetInstance()->GetRealSnapshotSequence() << endl;
 
             // Write input(position directions) to stream
             Streamer.WriteUnsignedInt32(inputHandler->GetInputBitMask());
             bytesWritten += sizeof(uint32_t);
 
-            // Get orientation
+            // Get orientation, shouldn't be a problem if wrong for now
             EntityID id = 0;
             if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(id))
             {
-                cout << "wrong in createinput message" << endl;
+                // cout << "wrong in createinput message" << endl;
             }
 
             // Write orientation and translation
@@ -551,8 +563,23 @@ namespace Doremi
 
         void ClientNetworkManager::SendMapLoadingMessage()
         {
+            // Create message base
             NetMessage Message = NetMessage();
             Message.MessageID = MessageID::LOAD_WORLD;
+
+            // Create streamer
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = Message.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(Message.Data));
+
+            // Amount written
+            uint32_t t_bytesWritten = 0;
+
+            // Write acked event
+            uint32_t eventAcc = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetLastJoinEventRead();
+
+            t_streamer.WriteUnsignedInt32(eventAcc);
+            t_bytesWritten += sizeof(uint32_t);
 
             // Send Message
             m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
@@ -562,9 +589,6 @@ namespace Doremi
         {
             NetMessage Message = NetMessage();
             Message.MessageID = MessageID::INPUT;
-
-            // std::cout << "Sending input message" << std::endl; // TODOCM logg instead
-            // Createing input message
 
 
             CreateInputMessage(Message);

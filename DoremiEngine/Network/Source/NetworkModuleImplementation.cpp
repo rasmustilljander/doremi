@@ -16,7 +16,7 @@ namespace DoremiEngine
     {
         NetworkModuleImplementation::NetworkModuleImplementation() : m_isInitialized(false) {}
 
-        NetworkModuleImplementation::~NetworkModuleImplementation() {}
+        NetworkModuleImplementation::~NetworkModuleImplementation() { Shutdown(); }
 
         void NetworkModuleImplementation::Startup()
         {
@@ -75,7 +75,7 @@ namespace DoremiEngine
             // If none is found, error
             if(iter == m_socketHandleMap.end())
             {
-                throw std::runtime_error("Invalid socketHandle, no such Socket exists.");
+                return nullptr;
             }
 
             return iter->second;
@@ -235,8 +235,11 @@ namespace DoremiEngine
         {
             Socket* socket = GetSocketFromMap(p_socketID);
 
-            delete socket;
-            m_socketHandleMap.erase(p_socketID);
+            if(socket != nullptr)
+            {
+                delete socket;
+                m_socketHandleMap.erase(p_socketID);
+            }
         }
 
         void NetworkModuleImplementation::Shutdown()

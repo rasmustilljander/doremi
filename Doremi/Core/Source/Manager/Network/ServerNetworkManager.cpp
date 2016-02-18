@@ -62,8 +62,6 @@ namespace Doremi
 
         void ServerNetworkManager::Update(double p_dt)
         {
-            // std::cout << "Real: " << (uint32_t)m_nextSnapshotSequence << std::endl;
-
             // Recieve Messages
             RecieveMessages(p_dt);
 
@@ -135,26 +133,34 @@ namespace Doremi
 
         void ServerNetworkManager::ReceiveLoadWorldMessage(NetMessage& p_message, Connection* p_connection)
         {
-            // Create a stream
-            NetworkStreamer Streamer = NetworkStreamer();
-
-            // Set message buffer to stream
-            unsigned char* BufferPointer = p_message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
-
-            // Amount read
-            uint32_t bytesRead = 0;
-
-            // Read acced event
-            uint32_t eventAcc = Streamer.ReadUnsignedInt32();
-
-            // Acc rejoin event
-            bool FullyLoaded = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->UpdateRejoinQueueForPlayer(eventAcc, p_connection->PlayerID);
-
-            // If fully loaded, set player to be in game
-            if(FullyLoaded)
+            if(p_connection->ConnectionState == ConnectionState::MAP_LOADING)
             {
-                p_connection->ConnectionState = ConnectionState::IN_GAME;
+                // Create a stream
+                NetworkStreamer Streamer = NetworkStreamer();
+
+                // Set message buffer to stream
+                unsigned char* BufferPointer = p_message.Data;
+                Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
+
+                // Amount read
+                uint32_t bytesRead = 0;
+
+                // Read acced event
+                uint32_t eventAcc = Streamer.ReadUnsignedInt32();
+
+                // Acc rejoin event
+                bool FullyLoaded = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->UpdateRejoinQueueForPlayer(eventAcc, p_connection->PlayerID);
+
+                // If fully loaded, set player to be in game
+                if(FullyLoaded)
+                {
+                    p_connection->ConnectionState = ConnectionState::IN_GAME;
+                    cout << "A player finished loading the map..." << endl;
+                }
+            }
+            else
+            {
+                // Not sure if we need to check ... maybe
             }
         }
 
@@ -333,7 +339,7 @@ namespace Doremi
             {
                 if(connection->ConnectionState == ConnectionState::CONNECTING)
                 {
-                    // Change connection state to connected
+                    // Change connection state to connecting
                     connection->ConnectionState = ConnectionState::VERSION_CHECK;
                     connection->LastResponse = 0;
 
@@ -342,41 +348,16 @@ namespace Doremi
                     Streamer.SetTargetBuffer(DataPOinter, sizeof(m_message.Data));
                     uint32_t PlayerID = Streamer.ReadUnsignedInt32();
 
-
                     // Check if player is saved
                     // TODOCM change the way its saved
                     std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
 
-                    // If we found one we remoe it from list and use it
-                    if(iter != m_SavedPlayerIDs.end())
-                    {
-                        m_SavedPlayerIDs.erase(iter);
-
-                        // TODOCM maybe crete player again
-                        PlayerID = rand();
-
-                        // TODOXX setting the position of inputhandler here.. shouldn't do that...
-                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
-
-                        // Create player
-                        PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
-                    }
-                    else
-                    {
-
-                        // Create a playerID
-                        // TODOCM need to change this to some other method to get a unique ID, like gametime
-                        PlayerID = rand();
-
-                        InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
-
-                        // Create player
-                        PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
-                    }
-
-                    connection->PlayerID = PlayerID;
-
-
+                    // Send Connected Message
+                    SendConnect(connection, m_adress);
+                }
+                // If packet is dropped, they might still need the connect message
+                else if(connection->ConnectionState == ConnectionState::VERSION_CHECK)
+                {
                     // Send Connected Message
                     SendConnect(connection, m_adress);
                 }
@@ -618,7 +599,6 @@ namespace Doremi
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
 
-            // std::cout << "Sending snapshot." << std::endl; // TODOCM logg instead
             // If we're a new connection we send a initialise snapshot, might need this later
             if(p_connection->NewConnection)
             {
@@ -653,7 +633,8 @@ namespace Doremi
             // Send message
             if(!NetworkModule.SendReliableData(&p_message, sizeof(p_message), p_connection->ReliableSocketHandle))
             {
-                cout << "Failed to send" << endl;
+                cout << "Failed to send, disconnecting..." << endl;
+                p_connection->LastResponse = 100000;
             }
         }
 
@@ -691,8 +672,24 @@ namespace Doremi
                             iter->second->NewConnection = true;
 
                             foundConnection = true;
+
+                            // Random new playerID
+                            uint32_t PlayerID = rand();
+
+                            // Create new InputHandler
+                            InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
+
+                            // I want to create a new Player" in the PlayerHandler, add start and stop, then create a new entity?
+                            // Create player
+                            PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
+
+                            // Set playerID
+                            iter->second->PlayerID = PlayerID;
+
+
                             break;
                         }
+                        // I think this didn't work cause we connected from same computer = same IP, but different games, how do we tell apart?
                         // else // If not, either wrong stage or something happened, or bot.. problem here is that if we play from 2 clients.. if
                         // wrong stage it will
                         //{
@@ -734,6 +731,8 @@ namespace Doremi
                 {
                     // Send disconnection message
                     SendDisconnect(*iter->first, "Timeout");
+
+                    m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
 
                     // Delete the memory here
                     delete iter->first;

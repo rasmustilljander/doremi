@@ -49,6 +49,8 @@ namespace Doremi
 
             void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) override;
 
+            void SetNewPlayerEntityID(const EntityID& p_entityID);
+
             NetworkEventReceiver* GetNetworkEventReceiverForPlayer(uint32_t p_playerID);
 
             /**
@@ -57,6 +59,10 @@ namespace Doremi
             void ReadEventsForJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesRead);
 
             void OnEvent(Event* p_event) override;
+
+            uint32_t GetLastJoinEventRead() { return m_lastJoinEventRead; }
+
+            uint32_t GetMaximumNumberOfJoinEvents() { return m_maxNumEvents; }
 
         private:
             DoremiEngine::Logging::Logger* m_logger;

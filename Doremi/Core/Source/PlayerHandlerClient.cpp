@@ -51,10 +51,11 @@ namespace Doremi
     namespace Core
     {
         PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : PlayerHandler(p_sharedContext), m_logger(nullptr)
+            : PlayerHandler(p_sharedContext), m_logger(nullptr), m_lastJoinEventRead(0), m_maxNumEvents(0)
         {
             EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerRespawn, this);
+            EventHandler::GetInstance()->Subscribe(EventType::EntityCreated, this);
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
         }
 
@@ -106,57 +107,27 @@ namespace Doremi
                 std::runtime_error("Creating player twice with same ID.");
             }
 
-            // TODOCM hard coded entityID for new players
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            EntityID t_EntityID =
-                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
+            //// TODOCM hard coded entityID for new players
+            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
+            // EntityID t_EntityID =
+            //    EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
 
             NetworkEventReceiver* newNetworkEventReceiver = new NetworkEventReceiver();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
 
-            Player* NewPlayer = new PlayerClient(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
+            Player* NewPlayer = new PlayerClient(0, p_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
+            NewPlayer->m_isFullyInitialized = false;
 
             m_playerMap[p_playerID] = NewPlayer;
+        }
 
-            // int materialID =
-            // EntityHandler::GetInstance().GetComponentFromStorage<Core::PhysicsMaterialComponent>(NewPlayer->m_playerEntityID)->p_materialID;
-            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            // DirectX::XMFLOAT4 orientation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-            // m_sharedContext.GetPhysicsModule().GetCharacterControlManager().AddController(NewPlayer->m_playerEntityID, materialID, position,
-            // XMFLOAT2(1.0f, 1.0f));
-
-            /// Add a new potential field actor to the player
-            // Check if we have a actor, different from server and client...
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
-            {
-                PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
-                pfComponent->ChargedActor =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(position, 30, 60, false, DoremiEngine::AI::AIActorType::Player);
-            }
-            /// Create the gun
-            // Check if we have the gun
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
-            {
-                // ParticlePressureComponent* particleComp =
-                //    EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(NewPlayer->m_playerEntityID);
-                // particleComp->data.m_active = false;
-                // particleComp->data.m_density = 2.0f;
-                // particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-                // particleComp->data.m_direction =
-                // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->rotation;
-                // particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-                // particleComp->data.m_emissionRate = 0.05;
-                // particleComp->data.m_launchPressure = 100;
-                // particleComp->data.m_numParticlesX = 5;
-                // particleComp->data.m_numParticlesY = 1;
-                // particleComp->data.m_size = 1;
-                // particleComp->data.m_position =
-                // EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(NewPlayer->m_playerEntityID)->position;
-                // m_sharedContext.GetPhysicsModule().GetFluidManager().CreateParticleEmitter(NewPlayer->m_playerEntityID, particleComp->data);
-            }
+        void PlayerHandlerClient::SetNewPlayerEntityID(const EntityID& p_entityID)
+        {
+            m_playerMap.begin()->second->m_playerEntityID = p_entityID;
+            m_playerMap.begin()->second->m_isFullyInitialized = true;
 
             // Create event
-            PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
+            PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(p_entityID);
 
             // Broadcast event
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
@@ -187,10 +158,11 @@ namespace Doremi
 
             // Read the number of events to be read
             uint32_t t_numOfEvents = p_streamer.ReadUnsignedInt32();
-            op_bytesRead = +sizeof(uint32_t);
+            op_bytesRead += sizeof(uint32_t);
 
             // Here is a thing, because we know all event exists beforehand, and because they are bunched to be sent according to acks
             // We can make the assumption that if we've already read the first one here, we've read all in the message
+
             uint32_t t_bitsRead = 0;
             if(t_messageStartEvent < m_lastJoinEventRead)
             {

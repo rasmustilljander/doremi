@@ -129,6 +129,13 @@ namespace Doremi
                 std::runtime_error("GetDefaultPlayerEntityID called without any players aviable.");
                 return false;
             }
+
+            // Needed this cause client needs some parts initialized but is not sure to have created a entityYet.. wow mega hax
+            if(!m_playerMap.begin()->second->m_isFullyInitialized)
+            {
+                return false;
+            }
+
             o_outID = m_playerMap.begin()->second->m_playerEntityID;
 
             return true;

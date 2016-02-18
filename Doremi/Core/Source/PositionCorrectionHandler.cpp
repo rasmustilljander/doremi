@@ -44,9 +44,10 @@ namespace Doremi
         void PositionCorrectionHandler::InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
             EntityID playerEntityID = 0;
-            if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
+            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerEntityID))
             {
-                std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
+                // std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
+                return;
             }
 
             DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
@@ -93,9 +94,10 @@ namespace Doremi
             // extrapolate
             // Get player Entity ID
             EntityID playerEntityID = 0;
-            if(!PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_playerID, playerEntityID))
+            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerEntityID))
             {
-                std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
+                // std::cout << "Error player entityID in PositionCorrectionHandler, might not be an error right now" << std::endl;
+                return;
             }
 
             DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();

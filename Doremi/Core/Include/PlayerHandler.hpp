@@ -41,7 +41,8 @@ namespace Doremi
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),
                   m_frequencyBufferHandler(p_frequencyBufferHandler),
-                  m_turnSpeed(0.01f)
+                  m_turnSpeed(0.01f),
+                  m_isFullyInitialized(true)
             {
             }
             ~Player()
@@ -85,6 +86,11 @@ namespace Doremi
                 TODOEA doc
             */
             float m_turnSpeed;
+
+            /**
+                TODOCM doc
+            */
+            bool m_isFullyInitialized;
         };
 
         /**

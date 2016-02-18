@@ -101,7 +101,7 @@ namespace Doremi
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
         EventHandlerClient::StartupEventHandlerClient();
-        Core::EntityHandlerClient::StartupEntityHandlerClient();
+        Core::EntityHandlerClient::StartupEntityHandlerClient(sharedContext);
         Core::PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
         Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
         Core::AudioHandler::StartAudioHandler(sharedContext);
@@ -302,7 +302,7 @@ namespace Doremi
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
             if(inputHandler != nullptr)
             {
-                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ExitGame))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::ExitGame))
                 {
                     break;
                 }
