@@ -547,8 +547,9 @@ namespace DoremiEngine
                     // Create a new shape between the current positions
                     PxVec3 newPosition = 0.5 * (position + shapePos);
                     PxShape* newShape;
-                    newShape = m_utils.m_physics->createShape(PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8)),
-                                                              *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+                    // PxSphereGeometry newGeometry = PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8));
+                    PxSphereGeometry newGeometry = PxSphereGeometry(mergeDistance);
+                    newShape = m_utils.m_physics->createShape(newGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
                     // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
                     newShape->setLocalPose(PxTransform(newPosition));
                     // Attach shape to body
