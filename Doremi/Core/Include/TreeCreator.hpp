@@ -46,7 +46,7 @@ namespace Doremi
             void CreateTree();
 
         private:
-            void BuildIt(OctNode& o_treeNode);
+            void BuildItRoot(OctNode& o_treeNode);
             void CreateAndDivideTheChildren(OctNode& o_treeNode);
         };
     }
