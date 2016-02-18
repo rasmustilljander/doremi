@@ -554,7 +554,7 @@ namespace DoremiEngine
                 PxVec3 shapePos = shape->getLocalPose().p;
                 float distanceBetweenPositions = (shape->getLocalPose().p - position).magnitude();
                 // Check if distance is big enough to justify a merge
-                if(distanceBetweenPositions > mergeDistance)
+                if(distanceBetweenPositions < mergeDistance)
                 {
                     // Create a new shape between the current positions
                     PxVec3 newPosition = 0.5 * (position + shapePos);
