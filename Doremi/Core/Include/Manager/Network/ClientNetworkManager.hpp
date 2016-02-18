@@ -199,6 +199,11 @@ namespace Doremi
                 TODOCM doc
             */
             uint32_t m_playerID;
+
+            /**
+                TODOCM doc
+            */
+            uint32_t m_numJoinEvents;
         };
     }
 }

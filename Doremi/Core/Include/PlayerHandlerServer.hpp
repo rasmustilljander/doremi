@@ -71,6 +71,8 @@ namespace Doremi
 
             void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) override;
 
+            uint32_t GetMaxEventForPlayer(uint32_t p_playerID);
+
             NetworkEventSender* GetNetworkEventSenderForPlayer(uint32_t p_playerID);
 
             NetworkPriorityHandler* GetNetworkPriorityHandlerForplayer(uint32_t p_playerID);

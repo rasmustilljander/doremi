@@ -46,7 +46,8 @@ namespace Doremi
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
               m_timeoutInterval(3.0f),
-              m_playerID(0)
+              m_playerID(0),
+              m_numJoinEvents(0)
         {
             LoadIPFromConfigFile(p_sharedContext);
 
@@ -232,6 +233,8 @@ namespace Doremi
             unsigned char* BufferPointer = Message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
+            m_numJoinEvents = Streamer.ReadUnsignedInt32();
+
             bool GameStarts = Streamer.ReadBool();
 
             if(GameStarts)
@@ -258,8 +261,20 @@ namespace Doremi
 
                 uint32_t t_bytesWritten = 0;
 
+
+                PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+                uint32_t t_previousNumEvents = t_playerHandler->GetLastJoinEventRead();
+
                 // Write events
-                static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->ReadEventsForJoin(Streamer, sizeof(p_message.Data), t_bytesWritten);
+                t_playerHandler->ReadEventsForJoin(Streamer, sizeof(p_message.Data), t_bytesWritten);
+
+                // If we got something new, print! :3
+                uint32_t t_newNumEvents = t_playerHandler->GetLastJoinEventRead();
+                if(t_previousNumEvents != t_newNumEvents)
+                {
+                    cout << "Loaded: " << ((float)t_newNumEvents / (float)m_numJoinEvents) * 100.0f << "%..." << endl;
+                }
 
                 // Update last response
                 m_serverLastResponse = 0;

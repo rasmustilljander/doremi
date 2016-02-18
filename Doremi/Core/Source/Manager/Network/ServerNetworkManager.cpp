@@ -562,6 +562,8 @@ namespace Doremi
             unsigned char* BufferPointer = Message.Data;
             Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
 
+            Streamer.WriteUnsignedInt32(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID));
+
             Streamer.WriteBool(true);
 
             p_connection->ConnectionState = ConnectionState::MAP_LOADING;

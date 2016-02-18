@@ -153,6 +153,20 @@ namespace Doremi
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
+        uint32_t PlayerHandlerServer::GetMaxEventForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            NetworkEventSender* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                return static_cast<PlayerServer*>(iter->second)->m_EndEvent;
+            }
+
+            return 0;
+        }
+
         NetworkEventSender* PlayerHandlerServer::GetNetworkEventSenderForPlayer(uint32_t p_playerID)
         {
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
