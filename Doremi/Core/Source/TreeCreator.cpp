@@ -26,10 +26,10 @@ namespace Doremi
             // standard root beginning
             // Root checks eight boxes(its children) for anycollision.
 
-            BuildIt(treeRoot);
+            BuildItRoot(treeRoot);
         }
 
-        void TreeCreator::BuildIt(OctNode& o_treeNode)
+        void TreeCreator::BuildItRoot(OctNode& o_treeNode)
         {
             for(size_t i = 0; i < 8; i++)
             {
@@ -45,11 +45,12 @@ namespace Doremi
                     {
                         // If there is a collision we split the node to 8 smaller nodes if we havent reached max depth
                         CreateAndDivideTheChildren(o_treeNode);
-                        BuildIt(o_treeNode);
+                        // Change BuildIt to build it Node instead of root
+                        BuildItRoot(o_treeNode);
                     }
                     else
                     {
-
+                        int hej = 0;
                         // We reached max depth.
                     }
                 }
