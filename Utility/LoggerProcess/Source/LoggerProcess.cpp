@@ -174,7 +174,7 @@ void LoggerProcess::BuildLogFiles()
 {
     for(auto& tag : Logging::ALL_LOG_TAGS)
     {
-        m_logfiles[tag] = SpecificLogFile();
+        m_logfiles.emplace(tag, SpecificLogFile());
         m_logfiles[tag].Initialize(tag);
     }
 }
