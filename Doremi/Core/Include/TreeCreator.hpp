@@ -10,6 +10,9 @@ namespace Doremi
     {
         class TreeCreator : public Subscriber
         {
+
+
+        public:
             struct OctNode
             {
                 OctNode(uint8_t p_depth, bool p_empty, DirectX::XMFLOAT3 p_boxDimensions, DirectX::XMFLOAT3 p_center)
@@ -36,18 +39,19 @@ namespace Doremi
                 uint8_t depth;
             };
 
-        public:
             TreeCreator();
             ~TreeCreator();
+
             void Update();
             void OnEvent(Event* p_event) override;
-            OctNode treeRoot;
             void CreateTree();
+
+            OctNode treeRoot;
+            uint16_t m_treeDepth;
 
         private:
             void BuildTree(OctNode& o_treeNode);
             void CreateAndDivideTheChildren(OctNode& o_treeNode);
-            uint16_t m_treeDepth;
         };
     }
 }
