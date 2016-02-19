@@ -93,9 +93,9 @@ float3 CalcPointLight(PixelInputType input, Light l)
     float3 lightDirection = l.position - input.worldPos.xyz;
     float lightDistance = length(lightDirection);
 
-    if (lightDistance < 50.0f)
+    if (lightDistance < 100.0f)
     {
-        attenuation = 2.5f /
+        attenuation = 1.f /
             (l.attenuation[0] + l.attenuation[1] * lightDistance +
                 l.attenuation[2] * lightDistance * lightDistance);
 
