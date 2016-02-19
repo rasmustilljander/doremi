@@ -11,6 +11,8 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
@@ -83,6 +85,14 @@ namespace Doremi
 
                 case Doremi::Core::EventType::PlaySound:
                     p_newEvent = new PlaySoundEvent();
+                    break;
+
+                case Doremi::Core::EventType::SetHealth:
+                    p_newEvent = new SetHealthEvent();
+                    break;
+
+                case Doremi::Core::EventType::SetTransform:
+                    p_newEvent = new SetTransformEvent();
                     break;
 
                 default:

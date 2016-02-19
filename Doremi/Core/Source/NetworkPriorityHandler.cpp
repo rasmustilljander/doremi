@@ -16,11 +16,7 @@ namespace Doremi
             : m_sharedContext(p_sharedContext), RelevantTimer(5.0f), ShortRelevantTimer(1.0f), CullRange(1000000000.0f)
         {
             // Copy all current network objects
-            uint32_t t_numEntities = EntityHandler::GetInstance().GetLastEntityIndex();
-            memcpy(m_netPriorityObjects, GetComponent<NetworkObjectComponent>(0), sizeof(NetworkObjectComponent) * t_numEntities);
-
-            // Reserve memory for the maximum number of elements
-            m_idByPriorityList.reserve(t_numEntities);
+            UpdateAllNetworkObject();
         }
 
         NetworkPriorityHandler::~NetworkPriorityHandler() {}
@@ -113,6 +109,13 @@ namespace Doremi
             // Sort by priority
             FunctorPriority functorPriority(m_netPriorityObjects);
             std::sort(m_idByPriorityList.begin(), m_idByPriorityList.end(), functorPriority);
+        }
+
+        void NetworkPriorityHandler::UpdateAllNetworkObject()
+        {
+            // Copy all current network objects
+            uint32_t t_numEntities = EntityHandler::GetInstance().GetLastEntityIndex();
+            memcpy(m_netPriorityObjects, GetComponent<NetworkObjectComponent>(0), sizeof(NetworkObjectComponent) * t_numEntities);
         }
 
         void NetworkPriorityHandler::UpdateNetworkObject(const EntityID& p_entityID)

@@ -28,6 +28,7 @@
 #include <iostream> // TODOCM remove after test
 #include <vector>
 #include <algorithm>
+#include <time.h>
 
 namespace Doremi
 {
@@ -56,6 +57,8 @@ namespace Doremi
             m_reliableSocketHandle = NetworkModule.CreateReliableConnection(ReliableAdress, m_maxConnection);
 
             counter = 0;
+
+            srand(time(NULL));
         }
 
         ServerNetworkManager::~ServerNetworkManager() {}
@@ -156,6 +159,9 @@ namespace Doremi
                 {
                     p_connection->ConnectionState = ConnectionState::IN_GAME;
                     cout << "A player finished loading the map..." << endl;
+
+                    // Update all network objects, so that all objects attempt to send their stuff right away
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID)->UpdateAllNetworkObject();
                 }
             }
             else
@@ -240,7 +246,7 @@ namespace Doremi
                         switch(Message.MessageID)
                         {
                             case MessageID::CONNECTED:
-
+                                // Irellevant for now
                                 // Add code here
                                 break;
 
@@ -301,7 +307,7 @@ namespace Doremi
             if(FoundAdress)
             {
                 // TODOCM if added more states add here as well to disconnect if wrong is sent
-                if(connection->ConnectionState == ConnectionState::CONNECTED)
+                if(connection->ConnectionState >= ConnectionState::CONNECTED)
                 {
                     // Set client state to disconnected, let him timeout to remove or reconnect
                     connection->ConnectionState = ConnectionState::DISCONNECTED;
@@ -350,7 +356,24 @@ namespace Doremi
 
                     // Check if player is saved
                     // TODOCM change the way its saved
-                    std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
+                    // std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
+
+
+                    PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
+                    // If we don't have saved data of the player, we need to generate a newID
+                    if(!t_playerHandler->InactivePlayerIDExists(PlayerID))
+                    {
+                        // TODO change better way of generation random unique number, then checking against existing
+                        PlayerID = rand();
+
+                        while(t_playerHandler->ActivePlayerIDExists(PlayerID))
+                        {
+                            PlayerID = rand();
+                        }
+                    }
+
+                    // Set playerID
+                    connection->PlayerID = PlayerID;
 
                     // Send Connected Message
                     SendConnect(connection, m_adress);
@@ -681,7 +704,6 @@ namespace Doremi
                             // Create new InputHandler
                             InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
-                            // I want to create a new Player" in the PlayerHandler, add start and stop, then create a new entity?
                             // Create player
                             PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
 
@@ -735,6 +757,9 @@ namespace Doremi
                     SendDisconnect(*iter->first, "Timeout");
 
                     m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
+
+                    // Remove and save player if it exists
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(iter->second->PlayerID);
 
                     // Delete the memory here
                     delete iter->first;

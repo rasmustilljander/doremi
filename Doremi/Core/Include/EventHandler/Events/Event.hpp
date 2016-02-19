@@ -25,6 +25,8 @@ namespace Doremi
             PlayerRespawn, // TODO maybe fix name to more specific?
             GunFireToggle,
             PlaySound,
+            SetHealth,
+            SetTransform,
         };
 
         /**All events needs to inherit this struct*/

@@ -44,6 +44,11 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void ClearInput();
+
+            /**
+                TODOCM doc
+            */
             DirectX::XMFLOAT4 GetOrientationFromInput();
 
             /**

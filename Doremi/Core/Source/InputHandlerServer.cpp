@@ -93,6 +93,12 @@ namespace Doremi
 
         void InputHandlerServer::SetSequence(uint8_t p_sequence) { m_realSequence = p_sequence - m_sequenceDelay; }
 
+        void InputHandlerServer::ClearInput()
+        {
+            m_queuedInputs.clear();
+            m_maskWithInput = 0;
+        }
+
         DirectX::XMFLOAT4 InputHandlerServer::GetOrientationFromInput() { return m_orientationQuaternion; }
     }
 }

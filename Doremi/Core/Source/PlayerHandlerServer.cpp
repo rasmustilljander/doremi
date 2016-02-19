@@ -21,6 +21,8 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -41,6 +43,7 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/PressureParticleComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/HealthComponent.hpp>
 
 #include <iostream>
 
@@ -103,54 +106,125 @@ namespace Doremi
 
         void PlayerHandlerServer::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
         {
-            // Check if we already have a ID
-            // TODOCM maybe we ignore here and if we find one, we know there actually was one before, and can use that position etc..
+            // Error check if we create duplicate, shouoldn't be able to happen
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
             if(iter != m_playerMap.end())
             {
                 std::runtime_error("Creating player twice with same ID.");
             }
 
-            // Get the spawner ID and spawn the new player there
-            // TODO could change this to checkpoint when we get checkpoints in the game
-            uint32_t t_spawnerEntityID = PlayerSpawnerHandler::GetInstance()->GetCurrentSpawnerEntityID();
-            DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+            PlayerServer* NewPlayer;
 
-            // Get position and orientation of the trigger..
-            DirectX::XMFLOAT3 t_triggerPosition = t_rigidBodyManager.GetBodyPosition(t_spawnerEntityID);
-            DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(t_spawnerEntityID);
 
-            // Create new stuff needed for a Player
-            NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
-            FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
-            NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
+            // If we got the id saved as a disconnect, we use the saved values
+            std::map<uint32_t, InactivePlayerServer*>::iterator iterInact = m_inactivePlayers.find(p_playerID);
+            if(iterInact != m_inactivePlayers.end())
+            {
+                // Create the actual playerentity
+                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, iterInact->second->m_savedPosition,
+                                                                                iterInact->second->m_savedOrientation, XMFLOAT3(0.25, 0.25, 0.25));
 
-            // Create the actual playerentity
-            EntityID t_EntityID =
-                EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation, XMFLOAT3(0.25, 0.25, 0.25));
+                // Set health
+                EventHandler::GetInstance()->BroadcastEvent(new SetHealthEvent(t_EntityID, iterInact->second->m_savedHealth));
 
-            // Create a new player
-            PlayerServer* NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
+                // Create a "new" player
+                NewPlayer = iterInact->second->m_savedPlayer;
 
-            // Add player to map
-            m_playerMap[p_playerID] = NewPlayer;
+                // Add player to map and remove from inactive
+                m_playerMap[p_playerID] = NewPlayer;
+                m_inactivePlayers.erase(iterInact);
+            }
+            else
+            {
+                // Get the spawner ID and spawn the new player there
+                // TODO could change this to checkpoint when we get checkpoints in the game
+                uint32_t t_spawnerEntityID = PlayerSpawnerHandler::GetInstance()->GetCurrentSpawnerEntityID();
+                DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+                // Get position and orientation of the trigger..
+                DirectX::XMFLOAT3 t_triggerPosition = t_rigidBodyManager.GetBodyPosition(t_spawnerEntityID);
+                DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(t_spawnerEntityID);
+
+                // Create new stuff needed for a Player
+                NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
+                FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
+                NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
+
+                // Create the actual playerentity
+                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation,
+                                                                                XMFLOAT3(0.25, 0.25, 0.25));
+
+                // Create a new player
+                NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
+
+                // Add player to map
+                m_playerMap[p_playerID] = NewPlayer;
+            }
+
 
             // Set start and endEvent for client
             SetupRejoin(p_playerID);
 
-            /// Add a new potential field actor to the player
-            // Check if we have a actor, different from server and client...
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
-            {
-                PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
-                pfComponent->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(t_triggerPosition, 30, 60, false,
-                                                                                                                      DoremiEngine::AI::AIActorType::Player);
-            }
-
             // Create event & broadcast event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(NewPlayer->m_playerEntityID);
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
+        }
+
+        void PlayerHandlerServer::RemoveAndSavePlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+
+            // If playerID exist
+            if(iter != m_playerMap.end())
+            {
+                // Create new inactive player
+                InactivePlayerServer* t_newInactivePlayer = new InactivePlayerServer();
+
+                // Get transcomp and player object
+                TransformComponent* t_transComp = GetComponent<TransformComponent>(iter->second->m_playerEntityID);
+                PlayerServer* t_playerServ = static_cast<PlayerServer*>(iter->second);
+
+                // Save position, orientation, health
+                t_newInactivePlayer->m_savedPosition = t_transComp->position;
+                t_newInactivePlayer->m_savedOrientation = t_transComp->rotation;
+                t_newInactivePlayer->m_savedHealth = GetComponent<HealthComponent>(iter->second->m_playerEntityID)->currentHealth;
+                t_newInactivePlayer->m_savedPlayer = t_playerServ;
+
+                // Set input to 0, and clear buffer
+                // TODOCM If we're based on 0 sequence or something we'll need to fix this, seems not to be a problem with input?
+                static_cast<InputHandlerServer*>(t_playerServ->m_inputHandler)->ClearInput();
+
+                // Remove the entity
+                EntityHandler::GetInstance().RemoveEntity(t_playerServ->m_playerEntityID);
+
+                // Erase from active players, and add to inactive players
+                m_playerMap.erase(p_playerID);
+                m_inactivePlayers[p_playerID] = t_newInactivePlayer;
+            }
+        }
+
+
+        bool PlayerHandlerServer::InactivePlayerIDExists(const uint32_t& p_playerID)
+        {
+            std::map<uint32_t, InactivePlayerServer*>::iterator iter = m_inactivePlayers.find(p_playerID);
+            if(iter != m_inactivePlayers.end())
+            {
+                cout << "Found inactive playerID..." << endl;
+                return true;
+            }
+
+            return false;
+        }
+
+        bool PlayerHandlerServer::ActivePlayerIDExists(const uint32_t& p_playerID)
+        {
+            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            if(iter != m_playerMap.end())
+            {
+                return true;
+            }
+
+            return false;
         }
 
         uint32_t PlayerHandlerServer::GetMaxEventForPlayer(uint32_t p_playerID)
@@ -225,8 +299,35 @@ namespace Doremi
             }
             PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
 
-            t_player->m_StartEvent = 0; // Well... if we rejoin we want to reset
-            t_player->m_EndEvent = m_lateJoinEventQueue.size(); // Size of current queue
+            // reset start and set new end
+            t_player->m_StartEvent = 0;
+            t_player->m_EndEvent = m_lateJoinEventQueue.size();
+
+            // Get network event sender
+            NetworkEventSender* t_netEventSender = t_player->m_networkEventSender;
+
+            // Now when we created the event box, we can add health events and setposition
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            size_t t_numEntities = t_entityHandler.GetLastEntityIndex();
+            uint32_t t_mask = static_cast<uint32_t>(ComponentType::Health);
+            for(size_t entityID = 0; entityID < t_numEntities; entityID++)
+            {
+                if(t_entityHandler.HasComponents(entityID, t_mask))
+                {
+                    t_netEventSender->QueueEventToFrame(new SetHealthEvent(entityID, GetComponent<HealthComponent>(entityID)->currentHealth));
+                }
+            }
+
+            // Set positions, we might not actuall
+            t_mask = static_cast<uint32_t>(ComponentType::Transform) | static_cast<uint32_t>(ComponentType::NetworkObject);
+            for(size_t entityID = 0; entityID < t_numEntities; entityID++)
+            {
+                if(t_entityHandler.HasComponents(entityID, t_mask))
+                {
+                    TransformComponent* t_transComp = GetComponent<TransformComponent>(entityID);
+                    t_netEventSender->QueueEventToFrame(new SetTransformEvent(entityID, t_transComp->position, t_transComp->rotation));
+                }
+            }
         }
 
         bool PlayerHandlerServer::UpdateRejoinQueueForPlayer(uint32_t p_EventSlot, uint32_t t_playerID)
@@ -388,6 +489,26 @@ namespace Doremi
             }
         }
 
+        void PlayerHandlerServer::QueueSetHealthEventToPlayers(SetHealthEvent* t_setHealthEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new SetHealthEvent(*t_setHealthEvent));
+            }
+        }
+
+        void PlayerHandlerServer::QueueSetTransformEventToPlayers(SetTransformEvent* t_setTransformEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new SetTransformEvent(*t_setTransformEvent));
+            }
+        }
+
         void PlayerHandlerServer::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -424,6 +545,22 @@ namespace Doremi
                     GunFireToggleEvent* t_gunFireToggleEvent = static_cast<GunFireToggleEvent*>(p_event);
 
                     QueueGunFireToggleEventToPlayers(t_gunFireToggleEvent);
+
+                    break;
+                }
+                case Doremi::Core::EventType::SetHealth:
+                {
+                    SetHealthEvent* t_setHealthEvent = static_cast<SetHealthEvent*>(p_event);
+
+                    QueueSetHealthEventToPlayers(t_setHealthEvent);
+
+                    break;
+                }
+                case Doremi::Core::EventType::SetTransform:
+                {
+                    SetTransformEvent* t_setTransformEvent = static_cast<SetTransformEvent*>(p_event);
+
+                    QueueSetTransformEventToPlayers(t_setTransformEvent);
 
                     break;
                 }

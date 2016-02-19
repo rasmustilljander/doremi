@@ -9,6 +9,8 @@ namespace Doremi
         class NetworkPriorityHandler;
         struct GunFireToggleEvent;
         class NetworkStreamer;
+        struct SetHealthEvent;
+        struct SetTransformEvent;
 
         /**
             TODOCM doc
@@ -56,6 +58,36 @@ namespace Doremi
         /**
             TODOCM doc
         */
+        struct InactivePlayerServer
+        {
+        public:
+            InactivePlayerServer() {}
+
+            ~InactivePlayerServer() {}
+            /**
+                TODOCM doc
+            */
+            PlayerServer* m_savedPlayer;
+
+            /**
+                TODOCM DOC
+            */
+            DirectX::XMFLOAT3 m_savedPosition;
+
+            /**
+                TODOCM DOC
+            */
+            DirectX::XMFLOAT4 m_savedOrientation;
+
+            /**
+                TODOCM doc
+            */
+            float m_savedHealth;
+        };
+
+        /**
+            TODOCM doc
+        */
         class PlayerHandlerServer : public PlayerHandler, public Subscriber
         {
         public:
@@ -70,6 +102,12 @@ namespace Doremi
             void UpdatePlayerInputs() override;
 
             void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) override;
+
+            void RemoveAndSavePlayer(uint32_t p_playerID);
+
+            bool InactivePlayerIDExists(const uint32_t& p_playerID);
+
+            bool ActivePlayerIDExists(const uint32_t& p_playerID);
 
             uint32_t GetMaxEventForPlayer(uint32_t p_playerID);
 
@@ -128,7 +166,22 @@ namespace Doremi
             /**
                 TODOCM doc
             */
+            void PlayerHandlerServer::QueueSetHealthEventToPlayers(SetHealthEvent* t_setHealthEvent);
+
+            /**
+                TODOCM doc
+            */
+            void QueueSetTransformEventToPlayers(SetTransformEvent* t_setTransformEvent);
+
+            /**
+                TODOCM doc
+            */
             std::vector<Event*> m_lateJoinEventQueue;
+
+            /**
+                TODOCM doc
+            */
+            std::map<uint32_t, InactivePlayerServer*> m_inactivePlayers;
         };
     }
 }

@@ -61,6 +61,11 @@ namespace Doremi
             void Update(EntityID p_playerIDEntityID, double p_dt);
 
             /**
+                TODOCM doc
+            */
+            void UpdateAllNetworkObject();
+
+            /**
                 Update a specific object with a priority template
             */
             void UpdateNetworkObject(const EntityID& p_entityID);
