@@ -69,20 +69,7 @@ namespace DoremiEngine
 
                 XMStoreFloat4x4(&t_toRootTransforms[i], t_toRoot);
             }
-
-            // two solutions below. Use the first if we export maya with individual transformMatrices
             p_finalTransforms = t_toRootTransforms;
-
-            // Premultiply by the bone offset transform to get the final transform (Wont be needed if we export maya with individual
-            // transformmatrices.
-            // std::vector<XMFLOAT4X4> t_boneOffsets = p_skeletalInformation->GetBoneOffsets();
-            // for (size_t i = 0; i < t_numBones; i++)
-            //{
-            //    //XMMATRIX t_offset = XMLoadFloat4x4(&t_boneOffsets[i]);
-            //    XMMATRIX t_toRoot = XMLoadFloat4x4(&t_toRootTransforms[i]);
-            //    //XMStoreFloat4x4(&p_finalTransforms[i], XMMatrixMultiply(t_offset, t_toRoot));
-            //    XMStoreFloat4x4(&p_finalTransforms[i], t_toRoot);
-            //}
         }
         void SkeletalAnimationManagerImpl::PushMatricesToDevice(std::vector<DirectX::XMFLOAT4X4> p_transformsToPush)
         {
@@ -92,10 +79,6 @@ namespace DoremiEngine
             for(size_t i = 0; i < p_transformsToPush.size(); i++)
             {
                 XMVECTOR t_determinant = XMMatrixDeterminant(XMLoadFloat4x4(&p_transformsToPush[i]));
-                // XMStoreFloat4x4(&p_transformsToPush[i], XMMatrixTranspose(XMMatrixInverse(&t_determinant,
-                // XMLoadFloat4x4(&p_transformsToPush[i]))));
-                // XMStoreFloat4x4(&p_transformsToPush[i], XMMatrixInverse(&t_determinant, XMMatrixTranspose(
-                // XMLoadFloat4x4(&p_transformsToPush[i]))));
                 XMStoreFloat4x4(&p_transformsToPush[i], XMMatrixTranspose(XMLoadFloat4x4(&p_transformsToPush[i])));
             }
             m_directX.GetDeviceContext()->Map(m_matricesBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);

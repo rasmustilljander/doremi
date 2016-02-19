@@ -4,6 +4,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/SkeletalAnimationComponent.hpp>
+#include <EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <Doremi/Core/Include/PlayerHandler.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
@@ -75,8 +76,8 @@ namespace Doremi
             // Loop through all entities
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to perform various functions on enteties that have skeletal animation
-            int mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::SkeletalAnimation;
-
+            int mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
+                       (int)ComponentType::LowerBodySkeletalAnimation;
             // Set shaders
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
@@ -89,22 +90,68 @@ namespace Doremi
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(j);
+                    LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
+                        EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(j);
+
                     t_skeletalAnimationComponent->timePosition += p_dt;
-                    // t_skeletalAnimationComponent->timePosition = 0.0f;
+                    t_lowerSkeletalAnimationComponent->timePosition += p_dt;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
                     if(t_skeletalAnimationComponent->timePosition >
                        t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName))
                     {
+                        // if (t_skeletalAnimationComponent->clipName == "Run")
+                        //{
+                        //    t_skeletalAnimationComponent->clipName = "Walk";
+                        //}
+                        // else if(t_skeletalAnimationComponent->clipName == "Walk")
+                        //{
+                        //    t_skeletalAnimationComponent->clipName = "Idle";
+                        //}
+                        // else
+                        //{
+                        //    t_skeletalAnimationComponent->clipName = "Run";
+                        //}
                         t_skeletalAnimationComponent->timePosition = 0.0f;
                     }
+                    if(t_lowerSkeletalAnimationComponent->timePosition >
+                       t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName))
+                    {
+                        // if (t_lowerSkeletalAnimationComponent->clipName == "Run")
+                        //{
+                        //    t_lowerSkeletalAnimationComponent->clipName = "Walk";
+                        //}
+                        // else if (t_lowerSkeletalAnimationComponent->clipName == "Walk")
+                        //{
+                        //    t_lowerSkeletalAnimationComponent->clipName = "Idle";
+                        //}
+                        // else
+                        //{
+                        //    t_lowerSkeletalAnimationComponent->clipName = "Run";
+                        //}
+                        t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                    }
+                    ///////////********WAAARNINNGGGGG tänk på att vi kommer lägga in rootnoden i både upper å lower. Det kan fakka med skit!!!!!!!
+                    /// Fortsätt med Loadern å hör med simon hur det ska se ut!
+
                     // Make a transformationmatrix per bone
                     int t_numberOfTransformationMatrices = t_skeletalAnimationComponent->skeletalInformation->GetBoneCount();
+                    int t_numberOfLowerBodyTransforms = t_lowerSkeletalAnimationComponent->skeletalInformation->GetBoneCount();
                     // Declare and define a vector to the length of the number of joints/bones
                     std::vector<DirectX::XMFLOAT4X4> t_finalTransformations(t_numberOfTransformationMatrices);
+                    std::vector<DirectX::XMFLOAT4X4> t_lowerBodyFinalTransformations(t_numberOfLowerBodyTransforms);
                     // Send to graphicmodule to compute the final transformationmatrices for this timeinstant.
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().GetFinalTransforms(
                         t_skeletalAnimationComponent->clipName, (float)t_skeletalAnimationComponent->timePosition, t_finalTransformations,
                         t_skeletalAnimationComponent->skeletalInformation);
+                    // Do the same for lowerbody
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().GetFinalTransforms(
+                        t_lowerSkeletalAnimationComponent->clipName, (float)t_lowerSkeletalAnimationComponent->timePosition,
+                        t_lowerBodyFinalTransformations, t_lowerSkeletalAnimationComponent->skeletalInformation);
+                    // Add the lowerbodytransformations to the list of upperbody and get ready to push the matrices to gpu
+                    for(size_t i = 1; i < t_numberOfLowerBodyTransforms; i++)
+                    {
+                        t_finalTransformations.push_back(t_lowerBodyFinalTransformations[i]);
+                    }
                     // Push the matrices to the gpu
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().PushMatricesToDevice(t_finalTransformations);
 

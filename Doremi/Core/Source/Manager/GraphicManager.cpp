@@ -70,7 +70,8 @@ namespace Doremi
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {
-                if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::SkeletalAnimation))
+                if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
+                   !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
                 {
                     RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
                     TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);

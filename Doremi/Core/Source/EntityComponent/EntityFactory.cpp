@@ -48,6 +48,7 @@
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <EntityComponent/Components/SkeletalAnimationComponent.hpp>
+#include <EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 
 #include <iostream>
 namespace Doremi
@@ -296,15 +297,22 @@ namespace Doremi
                 {
                     memcpy(GetComponent<EntitySpawnComponent>(p_entityID), iter->second, sizeof(EntitySpawnComponent));
                 }
-                else if(iter->first == ComponentType::SkeletalAnimation)
+                else if(iter->first == ComponentType::UpperBodySkeletalAnimation)
                 {
                     memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
                 }
+<<<<<<< HEAD
                 else if(iter->first == ComponentType::AITimer)
                 {
                     memcpy(GetComponent<AITimerComponent>(p_entityID), iter->second, sizeof(AITimerComponent));
                 }
 
+=======
+                else if(iter->first == ComponentType::LowerBodySkeletalAnimation)
+                {
+                    memcpy(GetComponent<LowerSkeletalAnimationComponent>(p_entityID), iter->second, sizeof(LowerSkeletalAnimationComponent));
+                }
+>>>>>>> SkeletalAnimations works. Separerat över och under
                 // Add bitmask. This is now done last due to transform being a dick
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
             }

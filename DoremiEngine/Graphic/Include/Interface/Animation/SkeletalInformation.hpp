@@ -90,6 +90,10 @@ namespace DoremiEngine
 
                             // Get a zeroVector for rotation orientation.
                             XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+                            // XMMATRIX t_temp = XMMatrixAffineTransformation(t_interpolatedScale, t_zero, t_interpolatedQuaternion,
+                            // t_interpolatedPosition);
+                            // t_temp = XMMatrixInverse(nullptr, t_temp);
+                            // XMStoreFloat4x4(&p_matrix, t_temp);
 
                             XMStoreFloat4x4(&p_matrix, XMMatrixAffineTransformation(t_interpolatedScale, t_zero, t_interpolatedQuaternion, t_interpolatedPosition));
 

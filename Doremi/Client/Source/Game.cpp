@@ -140,6 +140,7 @@ namespace Doremi
         m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
         Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
+        m_graphicalManagers.push_back(t_skeletalAnimationManager);
         // Add manager to list of managers
         m_graphicalManagers.push_back(t_skyBoxManager);
         // m_managers.push_back(t_physicsManager);

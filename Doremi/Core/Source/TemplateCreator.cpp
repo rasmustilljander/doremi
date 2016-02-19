@@ -25,6 +25,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/CharacterControlComponen.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/AITimerComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -652,7 +653,9 @@ namespace Doremi
 
             CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
-            DoremiEngine::Graphic::SkeletalInformation* t_skeletalInformation =
+            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros15TvåJointsunderEN.drm", *t_skeletalInformation);
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros16TommaJoints.drm", *t_skeletalInformation);
@@ -660,21 +663,32 @@ namespace Doremi
             // *t_skeletalInformation);
 
             // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/RobotSmallTest.drm", *t_skeletalInformation);
+            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/SmallRobotNew5.drm", *t_skeletalInformation);
+            CharacterDataNames playerSkeletalCharData =
+                loader.LoadSkeletalCharacter("Models/Gyros25.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
 
 
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerCharData.meshName);
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerCharData.materialName);
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
+            t_renderComp->material =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerSkeletalCharData.materialName);
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
             // SkeletalAnimation
-            // SkeletalAnimationComponent* t_skeletalAnimationComp = new SkeletalAnimationComponent();
-            // t_avatarBlueprint[ComponentType::SkeletalAnimation] = t_skeletalAnimationComp;
-            // t_skeletalAnimationComp->skeletalInformation = t_skeletalInformation;
-            // t_skeletalAnimationComp->clipName = "Run";
-            // t_skeletalAnimationComp->timePosition = 0;
+            SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
+            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
+            t_upperBodySkeletalAnimationComp->clipName = "Idle";
+            t_upperBodySkeletalAnimationComp->timePosition = 0;
+
+            LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
+            t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
+            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
+            t_lowerBodySkeletalAnimationComp->clipName = "Run";
+            t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();

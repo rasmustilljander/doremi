@@ -17,15 +17,17 @@ namespace Doremi
         /**
         Contains information of the skeletalanimation
         */
-        struct SkeletalAnimationComponent
+        struct LowerSkeletalAnimationComponent
         {
             DoremiEngine::Graphic::SkeletalInformation* skeletalInformation;
             std::string clipName;
             double timePosition;
-            SkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation) : skeletalInformation(p_skeletalInformation)
+            DirectX::XMFLOAT4 orientation;
+            LowerSkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
+                : skeletalInformation(p_skeletalInformation)
             {
             }
-            SkeletalAnimationComponent() : skeletalInformation(nullptr) {}
+            LowerSkeletalAnimationComponent() : skeletalInformation(nullptr) {}
         };
     }
 }

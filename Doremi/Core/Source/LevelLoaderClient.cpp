@@ -78,313 +78,378 @@ namespace Doremi
             }
         }
 
-        CharacterDataNames LevelLoaderClient::LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_skeletalInformation)
+        CharacterDataNames LevelLoaderClient::LoadSkeletalCharacter(const std::string& p_fileName,
+                                                                    DoremiEngine::Graphic::SkeletalInformation& p_upperBodySkeletalInformation,
+                                                                    DoremiEngine::Graphic::SkeletalInformation& p_lowerBodySkeletalInformation)
         {
             // Get the full path
-            // string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
+            string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
 
-            // ifstream ifs;
-            // ifs.open(fileName, ifstream::in | ifstream::binary);
-            // if(ifs.is_open() == true)
-            //{
-            //    // Read the Name of the skeletalanimationmodel (This is set in maya, I use the name to have an identifier for meshname)
-            //    int sceneNameSize;
-            //    ifs.read((char*)&sceneNameSize, sizeof(int));
-            //    char* sceneName = new char[sceneNameSize];
-            //    ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
-            //    std::string t_sceneName = sceneName;
+            ifstream ifs;
+            ifs.open(fileName, ifstream::in | ifstream::binary);
+            if(ifs.is_open() == true)
+            {
+                // Read the Name of the skeletalanimationmodel (This is set in maya, I use the name to have an identifier for meshname)
+                int sceneNameSize;
+                ifs.read((char*)&sceneNameSize, sizeof(int));
+                char* sceneName = new char[sceneNameSize];
+                ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
+                std::string t_sceneName = sceneName;
 
-            //    // Read how many joints, materials, transforms and meshes we will read. Used for forloops
-            //    int nrJoints, nrMats, nrTransforms, nrMeshes;
-            //    ifs.read((char*)&nrJoints, sizeof(int));
-            //    ifs.read((char*)&nrMats, sizeof(int));
-            //    ifs.read((char*)&nrTransforms, sizeof(int));
-            //    ifs.read((char*)&nrMeshes, sizeof(int));
+                // Read how many joints, materials, transforms and meshes we will read. Used for forloops
+                int nrJoints, nrMats, nrTransforms, nrMeshes;
+                ifs.read((char*)&nrJoints, sizeof(int));
+                ifs.read((char*)&nrMats, sizeof(int));
+                ifs.read((char*)&nrTransforms, sizeof(int));
+                ifs.read((char*)&nrMeshes, sizeof(int));
 
-            //    // Per skelettmesh
-            //    // The heirachy of the skeleton. Index = jointID. Value = ParentID
-            //    std::vector<int> t_jointHeirarchy;
-            //    // All the animations
-            //    std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_animations;
-            //    // Debug todolh remove
-            //    std::vector<std::vector<std::string>> t_transformNamesAll;
-
-            //    // Per animationsclip
-            //    // Fill this variable with data and push it into the map of animationclips
-            //    DoremiEngine::Graphic::AnimationClip t_animationClip;
-            //    std::vector<std::string> t_childTransformNames;
-            //    // Per joint
-            //    int nrKeyFrames;
-            //    for(int i = 0; i < nrJoints; i++)
-            //    {
-            //        int ID, parentID; // joint IDs
-            //        int nrChildrenTransforms;
-            //        // int nrKeyFrames;
-            //        int nameSize;
-
-            //        // Read ID parentID nrChildrenTransforms, nrKeyframes and How long the name is
-            //        ifs.read((char*)&ID, sizeof(int));
-            //        ifs.read((char*)&parentID, sizeof(int));
-            //        ifs.read((char*)&nrChildrenTransforms, sizeof(int));
-            //        ifs.read((char*)&nrKeyFrames, sizeof(int));
-            //        ifs.read((char*)&nameSize, sizeof(int));
-
-            //        char* name = new char[nameSize]; // namnet på jointen
-            //        ifs.read((char*)name, sizeof(char) * nameSize);
-            //        t_jointHeirarchy.push_back(parentID);
+                // Per skelettmesh
+                // The heirachy of the skeleton. Index = jointID. Value = ParentID
+                std::vector<int> t_upperBodyJointHeirarchy;
+                std::vector<int> t_lowerBodyJointHeirarchy;
+                // All the animations this is used as final map and used in skeletalanimations
+                std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_upperBodyAnimations;
+                std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_lowerBodyAnimations;
 
 
-            //        std::vector<std::string> t_transformNames;
+                // Read how many animation this file contains
+                int t_nrAnimations;
+                ifs.read((char*)&t_nrAnimations, sizeof(int));
+                std::vector<AnimationInformation> t_animationInformations(t_nrAnimations);
+                // Save data for animationsinformation
+                std::vector<std::string> t_animationNames(t_nrAnimations);
+                for(size_t i = 0; i < t_nrAnimations; i++)
+                {
+                    int t_nameSize;
+                    AnimationInformation t_animationInfo;
+                    ifs.read((char*)&t_nameSize, sizeof(int));
+                    char* t_animationName = new char[t_nameSize];
+                    ifs.read((char*)t_animationName, sizeof(char) * t_nameSize);
+                    std::string t_animationString(t_animationName);
+                    t_animationInfo.name = t_animationString;
+                    delete t_animationName;
+                    ifs.read((char*)&t_animationInfo.startFrame, sizeof(int));
+                    ifs.read((char*)&t_animationInfo.endFrame, sizeof(int));
+                    ifs.read((char*)&t_animationInfo.prioPart, sizeof(int));
+                    t_animationInformations[i] = t_animationInfo;
+                }
+                // Temporary savings of the animations.
+                std::vector<DoremiEngine::Graphic::AnimationClip> t_upperBodyAnimationVector(t_nrAnimations);
+                std::vector<DoremiEngine::Graphic::AnimationClip> t_lowerBodyAnimationVector(t_nrAnimations);
+                // Per animationsclip
+                // Fill this variable with data and push it into the map of animationclips
+                DoremiEngine::Graphic::AnimationClip t_animationClip;
+                // Per joint
+                int nrKeyFrames;
+                for(int i = 0; i < nrJoints; i++)
+                {
+                    int ID, parentID; // joint IDs
+                    int nrChildrenTransforms;
+                    // int nrKeyFrames;
+                    int nameSize;
+                    int bodyPartID;
+                    // Read ID parentID nrChildrenTransforms, nrKeyframes and How long the name is
+                    ifs.read((char*)&ID, sizeof(int));
+                    ifs.read((char*)&parentID, sizeof(int));
+                    ifs.read((char*)&nrChildrenTransforms, sizeof(int));
+                    ifs.read((char*)&nrKeyFrames, sizeof(int));
+                    ifs.read((char*)&bodyPartID, sizeof(int));
+                    ifs.read((char*)&nameSize, sizeof(int));
 
 
-            //        for(int y = 0; y < nrChildrenTransforms;
-            //            y++) // skriv alla transforms (förutom joints) som är children till denna joint, dvs transforms till meshes
-            //        {
-            //            // Detta har ingen funktion atm men kan inte ta bort reads då fakkarprogrammet
-            //            static int legbotCount = 0;
-            //            int childNameSize;
-            //            ifs.read((char*)&childNameSize, sizeof(int));
-            //            char* childTransformName = new char[childNameSize]; // namn på transform som skall vara till mesh, dvs INGEN joint
-            //            ifs.read((char*)childTransformName, sizeof(char) * childNameSize);
-            //            t_transformNames.push_back(childTransformName); // Kanske ska bort om den under funkar
-            //            delete childTransformName;
-            //        }
-            //        t_transformNamesAll.push_back(t_transformNames); // ska bort om den övre funkar
+                    char* name = new char[nameSize]; // namnet på jointen
+                    ifs.read((char*)name, sizeof(char) * nameSize);
+                    if(bodyPartID == 1)
+                    {
+                        t_upperBodyJointHeirarchy.push_back(parentID);
+                    }
+                    else if(bodyPartID == 2)
+                    {
+                        if(parentID == 0)
+                        {
+                            t_lowerBodyJointHeirarchy.push_back(parentID);
+                        }
+                        else
+                        {
+                            t_lowerBodyJointHeirarchy.push_back(parentID - (t_upperBodyJointHeirarchy.size() - 1));
+                        }
+                    }
+                    else if(bodyPartID == 0)
+                    {
+                        t_upperBodyJointHeirarchy.push_back(parentID);
+                        t_lowerBodyJointHeirarchy.push_back(parentID);
+                    }
 
-            //        // SPara ner keyframesen i boneanimaiton som sedan sparas ner i animationclip å mappas mot animationclipnamnet
-            //        DoremiEngine::Graphic::BoneAnimation t_boneAnimation;
-            //        // Använd jointorientation för att lägga på rotation i alla keyframes. Betyder att alla rotationer på jointen i keyframes utgår
-            //        // från att jointen redan är roterad så här
-            //        XMFLOAT3 t_jointOrientation;
-            //        ifs.read((char*)&t_jointOrientation, sizeof(float) * 3); // jointorientationen måste användas för att få det rätt...
+                    for(int y = 0; y < nrChildrenTransforms;
+                        y++) // skriv alla transforms (förutom joints) som är children till denna joint, dvs transforms till meshes
+                    {
+                        // Detta har ingen funktion atm men kan inte ta bort reads då fakkarprogrammet TODOLH ta bort.
+                        int childNameSize;
+                        ifs.read((char*)&childNameSize, sizeof(int));
+                        char* childTransformName = new char[childNameSize]; // namn på transform som skall vara till mesh, dvs INGEN joint
+                        ifs.read((char*)childTransformName, sizeof(char) * childNameSize);
+                        delete childTransformName;
+                    }
+
+                    // SPara ner keyframesen i boneanimaiton som sedan sparas ner i animationclip å mappas mot animationclipnamnet
+                    DoremiEngine::Graphic::BoneAnimation t_boneAnimation;
+                    // TODOLH TODOSH ta bort skcikning och läsning av jointquaternion
+                    XMFLOAT4 t_jointQuaternion;
+                    ifs.read((char*)&t_jointQuaternion, sizeof(float) * 4); // jointorientationen måste användas för att få det rätt...
+                    // Loopa över keyframes å spar ner i t_boneAnimations. Detta är en temporär variabel eftersom den bara sparas undan i
+                    // animationsclippet och tas fram efter timeposen den har
+                    int t_animationInformationIndex = 0;
+                    for(int y = 0; y < nrKeyFrames; y++)
+                    {
+                        for(size_t p = 0; p < t_nrAnimations; p++)
+                        {
+                            if(y >= t_animationInformations[p].startFrame && y < t_animationInformations[p].endFrame) //>= ?
+                            {
+                                if(t_animationInformationIndex != p)
+                                {
+                                    // Nu är alla keyframes för denna benets fulla animation sparat. Då ska benanimationsdatan sparas undan i
+                                    // animationsclippet. Där sparas alla dessa benanimationer
+                                    if(bodyPartID == 1)
+                                    {
+                                        t_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    }
+                                    else if(bodyPartID == 2)
+                                    {
+                                        t_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    }
+                                    else if(bodyPartID == 0)
+                                    {
+                                        t_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                        t_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    }
+                                    // t_animationVector[p-1].BoneAnimations.push_back(t_boneAnimation);
+                                    // Sätts många gånger i onödan...
+                                    t_animationNames[p - 1] = t_animationInformations[p - 1].name;
+                                    t_boneAnimation = DoremiEngine::Graphic::BoneAnimation();
+                                    t_animationInformationIndex = p;
+                                    break;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                // Do nothing
+                            }
+                        }
+                        DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
+                        // Temporär t_frame för att användas till uträkning av hastighet av animation.
+                        int t_frame;
+                        // ska tas bort under
+                        XMFLOAT3 t_eulerAngles;
+                        ifs.read((char*)&t_keyFrameTemp.position, sizeof(float) * 3);
+                        ifs.read((char*)&t_keyFrameTemp.quaternion, sizeof(float) * 4);
+                        ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
+                        ifs.read((char*)&t_keyFrameTemp.scale, sizeof(float) * 3); // TODOLH TODOSH bör ta bort antingen euler eller quaternion. De
+                        // ska va likadana å fylla samma funktion
+                        ifs.read((char*)&t_frame, sizeof(int));
+                        t_frame -= t_animationInformations[t_animationInformationIndex].startFrame;
+                        // Hårdkodat värde atm. Bör komma från maya (?) TODOLH. Bör iaf inte vara en variabel här
+                        float t_timeMax = 0.5f;
+                        // Räkna ut vilken timestamp som ska sättas på denna frame.
+                        float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
+                        t_keyFrameTemp.time = t_currentTime;
+                        // Spara ner keyframedatan i benanimationsscructen som sedan pushbackas in i animationclipets benanimationsvector utanför
+                        // forloopen
+                        t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
+                        if((nrKeyFrames - 1) == y)
+                        {
+                            // Nu är alla keyframes för denna benets fulla animation sparat. Då ska benanimationsdatan sparas undan i
+                            // animationsclippet. Där sparas alla dessa benanimationer
+                            if(bodyPartID == 1)
+                            {
+                                t_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            }
+                            else if(bodyPartID == 2)
+                            {
+                                t_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            }
+                            else if(bodyPartID == 0)
+                            {
+                                t_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                                t_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            }
+                            // t_animationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            // Sätts många gånger i onödan...
+                            t_animationNames[t_animationInformationIndex] = t_animationInformations[t_animationInformationIndex].name;
+                            t_boneAnimation = DoremiEngine::Graphic::BoneAnimation();
+                        }
+                    }
+
+                    delete name; // name isnt used atm
+                }
+                for(size_t i = 0; i < t_nrAnimations; i++)
+                {
+                    t_upperBodyAnimations.emplace(t_animationNames[i], t_upperBodyAnimationVector[i]);
+                    t_lowerBodyAnimations.emplace(t_animationNames[i], t_lowerBodyAnimationVector[i]);
+                }
+                // t_animations["Run"] = t_animationClip;
+                // materialen kommer senare att läsas in här imellan
+
+                // En map för att kunna använda rätt transformationsmatris till rätt mesh.
+                std::map<std::string, XMFLOAT4X4> t_transformMap;
+                for(int i = 0; i < nrTransforms; i++)
+                {
+                    int parentNameSize;
+                    int transformNameSize;
+
+                    // Read namelengths of parent(not used) and transform
+                    ifs.read((char*)&parentNameSize, sizeof(int));
+                    ifs.read((char*)&transformNameSize, sizeof(int));
+
+                    // Read parent name(not used) and transformname
+                    char* parentName = new char[parentNameSize]; // denna används inte alls för tillfället men kan komma att implementeras i
+                    // framtiden! transformsen (för meshar) ska inte ha några parents nu. Läs ändå for
+                    // safety! (y)
+                    char* transformName = new char[transformNameSize];
+                    ifs.read((char*)parentName, sizeof(char) * parentNameSize);
+                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+                    // Convert to string. not sure how char* works properly with map if I delete them
+                    std::string t_transformName(transformName);
+
+                    // Delete the char*
+                    delete parentName;
+                    delete transformName;
+
+                    // Fetch the data we are interested in
+                    TransformInformation transformDataTemp;
+                    XMFLOAT3 t_eulerAngles;
+                    // Läs datan och spara ner i min transforminformationsstruct
+                    ifs.read((char*)&transformDataTemp.position, sizeof(float) * 3);
+                    ifs.read((char*)&transformDataTemp.quaternion, sizeof(float) * 4);
+                    // TODOLH ta bort eulers
+                    ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
+                    ifs.read((char*)&transformDataTemp.scale, sizeof(float) * 3);
+
+                    // Skapa de nödvändiga vectorer för att bygga upp en tranformationsmatris
+                    XMVECTOR t_translation = XMLoadFloat3(&transformDataTemp.position);
+                    XMVECTOR t_quaternion = XMLoadFloat4(&transformDataTemp.quaternion);
+                    XMVECTOR t_scale = XMLoadFloat3(&transformDataTemp.scale);
+                    XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+                    // SPara ner transformationsmatrisen i en XMFLOAT4x4
+                    XMFLOAT4X4 t_transformationMatrix;
+                    XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
+                    // Push the name to the map with the value of the matrix (XMFLAOT4x4)
+                    t_transformMap[t_transformName] = t_transformationMatrix;
+                }
+                // This buffer is used to combine all the meshes into one. And convert the vertexstruct to skeletalvertex from the computevertex thing
+                vector<DoremiEngine::Graphic::SkeletalVertex> t_skeletalVertexBuffer;
+                for(int i = 0; i < nrMeshes; i++)
+                {
+                    // Läs datan och spara ner på rätt ställe. Mesharna har mycket att läsa kommenterar inte mer än detta.
+                    int meshNameSize;
+                    int transformNameSize;
+                    int materialNameSize;
+
+                    ifs.read((char*)&meshNameSize, sizeof(int));
+                    char* meshName = new char[meshNameSize];
+                    ifs.read((char*)meshName, sizeof(char) * meshNameSize);
+                    std::string t_meshName(meshName);
+
+                    ifs.read((char*)&transformNameSize, sizeof(int));
+                    char* transformName = new char[transformNameSize]; // denna meshens transforms, denna mesh ska använda dess transform värden!
+                    ifs.read((char*)transformName, sizeof(char) * transformNameSize);
+
+                    std::string t_transformName(transformName);
+
+                    ifs.read((char*)&materialNameSize, sizeof(int));
+                    char* materialName = new char[materialNameSize];
+                    ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
 
-            //        for(int y = 0; y < nrKeyFrames; y++) // skriv keyframsen
-            //        {
-            //            DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
-            //            int t_frame;
-            //            XMFLOAT3 t_eulerAngles;
-            //            ifs.read((char*)&t_keyFrameTemp.position, sizeof(float) * 3);
-            //            ifs.read((char*)&t_keyFrameTemp.quaternion, sizeof(float) * 4);
-            //            ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
-            //            ifs.read((char*)&t_keyFrameTemp.scale, sizeof(float) * 3); // TODOLH TODOSH bör ta bort antingen euler eller quaternion. De
-            //            // ska va likadana å fylla samma funktion
-            //            ifs.read((char*)&t_frame, sizeof(int));
+                    int meshID;
+                    ifs.read((char*)&meshID, sizeof(int)); // nog inget som används atm
+                    DoremiEditor::Core::MeshData meshData;
 
-            //            XMStoreFloat3(&t_eulerAngles, XMVectorAdd(XMLoadFloat3(&t_eulerAngles), XMLoadFloat3(&t_jointOrientation)));
-            //            XMVECTOR t_finalRotation = XMLoadFloat3(&t_eulerAngles);
-            //            XMVECTOR quat = XMLoadFloat4(&XMFLOAT4(0, 0, 0, 1));
-            //            quat = XMQuaternionRotationRollPitchYawFromVector(t_finalRotation);
-            //            XMStoreFloat4(&t_keyFrameTemp.quaternion, quat);
+                    ifs.read((char*)&meshData.vertCount, sizeof(int));
+                    ifs.read((char*)&meshData.normalCount, sizeof(int));
+                    ifs.read((char*)&meshData.UVCount, sizeof(int));
+                    ifs.read((char*)&meshData.indCount, sizeof(int));
+                    ifs.read((char*)&meshData.triCount, sizeof(int));
 
-            //            // Hårdkodat värde atm. Bör komma från maya (?) TODOLH. Bör iaf inte vara en variabel här
-            //            float t_timeMax = 10.0f;
-            //            // Räkna ut vilken timestamp som ska sättas på denna frame.
-            //            float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
-            //            t_keyFrameTemp.time = t_currentTime;
-            //            t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
-            //            // Som skrivet över forloopen. Addera alla keyframerotationer på ursprungsjointorientationen.
-            //        }
-            //        t_animationClip.BoneAnimations.push_back(t_boneAnimation);
+                    meshData.positions = new XMFLOAT3[meshData.vertCount];
+                    meshData.normals = new XMFLOAT3[meshData.normalCount];
+                    meshData.uvs = new XMFLOAT2[meshData.UVCount];
 
-            //        delete name; // name isnt used atm
-            //    }
+                    meshData.indexPositions = new int[meshData.indCount];
+                    meshData.indexNormals = new int[meshData.indCount];
+                    meshData.indexUVs = new int[meshData.indCount];
+                    meshData.trianglesPerFace = new int[meshData.triCount];
+                    vector<XMFLOAT3> poss;
+                    ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.vertCount);
+                    ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.normalCount);
+                    ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.UVCount);
 
-            //    t_animations["Run"] = t_animationClip;
-            //    // materialen kommer senare att läsas in här imellan
-            //    std::map<std::string, TransformInformation> t_transformMap;
-            //    for(int i = 0; i < nrTransforms; i++)
-            //    {
-            //        int parentNameSize;
-            //        int transformNameSize;
+                    ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.indCount);
+                    ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.indCount);
+                    ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.indCount);
+                    ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triCount);
+                    // Spara ner jointID. Detta skickas till shadern så att vi kan hålla sär på våra olika meshes fast de blendas till en mesh
+                    int jointID;
+                    ifs.read((char*)&jointID, sizeof(int)); // här kommer jointID som ska vara för alla denna meshens vertiser, kom på att jag inte
 
-            //        // Read namelengths of parent(not used) and transform
-            //        ifs.read((char*)&parentNameSize, sizeof(int));
-            //        ifs.read((char*)&transformNameSize, sizeof(int));
+                    // Detta ska bort!! TODOLH
+                    XMFLOAT4 t_jointOrientation;
+                    ifs.read((char*)&t_jointOrientation, sizeof(float) * 4);
 
-            //        // Read parent name(not used) and transformname
-            //        char* parentName = new char[parentNameSize]; // denna används inte alls för tillfället men kan komma att implementeras i
-            //        // framtiden! transformsen (för meshar) ska inte ha några parents nu. Läs ändå for
-            //        // safety! (y)
-            //        char* transformName = new char[transformNameSize];
-            //        ifs.read((char*)parentName, sizeof(char) * parentNameSize);
-            //        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-            //        // Convert to string. not sure how char* works properly with map if I delete them
-            //        std::string t_transformName(transformName);
+                    // Hämta transformationsMatrisen vi sparade undan tidigare genom att plocka ur mappen med hjälp av namnet vi läste högre upp i
+                    // denna forloop
+                    XMFLOAT4X4 t_transformationMatrix = t_transformMap[t_transformName];
 
-            //        // Delete the char*
-            //        delete parentName;
-            //        delete transformName;
+                    // Compute vertexdata for graphics, discard data for physics. Det här är något magiskt jag tog från den andra inladdningen av
+                    // vanlig karaktär
+                    DirectX::XMFLOAT3 scale = {1.0f, 1.0f, 1.0f}; // TODOXX Should the scale for the player always be one?
+                    std::vector<DirectX::XMFLOAT3> positionPX;
+                    std::vector<int> indexPX;
+                    vector<DoremiEngine::Graphic::Vertex>& vertexBuffer = ComputeVertexAndPositionAndIndex(meshData, scale, positionPX, indexPX);
+                    size_t length = vertexBuffer.size();
+                    // Omvandla vertexbuffern till skeletalvertexbuffern
+                    for(size_t j = 0; j < length; j++)
+                    {
+                        // Vänd på z (görs redan i computevertexandpositionandindex men behövs tydligen igen för att karaktären ska facea rätt håll.
+                        vertexBuffer[j].position.z *= -1;
+                        // Flytta vertiserna från localspace till Jointspace. Detta gör så att vår "mesh" sitter fast på jointen där den ska. Annars
+                        // hade meshen suttit med origo mitt i jointen.
+                        XMVECTOR t_vertexPosition = XMLoadFloat3(&vertexBuffer[j].position);
+                        XMMATRIX t_transformMatrix = XMLoadFloat4x4(&t_transformationMatrix);
+                        // Transforma en positionsvector med transformationsmatrisen vi läste in tidigare
+                        t_vertexPosition = XMVector3Transform(t_vertexPosition, t_transformMatrix);
+                        // SKapa en skeletalvertex. Den enda skillnaden är att vi har en jointID i skeletalvertexx FInns det ett bättre sätt att göra
+                        // detta på?
+                        DoremiEngine::Graphic::SkeletalVertex t_vertex;
+                        XMStoreFloat3(&t_vertex.position, t_vertexPosition);
+                        t_vertex.normal = vertexBuffer[j].normal;
+                        t_vertex.textureCoordinate = vertexBuffer[j].textureCoordinate;
+                        t_vertex.jointID = jointID;
+                        t_skeletalVertexBuffer.push_back(t_vertex);
+                    }
+                    delete transformName;
+                    delete meshName;
+                    delete materialName;
+                }
+                // Vanliga builcalls för att få en mesh å material
+                DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+                meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
+                meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);
+                // Detta är typen vi använder för att sedan loada mesh/material i templatecreator
+                CharacterDataNames o_charData;
+                o_charData.meshName = t_sceneName;
+                o_charData.materialName = m_materials[m_meshCoupling[0].materialName].diffuseTextureName;
+                ifs.close();
 
-            //        // Fetch the data we are interested in
-            //        TransformData transformDataTemp;
-            //        XMFLOAT3 t_eulerAngles;
-            //        ifs.read((char*)&transformDataTemp.pos, sizeof(float) * 3);
-            //        ifs.read((char*)&transformDataTemp.rot, sizeof(float) * 4);
-            //        ifs.read((char*)&t_eulerAngles, sizeof(float) * 3);
-            //        ifs.read((char*)&transformDataTemp.scale, sizeof(float) * 3);
-            //        // transformDataTemp.scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
-            //        // Make a matrix from it and store it as XMFLOAT4x4
-            //        transformDataTemp.pos.z *= -1.0f;
-
-
-            //        XMFLOAT4 t_quaterTemp;
-            //        t_quaterTemp = XMFLOAT4(0.0f, transformDataTemp.rot.y, 0.0f, 1.0f);
-            //        XMStoreFloat4(&transformDataTemp.rot, XMQuaternionRotationRollPitchYaw(t_eulerAngles.x, t_eulerAngles.y, t_eulerAngles.z));
-            //        // transformDataTemp.rot = t_quaterTemp;
-
-
-            //        XMVECTOR t_translation = XMLoadFloat3(&transformDataTemp.pos);
-            //        XMVECTOR t_quaternion = XMLoadFloat4(&transformDataTemp.rot);
-            //        XMVECTOR t_scale = XMLoadFloat3(&transformDataTemp.scale);
-            //        XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-
-            //        XMFLOAT4X4 t_transformationMatrix;
-            //        XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
-            //        // Push the name to the map with the value of the matrix (XMFLAOT4x4)
-            //        TransformInformation t_transInfo;
-            //        t_transInfo.euler = t_eulerAngles;
-            //        t_transInfo.position = transformDataTemp.pos;
-            //        t_transInfo.quaternion = transformDataTemp.rot;
-            //        t_transInfo.scale = transformDataTemp.scale;
-            //        t_transformMap[t_transformName] = t_transInfo;
-            //    }
-            //    // This buffer is used to combine all the meshes into one. And convert the vertexstruct to skeletalvertex from the computevertex
-            //    thing
-            //    vector<DoremiEngine::Graphic::SkeletalVertex> t_skeletalVertexBuffer;
-            //    vector<XMFLOAT3> t_jointOrientationList;
-            //    for(int i = 0; i < nrMeshes; i++)
-            //    {
-            //        int meshNameSize;
-            //        int transformNameSize;
-            //        int materialNameSize;
-
-            //        ifs.read((char*)&meshNameSize, sizeof(int));
-            //        char* meshName = new char[meshNameSize];
-            //        ifs.read((char*)meshName, sizeof(char) * meshNameSize);
-            //        std::string t_meshName(meshName);
-
-            //        ifs.read((char*)&transformNameSize, sizeof(int));
-            //        char* transformName = new char[transformNameSize]; // denna meshens transforms, denna mesh ska använda dess transform värden!
-            //        ifs.read((char*)transformName, sizeof(char) * transformNameSize);
-
-            //        std::string t_transformName(transformName);
-
-            //        ifs.read((char*)&materialNameSize, sizeof(int));
-            //        char* materialName = new char[materialNameSize];
-            //        ifs.read((char*)materialName, sizeof(char) * materialNameSize);
-
-
-            //        int meshID;
-            //        ifs.read((char*)&meshID, sizeof(int)); // nog inget som används atm
-            //        MeshData meshData;
-
-            //        ifs.read((char*)&meshData.nrPos, sizeof(int));
-            //        ifs.read((char*)&meshData.nrNor, sizeof(int));
-            //        ifs.read((char*)&meshData.nrUV, sizeof(int));
-            //        ifs.read((char*)&meshData.nrI, sizeof(int));
-            //        ifs.read((char*)&meshData.triangleCount, sizeof(int));
-
-            //        meshData.positions = new XMFLOAT3[meshData.nrPos];
-            //        meshData.normals = new XMFLOAT3[meshData.nrNor];
-            //        meshData.uvs = new XMFLOAT2[meshData.nrUV];
-
-            //        meshData.indexPositions = new int[meshData.nrI];
-            //        meshData.indexNormals = new int[meshData.nrI];
-            //        meshData.indexUVs = new int[meshData.nrI];
-            //        meshData.trianglesPerFace = new int[meshData.triangleCount];
-            //        vector<XMFLOAT3> poss;
-            //        ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.nrPos);
-            //        ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.nrNor);
-            //        ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.nrUV);
-
-            //        ifs.read((char*)meshData.indexPositions, sizeof(int) * meshData.nrI);
-            //        ifs.read((char*)meshData.indexNormals, sizeof(int) * meshData.nrI);
-            //        ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.nrI);
-            //        ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triangleCount);
-
-            //        // XMFLOAT4X4 t_meshTransform = t_transformMap[t_transformName];
-            //        TransformInformation t_transformInfo = t_transformMap[t_transformName];
-
-
-            //        int jointID;
-            //        ifs.read((char*)&jointID, sizeof(int)); // här kommer jointID som ska vara för alla denna meshens vertiser, kom på att jag inte
-
-            //        XMFLOAT3 t_jointOrientation;
-            //        ifs.read((char*)&t_jointOrientation, sizeof(float) * 3); // jointorientationen måste användas för att få det rätt...
-            //        t_jointOrientationList.push_back(t_jointOrientation);
-            //        // bygger vertiserna på denna sidan.
-            //        if(jointID == -200)
-            //        {
-            //            jointID = 0;
-            //        }
-            //        // Så du får sätta alla vertiser till detta värde när du bygger dem!!
-
-            //        XMVECTOR t_translation = XMLoadFloat3(&t_transformInfo.position);
-            //        XMVECTOR t_rotation = XMLoadFloat3(&t_transformInfo.euler);
-            //        XMVECTOR t_scale = XMLoadFloat3(&t_transformInfo.scale);
-            //        XMVECTOR t_zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-            //        XMVECTOR t_jointRotation = XMLoadFloat3(&t_jointOrientation);
-
-            //        XMVECTOR t_finalRotation = XMVectorAdd(t_rotation, t_jointRotation);
-
-
-            //        XMVECTOR t_quaternion = XMQuaternionRotationRollPitchYawFromVector(t_rotation);
-            //        XMVECTOR t_jointQuaternion = XMQuaternionRotationRollPitchYawFromVector(t_jointRotation);
-            //        XMMATRIX t_jointRotMat = XMMatrixRotationRollPitchYawFromVector(t_jointRotation);
-            //        XMFLOAT4X4 t_transformationMatrix;
-
-            //        // XMVECTOR t_finalQuart = XMQuaternionRotationRollPitchYawFromVector(t_finalRotation);
-
-            //        t_translation = XMVector3Rotate(t_translation, t_jointQuaternion);
-            //        // XMStoreFloat4x4(&t_transformationMatrix, XMMatrixMultiply(XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion,
-            //        // t_translation), t_jointRotMat));
-            //        XMStoreFloat4x4(&t_transformationMatrix, XMMatrixAffineTransformation(t_scale, t_zero, t_quaternion, t_translation));
-
-            //        // Nu måte verticerna från "Meshspace" till "joint space" som jag kallar det. Basicly byt koordinatsystem från meshens till
-            //        // jointens. Jointens origo mitten av jointen
-            //        // Osäker på om det är invers eller vanlig multi. Jag tror det är vanlig multi
-            //        // vi måste även lägga till jointID i vår vertis.
-            //        // Player specific
-            //        DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            //        std::string textureName = m_materials[m_meshCoupling[0].materialName]; // Danger. Kan kraska om vi inte lagt in ett material
-            //        // innan... Finns inte stöd för material än TODOXX
-
-            //        // Compute vertexdata for graphics, discard data for physics.
-            //        DirectX::XMFLOAT3 scale = {1.0f, 1.0f, 1.0f}; // TODOXX Should the scale for the player always be one?
-            //        std::vector<DirectX::XMFLOAT3> positionPX;
-            //        std::vector<int> indexPX;
-            //        vector<DoremiEngine::Graphic::Vertex>& vertexBuffer = ComputeVertexAndPositionAndIndex(meshData, scale, positionPX, indexPX);
-            //        size_t length = vertexBuffer.size();
-            //        // Omvandla vertexbuffern till skeletalvertexbuffern
-            //        for(size_t j = 0; j < length; j++)
-            //        {
-            //            XMVECTOR t_vertexPosition = XMLoadFloat3(&vertexBuffer[j].position);
-            //            XMMATRIX t_translationMatrix = XMLoadFloat4x4(&t_transformationMatrix);
-            //            t_vertexPosition = XMVector3Transform(t_vertexPosition, t_translationMatrix);
-            //            DoremiEngine::Graphic::SkeletalVertex t_vertex;
-            //            XMStoreFloat3(&t_vertex.position, t_vertexPosition);
-            //            t_vertex.normal = vertexBuffer[j].normal;
-            //            t_vertex.textureCoordinate = vertexBuffer[j].textureCoordinate;
-            //            t_vertex.jointID = jointID;
-            //            t_skeletalVertexBuffer.push_back(t_vertex);
-            //        }
-            //        delete transformName;
-            //        delete meshName;
-            //        delete materialName;
-            //}
-
-            /*DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
-            meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);*/
-            CharacterDataNames o_charData; /*
-             o_charData.meshName = t_sceneName;
-             o_charData.materialName = m_materials[m_meshCoupling[0].materialName];
-             ifs.close();
-
-             p_skeletalInformation.Set(t_jointHeirarchy, t_animations);*/
-            return o_charData;
-            //}
+                // Sätt värdena som behövs för skelettanimationens keyframeuppdatering. (Basicly datan som används vid animationen)
+                p_upperBodySkeletalInformation.Set(t_upperBodyJointHeirarchy, t_upperBodyAnimations);
+                p_lowerBodySkeletalInformation.Set(t_lowerBodyJointHeirarchy, t_lowerBodyAnimations);
+                return o_charData;
+            }
         }
 
         CharacterDataNames LevelLoaderClient::LoadCharacter(const std::string& p_fileName)

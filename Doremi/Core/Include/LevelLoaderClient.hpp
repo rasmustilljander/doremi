@@ -25,7 +25,8 @@ namespace Doremi
 
             CharacterDataNames LoadCharacter(const std::string& p_fileName);
 
-            CharacterDataNames LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_skeletalInformation);
+            CharacterDataNames LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_upperBodySkeletalInformation,
+                                                     DoremiEngine::Graphic::SkeletalInformation& p_lowerBodySkeletalInformation);
 
         protected:
             bool BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;
@@ -39,6 +40,13 @@ namespace Doremi
                 DirectX::XMFLOAT4 quaternion;
                 DirectX::XMFLOAT3 euler;
                 DirectX::XMFLOAT3 scale;
+            };
+            struct AnimationInformation
+            {
+                std::string name;
+                int startFrame;
+                int endFrame;
+                int prioPart;
             };
         };
     }
