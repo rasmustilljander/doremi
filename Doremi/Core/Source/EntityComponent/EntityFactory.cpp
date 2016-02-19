@@ -301,18 +301,14 @@ namespace Doremi
                 {
                     memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
                 }
-<<<<<<< HEAD
                 else if(iter->first == ComponentType::AITimer)
                 {
                     memcpy(GetComponent<AITimerComponent>(p_entityID), iter->second, sizeof(AITimerComponent));
                 }
-
-=======
                 else if(iter->first == ComponentType::LowerBodySkeletalAnimation)
                 {
                     memcpy(GetComponent<LowerSkeletalAnimationComponent>(p_entityID), iter->second, sizeof(LowerSkeletalAnimationComponent));
                 }
->>>>>>> SkeletalAnimations works. Separerat över och under
                 // Add bitmask. This is now done last due to transform being a dick
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
             }

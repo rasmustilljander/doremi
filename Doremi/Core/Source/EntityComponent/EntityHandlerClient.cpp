@@ -55,7 +55,7 @@ namespace Doremi
                 {
                     // Create entity
                     EntityID t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position,
-                                                                      p_entityCreated->orientation, DirectX::XMFLOAT3(0.25f, 0.25f, 0.25f));
+                                                                      p_entityCreated->orientation, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
                     // Create player
                     static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->SetNewPlayerEntityID(t_entityID);
