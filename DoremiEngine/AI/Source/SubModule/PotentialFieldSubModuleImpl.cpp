@@ -8,7 +8,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldSubModuleImpl::PotentialFieldSubModuleImpl() {}
+        PotentialFieldSubModuleImpl::PotentialFieldSubModuleImpl(AIContext& p_aiContext) : m_context(p_aiContext) {}
         PotentialFieldSubModuleImpl::~PotentialFieldSubModuleImpl() {}
         PotentialField* PotentialFieldSubModuleImpl::CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
                                                                     const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center)
@@ -16,7 +16,7 @@ namespace DoremiEngine
             // TODOKO review if we need to create a 3d grid or if a 2d grid is enough just to see where they can move in x and z
             using namespace std;
             using namespace DirectX;
-            PotentialField* newField = new PotentialFieldImpl();
+            PotentialField* newField = new PotentialFieldImpl(m_context);
             vector<vector<PotentialFieldGridPoint>> grid;
             float quadWidth = p_width / static_cast<float>(p_numberOfQuadsWidth);
             float quadHeight = p_height / static_cast<float>(p_numberOfQuadsHeight);

@@ -1,5 +1,6 @@
 #pragma once
 #include <Interface/SubModule/PotentialFieldSubModule.hpp>
+#include <Internal/AIContext.hpp>
 #include <vector>
 namespace DoremiEngine
 {
@@ -8,7 +9,7 @@ namespace DoremiEngine
         class PotentialFieldSubModuleImpl : public PotentialFieldSubModule
         {
         public:
-            PotentialFieldSubModuleImpl();
+            PotentialFieldSubModuleImpl(AIContext& p_aiContext);
             virtual ~PotentialFieldSubModuleImpl();
             PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
                                            const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center) override;
@@ -23,6 +24,7 @@ namespace DoremiEngine
             std::vector<PotentialField*>& GetAllActiveFields() override { return m_fields; };
         private:
             std::vector<PotentialField*> m_fields;
+            AIContext& m_context;
         };
     }
 }

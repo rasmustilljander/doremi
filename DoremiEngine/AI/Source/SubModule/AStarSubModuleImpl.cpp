@@ -6,7 +6,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        AStarSubModuleImpl::AStarSubModuleImpl(){};
+        AStarSubModuleImpl::AStarSubModuleImpl(AIContext& p_aiContext) : m_context(p_aiContext){};
         AStarSubModuleImpl::~AStarSubModuleImpl(){};
         void AStarSubModuleImpl::GetPath(int p_startPos, const MapGrid& p_map) {}
         MapGrid* AStarSubModuleImpl::BuildMapGrid()

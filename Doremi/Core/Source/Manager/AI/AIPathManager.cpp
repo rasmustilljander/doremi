@@ -72,12 +72,19 @@ namespace Doremi
                 // Update actors position, should perhaps not be here...
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
                 { // This is so the player updates his position too...
-                    DoremiEngine::AI::PotentialFieldActor* actor = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
+                    PotentialFieldComponent* pfComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i);
                     XMFLOAT3 pos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i)->position;
-                    actor->SetPosition(pos);
+                    if(!pfComp->isField) // If not a field we assume it's a actor who needs updating
+                    {
+                        pfComp->ChargedActor->SetPosition(pos);
+                    }
+                    else
+                    {
+                        pfComp->Field->SetCenter(pos);
+                    }
                 }
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform | (int)ComponentType::Movement |
-                                                                      (int)ComponentType::PotentialField))
+                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::AIAgent | (int)ComponentType::Transform |
+                                                                     (int)ComponentType::Movement | (int)ComponentType::PotentialField))
                 {
                     // Get the needed components
                     XMFLOAT2 desiredPos;

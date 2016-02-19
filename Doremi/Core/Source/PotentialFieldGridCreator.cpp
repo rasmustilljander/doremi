@@ -70,11 +70,13 @@ namespace Doremi
 
                         if(EntityHandler::GetInstance().HasComponents(objectID, (int)ComponentType::PotentialField))
                         {
-                            DoremiEngine::AI::PotentialFieldActor* actor =
-                                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(objectID)->ChargedActor;
-                            actor->AddOccupiedQuad(XMINT2(x, z));
-                            op_field->AddActor(actor);
-                            break; // If more than on collision occures, fuck it >D
+                            PotentialFieldComponent* pfComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(objectID);
+                            if(!pfComp->isField && pfComp->ChargedActor != nullptr)
+                            {
+                                pfComp->ChargedActor->AddOccupiedQuad(XMINT2(x, z));
+                                op_field->AddActor(pfComp->ChargedActor);
+                                break; // If more than on collision occures, fuck it >D
+                            }
                         }
                     }
                 }

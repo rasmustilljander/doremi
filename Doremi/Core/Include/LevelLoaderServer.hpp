@@ -25,8 +25,6 @@ namespace Doremi
 
 
         private:
-            void CreatePotentialfieldAroundMesh(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
-                                                const DoremiEditor::Core::TransformData& p_transformationData);
         };
     }
 }

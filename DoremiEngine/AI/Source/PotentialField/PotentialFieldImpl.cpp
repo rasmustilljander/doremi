@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl() : m_phermoneEffect(10) {}
+        PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(10), m_context(p_aiContext) {}
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
@@ -219,29 +219,11 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    //// Tries to check outside the field
-                    //// Here we create a imaginary quad and checks if that quad have a greater charge than the last,
-                    //// if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
-                    /// transition
-                    // XMFLOAT2 newQuadPosition = m_grid[quadNrX][quadNrY].position;
-                    // if (x < 0)
-                    //{
-                    //    newQuadPosition.x -= gridQuadWidth;
-                    //}
-                    // else if (x > m_grid.size()-1) // TODOKO should it be -1?
-                    //{
-                    //    newQuadPosition.x += gridQuadWidth;
-                    //}
-                    // else if (y<0)
-                    //{
-                    //    newQuadPosition.y -= gridQuadHeight;
-                    //}
-                    // else if (y > m_grid[0].size() - 1)// TODOKO should it be -1?
-                    //{
-                    //    newQuadPosition.y += gridQuadWidth;
-                    //}
-                    //
-                    // PotentialFieldGridPoint imaginaryQuad = PotentialFieldGridPoint(newQuadPosition, , false);
+                    // Tries to check outside the field
+                    // Here we create a imaginary quad and checks if that quad have a greater charge than the last,
+                    // if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
+                    // transition
+                    XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
                 }
             }
 

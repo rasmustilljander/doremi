@@ -30,6 +30,11 @@ namespace Doremi
             closest from the potential field sub module
             */
             DoremiEngine::AI::PotentialField* Field;
+            /**
+            States wheter or not this is a field, in case of true this entity will update the fields position. This shouldnt be a actor if true...
+            If the field is to move around it might not be a good idea to have obstacles on it.
+            */
+            bool isField = false;
             PotentialFieldComponent(DoremiEngine::AI::PotentialFieldActor* p_actor, DoremiEngine::AI::PotentialField* p_potentialField)
                 : ChargedActor(p_actor), Field(p_potentialField)
             {

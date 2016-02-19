@@ -1,5 +1,7 @@
 #include <Interface/PotentialField/PotentialField.hpp>
 #include <Internal/PotentialField/PotentialFieldActorImpl.hpp>
+#include <Internal/AIContext.hpp>
+
 #include <set>
 namespace DoremiEngine
 {
@@ -8,7 +10,7 @@ namespace DoremiEngine
         class PotentialFieldImpl : public PotentialField
         {
         public:
-            PotentialFieldImpl();
+            PotentialFieldImpl(AIContext& p_aiContext);
             virtual ~PotentialFieldImpl();
             void SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid) override;
             void SetHeight(const float& p_height) override { m_height = p_height; };
@@ -41,6 +43,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 m_quadSize;
             DirectX::XMFLOAT3 m_center;
             float m_phermoneEffect;
+            AIContext& m_context;
         };
     }
 }

@@ -1,7 +1,6 @@
 #pragma once
 #include <AIModule.hpp>
-#include <FMod\fmod.hpp>
-#include <FMod\fmod_errors.h>
+#include <Internal/AIContext.hpp>
 #include <vector>
 #include <DirectXMath.h>
 
@@ -50,6 +49,7 @@ namespace DoremiEngine
             const Core::SharedContext& m_sharedContext;
             PotentialFieldSubModuleImpl* m_potentialFieldSubModuleImpl;
             AStarSubModuleImpl* m_aStarSubModuleImpl;
+            AIContext* m_context;
         };
     }
 }

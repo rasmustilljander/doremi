@@ -120,7 +120,24 @@ namespace Doremi
             if(transformationData.attributes.isAIground)
             {
                 // Should build a potential field around this mesh
-                CreatePotentialfieldAroundMesh(p_vertexBuffer, transformationData);
+                using namespace DirectX;
+                // Get the aabb box around the mesh with a AIGround attribute
+                XMFLOAT3 centerPoint, minPoint, maxPoint;
+                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                // Set it to the top of the mesh since we bassicly want a 2d field offset to a Y value
+                centerPoint.y = maxPoint.y;
+                // Create a new field with width and height calculated from bounding box.
+                // TODOCONFIG 50, 50 is hardcoded how many quads in x and z. should be calculated from a given quad size instead
+                DoremiEngine::AI::PotentialField* field =
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
+                if(!transformationData.attributes.isStatic)
+                {
+                    EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);
+                    PotentialFieldComponent* potComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityId);
+                    potComp->Field = field;
+                    potComp->isField = true;
+                }
             }
             else if(transformationData.attributes.isPotentialFieldCollidable)
             {
@@ -336,22 +353,6 @@ namespace Doremi
 
 
             return r_shouldCookStaticPhysics;
-        }
-
-        void LevelLoaderServer::CreatePotentialfieldAroundMesh(const std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer,
-                                                               const DoremiEditor::Core::TransformData& p_transformationData)
-        {
-            using namespace DirectX;
-            // Get the aabb box around the mesh with a AIGround attribute
-            XMFLOAT3 centerPoint, minPoint, maxPoint;
-            CalculateAABBBoundingBox(p_vertexBuffer, p_transformationData, maxPoint, minPoint, centerPoint);
-
-            // Set it to the top of the mesh since we bassicly want a 2d field offset to a Y value
-            centerPoint.y = maxPoint.y;
-            // Create a new field with width and height calculated from bounding box.
-            // TODOCONFIG 50, 50 is hardcoded how many quads in x and z. should be calculated from a given quad size instead
-            m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
-            // The reason i dont save the created field is that it's gathered later for the occupied calculation. No delete needed!
         }
     }
 }
