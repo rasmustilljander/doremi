@@ -7,10 +7,10 @@ namespace Doremi
         TreeCreator::TreeCreator()
         {
             // Set the depth of the oct tree
-            m_treeDepth = 4;
+            m_treeDepth = 7;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 100, 100);
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(10000, 10000, 10000);
 
             // Set the center for the box of the world
             treeRoot.center = DirectX::XMFLOAT3(0, 0, 0);
@@ -50,9 +50,11 @@ namespace Doremi
                         // We start over in the next node to see if we can split it even further
                         BuildTree(*o_treeNode.children[i]);
                     }
-                    else if(o_treeNode.depth == m_treeDepth)
+                    else if(o_treeNode.depth == m_treeDepth - 1)
                     {
+                        int hejsan = 0;
                         // Collision but we reached max depth
+                        // Check where the objects will be placed in this nodes children
                     }
                     else
                     {
