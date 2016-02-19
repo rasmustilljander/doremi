@@ -149,7 +149,7 @@ namespace DoremiEngine
             // Set UAV and SRV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_uav[BufferType::FRUSTUM], 0);
 
-            m_deviceContext->Dispatch(50, 50, 1);
+            m_deviceContext->Dispatch(80, 45, 1);
 
             // Clear UAV and SRV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
@@ -183,7 +183,7 @@ namespace DoremiEngine
             m_deviceContext->CSSetShaderResources(0, 1, &m_srv[BufferType::FRUSTUM]);
 
 
-            m_deviceContext->Dispatch(50, 50, 1);
+            m_deviceContext->Dispatch(80, 45, 1);
 
             // Clear UAV and SRV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);

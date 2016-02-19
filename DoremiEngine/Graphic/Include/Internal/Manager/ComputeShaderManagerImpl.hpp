@@ -1,7 +1,7 @@
 #pragma once
 
-#define NUM_THREAD_BLOCKS 2500
-#define NUM_THREADS 640000
+#define NUM_THREAD_BLOCKS 3600
+#define NUM_THREADS 921600
 
 #include <Interface/Manager/ComputeShaderManager.hpp>
 #include <Internal/Light/LightInfoImpl.hpp>

@@ -9,7 +9,7 @@ RWStructuredBuffer<Frustum> out_Frustums : register(u0);
 void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
-    uint3 numThreadGroups = uint3(50, 50, 1);
+    uint3 numThreadGroups = uint3(80, 45, 1);
     uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
     // View space eye position is always at the origin.
     const float3 eyePos = float3(0, 0, 0);
@@ -50,4 +50,6 @@ void CS_main(ComputeShaderInput input)
         uint index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
         out_Frustums[index] = frustum;
     }
+
+
 }

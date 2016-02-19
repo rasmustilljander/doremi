@@ -4,6 +4,7 @@ struct PixelInputType
 {
     float4 position : SV_POSITION;
     float4 worldPos : WORLDPOS;
+    float2 depth : DEPTH;
     float3 screenPos : SCREENPOS;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
@@ -14,6 +15,7 @@ struct PixelOutputType
 {
     float4 diffuse : SV_Target0;
     float4 glow : SV_Target1;
+    float4 depth : SV_Target2;
 };
 
 struct LightGridInfo
@@ -91,7 +93,7 @@ float3 CalcPointLight(PixelInputType input, Light l)
     float3 lightDirection = l.position - input.worldPos.xyz;
     float lightDistance = length(lightDirection);
 
-    if (lightDistance < 500.0f)
+    if (lightDistance < 50.0f)
     {
         attenuation = 2.5f /
             (l.attenuation[0] + l.attenuation[1] * lightDistance +
@@ -114,14 +116,13 @@ PixelOutputType PS_main(PixelInputType input)
 {
     PixelOutputType output;
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
-    screenPos.y = -screenPos.y;
-    screenPos = (screenPos + 1) * 400;
+    screenPos.y = (-screenPos.y + 1) * 360;
+    screenPos.x = (screenPos.x + 1) * 640;
 
-    //glowMap[screenPos] = float4(0, 0, 0, 0);
 
     //calculate which thread group this pixel was in the compute shader stage
     float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
-    float groupID = groupID2.x + (groupID2.y * 50);
+    float groupID = groupID2.x + (groupID2.y * 80);
     //extract data from light grid
     int index = o_LightGrid[groupID].offset;
     int value = o_LightGrid[groupID].value;
@@ -130,20 +131,18 @@ PixelOutputType PS_main(PixelInputType input)
     float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
 
     texcolor = saturate(texcolor);
-    //return texcolor;
-    //texcolor = float4(0.9, 0.9, 0.9, 1);
 
     float3 rgb = float3(0, 0, 0);
 
-    //for (int i = index; i < index + value; i++)
-    for (int i = 0; i < NUM_LIGHTS; i++)
+    for (int i = index; i < index + value; i++)
+    //for (int i = 0; i < 0/*NUM_LIGHTS*/; i++)
     {
-        //Light l = light[o_LightIndexList[i]];
-        Light l = light[i];
+        Light l = light[o_LightIndexList[i]];
+        //Light l = light[i];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
-            rgb += CalcDirectionalLight(input, l);
+            rgb += CalcDirectionalLight(input, l); 
         if (l.type == 2)
             rgb += CalcSpotLight(input, l);
         if (l.type == 3)
@@ -157,13 +156,10 @@ PixelOutputType PS_main(PixelInputType input)
 
     texcolor.a = 1.f;
     output.diffuse = float4(rgb, 1) * texcolor * 3;
+    float depth = (input.position.x/input.position.y) + 1;
+    output.depth = float4(depth, depth, depth, 1);
 
     return output;
 
-    //return float4(rgb, 1) * texcolor * 3;
-    //return glowcolor;
-    //return float4(screenPos.x/800.f, screenPos.y/800.f, 0, 1);
-    //return float4((t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, (t_LightGrid[screenPos.x + (screenPos.y * 800)].value) / 6.f, 1);
-    //return float4(4.f/6.f, 4.f/6.f, 4.f/6.f, 1);
 
 }

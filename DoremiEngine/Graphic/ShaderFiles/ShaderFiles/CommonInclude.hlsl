@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 30
+#define NUM_LIGHTS 50
 #define BLOCK_SIZE 16
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -37,7 +37,6 @@ struct ComputeShaderInput
     uint  groupIndex        : SV_GroupIndex;        // Flattened local index of the thread within a thread group.
 };
 
-//StructuredBuffer<Light> Lights : register(t8);
 
 struct Plane
 {
@@ -77,8 +76,8 @@ struct Frustum
 float4 ClipToView(float4 clip)
 {
     // View space position.
-    //TODORK change to inverseProjection
     float4 view = mul(clip, inverseProjection);
+    //float4 view = mul(inverseProjection, clip);
     // Perspecitive projection.
     view = view / view.w;
 
@@ -117,8 +116,9 @@ Plane ComputePlane(float3 p0, float3 p1, float3 p2)
 // Source: Real-time collision detection, Christer Ericson (2005)
 bool SphereInsidePlane(Sphere sphere, Plane plane)
 {
-    float res = dot(plane.N, sphere.c) - plane.d;
-    return res < -sphere.r;
+    //float res = dot(plane.N, sphere.c) - plane.d;
+    //return dot(plane.N, sphere.c) - plane.d < -sphere.r;
+    return dot(plane.N, sphere.c) - plane.d < -sphere.r;
 }
 
 // Check to see of a light is partially contained within the frustum.

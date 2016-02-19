@@ -58,6 +58,10 @@ namespace DoremiEngine
             Computes glow
             */
             void ComputeGlow();
+            /**
+            Necessary stuff before anythig gets rendered
+            */
+            void BeginDraw() override;
             // TODOKO should end draw be here?
             /**
             Necessary dirX stuff after everything has been rendered 
@@ -125,22 +129,28 @@ namespace DoremiEngine
             ID3D11Device* m_device;
             ID3D11DeviceContext* m_deviceContext;
             IDXGISwapChain* m_swapChain;
-            ID3D11RenderTargetView* m_backBuffer[2];
-            ID3D11RenderTargetView* m_postEffectRT;
+            ID3D11RenderTargetView* m_backBufferRTV;
+            ID3D11RenderTargetView* m_sceneRTV;
+            ID3D11RenderTargetView* m_glowRTV;
+            ID3D11RenderTargetView* m_depthRTV;
+            ID3D11ShaderResourceView* m_srv;
+            ID3D11ShaderResourceView* m_backbufferSRV;
+            ID3D11ShaderResourceView* m_sceneSRV;
+            ID3D11ShaderResourceView* m_glowSRV;
+            ID3D11ShaderResourceView* m_depthSRV;
+            ID3D11UnorderedAccessView* m_backbufferUAV;
+            ID3D11UnorderedAccessView* m_sceneUAV;
+            ID3D11UnorderedAccessView* m_glowUAV;
             ID3D11Texture2D* m_depthBuffer;
             ID3D11Texture2D* m_glowmap;
             ID3D11Texture2D* m_scene;
+            ID3D11Texture2D* m_depth;
             ID3D11Texture2D* m_renderTargetTexture[2];
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
             ID3D11SamplerState* m_defaultSamplerState;
             ID3D11BlendState* m_enableBlendState;
             ID3D11BlendState* m_disableBlendState;
-            ID3D11ShaderResourceView* m_srv;
-            ID3D11ShaderResourceView* m_renderTargetSRV[2];
-            ID3D11ShaderResourceView* m_sceneSRV;
-            ID3D11UnorderedAccessView* m_backbufferUAV;
-            ID3D11UnorderedAccessView* m_glowmapUAV;
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;
             DirectX::XMFLOAT2 m_screenResolution;

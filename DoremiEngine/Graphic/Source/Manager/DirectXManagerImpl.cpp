@@ -78,13 +78,13 @@ namespace DoremiEngine
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
 
-            res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_renderTargetSRV[0]);
+            res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_backbufferSRV);
             if(FAILED(res))
             {
                 // ERROR MESSAGE
                 std::cout << "Failed to create shader resource view" << std::endl;
             }
-            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBuffer[0]);
+            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBufferRTV);
             if(FAILED(res))
             {
                 // ERROR MESSAGE
@@ -119,24 +119,38 @@ namespace DoremiEngine
                 // ERROR MESSAGE
                 std::cout << "Failed to create texture" << std::endl;
             }
-
+            res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depth);
+            if (FAILED(res))
+            {
+                std::cout << "Failed to create texture" << std::endl;
+            }
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_glowmap);
             if(FAILED(res))
             {
                 std::cout << "Failed to create texture" << std::endl;
             }
-            res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_backBuffer[1]);
+            res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_sceneRTV);
             if(FAILED(res))
             {
                 std::cout << "Failed to create render target view" << std::endl;
             }
-            res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowmapUAV);
+            res = m_device->CreateRenderTargetView(m_depth, NULL, &m_depthRTV);
+            if (FAILED(res))
+            {
+                std::cout << "Failed to create render target view" << std::endl;
+            }
+            res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowUAV);
             if(FAILED(res))
             {
                 std::cout << "Failed to create unordered access view" << std::endl;
             }
-            res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_renderTargetSRV[1]);
+            res = m_device->CreateUnorderedAccessView(m_scene, NULL, &m_sceneUAV);
+            if (FAILED(res))
+            {
+                std::cout << "Failed to create shader resource view" << std::endl;
+            }
+            res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_glowSRV);
             if(FAILED(res))
             {
                 std::cout << "Failed to create shader resource view" << std::endl;
@@ -146,8 +160,12 @@ namespace DoremiEngine
             {
                 std::cout << "Failed to create shader resource view" << std::endl;
             }
-
-            res = m_device->CreateRenderTargetView(m_scene, NULL, &m_postEffectRT);
+            res = m_device->CreateShaderResourceView(m_depth, NULL, &m_depthSRV);
+            if (FAILED(res))
+            {
+                std::cout << "Failed to create shader resource view" << std::endl;
+            }
+            res = m_device->CreateRenderTargetView(m_scene, NULL, &m_glowRTV);
             if(FAILED(res))
             {
                 std::cout << "Failed to create render target view" << std::endl;
@@ -209,7 +227,7 @@ namespace DoremiEngine
                 std::cout << "Failed to create shader resource view" << std::endl;
             }
 
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthView);
 
             // Viewport
             // TODOKO change so width and height is modifiable and taken from some smarter place
@@ -302,6 +320,8 @@ namespace DoremiEngine
             {
                 std::cout << "Failed to create blend state" << std::endl;
             }
+
+           
         }
 
         void DirectXManagerImpl::SetScreenResolution(DirectX::XMFLOAT2 p_res) { m_screenResolution = p_res; }
@@ -359,8 +379,6 @@ namespace DoremiEngine
         {
             m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
             m_deviceContext->RSSetState(p_rasterizerState);
-
-            SetRenderTargetNormal();
 
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
@@ -472,7 +490,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderAllMeshs()
         {
-            DispatchCompute();
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -670,8 +687,7 @@ namespace DoremiEngine
             m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr); // switch between &m_backBuffer and &nullRTV
 
             m_deviceContext->CSSetUnorderedAccessViews(6, 1, &m_backbufferUAV, 0); // Remove to render normally
-            m_deviceContext->CSSetShaderResources(1, 1, &m_srv);
-
+            m_deviceContext->CSSetShaderResources(1, 1, &m_depthSRV);
 
             // dispatch frustum shader
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
@@ -698,16 +714,16 @@ namespace DoremiEngine
         {
             // Bind render target to backbuffer again
 
-            ID3D11RenderTargetView* nullRTV[2] = {NULL, NULL};
-            m_deviceContext->OMSetRenderTargets(2, nullRTV, m_depthView);
-            m_deviceContext->OMSetRenderTargets(1, &m_backBuffer[0], m_depthView);
+            ID3D11RenderTargetView* nullRTV[3] = {NULL, NULL, NULL};
+            m_deviceContext->OMSetRenderTargets(3, nullRTV, m_depthView);
+            m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthView);
         }
 
         void DirectXManagerImpl::SetRenderTargetGlow()
         {
             // Add depth bind to OM
-            ID3D11RenderTargetView* t_RTArray[2] = {m_postEffectRT, m_backBuffer[0]};
-            m_deviceContext->OMSetRenderTargets(2, t_RTArray, m_depthView);
+            ID3D11RenderTargetView* t_RTArray[3] = { m_glowRTV, m_backBufferRTV, m_depthRTV };
+            m_deviceContext->OMSetRenderTargets(3, t_RTArray, m_depthView);
         }
 
         void DirectXManagerImpl::EnableBlend()
@@ -749,8 +765,8 @@ namespace DoremiEngine
             m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
 
             //////BLUR HORIZONAL
-            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[0]);
-            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_glowmapUAV, 0);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_backbufferSRV);
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_glowUAV, 0);
 
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurHorizontal();
 
@@ -760,10 +776,10 @@ namespace DoremiEngine
             /////////BLUR VERTICAL
 
             // shader resource m_renderTargetSRV[0] and scene
-            m_deviceContext->CSSetShaderResources(0, 1, &m_renderTargetSRV[1]);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_glowSRV);
             m_deviceContext->CSSetShaderResources(1, 1, &m_sceneSRV);
 
-            // uav m_glowmapUAV
+            // uav   m_glowUAV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_backbufferUAV, 0);
             // dispatch
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurVertical();
@@ -774,17 +790,22 @@ namespace DoremiEngine
 
         }
 
+        void DirectXManagerImpl::BeginDraw()
+        {
+            DispatchCompute();
+
+        }
+        
         void DirectXManagerImpl::EndDraw()
         {
             ComputeGlow();
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};
-            m_deviceContext->ClearRenderTargetView(m_backBuffer[0], color);
-            m_deviceContext->ClearRenderTargetView(m_backBuffer[1], color);
-            m_deviceContext->ClearRenderTargetView(m_postEffectRT, color);
+            m_deviceContext->ClearRenderTargetView(m_backBufferRTV, color);
+            m_deviceContext->ClearRenderTargetView(m_sceneRTV, color);
+            m_deviceContext->ClearRenderTargetView(m_glowRTV, color);
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
         }
 
         void DirectXManagerImpl::AddMeshForRendering(MeshRenderData& p_renderData)

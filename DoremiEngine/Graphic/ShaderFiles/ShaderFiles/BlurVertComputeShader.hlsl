@@ -28,8 +28,6 @@ void CS_main(ComputeShaderInput input)
     float2 index2d = input.dispatchThreadID.xy;
     float index = index2d.x + (index2d.y * SCREEN_WIDTH);
 
-    //gCache[index] = scene[input.dispatchThreadID.xy];
-
     // Wait for all threads to finish.
     GroupMemoryBarrierWithGroupSync();
 
@@ -46,5 +44,6 @@ void CS_main(ComputeShaderInput input)
     }
 
     output[index2d.xy] = saturate(scene[index2d] + blurColor);
+    //output[index2d.xy] = scene[index2d];
 
 }

@@ -79,7 +79,7 @@ void t_AppendLight(uint lightIndex)
 void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
-    uint3 numThreadGroups = uint3(50, 50, 1);
+    uint3 numThreadGroups = uint3(80, 45, 1);
     uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 
     // Calculate min & max depth in threadgroup / tile.
@@ -141,17 +141,21 @@ void CS_main(ComputeShaderInput input)
             switch (light.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(light.position, viewMatrix).xyz, light.intensity * 50.f}; //TODORK change intensity to light range
+                Sphere sphere = { mul(float4(light.position, 1), viewMatrix).xyz, /*light.intensity **/ 110.f}; //TODORK change intensity to light range
+                //Sphere sphere = { light.position, light.intensity * 20.f }; //TODORK change intensity to light range
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
                     t_AppendLight(i);
+                    o_AppendLight(i);
 
                     if (!SphereInsidePlane(sphere, minPlane))
                     {
                         // Add light to light list for opaque geometry.
-                        o_AppendLight(i);
+                        //o_AppendLight(i);
                     }
+
+                
                 }
 
 
@@ -185,6 +189,7 @@ void CS_main(ComputeShaderInput input)
         }
     }
 
+    GroupMemoryBarrierWithGroupSync();
 
     // Update global memory with visible light buffer.
     // First update the light grid (only thread 0 in group needs to do this)
@@ -226,5 +231,5 @@ void CS_main(ComputeShaderInput input)
     }
     uint a = o_LightIndexList[0];
     //render depth to back buffer
-    //backbuffer[input.dispatchThreadID.xy] = float4(((float)o_LightCount) / 7.0f, ((float)o_LightCount)/ 7.0f, ((float)o_LightCount) / 7.0f,1.0f);
+    //backbuffer[input.dispatchThreadID.xy] = float4((float)o_LightCount/12, (float)o_LightCount/12, (float)o_LightCount/12, 1.0f);
 }

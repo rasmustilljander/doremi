@@ -163,12 +163,12 @@ namespace Doremi
         std::vector<string> t_textureNamesForMenuButtons;
         // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
         // textures under in the same order
-        t_textureNamesForMenuButtons.push_back("Playbutton.dds");
-        t_textureNamesForMenuButtons.push_back("Optionsbutton.dds");
-        t_textureNamesForMenuButtons.push_back("Exitbutton.dds");
-        t_textureNamesForMenuButtons.push_back("PlaybuttonHighlighted.dds");
-        t_textureNamesForMenuButtons.push_back("OptionsbuttonHighlighted.dds");
-        t_textureNamesForMenuButtons.push_back("ExitbuttonHighlighted.dds");
+        t_textureNamesForMenuButtons.push_back("playbutton2.dds");
+        t_textureNamesForMenuButtons.push_back("optionsbutton2.dds");
+        t_textureNamesForMenuButtons.push_back("exitbutton2.dds");
+        t_textureNamesForMenuButtons.push_back("playbutton2highlight.dds");
+        t_textureNamesForMenuButtons.push_back("optionsbutton2highlight.dds");
+        t_textureNamesForMenuButtons.push_back("exitbutton2highlight.dds");
         MenuHandler::StartMenuHandler(sharedContext, m_screenRes);
         MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
         // initialize menudraw
@@ -414,6 +414,7 @@ namespace Doremi
         TIME_FUNCTION_START
         /** TODOLH Detta ska flyttas till en function som i updaten*/
         Core::DoremiStates t_state = Core::StateHandler::GetInstance()->GetState();
+        m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
         switch(t_state)
         {
             case Core::DoremiStates::RUNGAME:
