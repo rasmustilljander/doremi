@@ -16,11 +16,11 @@ namespace Doremi
                 {
                     started = ARBITRARY_CIRCLE_BUFFER_STARTED;
                 }
-                size_t currentTailOffset; // Only changed by the consumer
-                size_t currentHeadOffset; // Only changed by the producer
-                size_t totalMemoryInBytes; // Should not be changed
-                size_t totalConsumedMemoryInBytes; // Only changed by the consumer, but will be reset at some point.
-                size_t totalProducedMemoryInBytes; // Only changed by the producer, but will be reset at some point.
+                uint32_t currentTailOffset; // Only changed by the consumer
+                uint32_t currentHeadOffset; // Only changed by the producer
+                uint32_t totalMemoryInBytes; // Should not be changed
+                uint32_t totalConsumedMemoryInBytes; // Only changed by the consumer, but will be reset at some point.
+                uint32_t totalProducedMemoryInBytes; // Only changed by the producer, but will be reset at some point.
                 uint8_t started;
             };
         }
