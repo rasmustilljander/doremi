@@ -40,16 +40,14 @@ namespace Doremi
         public:
             TreeCreator();
             ~TreeCreator();
-            void CreateAndDivideTheChildrenChild(OctNode& o_treeNode);
             void Update();
             void OnEvent(Event* p_event) override;
             OctNode treeRoot;
             void CreateTree();
 
         private:
-            void BuildItRoot(OctNode& o_treeNode);
-            void BuildItNode(OctNode& o_treeNode);
-            void CreateAndDivideTheChildrenRoot(OctNode& o_treeNode);
+            void BuildTree(OctNode& o_treeNode);
+            void CreateAndDivideTheChildren(OctNode& o_treeNode);
             uint16_t m_treeDepth;
         };
     }

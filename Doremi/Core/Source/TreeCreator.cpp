@@ -15,206 +15,107 @@ namespace Doremi
         //}
         TreeCreator::TreeCreator()
         {
+            // Set the depth of the oct tree
             m_treeDepth = 4;
+
+            // Set the box for the world
             treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 100, 100);
+
+            // Set the center for the box of the world
             treeRoot.center = DirectX::XMFLOAT3(0, 0, 0);
-            CreateAndDivideTheChildrenRoot(treeRoot);
+
+            // Start up for the oct tree. Without this function we don't have anything to start with
+            CreateAndDivideTheChildren(treeRoot);
             int hej2 = 0;
         };
         TreeCreator::~TreeCreator() {}
 
         void TreeCreator::CreateTree()
         {
-            // standard root beginning
-            // Root checks eight boxes(its children) for anycollision.
-
-            BuildItRoot(treeRoot);
+            // Start building the tree
+            BuildTree(treeRoot);
             int hej10 = 0;
         }
 
-        void TreeCreator::BuildItRoot(OctNode& o_treeNode)
+        void TreeCreator::BuildTree(OctNode& o_treeNode)
         {
+            // Looping through the
             for(size_t i = 0; i < 8; i++)
             {
-                // o_treeNode.children[i]->depth = o_treeNode.depth + (uint8_t)1;
-                // o_treeNode.children[i]->empty = true;
-                // if there is a collision set bool empty to false
-                if(true)
+                // if there is a collision between the child box and any object that needs drawing
+                if(true) // TODOEA Here should be the collision check between all the objects in the objectsInTheArea list
                 {
-
+                    // Since we had a collision, there is something in this box
                     o_treeNode.empty = false;
+
                     // If max depth isnt reached , minus two is needed to get the depth wanted.
                     if(o_treeNode.depth <= m_treeDepth - 2)
                     {
-                        // If there is a collision we split the node to 8 smaller nodes if we havent reached max depth
-                        CreateAndDivideTheChildrenRoot(*o_treeNode.children[i]);
-                        // Change BuildIt to build it Node instead of root
-                        BuildItRoot(*o_treeNode.children[i]);
-                    }
-                    else
-                    {
-                        int hej = 0;
-                        // We reached max depth.
-                    }
-                }
-                else
-                {
-                    // No collision
-                    // Set the node to empty = true;
-                    o_treeNode.empty = true;
-                }
-            }
-        }
-        // Not needed
-        void TreeCreator::BuildItNode(OctNode& o_treeNode)
-        {
-            for(size_t i = 0; i < 8; i++)
-            {
-                // o_treeNode.children[i]->depth = o_treeNode.depth + (uint8_t)1;
-                // o_treeNode.children[i]->empty = true;
-                // if there is a collision set bool empty to false
-                if(true)
-                {
+                        // Collision and max depth wasn't reached
 
-                    o_treeNode.empty = false;
-                    // If max depth isnt reached
-                    if(o_treeNode.depth <= 6)
-                    {
-                        // If there is a collision we split the node to 8 smaller nodes if we havent reached max depth
-                        CreateAndDivideTheChildrenChild(*o_treeNode.children[i]);
-                        // Change BuildIt to build it Node instead of root
-                        BuildItRoot(*o_treeNode.children[i]);
+                        // Prepare the next BuildTree() function with 8 newly created children
+                        CreateAndDivideTheChildren(*o_treeNode.children[i]);
+
+                        // We start over in the next node to see if we can split it even further
+                        BuildTree(*o_treeNode.children[i]);
                     }
                     else
                     {
-                        int hej = 0;
-                        // We reached max depth.
+                        // Collision but we reached max depth
                     }
                 }
                 else
                 {
                     // No collision
-                    // Set the node to empty = true;
                     o_treeNode.empty = true;
                 }
             }
         }
-        void TreeCreator::CreateAndDivideTheChildrenRoot(OctNode& o_treeNode)
+        void TreeCreator::CreateAndDivideTheChildren(OctNode& o_treeNode)
         {
             // Using DirectXNamespace because I couldnt multiply two vectors with eafchother without it
             using namespace DirectX;
-            // DirectX::XMVECTOR t_newDimensionsVector = DirectX::XMLoadFloat3(&o_treeNode.boxDimensions);
-            // t_newDimensionsVector = t_newDimensionsVector * 0.5f;
-            // DirectX::XMFLOAT3 t_newDimensionsFloatThree;
-            // DirectX::XMStoreFloat3(&t_newDimensionsFloatThree, t_newDimensionsVector);
 
 
-            // make the dimensions available for usage and make it half so we can split it up into 8 pieces
+            /*
+            Make the dimensions available for usage and make split it in half
+            Splitting them in half so they can be used for the childrens dimensions
+            */
             XMVECTOR t_halfDimensions = XMLoadFloat3(&o_treeNode.boxDimensions);
             t_halfDimensions = t_halfDimensions * 0.5f;
+
             // Same with the center, making it availabe for manipulation
             XMVECTOR t_startPosForThisOct = XMLoadFloat3(&o_treeNode.center);
             t_startPosForThisOct = t_startPosForThisOct - t_halfDimensions;
+
             // to use for getting the new center we need a xmfloat
             XMFLOAT3 t_startPosForThisOctFLOAT;
             XMStoreFloat3(&t_startPosForThisOctFLOAT, t_startPosForThisOct);
-
-            // DirectX::XMFLOAT3 t_negativeHalfDimensions = DirectX::XMFLOAT3(o_treeNode.boxDimensions.x * -0.5f, o_treeNode.boxDimensions.y * -0.5f,
-            // o_treeNode.boxDimensions.z * -0.5f);
 
             // Store the vecotr to a xmfloat3 for later use
             XMFLOAT3 t_halfDimensionsXMFLOAT;
             XMStoreFloat3(&t_halfDimensionsXMFLOAT, t_halfDimensions);
             XMFLOAT3 t_fourthOfDimensionsXMFLOAT;
             XMStoreFloat3(&t_fourthOfDimensionsXMFLOAT, t_halfDimensions * 0.5f);
-            // DirectX::XMVECTOR t_newCenter = t_startPosForThisOct + t_halfDimensions * 0.5f;
 
             XMStoreFloat3(&t_startPosForThisOctFLOAT, XMLoadFloat3(&t_startPosForThisOctFLOAT) + XMLoadFloat3(&t_fourthOfDimensionsXMFLOAT));
 
             // Get the first center for
-
             for(size_t x = 0; x < 2; ++x)
             {
                 for(size_t y = 0; y < 2; ++y)
                 {
                     for(size_t z = 0; z < 2; ++z)
                     {
-                        // t_startPosForThisOctFLOAT.x = t_startPosForThisOctFLOAT.x + t_fourthOfDimensionsXMFLOAT.x;
-                        // t_startPosForThisOctFLOAT.y = t_startPosForThisOctFLOAT.y + t_fourthOfDimensionsXMFLOAT.y;
-                        // t_startPosForThisOctFLOAT.z = t_startPosForThisOctFLOAT.z + t_fourthOfDimensionsXMFLOAT.z;
-                        // DirectX::XMVECTOR t_halfDimensionsForTheNextCenter = t_newDimensionsVector * 0.5f;
-                        // DirectX::XMFLOAT3 t_changesToCenter = DirectX::XMFLOAT3(o_treeNode.boxDimensions.x * 0.25f + x *
-                        // (o_treeNode.boxDimensions.x * 0.5), o_treeNode.boxDimensions.y * 0.25f + y * (o_treeNode.boxDimensions.y * 0.5),
-                        // o_treeNode.boxDimensions.z * 0.25f + z * (o_treeNode.boxDimensions.z * 0.5));
-                        // t_newCenter
+                        // Getting the values for the eight different children
                         XMFLOAT3 t_finalCenter;
                         t_finalCenter.x = t_startPosForThisOctFLOAT.x + t_halfDimensionsXMFLOAT.x * x;
                         t_finalCenter.y = t_startPosForThisOctFLOAT.y + t_halfDimensionsXMFLOAT.y * y;
                         t_finalCenter.z = t_startPosForThisOctFLOAT.z + t_halfDimensionsXMFLOAT.z * z;
 
+                        // Since we are createing a new layer of children we add one depth to it.
                         OctNode* t_intoTheTree = new OctNode(o_treeNode.depth + 1, true, t_halfDimensionsXMFLOAT, t_finalCenter);
                         o_treeNode.children[z + (y * 2) + (x * 4)] = t_intoTheTree;
-                        // o_treeNode.boxDimensions;
-                    }
-                }
-            }
-        }
-        void TreeCreator::CreateAndDivideTheChildrenChild(OctNode& o_treeNode)
-        {
-            // Using DirectXNamespace because I couldnt multiply two vectors with eafchother without it
-            using namespace DirectX;
-            // DirectX::XMVECTOR t_newDimensionsVector = DirectX::XMLoadFloat3(&o_treeNode.boxDimensions);
-            // t_newDimensionsVector = t_newDimensionsVector * 0.5f;
-            // DirectX::XMFLOAT3 t_newDimensionsFloatThree;
-            // DirectX::XMStoreFloat3(&t_newDimensionsFloatThree, t_newDimensionsVector);
-
-
-            // make the dimensions available for usage and make it half so we can split it up into 8 pieces
-            XMVECTOR t_halfDimensions = XMLoadFloat3(&o_treeNode.boxDimensions);
-            t_halfDimensions = t_halfDimensions * 0.5f;
-            // Same with the center, making it availabe for manipulation
-            XMVECTOR t_startPosForThisOct = XMLoadFloat3(&o_treeNode.center);
-            t_startPosForThisOct = t_startPosForThisOct - t_halfDimensions;
-            // to use for getting the new center we need a xmfloat
-            XMFLOAT3 t_startPosForThisOctFLOAT;
-            XMStoreFloat3(&t_startPosForThisOctFLOAT, t_startPosForThisOct);
-
-            // DirectX::XMFLOAT3 t_negativeHalfDimensions = DirectX::XMFLOAT3(o_treeNode.boxDimensions.x * -0.5f, o_treeNode.boxDimensions.y * -0.5f,
-            // o_treeNode.boxDimensions.z * -0.5f);
-
-            // Store the vecotr to a xmfloat3 for later use
-            XMFLOAT3 t_halfDimensionsXMFLOAT;
-            XMStoreFloat3(&t_halfDimensionsXMFLOAT, t_halfDimensions);
-            XMFLOAT3 t_fourthOfDimensionsXMFLOAT;
-            XMStoreFloat3(&t_fourthOfDimensionsXMFLOAT, t_halfDimensions * 0.5f);
-            // DirectX::XMVECTOR t_newCenter = t_startPosForThisOct + t_halfDimensions * 0.5f;
-
-            XMStoreFloat3(&t_startPosForThisOctFLOAT, XMLoadFloat3(&t_startPosForThisOctFLOAT) + XMLoadFloat3(&t_fourthOfDimensionsXMFLOAT));
-
-            // Get the first center for
-
-            for(size_t x = 0; x < 2; ++x)
-            {
-                for(size_t y = 0; y < 2; ++y)
-                {
-                    for(size_t z = 0; z < 2; ++z)
-                    {
-                        // t_startPosForThisOctFLOAT.x = t_startPosForThisOctFLOAT.x + t_fourthOfDimensionsXMFLOAT.x;
-                        // t_startPosForThisOctFLOAT.y = t_startPosForThisOctFLOAT.y + t_fourthOfDimensionsXMFLOAT.y;
-                        // t_startPosForThisOctFLOAT.z = t_startPosForThisOctFLOAT.z + t_fourthOfDimensionsXMFLOAT.z;
-                        // DirectX::XMVECTOR t_halfDimensionsForTheNextCenter = t_newDimensionsVector * 0.5f;
-                        // DirectX::XMFLOAT3 t_changesToCenter = DirectX::XMFLOAT3(o_treeNode.boxDimensions.x * 0.25f + x *
-                        // (o_treeNode.boxDimensions.x * 0.5), o_treeNode.boxDimensions.y * 0.25f + y * (o_treeNode.boxDimensions.y * 0.5),
-                        // o_treeNode.boxDimensions.z * 0.25f + z * (o_treeNode.boxDimensions.z * 0.5));
-                        // t_newCenter
-                        XMFLOAT3 t_finalCenter;
-                        t_finalCenter.x = t_startPosForThisOctFLOAT.x + t_halfDimensionsXMFLOAT.x * x;
-                        t_finalCenter.y = t_startPosForThisOctFLOAT.y + t_halfDimensionsXMFLOAT.y * y;
-                        t_finalCenter.z = t_startPosForThisOctFLOAT.z + t_halfDimensionsXMFLOAT.z * z;
-
-                        OctNode* t_intoTheTree = new OctNode(o_treeNode.depth + 1, true, t_halfDimensionsXMFLOAT, t_finalCenter);
-                        o_treeNode.children[z + (y * 2) + (x * 4)] = t_intoTheTree;
-                        // o_treeNode.boxDimensions;
                     }
                 }
             }
