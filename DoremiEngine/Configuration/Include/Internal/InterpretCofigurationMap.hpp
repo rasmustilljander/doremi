@@ -100,10 +100,10 @@ namespace DoremiEngine
             returnMap["StartRepeatingAudioRecording"] = std::to_string(p_info.StartRepeatingAudioRecording);
             returnMap["PlayRepeatableAudioRecording"] = std::to_string(p_info.PlayRepeatableAudioRecording);
             returnMap["ExitGame"] = std::to_string(p_info.ExitGame);
-            returnMap["CameraDistanceFromPlayer"] = std::to_string(p_info.ExitGame);
-            returnMap["CameraSpeedY"] = std::to_string(p_info.ExitGame);
-            returnMap["CameraViewDistance"] = std::to_string(p_info.ExitGame);
-            returnMap["CameraFieldOfView"] = std::to_string(p_info.ExitGame);
+            returnMap["CameraDistanceFromPlayer"] = std::to_string(p_info.CameraDistanceFromPlayer);
+            returnMap["CameraSpeedY"] = std::to_string(p_info.CameraSpeedY);
+            returnMap["CameraViewDistance"] = std::to_string(p_info.CameraViewDistance);
+            returnMap["CameraFieldOfView"] = std::to_string(p_info.CameraFieldOfView);
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
             return returnMap;

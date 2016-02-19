@@ -114,12 +114,14 @@ namespace Doremi
             }
 
             PlayerServer* NewPlayer;
-
+            XMFLOAT3 newPosition;
 
             // If we got the id saved as a disconnect, we use the saved values
             std::map<uint32_t, InactivePlayerServer*>::iterator iterInact = m_inactivePlayers.find(p_playerID);
             if(iterInact != m_inactivePlayers.end())
             {
+                newPosition = iterInact->second->m_savedPosition;
+
                 // Create the actual playerentity
                 EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, iterInact->second->m_savedPosition,
                                                                                 iterInact->second->m_savedOrientation, XMFLOAT3(0.25, 0.25, 0.25));
@@ -144,6 +146,7 @@ namespace Doremi
                 // Get position and orientation of the trigger..
                 DirectX::XMFLOAT3 t_triggerPosition = t_rigidBodyManager.GetBodyPosition(t_spawnerEntityID);
                 DirectX::XMFLOAT4 t_triggerOrientation = t_rigidBodyManager.GetBodyOrientation(t_spawnerEntityID);
+                newPosition = t_triggerPosition;
 
                 // Create new stuff needed for a Player
                 NetworkEventSender* newNetworkEventSender = new NetworkEventSender();
@@ -151,14 +154,22 @@ namespace Doremi
                 NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
 
                 // Create the actual playerentity
-                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation,
-                                                                                XMFLOAT3(0.25, 0.25, 0.25));
+                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation);
 
                 // Create a new player
                 NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
 
                 // Add player to map
                 m_playerMap[p_playerID] = NewPlayer;
+            }
+
+            /// Add a new potential field actor to the player
+            // Check if we have a actor, different from server and client...
+            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
+            {
+                PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
+                pfComponent->ChargedActor =
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(newPosition, 30, 60, false, DoremiEngine::AI::AIActorType::Player);
             }
 
 
