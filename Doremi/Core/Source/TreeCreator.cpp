@@ -1,4 +1,7 @@
 #include <Doremi/Core/Include/TreeCreator.hpp>
+#include <EntityComponent/EntityHandler.hpp>
+#include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+
 
 namespace Doremi
 {
@@ -23,8 +26,30 @@ namespace Doremi
 
         void TreeCreator::CreateTree()
         {
+            // Get the max entities so we can collect all of the draw objects in the world
+            size_t maxEntities = EntityHandler::GetInstance().GetLastEntityIndex();
+            // Loop over all entities to add the things that have render components into the list.
+            for(size_t j = 0; j < maxEntities; j++)
+            {
+                // Check if entity will be affected by the render.
+                if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::Render))
+                {
+                    // If they are colliding with the rootTree box we add them to the list.
+                    if(true)
+                    {
+                        // Colliding with the box and it is a render component
+                        treeRoot.objectsInTheArea.push_back(j);
+                    }
+                    else
+                    {
+                        // Not colliding with the box but are a render component
+                    }
+                }
+            }
+
             // Start building the tree
             BuildTree(treeRoot);
+
             int hej10 = 0;
         }
 
