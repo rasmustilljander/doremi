@@ -147,7 +147,7 @@ namespace Doremi
                 }
 
                 /**
-                Threadsafe, internal loackage
+                Threadsafe, internal loackage. Throws exception if not possible.
                 */
                 void Produce(const CircleBufferHeader& p_Header, const void* const p_data)
                 {
@@ -214,7 +214,7 @@ namespace Doremi
                 }
 
                 /**
-                Threadsafe, internal loackage. Returns nullptr if there was nothing to read.
+                Threadsafe, internal loackage. Returns false if there was nothing to read.
                 */
                 bool Consume(CircleBufferHeader*& o_header, void* o_dataBuffer, const uint32_t& p_outbufferSize)
                 {
