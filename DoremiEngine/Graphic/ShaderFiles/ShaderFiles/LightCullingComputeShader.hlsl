@@ -6,8 +6,6 @@ struct LightGridInfo
     uint offset;
     uint value;
 };
-//StructuredBuffer<Light> Lights : register(t8);
-//StructuredBuffer<Frustum> in_Frustums : register(t9);
 
 // Global counter for current index into the light index list.
 // "o_" prefix indicates light lists for opaque geometry while 
@@ -114,12 +112,6 @@ void CS_main(ComputeShaderInput input)
     float fMinDepth = asfloat(uMinDepth);
     float fMaxDepth = asfloat(uMaxDepth);
 
-    //render depth to back buffer
-    //backbuffer[input.dispatchThreadID.xy] = float4(fMinDepth, 0, fMaxDepth, 1);
-    //backbuffer[input.dispatchThreadID.xy] = float4(fMinDepth, fMinDepth, fMinDepth, 1); b
-    //float fMinDepth = 0;
-    //float fMaxDepth = 100;
-
     // Convert depth values to view space.
     float minDepthVS = ClipToView(float4(0, 0, fMinDepth, 1)).z;
     float maxDepthVS = ClipToView(float4(0, 0, fMaxDepth, 1)).z;
@@ -142,7 +134,6 @@ void CS_main(ComputeShaderInput input)
             {
             case 3: //pointlight
                 Sphere sphere = { mul(float4(light.position, 1), viewMatrix).xyz, /*light.intensity **/ 110.f}; //TODORK change intensity to light range
-                //Sphere sphere = { light.position, light.intensity * 20.f }; //TODORK change intensity to light range
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
@@ -200,7 +191,6 @@ void CS_main(ComputeShaderInput input)
         LightGridInfo lightGridInfo;
         lightGridInfo.offset = o_LightIndexStartOffset;
         lightGridInfo.value = o_LightCount;
-        //o_LightGrid[input.groupID.xy] = uint2(o_LightIndexStartOffset, o_LightCount);
         uint index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
         o_LightGrid[index] = lightGridInfo;
 
@@ -208,7 +198,6 @@ void CS_main(ComputeShaderInput input)
         InterlockedAdd(t_LightIndexCounter[0], t_LightCount, t_LightIndexStartOffset);
         lightGridInfo.offset = t_LightIndexStartOffset;
         lightGridInfo.value = t_LightCount;
-        //t_LightGrid[input.groupID.xy] = uint2(t_LightIndexStartOffset, t_LightCount);
         index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
         t_LightGrid[index] = lightGridInfo;
 
@@ -230,6 +219,4 @@ void CS_main(ComputeShaderInput input)
         t_LightIndexList[t_LightIndexStartOffset + i] = t_LightList[i];
     }
     uint a = o_LightIndexList[0];
-    //render depth to back buffer
-    //backbuffer[input.dispatchThreadID.xy] = float4((float)o_LightCount/12, (float)o_LightCount/12, (float)o_LightCount/12, 1.0f);
 }

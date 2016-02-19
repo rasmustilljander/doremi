@@ -77,7 +77,6 @@ float4 ClipToView(float4 clip)
 {
     // View space position.
     float4 view = mul(clip, inverseProjection);
-    //float4 view = mul(inverseProjection, clip);
     // Perspecitive projection.
     view = view / view.w;
 
@@ -93,7 +92,6 @@ float4 ScreenToView(float4 screen)
     // Convert to clip space
     float4 clip = float4(float2(texCoord.x, 1.0f - texCoord.y) * 2.0f - 1.0f, screen.z, screen.w);
 
-    //return ClipToView(clip);
     return ClipToView(clip);
 }
 
@@ -116,8 +114,6 @@ Plane ComputePlane(float3 p0, float3 p1, float3 p2)
 // Source: Real-time collision detection, Christer Ericson (2005)
 bool SphereInsidePlane(Sphere sphere, Plane plane)
 {
-    //float res = dot(plane.N, sphere.c) - plane.d;
-    //return dot(plane.N, sphere.c) - plane.d < -sphere.r;
     return dot(plane.N, sphere.c) - plane.d < -sphere.r;
 }
 
@@ -130,7 +126,6 @@ bool SphereInsideFrustum(Sphere sphere, Frustum frustum, float zNear, float zFar
     // First check depth
     // Note: Here, the view vector points in the -Z axis so the 
     // far depth value will be approaching -infinity.
-    //TESTA ÄNDRA < & >
     if (sphere.c.z + sphere.r < zNear || sphere.c.z - sphere.r > zFar)
     {
         // TODORK return false as soon as you know it's outside

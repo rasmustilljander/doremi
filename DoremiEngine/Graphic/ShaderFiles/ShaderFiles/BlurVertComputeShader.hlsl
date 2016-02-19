@@ -44,6 +44,5 @@ void CS_main(ComputeShaderInput input)
     }
 
     output[index2d.xy] = saturate(scene[index2d] + blurColor);
-    //output[index2d.xy] = scene[index2d];
 
 }

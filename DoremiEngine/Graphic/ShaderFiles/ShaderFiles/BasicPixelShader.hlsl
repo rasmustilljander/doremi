@@ -135,10 +135,8 @@ PixelOutputType PS_main(PixelInputType input)
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
-    //for (int i = 0; i < 0/*NUM_LIGHTS*/; i++)
     {
         Light l = light[o_LightIndexList[i]];
-        //Light l = light[i];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
