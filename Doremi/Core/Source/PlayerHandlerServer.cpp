@@ -403,6 +403,7 @@ namespace Doremi
             // While we got events left to send and we have space left to wirte
             for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; i++)
             {
+                t_bitIncrement = 0;
                 p_streamer.WriteUnsignedInt32(static_cast<uint32_t>(m_lateJoinEventQueue[i]->eventType));
                 t_bitIncrement += sizeof(uint32_t) * 8;
 
