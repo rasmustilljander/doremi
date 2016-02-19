@@ -4,15 +4,6 @@ namespace Doremi
 {
     namespace Core
     {
-        //&& TreeCreator* TreeCreator::m_singleton = nullptr;
-        // TreeCreator* TreeCreator::GetInstance()
-        //{
-        //    if(m_singleton == nullptr)
-        //    {
-        //        m_singleton = new TreeCreator();
-        //    }
-        //    return m_singleton;
-        //}
         TreeCreator::TreeCreator()
         {
             // Set the depth of the oct tree
