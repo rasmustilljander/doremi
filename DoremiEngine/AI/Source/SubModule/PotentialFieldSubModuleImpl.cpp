@@ -26,13 +26,7 @@ namespace DoremiEngine
             grid.resize(p_numberOfQuadsWidth);
             for(size_t x = 0; x < p_numberOfQuadsWidth; x++)
             {
-                for(size_t y = 0; y < p_numberOfQuadsHeight; y++)
-                {
-                    PotentialFieldGridPoint newPoint;
-                    newPoint.position =
-                        XMFLOAT2((float)x * quadWidth + bottomLeft.x + quadWidth * 0.5f, (float)y * quadHeight + bottomLeft.y + quadHeight * 0.5f);
-                    grid[x].push_back(newPoint);
-                }
+                grid[x].resize(p_numberOfQuadsHeight);
             }
             newField->SetGrid(grid);
             newField->SetCenter(p_center);

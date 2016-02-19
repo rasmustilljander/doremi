@@ -7,13 +7,9 @@ namespace DoremiEngine
     {
         struct PotentialFieldGridPoint
         {
-            DirectX::XMFLOAT2 position = DirectX::XMFLOAT2(0, 0);
             float charge = 0;
             bool occupied = false;
-            PotentialFieldGridPoint(const DirectX::XMFLOAT2& p_position, const float& p_charge, const bool& p_occupied)
-                : position(p_position), charge(p_charge), occupied(p_occupied)
-            {
-            }
+            PotentialFieldGridPoint(const float& p_charge, const bool& p_occupied) : charge(p_charge), occupied(p_occupied) {}
             PotentialFieldGridPoint() {}
         };
         /**
@@ -74,6 +70,11 @@ namespace DoremiEngine
             */
             virtual DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition) = 0;
             virtual const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const = 0;
+
+            /**
+            Returns the position of the given grid quad
+            */
+            virtual DirectX::XMFLOAT2 GetGridQuadPosition(const int& p_x, const int& p_z) = 0;
         };
     }
 }
