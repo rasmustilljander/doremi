@@ -22,7 +22,7 @@ namespace DoremiEngine
     {
         MeshManagerImpl::MeshManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_modelLoader = new ModelLoader();
+            m_modelLoader = ModelLoader::GetInstance();
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
         }
 
@@ -160,7 +160,7 @@ namespace DoremiEngine
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             MaterialInfo* newMaterial = new MaterialInfoImpl();
             std::string fileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_fileName;
-            ModelLoader t_loader = ModelLoader();
+            ModelLoader& t_loader = *ModelLoader::GetInstance();
             ID3D11ShaderResourceView* newTexture = t_loader.LoadTexture(fileLocation, m_directX.GetDevice());
             newMaterial->SetMaterialName(p_fileName);
             newMaterial->SetDiffuseTexture(newTexture);
@@ -176,7 +176,7 @@ namespace DoremiEngine
             MaterialInfo* newMaterial = new MaterialInfoImpl();
             std::string diffuseFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.diffuseTextureName;
             std::string glowFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.glowTextureName;
-            ModelLoader t_loader = ModelLoader();
+            ModelLoader& t_loader = *ModelLoader::GetInstance();
             ID3D11ShaderResourceView* newDiffuseTexture = t_loader.LoadTexture(diffuseFileLocation, m_directX.GetDevice());
             ID3D11ShaderResourceView* newGlowTexture = t_loader.LoadTexture(glowFileLocation, m_directX.GetDevice());
             newMaterial->SetMaterialName(p_materialData.diffuseTextureName);

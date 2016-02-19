@@ -10,6 +10,17 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
+        ModelLoader* ModelLoader::m_singleton = nullptr;
+
+        ModelLoader* ModelLoader::GetInstance()
+        {
+            if(m_singleton == nullptr)
+            {
+                m_singleton = new ModelLoader();
+            }
+            return m_singleton;
+        }
+
         ModelLoader::ModelLoader() {}
 
 
@@ -255,13 +266,27 @@ namespace DoremiEngine
 
         ID3D11ShaderResourceView* ModelLoader::LoadTexture(const std::string& p_fileName, ID3D11Device* p_device)
         {
+            std::map<std::string, ID3D11ShaderResourceView*>::iterator iter = m_loadedTextureMap.find(p_fileName);
+
+            // if we got the texture saved
+            if(iter != m_loadedTextureMap.end())
+            {
+                return iter->second;
+            }
+
+            // If not we load a new texture
             ID3D11ShaderResourceView* returnView;
             std::wstring tempName = StringToWstring(p_fileName);
             HRESULT res = DirectX::CreateDDSTextureFromFile(p_device, tempName.c_str(), nullptr, &returnView);
+
             if(!CheckHRESULT(res, "Couldnt load texture from file: " + p_fileName))
             {
                 return nullptr;
             }
+
+            // Add texture to map
+            m_loadedTextureMap[p_fileName] = returnView;
+
             return returnView;
         }
     }
