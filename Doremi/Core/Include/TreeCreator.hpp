@@ -29,7 +29,6 @@ namespace Doremi
                 ~OctNode(){};
                 DirectX::XMFLOAT3 boxDimensions;
                 DirectX::XMFLOAT3 center;
-                // std::vector<OctNode> children;
                 OctNode* children[8];
                 // Keep them so we can check against them in the kid to this node.
                 std::vector<uint32_t> objectsInTheArea;

@@ -49,7 +49,7 @@ namespace Doremi
                     o_treeNode.empty = false;
 
                     // If max depth isnt reached , minus two is needed to get the depth wanted.
-                    if(o_treeNode.depth <= m_treeDepth - 2)
+                    if(o_treeNode.depth < m_treeDepth - 1)
                     {
                         // Collision and max depth wasn't reached
 
@@ -59,9 +59,13 @@ namespace Doremi
                         // We start over in the next node to see if we can split it even further
                         BuildTree(*o_treeNode.children[i]);
                     }
-                    else
+                    else if(o_treeNode.depth == m_treeDepth)
                     {
                         // Collision but we reached max depth
+                    }
+                    else
+                    {
+                        // Collision but we're beyond max depth
                     }
                 }
                 else
