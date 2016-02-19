@@ -22,7 +22,7 @@ namespace Doremi
               m_camYaw(0.0f),
               m_moveLeftRight(0.0f),
               m_moveForwardBackward(0.0f),
-              m_speed(10)
+              m_speed(100)
         {
             using namespace DirectX;
         }

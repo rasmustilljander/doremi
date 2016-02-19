@@ -458,13 +458,19 @@ namespace Doremi
             DirectX::XMFLOAT3 maxPosition = DirectX::XMFLOAT3(minInt, minInt, minInt); // THe lowest possible position a int can have
             DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(maxInt, maxInt, maxInt); // The highest possible position a int can have
             DirectX::XMVECTOR rotation = DirectX::XMLoadFloat4(&p_transformationData.rotation);
+            DirectX::XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
+            DirectX::XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
             size_t length = p_vertexBuffer.size();
             for(size_t i = 0; i < length; i++)
             {
                 // Rotate positions
                 DirectX::XMVECTOR positionVec = XMLoadFloat3(&p_vertexBuffer[i].position);
 
+                positionVec = XMVector3Transform(positionVec, scale);
                 positionVec = XMVector3Rotate(positionVec, rotation);
+                positionVec = XMVector3Transform(positionVec, translation);
+
+
                 XMFLOAT3 rotatedPos;
                 XMStoreFloat3(&rotatedPos, positionVec);
                 // Finding max value
@@ -500,14 +506,13 @@ namespace Doremi
             DirectX::XMVECTOR maxVector = XMLoadFloat3(&maxPosition);
             DirectX::XMVECTOR minVector = XMLoadFloat3(&minPosition);
             // Create scale and translation matrices
-            DirectX::XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
-            DirectX::XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
+
 
             // scale first then translate the points
-            maxVector = XMVector3Transform(maxVector, scale);
-            maxVector = XMVector3Transform(maxVector, translation);
-            minVector = XMVector3Transform(minVector, scale);
-            minVector = XMVector3Transform(minVector, translation);
+            // maxVector = XMVector3Transform(maxVector, scale);
+            // maxVector = XMVector3Transform(maxVector, translation);
+            // minVector = XMVector3Transform(minVector, scale);
+            // minVector = XMVector3Transform(minVector, translation);
 
             // The center is taken from the heighest point and the lowest point
             DirectX::XMFLOAT3 centerPoint;

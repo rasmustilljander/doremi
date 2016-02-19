@@ -119,7 +119,7 @@ namespace Doremi
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_pressureParticleManager);
         m_managers.push_back(t_aiPathManager);
-        m_managers.push_back(t_aiTargetManager);
+        m_managers.push_back(t_aiTargetManager); // Must be before movement
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
         m_managers.push_back(t_frequencyAffectedObjectManager);

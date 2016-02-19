@@ -11,6 +11,7 @@
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 #include <EntityComponent/Components/AITimerComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
+#include <EntityComponent/Components/MovementComponent.hpp>
 // Helper
 #include <Helper/ProximityChecker.hpp>
 
@@ -124,29 +125,7 @@ namespace Doremi
                         // We now know what player is closest and visible
                         if(shouldFire)
                         {
-                            TransformComponent* playerTransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(closestVisiblePlayer);
-                            // Get things in to vectors
-                            XMVECTOR playerPos = XMLoadFloat3(&playerTransform->position);
-                            XMVECTOR AIPos = XMLoadFloat3(&AITransform->position);
-
-                            // calculate direction again...
-                            XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
-                            direction = XMVector3Normalize(direction);
-                            XMFLOAT3 directionFloat;
-                            XMStoreFloat3(&directionFloat, direction);
-
-                            XMVECTOR bulletOrigin =
-                                AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
-                            // the bodies radius is larger than x.x
-                            XMFLOAT3 bulletOriginFloat;
-                            XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
-                            int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
-
-                            // Add a force to the body TODOXX should not be hard coded the force amount
-                            direction *= 1500.0f;
-                            XMFLOAT3 force;
-                            XMStoreFloat3(&force, direction);
-                            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
+                            FireAtEntity(closestVisiblePlayer, i, closestDistance);
                         }
                         // If we see a player turn off the phermonetrail
                         if(t_entityHandler.HasComponents(i, (int)ComponentType::PotentialField))
@@ -158,6 +137,37 @@ namespace Doremi
                     }
                 }
             }
+        }
+
+        void AITargetManager::FireAtEntity(const size_t& p_entityID, const size_t& p_enemyID, const float& p_distance)
+        {
+            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+            TransformComponent* playerTransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(p_entityID);
+            MovementComponent* playerMovement = t_entityHandler.GetComponentFromStorage<MovementComponent>(p_entityID);
+            TransformComponent* AITransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(p_enemyID);
+            // Get things in to vectors
+            XMVECTOR playerPos = XMLoadFloat3(&playerTransform->position);
+            XMVECTOR AIPos = XMLoadFloat3(&AITransform->position);
+
+            // calculate direction again...
+            XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
+            direction = XMVector3Normalize(direction);
+            direction += XMVector3Normalize(XMLoadFloat3(&playerMovement->movement));
+            direction = XMVector3Normalize(direction);
+            XMFLOAT3 directionFloat;
+            XMStoreFloat3(&directionFloat, direction);
+
+            XMVECTOR bulletOrigin = AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
+            // the bodies radius is larger than x.x
+            XMFLOAT3 bulletOriginFloat;
+            XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
+            int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
+
+            // Add a force to the body TODOXX should not be hard coded the force amount
+            direction *= 1500.0f;
+            XMFLOAT3 force;
+            XMStoreFloat3(&force, direction);
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
         }
     }
 }

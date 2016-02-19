@@ -48,7 +48,8 @@ namespace Doremi
                     XMFLOAT3 sweepOrigin = XMFLOAT3(grid[x][z].position.x, centerGridY, grid[x][z].position.y);
                     XMFLOAT3 boxHalfExtents = XMFLOAT3(quadSize.x * 0.5f, 2, quadSize.y * 0.5);
                     int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
-
+                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(MAX_NUM_ENTITIES + 1, sweepOrigin, XMFLOAT4(0, 0, 0,
+                    // 1), boxHalfExtents, materialID);
                     std::vector<int> sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(sweepOrigin, boxHalfExtents);
 
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
