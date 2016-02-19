@@ -24,7 +24,7 @@ namespace DoremiEngine
             {
                 for(size_t y = 0; y < nrOfQuadsY; y++)
                 {
-                    XMFLOAT2 quadPos = m_grid[x][y].position;
+                    XMFLOAT2 quadPos = GetGridQuadPosition(x, y);
                     float totalCharge = 0;
                     for(auto actor : m_staticActors)
                     {
@@ -36,7 +36,7 @@ namespace DoremiEngine
                             m_grid[x][y].occupied = true;
                             // std::cout << "x " << x << " y " << y << std::endl;
                         }
-                        XMFLOAT2 actorQuadPosition = m_grid[closestQuad.x][closestQuad.y].position;
+                        XMFLOAT2 actorQuadPosition = GetGridQuadPosition(closestQuad.x, closestQuad.y);
 
                         float actorCharge = actor->GetCharge();
                         float actorRange = actor->GetRange();
@@ -124,6 +124,18 @@ namespace DoremiEngine
                 return XMINT2(-1, -1);
             }
         }
+
+        DirectX::XMFLOAT2 PotentialFieldImpl::GetGridQuadPosition(const int& p_x, const int& p_z)
+        {
+            using namespace DirectX;
+            XMFLOAT2 returnPosition; // position to be returned
+            float quadWidth = m_quadSize.x;
+            float quadHeight = m_quadSize.y;
+            XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width * 0.5f, m_center.z - m_height * 0.5f);
+            returnPosition = XMFLOAT2((float)p_x * quadWidth + bottomLeft.x + quadWidth * 0.5f, (float)p_z * quadHeight + bottomLeft.y + quadHeight * 0.5f);
+            return returnPosition;
+        }
+
         DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
                                                                     const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
@@ -202,7 +214,7 @@ namespace DoremiEngine
                     if(quadCharge > highestCharge)
                     {
                         highestCharge = quadCharge;
-                        highestChargedPos = m_grid[x][y].position;
+                        highestChargedPos = GetGridQuadPosition(x, y);
                     }
                 }
                 else
@@ -239,7 +251,7 @@ namespace DoremiEngine
         float PotentialFieldImpl::CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor)
         {
             using namespace DirectX;
-            XMFLOAT2 quadPos = m_grid[p_quadX][p_quadY].position;
+            XMFLOAT2 quadPos = GetGridQuadPosition(p_quadX, p_quadY);
             float totalCharge = 0;
             bool usePhermone = true;
             for(auto actor : m_dynamicActors)
@@ -262,7 +274,7 @@ namespace DoremiEngine
                 for(size_t i = 0; i < t_vecSize; ++i)
                 {
                     // Create a smal charge on the phermone position
-                    XMFLOAT2 phermonePos = m_grid[phermoneVector[i].x][phermoneVector[i].y].position;
+                    XMFLOAT2 phermonePos = GetGridQuadPosition(phermoneVector[i].x, phermoneVector[i].y);
                     XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
                     XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 

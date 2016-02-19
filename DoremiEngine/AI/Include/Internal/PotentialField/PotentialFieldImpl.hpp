@@ -24,6 +24,7 @@ namespace DoremiEngine
             DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition);
             DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr,
                                                     const bool& p_staticCheck = true) override;
+            DirectX::XMFLOAT2 GetGridQuadPosition(const int& p_x, const int& p_z);
 
         private:
             // Help functions
