@@ -358,7 +358,6 @@ namespace Doremi
                     // TODOCM change the way its saved
                     // std::list<uint32_t>::iterator iter = std::find(m_SavedPlayerIDs.begin(), m_SavedPlayerIDs.end(), PlayerID);
 
-
                     PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
                     // If we don't have saved data of the player, we need to generate a newID
                     if(!t_playerHandler->InactivePlayerIDExists(PlayerID))
@@ -567,6 +566,9 @@ namespace Doremi
 
             // TODOCM add info - like port etc...
             NetworkStreamer Streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = NewMessage.Data;
+            Streamer.SetTargetBuffer(t_bufferPointer, sizeof(NewMessage.Data));
+
             Streamer.WriteUnsignedInt32(connection->PlayerID);
 
             // Send connect message
@@ -587,6 +589,7 @@ namespace Doremi
 
             Streamer.WriteUnsignedInt32(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID));
 
+            // Start game YES
             Streamer.WriteBool(true);
 
             p_connection->ConnectionState = ConnectionState::MAP_LOADING;
@@ -698,17 +701,11 @@ namespace Doremi
 
                             foundConnection = true;
 
-                            // Random new playerID
-                            uint32_t PlayerID = rand();
-
                             // Create new InputHandler
                             InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                             // Create player
-                            PlayerHandler::GetInstance()->CreateNewPlayer(PlayerID, NewInputHandler);
-
-                            // Set playerID
-                            iter->second->PlayerID = PlayerID;
+                            PlayerHandler::GetInstance()->CreateNewPlayer(iter->second->PlayerID, NewInputHandler);
 
 
                             break;

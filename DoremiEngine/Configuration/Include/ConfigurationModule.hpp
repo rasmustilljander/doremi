@@ -33,6 +33,7 @@ namespace DoremiEngine
 
             // Network stuff
             std::string IPToServer = "127.0.0.1";
+            uint32_t LastServerPlayerID = 0;
 
             // Key binds TODOKO ask how this works
             int Forward = 119;

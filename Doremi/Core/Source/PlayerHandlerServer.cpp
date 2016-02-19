@@ -221,6 +221,7 @@ namespace Doremi
             std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
             if(iter != m_playerMap.end())
             {
+                cout << "Found active playerID..." << endl;
                 return true;
             }
 

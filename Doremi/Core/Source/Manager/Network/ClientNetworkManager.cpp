@@ -46,10 +46,10 @@ namespace Doremi
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
               m_timeoutInterval(3.0f),
-              m_playerID(0),
               m_numJoinEvents(0)
         {
-            LoadIPFromConfigFile(p_sharedContext);
+            LoadConfigFile(p_sharedContext);
+
 
             m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
 
@@ -60,9 +60,12 @@ namespace Doremi
 
         ClientNetworkManager::~ClientNetworkManager() {}
 
-        void ClientNetworkManager::LoadIPFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void ClientNetworkManager::LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+
+            // Get last playerID
+            m_playerID = t_configInfo.LastServerPlayerID;
 
             // Get IP from config file
             std::string IPString = t_configInfo.IPToServer;
@@ -186,7 +189,22 @@ namespace Doremi
                                 NetworkStreamer Streamer = NetworkStreamer();
                                 unsigned char* DataPointer = Message.Data;
                                 Streamer.SetTargetBuffer(DataPointer, sizeof(Message.Data));
+
+                                // Get playerID from server
+                                uint32_t t_lastPlayerID = m_playerID;
                                 m_playerID = Streamer.ReadUnsignedInt32();
+
+                                // If it changed, we want to update config file for now
+                                // TODO change not to write to config file all times we get new value?
+                                if(t_lastPlayerID != m_playerID)
+                                {
+                                    // Update the value
+                                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID = m_playerID;
+
+                                    // TODOXX if we change config file name, this will crash like hell
+                                    m_sharedContext.GetConfigurationModule().WriteConfigurationValuesToFile("Configuration.txt");
+                                    cout << "Writing new playerID to file.." << m_playerID << endl;
+                                }
 
                                 // Increase the rate of which we send messages
                                 m_updateInterval = 0.017f;
@@ -237,6 +255,7 @@ namespace Doremi
 
             bool GameStarts = Streamer.ReadBool();
 
+            // I think this one is unecessary for now, since we'll be start loading world when we receive that message...
             if(GameStarts)
             {
                 m_serverConnectionState = ConnectionState::MAP_LOADING;

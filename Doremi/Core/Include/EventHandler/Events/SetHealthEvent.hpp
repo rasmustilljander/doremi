@@ -20,7 +20,7 @@ namespace Doremi
             {
                 p_streamer->WriteUnsignedInt32(entityID);
                 p_streamer->WriteFloat(health);
-                op_bitsWritten += (sizeof(EntityID) + sizeof(float)) * 8;
+                op_bitsWritten += (sizeof(uint32_t) + sizeof(float)) * 8;
             }
 
             /**
@@ -30,7 +30,7 @@ namespace Doremi
             {
                 entityID = p_streamer->ReadUnsignedInt32();
                 health = p_streamer->ReadFloat();
-                op_bitsRead += (sizeof(EntityID) + sizeof(float)) * 8;
+                op_bitsRead += (sizeof(uint32_t) + sizeof(float)) * 8;
             }
 
             EntityID entityID;

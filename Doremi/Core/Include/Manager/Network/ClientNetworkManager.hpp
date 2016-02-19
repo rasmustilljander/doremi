@@ -34,9 +34,9 @@ namespace Doremi
             virtual ~ClientNetworkManager();
 
             /**
-                TODOCM doc
+                Load IP to server and playerID
             */
-            void LoadIPFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            void LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODOCM doc

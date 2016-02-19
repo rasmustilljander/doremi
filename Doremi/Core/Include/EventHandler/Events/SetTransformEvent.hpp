@@ -25,7 +25,7 @@ namespace Doremi
                 p_streamer->WriteUnsignedInt32(entityID);
                 p_streamer->WriteFloat3(position);
                 p_streamer->WriteRotationQuaternion(orientation);
-                op_bitsWritten += (sizeof(EntityID) + sizeof(float) * 3 + sizeof(float) * 4) * 8;
+                op_bitsWritten += (sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4) * 8;
             }
 
             /**
@@ -36,7 +36,7 @@ namespace Doremi
                 entityID = p_streamer->ReadUnsignedInt32();
                 position = p_streamer->ReadFloat3();
                 orientation = p_streamer->ReadRotationQuaternion();
-                op_bitsRead += (sizeof(EntityID) + sizeof(float) * 3 + sizeof(float) * 4) * 8;
+                op_bitsRead += (sizeof(uint32_t) + sizeof(float) * 3 + sizeof(float) * 4) * 8;
             }
 
             EntityID entityID;
