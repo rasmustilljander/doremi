@@ -49,7 +49,7 @@ namespace Doremi
                 {
                     // Create entity
                     EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
-                                                DirectX::XMFLOAT3(0.25f, 0.25f, 0.25f));
+                                                DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
                 }
                 else if(p_entityCreated->bluepirnt == Blueprints::PlayerEntity)
                 {
