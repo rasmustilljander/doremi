@@ -16,6 +16,13 @@ namespace Doremi
             DirectX::XMFLOAT4 rotation;
             DirectX::XMFLOAT3 scale; // TODOKO Let him be!! no just kiddin, REMOVE!
             TransformComponent() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1)) {}
+            TransformComponent(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot, DirectX::XMFLOAT3 p_scale)
+                : position(p_pos), rotation(p_rot), scale(p_scale)
+            {
+            }
+            TransformComponent(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot) : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            }
         };
 
         struct TransformComponentPrevious
@@ -27,6 +34,14 @@ namespace Doremi
                 : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1))
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentPrevious(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot, DirectX::XMFLOAT3 p_scale)
+                : position(p_pos), rotation(p_rot), scale(p_scale)
+            {
+            }
+            TransformComponentPrevious(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            }
         };
 
         struct TransformComponentNext
@@ -42,6 +57,10 @@ namespace Doremi
                 : position(p_pos), rotation(p_rot), scale(p_scale)
             {
             }
+            TransformComponentNext(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            }
         };
 
         struct TransformComponentSnapshotNext
@@ -55,6 +74,10 @@ namespace Doremi
             {
 
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentSnapshotNext(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            }
             TransformComponentSnapshotNext(const TransformComponentNext& p_copy)
             {
                 position = p_copy.position;
@@ -75,6 +98,10 @@ namespace Doremi
                 : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNext(0)
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
+            TransformComponentSnapshotPrevious(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+            {
+            }
             TransformComponentSnapshotPrevious(const TransformComponentNext& p_copy)
             {
                 position = p_copy.position;

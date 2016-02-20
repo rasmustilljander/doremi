@@ -56,6 +56,8 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerRespawn, this);
             EventHandler::GetInstance()->Subscribe(EventType::EntityCreated, this);
+            EventHandler::GetInstance()->Subscribe(EventType::SetHealth, this);
+            EventHandler::GetInstance()->Subscribe(EventType::SetTransform, this);
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
         }
 
@@ -226,6 +228,44 @@ namespace Doremi
 
                 // Play respawn sound
                 EventHandler::GetInstance()->BroadcastEvent(new PlaySoundEvent(t_playerSpawnerEvent->entityID, static_cast<int32_t>(AudioCompEnum::Death)));
+            }
+            else if(p_event->eventType == Doremi::Core::EventType::SetHealth)
+            {
+                SetHealthEvent* t_setHealthEvent = static_cast<SetHealthEvent*>(p_event);
+
+                GetComponent<HealthComponent>(t_setHealthEvent->entityID)->currentHealth = t_setHealthEvent->health;
+            }
+            else if(p_event->eventType == Doremi::Core::EventType::SetTransform)
+            {
+                SetTransformEvent* t_setTransformEvent = static_cast<SetTransformEvent*>(p_event);
+
+                EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+                // If char controller or rigid body, set position to physics
+                if(t_entityHandler.HasComponents(t_setTransformEvent->entityID, static_cast<uint32_t>(ComponentType::RigidBody)))
+                {
+                    DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+                    t_rigidBodyManager.SetBodyPosition(t_setTransformEvent->entityID, t_setTransformEvent->position, t_setTransformEvent->orientation);
+                }
+                else if(t_entityHandler.HasComponents(t_setTransformEvent->entityID, static_cast<uint32_t>(ComponentType::CharacterController)))
+                {
+                    DoremiEngine::Physics::CharacterControlManager& t_characterControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+
+                    t_characterControlManager.SetPosition(t_setTransformEvent->entityID, t_setTransformEvent->position);
+                }
+
+                // Set transform to components
+                TransformComponent* transComp = GetComponent<TransformComponent>(t_setTransformEvent->entityID);
+                *transComp = TransformComponent(t_setTransformEvent->position, t_setTransformEvent->orientation);
+
+                // Set copy data to other transform components
+                memcpy(GetComponent<TransformComponentNext>(t_setTransformEvent->entityID), transComp, sizeof(TransformComponent));
+                memcpy(GetComponent<TransformComponentPrevious>(t_setTransformEvent->entityID), transComp, sizeof(TransformComponent));
+                *GetComponent<TransformComponentSnapshotNext>(t_setTransformEvent->entityID) =
+                    TransformComponentSnapshotNext(*GetComponent<TransformComponentNext>(t_setTransformEvent->entityID));
+                *GetComponent<TransformComponentSnapshotPrevious>(t_setTransformEvent->entityID) =
+                    TransformComponentSnapshotPrevious(*GetComponent<TransformComponentNext>(t_setTransformEvent->entityID));
             }
         }
     }
