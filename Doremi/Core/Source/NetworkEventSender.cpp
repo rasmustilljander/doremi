@@ -129,8 +129,8 @@ namespace Doremi
                     uint32_t t_bitsWrittenPerObject = 0;
 
                     // Write event id
-                    p_streamer.WriteUnsignedInt32(static_cast<uint32_t>((*iterEvents)->eventType));
-                    t_bitsWrittenPerObject += sizeof(uint32_t) * 8;
+                    p_streamer.WriteUnsignedInt8(static_cast<uint8_t>((*iterEvents)->eventType));
+                    t_bitsWrittenPerObject += sizeof(uint8_t) * 8;
 
                     // If we read more then we can, we need to exclude the one who didn't get to write whole
                     (*iterEvents)->Write(&p_streamer, t_bitsWrittenPerObject);

@@ -27,8 +27,8 @@ namespace Doremi
         static Event* InterpetEvent(NetworkStreamer& p_streamer, uint32_t& op_BitssRead)
         {
             // Hard coded type
-            EventType p_eventType = (EventType)p_streamer.ReadUnsignedInt32();
-            op_BitssRead += sizeof(uint32_t) * 8;
+            EventType p_eventType = (EventType)p_streamer.ReadUnsignedInt8();
+            op_BitssRead += sizeof(uint8_t) * 8;
 
             Event* p_newEvent;
 

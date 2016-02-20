@@ -15,7 +15,7 @@ namespace Doremi
     namespace Core
     {
         struct Event;
-        enum class EventType;
+        enum class EventType : uint8_t;
         class Subscriber;
         class EventHandler
         {

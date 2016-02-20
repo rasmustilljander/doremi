@@ -257,7 +257,8 @@ namespace Doremi
 
                 // Set transform to components
                 TransformComponent* transComp = GetComponent<TransformComponent>(t_setTransformEvent->entityID);
-                *transComp = TransformComponent(t_setTransformEvent->position, t_setTransformEvent->orientation);
+                transComp->position = t_setTransformEvent->position;
+                transComp->rotation = t_setTransformEvent->orientation;
 
                 // Set copy data to other transform components
                 memcpy(GetComponent<TransformComponentNext>(t_setTransformEvent->entityID), transComp, sizeof(TransformComponent));

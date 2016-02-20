@@ -404,8 +404,8 @@ namespace Doremi
             for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; i++)
             {
                 t_bitIncrement = 0;
-                p_streamer.WriteUnsignedInt32(static_cast<uint32_t>(m_lateJoinEventQueue[i]->eventType));
-                t_bitIncrement += sizeof(uint32_t) * 8;
+                p_streamer.WriteUnsignedInt8(static_cast<uint8_t>(m_lateJoinEventQueue[i]->eventType));
+                t_bitIncrement += sizeof(uint8_t) * 8;
 
                 m_lateJoinEventQueue[i]->Write(&p_streamer, t_bitIncrement);
                 t_bitsWritten += t_bitIncrement;

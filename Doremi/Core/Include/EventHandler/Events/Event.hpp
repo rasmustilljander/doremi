@@ -8,8 +8,9 @@ namespace Doremi
         /**
             Every new type of event needs to be inserted in this enum
             If you add, don't forget to add it to function InterpetEvent in NetworkEventReceiver
+            Is not bitmask, so max eventypes are 255 for now
         */
-        enum class EventType
+        enum class EventType : uint8_t
         {
             Undefined,
             EntityCreated, // TODO This is currently Created on server, and ToCreate on client, might split in two and convert from one to other in
