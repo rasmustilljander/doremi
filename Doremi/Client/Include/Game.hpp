@@ -36,9 +36,9 @@ namespace Doremi
         void Initialize();
 
         /**
-            TODOCM doc
+            Responsible for building the world.
         */
-        void SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext);
+        void BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext);
 
         /**
             TODOCM doc

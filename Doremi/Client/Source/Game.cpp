@@ -168,7 +168,7 @@ namespace Doremi
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
 
         Core::TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
-        SpawnDebugWorld(sharedContext);
+        BuildWorld(sharedContext);
 
         // Remove later, needed to see something when we play solo cause of camera interactions with input
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
@@ -180,7 +180,7 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
-    void GameMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
+    void GameMain::BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
