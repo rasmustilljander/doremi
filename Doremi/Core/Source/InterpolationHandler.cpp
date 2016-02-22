@@ -161,6 +161,8 @@ namespace Doremi
                         }
                         else if(m_DelayedSnapshots.size() > 1)
                         {
+                            cout << "Didn't know it was possible to get here..." << endl;
+
                             // Remove it
                             iterRemoveStart = --iter.base();
                             AmountOfSnapshots--;
@@ -367,6 +369,10 @@ namespace Doremi
             // If we get n' old snapshot
             if(sequence_more_recent(m_snapshotSequenceUsed, p_newSnapshot->SnapshotSequence, 255)) // TODOCM check if it should be equal less
             {
+                if(p_newSnapshot->Events.size())
+                {
+                    cout << "WARNING: Something's wrong, removing snapshot with events!!!" << endl;
+                }
                 // std::cout << "Throwing snapshot" << std::endl;
                 delete p_newSnapshot;
                 return;
@@ -381,6 +387,7 @@ namespace Doremi
                 return;
             }
 
+            // TODOXX we should check what snapshot events belong to and swap them there, else we'll get visual bugs when we get packets in bad order
             // Else we check for all if our sequence is newer(If we got them in wrong order)
             std::list<Snapshot*>::iterator iter;
             for(iter = m_DelayedSnapshots.begin(); iter != m_DelayedSnapshots.end(); ++iter)
