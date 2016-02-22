@@ -78,6 +78,10 @@ namespace DoremiEngine
             // TODOJB these are experimental. Remove
             void CreateArbitraryBody(int p_id) override;
             void AddShapeToBody(int p_id, XMFLOAT3 p_position) override;
+            // THIS is really not the way to do things. Still: experimental/just to try things out
+            const int m_maxTriggers = 100; // Has to be the same as below array size... I know this is stupid
+            bool m_bigBodyTriggerIndices[100];
+            int m_triggerCounter;
 
         private:
             InternalPhysicsUtils& m_utils;
