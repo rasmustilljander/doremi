@@ -132,7 +132,7 @@ namespace Doremi
                 m_materials[materialName] = materialData;
 
                 // delete diffuseTextureName;
-                delete materialName;
+                delete[] materialName;
             }
         }
 
@@ -158,8 +158,8 @@ namespace Doremi
                 ifs.read((char*)&transformData, sizeof(transformData));
 
                 m_transforms[transformName] = transformData;
-                delete parentName;
-                delete transformName;
+                delete[] parentName;
+                delete[] transformName;
             }
         }
 
@@ -184,8 +184,8 @@ namespace Doremi
                 ifs.read((char*)&transformData, sizeof(transformData));
 
                 m_transformsCharacter[transformName] = transformData;
-                delete parentName;
-                delete transformName;
+                delete[] parentName;
+                delete[] transformName;
             }
         }
 
@@ -298,8 +298,8 @@ namespace Doremi
 
                 m_lightNames[i] = pair<string, string>(string(transformName), string(lightName));
 
-                delete transformName;
-                delete lightName;
+                delete[] transformName;
+                delete[] lightName;
             }
         }
 

@@ -71,6 +71,7 @@ namespace Doremi
                 LoadTriggers();
 
                 BuildLights();
+                delete[] sceneName;
             }
             else
             {
@@ -179,7 +180,7 @@ namespace Doremi
                 ifs.read((char*)t_animationName, sizeof(char) * t_nameSize);
                 std::string t_animationString(t_animationName);
                 t_animationInfo.name = t_animationString;
-                delete t_animationName;
+                delete[] t_animationName;
                 ifs.read((char*)&t_animationInfo.startFrame, sizeof(int));
                 ifs.read((char*)&t_animationInfo.endFrame, sizeof(int));
                 ifs.read((char*)&t_animationInfo.prioPart, sizeof(int));
@@ -252,7 +253,7 @@ namespace Doremi
                     ifs.read((char*)&childNameSize, sizeof(int));
                     char* childTransformName = new char[childNameSize]; // namn på transform som skall vara till mesh, dvs INGEN joint
                     ifs.read((char*)childTransformName, sizeof(char) * childNameSize);
-                    delete childTransformName;
+                    delete[] childTransformName;
                 }
 
                 // SPara ner keyframesen i boneanimaiton som sedan sparas ner i animationclip å mappas mot animationclipnamnet
@@ -347,7 +348,7 @@ namespace Doremi
                     }
                 }
 
-                delete name; // name isnt used atm
+                delete[] name; // name isnt used atm
             }
         }
 
@@ -375,8 +376,8 @@ namespace Doremi
                 std::string t_transformName(transformName);
 
                 // Delete the char*
-                delete parentName;
-                delete transformName;
+                delete[] parentName;
+                delete[] transformName;
 
                 // Fetch the data we are interested in
                 TransformInformation transformDataTemp;
@@ -502,9 +503,9 @@ namespace Doremi
                     t_skeletalVertexBuffer.push_back(t_vertex);
                 }
                 // Deletea char*
-                delete transformName;
-                delete meshName;
-                delete materialName;
+                delete[] transformName;
+                delete[] meshName;
+                delete[] materialName;
             }
             return t_skeletalVertexBuffer;
         }
