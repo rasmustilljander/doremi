@@ -17,22 +17,21 @@ namespace DoremiEngine
             using namespace std;
             using namespace DirectX;
             PotentialField* newField = new PotentialFieldImpl(m_context);
-            vector<vector<PotentialFieldGridPoint>> grid;
+            PotentialFieldGridPoint* grid;
             float quadWidth = p_width / static_cast<float>(p_numberOfQuadsWidth);
             float quadHeight = p_height / static_cast<float>(p_numberOfQuadsHeight);
             float halfWidth = p_width / 2.0f;
             float halfHeight = p_height / 2.0f;
             XMFLOAT2 bottomLeft = XMFLOAT2(p_center.x - halfWidth, p_center.z - halfHeight);
-            grid.resize(p_numberOfQuadsWidth);
-            for(size_t x = 0; x < p_numberOfQuadsWidth; x++)
-            {
-                grid[x].resize(p_numberOfQuadsHeight);
-            }
+            grid = (PotentialFieldGridPoint*)malloc(p_numberOfQuadsHeight * p_numberOfQuadsWidth * sizeof(PotentialFieldGridPoint));
+            // TODOXX Wont work if standard values are not 0
+            memset(grid, 0, p_numberOfQuadsHeight * p_numberOfQuadsWidth * sizeof(PotentialFieldGridPoint));
             newField->SetGrid(grid);
             newField->SetCenter(p_center);
             newField->SetHeight(p_height);
             newField->SetWidth(p_width);
             newField->SetQuadSize(XMFLOAT2(quadWidth, quadHeight));
+            newField->SetNumberOfQuads(p_numberOfQuadsWidth, p_numberOfQuadsHeight);
             m_fields.push_back(newField);
             return newField;
         }
@@ -84,8 +83,8 @@ namespace DoremiEngine
                 XMFLOAT3 fieldCenter = m_fields[i]->GetCenter();
                 XMFLOAT2 quadSize = m_fields[i]->GetQuadSize();
 
-                int quadsX = m_fields[i]->GetGrid().size(); // Get number of quads in x and y
-                int quadsY = m_fields[i]->GetGrid()[0].size();
+                int quadsX = m_fields[i]->GetNumberOfQuadsWidth(); // Get number of quads in x and y
+                int quadsY = m_fields[i]->GetNumberOfQuadsHeight();
 
                 float fieldHalfWidth = quadSize.x * static_cast<float>(quadsX) * 0.5f; // Half the fields width and height
                 float fieldHalfHeight = quadSize.y * static_cast<float>(quadsY) * 0.5f;

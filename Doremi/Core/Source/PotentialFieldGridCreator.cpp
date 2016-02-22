@@ -36,9 +36,9 @@ namespace Doremi
             Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
             XMFLOAT2 quadSize = op_field->GetQuadSize();
-            std::vector<std::vector<DoremiEngine::AI::PotentialFieldGridPoint>> grid = op_field->GetGrid();
-            size_t gridSizeX = grid.size();
-            size_t gridSizeZ = grid[0].size();
+            const DoremiEngine::AI::PotentialFieldGridPoint* grid = op_field->GetGrid();
+            size_t gridSizeX = op_field->GetNumberOfQuadsWidth();
+            size_t gridSizeZ = op_field->GetNumberOfQuadsHeight();
             float centerGridY = op_field->GetCenter().y;
             for(size_t x = 0; x < gridSizeX; ++x)
             // thread this place TODOKO

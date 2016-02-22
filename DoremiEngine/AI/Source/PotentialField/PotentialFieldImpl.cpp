@@ -17,22 +17,20 @@ namespace DoremiEngine
             m_jumpDistance = m_context.config.GetAllConfigurationValues().AIJumpDistance;
         }
         PotentialFieldImpl::~PotentialFieldImpl() {}
-        void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
+        void PotentialFieldImpl::SetGrid(PotentialFieldGridPoint* p_grid)
         {
             // m_grid = p_grid;
-            m_grid = std::move(p_grid);
+            m_grid = p_grid;
         }
         void PotentialFieldImpl::Update()
         {
             // TODOKO optimize!!!! threads would be awesome here...
             // Lets all the actors update all the gridpoints in the potentialfield using the distance and charge
             using namespace DirectX;
-            size_t nrOfQuadsX = m_grid.size();
-            size_t nrOfQuadsY = m_grid[0].size();
 
-            for(size_t x = 0; x < nrOfQuadsX; x++)
+            for(size_t x = 0; x < m_numberOfQuadsWidth; x++)
             {
-                for(size_t y = 0; y < nrOfQuadsY; y++)
+                for(size_t y = 0; y < m_numberOfQuadsHeight; y++)
                 {
                     XMFLOAT2 quadPos = GetGridQuadPosition(x, y);
                     float totalCharge = 0;
@@ -43,7 +41,7 @@ namespace DoremiEngine
                         if(myQuad.x == closestQuad.x && myQuad.y == closestQuad.y)
                         {
                             // Same quad
-                            m_grid[x][y].occupied = true;
+                            m_grid[x + m_numberOfQuadsWidth * y].occupied = true;
                             // std::cout << "x " << x << " y " << y << std::endl;
                         }
                         XMFLOAT2 actorQuadPosition = GetGridQuadPosition(closestQuad.x, closestQuad.y);
@@ -62,14 +60,14 @@ namespace DoremiEngine
                             totalCharge += force;
                         }
                     }
-                    m_grid[x][y].charge = totalCharge;
+                    m_grid[x + m_numberOfQuadsWidth * y].charge = totalCharge;
                 }
             }
-            for(size_t x = 0; x < nrOfQuadsX; x++)
+            for(size_t x = 0; x < m_numberOfQuadsWidth; x++)
             {
-                for(size_t y = 0; y < nrOfQuadsY; y++)
+                for(size_t y = 0; y < m_numberOfQuadsHeight; y++)
                 {
-                    if(m_grid[x][y].occupied == true)
+                    if(m_grid[x + m_numberOfQuadsWidth * y].occupied == true)
                     {
                         std::cout << "X";
                     }
@@ -117,15 +115,15 @@ namespace DoremiEngine
         {
             using namespace DirectX;
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
-            float gridQuadWidth = m_width / static_cast<float>(m_grid.size()); // Gets the width and hight of one quad
-            float gridQuadHeight = m_height / static_cast<float>(m_grid[0].size());
+            float gridQuadWidth = m_width / static_cast<float>(m_numberOfQuadsWidth); // Gets the width and hight of one quad
+            float gridQuadHeight = m_height / static_cast<float>(m_numberOfQuadsHeight);
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
             position2D.x -= bottomLeft.x;
             position2D.y -= bottomLeft.y;
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
-            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
+            if(quadNrX >= 0 && quadNrX < m_numberOfQuadsWidth && quadNrY >= 0 && quadNrY < m_numberOfQuadsHeight)
             {
                 return XMINT2(quadNrX, quadNrY);
             }
@@ -159,8 +157,8 @@ namespace DoremiEngine
 
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
             XMFLOAT2 position2D = XMFLOAT2(p_unitPosition.x, p_unitPosition.z); // Needs to be modifiable
-            float gridQuadWidth = m_width / static_cast<float>(m_grid.size()); // Gets the width and hight of one quad
-            float gridQuadHeight = m_height / static_cast<float>(m_grid[0].size());
+            float gridQuadWidth = m_width / static_cast<float>(m_numberOfQuadsWidth); // Gets the width and hight of one quad
+            float gridQuadHeight = m_height / static_cast<float>(m_numberOfQuadsHeight);
 
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
@@ -186,13 +184,13 @@ namespace DoremiEngine
             size_t length = quadsToCheck.size();
             XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // if we are outside the field we should walk to center
             float highestCharge = 0;
-            if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
+            if(quadNrX >= 0 && quadNrX < m_numberOfQuadsWidth && quadNrY >= 0 && quadNrY < m_numberOfQuadsHeight)
             {
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
                 highestCharge =
                     CalculateCharge(quadNrX, quadNrY, p_currentActor); // +5 since that the max number of phermonetrails in the list TODOCONFIG
                 highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
-                if(m_grid[quadNrX][quadNrY].occupied)
+                if(m_grid[quadNrX + quadNrY * m_numberOfQuadsWidth].occupied)
                 {
                     // If the one we are in is occupied set highest charge to low just to get out
                     highestCharge = std::numeric_limits<float>::min();
@@ -206,7 +204,7 @@ namespace DoremiEngine
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
                 float quadCharge;
-                if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size() && !m_grid[x][y].occupied)
+                if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight && !m_grid[x + y * m_numberOfQuadsWidth].occupied)
                 {
                     // The quad exists!
 
@@ -214,7 +212,7 @@ namespace DoremiEngine
                     // This will probably never be used...
                     if(p_staticCheck)
                     {
-                        quadCharge = m_grid[x][y].charge;
+                        quadCharge = m_grid[x + y * m_numberOfQuadsWidth].charge;
                     }
                     else
                     {
@@ -313,7 +311,7 @@ namespace DoremiEngine
                 }
             }
 
-            return totalCharge + m_grid[p_quadX][p_quadY].charge;
+            return totalCharge + m_grid[p_quadX + p_quadY * m_numberOfQuadsWidth].charge;
         }
         bool PotentialFieldImpl::AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position)
         {

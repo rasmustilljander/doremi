@@ -7,6 +7,7 @@ namespace DoremiEngine
     {
         struct PotentialFieldGridPoint
         {
+            // TODOXX Wont work if standard values are not 0 since we memset in creation
             float charge = 0;
             bool occupied = false;
             PotentialFieldGridPoint(const float& p_charge, const bool& p_occupied) : charge(p_charge), occupied(p_occupied) {}
@@ -22,10 +23,11 @@ namespace DoremiEngine
             /**
             Saves a 2D array of 3D positions
             */
-            virtual void SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid) = 0;
+            virtual void SetGrid(PotentialFieldGridPoint* p_grid) = 0;
             virtual void SetHeight(const float& p_height) = 0;
             virtual void SetWidth(const float& p_width) = 0;
             virtual void SetCenter(const DirectX::XMFLOAT3& p_center) = 0;
+            virtual void SetNumberOfQuads(const int& p_numberOfQuadsWidth, const int& p_numberOfQuadsHeight) = 0;
 
             /**
             Set the quadsize in that field.
@@ -69,12 +71,22 @@ namespace DoremiEngine
             By sending in the units position you will get what gridpos it is on.
             */
             virtual DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition) = 0;
-            virtual const std::vector<std::vector<PotentialFieldGridPoint>>& GetGrid() const = 0;
+            virtual const PotentialFieldGridPoint* GetGrid() const = 0;
 
             /**
             Returns the position of the given grid quad
             */
             virtual DirectX::XMFLOAT2 GetGridQuadPosition(const int& p_x, const int& p_z) = 0;
+
+            /**
+            returns number of quads in x/width
+            */
+            virtual int GetNumberOfQuadsWidth() = 0;
+
+            /**
+            returns number of quads in z/height
+            */
+            virtual int GetNumberOfQuadsHeight() = 0;
         };
     }
 }
