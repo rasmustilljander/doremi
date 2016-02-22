@@ -117,7 +117,7 @@ namespace Doremi
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
             // Check if we should cook meshes
-            if(!transformationData.attributes.isBBox && transformationData.attributes.isCollider)
+            if(transformationData.attributes.isCollider)
             {
                 r_shouldCookStaticPhysics = true;
             }
