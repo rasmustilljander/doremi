@@ -56,22 +56,23 @@ namespace Doremi
                         m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
                     }
 
-                    /// Draw the fields
-                    // Get particle component TODOJB Shouldn't draw it as the same mesh and material as the system itself...
+                    /// Time to draw!
                     ParticlePressureComponent* particleComp = entityHandler.GetComponentFromStorage<ParticlePressureComponent>(i);
-                    // Iterate through all positions
-                    size_t size = m_groundEffectPoints.size();
-                    if(size > 0)
+                    // Get our positions
+                    vector<XMFLOAT3> positions;
+                    vector<float> radii;
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetShapeData(-15, positions, radii);
+
+                    // Draw the particles
+                    int size = positions.size();
+                    for(size_t j = 0; j < size; j++)
                     {
-                        for(size_t j = 0; j < size; j++)
-                        {
-                            XMFLOAT4X4 transMat;
-                            // DX oneliner: create a translation matrix, then transpose it, then store it
-                            XMStoreFloat4x4(&transMat, XMMatrixTranspose(XMMatrixTranslation(m_groundEffectPoints[j].x, m_groundEffectPoints[j].y,
-                                                                                             m_groundEffectPoints[j].z)));
-                            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
-                                                                                                                      *particleComp->material, transMat);
-                        }
+
+                        XMFLOAT4X4 mat;
+                        XMStoreFloat4x4(&mat, XMMatrixTranspose(XMMatrixScaling(radii[j], radii[j], radii[j]) *
+                                                                XMMatrixTranslation(positions[j].x, positions[j].y, positions[j].z)));
+                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
+                                                                                                                  *particleComp->material, mat);
                     }
                 }
             }
