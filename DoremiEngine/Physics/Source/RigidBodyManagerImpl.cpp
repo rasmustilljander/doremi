@@ -14,7 +14,7 @@ namespace DoremiEngine
             m_triggerCounter = 0;
             for(size_t i = 0; i < 100; i++)
             {
-                m_bigBodyTriggerIndices[i] = false;
+                m_bigBodyShapes[i] = nullptr;
             }
         }
 
@@ -541,73 +541,150 @@ namespace DoremiEngine
         {
             float maxWidth = 4;
 
-            PxVec3 position(p_position.x, p_position.y, p_position.z);
+            PxVec3 particlePos(p_position.x, p_position.y, p_position.z);
             // Check if there's another trigger close by. Shouldn't be done in engine...
             PxRigidActor* actor = m_bodies[p_id];
-            uint32_t numShapes = actor->getNbShapes();
-            // Magic allocation of memory (i think)
-            PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
-            actor->getShapes(shapes, numShapes);
-            bool isDone = false;
-            for(uint32_t i = 0; i < numShapes; i++)
+
+            /// Get closest shape
+            float closestDistance = maxWidth;
+            int closestShapeIndex = -1; // Debug flag thingy
+            float newWidth = 0;
+            for(size_t i = 0; i < m_maxTriggers; i++)
             {
-                PxShape* shape = shapes[i];
-                // Get how long we want the distance to be checked. Based on already existing trigger radius
-                PxSphereGeometry geometry;
-                shape->getSphereGeometry(geometry);
-                float mergeDistance = geometry.radius; // Hard coded 1 here can be tweaked of course
-                float newWidth = mergeDistance * 1.05;
-                // Calculate distance
-                PxVec3 shapePos = shape->getLocalPose().p;
-                float distanceBetweenPositions = (shape->getLocalPose().p - position).magnitude();
-                // Check if distance is big enough to justify a merge
-                if(distanceBetweenPositions < mergeDistance)
+                // Get shape
+                PxShape* shape = m_bigBodyShapes[i];
+                // Check if it exists
+                if(shape != nullptr)
                 {
-                    if(newWidth < maxWidth)
+                    // Get how long we want the distance to be checked. Based on already existing trigger radius
+                    PxSphereGeometry geometry;
+                    shape->getSphereGeometry(geometry);
+                    float mergeDistance = geometry.radius;
+                    // Width of the new field
+                    newWidth = mergeDistance * 1.05;
+                    // Calculate distance
+                    PxVec3 shapePos = shape->getLocalPose().p;
+                    float distanceBetweenPositions = (shapePos - particlePos).magnitude();
+                    // Check if distance is big enough to justify a merge and that the merged trigger isn't too big
+                    if(distanceBetweenPositions < mergeDistance && newWidth < maxWidth)
                     {
-                        // Create a new shape between the current positions
-                        PxVec3 newPosition = 0.5 * (position + shapePos);
-                        PxShape* newShape;
-                        // PxSphereGeometry newGeometry = PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8));
-                        PxSphereGeometry newGeometry = PxSphereGeometry(newWidth);
-                        newShape = m_utils.m_physics->createShape(newGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
-                        m_bigBodyTriggerIndices[m_triggerCounter] = true;
-                        m_triggerCounter++;
-                        if(m_triggerCounter >= m_maxTriggers)
+                        // It is close enough to potentially merge. Check if it is thee closest shape
+                        if(distanceBetweenPositions < closestDistance)
                         {
-                            m_triggerCounter = 0;
+                            // Update closest info
+                            closestDistance = distanceBetweenPositions;
+                            closestShapeIndex = i;
                         }
-                        // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
-                        newShape->setLocalPose(PxTransform(newPosition));
-                        // Attach shape to body
-                        m_bodies[p_id]->attachShape(*newShape);
-                        // Detach old shape
-                        actor->detachShape(*shape);
                     }
-                    isDone = true;
-                    break;
                 }
             }
-            // Cleanup
-            if(shapes)
+            // Check if we found a body to merge with
+            if(closestShapeIndex != -1)
             {
-                m_utils.m_allocator.deallocate(shapes);
-                shapes = NULL;
+                // We have the closest shape. Now alter that shape a tad
+                PxVec3 newPosition = 0.5 * (particlePos + m_bigBodyShapes[closestShapeIndex]->getLocalPose().p);
+                // Change diameter and position of shape
+                m_bigBodyShapes[closestShapeIndex]->setLocalPose(PxTransform(newPosition));
+                m_bigBodyShapes[closestShapeIndex]->setGeometry(PxSphereGeometry(newWidth));
             }
-            if(isDone)
+            // We need to create a new shape since no old one could be used in a merge
+            else
             {
-                return;
+                // Check if there is a body to remove
+                if(m_bigBodyShapes[m_triggerCounter])
+                {
+                    m_bodies[p_id]->detachShape(*m_bigBodyShapes[m_triggerCounter]);
+                }
+                else
+                {
+                    // We're cool. The slot is available
+                }
+                m_bigBodyShapes[m_triggerCounter] =
+                    m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), true, PxShapeFlag::eTRIGGER_SHAPE);
+                m_bodies[p_id]->attachShape(*m_bigBodyShapes[m_triggerCounter]);
+                m_bigBodyShapes[m_triggerCounter]->setLocalPose(PxTransform(particlePos));
+                // Update trigger
+                m_triggerCounter++;
+                // Circle back if needed
+                if(m_triggerCounter == m_maxTriggers)
+                {
+                    m_triggerCounter = 0;
+                }
             }
 
-            // We didn't return yet so there wasn't a merge. Create new trigger
-            // Create a shape. Set it as a trigger
-            PxShape* shape;
-            shape = m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
-            // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
 
-            shape->setLocalPose(PxTransform(position));
-            // Attach shape to body
-            m_bodies[p_id]->attachShape(*shape);
+            ////uint32_t numShapes = actor->getNbShapes();
+            ////// Magic allocation of memory (i think)
+            ////PxShape** shapes = (PxShape**)m_utils.m_allocator.allocate(sizeof(PxShape*) * numShapes, 0, __FILE__, __LINE__);
+            ////actor->getShapes(shapes, numShapes);
+            ////bool isDone = false;
+            ////for(uint32_t i = 0; i < numShapes; i++)
+            ////{
+            ////    PxShape* shape = shapes[i];
+            ////    // Get how long we want the distance to be checked. Based on already existing trigger radius
+            ////    PxSphereGeometry geometry;
+            ////    shape->getSphereGeometry(geometry);
+            ////    float mergeDistance = geometry.radius;
+            ////    // Width of the new field
+            ////    float newWidth = mergeDistance * 1.05;
+            ////    // Calculate distance
+            ////    PxVec3 shapePos = shape->getLocalPose().p;
+            ////    float distanceBetweenPositions = (shape->getLocalPose().p - position).magnitude();
+            ////    // Check if distance is big enough to justify a merge
+            ////    if(distanceBetweenPositions < mergeDistance)
+            ////    {
+            ////        // Check if we want a new trigger based on width
+            ////        if (newWidth < maxWidth)
+            ////        {
+            ////            // Create a new shape between the current positions
+            ////            PxVec3 newPosition = 0.5 * (position + shapePos);
+            ////            // Change diameter and position of shape
+            ////            shape->setLocalPose(PxTransform(newPosition));
+            ////            shape->setGeometry(PxSphereGeometry(newWidth));
+
+
+            ////            ///// Do things internally
+            ////            //m_triggerCounter++;
+            ////            //// Make sure we loop around
+            ////            //if (m_triggerCounter >= m_maxTriggers)
+            ////            //{
+            ////            //    m_triggerCounter = 0;
+            ////            //}
+            ////            //// Clear the last added shape
+            ////            //if (m_bigBodyShapes[m_triggerCounter] != nullptr)
+            ////            //{
+            ////            //    actor->detachShape(*m_bigBodyShapes[m_triggerCounter]);
+            ////            //    m_bigBodyShapes[m_triggerCounter] = nullptr;
+            ////            //}
+            ////            //// Keep track of new shape internally
+            ////            //m_bigBodyShapes[m_triggerCounter] = newShape;
+            ////            ///// End internal things
+            ////        }
+            ////        isDone = true;
+            ////        break;
+            ////    }
+            ////}
+            //////// Cleanup
+            ////if(shapes)
+            ////{
+            ////    m_utils.m_allocator.deallocate(shapes);
+            ////    shapes = NULL;
+            ////}
+            ////if(isDone)
+            ////{
+            ////    return;
+            ////}
+
+            //// We didn't return yet so there wasn't a merge. Create new trigger
+            //// Create a shape. Set it as a trigger
+            // PxShape* shape;
+            // shape = m_utils.m_physics->createShape(PxSphereGeometry(1), *m_utils.m_physics->createMaterial(0, 0, 0), true,
+            // PxShapeFlag::eTRIGGER_SHAPE);
+            //// Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
+
+            // shape->setLocalPose(PxTransform(particlePos));
+            //// Attach shape to body
+            // m_bodies[p_id]->attachShape(*shape);
         }
     }
 }
