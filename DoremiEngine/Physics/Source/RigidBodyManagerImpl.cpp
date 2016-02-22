@@ -549,13 +549,12 @@ namespace DoremiEngine
                     PxSphereGeometry geometry;
                     shape->getSphereGeometry(geometry);
                     float mergeDistance = geometry.radius;
-                    // Width of the new field
-                    newWidth = mergeDistance * 1.05;
                     // Calculate distance
                     PxVec3 shapePos = shape->getLocalPose().p;
                     float distanceBetweenPositions = (shapePos - particlePos).magnitude();
+
                     // Check if distance is big enough to justify a merge and that the merged trigger isn't too big
-                    if(distanceBetweenPositions < mergeDistance && newWidth < maxWidth)
+                    if(distanceBetweenPositions < mergeDistance && mergeDistance < maxWidth) // Redundant to involve mergeDistance here
                     {
                         // It is close enough to potentially merge. Check if it is thee closest shape
                         if(distanceBetweenPositions < closestDistance)
@@ -565,16 +564,25 @@ namespace DoremiEngine
                             closestShapeIndex = i;
                         }
                     }
+                    else
+                    {
+                        // We don't want a merge
+                    }
                 }
             }
+
             // Check if we found a body to merge with
             if(closestShapeIndex != -1)
             {
+                PxShape* shape = m_bigBodyShapes[closestShapeIndex];
                 // We have the closest shape. Now alter that shape a tad
                 PxVec3 newPosition = 0.5 * (particlePos + m_bigBodyShapes[closestShapeIndex]->getLocalPose().p);
                 // Change diameter and position of shape
-                m_bigBodyShapes[closestShapeIndex]->setLocalPose(PxTransform(newPosition));
-                m_bigBodyShapes[closestShapeIndex]->setGeometry(PxSphereGeometry(newWidth));
+                PxSphereGeometry geometry;
+                shape->getSphereGeometry(geometry);
+                float newWidth = geometry.radius + (shape->getLocalPose().p - newPosition).magnitude();
+                shape->setLocalPose(PxTransform(newPosition));
+                shape->setGeometry(PxSphereGeometry(newWidth));
             }
             // We need to create a new shape since no old one could be used in a merge
             else
@@ -675,6 +683,28 @@ namespace DoremiEngine
             //// Attach shape to body
             // m_bodies[p_id]->attachShape(*shape);
         }
-        void RigidBodyManagerImpl::GetShapeData(int p_id, vector<XMFLOAT3>& o_positions, vector<float>& o_radii) {}
+        void RigidBodyManagerImpl::GetShapeData(int p_id, vector<XMFLOAT3>& o_positions, vector<float>& o_radii)
+        {
+            for(size_t i = 0; i < m_maxTriggers; i++)
+            {
+                PxShape* shape = m_bigBodyShapes[i];
+                // Check if body exists
+                if(shape)
+                {
+                    // Get radius
+                    PxSphereGeometry geometry;
+                    shape->getSphereGeometry(geometry);
+                    float radius = geometry.radius;
+                    o_radii.push_back(radius);
+                    // Get position
+                    PxVec3 pos = shape->getLocalPose().p;
+                    o_positions.push_back(XMFLOAT3(pos.x, pos.y, pos.z));
+                }
+                else
+                {
+                    // No body. Don't pretend like we do
+                }
+            }
+        }
     }
 }
