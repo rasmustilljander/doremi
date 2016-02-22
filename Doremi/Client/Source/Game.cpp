@@ -91,7 +91,20 @@ namespace Doremi
     using namespace Core;
     GameMain::GameMain() {}
 
-    GameMain::~GameMain() {}
+    GameMain::~GameMain()
+    {
+        for(auto& manager : m_managers)
+        {
+            delete manager;
+        }
+        m_managers.clear();
+
+        for(auto& manager : m_graphicalManagers)
+        {
+            delete manager;
+        }
+        m_graphicalManagers.clear();
+    }
 
     void GameMain::Initialize()
     {
