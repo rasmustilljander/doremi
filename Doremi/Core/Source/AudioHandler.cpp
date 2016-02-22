@@ -266,7 +266,7 @@ namespace Doremi
 
 
                 using namespace Doremi::Utilities::Logging;
-                m_logger->DebugLog(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
+                m_logger->LogText(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
             }
 
             TIME_FUNCTION_STOP

@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Doremi
 {
     namespace Utilities
     {
         namespace Logging
         {
-            enum class LogLevel
+            enum class LogLevel : uint8_t
             {
                 FATAL_ERROR, // Error in which the game is not expected to return from.
                 NON_FATAL_ERROR, // Error which the game can return from

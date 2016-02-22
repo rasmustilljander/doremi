@@ -18,6 +18,19 @@ namespace Doremi
                 LogTag logTag;
                 LogLevel logLevel;
             };
+
+            struct TextMetaData
+            {
+                TextMetaData(LogTag p_logTag, LogLevel p_logLevel, uint16_t p_line, uint16_t p_functionLength, uint16_t p_messageLength)
+                    : logTag(p_logTag), logLevel(p_logLevel), line(p_line), functionLength(p_functionLength), messageLength(p_messageLength)
+                {
+                }
+                LogTag logTag;
+                LogLevel logLevel;
+                uint16_t line;
+                uint16_t functionLength;
+                uint16_t messageLength;
+            };
         }
     }
 }

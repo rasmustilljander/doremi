@@ -11,7 +11,7 @@ namespace Doremi
         }
         namespace Logging
         {
-            enum class LogTag;
+            enum class LogTag : uint8_t;
             struct LogTextData;
         }
     }

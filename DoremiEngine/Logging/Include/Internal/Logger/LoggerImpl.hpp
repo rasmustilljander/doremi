@@ -1,7 +1,7 @@
 #pragma once
 #include <Logger/Logger.hpp>
 #include <map>
-#include <Utility/Utilities/Include/Memory/Circlebuffer/Circlebuffer.hpp>
+#include <Utility/Utilities/Include/Memory/Circlebuffer/ArbitrarySizeCirclebuffer.hpp>
 #include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 
 namespace Doremi
@@ -15,8 +15,8 @@ namespace Doremi
         }
         namespace Logging
         {
-            enum class LogTag;
-            enum class LogLevel;
+            enum class LogTag : uint8_t;
+            enum class LogLevel : uint8_t;
         }
     }
 }
@@ -47,16 +47,16 @@ namespace DoremiEngine
             /**
             The actual method called when calling LogText
             */
-            void DebugLogReal(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
-                              const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
+            void LogTextReal(const std::string& p_function, const uint16_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
+                             const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
 
         private:
             void* InitializeFileMap(const std::size_t& p_size);
             std::wstring BuildLoggingProcessArgumentString();
             void StartLoggingProcess();
 
-            Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_localBuffer;
-            Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_outGoingBuffer;
+            Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_localBuffer;
+            Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer;
             Doremi::Utilities::IO::FileMap* m_fileMap;
             Doremi::Utilities::IO::Mutex* m_mutex;
             Doremi::Utilities::IO::Mutex* CreateFileMapMutex();

@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstdint>
 
 namespace Doremi
 {
@@ -7,7 +8,7 @@ namespace Doremi
     {
         namespace Logging
         {
-            enum class LogTag
+            enum class LogTag : uint8_t
             {
                 GRAPHIC,
                 NETWORK,

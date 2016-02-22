@@ -172,7 +172,7 @@ namespace Doremi
             if(m_player->IsCreated)
             {
                 using namespace Doremi::Utilities::Logging;
-                m_logger->DebugLog(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
+                m_logger->LogText(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
                     inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
             }
 

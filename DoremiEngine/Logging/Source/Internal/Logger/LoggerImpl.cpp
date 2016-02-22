@@ -21,7 +21,7 @@ namespace DoremiEngine
         using namespace Doremi::Utilities;
         using namespace Doremi::Utilities::Logging;
 
-        void threadWork(bool* p_applicationOnline, Memory::CircleBuffer<LogTextData>* p_localBuffer, Memory::CircleBuffer<LogTextData>* m_outGoingBuffer);
+        void threadWork(bool* p_applicationOnline, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer);
 
         LoggerImpl::LoggerImpl()
             : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr)
@@ -57,8 +57,8 @@ namespace DoremiEngine
 
         void LoggerImpl::Initialize()
         {
-            m_localBuffer = new Memory::CircleBuffer<LogTextData>();
-            m_outGoingBuffer = new Memory::CircleBuffer<LogTextData>();
+            m_localBuffer = new Memory::ArbitrarySizeCirclebuffer();
+            m_outGoingBuffer = new Memory::ArbitrarySizeCirclebuffer();
 
             // TODORT
             // TODOXX
@@ -85,9 +85,10 @@ namespace DoremiEngine
 #endif
         }
 
-        void LoggerImpl::DebugLogReal(const std::string& p_function, const size_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
-                                      const char* p_format, ...)
+        void LoggerImpl::LogTextReal(const std::string& p_function, const uint16_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
+                                     const char* p_format, ...)
         {
+            using namespace Doremi::Utilities::Logging;
             // Build a string from va_list
             va_list args;
             va_start(args, p_format);
@@ -95,38 +96,53 @@ namespace DoremiEngine
             String::toString(message, p_format, args);
             va_end(args);
 
-            Logging::LogTextData data;
+
+            // Allocate buffer
+            const uint16_t functionSize = p_function.size() + 1;
+            const uint16_t messageSize = message.size() + 1;
+            const uint32_t bufferSize = functionSize + messageSize + sizeof(TextMetaData);
+
+            void* buffer = malloc(bufferSize); // TODORT only use one buffer and lock this buffer
+            char* charBuffer = static_cast<char*>(buffer);
+
+            // Write textmetadata
+            *static_cast<TextMetaData*>(buffer) = TextMetaData(p_logTag, p_logLevel, p_line, functionSize, messageSize);
+            uint32_t offset = sizeof(TextMetaData);
 
             // Function
-            const std::size_t functionLength = p_function.copy(data.function, std::max(p_function.size(), Constants::LONGEST_FUNCTION_NAME), 0);
-            data.function[functionLength] = '\0';
-
-            // Line
-            data.line = p_line;
+            const std::size_t functionLength = p_function.copy(charBuffer, functionSize, offset); // Copy string to buffer
+            charBuffer[offset + functionLength] = '\0';
+            offset += functionLength;
 
             // Message
-            const std::size_t messageLength = message.copy(data.message, std::max(message.size(), Constants::LONGEST_FUNCTION_NAME), 0);
-            data.message[messageLength] = '\0';
-
-            // Level and tag
-            data.logLevel = p_logLevel;
-            data.logTag = p_logTag;
+            const std::size_t messageLength = message.copy(charBuffer, messageSize, offset);
+            charBuffer[offset + functionLength + messageLength] = '\0';
+            offset += functionLength;
 
             using namespace Memory;
             Memory::CircleBufferHeader header;
-            header.packageSize = sizeof(LogTextData);
+            header.packageSize = bufferSize;
             header.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
             bool succeed = false;
-
 
 #ifdef NO_LOGGER
             m_localBuffer->Produce(header, &data);
 #else
-            while(!succeed) // TODORT Might not need while loop
+            while(!succeed)
             {
-                succeed = m_localBuffer->Produce(header, &data);
+                try
+                {
+                    m_localBuffer->Produce(header, buffer); // TODORT NOt very performance nice
+                    succeed = true;
+                }
+                catch(...)
+                {
+                    // succeed = false;
+                }
             }
 #endif
+
+            free(buffer);
         }
 
         void* LoggerImpl::InitializeFileMap(const std::size_t& p_size)
@@ -183,18 +199,20 @@ namespace DoremiEngine
             CloseHandle(processInformation.hThread);
         }
 
-        void threadWork(bool* p_applicationOnline, Memory::CircleBuffer<LogTextData>* p_localBuffer, Memory::CircleBuffer<LogTextData>* m_outGoingBuffer)
+        void threadWork(bool* p_applicationOnline, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer)
         {
             bool messageExist = true;
-            LogTextData* data = new LogTextData();
+            const uint32_t sizeofBuffer = 1000;
+            void* buffer = malloc(sizeofBuffer); // TODORT TODOXX Might need to find a better value.
             Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
+            header->packageSize = sizeofBuffer; // TODORT TODOXX Might need to find a better value.
             bool succeed = false;
 
             // As long as the application is running or if there are some messages ongoing
-            while(*p_applicationOnline || messageExist) // TODORT, this might crash on crash....
+            while(*p_applicationOnline || messageExist)
             {
                 using namespace std::literals;
-                messageExist = p_localBuffer->Consume(header, data);
+                messageExist = p_localBuffer->Consume(header, buffer, sizeofBuffer);
                 if(messageExist)
                 {
 
@@ -204,7 +222,15 @@ namespace DoremiEngine
                     succeed = false;
                     while(!succeed)
                     {
-                        succeed = m_outGoingBuffer->Produce(*header, data);
+                        try
+                        {
+                            m_outGoingBuffer->Produce(*header, buffer);
+                            succeed = true;
+                        }
+                        catch(...)
+                        {
+                            std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT); // TODORT NOt very performance nice
+                        }
                     }
 #endif
                 }
@@ -215,8 +241,9 @@ namespace DoremiEngine
                     std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                 }
             }
-            delete data;
+            free(buffer);
             delete header;
+            delete p_applicationOnline;
         }
     }
 }

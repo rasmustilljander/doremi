@@ -11,8 +11,8 @@ namespace Doremi
     {
         namespace Logging
         {
-            enum class LogTag;
-            enum class LogLevel;
+            enum class LogTag : uint8_t;
+            enum class LogLevel : uint8_t;
         }
     }
 }
