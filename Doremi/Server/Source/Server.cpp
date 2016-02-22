@@ -199,7 +199,7 @@ namespace Doremi
         double Offset = 0;
         double Accum = 0;
         double GameTime = 0;
-        double UpdateStepLen = 0.017;
+        double UpdateStepLen = 0.017 * 2; // Limit to 30 fps for debug purposes TODOJB Change back to 60 fps
         double MaxFrameTime = 0.25;
 
         while(true)

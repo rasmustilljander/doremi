@@ -246,7 +246,7 @@ namespace Doremi
         double Offset = 0;
         double Accum = 0;
         double GameTime = 0;
-        double UpdateStepLen = 0.017f;
+        double UpdateStepLen = 0.017f*2;
         double MaxFrameTime = 0.25f;
 
         while(true)
