@@ -22,6 +22,7 @@ namespace Doremi
             trigger = 0x04,
             drain = 0x08,
             ignoredDEBUG = 0x10,
+            DisableGravity = 0x20,
         };
         /**
         Contain the ID for the rigid body of the entity with this component*/

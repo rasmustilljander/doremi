@@ -192,6 +192,10 @@ namespace Doremi
                     {
                         rigidBodyManager.SetIgnoredDEBUG(p_entityID);
                     }
+                    if(((int)bodyComp->flags & (int)RigidBodyFlags::DisableGravity) == (int)RigidBodyFlags::DisableGravity)
+                    {
+                        rigidBodyManager.SetGravity(p_entityID, false);
+                    }
                 }
 
                 else if(iter->first == ComponentType::CharacterController)

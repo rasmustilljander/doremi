@@ -406,6 +406,7 @@ namespace Doremi
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
             rigidBodyComp->boxDims = XMFLOAT3(0.25, 0.25, 0.25);
             rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
+            rigidBodyComp->flags = RigidBodyFlags::DisableGravity;
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
 
             // Entity type comp
