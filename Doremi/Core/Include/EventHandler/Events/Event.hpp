@@ -28,6 +28,7 @@ namespace Doremi
             PlaySound,
             SetHealth,
             SetTransform,
+            AnimationTransition,
         };
 
         /**All events needs to inherit this struct*/

@@ -26,7 +26,7 @@ namespace Doremi
         class SkeletalAnimationCoreManager : public Manager
         {
         public:
-            SkeletalAnimationCoreManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit SkeletalAnimationCoreManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~SkeletalAnimationCoreManager();
             void Update(double p_dt) override;
             /**

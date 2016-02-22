@@ -10,7 +10,7 @@ namespace Doremi
     {
         struct GunFireToggleEvent : public Event
         {
-            GunFireToggleEvent() : Event(EventType::RemoveEntity) {}
+            GunFireToggleEvent() : Event(EventType::GunFireToggle) {}
             GunFireToggleEvent(uint32_t p_entityID, bool p_isFiring) : Event(EventType::GunFireToggle), entityID(p_entityID), isFiring(p_isFiring) {}
 
             /**
