@@ -16,7 +16,7 @@ namespace DoremiEngine
     namespace Configuration
     {
         /**
-        A struct containing all the information gathered from config files
+        A struct containing all the information gathered from config files.
         */
         struct ConfiguartionInfo
         {

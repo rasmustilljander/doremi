@@ -78,9 +78,14 @@ namespace DoremiEngine
             {
                 o_info.IPToServer = p_mapToInterpret.at("IPToServer");
             }
-            if(p_mapToInterpret.count("LastServerPlayerID"))
+            if (p_mapToInterpret.count("LastServerPlayerID"))
             {
                 o_info.LastServerPlayerID = std::stoi(p_mapToInterpret.at("LastServerPlayerID"));
+            }
+            if(p_mapToInterpret.count("AIJumpDistance"))
+            {
+                o_info.AIJumpDistance = std::stof(p_mapToInterpret.at("AIJumpDistance"));
+
             }
         }
 
@@ -106,6 +111,8 @@ namespace DoremiEngine
             returnMap["CameraFieldOfView"] = std::to_string(p_info.CameraFieldOfView);
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
+            returnMap["AIJumpDistance"] = p_info.AIJumpDistance;
+
             return returnMap;
         }
     }
