@@ -29,6 +29,8 @@ namespace Doremi
         GroundEffectManagerClient::GroundEffectManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "GroundEffectManagerClient")
         {
+            // EXPERIMENTAL PHYSICS. Hard-coded ID works since I thought ahead and made it signed. Tru story
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().CreateArbitraryBody(-15);
         }
 
         GroundEffectManagerClient::~GroundEffectManagerClient() {}
@@ -48,6 +50,10 @@ namespace Doremi
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
                     m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
                     m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
+                    for(size_t j = 0; j < newPositions.size(); j++)
+                    {
+                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
+                    }
 
                     /// Draw the fields
                     // Get particle component TODOJB Shouldn't draw it as the same mesh and material as the system itself...
