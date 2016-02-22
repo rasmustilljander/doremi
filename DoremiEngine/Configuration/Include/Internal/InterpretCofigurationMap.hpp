@@ -111,7 +111,7 @@ namespace DoremiEngine
             returnMap["CameraFieldOfView"] = std::to_string(p_info.CameraFieldOfView);
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
-            returnMap["AIJumpDistance"] = p_info.AIJumpDistance;
+            returnMap["AIJumpDistance"] = std::to_string(p_info.AIJumpDistance);
 
             return returnMap;
         }

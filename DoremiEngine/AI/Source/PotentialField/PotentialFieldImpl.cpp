@@ -237,11 +237,11 @@ namespace DoremiEngine
                     // FInd the position the grid would have had
                     XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
                     // Use that position to set new unit position
-                    float jumpDistance = 3;
+
                     // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add the
                     // jump
-                    XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * jumpDistance), p_unitPosition.y,
-                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * jumpDistance));
+                    XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_jumpDistance), p_unitPosition.y,
+                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * m_jumpDistance));
                     // Find what field the new position is in, if any
                     PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(newUnitPosition));
                     if(newField != nullptr)
