@@ -84,7 +84,7 @@ void LoggerProcess::Run()
             using namespace std::literals;
             // TODORT
             // TODOXX is 10ms good?
-            std::this_thread::sleep_for(10ms);
+            std::this_thread::sleep_for(Constants::LOGGING_CONSUME_TIME_WAIT);
         }
 
         // Compute delta time

@@ -207,7 +207,12 @@ namespace DoremiEngine
                     }
 #endif
                 }
-                // std::this_thread::sleep_for(2s);
+                else
+                {
+                    // TODORT
+                    // TODOXX Might not be long enough, or might be longer than required.
+                    std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
+                }
             }
             delete data;
             delete header;
