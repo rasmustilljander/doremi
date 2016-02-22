@@ -686,5 +686,6 @@ namespace DoremiEngine
             //// Attach shape to body
             // m_bodies[p_id]->attachShape(*shape);
         }
+        void RigidBodyManagerImpl::GetShapeData(int p_id, vector<XMFLOAT3>& o_positions, vector<float>& o_radii) {}
     }
 }

@@ -78,6 +78,7 @@ namespace DoremiEngine
             // TODOJB these are experimental. Remove
             void CreateArbitraryBody(int p_id) override;
             void AddShapeToBody(int p_id, XMFLOAT3 p_position) override;
+            void GetShapeData(int p_id, vector<XMFLOAT3>& o_positions, vector<float>& o_radii) override;
             // THIS is really not the way to do things. Still: experimental/just to try things out
             const int m_maxTriggers = 100; // Has to be the same as below array size... I know this is stupid
             PxShape* m_bigBodyShapes[100];
