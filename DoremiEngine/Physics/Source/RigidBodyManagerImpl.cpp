@@ -9,7 +9,8 @@ namespace DoremiEngine
     namespace Physics
     {
         RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils), m_meshCooker(new MeshCooker(p_utils)) {}
-        RigidBodyManagerImpl::~RigidBodyManagerImpl() {}
+
+        RigidBodyManagerImpl::~RigidBodyManagerImpl() { delete m_meshCooker; }
 
         int RigidBodyManagerImpl::AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
         {

@@ -28,6 +28,8 @@ namespace DoremiEngine
         class PhysicsModule : public DoremiEngine::Core::EngineModule
         {
         public:
+            virtual ~PhysicsModule() {}
+
             /**
             Does nothing so far TODOJB update as necessary
             */

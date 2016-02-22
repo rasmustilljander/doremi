@@ -16,7 +16,8 @@ namespace DoremiEngine
                 throw runtime_error("initializing mesh cooker failed");
             }
         }
-        MeshCooker::~MeshCooker() {}
+
+        MeshCooker::~MeshCooker() { m_cooker->release(); }
 
         PxTriangleMesh* MeshCooker::CookMesh(vector<XMFLOAT3>& p_vertexPositions, vector<int>& p_indices)
         {

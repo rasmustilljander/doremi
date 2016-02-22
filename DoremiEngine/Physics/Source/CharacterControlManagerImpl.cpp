@@ -12,7 +12,7 @@ namespace DoremiEngine
         {
             m_manager = PxCreateControllerManager(*m_utils.m_worldScene);
         }
-        CharacterControlManagerImpl::~CharacterControlManagerImpl() {}
+        CharacterControlManagerImpl::~CharacterControlManagerImpl() { m_manager->release(); }
 
         int CharacterControlManagerImpl::AddController(int p_id, int p_matID, XMFLOAT3 p_position, XMFLOAT2 p_dimensions)
         {

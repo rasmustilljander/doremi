@@ -24,6 +24,19 @@ namespace DoremiEngine
         // Internal struct to be used for submodules to communicate
         struct InternalPhysicsUtils
         {
+            ~InternalPhysicsUtils()
+            {
+                delete m_rigidBodyManager;
+                delete m_physicsMaterialManager;
+                delete m_characterControlManager;
+                delete m_fluidManager;
+                delete m_rayCastManager;
+                m_worldScene->release();
+                m_physics->release();
+                m_dispatcher->release();
+                m_foundation->release();
+            }
+
             // Sub modules managers thingies
             RigidBodyManagerImpl* m_rigidBodyManager;
             PhysicsMaterialManagerImpl* m_physicsMaterialManager;
@@ -34,11 +47,9 @@ namespace DoremiEngine
             // PhysX stuff
             PxDefaultAllocator m_allocator;
             PxDefaultErrorCallback m_errorCallback;
-
-            PxFoundation* m_foundation;
             PxPhysics* m_physics;
-
             PxDefaultCpuDispatcher* m_dispatcher;
+            PxFoundation* m_foundation;
 
             // The basic world. TODOJB add to some sort of scene manager?
             PxScene* m_worldScene;

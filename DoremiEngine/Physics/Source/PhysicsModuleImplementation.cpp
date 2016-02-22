@@ -6,14 +6,14 @@ namespace DoremiEngine
     namespace Physics
     {
         PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+
         PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
         void PhysicsModuleImplementation::Startup()
         {
             // Start physX
             m_utils.m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_utils.m_allocator, m_utils.m_errorCallback);
-            PxProfileZoneManager* profileZoneManager = &PxProfileZoneManager::createProfileZoneManager(m_utils.m_foundation);
-            m_utils.m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_utils.m_foundation, PxTolerancesScale(), true, profileZoneManager);
+            m_utils.m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_utils.m_foundation, PxTolerancesScale(), true);
 
             // Create world scene TODOJB create scene handler for this kind of job
             CreateWorldScene();
@@ -38,7 +38,12 @@ namespace DoremiEngine
             if(theConnection) theConnection->release();
         }
 
-        void PhysicsModuleImplementation::Shutdown() {}
+        void PhysicsModuleImplementation::Shutdown()
+        {
+            m_collisionPairs.clear();
+            m_triggerPairs.clear();
+            m_leftCollisionPairs.clear();
+        }
 
         void PhysicsModuleImplementation::Update(float p_dt)
         {
