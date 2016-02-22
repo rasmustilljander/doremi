@@ -13,7 +13,7 @@
 
 using namespace Doremi::Utilities;
 
-LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr) {}
+LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr) {}
 
 LoggerProcess::~LoggerProcess()
 {
@@ -26,11 +26,6 @@ LoggerProcess::~LoggerProcess()
     {
         delete m_ingoingBuffer;
     }
-
-    if(m_mutex != nullptr)
-    {
-        delete m_mutex;
-    }
 }
 
 void LoggerProcess::Initialize(const int& p_uniqueId)
@@ -40,9 +35,8 @@ void LoggerProcess::Initialize(const int& p_uniqueId)
     BuildLogFiles();
     SetupCircleBuffer();
     void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
-    m_mutex = CreateFileMapMutex();
 
-    m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
+    m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE);
 }
 
 void LoggerProcess::Run()
@@ -50,7 +44,8 @@ void LoggerProcess::Run()
     using namespace Doremi::Utilities;
 
     // Create temporary data/header memory
-    Logging::LogTextData* data = new Logging::LogTextData();
+    const uint32_t sizeOfBuffer = 1000;
+    void* buffer = malloc(sizeOfBuffer);
     Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
 
     bool messageExist = false;
@@ -61,19 +56,22 @@ void LoggerProcess::Run()
     while(gameIsRunning || messageExist)
     {
         // Consume data from shared memory
-        messageExist = m_ingoingBuffer->Consume(header, data);
+        messageExist = m_ingoingBuffer->Consume(header, buffer, sizeOfBuffer);
         gameIsRunning = IsGameRunning();
 
         // If any data existed
         if(messageExist)
         {
-            // Send data to logfile
-            m_logfiles[data->logTag].Write(*data);
-
-            // Print data to console
-            if(data->logLevel == Logging::LogLevel::INFO)
+            if(header->packageType == Memory::CircleBufferTypeEnum::TEXT)
             {
-                std::cout << data->message << "\n";
+                Logging::TextMetaData* textMetaData = static_cast<Logging::TextMetaData*>(buffer);
+
+                // Send data to logfile
+                m_logfiles[textMetaData->logTag].Write(buffer);
+            }
+            else if(header->packageType == Memory::CircleBufferTypeEnum::DATA)
+            {
+                // TODORT
             }
 
             // Reset elapsed time
@@ -111,7 +109,7 @@ void LoggerProcess::Run()
     }
 
     // Release temporary memory
-    delete data;
+    free(buffer);
     delete header;
 }
 
@@ -141,7 +139,7 @@ void* LoggerProcess::InitializeFileMap(const std::size_t& p_size)
     }
 }
 
-void LoggerProcess::SetupCircleBuffer() { m_ingoingBuffer = new Memory::CircleBuffer<Logging::LogTextData>(); }
+void LoggerProcess::SetupCircleBuffer() { m_ingoingBuffer = new Memory::ArbitrarySizeCirclebuffer(); }
 
 IO::Mutex* LoggerProcess::CreateFileMapMutex()
 {

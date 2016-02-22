@@ -9,6 +9,8 @@
 
 #include <Utility/Utilities/Include/String/VA_ListToString.hpp>
 #include <Utility/Utilities/Include/String/StringHelper.hpp>
+#include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
+
 #include <iostream>
 #include <algorithm>
 #include <chrono>
@@ -64,16 +66,16 @@ namespace DoremiEngine
             // TODOXX
             // TODOCONFIG our hardcode better value from empirical tests
             // Create localbuffer
-            m_localBuffer->Initialize(10000, nullptr);
+            m_localBuffer->Initialize(10000);
 
             // Create mutex
-            m_mutex = CreateFileMapMutex();
+            // m_mutex = CreateFileMapMutex();
 
             // Fetch shared memory from fileMap
             void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
 
             // Intiailize outgoing buffer with shared memory and mutex
-            m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
+            m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE);
             m_applicationRunning = new bool(true);
 
             std::thread outGoingLoggingThread(threadWork, m_applicationRunning, m_localBuffer, m_outGoingBuffer);
@@ -89,6 +91,7 @@ namespace DoremiEngine
                                      const char* p_format, ...)
         {
             using namespace Doremi::Utilities::Logging;
+            using namespace Doremi::Utilities;
             // Build a string from va_list
             va_list args;
             va_start(args, p_format);
@@ -98,26 +101,25 @@ namespace DoremiEngine
 
 
             // Allocate buffer
-            const uint16_t functionSize = p_function.size() + 1;
-            const uint16_t messageSize = message.size() + 1;
+            const uint16_t functionSize = p_function.size() + 1; // The plus one comes as the null terminator
+            const uint16_t messageSize = message.size() + 1; // The plus one comes as the null terminator
             const uint32_t bufferSize = functionSize + messageSize + sizeof(TextMetaData);
 
             void* buffer = malloc(bufferSize); // TODORT only use one buffer and lock this buffer
+            memset(buffer, 0, bufferSize); // Do not remove this, used to get null terminator in the strings
             char* charBuffer = static_cast<char*>(buffer);
 
             // Write textmetadata
             *static_cast<TextMetaData*>(buffer) = TextMetaData(p_logTag, p_logLevel, p_line, functionSize, messageSize);
-            uint32_t offset = sizeof(TextMetaData);
+            charBuffer = PointerArithmetic::Addition(charBuffer, sizeof(TextMetaData));
 
             // Function
-            const std::size_t functionLength = p_function.copy(charBuffer, functionSize, offset); // Copy string to buffer
-            charBuffer[offset + functionLength] = '\0';
-            offset += functionLength;
+            const std::size_t functionLength = p_function.copy(charBuffer, functionSize, 0); // Copy functionString to buffer
+            charBuffer = PointerArithmetic::Addition(charBuffer, functionLength + 1); // The plus one comes as the null terminator
 
             // Message
-            const std::size_t messageLength = message.copy(charBuffer, messageSize, offset);
-            charBuffer[offset + functionLength + messageLength] = '\0';
-            offset += functionLength;
+            const std::size_t messageLength = message.copy(charBuffer, messageSize, 0); // Copy messageString to buffer
+            charBuffer = PointerArithmetic::Addition(charBuffer, messageLength + 1); // The plus one comes as the null terminator
 
             using namespace Memory;
             Memory::CircleBufferHeader header;

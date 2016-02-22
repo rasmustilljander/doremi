@@ -11,7 +11,7 @@ namespace Doremi
             template <typename T> T Addition(T const p_src, const size_t& p_value)
             {
                 // TODORT Check for overflow / underflow ?
-                return reinterpret_cast<void*>(reinterpret_cast<size_t>(p_src) + p_value);
+                return reinterpret_cast<T>(reinterpret_cast<size_t>(p_src) + p_value);
             }
 
             // TODORT

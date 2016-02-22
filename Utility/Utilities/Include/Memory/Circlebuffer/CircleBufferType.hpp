@@ -8,7 +8,7 @@ namespace Doremi
             enum class CircleBufferTypeEnum : int8_t
             {
                 TEXT,
-                COMMAND,
+                DATA,
                 UNKNOWN,
             };
 
@@ -32,7 +32,6 @@ namespace Doremi
                     }
                     return false;
                 }
-
 
                 int8_t typeValue;
                 CircleBufferTypeEnum typeEnum;

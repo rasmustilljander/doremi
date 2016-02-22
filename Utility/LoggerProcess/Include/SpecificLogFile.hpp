@@ -38,7 +38,7 @@ public:
     /**
     Writes to buffer for file, calls flush with regular intervalls.
     */
-    void Write(const Doremi::Utilities::Logging::LogTextData& p_data);
+    void Write(void*& p_data);
 
     /**
     Forcily flushes the data in the buffer to a file on the disk.

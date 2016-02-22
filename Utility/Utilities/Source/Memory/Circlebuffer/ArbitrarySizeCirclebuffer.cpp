@@ -36,21 +36,19 @@ namespace Doremi
                 }
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize, IO::Mutex* p_mutex)
+            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
-                m_metaDataMutex = p_mutex;
                 m_rawBufferPointerStart = malloc(m_rawBufferSize);
                 SetupVariables();
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, IO::Mutex* p_mutex)
+            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
                 m_rawBufferPointerStart = p_preAllocatedBuffer;
-                m_metaDataMutex = p_mutex;
                 m_internalMemoryManagement = false;
                 SetupVariables();
             }

@@ -6,6 +6,7 @@
 #include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 #include <Utility/Utilities/Include/String/StringHelper.hpp>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
+#include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
 
 #include <iostream>
 #include <exception>
@@ -60,12 +61,26 @@ void SpecificLogFile::OpenFileStream(const std::string& p_fileName)
     }
 }
 
-void SpecificLogFile::Write(const Doremi::Utilities::Logging::LogTextData& p_data)
+void SpecificLogFile::Write(void*& p_data)
 {
-    *m_fileStream << p_data.message << "\n";
-    m_elapsedTime += m_timer->Tick().GetElapsedTimeInSeconds();
+    // Rebuilddata
+    const Logging::TextMetaData* textMetaData = static_cast<Logging::TextMetaData*>(p_data);
+
+    // Fetch pointer to function text
+    void* function = PointerArithmetic::Addition(p_data, sizeof(Logging::TextMetaData));
+
+    // Fetch pointer to messagetext
+    void* message = PointerArithmetic::Addition(p_data, sizeof(Logging::TextMetaData) + textMetaData->functionLength);
+
+    // Actually cout the data to a file
+    *m_fileStream << static_cast<char*>(message) << "\n";
+    if(textMetaData->logLevel == Logging::LogLevel::INFO)
+    {
+        std::cout << static_cast<char*>(message) << "\n";
+    }
 
     // If called often, flush
+    m_elapsedTime += m_timer->Tick().GetElapsedTimeInSeconds();
     if(m_elapsedTime > m_flushTimerLimit)
     {
         Flush();

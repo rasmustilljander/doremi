@@ -29,13 +29,13 @@ namespace Doremi
                 The useable size of the buffer will be p_bufferSize - sizeof(StaticData).
                 Each object will allocate sizeof(T) + sizeof(CircleBufferHeader).
                 */
-                void Initialize(const uint32_t& p_bufferSize, IO::Mutex* p_mutex = nullptr);
+                void Initialize(const uint32_t& p_bufferSize);
 
                 /**
                 The useable size of the buffer will be p_bufferSize - sizeof(StaticData).
                 Each object will allocate sizeof(T) + sizeof(CircleBufferHeader).
                 */
-                void Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, IO::Mutex* p_mutex = nullptr);
+                void Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize);
 
                 /**
                 Threadsafe, internal loackage. Throws exception if not possible.

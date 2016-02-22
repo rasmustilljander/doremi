@@ -3,7 +3,7 @@
 #include <SpecificLogFile.hpp>
 #include <Utility/Utilities/Include/Logging/LogTag.hpp>
 
-#include <Utility/Utilities/Include/Memory/Circlebuffer/Circlebuffer.hpp>
+#include <Utility/Utilities/Include/Memory/Circlebuffer/ArbitrarySizeCirclebuffer.hpp>
 #include <Utility/Utilities/Include/Logging/LogTextData.hpp>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
 #include <map>
@@ -57,8 +57,7 @@ private:
 
     Doremi::Utilities::Chrono::Timer m_timer;
     Doremi::Utilities::IO::FileMap* m_fileMap;
-    Doremi::Utilities::Memory::CircleBuffer<Doremi::Utilities::Logging::LogTextData>* m_ingoingBuffer;
-    Doremi::Utilities::IO::Mutex* m_mutex;
+    Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_ingoingBuffer;
     std::map<Doremi::Utilities::Logging::LogTag, SpecificLogFile> m_logfiles;
     int m_processIdOfGame;
 };
