@@ -65,6 +65,7 @@ namespace DoremiEngine
             bool IsSleeping(int p_bodyID) override;
 
             void RemoveBody(int p_bodyID) override;
+            void SetGravity(int p_bodyID, bool p_useGravity) override;
 
             /// Internal methods not used via interface (only used in module)
             unordered_map<PxRigidActor*, int>& GetIDsByBodies();
@@ -73,7 +74,6 @@ namespace DoremiEngine
             void SetRecentlySleepingObjects(PxActor** p_actors, int p_count);
             // Clears the above lists. Called from PhysicsModuleImplementation before each fetchResults
             void ClearRecentlyWakeStatusLists();
-
 
         private:
             InternalPhysicsUtils& m_utils;

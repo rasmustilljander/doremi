@@ -147,6 +147,11 @@ namespace DoremiEngine
             Releases the actor
             */
             virtual void RemoveBody(int p_bodyID) = 0;
+
+            /**
+            Sets if the body should use gravity or not. Only works with dynamic rigid bodies
+            */
+            virtual void SetGravity(int p_bodyID, bool p_useGravity) = 0;
         };
     }
 }

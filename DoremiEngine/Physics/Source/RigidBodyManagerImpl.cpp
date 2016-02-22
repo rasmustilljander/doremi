@@ -508,5 +508,16 @@ namespace DoremiEngine
             m_recentlySleepingObjects.clear();
             m_recentlyWokenObjects.clear();
         }
+
+        void RigidBodyManagerImpl::SetGravity(int p_bodyID, bool p_useGravity)
+        {
+            if(m_bodies.count(p_bodyID) == 0)
+            {
+                // No body with that id, log error!
+                cout << "Physics: couldn't set gravity on rigid body ID: " << p_bodyID << " since it did not exist" << endl;
+            }
+            // !p_useGravity since we want to disable gravity if p_usegravity is false. Double negativity and shit
+            m_bodies.find(p_bodyID)->second->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !p_useGravity);
+        }
     }
 }
