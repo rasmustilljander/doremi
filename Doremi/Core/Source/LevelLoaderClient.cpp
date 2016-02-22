@@ -572,7 +572,7 @@ namespace Doremi
 
         bool LevelLoaderClient::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
         {
-            bool r_shouldBuildPhysics = true;
+            bool r_shouldBuildPhysics = false;
 
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
 
@@ -584,6 +584,12 @@ namespace Doremi
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
             DoremiEditor::Core::TransformData transformationData = m_transforms[meshCoupling.transformName];
+
+            // Check if we should cook meshes
+            if(!transformationData.attributes.isBBox && transformationData.attributes.isCollider)
+            {
+                r_shouldBuildPhysics = true;
+            }
 
             // If render, create grapic properties
             if(transformationData.attributes.isRendered)
