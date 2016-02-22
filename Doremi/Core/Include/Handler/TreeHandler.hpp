@@ -38,7 +38,7 @@ namespace Doremi
             static TreeHandler* m_singleton;
 
             const DoremiEngine::Core::SharedContext& m_sharedContext;
-            TreeCreator m_treeCreator;
+            TreeCreator* m_treeCreator;
         };
     }
 }

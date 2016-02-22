@@ -7,13 +7,15 @@ namespace Doremi
 {
     namespace Core
     {
-        TreeCreator::TreeCreator()
+        TreeCreator::TreeCreator(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
+            // m_sharedContext = p_sharedContext;
+
             // Set the depth of the oct tree
             m_treeDepth = 7;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(10000, 10000, 10000);
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
             // Set the center for the box of the world
             treeRoot.center = DirectX::XMFLOAT3(0, 0, 0);
@@ -26,6 +28,11 @@ namespace Doremi
 
         void TreeCreator::CreateTree()
         {
+            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(//(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
+            // XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),
+            // materialID);
+            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+
             // Get the max entities so we can collect all of the draw objects in the world
             size_t maxEntities = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to add the things that have render components into the list.
@@ -77,7 +84,7 @@ namespace Doremi
                     }
                     else if(o_treeNode.depth == m_treeDepth - 1)
                     {
-                        int hejsan = 0;
+                        // int hejsan = 0;
                         // Collision but we reached max depth
                         // Check where the objects will be placed in this nodes children
                     }
@@ -92,6 +99,45 @@ namespace Doremi
                     o_treeNode.empty = true;
                 }
             }
+
+
+            //// Looping through the
+            // for(size_t i = 0; i < 8; i++)
+            //{
+            //    // if there is a collision between the child box and any object that needs drawing
+            //    if(true) // TODOEA Here should be the collision check between all the objects in the objectsInTheArea list
+            //    {
+            //        // Since we had a collision, there is something in this box
+            //        o_treeNode.empty = false;
+
+            //        // If max depth isnt reached , minus two is needed to get the depth wanted.
+            //        if(o_treeNode.depth < m_treeDepth - 1)
+            //        {
+            //            // Collision and max depth wasn't reached
+
+            //            // Prepare the next BuildTree() function with 8 newly created children
+            //            CreateAndDivideTheChildren(*o_treeNode.children[i]);
+
+            //            // We start over in the next node to see if we can split it even further
+            //            BuildTree(*o_treeNode.children[i]);
+            //        }
+            //        else if(o_treeNode.depth == m_treeDepth - 1)
+            //        {
+            //            // int hejsan = 0;
+            //            // Collision but we reached max depth
+            //            // Check where the objects will be placed in this nodes children
+            //        }
+            //        else
+            //        {
+            //            // Collision but we're beyond max depth
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // No collision
+            //        o_treeNode.empty = true;
+            //    }
+            //}
         }
         void TreeCreator::CreateAndDivideTheChildren(OctNode& o_treeNode)
         {

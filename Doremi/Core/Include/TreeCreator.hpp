@@ -4,6 +4,13 @@
 #include <vector>
 #include <cstdint>
 
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
 namespace Doremi
 {
     namespace Core
@@ -39,7 +46,7 @@ namespace Doremi
                 uint8_t depth;
             };
 
-            TreeCreator();
+            TreeCreator::TreeCreator(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~TreeCreator();
 
             void Update();
@@ -50,6 +57,8 @@ namespace Doremi
             uint16_t m_treeDepth;
 
         private:
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
+            OctNode* whatNode;
             void BuildTree(OctNode& o_treeNode);
             void CreateAndDivideTheChildren(OctNode& o_treeNode);
         };

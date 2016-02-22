@@ -146,7 +146,7 @@ namespace Doremi
         OptionsHandler::StartOptionsHandler(sharedContext);
         Core::TreeHandler::StartupTreeHandler(sharedContext);
 
-        // Core::TreeHandler::GetInstance()->BuildTheTree();
+        Core::TreeHandler::GetInstance()->BuildTheTree();
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
         m_screenSpaceDrawer = ScreenSpaceDrawer::GetInstance();
