@@ -47,8 +47,8 @@ namespace DoremiEngine
             /**
             The actual method called when calling LogText
             */
-            void LT(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
-                    const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
+            void DebugLogReal(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
+                              const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) override;
 
         private:
             void* InitializeFileMap(const std::size_t& p_size);

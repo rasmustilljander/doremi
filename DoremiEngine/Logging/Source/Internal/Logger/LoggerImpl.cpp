@@ -85,7 +85,8 @@ namespace DoremiEngine
 #endif
         }
 
-        void LoggerImpl::LT(const std::string& p_function, const size_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel, const char* p_format, ...)
+        void LoggerImpl::DebugLogReal(const std::string& p_function, const size_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
+                                      const char* p_format, ...)
         {
             // Build a string from va_list
             va_list args;

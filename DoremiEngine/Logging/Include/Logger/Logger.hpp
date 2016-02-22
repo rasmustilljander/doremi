@@ -19,8 +19,8 @@ namespace DoremiEngine
                 If this metod is called directly the call should looke something like:
                 Logger.LT(__FUNCTION__, __LINE__, LogTag::Level, LogLevel::Level, "formatstring %d %d", 1, 2);"
             */
-            virtual void LT(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
-                            const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) = 0;
+            virtual void DebugLogReal(const std::string& p_function, const size_t& p_line, const Doremi::Utilities::Logging::LogTag& p_tag,
+                                      const Doremi::Utilities::Logging::LogLevel& p_vLevel, const char* p_format, ...) = 0;
         };
     }
 }
@@ -33,5 +33,5 @@ The hack makes it slightly harder to log things, probably introduces non-portabl
 TODORT Add possibility to turn hack off, then this method should reference another method
 
 */
-#define LogText(...) LT(__FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define DebugLog(...) DebugLogReal(__FUNCTION__, __LINE__, ##__VA_ARGS__)
 #endif

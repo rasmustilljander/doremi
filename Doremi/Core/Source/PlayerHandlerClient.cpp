@@ -94,8 +94,8 @@ namespace Doremi
                 using namespace Doremi::Utilities::Logging;
                 InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(input.second->m_inputHandler);
                 inputHandler->Update();
-                m_logger->LogText(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
-                                  inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
+                m_logger->DebugLog(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
+                                   inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
             }
             TIME_FUNCTION_STOP
         }

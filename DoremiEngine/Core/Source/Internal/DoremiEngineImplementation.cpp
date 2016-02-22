@@ -240,7 +240,7 @@ namespace DoremiEngine
                     using namespace Doremi::Utilities::Logging;
                     m_logger = &m_loggingModule->GetSubModuleManager().GetLogger();
                     std::cout << "Logger system is now online, all other logging will be directed to the logfile." << std::endl;
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Logger system is now online.");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Logger system is now online.");
                 }
                 else
                 {
@@ -256,19 +256,19 @@ namespace DoremiEngine
         void DoremiEngineImplementation::LoadTimingModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll");
             m_timingLibrary = DynamicLoader::LoadSharedLibrary("Timing.dll");
 
             if(m_timingLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll");
 
                 CREATE_TIMING_MODULE functionCreateTimingModule =
                     (CREATE_TIMING_MODULE)DynamicLoader::LoadProcess(m_timingLibrary, "CreateTimingModule");
                 if(functionCreateTimingModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Success");
 
                     m_timingModule = static_cast<Timing::TimingModule*>(functionCreateTimingModule(o_sharedContext));
                     m_timingModule->Startup();
@@ -276,30 +276,30 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadAudioModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll");
             m_audioLibrary = DynamicLoader::LoadSharedLibrary("Audio.dll");
 
             if(m_audioLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll");
 
                 CREATE_AUDIO_MODULE functionCreateAudioModule = (CREATE_AUDIO_MODULE)DynamicLoader::LoadProcess(m_audioLibrary, "CreateAudioModule");
                 if(functionCreateAudioModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Success");
 
                     m_audioModule = static_cast<Audio::AudioModule*>(functionCreateAudioModule(o_sharedContext));
                     m_audioModule->Startup();
@@ -307,148 +307,148 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Audio.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Audio.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadGraphicModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll");
             m_graphicLibrary = DynamicLoader::LoadSharedLibrary("Graphic.dll");
 
             if(m_graphicLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll");
                 CREATE_GRAPHIC_MODULE functionCreateGraphicModule =
                     (CREATE_GRAPHIC_MODULE)DynamicLoader::LoadProcess(m_graphicLibrary, "CreateGraphicModule");
                 if(functionCreateGraphicModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll - Success");
                     m_graphicModule = static_cast<Graphic::GraphicModule*>(functionCreateGraphicModule(o_sharedContext));
                     m_graphicModule->Startup();
                     o_sharedContext.SetGraphicModule(m_graphicModule);
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Graphic.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Graphic.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadNetworkModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll");
             m_networkLibrary = DynamicLoader::LoadSharedLibrary("Network.dll");
 
             if(m_networkLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll");
                 CREATE_NETWORK_MODULE functionCreateNetworkModule =
                     (CREATE_NETWORK_MODULE)DynamicLoader::LoadProcess(m_networkLibrary, "CreateNetworkModule");
                 if(functionCreateNetworkModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll - Success");
                     m_networkModule = static_cast<Network::NetworkModule*>(functionCreateNetworkModule(o_sharedContext));
                     m_networkModule->Startup();
                     o_sharedContext.SetNetworkModule(m_networkModule);
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Network.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Network.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadPhysicsModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll");
             m_physicsLibrary = DynamicLoader::LoadSharedLibrary("Physics.dll");
 
             if(m_physicsLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll");
                 CREATE_PHYSICS_MODULE functionCreatePhysicsModule =
                     (CREATE_PHYSICS_MODULE)DynamicLoader::LoadProcess(m_physicsLibrary, "CreatePhysicsModule");
                 if(functionCreatePhysicsModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll - Success");
                     m_physicsModule = static_cast<Physics::PhysicsModule*>(functionCreatePhysicsModule(o_sharedContext));
                     m_physicsModule->Startup();
                     o_sharedContext.SetPhysicsModule(m_physicsModule);
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Physics.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Physics.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadInputModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll");
             m_inputLibrary = DynamicLoader::LoadSharedLibrary("Input.dll");
 
             if(m_inputLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll");
                 CREATE_INPUT_MODULE functionCreateInputModule = (CREATE_INPUT_MODULE)DynamicLoader::LoadProcess(m_inputLibrary, "CreateInputModule");
                 if(functionCreateInputModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll - Success");
                     m_inputModule = static_cast<Input::InputModule*>(functionCreateInputModule(o_sharedContext));
                     m_inputModule->Startup();
                     o_sharedContext.SetInputModule(m_inputModule);
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Input.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Input.dll - Failed");
             }
         }
 
         void DoremiEngineImplementation::LoadAIModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll");
             m_aiLibrary = DynamicLoader::LoadSharedLibrary("AI.dll");
 
             if(m_aiLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll");
                 CREATE_AI_MODULE functionCreateAIModule = (CREATE_AI_MODULE)DynamicLoader::LoadProcess(m_aiLibrary, "CreateAIModule");
                 if(functionCreateAIModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll - Success");
 
                     m_aiModule = static_cast<AI::AIModule*>(functionCreateAIModule(o_sharedContext));
                     m_aiModule->Startup();
@@ -456,29 +456,29 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from AI.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading AI.dll - Failed");
             }
         }
         void DoremiEngineImplementation::LoadConfigurationModule(SharedContextImplementation& o_sharedContext)
         {
             using namespace Doremi::Utilities::Logging;
-            m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll");
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll");
             m_configurationLibrary = DynamicLoader::LoadSharedLibrary("Configuration.dll");
 
             if(m_configurationLibrary != nullptr)
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Success");
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Success");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll");
                 CREATE_CONFIGURATION_MODULE functionCreateConfigurationModule =
                     (CREATE_CONFIGURATION_MODULE)DynamicLoader::LoadProcess(m_configurationLibrary, "CreateConfigurationModule");
                 if(functionCreateConfigurationModule != nullptr)
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Success");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Success");
 
                     m_configurationModule = static_cast<Configuration::ConfigurationModule*>(functionCreateConfigurationModule(o_sharedContext));
                     m_configurationModule->Startup();
@@ -486,12 +486,12 @@ namespace DoremiEngine
                 }
                 else
                 {
-                    m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Failed");
+                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Configuration.dll - Failed");
                 }
             }
             else
             {
-                m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Failed");
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Configuration.dll - Failed");
             }
         }
     }
