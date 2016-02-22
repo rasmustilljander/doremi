@@ -45,6 +45,9 @@ namespace DoremiEngine
             int StartRepeatingAudioRecording = 228;
             int PlayRepeatableAudioRecording = 246;
             int ExitGame = 27;
+
+            // AI stuff
+            float AIJumpDistance = 3;
         };
         /**
         Reads and saves configuration from file. If another module needs configuration values they can use fucntions in this class to get them.

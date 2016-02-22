@@ -19,7 +19,7 @@ namespace DoremiEngine
 
         void AIModuleImplementation::Startup()
         {
-            m_context = new AIContext();
+            m_context = new AIContext(m_sharedContext.GetConfigurationModule());
             m_aStarSubModuleImpl = new AStarSubModuleImpl(*m_context);
             m_potentialFieldSubModuleImpl = new PotentialFieldSubModuleImpl(*m_context);
             m_context->AStarModule = m_aStarSubModuleImpl;

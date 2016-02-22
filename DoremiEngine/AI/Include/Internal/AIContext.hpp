@@ -16,8 +16,8 @@ namespace DoremiEngine
             AIModuleImplementation* Module;
             AStarSubModuleImpl* AStarModule;
             PotentialFieldSubModuleImpl* PFModule;
-            Configuration::ConfigurationModule* config;
-            AIContext(){};
+            Configuration::ConfigurationModule& config;
+            AIContext(Configuration::ConfigurationModule& p_config) : config(p_config){};
         };
     }
 }

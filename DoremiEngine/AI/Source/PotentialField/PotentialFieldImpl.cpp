@@ -2,6 +2,9 @@
 #include <Internal/SubModule/PotentialFieldSubModuleImpl.hpp>
 #include <Internal/HelperFunctions.hpp>
 
+// Config module
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
+
 #include <iostream>
 
 
@@ -9,7 +12,10 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(10), m_context(p_aiContext) {}
+        PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(10), m_context(p_aiContext)
+        {
+            m_jumpDistance = m_context.config.GetAllConfigurationValues().AIJumpDistance;
+        }
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(const std::vector<std::vector<PotentialFieldGridPoint>>& p_grid)
         {
@@ -232,6 +238,8 @@ namespace DoremiEngine
                     XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
                     // Use that position to set new unit position
                     float jumpDistance = 3;
+                    // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add the
+                    // jump
                     XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * jumpDistance), p_unitPosition.y,
                                                         newPosition.y + (static_cast<float>(sign<int>(y)) * jumpDistance));
                     // Find what field the new position is in, if any

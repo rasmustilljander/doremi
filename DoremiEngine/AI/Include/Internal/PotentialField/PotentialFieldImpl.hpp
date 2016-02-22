@@ -47,6 +47,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT3 m_center;
             float m_phermoneEffect;
             AIContext& m_context;
+            float m_jumpDistance;
         };
     }
 }
