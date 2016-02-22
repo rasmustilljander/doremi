@@ -138,12 +138,12 @@ void CS_main(ComputeShaderInput input)
                 {
                     // Add light to light list for transparent geometry.
                     t_AppendLight(i);
-                    o_AppendLight(i);
+                    //o_AppendLight(i);
 
                     if (!SphereInsidePlane(sphere, minPlane))
                     {
                         // Add light to light list for opaque geometry.
-                        //o_AppendLight(i);
+                        o_AppendLight(i);
                     }
 
                 
