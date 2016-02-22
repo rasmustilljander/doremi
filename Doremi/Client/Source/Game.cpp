@@ -111,20 +111,17 @@ namespace Doremi
         Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         Core::EntityFactory::StartupEntityFactory(sharedContext);
         Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
+
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
         m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, m_screenRes);
 
-        ////////////////Example only////////////////
         // Create manager
         Core::Manager* t_renderManager = new Core::GraphicManager(sharedContext);
-        // Manager* t_physicsManager = new ExampleManager(sharedContext);
-        // Manager* t_playerManager = new PlayerManager(sharedContext);
         Core::Manager* t_clientNetworkManager = new Core::ClientNetworkManager(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManagerClient(sharedContext);
         Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        // Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
         Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
         Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
         Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
@@ -133,34 +130,29 @@ namespace Doremi
         Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
         Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
-
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
-        // Add manager to list of managers
 
+        // Add manager to list of managers
         m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
         m_graphicalManagers.push_back(t_renderManager);
         Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
         m_graphicalManagers.push_back(t_skeletalAnimationManager);
-        // Add manager to list of managers
         m_graphicalManagers.push_back(t_skyBoxManager);
-        // m_managers.push_back(t_physicsManager);
-        // m_managers.push_back(t_playerManager);
         m_managers.push_back(t_audioManager);
         m_managers.push_back(t_clientNetworkManager);
         m_managers.push_back(t_rigidTransSyndManager);
         m_managers.push_back(t_pressureParticleManager);
-
         m_managers.push_back(t_lightManager);
         m_managers.push_back(t_jumpManager);
         m_managers.push_back(t_gravManager);
-        // m_managers.push_back(t_aiPathManager);
         m_managers.push_back(t_movementManager); // Must be after gravity/jump
         m_managers.push_back(t_charSyncManager); // Must be after movement
         m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
-
         m_graphicalManagers.push_back(t_extraDrainManager);
+
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
+
         // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
         // textures under in the same order
         t_textureNamesForMenuButtons.push_back("playbutton2.dds");
@@ -171,19 +163,14 @@ namespace Doremi
         t_textureNamesForMenuButtons.push_back("exitbutton2highlight.dds");
         MenuHandler::StartMenuHandler(sharedContext, m_screenRes);
         MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
+
         // initialize menudraw
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
 
-
-        // GenerateWorld(sharedContext);
-
         Core::TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
-        // GenerateWorldClientJawsTest(sharedContext);
         SpawnDebugWorld(sharedContext);
 
         // Remove later, needed to see something when we play solo cause of camera interactions with input
-        // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
-        // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
         Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
@@ -214,19 +201,7 @@ namespace Doremi
             t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140, position.z);
         }
 
-        // Create some enemies
-        for(size_t i = 0; i < 0; i++)
-        {
-            XMFLOAT3 position = DirectX::XMFLOAT3(-2 * (int)i + 0, 0 * (int)i + 4, -2 * (int)i + 15); //-2,6,60 -280, 150.0f, -85
-            XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-
-            int entityID = t_entityFactory.CreateEntity(Blueprints::RangedEnemyEntity, position, orientation);
-        }
-
         // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
-        // int entityID = t_entityFactory.CreateEntity(Blueprints::EnemySpawnerEntity);
-
-
         TIME_FUNCTION_STOP
     }
 
