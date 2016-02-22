@@ -79,12 +79,13 @@ namespace DoremiEngine
             /**
                 Recieve data from a specific socket, Adress is fetched and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut) = 0;
+            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut,
+                                               uint32_t& p_dataSizeReceived) = 0;
 
             /**
                 Recieve data from a specific socket and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle) = 0;
+            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, uint32_t& p_dataSizeReceived) = 0;
 
             /**
                 Create a socket and connects to a reliable standby socket

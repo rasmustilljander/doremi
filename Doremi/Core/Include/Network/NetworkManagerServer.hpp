@@ -20,24 +20,21 @@ namespace Doremi
 {
     namespace Core
     {
-        struct Connection;
-        struct NetMessage;
-
         /**
             Manager class for Server, contains the logic for the connection pattern
         */
-        class ServerNetworkManager : public Manager
+        class NetworkManagerServer : public Manager
         {
         public:
             /**
                 TODOCM doc
             */
-            ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODOCM doc
             */
-            virtual ~ServerNetworkManager();
+            virtual ~NetworkManagerServer();
 
             /**
                 TODOCM doc
@@ -48,27 +45,30 @@ namespace Doremi
             /**
                 Recieves reliable and unreliable messages
             */
-            void RecieveMessages(double p_dt);
+            void ReceiveMessages();
+
+            /**
+                Check for incomming connecting messages
+            */
+            void ReceiveConnectingMessages();
+
+            /**
+                Check for incomming connected messages
+            */
+            void ReceiveConnectedMessages();
+
 
             /**
                 Checks if adress exists in connections ( both port & IP)
             */
             bool AdressExist(const DoremiEngine::Network::Adress& m_Adress, Connection*& m_connection);
 
-            /**
-                Check for incomming unreliable messages
-            */
-            void RecieveUnreliableMessages();
 
             /**
                 TODOCM doc
             */
             void ReceiveLoadWorldMessage(NetMessage& p_message, Connection* p_connection);
 
-            /**
-                Check for incomming reliable messages
-            */
-            void RecieveReliableMessages();
 
             /**
                 Recieve a connection request message
@@ -190,6 +190,10 @@ namespace Doremi
                 TODOCM move to external place?
             */
             std::list<uint32_t> m_SavedPlayerIDs;
+
+            uint8_t m_maxConnectingMessagesPerFrame;
+
+            uint8_t m_maxConnectedMessagesPerFrame;
         };
     }
 }

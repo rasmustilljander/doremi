@@ -182,7 +182,7 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize)
+        bool Socket::RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
             SOCKADDR_IN Adress = {0};
 
@@ -216,7 +216,7 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveUDP(void* p_data, const uint32_t& p_dataSize)
+        bool Socket::RecieveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
             // Attempt to recieve data from socket
             int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, nullptr, nullptr);

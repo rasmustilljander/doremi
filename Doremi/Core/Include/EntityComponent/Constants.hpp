@@ -4,6 +4,7 @@
 #include <map>
 
 typedef uint32_t EntityID;
+typedef uint32_t PlayerID;
 
 // Maximum number of entities allowed in the game
 #define MAX_NUM_ENTITIES 100000

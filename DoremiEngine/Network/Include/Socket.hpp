@@ -67,12 +67,12 @@ namespace DoremiEngine
             /**
                 Recieve data using UDP and fetch adress
             */
-            bool RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize);
+            bool RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
             /**
                 Recieve data using UDP to bound socket
             */
-            bool RecieveUDP(void* p_data, const uint32_t& p_dataSize);
+            bool RecieveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
             /**
                 Send data to socket

@@ -79,7 +79,8 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) override;
+            bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo,
+                                    uint32_t& p_dataSizeReceived) override;
 
             /**
                 TODOCM docs

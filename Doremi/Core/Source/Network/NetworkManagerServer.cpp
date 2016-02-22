@@ -1,30 +1,23 @@
 // Project specific
-
-// Managers
-#include <Manager/Network/ServerNetworkManager.hpp>
+#include <Doremi/Core/Include/Network/NetworkManagerServer.hpp>
 
 // Modules
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 
-
-#include <Manager/Network/NetMessage.hpp>
-#include <Manager/Network/Connection.hpp>
+// Streamer
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
-// Compnoents
-#include <EntityComponent/Components/TransformComponent.hpp>
-
 // Handlers
-#include <PlayerHandlerServer.hpp>
-#include <InputHandlerServer.hpp>
-#include <FrequencyBufferHandler.hpp>
-#include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
-#include <EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 
-#include <NetworkEventSender.hpp>
+// Net messages
+#include <Doremi/Core/Include/Network/NetMessages.hpp>
+#include <Doremi/Core/Include/Network/NetworkMessagesServer.hpp>
 
-#include <SequenceMath.hpp>
+// Connections
+#include <Doremi/Core/Include/Network/NetworkConnectionsServer.hpp>
 
+// Standard
 #include <iostream> // TODOCM remove after test
 #include <vector>
 #include <algorithm>
@@ -34,13 +27,15 @@ namespace Doremi
 {
     namespace Core
     {
-        ServerNetworkManager::ServerNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        NetworkManagerServer::NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "ServerNetworkManager"),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(0.017f),
               m_timeoutInterval(3.0f),
               m_maxConnection(16),
-              m_nextSnapshotSequence(0)
+              m_nextSnapshotSequence(0),
+              m_maxConnectMessagesPerFrame(20),
+              m_maxConnectedMessagesPerFrame(10),
         {
             DoremiEngine::Network::NetworkModule& NetworkModule = p_sharedContext.GetNetworkModule();
 
@@ -61,77 +56,236 @@ namespace Doremi
             srand(time(NULL));
         }
 
-        ServerNetworkManager::~ServerNetworkManager() {}
+        NetworkManagerServer::~NetworkManagerServer() {}
 
-        void ServerNetworkManager::Update(double p_dt)
+        void NetworkManagerServer::Update(double p_dt)
         {
-            // Recieve Messages
-            RecieveMessages(p_dt);
+            // Receive Messages
+            ReceiveMessages();
 
             // Send Messages
-            SendMessages(p_dt);
+            SendMessages();
 
-            // Accept connections
+            // Check for connections TODOCM not sure if I want this if we going for UDP only
             CheckForConnections();
 
-            // Check for timed out connections
+            // Update timeouts
             UpdateTimeouts(p_dt);
         }
 
-        void ServerNetworkManager::RecieveMessages(double p_dt)
+        void NetworkManagerServer::ReceiveMessages()
         {
-            // For some incomming unreliable recieved messages we send one
-            RecieveUnreliableMessages();
+            // For some incomming connecting recieved messages we send one
+            ReceiveConnectingMessages();
 
-            // Recieve reliable messages from connected clients
-            RecieveReliableMessages();
+            // Recieve connecting messages from connected clients
+            ReceiveConnectedMessages();
         }
-        // TODOCM maybe check what their timer is befor sending a new message cause of DDOS etc
-        void ServerNetworkManager::RecieveUnreliableMessages()
+
+        void NetworkManagerServer::ReceiveConnectingMessages()
         {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-            NetMessage Message = NetMessage();
-            DoremiEngine::Network::Adress* IncommingAdress = NetworkModule.CreateAdress(); // TODOCM dont forget to remove this one
+            // Get Nework module
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+
+            // Create adress we can use, we don't know the incomming adress before we receive message
+            // We delete this end of function
+            DoremiEngine::Network::Adress* t_incommingAdress = t_networkModule.CreateAdress();
+
+            // Create buffer NetworkMessage
+            NetMessageBuffer t_networkMessage = NetMessageBuffer();
+
+            // How much data we received
+            uint32_t t_dataSizeReceived = 0;
 
             // Check for incomming messages
-            while(NetworkModule.RecieveUnreliableData(&Message, sizeof(Message), m_unreliableSocketHandle, IncommingAdress))
+            size_t t_NumOfMessagesReceived = 0;
+            while(t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), m_unreliableSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
+                  t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
             {
-                std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
+                // Increment number of messages received
+                t_NumOfMessagesReceived++;
 
-                switch(Message.MessageID)
+                // If we don't have of that size
+                if(t_dataSizeReceived != sizeof(NetMessageConnectingFromClient))
                 {
-                    case MessageID::CONNECT_REQUEST:
-
-                        std::cout << "Connection Request." << std::endl; // TODOCM logg instead
-
-                        // Recieve a connnection request message and interpet
-                        RecieveConnectionRequest(Message, *IncommingAdress);
-
-                        break;
-                    case MessageID::VERSION_CHECK:
-
-                        std::cout << "Version Check" << std::endl; // TODOCM logg instead
-
-                        // Recieve a version check message and interpet
-                        RecieveVersionCheck(Message, *IncommingAdress);
-
-                        break;
-                    case MessageID::DISCONNECT:
-
-                        std::cout << "Disconnect" << std::endl; // TODOCM logg instead
-
-                        // Recieve a disconnect message and interpet
-                        RecieveDisconnect(Message, *IncommingAdress);
-
-                        break;
-                    default:
-                        break;
+                    // Null message and conitinue
+                    t_networkMessage = NetMessageBuffer();
+                    continue;
                 }
 
-                Message = NetMessage();
+                std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
+                NetMessageConnectingFromClient& t_netMessageConnecting = *reinterpret_cast<NetMessageConnectingFromClient*>(&t_networkMessage);
+
+                // Switch on what kind of message
+                switch(t_netMessageConnecting.MessageID)
+                {
+                    case SendMessageIDFromClient::CONNECTION_REQUEST:
+                    {
+                        std::cout << "Connection Request." << std::endl; // TODOCM logg instead
+                        NetworkMessagesServer::ReceiveConnectionRequest(t_netMessageConnecting, *t_incommingAdress);
+
+                        break;
+                    }
+                    case SendMessageIDFromClient::VERSION_CHECK:
+                    {
+                        std::cout << "Version Check" << std::endl; // TODOCM logg instead
+                        NetworkMessagesServer::ReceiveVersionCheck(t_netMessageConnecting, *t_incommingAdress);
+
+                        break;
+                    }
+                    case SendMessageIDFromClient::DISCONNECT:
+                    {
+                        std::cout << "Disconnect" << std::endl; // TODOCM logg instead
+                        NetworkMessagesServer::ReceiveDisconnect(t_netMessageConnecting, *t_incommingAdress);
+
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+
+                // Reset message
+                t_networkMessage = NetMessageBuffer();
             }
 
-            delete IncommingAdress;
+            // Delete the adress holder
+            delete t_incommingAdress;
+        }
+
+        void NetworkManagerServer::ReceiveConnectedMessages()
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+
+            // For each connection
+            auto& t_connectedClientConnections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
+            for(auto& t_connection : t_connectedClientConnections)
+            {
+                // Create message
+                NetMessageBuffer t_message = NetMessageBuffer();
+
+                // Max message counter
+                uint32_t t_messageCounter = 0;
+
+                // If we're connected
+                if(t_connection.second->ConnectionState >= ClientConnectionStateFromServer::CONNECTED)
+                {
+                    // While we have something to receive and still less then max messages per frame
+                    while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle) &&
+                          t_messageCounter < m_maxConnectedMessagesPerFrame)
+                    {
+                        NetMessageConnectedFromClient& t_connectedMessage = *reinterpret_cast<NetMessageConnectedFromClient*>(&t_message);
+
+                        // Interpet message based on type
+                        switch(t_connectedMessage.MessageID)
+                        {
+                            case SendMessageIDFromClient::CONNECTED:
+                            {
+                                NetworkMessagesServer::ReceiveConnectedMessage(t_connectedMessage, t_connection.second);
+
+                                break;
+                            }
+                            case SendMessageIDFromClient::LOAD_WORLD:
+                            {
+                                NetworkMessagesServer::ReceiveLoadWorldMessage(t_connectedMessage, t_connection.second);
+
+                                break;
+                            }
+                            case SendMessageIDFromClient::IN_GAME:
+                            {
+                                NetworkMessagesServer::ReceiveInGameMessage(t_connectedMessage, t_connection.second);
+
+                                break;
+                            }
+                            default:
+                            {
+                                break;
+                            }
+                        }
+
+                        // Reset ping timer
+                        iter->second->LastResponse = 0;
+
+                        // Reset message
+                        t_message = NetMessageBuffer();
+                    }
+                }
+            }
+        }
+
+        void NetworkManagerServer::UpdateTimeouts(double t_dt)
+        {
+            // Check all connected connections
+            {
+                auto& t_connectedConnections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
+                auto t_connection = t_connectedConnections.begin();
+
+                while(t_connection != t_connectedConnections.end())
+                {
+                    // Update timer
+                    t_connection->second->LastResponse += t_dt;
+
+                    // If exceed timout
+                    if(t_connection->second->LastResponse >= m_timeoutInterval)
+                    {
+                        // Send disconnection message
+                        NetworkMessagesServer::SendDisconnect(*t_connection->first, "Timeout");
+
+                        // Remove socket
+                        m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
+
+                        // Remove and save player if it exists, it should
+                        static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(iter->second->PlayerID);
+
+                        // Delete the memory here
+                        delete t_connection->first;
+                        delete t_connection->second;
+
+                        // Erase from map
+                        t_connection = t_connectedConnections.erase(t_connection);
+                    }
+                    else
+                    {
+                        // Else just increment
+                        t_connection++;
+                    }
+                }
+            }
+
+            // Check all connecting connections
+            {
+                auto& t_connectingConnections = NetworkConnectionsServer::GetInstance()->GetConnectingClientConnections();
+                auto t_connection = t_connectingConnections.begin();
+
+                while(t_connection != t_connectingConnections.end())
+                {
+                    // Update timer
+                    t_connection->second->LastResponse += t_dt;
+
+                    // If exceed timout
+                    if(t_connection->second->LastResponse >= m_timeoutInterval)
+                    {
+                        // Send disconnection message
+                        NetworkMessagesServer::SendDisconnect(*t_connection->first, "Timeout");
+
+                        // Remove socket
+                        m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
+
+                        // Delete the memory here
+                        delete t_connection->first;
+                        delete t_connection->second;
+
+                        // Erase from map
+                        t_connection = t_connectingConnections.erase(t_connection);
+                    }
+                    else
+                    {
+                        // Else just increment
+                        t_connection++;
+                    }
+                }
+            }
         }
 
         void ServerNetworkManager::ReceiveLoadWorldMessage(NetMessage& p_message, Connection* p_connection)
@@ -225,55 +379,6 @@ namespace Doremi
             frequencyHandler->ReadNewFrequencies(Streamer, sizeof(p_message.Data), bytesRead);
         }
 
-        void ServerNetworkManager::RecieveReliableMessages()
-        {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-
-            // TODOCM make some break on the inner while, because if we're overflowed we will never get out
-            // For each connection
-            for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
-            {
-                if(iter->second->ConnectionState >= ConnectionState::CONNECTED)
-                {
-                    NetMessage Message = NetMessage();
-
-                    // Check if we got any data
-                    // TODOCM maybe we want to loop to get all data? or not..
-                    while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), iter->second->ReliableSocketHandle))
-                    {
-                        // std::cout << "Recieved reliable messsage." << std::endl;
-                        // TODOCM logg instead
-                        switch(Message.MessageID)
-                        {
-                            case MessageID::CONNECTED:
-                                // Irellevant for now
-                                // Add code here
-                                break;
-
-                            case MessageID::LOAD_WORLD:
-
-                                // Add code here
-                                ReceiveLoadWorldMessage(Message, iter->second);
-                                break;
-
-                            case MessageID::INPUT:
-
-                                // Interpet n' input message
-                                RecieveInputMessage(Message, iter->second);
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                        // TODOCM interpet data
-                        iter->second->LastResponse = 0;
-
-                        Message = NetMessage();
-                    }
-                }
-            }
-        }
 
         bool ServerNetworkManager::AdressExist(const DoremiEngine::Network::Adress& m_Adress, Connection*& m_connection)
         {
@@ -736,41 +841,6 @@ namespace Doremi
 
             // Delete socketadress
             delete OutAdress;
-        }
-
-        void ServerNetworkManager::UpdateTimeouts(double t_dt)
-        {
-            std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin();
-
-            while(iter != m_connections.end())
-            {
-                // Update timer
-                iter->second->LastResponse += t_dt;
-
-                // Check if exceeded timeout
-                if(iter->second->LastResponse >= m_timeoutInterval)
-                {
-                    // Send disconnection message
-                    SendDisconnect(*iter->first, "Timeout");
-
-                    m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
-
-                    // Remove and save player if it exists
-                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(iter->second->PlayerID);
-
-                    // Delete the memory here
-                    delete iter->first;
-                    delete iter->second;
-
-                    // Remove this item in map, return will be on next object
-                    iter = m_connections.erase(iter);
-                }
-                else
-                {
-                    // Move to next object
-                    ++iter;
-                }
-            }
         }
     }
 }
