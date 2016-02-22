@@ -123,7 +123,6 @@ namespace Doremi
                                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(currentActor->GetPosition());
                             if(newField != nullptr && newField != field)
                             {
-                                std::cout << "Changing Field" << std::endl;
                                 field->RemoveActor(currentActor);
                                 newField->AddActor(currentActor);
                                 EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field = newField;

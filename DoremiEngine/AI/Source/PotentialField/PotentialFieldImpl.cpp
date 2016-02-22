@@ -266,7 +266,6 @@ namespace DoremiEngine
             // if the wanted position is outside the current field we should change field
             if(WhatGridPosAmIOn(XMFLOAT3(highestChargedPos.x, p_unitPosition.y, highestChargedPos.y)).x == -1)
             {
-                std::cout << "time to change field!" << std::endl;
                 p_inField = false;
             }
             return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
