@@ -29,7 +29,7 @@ namespace Doremi
                 m_name = p_name;
 
                 // Set success variable
-                bool success = false;
+                bool success;
 
                 // Open/CreateMutex
                 success = InitializeExternalMutex();

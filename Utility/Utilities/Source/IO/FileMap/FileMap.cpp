@@ -23,7 +23,7 @@ namespace Doremi
             {
                 m_name = p_name;
                 m_fileMapSize = p_fileMapSize;
-                bool success = false;
+                bool success;
 
                 success = OpenFileMap();
                 if(!success)
