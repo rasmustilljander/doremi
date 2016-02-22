@@ -184,7 +184,7 @@ namespace Doremi
     {
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
-        Core::LevelLoaderClient t_levelLoader = LevelLoaderClient(sharedContext);
+        Core::LevelLoaderClient t_levelLoader(sharedContext);
 
         t_levelLoader.LoadLevel("Levels/IntroScene.drm");
 
