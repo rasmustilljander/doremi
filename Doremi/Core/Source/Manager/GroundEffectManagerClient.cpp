@@ -50,6 +50,7 @@ namespace Doremi
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
                     m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
                     m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
+                    // Add us a shape to the arbitrary body thingy
                     for(size_t j = 0; j < newPositions.size(); j++)
                     {
                         m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
