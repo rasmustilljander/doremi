@@ -8,9 +8,15 @@ namespace DoremiEngine
 {
     namespace Physics
     {
-        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils), m_meshCooker(new MeshCooker(p_utils)) {}
-
         RigidBodyManagerImpl::~RigidBodyManagerImpl() { delete m_meshCooker; }
+        RigidBodyManagerImpl::RigidBodyManagerImpl(InternalPhysicsUtils& p_utils) : m_utils(p_utils), m_meshCooker(new MeshCooker(p_utils))
+        {
+            m_triggerCounter = 0;
+            for(size_t i = 0; i < 100; i++)
+            {
+                m_bigBodyTriggerIndices[i] = false;
+            }
+        }
 
         int RigidBodyManagerImpl::AddBoxBodyDynamic(int p_id, XMFLOAT3 p_position, XMFLOAT4 p_orientation, XMFLOAT3 p_dims, int p_materialID)
         {
@@ -565,6 +571,12 @@ namespace DoremiEngine
                         // PxSphereGeometry newGeometry = PxSphereGeometry((mergeDistance + 1) / (geometry.radius * 0.8));
                         PxSphereGeometry newGeometry = PxSphereGeometry(newWidth);
                         newShape = m_utils.m_physics->createShape(newGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), false, PxShapeFlag::eTRIGGER_SHAPE);
+                        m_bigBodyTriggerIndices[m_triggerCounter] = true;
+                        m_triggerCounter++;
+                        if(m_triggerCounter >= m_maxTriggers)
+                        {
+                            m_triggerCounter = 0;
+                        }
                         // Set its actor space position to parameter. This works since the actor is in 0,0,0 so actor space is same as world space
                         newShape->setLocalPose(PxTransform(newPosition));
                         // Attach shape to body
