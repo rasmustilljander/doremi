@@ -86,5 +86,9 @@ namespace Doremi
         Core::ScreenSpaceDrawer* m_screenSpaceDrawer;
 
         DirectX::XMFLOAT2 m_screenRes;
+
+    protected:
+        void AddToManagerList(Core::Manager* p_manager);
+        void AddToGraphicalManagerList(Core::Manager* p_manager);
     };
 }

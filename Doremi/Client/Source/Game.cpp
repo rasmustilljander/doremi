@@ -96,59 +96,44 @@ namespace Doremi
     void GameMain::Initialize()
     {
         TIME_FUNCTION_START
+
+        using namespace Core;
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
         EventHandlerClient::StartupEventHandlerClient();
-        Core::EntityHandlerClient::StartupEntityHandlerClient(sharedContext);
-        Core::PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
-        Core::InterpolationHandler::StartInterpolationHandler(sharedContext);
-        Core::AudioHandler::StartAudioHandler(sharedContext);
-        Core::StateHandler::StartStateHandler(sharedContext);
-        Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
-        Core::CameraHandler::StartCameraHandler(sharedContext);
-        Core::PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
-        Core::EntityFactory::StartupEntityFactory(sharedContext);
-        Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
+        EntityHandlerClient::StartupEntityHandlerClient(sharedContext);
+        PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
+        InterpolationHandler::StartInterpolationHandler(sharedContext);
+        AudioHandler::StartAudioHandler(sharedContext);
+        StateHandler::StartStateHandler(sharedContext);
+        EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+        CameraHandler::StartCameraHandler(sharedContext);
+        PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
+        EntityFactory::StartupEntityFactory(sharedContext);
+        PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
-        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, m_screenRes);
+        m_screenSpaceDrawer = new ScreenSpaceDrawer(sharedContext, m_screenRes);
 
-        // Create manager
-        Core::Manager* t_renderManager = new Core::GraphicManager(sharedContext);
-        Core::Manager* t_clientNetworkManager = new Core::ClientNetworkManager(sharedContext);
-        Core::Manager* t_movementManager = new Core::MovementManagerClient(sharedContext);
-        Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
-        Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
-        Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
-        Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
-        Core::Manager* t_pressureParticleGraphicManager = new Core::PressureParticleGraphicManager(sharedContext);
-        Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
-        Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
-        Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
-        Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
-        Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
-
-        // Add manager to list of managers
-        m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
-        m_graphicalManagers.push_back(t_renderManager);
-        Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
-        m_graphicalManagers.push_back(t_skeletalAnimationManager);
-        m_graphicalManagers.push_back(t_skyBoxManager);
-        m_managers.push_back(t_audioManager);
-        m_managers.push_back(t_clientNetworkManager);
-        m_managers.push_back(t_rigidTransSyndManager);
-        m_managers.push_back(t_pressureParticleManager);
-        m_managers.push_back(t_lightManager);
-        m_managers.push_back(t_jumpManager);
-        m_managers.push_back(t_gravManager);
-        m_managers.push_back(t_movementManager); // Must be after gravity/jump
-        m_managers.push_back(t_charSyncManager); // Must be after movement
-        m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
-        m_graphicalManagers.push_back(t_extraDrainManager);
+        // Create manager & add manager to list of managers
+        AddToGraphicalManagerList(new PressureParticleGraphicManager(sharedContext));
+        AddToGraphicalManagerList(new GraphicManager(sharedContext));
+        AddToGraphicalManagerList(new SkeletalAnimationCoreManager(sharedContext));
+        AddToGraphicalManagerList(new SkyBoxManager(sharedContext));
+        AddToManagerList(new AudioManager(sharedContext));
+        AddToManagerList(new ClientNetworkManager(sharedContext));
+        AddToManagerList(new RigidTransformSyncManager(sharedContext));
+        AddToManagerList(new PressureParticleManager(sharedContext));
+        AddToManagerList(new LightManager(sharedContext));
+        AddToManagerList(new JumpManager(sharedContext));
+        AddToManagerList(new GravityManager(sharedContext));
+        AddToManagerList(new MovementManagerClient(sharedContext)); // Must be after gravity/jump
+        AddToManagerList(new CharacterControlSyncManager(sharedContext)); // Must be after movement
+        AddToManagerList(new TriggerManager(sharedContext)); // TODOKO should only be needed on server
+        AddToGraphicalManagerList(new ExtraDrainSyncManager(sharedContext));
 
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
@@ -167,11 +152,11 @@ namespace Doremi
         // initialize menudraw
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
 
-        Core::TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
+        TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         BuildWorld(sharedContext);
 
         // Remove later, needed to see something when we play solo cause of camera interactions with input
-        Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
+        InputHandlerClient* inputHandler = new InputHandlerClient(sharedContext);
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
@@ -179,6 +164,10 @@ namespace Doremi
 
         TIME_FUNCTION_STOP
     }
+
+    void GameMain::AddToManagerList(Manager* p_manager) { m_managers.push_back(p_manager); }
+
+    void GameMain::AddToGraphicalManagerList(Manager* p_manager) { m_graphicalManagers.push_back(p_manager); }
 
     void GameMain::BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
