@@ -46,7 +46,7 @@ void localMain()
 {
     try
     {
-        Doremi::GameMain gameMain = Doremi::GameMain();
+        Doremi::GameMain gameMain;
         gameMain.Start();
     }
     catch(const std::exception& e)
