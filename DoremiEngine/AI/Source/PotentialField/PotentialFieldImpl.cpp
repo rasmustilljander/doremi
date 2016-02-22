@@ -1,6 +1,10 @@
 #include <Internal/PotentialField/PotentialFieldImpl.hpp>
+#include <Internal/SubModule/PotentialFieldSubModuleImpl.hpp>
+#include <Internal/HelperFunctions.hpp>
 
 #include <iostream>
+
+
 namespace DoremiEngine
 {
     namespace AI
@@ -111,8 +115,8 @@ namespace DoremiEngine
             float gridQuadHeight = m_height / static_cast<float>(m_grid[0].size());
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
-            position2D.x -= bottomLeft.x - 0.5f;
-            position2D.y -= bottomLeft.y - 0.5f;
+            position2D.x -= bottomLeft.x;
+            position2D.y -= bottomLeft.y;
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
@@ -136,8 +140,8 @@ namespace DoremiEngine
             return returnPosition;
         }
 
-        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition,
-                                                                    const PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
+        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField,
+                                                                    PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
             using namespace DirectX;
             // If there is no positive actor/goal to go to simply dont move!
@@ -154,8 +158,8 @@ namespace DoremiEngine
 
             // Offset given position with the fields offset to take it back to origo so we are able to calculate which quad we are in
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width / 2.0f, m_center.z - m_height / 2.0f);
-            position2D.x -= bottomLeft.x - 0.5f;
-            position2D.y -= bottomLeft.y - 0.5f;
+            position2D.x -= bottomLeft.x;
+            position2D.y -= bottomLeft.y;
 
             int quadNrX = static_cast<int>(std::floor(position2D.x / gridQuadWidth)); // What quad in x and y
             int quadNrY = static_cast<int>(std::floor(position2D.y / gridQuadHeight));
@@ -175,7 +179,7 @@ namespace DoremiEngine
             // Check for special cases
             size_t length = quadsToCheck.size();
             XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // if we are outside the field we should walk to center
-            float highestCharge;
+            float highestCharge = 0;
             if(quadNrX >= 0 && quadNrX < m_grid.size() && quadNrY >= 0 && quadNrY < m_grid[0].size())
             {
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
@@ -195,10 +199,10 @@ namespace DoremiEngine
             {
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
+                float quadCharge;
                 if(x >= 0 && x < m_grid.size() && y >= 0 && y < m_grid[0].size() && !m_grid[x][y].occupied)
                 {
                     // The quad exists!
-                    float quadCharge;
 
                     // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
                     // This will probably never be used...
@@ -223,10 +227,40 @@ namespace DoremiEngine
                     // Here we create a imaginary quad and checks if that quad have a greater charge than the last,
                     // if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
                     // transition
+
+                    // FInd the position the grid would have had
                     XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
+                    // Use that position to set new unit position
+                    float jumpDistance = 3;
+                    XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * jumpDistance), p_unitPosition.y,
+                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * jumpDistance));
+                    // Find what field the new position is in, if any
+                    PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(newUnitPosition));
+                    if(newField != nullptr)
+                    {
+                        // if a field was found check what grid point in that field we are in
+                        XMINT2 gridPoint = newField->WhatGridPosAmIOn(newUnitPosition);
+                        // if for some wierd reason we are in the field but not in a grid point screw it...
+                        if(gridPoint.x != -1)
+                        {
+                            // calculate a new charge from the new field
+                            quadCharge = newField->CalculateCharge(gridPoint.x, gridPoint.y, p_currentActor);
+                            // if higher set it as the new high
+                            if(quadCharge > highestCharge)
+                            {
+                                highestCharge = quadCharge;
+                                highestChargedPos = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
+                            }
+                        }
+                    }
                 }
             }
-
+            // if the wanted position is outside the current field we should change field
+            if(WhatGridPosAmIOn(XMFLOAT3(highestChargedPos.x, p_unitPosition.y, highestChargedPos.y)).x == -1)
+            {
+                std::cout << "time to change field!" << std::endl;
+                p_inField = false;
+            }
             return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
         }
 

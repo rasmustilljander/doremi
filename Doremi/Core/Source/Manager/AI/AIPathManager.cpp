@@ -114,8 +114,21 @@ namespace Doremi
                                 currentActor->UpdatePhermoneTrail(currentActor->GetPrevGridPos());
                             }
                         }
-
-                        desiredPos = field->GetAttractionPosition(unitPos, currentActor, false);
+                        bool inField;
+                        desiredPos = field->GetAttractionPosition(unitPos, inField, currentActor, false);
+                        if(!inField)
+                        {
+                            // We are not in the current field, this means we are in another field. Lets change!
+                            DoremiEngine::AI::PotentialField* newField =
+                                m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(currentActor->GetPosition());
+                            if(newField != nullptr && newField != field)
+                            {
+                                std::cout << "Changing Field" << std::endl;
+                                field->RemoveActor(currentActor);
+                                newField->AddActor(currentActor);
+                                EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field = newField;
+                            }
+                        }
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
                     // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact

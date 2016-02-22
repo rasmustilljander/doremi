@@ -24,13 +24,16 @@ namespace DoremiEngine
             void AddActor(PotentialFieldActor* p_newActor) override;
             void RemoveActor(PotentialFieldActor* p_newActor) override;
             DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition);
-            DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, const PotentialFieldActor* p_currentActor = nullptr,
-                                                    const bool& p_staticCheck = true) override;
+            DirectX::XMFLOAT2 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField,
+                                                    PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) override;
             DirectX::XMFLOAT2 GetGridQuadPosition(const int& p_x, const int& p_z) override;
+
+            // Not in interface
+            float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
 
         private:
             // Help functions
-            float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);
+
             bool AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position);
             float GetChargeInfluenceFromActor(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actor);
             float GetSpecialInfluenceBetweenActors(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actorToCheck,

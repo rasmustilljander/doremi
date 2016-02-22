@@ -1,8 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <DirectXMath.h>
-#define _USE_MATH_DEFINES // TODOXX Might be dangerous to define
-#include <math.h>
+
 namespace Doremi
 {
     namespace Core
