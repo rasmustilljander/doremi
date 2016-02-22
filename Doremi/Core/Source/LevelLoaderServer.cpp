@@ -102,7 +102,8 @@ namespace Doremi
 
         bool LevelLoaderServer::BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer)
         {
-            bool r_shouldCookStaticPhysics = true;
+            bool r_shouldCookStaticPhysics = false;
+
             bool t_builtPhysics = false;
 
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
@@ -115,6 +116,11 @@ namespace Doremi
             transComp->rotation = m_transforms[meshCoupling.transformName].rotation;
             transComp->scale = m_transforms[meshCoupling.transformName].scale;
 
+            // Check if we should cook meshes
+            if(!transformationData.attributes.isBBox && transformationData.attributes.isCollider)
+            {
+                r_shouldCookStaticPhysics = true;
+            }
 
             // If we are AI ground
             if(transformationData.attributes.isAIground)
