@@ -108,7 +108,6 @@ namespace Doremi
         InterpolationHandler::StartInterpolationHandler(sharedContext);
         AudioHandler::StartAudioHandler(sharedContext);
         StateHandler::StartStateHandler(sharedContext);
-        EntityHandler& t_entityHandler = EntityHandler::GetInstance();
         CameraHandler::StartCameraHandler(sharedContext);
         PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         EntityFactory::StartupEntityFactory(sharedContext);
@@ -154,9 +153,6 @@ namespace Doremi
 
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         BuildWorld(sharedContext);
-
-        // Remove later, needed to see something when we play solo cause of camera interactions with input
-        InputHandlerClient* inputHandler = new InputHandlerClient(sharedContext);
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
