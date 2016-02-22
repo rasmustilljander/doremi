@@ -7,7 +7,7 @@ using namespace Doremi::Utilities::IO;
 class FileMapTest : public testing::Test
 {
 public:
-    FileMapTest() {}
+    FileMapTest() : m_fileMap(nullptr) {}
     virtual ~FileMapTest() {}
 
     FileMap* m_fileMap;
