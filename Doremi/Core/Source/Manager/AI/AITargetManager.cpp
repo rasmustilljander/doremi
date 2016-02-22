@@ -20,6 +20,9 @@
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RayCastManager.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+
+// Config
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 // Third party
 #include <DirectXMath.h>
 #include <iostream>
@@ -27,7 +30,10 @@ namespace Doremi
 {
     namespace Core
     {
-        AITargetManager::AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AITargetManager") {}
+        AITargetManager::AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AITargetManager")
+        {
+            m_playerMovementImpact = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().AIAimOffset;
+        }
 
         AITargetManager::~AITargetManager() {}
 
@@ -152,7 +158,7 @@ namespace Doremi
             // calculate direction again...
             XMVECTOR direction = playerPos - AIPos; // Might be the wrong way
             direction = XMVector3Normalize(direction);
-            direction += XMVector3Normalize(XMLoadFloat3(&playerMovement->movement));
+            direction += XMVector3Normalize(XMLoadFloat3(&playerMovement->movement) * m_playerMovementImpact);
             direction = XMVector3Normalize(direction);
             XMFLOAT3 directionFloat;
             XMStoreFloat3(&directionFloat, direction);

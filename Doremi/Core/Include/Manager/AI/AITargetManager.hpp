@@ -13,6 +13,8 @@ namespace Doremi
         private:
             // Helper functions
             void FireAtEntity(const size_t& p_entityID, const size_t& p_enemyID, const float& p_distance);
+
+            float m_playerMovementImpact;
         };
     }
 }

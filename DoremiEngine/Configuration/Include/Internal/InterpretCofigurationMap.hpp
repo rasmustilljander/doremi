@@ -85,7 +85,10 @@ namespace DoremiEngine
             if(p_mapToInterpret.count("AIJumpDistance"))
             {
                 o_info.AIJumpDistance = std::stof(p_mapToInterpret.at("AIJumpDistance"));
-
+            }
+            if(p_mapToInterpret.count("AIAimOffset"))
+            {
+                o_info.AIAimOffset = std::stof(p_mapToInterpret.at("AIAimOffset"));
             }
         }
 
@@ -112,7 +115,7 @@ namespace DoremiEngine
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
             returnMap["AIJumpDistance"] = std::to_string(p_info.AIJumpDistance);
-
+            returnMap["AIAimOffset"] = std::to_string(p_info.AIAimOffset);
             return returnMap;
         }
     }

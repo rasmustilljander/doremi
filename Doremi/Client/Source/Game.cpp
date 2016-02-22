@@ -186,6 +186,7 @@ namespace Doremi
 
         t_levelLoader.LoadLevel("Levels/IntroScene.drm");
 
+
         // Create platforms
         for(size_t i = 0; i < 1; i++)
         {

@@ -47,7 +47,8 @@ namespace DoremiEngine
             int ExitGame = 27;
 
             // AI stuff
-            float AIJumpDistance = 3;
+            float AIJumpDistance = 3.0f;
+            float AIAimOffset = 0.3f;
         };
         /**
         Reads and saves configuration from file. If another module needs configuration values they can use fucntions in this class to get them.
