@@ -10,10 +10,11 @@ namespace DoremiEngine
         {
             MeshRenderData() : diffuseTexture(nullptr), samplerState(nullptr), vertexData(nullptr), indexData(nullptr) {}
             MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture,
-                           ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount)
+                ID3D11Buffer* p_materialData,ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount)
                 : worldMatrix(p_worldMatrix),
                   diffuseTexture(p_texture),
                   glowTexture(p_glowtexture),
+                  materialData(p_materialData),
                   samplerState(p_samplerState),
                   vertexData(p_vertexData),
                   vertexCount(p_vertexCount),
@@ -26,7 +27,7 @@ namespace DoremiEngine
             }
             MeshRenderData(DirectX::XMFLOAT4X4 p_worldMatrix, ID3D11ShaderResourceView* p_texture, ID3D11ShaderResourceView* p_glowtexture,
                            ID3D11SamplerState* p_samplerState, ID3D11Buffer* p_vertexData, const size_t& p_vertexCount, ID3D11Buffer* p_indexData,
-                           const size_t& p_indexCount)
+                           const size_t& p_indexCount, ID3D11Buffer* p_materialData)
                 : worldMatrix(p_worldMatrix),
                   diffuseTexture(p_texture),
                   glowTexture(p_glowtexture),
@@ -34,11 +35,13 @@ namespace DoremiEngine
                   vertexData(p_vertexData),
                   vertexCount(p_vertexCount),
                   indexData(p_indexData),
-                  indexCount(p_indexCount)
+                  indexCount(p_indexCount),
+                  materialData(p_materialData)
             {
             }
             ID3D11Buffer* indexData;
             ID3D11Buffer* vertexData;
+            ID3D11Buffer* materialData;
             ID3D11ShaderResourceView* diffuseTexture;
             ID3D11ShaderResourceView* glowTexture;
             ID3D11SamplerState* samplerState;

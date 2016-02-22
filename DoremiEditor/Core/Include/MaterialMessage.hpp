@@ -8,12 +8,13 @@ namespace DoremiEditor
     {
         struct MaterialMessage
         {
-            char nodeName[MAX_NAME_SIZE];
-            char diffuseTexturePath[MAX_NAME_SIZE];
-            char glowTexturePath[MAX_NAME_SIZE];
-            char specTexturePath[MAX_NAME_SIZE];
-            char bumpTexturePath[MAX_NAME_SIZE];
+            char* nodeName;
+            char* diffuseTexturePath;
+            char* glowTexturePath;
+            char* specTexturePath;
+            char* bumpTexturePath;
             int type;
+            float pad[2];
             MaterialData data;
         };
     }

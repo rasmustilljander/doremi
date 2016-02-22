@@ -10,6 +10,7 @@
 #include <DoremiEditor/Core/Include/LightData.hpp>
 #include <DoremiEditor/Core/Include/MeshData.hpp>
 #include <DoremiEditor/Core/Include/MaterialData.hpp>
+#include <DoremiEditor/Core/Include/MaterialMessage.hpp>
 
 namespace DoremiEngine
 {
@@ -28,31 +29,6 @@ namespace Doremi
 
     namespace Core
     {
-        // Loads of structs
-
-        // struct MaterialData
-        //{
-        //    MaterialData()
-        //    {
-        //        mapMasks = 0;
-        //        diffuse = 0;
-        //        color[0] = color[1] = color[2] = 0.5f;
-        //        ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
-        //        specColor[0] = specColor[1] = specColor[2] = 0.0f;
-        //        specCosine = specEccentricity = specRollOff = 0;
-        //    }
-        //    int mapMasks;
-        //    float diffuse;
-        //    float color[3];
-        //    float ambColor[3];
-        //    float specColor[3];
-        //    float specCosine;
-        //    float specEccentricity;
-        //    float specRollOff;
-        //    char* diffuseTextureName;
-        //    char* glowTextureName;
-        //};
-
 
         struct ObjectCouplingInfo
         {
@@ -96,8 +72,7 @@ namespace Doremi
 
             std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!
 
-            // std::map<std::string, std::string> m_materials;
-            std::map<std::string, DoremiEngine::Graphic::MaterialData> m_materials;
+            std::map<std::string, DoremiEditor::Core::MaterialMessage> m_materials;
 
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;

@@ -165,34 +165,56 @@ namespace DoremiEngine
             newMaterial->SetMaterialName(p_fileName);
             newMaterial->SetDiffuseTexture(newTexture);
             newMaterial->SetGlowTexture(nullptr);
+            newMaterial->SetMaterialData(nullptr);
             newMaterial->SetSamplerState(m_directX.GetDefaultSamplerState());
             m_materialInfo[p_fileName] = newMaterial;
             return newMaterial;
         }
 
-        MaterialInfo* MeshManagerImpl::BuildMaterialInfo(MaterialData p_materialData)
+        MaterialInfo* MeshManagerImpl::BuildMaterialInfo(DoremiEditor::Core::MaterialMessage p_materialData)
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             MaterialInfo* newMaterial = new MaterialInfoImpl();
-            std::string diffuseFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.diffuseTextureName;
-            std::string glowFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.glowTextureName;
+            std::string diffuseFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.diffuseTexturePath;
+            std::string glowFileLocation = m_graphicContext.m_workingDirectory + "Textures/" + p_materialData.glowTexturePath;
             ModelLoader& t_loader = *ModelLoader::GetInstance();
             ID3D11ShaderResourceView* newDiffuseTexture = t_loader.LoadTexture(diffuseFileLocation, m_directX.GetDevice());
             ID3D11ShaderResourceView* newGlowTexture = t_loader.LoadTexture(glowFileLocation, m_directX.GetDevice());
-            newMaterial->SetMaterialName(p_materialData.diffuseTextureName);
+
+            ID3D11Buffer* materialData;
+            D3D11_BUFFER_DESC materialBufferDesc;
+            ZeroMemory(&materialBufferDesc, sizeof(materialBufferDesc));
+            materialBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+            materialBufferDesc.ByteWidth = sizeof(p_materialData.data);
+            materialBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+            materialBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            materialBufferDesc.MiscFlags = 0;
+            materialBufferDesc.StructureByteStride = 0;
+            m_directX.GetDevice()->CreateBuffer(&materialBufferDesc, NULL, &materialData);
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_directX.GetDeviceContext()->Map(materialData, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &p_materialData.data, sizeof(p_materialData.data));
+            m_directX.GetDeviceContext()->Unmap(materialData, NULL);
+
+            m_directX.GetDeviceContext()->PSSetConstantBuffers(1, 1 , &materialData);
+
+            newMaterial->SetMaterialName(p_materialData.diffuseTexturePath);
+            newMaterial->SetMaterialData(materialData);
             newMaterial->SetDiffuseTexture(newDiffuseTexture);
             newMaterial->SetGlowTexture(newGlowTexture);
             newMaterial->SetSamplerState(m_directX.GetDefaultSamplerState());
-            m_materialInfo[p_materialData.diffuseTextureName] = newMaterial;
+            m_materialInfo[p_materialData.diffuseTexturePath] = newMaterial;
             return newMaterial;
         }
 
         void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix)
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
+            ID3D11Buffer* materialData = p_material.GetMaterialData();
 
             MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(),
-                                          p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount());
+                                          p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount(), 
+                                          materialData);
             m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
         }
         void MeshManagerImpl::Draw() {}

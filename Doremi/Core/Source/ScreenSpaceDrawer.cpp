@@ -105,8 +105,10 @@ namespace Doremi
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
             DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
-                                                                                                               t_depthStencil->GetDepthStencilState());
+            /*m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
+                                                                                                               t_depthStencil->GetDepthStencilState());*/
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
+                                                                                                   t_depthStencil->GetDepthStencilState());
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere
             // else too...
         }
@@ -128,8 +130,10 @@ namespace Doremi
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
             DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
-                                                                                                               t_depthStencil->GetDepthStencilState());
+            //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
+            //                                                                                                   t_depthStencil->GetDepthStencilState());
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
+                                                                                                                   t_depthStencil->GetDepthStencilState());
 
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere

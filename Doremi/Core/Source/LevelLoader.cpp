@@ -53,18 +53,18 @@ namespace Doremi
                 char* materialName = new char[materialNameSize];
                 ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                DoremiEngine::Graphic::MaterialData materialData;
-                ifs.read((char*)&materialData.mapMasks, sizeof(int));
-                ifs.read((char*)&materialData.diffuse, sizeof(float));
-                ifs.read((char*)&materialData.color, sizeof(float) * 3);
-                ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
-                ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
-                ifs.read((char*)&materialData.specCosine, sizeof(float));
-                ifs.read((char*)&materialData.specEccentricity, sizeof(float));
-                ifs.read((char*)&materialData.specRollOff, sizeof(float));
+                MaterialMessage materialMessage;
+                ifs.read((char*)&materialMessage.data.mapMasks, sizeof(int));
+                ifs.read((char*)&materialMessage.data.diffuse, sizeof(float));
+                ifs.read((char*)&materialMessage.data.color, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.ambColor, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.specColor, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.specCosine, sizeof(float));
+                ifs.read((char*)&materialMessage.data.specEccentricity, sizeof(float));
+                ifs.read((char*)&materialMessage.data.specRollOff, sizeof(float));
 
-                materialData.diffuseTextureName = "debug.dds";
-                materialData.glowTextureName = "glow.dds";
+                materialMessage.diffuseTexturePath = "debug.dds";
+                materialMessage.glowTexturePath = "glow.dds";
 
                 // load Diffuse texture
                 int diffuseTextureNameSize;
@@ -73,9 +73,7 @@ namespace Doremi
                 {
                     char* diffuseTextureName = new char[diffuseTextureNameSize];
                     ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                    materialData.diffuseTextureName = diffuseTextureName;
-                    // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
-                    // delete diffuseTextureName;
+                    materialMessage.diffuseTexturePath = diffuseTextureName;
                 }
 
                 // Glow texture
@@ -85,11 +83,11 @@ namespace Doremi
                 {
                     char* glowTextureName = new char[glowTextureNameSize];
                     ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
-                    materialData.glowTextureName = glowTextureName;
+                    materialMessage.glowTexturePath = glowTextureName;
                     // delete glowTextureName;
                 }
                 // TODOKO save the texture name<
-                m_materials[materialName] = materialData;
+                m_materials[materialName] = materialMessage;
 
 
                 // delete materialName;
@@ -108,28 +106,27 @@ namespace Doremi
                 char* materialName = new char[materialNameSize];
                 ifs.read((char*)materialName, sizeof(char) * materialNameSize);
 
-                DoremiEngine::Graphic::MaterialData materialData;
-                ifs.read((char*)&materialData.mapMasks, sizeof(int));
-                ifs.read((char*)&materialData.diffuse, sizeof(float));
-                ifs.read((char*)&materialData.color, sizeof(float) * 3);
-                ifs.read((char*)&materialData.ambColor, sizeof(float) * 3);
-                ifs.read((char*)&materialData.specColor, sizeof(float) * 3);
-                ifs.read((char*)&materialData.specCosine, sizeof(float));
-                ifs.read((char*)&materialData.specEccentricity, sizeof(float));
-                ifs.read((char*)&materialData.specRollOff, sizeof(float));
+                MaterialMessage materialMessage;
+                ifs.read((char*)&materialMessage.data.mapMasks, sizeof(int));
+                ifs.read((char*)&materialMessage.data.diffuse, sizeof(float));
+                ifs.read((char*)&materialMessage.data.color, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.ambColor, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.specColor, sizeof(float) * 3);
+                ifs.read((char*)&materialMessage.data.specCosine, sizeof(float));
+                ifs.read((char*)&materialMessage.data.specEccentricity, sizeof(float));
+                ifs.read((char*)&materialMessage.data.specRollOff, sizeof(float));
 
-                materialData.diffuseTextureName = "debug.dds";
-                materialData.glowTextureName = "glow.dds";
+                materialMessage.diffuseTexturePath = "debug.dds";
+                materialMessage.glowTexturePath = "glow.dds";
 
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if(diffuseTextureNameSize != 0) materialData.diffuseTextureName = diffuseTextureName;
-                // if (diffuseTextureNameSize != 0) m_materials[materialName] = diffuseTextureName;
+                if(diffuseTextureNameSize != 0) materialMessage.diffuseTexturePath = diffuseTextureName;
 
-                m_materials[materialName] = materialData;
+                m_materials[materialName] = materialMessage;
 
                 // delete diffuseTextureName;
                 delete[] materialName;

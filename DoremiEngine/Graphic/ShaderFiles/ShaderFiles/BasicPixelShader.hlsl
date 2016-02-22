@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 50
+#define NUM_LIGHTS 200
 
 struct PixelInputType
 {
@@ -38,6 +38,19 @@ struct Light
     float3 pad;
 };
 
+struct MaterialData
+{
+    int mapMasks;
+    float3 color;
+    float diffuse;
+    float3 ambColor;
+    float specCosine;
+    float3 specColor;
+    float specEccentricity;
+    float specRollOff;
+    float2 pad;
+};
+
 struct Plane
 {
     float3 N;   // Plane normal.
@@ -58,6 +71,18 @@ StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 cbuffer LightInfo : register(b0)
 {
     Light light[NUM_LIGHTS];
+};
+
+cbuffer MaterialMessage : register(b1)
+{
+    float nodeName;
+    float diffuseTexturePath;
+    float glowTexturePath;
+    float specTexturePath;
+    float bumpTexturePath;
+    int type;
+    float2 pad;
+    MaterialData materialData;
 };
 
 Texture2D ObjTexture : register(t0);
@@ -119,7 +144,6 @@ PixelOutputType PS_main(PixelInputType input)
     screenPos.y = (-screenPos.y + 1) * 360;
     screenPos.x = (screenPos.x + 1) * 640;
 
-
     //calculate which thread group this pixel was in the compute shader stage
     float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
     float groupID = groupID2.x + (groupID2.y * 80);
@@ -153,7 +177,8 @@ PixelOutputType PS_main(PixelInputType input)
         output.glow = normalize(texcolor) * 2;
 
     texcolor.a = 1.f;
-    output.diffuse = float4(rgb, 1) * texcolor * 3;
+    output.diffuse = float4(rgb, 1) * texcolor * 3.f;
+    //output.diffuse = float4( materialData.color, 1);
     float depth = (input.position.x/input.position.y) + 1;
     output.depth = float4(depth, depth, depth, 1);
 

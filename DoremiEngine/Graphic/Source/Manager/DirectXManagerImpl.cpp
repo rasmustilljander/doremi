@@ -498,6 +498,7 @@ namespace DoremiEngine
             const uint32_t stride = sizeof(Vertex);
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
+            ID3D11Buffer* materialData = renderData[0].materialData;
             ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
             ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
             ID3D11SamplerState* samplerState = renderData[0].samplerState;
@@ -516,6 +517,9 @@ namespace DoremiEngine
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+            m_deviceContext->PSSetConstantBuffers(1, 1, &materialData);
+
+
             if(renderData[0].indexData != nullptr)
             {
                 m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
@@ -565,6 +569,14 @@ namespace DoremiEngine
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
                 }
+                //if (renderData[i].materialData != renderData[i - 1].materialData) // Check if texture has been changed
+                //{
+                    materialData = renderData[i].materialData;
+                    if (materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetConstantBuffers(1, 1, &materialData);
+                    }
+                //}
 
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 

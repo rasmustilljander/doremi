@@ -158,7 +158,7 @@ namespace Doremi
                 // Detta är typen vi använder för att sedan loada mesh/material i templatecreator
                 CharacterDataNames o_charData;
                 o_charData.meshName = t_sceneName;
-                o_charData.materialName = m_materials[m_meshCoupling[0].materialName].diffuseTextureName;
+                o_charData.materialName = m_materials[m_meshCoupling[0].materialName].diffuseTexturePath;
                 ifs.close();
 
                 // Sätt värdena som behövs för skelettanimationens keyframeuppdatering. (Basicly datan som används vid animationen)
@@ -545,7 +545,7 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 const std::string meshName = m_meshCoupling[0].meshName;
                 std::string textureName;
-                textureName = m_materials[m_meshCoupling[0].materialName].diffuseTextureName;
+                textureName = m_materials[m_meshCoupling[0].materialName].diffuseTexturePath;
 
                 // Compute vertexdata for graphics, discard data for physics.
                 DirectX::XMFLOAT3 scale = {1.0f, 1.0f, 1.0f}; // TODOXX Should the scale for the player always be one?
@@ -595,7 +595,7 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
 
-                std::string textureName = m_materials[meshCoupling.materialName].diffuseTextureName;
+                std::string textureName = m_materials[meshCoupling.materialName].diffuseTexturePath;
 
                 renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
             }

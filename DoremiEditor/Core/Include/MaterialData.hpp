@@ -23,16 +23,15 @@ namespace DoremiEditor
                 specColor[0] = specColor[1] = specColor[2] = 0.0f;
                 specCosine = specEccentricity = specRollOff = 0;
             }
-            int mapMasks;
-            float diffuse;
+            float mapMasks;
             float color[3];
+            float diffuse;
             float ambColor[3];
-            float specColor[3];
             float specCosine;
+            float specColor[3];
             float specEccentricity;
             float specRollOff;
-            char* diffuseTextureName;
-            char* glowTextureName;
+            float pad[2];
         };
     }
 }
