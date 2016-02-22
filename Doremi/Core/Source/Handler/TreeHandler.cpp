@@ -9,7 +9,10 @@ namespace Doremi
     {
         TreeHandler* TreeHandler::m_singleton = nullptr;
 
-        TreeHandler::TreeHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        TreeHandler::TreeHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        {
+            m_treeCreator = new TreeCreator(p_sharedContext);
+        }
 
         TreeHandler* TreeHandler::GetInstance()
         {
@@ -27,7 +30,7 @@ namespace Doremi
             }
             m_singleton = new TreeHandler(p_sharedContext);
         }
-        void TreeHandler::BuildTheTree() { m_treeCreator.CreateTree(); }
+        void TreeHandler::BuildTheTree() { m_treeCreator->CreateTree(); }
         TreeHandler::~TreeHandler() {}
 
         void TreeHandler::Update() {}
