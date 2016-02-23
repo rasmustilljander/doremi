@@ -27,23 +27,6 @@ namespace Doremi
                 */
                 void* Initialize(const std::string& p_name, const size_t& p_fileMapSize);
 
-                /**
-                TODO docs
-                */
-                void AttemptLock(const uint32_t& p_timeOut);
-
-
-                /**
-                TODO docs
-                */
-                void Lock();
-
-
-                /**
-                TODO docs
-                */
-                void UnLock();
-
             protected:
                 bool OpenFileMap();
 
@@ -54,7 +37,6 @@ namespace Doremi
                 std::string m_name;
                 size_t m_fileMapSize;
                 void* m_rawMemoryOfMappedFile;
-                FileMapMutex m_mutex;
             };
         }
     }
