@@ -111,8 +111,23 @@ namespace Doremi
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);
                             // Send it to physx for raycast calculation
                             int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, aiRange->range);
-
-                            if(bodyHit == playerID)
+                            if(bodyHit == -1)
+                            {
+                                continue;
+                            }
+                            // we check if it was a bullet we did hit, in this case we probably did hit our own bullet and should take this as a
+                            // player hit
+                            // This is a bit of a wild guess and we should probably do a new raycast from the hit location but screw that!
+                            bool wasBullet = false;
+                            if(EntityHandler::GetInstance().HasComponents(bodyHit, (int)ComponentType::EntityType))
+                            {
+                                EntityTypeComponent* typeComp = EntityHandler::GetInstance().GetComponentFromStorage<EntityTypeComponent>(bodyHit);
+                                if(((int)typeComp->type & (int)EntityType::EnemyBullet) == (int)EntityType::EnemyBullet) // if first entity is bullet
+                                {
+                                    wasBullet = true;
+                                }
+                            }
+                            if(bodyHit == playerID || wasBullet)
                             {
                                 closestDistance = distanceToPlayer;
                                 closestVisiblePlayer = pairs.second->m_playerEntityID;

@@ -51,6 +51,8 @@
 #include <Doremi/Core/Include/Manager/ExtraDrainSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
 #include <Doremi/Core/Include/Manager/GroundEffectManagerServer.hpp>
+#include <Doremi/Core/Include/Manager/LifeTimeManager.hpp>
+
 
 // other
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
@@ -113,6 +115,7 @@ namespace Doremi
         Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
         Core::Manager* t_groundEffectManagerServer = new Core::GroundEffectManagerServer(sharedContext);
+        Core::Manager* t_lifeTimeManager = new Core::LifeTimeManager(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
@@ -132,6 +135,7 @@ namespace Doremi
         m_managers.push_back(t_charSyncManager); // Must be after movement
         m_managers.push_back(t_damageManager);
         m_managers.push_back(t_entitySpawnManager);
+        m_managers.push_back(t_lifeTimeManager); // Shoul probably be last or atleast on of the last
 
         // GenerateWorld(sharedContext);
         // GenerateWorldServerJawsTest(sharedContext);

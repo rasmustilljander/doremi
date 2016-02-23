@@ -26,6 +26,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/AiAgentComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/LifeTimeComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -437,6 +438,10 @@ namespace Doremi
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1.0f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
+            // Life time component
+            LifeTimeComponent* lifeTimeComp = new LifeTimeComponent();
+            lifeTimeComp->LifeTime = 5;
+            blueprint[ComponentType::LifeTime] = lifeTimeComp;
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
             TIME_FUNCTION_STOP

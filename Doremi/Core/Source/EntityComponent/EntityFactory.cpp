@@ -28,6 +28,7 @@
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
 #include <EntityComponent/Components/AiAgentComponent.hpp>
+#include <EntityComponent/Components/LifeTimeComponent.hpp>
 
 // Events
 #include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
@@ -312,6 +313,10 @@ namespace Doremi
                 else if(iter->first == ComponentType::LowerBodySkeletalAnimation)
                 {
                     memcpy(GetComponent<LowerSkeletalAnimationComponent>(p_entityID), iter->second, sizeof(LowerSkeletalAnimationComponent));
+                }
+                else if(iter->first == ComponentType::LifeTime)
+                {
+                    memcpy(GetComponent<LifeTimeComponent>(p_entityID), iter->second, sizeof(LifeTimeComponent));
                 }
                 // Add bitmask. This is now done last due to transform being a dick
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
