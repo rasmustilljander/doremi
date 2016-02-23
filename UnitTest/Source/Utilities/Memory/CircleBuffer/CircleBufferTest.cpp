@@ -69,7 +69,7 @@ TEST_F(CircleBufferTest, twoProduceAndConsume)
     // Produce
     m_circleBuffer->Produce(sendHeader, &sendData);
     sendData.f2 = 19;
-    sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::COMMAND);
+    sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::DATA);
     m_circleBuffer->Produce(sendHeader, &sendData);
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
@@ -84,7 +84,7 @@ TEST_F(CircleBufferTest, twoProduceAndConsume)
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(19, returnData->f2);
     ASSERT_EQ(64, returnHeader->packageSize);
-    ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::COMMAND).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
+    ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::DATA).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
     delete returnHeader;
     delete returnData;
 }
