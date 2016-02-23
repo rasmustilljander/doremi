@@ -13,7 +13,7 @@
 
 using namespace Doremi::Utilities;
 
-LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr) {}
+LoggerProcess::LoggerProcess() : m_fileMap(nullptr), m_ingoingBuffer(nullptr), m_mutex(nullptr) {}
 
 LoggerProcess::~LoggerProcess()
 {
@@ -26,6 +26,11 @@ LoggerProcess::~LoggerProcess()
     {
         delete m_ingoingBuffer;
     }
+
+    if(m_mutex != nullptr)
+    {
+        delete m_mutex;
+    }
 }
 
 void LoggerProcess::Initialize(const int& p_uniqueId)
@@ -35,8 +40,8 @@ void LoggerProcess::Initialize(const int& p_uniqueId)
     BuildLogFiles();
     SetupCircleBuffer();
     void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
-
-    m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE);
+    m_mutex = CreateFileMapMutex();
+    m_ingoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
 }
 
 void LoggerProcess::Run()

@@ -113,13 +113,13 @@ namespace DoremiEngine
             m_localBuffer->Initialize(10000);
 
             // Create mutex
-            // m_mutex = CreateFileMapMutex();
+            m_mutex = CreateFileMapMutex();
 
             // Fetch shared memory from fileMap
             void* fileMapMemory = InitializeFileMap(Constants::IPC_FILEMAP_SIZE);
 
             // Intiailize outgoing buffer with shared memory and mutex
-            m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE);
+            m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE, m_mutex);
             m_applicationRunning = new bool(true);
 
             m_threadMetaData = new ThreadMetaData(m_applicationRunning, new bool(true));

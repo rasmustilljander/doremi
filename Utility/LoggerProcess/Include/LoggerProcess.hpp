@@ -60,4 +60,5 @@ private:
     Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_ingoingBuffer;
     std::map<Doremi::Utilities::Logging::LogTag, SpecificLogFile> m_logfiles;
     int m_processIdOfGame;
+    Doremi::Utilities::IO::Mutex* m_mutex;
 };

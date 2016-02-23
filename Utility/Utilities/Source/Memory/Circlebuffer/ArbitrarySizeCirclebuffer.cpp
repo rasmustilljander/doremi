@@ -36,20 +36,22 @@ namespace Doremi
                 }
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize)
+            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize, std::mutex* p_sharedMemoryMutex)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
                 m_rawBufferPointerStart = malloc(m_rawBufferSize);
+                m_metaDataMutex = p_sharedMemoryMutex;
                 SetupVariables();
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize)
+            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, std::mutex* p_sharedMemoryMutex)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
                 m_rawBufferPointerStart = p_preAllocatedBuffer;
                 m_internalMemoryManagement = false;
+                m_metaDataMutex = p_sharedMemoryMutex;
                 SetupVariables();
             }
 
@@ -344,16 +346,26 @@ namespace Doremi
                 ComputeAdjustments();
                 m_data = static_cast<ArbitraryStaticData*>(m_rawBufferPointerStart);
 
-                // TODORT
-                // LockMetaData In a very specific state both processes may come here at about the same time.
-                // However, that should not be a problem. If they're almost here at the same no data should be lost.
-                if(m_data->started != ARBITRARY_CIRCLE_BUFFER_STARTED)
+                if(m_metaDataMutex != nullptr)
                 {
-                    *m_data = ArbitraryStaticData();
-                    m_data->currentTailOffset = 0;
-                    m_data->currentHeadOffset = 0;
+                    if(m_metaDataMutex->try_lock())
+                    {
+                        ResetMetaData();
+                    }
+                }
+                else
+                {
+                    ResetMetaData();
                 }
             }
+
+            void ArbitrarySizeCirclebuffer::ResetMetaData()
+            {
+                *m_data = ArbitraryStaticData();
+                m_data->currentTailOffset = 0;
+                m_data->currentHeadOffset = 0;
+            }
+
 
             uint32_t ArbitrarySizeCirclebuffer::ComputeDiffBetweenProducedAndConsumed()
             {

@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
 #include <Utility/Utilities/Include/Memory/Circlebuffer/CircleBufferHeader.hpp>
-#include <Utility/Utilities/Include/IO/Mutex/Mutex.hpp>
+#include <mutex>
 
 namespace Doremi
 {
@@ -29,13 +29,13 @@ namespace Doremi
                 The useable size of the buffer will be p_bufferSize - sizeof(StaticData).
                 Each object will allocate sizeof(T) + sizeof(CircleBufferHeader).
                 */
-                void Initialize(const uint32_t& p_bufferSize);
+                void Initialize(const uint32_t& p_bufferSize, std::mutex* p_metaDataMutex = nullptr);
 
                 /**
                 The useable size of the buffer will be p_bufferSize - sizeof(StaticData).
                 Each object will allocate sizeof(T) + sizeof(CircleBufferHeader).
                 */
-                void Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize);
+                void Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, std::mutex* p_metaDataMutex = nullptr);
 
                 /**
                 Threadsafe, internal loackage. Throws exception if not possible.
@@ -57,6 +57,7 @@ namespace Doremi
                 void ComputeAdjustments();
 
                 void SetupVariables();
+                void ResetMetaData();
 
                 uint32_t ComputeAvilableSpace(const uint32_t& p_requestedSize);
 
@@ -78,7 +79,7 @@ namespace Doremi
                 std::mutex m_produceLock;
                 std::mutex m_consumeLock;
                 bool m_alreadyInitialized;
-                IO::Mutex* m_metaDataMutex;
+                std::mutex* m_metaDataMutex;
             };
         }
     }
