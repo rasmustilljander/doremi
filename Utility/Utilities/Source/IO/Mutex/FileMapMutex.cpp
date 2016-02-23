@@ -9,7 +9,6 @@ namespace Doremi
     {
         namespace IO
         {
-
             // TODORT Define better than 1000?
             const uint32_t DEFAULT_TIMEOUT = 1000;
 
