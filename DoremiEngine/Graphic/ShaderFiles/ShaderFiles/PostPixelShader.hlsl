@@ -170,7 +170,7 @@ PixelOutputType PS_main(PixelInputType input)
 
     }
 
-    output.diffuse = float4(rgb, 1) * texcolor * 3.f;
+    output.diffuse = /*float4(rgb, 1) * */texcolor/* * 3.f*/;
 
     return output;
 

@@ -929,6 +929,7 @@ namespace DoremiEngine
 
             if(transRenderData.size() > 0)
             {
+
                 SetRenderTargetNormal();
                 EnableBlend();
                 RenderTransMeshs();
