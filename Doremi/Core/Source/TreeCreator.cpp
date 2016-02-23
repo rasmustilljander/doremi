@@ -15,7 +15,7 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 6;
+            m_treeDepth = 2;
 
             // Set the box for the world
             treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
@@ -47,11 +47,12 @@ namespace Doremi
             m_currentNode = &treeRoot;
             DirectX::XMFLOAT3 physicsCollideFloat;
 
-            while (!t_isDone)
+            while(!t_isDone)
             {
                 ////// DEBUG!
-                //int myID = MAX_NUM_ENTITIES;
-                //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, m_whatNode->center, DirectX::XMFLOAT4(0, 0, 0, 0), m_whatNode->boxDimensions, materialID);
+                // int myID = MAX_NUM_ENTITIES;
+                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, m_whatNode->center, DirectX::XMFLOAT4(0, 0, 0, 0),
+                // m_whatNode->boxDimensions, materialID);
                 // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
                 //                                                                           XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),
                 //                                                                           materialID);
