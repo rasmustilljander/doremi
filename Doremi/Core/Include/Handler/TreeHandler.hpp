@@ -34,9 +34,9 @@ namespace Doremi
         private:
             TreeHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~TreeHandler();
-
+            void TrimTheTree();
             static TreeHandler* m_singleton;
-            std::vector<TreeCreator::OctNode> m_boxesOfInterest;
+            std::vector<uint32_t> m_objectsToDraw;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             TreeCreator* m_treeCreator;
         };
