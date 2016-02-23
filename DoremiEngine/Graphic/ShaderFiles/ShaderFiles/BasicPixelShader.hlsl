@@ -1,4 +1,4 @@
-#define NUM_LIGHTS 200
+#define NUM_LIGHTS 500
 
 struct PixelInputType
 {

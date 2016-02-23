@@ -37,7 +37,7 @@ namespace Doremi
         {
             Player(EntityID p_EntityID, InputHandler* p_inputHandler, FrequencyBufferHandler* p_frequencyBufferHandler)
                 : m_playerEntityID(p_EntityID),
-                  m_moveSpeed(0.3f),
+                  m_moveSpeed(0.8f),
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),
                   m_frequencyBufferHandler(p_frequencyBufferHandler),

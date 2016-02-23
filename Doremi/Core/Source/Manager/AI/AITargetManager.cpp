@@ -118,7 +118,7 @@ namespace Doremi
                                 closestVisiblePlayer = pairs.second->m_playerEntityID;
 
                                 // Rotate the enemy to face the player
-                                XMMATRIX mat = XMMatrixInverse(nullptr, XMMatrixLookAtLH(AIPos, AIPos - direction, XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
+                                XMMATRIX mat = XMMatrixInverse(nullptr, XMMatrixLookAtLH(AIPos, AIPos + direction, XMLoadFloat3(&XMFLOAT3(0, 1, 0))));
                                 XMVECTOR rotation = XMQuaternionRotationMatrix(mat);
                                 XMFLOAT4 quater;
                                 XMStoreFloat4(&quater, rotation);

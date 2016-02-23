@@ -13,7 +13,7 @@ namespace DoremiEngine
         // Global light list
         struct LightBuffer
         {
-            Light lightList[200];
+            Light lightList[500];
         };
 
         class LightManagerImpl : public LightManager
