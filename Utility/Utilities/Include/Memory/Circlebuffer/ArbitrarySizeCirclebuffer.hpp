@@ -65,11 +65,7 @@ namespace Doremi
                 uint32_t ComputeDiffBetweenProducedAndConsumed();
 
                 // TODORT can be moved to utility
-                static bool CheckIfBothIsTrueOrBothIsFalse(bool a, bool b)
-                {
-                    const uint8_t value = static_cast<uint8_t>(a) + static_cast<uint8_t>(b);
-                    return !static_cast<bool>(value % 2);
-                }
+                static bool CheckIfBothIsTrueOrBothIsFalse(bool a, bool b) { return (a == b); }
 
                 ArbitraryStaticData* m_data;
                 void* m_rawBufferPointerStart;
