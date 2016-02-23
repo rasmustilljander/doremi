@@ -30,9 +30,9 @@ namespace Doremi
                 {
                     free(m_rawBufferPointerStart);
                 }
-                if(m_metaDataMutex != nullptr)
+                if(m_metaDataMutex)
                 {
-                    delete m_metaDataMutex;
+                    m_metaDataMutex->unlock();
                 }
             }
 
