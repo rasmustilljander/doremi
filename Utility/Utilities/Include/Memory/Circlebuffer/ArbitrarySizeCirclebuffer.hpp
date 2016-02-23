@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
 #include <Utility/Utilities/Include/Memory/Circlebuffer/CircleBufferHeader.hpp>
-#include <mutex>
+#include <Utility/Utilities/Include/IO/Mutex/Mutex.hpp>
 
 namespace Doremi
 {
@@ -59,11 +59,7 @@ namespace Doremi
                 void SetupVariables();
                 void ResetMetaData();
 
-                uint32_t ComputeAvilableSpace(const uint32_t& p_requestedSize);
-
                 void ComputeBufferLocationForProduce(const uint32_t& p_requestedSize, const uint32_t& currentlyAvailableSpace, bool& o_headerAtEnd, bool& o_dataAtEnd);
-
-                uint32_t ComputeDiffBetweenProducedAndConsumed();
 
                 // TODORT can be moved to utility
                 static bool CheckIfBothIsTrueOrBothIsFalse(bool a, bool b) { return (a == b); }

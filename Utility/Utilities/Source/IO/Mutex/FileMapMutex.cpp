@@ -47,7 +47,16 @@ namespace Doremi
 
                 if(check == WAIT_OBJECT_0)
                 {
-                    return true; // Got mutex
+                    return true;
+                }
+                else if(check == WAIT_TIMEOUT)
+                {
+                    return false; // Timeouted
+                }
+
+                else if(check == WAIT_ABANDONED)
+                {
+                    return true;
                 }
 
                 return false; // Did not get mutex

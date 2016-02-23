@@ -49,6 +49,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, emptyConsume)
 TEST_F(ArbitrarySizeCirclebufferTest, basicProduceAndConsume)
 {
     m_circleBuffer->Initialize(300);
+    bool res;
 
     CircleBufferHeader sendHeader;
     sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
@@ -60,10 +61,11 @@ TEST_F(ArbitrarySizeCirclebufferTest, basicProduceAndConsume)
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
     m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
-
+    ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(64, returnHeader->packageSize);
     ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
+
     delete returnHeader;
     delete returnData;
 }
@@ -71,6 +73,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, basicProduceAndConsume)
 TEST_F(ArbitrarySizeCirclebufferTest, produceHalfInEndHalfInFront)
 {
     m_circleBuffer->Initialize(151);
+    bool res;
 
     CircleBufferHeader sendHeader;
     sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
@@ -81,11 +84,16 @@ TEST_F(ArbitrarySizeCirclebufferTest, produceHalfInEndHalfInFront)
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    ASSERT_TRUE(res);
+    ASSERT_EQ(4, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
+    ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
 
 
     m_circleBuffer->Produce(sendHeader, &sendData);
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(64, returnHeader->packageSize);
     ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
@@ -96,24 +104,30 @@ TEST_F(ArbitrarySizeCirclebufferTest, produceHalfInEndHalfInFront)
 
 TEST_F(ArbitrarySizeCirclebufferTest, produceAllInFront)
 {
-    // (64+8)*1 + 32 = 104
-    // 64 data, 8 metaheader, 32 buffer statatic data
-    m_circleBuffer->Initialize(104);
+    // (64+8)*1 + 24 = 96
+    // 64 data, 8 metaheader, 24 buffer statatic data
+    m_circleBuffer->Initialize(100);
 
     CircleBufferHeader sendHeader;
     sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
     sendHeader.packageSize = sizeof(TestStruct64);
     TestStruct64 sendData;
     sendData.f1 = 4;
-    m_circleBuffer->Produce(sendHeader, &sendData);
 
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
-
+	bool res;
 
     m_circleBuffer->Produce(sendHeader, &sendData);
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    ASSERT_TRUE(res);
+    ASSERT_EQ(4, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
+    ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
+
+    m_circleBuffer->Produce(sendHeader, &sendData);
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+	ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(64, returnHeader->packageSize);
     ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
@@ -125,6 +139,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, produceAllInFront)
 TEST_F(ArbitrarySizeCirclebufferTest, twoProduceAndConsume)
 {
     m_circleBuffer->Initialize(300);
+    bool res;
 
     CircleBufferHeader sendHeader;
     sendHeader.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
@@ -142,12 +157,14 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoProduceAndConsume)
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
 
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(64, returnHeader->packageSize);
     ASSERT_EQ(CircleBufferType(CircleBufferTypeEnum::TEXT).typeValue, CircleBufferType(returnHeader->packageType).typeValue);
 
-    m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
+    ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
     ASSERT_EQ(19, returnData->f2);
     ASSERT_EQ(64, returnHeader->packageSize);
@@ -202,10 +219,12 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingDifferentPartOfSameExternal
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_TRUE(res);
     ASSERT_EQ(4, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_TRUE(res);
     ASSERT_EQ(19, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_FALSE(res);
@@ -214,10 +233,12 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingDifferentPartOfSameExternal
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_TRUE(res);
     ASSERT_EQ(62, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_TRUE(res);
     ASSERT_EQ(775, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64));
     ASSERT_FALSE(res);
@@ -263,6 +284,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersPointingOnSameMemory)
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(98, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Produce with first buffer
     sendData.f1 = 33;
@@ -272,11 +294,13 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersPointingOnSameMemory)
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(62, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0
     ASSERT_TRUE(res);
     ASSERT_EQ(33, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0
@@ -327,6 +351,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingOneFileMapToMemory)
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(98, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Produce with first buffer
     sendData.f1 = 33;
@@ -336,11 +361,13 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingOneFileMapToMemory)
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(62, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0
     ASSERT_TRUE(res);
     ASSERT_EQ(33, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0
@@ -399,6 +426,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingTwoFileMapsTMemory)
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(98, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Produce with first buffer
     sendData.f1 = 33;
@@ -408,11 +436,13 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingTwoFileMapsTMemory)
     res = otherBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
     ASSERT_TRUE(res);
     ASSERT_EQ(62, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0
     ASSERT_TRUE(res);
     ASSERT_EQ(33, returnData->f1);
+    ASSERT_EQ(64, returnHeader->packageSize);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 0

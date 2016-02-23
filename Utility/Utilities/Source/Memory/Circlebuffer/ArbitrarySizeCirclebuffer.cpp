@@ -3,6 +3,7 @@
 #include <Memory/Circlebuffer/CircleBufferHeader.hpp>
 #include <Memory/Circlebuffer/ArbitraryStaticData.hpp>
 #include <string>
+#include <iostream>
 
 namespace Doremi
 {
@@ -53,13 +54,6 @@ namespace Doremi
                 m_internalMemoryManagement = false;
                 m_metaDataMutex = p_sharedMemoryMutex;
                 SetupVariables();
-            }
-
-            uint32_t ArbitrarySizeCirclebuffer::ComputeAvilableSpace(const uint32_t& p_requestedSize)
-            {
-                const uint32_t diff = ComputeDiffBetweenProducedAndConsumed();
-                const uint32_t currentlyAvailableSpace = m_adjustedBufferSize - diff;
-                return currentlyAvailableSpace;
             }
 
             void ArbitrarySizeCirclebuffer::ComputeBufferLocationForProduce(const uint32_t& p_requestedSize, const uint32_t& currentlyAvailableSpace,
@@ -128,10 +122,42 @@ namespace Doremi
             {
                 // Internal lockage
                 std::lock_guard<std::mutex> lock(m_produceLock);
+                
+                // Fetch variables from shared memory
+                // These variables must be read at the same time :s
+                const size_t tailOffset = m_data->currentTailOffset;
+                const size_t headOffset = m_data->currentHeadOffset;
 
+                // Compute variables based on shared memory
+                void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, tailOffset); // Compute the location of the current tail
+                void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, headOffset); // Compute the location of the head
+                const intmax_t diff = PointerArithmetic::Difference(tail, head); // Compute the difference between the two
+
+                intmax_t part1, part2 = 0;
+                // Compute currently available space
+                if(diff == 0)
+                {
+                    //// Buffer is empty
+                    //// Use the diff between current head and end + the diff between the start and tail
+                    part1 = PointerArithmetic::Difference(head, m_adjustedBufferPointerEnd);
+                    part2 = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
+                }
+                else if(diff > 0)
+                {
+                    //// Head is to the "right" of the tail, use the diff between current head and end + the diff between the start and tail
+                    part1 = PointerArithmetic::Difference(head, m_adjustedBufferPointerEnd);
+                    part2 = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
+                    // TODOXX TODORT cast uint32_t intman_t ??
+                }
+                else
+                {
+                    //// Head is to the "left" of the tail, use the diff between current head and end
+                    part1 = diff * -1;
+                }
+                uint32_t currentlyAvailableSpace = part1 + part2;
+
+                // Check so that the data can fit within the buffer
                 const uint32_t requestedSize = sizeof(CircleBufferHeader) + p_Header.packageSize;
-                const uint32_t currentlyAvailableSpace = ComputeAvilableSpace(requestedSize);
-
                 if(currentlyAvailableSpace < requestedSize)
                 {
                     const std::string errorMessage = std::string("Not enough space in circlebuffer. Size of produce request " + std::to_string(requestedSize) +
@@ -139,25 +165,65 @@ namespace Doremi
                     throw std::runtime_error(errorMessage);
                 }
 
-                bool headerAtEnd;
-                bool dataAtEnd;
-                ComputeBufferLocationForProduce(requestedSize, currentlyAvailableSpace, headerAtEnd, dataAtEnd);
+                bool metaHeaderInPart1, dataPackageInPart1;
 
-                // Reset workingHead
-                void* workingHead = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
+                // Check if the metaheader can be fitted in the end
+                if (sizeof(CircleBufferHeader) <= part1)
+                {
+                    //// Atleast metaheader can be fitted in the first part
+                    metaHeaderInPart1 = true;
+
+                    // Check if the datapackage can be fitted in the first part after metaheader
+                    if (p_Header.packageSize <= part1 - sizeof(CircleBufferHeader))
+                    {
+                        dataPackageInPart1 = true;
+                    }
+                    
+                    // Check if datapackage can be fitted in the second part
+                    else if(p_Header.packageSize <= part2)
+                    {
+                        dataPackageInPart1 = false;
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Metaheader fits within the first part, but datapackage does not fit anywhere.");
+                    }
+                }
+                // Check if metaheader can be fitted within the second part
+                else if(sizeof(CircleBufferHeader) <= part2)
+                {
+                    //// Atleast metaheader can be fitted in the second part
+                    metaHeaderInPart1 = false;
+
+                    // Check if the datapackage can be fitted in the second part after metaheader
+                    if (p_Header.packageSize <= part2 - sizeof(CircleBufferHeader))
+                    {
+                        dataPackageInPart1 = false;
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Metaheader fits within second part, but not packagedata.");
+                    }
+                }
+                else
+                {
+                    throw std::runtime_error("Nothing fits");
+
+                }
+
                 void* locationOfMetaHeader;
-                void* locationOfData;
+                void* locationOfDataPackage;
 
                 // Check if both is false or if both is true
-                if(CheckIfBothIsTrueOrBothIsFalse(headerAtEnd, dataAtEnd))
+                if(metaHeaderInPart1 == dataPackageInPart1)
                 {
                     //// Both is true or both is false. Means that they are placed together, metadataheader first followed by the data.
 
                     // Check if they're placed in the end
-                    if(headerAtEnd)
+                    if(metaHeaderInPart1)
                     {
                         //// Both are placed in the end
-                        locationOfMetaHeader = workingHead;
+                        locationOfMetaHeader = head;
                     }
                     else
                     {
@@ -165,13 +231,13 @@ namespace Doremi
                         locationOfMetaHeader = m_adjustedBufferPointerStart;
                     }
                     // data is always right after
-                    locationOfData = PointerArithmetic::Addition(locationOfMetaHeader, sizeof(CircleBufferHeader));
+                    locationOfDataPackage = PointerArithmetic::Addition(locationOfMetaHeader, sizeof(CircleBufferHeader));
                 }
                 else
                 {
                     //// Means that the metadataheader is placed last and the data in front
-                    locationOfMetaHeader = workingHead;
-                    locationOfData = m_adjustedBufferPointerStart;
+                    locationOfMetaHeader = head;
+                    locationOfDataPackage = m_adjustedBufferPointerStart;
                 }
 
                 //// Helpdata complete, time to write
@@ -179,13 +245,13 @@ namespace Doremi
                 memcpy(locationOfMetaHeader, &p_Header, sizeof(CircleBufferHeader));
 
                 // Write data
-                memcpy(locationOfData, p_data, p_Header.packageSize);
+                memcpy(locationOfDataPackage, p_data, p_Header.packageSize);
 
                 // Update shared head
-                workingHead = PointerArithmetic::Addition(locationOfData, p_Header.packageSize);
+                head = PointerArithmetic::Addition(locationOfDataPackage, p_Header.packageSize);
 
-                m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, workingHead);
-                m_data->totalProducedMemoryInBytes += requestedSize;
+                m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
+                intmax_t diff2 = PointerArithmetic::Difference(tail, head);
             }
 
             bool ArbitrarySizeCirclebuffer::Consume(CircleBufferHeader*& o_header, void* o_dataBuffer, const uint32_t& p_outbufferSize)
@@ -194,36 +260,52 @@ namespace Doremi
                 std::lock_guard<std::mutex> lock(m_consumeLock);
                 bool success = false;
 
-                const uint32_t diff = ComputeDiffBetweenProducedAndConsumed();
+                // Fetch variables from shared memory
+                // These variables must be read at the same time :s
+                const size_t tailOffset = m_data->currentTailOffset;
+                const size_t headOffset = m_data->currentHeadOffset;
+
+                // Compute variables based on shared memory
+                void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, tailOffset); // Compute the location of the current tail
+                void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, headOffset); // Compute the location of the head
+                const intmax_t diff = PointerArithmetic::Difference(tail, head); // Compute the difference between the two
+
+                // Compute currently occupied space
+                intmax_t part1 = 0;
+                intmax_t part2 = 0;
                 if(diff == 0)
                 {
+                    //// Buffer is empty
+                    // Nothing to consume
                     return false;
                 }
-
-                // Fetch the location of the current tail
-                void* tail = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentTailOffset);
-
-                // Compute the size of the memory between the tail and the end.
-                uint32_t availableSpaceBetweenTailAndEnd = PointerArithmetic::Difference(tail, m_adjustedBufferPointerEnd);
-
-                // Check if the header can be fitted between current tail and the end of buffer
-                if(sizeof(CircleBufferHeader) < availableSpaceBetweenTailAndEnd) // Must be <, <= gives faulty results
+                else if(diff > 0)
                 {
-                    //// Header can fit between the tail and the end of buffer
+                    //// Head is to the "right" of the tail, use the diff between tail and the current head
+                    part1 = PointerArithmetic::Difference(tail, head);
+                }
+                else
+                {
+                    //// Head is to the "left" of the tail, use the diff between current tail and end + the diff between start and head
+                    part1 = PointerArithmetic::Difference(tail, m_adjustedBufferPointerEnd);
+                    part2 = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
+                }
+
+                // Check if a header could have been placed in the first part
+                if(sizeof(CircleBufferHeader) <= part1)
+                {
+                    //// Metaheader can fit within the first part
 
                     // Read metaheader
                     memcpy(o_header, tail, sizeof(CircleBufferHeader));
 
-                    // Move tail
-                    tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
-
-                    // Recompute the size of the memory between the new tail and the end.
-                    availableSpaceBetweenTailAndEnd = PointerArithmetic::Difference(tail, m_adjustedBufferPointerEnd);
-
-                    // Check if the data can be fitted between current tail and the end of buffer
-                    if(o_header->packageSize <= availableSpaceBetweenTailAndEnd)
+                    // Check if the datapackage could have been placed within the first part after the metaheader
+                    if(o_header->packageSize <= part1 - sizeof(CircleBufferHeader))
                     {
                         //// Data can fit between the tail and the end of buffer
+
+                        // Move tail
+                        tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
 
                         // Copy data from current tail
                         memcpy(o_dataBuffer, tail, o_header->packageSize);
@@ -234,21 +316,16 @@ namespace Doremi
                     }
                     else
                     {
-                        //// Data cannot fit between the tail and the end of buffer
+                        //// The datapackage could have been placed within the first part after the metaheader
 
-                        // Move tail to start
-                        tail = m_adjustedBufferPointerStart;
-
-                        // Compute available space in the front of the buffer.
-                        void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
-                        const uint32_t availableSpaceBetweenTailAndHead = PointerArithmetic::Difference(tail, head);
-
-                        // Check if the data can fit in the front
-                        if(o_header->packageSize <= availableSpaceBetweenTailAndHead)
+                        // Check if the datapackage can be fitted in the front
+                        if (o_header->packageSize <= part2)
                         {
                             //// Data can fit in the front
+                            // Move tail to start
+                            tail = m_adjustedBufferPointerStart;
 
-                            // Copy data from current_tail
+                            // Copy data from current tail
                             memcpy(o_dataBuffer, tail, o_header->packageSize);
 
                             // Move header to after data
@@ -265,12 +342,8 @@ namespace Doremi
                 {
                     //// Metaheader could not be placed in the end of the buffer
 
-                    // Compute available space in the front of the buffer.
-                    void* head = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentTailOffset);
-                    const uint32_t availableSpaceInFront = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
-
-                    //
-                    if(sizeof(CircleBufferHeader) < availableSpaceInFront)
+                    //Check if metaheader can be placed in the front
+                    if(sizeof(CircleBufferHeader) < part2)
                     {
                         // Move tail to start
                         tail = m_adjustedBufferPointerStart;
@@ -278,23 +351,25 @@ namespace Doremi
                         // Read metaheader
                         memcpy(o_header, tail, sizeof(CircleBufferHeader));
 
-                        // Move tail
-                        tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
+                        // Check if the datapackage can be placed after the metaheader
+                        if (o_header->packageSize < (part2 - sizeof(CircleBufferHeader)))
+                        {
+                            // Move tail
+                            tail = PointerArithmetic::Addition(tail, sizeof(CircleBufferHeader));
 
-                        // Copy data from current_tail
-                        memcpy(o_dataBuffer, tail, o_header->packageSize);
+                            // Copy data from current_tail
+                            memcpy(o_dataBuffer, tail, o_header->packageSize);
 
-                        // Move header to after data
-                        tail = PointerArithmetic::Addition(tail, o_header->packageSize);
-                        success = true;
+                            // Move header to after data
+                            tail = PointerArithmetic::Addition(tail, o_header->packageSize);
+                            success = true;
+                        }
                     }
                 }
 
-                //
                 if(success)
                 {
                     m_data->currentTailOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, tail);
-                    m_data->totalConsumedMemoryInBytes += (o_header->packageSize + sizeof(CircleBufferHeader));
                 }
                 return success;
             }
@@ -347,9 +422,10 @@ namespace Doremi
                 m_data = static_cast<ArbitraryStaticData*>(m_rawBufferPointerStart);
 
                 if(m_metaDataMutex != nullptr)
-                {
+                {                   
                     if(m_metaDataMutex->try_lock())
                     {
+                        printf("\nowner\n");
                         ResetMetaData();
                     }
                 }
@@ -364,22 +440,6 @@ namespace Doremi
                 *m_data = ArbitraryStaticData();
                 m_data->currentTailOffset = 0;
                 m_data->currentHeadOffset = 0;
-            }
-
-            uint32_t ArbitrarySizeCirclebuffer::ComputeDiffBetweenProducedAndConsumed()
-            {
-                const uint32_t consumed = m_data->totalConsumedMemoryInBytes;
-                const uint32_t produced = m_data->totalProducedMemoryInBytes;
-
-                if(consumed <= produced)
-                {
-                    return produced - consumed;
-                }
-                else
-                {
-                    const std::string message = std::string("Incorrect difference between consumption and production within the circlebuffer.");
-                    throw std::runtime_error(message);
-                }
             }
         }
     }

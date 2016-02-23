@@ -106,9 +106,7 @@ namespace DoremiEngine
             m_localBuffer = new Memory::ArbitrarySizeCirclebuffer();
             m_outGoingBuffer = new Memory::ArbitrarySizeCirclebuffer();
 
-            // TODORT
-            // TODOXX
-            // TODOCONFIG our hardcode better value from empirical tests
+            // TODOXX TODORT our hardcode better value from empirical tests
             // Create localbuffer
             m_localBuffer->Initialize(10000);
 
@@ -178,12 +176,14 @@ namespace DoremiEngine
             {
                 try
                 {
-                    m_localBuffer->Produce(header, buffer); // TODORT NOt very performance nice
+                    m_localBuffer->Produce(header, buffer);
                     succeed = true;
                 }
                 catch(...)
                 {
-                    // succeed = false;
+                    // Do nothing
+                    // TODOXX TODORT NOt very performance nice
+                    std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                 }
             }
 #endif
@@ -273,9 +273,10 @@ namespace DoremiEngine
                                 m_outGoingBuffer->Produce(*header, buffer);
                                 succeed = true;
                             }
-                            catch(...)
+                            catch(std::exception e)
                             {
-                                std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT); // TODORT NOt very performance nice
+                                // TODORT TODOXX NOt very performance nice
+                                std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                             }
                         }
 #endif

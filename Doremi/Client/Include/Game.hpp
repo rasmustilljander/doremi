@@ -9,6 +9,10 @@ namespace DoremiEngine
     {
         class SharedContext;
     }
+    namespace Logging
+    {
+        class Logger;
+    }
 }
 
 namespace Doremi
@@ -104,7 +108,7 @@ namespace Doremi
         void AddToManagerList(Core::Manager* p_manager);
         void AddToServerBrowserList(Core::Manager* p_manager);
         void AddToGraphicalManagerList(Core::Manager* p_manager);
-
         bool m_gameRunning;
+        DoremiEngine::Logging::Logger* m_logger;
     };
 }

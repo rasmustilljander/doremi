@@ -68,7 +68,7 @@ namespace Doremi
             auto& logger = p_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
             for(auto& i : m_timers)
             {
-                logger.DebugLog(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "%s:, %f", i.first.c_str(), i.second.second);
+                logger.LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "%s:, %f", i.first.c_str(), i.second.second);
             }
         }
     }
