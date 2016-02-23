@@ -29,6 +29,8 @@ namespace Doremi
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
             DoremiEngine::Graphic::PixelShader* m_skyBoxPixelShader;
             DoremiEngine::Graphic::VertexShader* m_skyBoxVertexShader;
+            DoremiEngine::Graphic::PixelShader* m_basicPixelShader;
+            DoremiEngine::Graphic::VertexShader* m_basicVertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
             DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
         };

@@ -22,6 +22,7 @@ namespace DoremiEngine
             virtual void SetSamplerState(ID3D11SamplerState* p_samplerState) = 0;
 
         private:
+            std::string materialName;
             int mapMasks;
             float diffuse;
             float color[3];

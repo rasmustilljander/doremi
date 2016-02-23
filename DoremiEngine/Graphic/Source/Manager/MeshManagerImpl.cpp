@@ -198,7 +198,7 @@ namespace DoremiEngine
 
             m_directX.GetDeviceContext()->PSSetConstantBuffers(1, 1 , &materialData);
 
-            newMaterial->SetMaterialName(p_materialData.diffuseTexturePath);
+            newMaterial->SetMaterialName(p_materialData.nodeName);
             newMaterial->SetMaterialData(materialData);
             newMaterial->SetDiffuseTexture(newDiffuseTexture);
             newMaterial->SetGlowTexture(newGlowTexture);
@@ -215,7 +215,13 @@ namespace DoremiEngine
             MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(),
                                           p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount(), 
                                           materialData);
-            m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
+            std::string materialName = p_material.GetMaterialName();
+            if (materialName[0] == 'T' && materialName[1] == 'T')   //TODOXX Extrem fullösning för att få in transparenta meshar!!
+                //Add transparent mesh in different list 
+                m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddTransMeshForRendering(meshRenderData);
+            else
+                m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
+            
         }
         void MeshManagerImpl::Draw() {}
     }

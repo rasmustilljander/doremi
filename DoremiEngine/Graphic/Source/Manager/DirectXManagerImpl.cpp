@@ -321,7 +321,6 @@ namespace DoremiEngine
                 std::cout << "Failed to create blend state" << std::endl;
             }
 
-           
         }
 
         void DirectXManagerImpl::SetScreenResolution(DirectX::XMFLOAT2 p_res) { m_screenResolution = p_res; }
@@ -373,6 +372,7 @@ namespace DoremiEngine
             m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
             m_deviceContext->RSSetState(p_rasterizerState);
             RenderAllMeshs();
+
         }
 
         void DirectXManagerImpl::Render2D(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState)
@@ -603,6 +603,123 @@ namespace DoremiEngine
             }
             renderData.clear(); // Empty the vector
         }
+
+        void DirectXManagerImpl::RenderTransMeshs()
+        {
+            // Sort the data according after mesh then texture
+            std::sort(transRenderData.begin(), transRenderData.end(), SortOnVertexThenTexture);
+            // std::sort(transRenderData.begin(), transRenderData.end(), SortRenderData); //TODORT remove
+
+            // Setup required variables
+            const uint32_t stride = sizeof(Vertex);
+            const uint32_t offset = 0;
+            ID3D11Buffer* vertexData = transRenderData[0].vertexData;
+            ID3D11Buffer* materialData = transRenderData[0].materialData;
+            ID3D11ShaderResourceView* texture = transRenderData[0].diffuseTexture;
+            ID3D11ShaderResourceView* glowtexture = transRenderData[0].glowTexture;
+            ID3D11SamplerState* samplerState = transRenderData[0].samplerState;
+
+            // Iterate all the entries and do the smallest amount of changes to the GPU
+            // Render the first entry outside of the loop because it's a specialcase
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &transRenderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
+            m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+            m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+            m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+            m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+            m_deviceContext->PSSetConstantBuffers(1, 1, &materialData);
+
+
+            if (transRenderData[0].indexData != nullptr)
+            {
+                m_deviceContext->IASetIndexBuffer(transRenderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->DrawIndexed(transRenderData[0].indexCount, 0, 0);
+            }
+            else
+            {
+                m_deviceContext->Draw(transRenderData[0].vertexCount, 0);
+            }
+
+            // TODO Can be upgraded with instanced drawing
+            const size_t vectorSize = transRenderData.size();
+            for (size_t i = 1; i < vectorSize; ++i)
+            {
+                if (transRenderData[i].vertexData != transRenderData[i - 1].vertexData) // Check if vertexdata has been changed
+                {
+                    vertexData = transRenderData[i].vertexData;
+                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+                }
+
+                if (transRenderData[i].samplerState != transRenderData[i - 1].samplerState)
+                {
+                    samplerState = transRenderData[i].samplerState;
+                    if (samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetSamplers(0, 1, &samplerState);
+                    }
+                    else
+                    {
+                        std::cout << "Something went wrong with the sampler in DirXmanagerImpl.cpp" << std::endl;
+                    }
+                }
+
+                if (transRenderData[i].diffuseTexture != transRenderData[i - 1].diffuseTexture) // Check if texture has been changed
+                {
+                    texture = transRenderData[i].diffuseTexture;
+                    if (texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(0, 1, &texture);
+                    }
+                }
+                if (transRenderData[i].glowTexture != transRenderData[i - 1].glowTexture) // Check if texture has been changed
+                {
+                    glowtexture = transRenderData[i].glowTexture;
+                    if (glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+                    }
+                }
+                //if (transRenderData[i].materialData != transRenderData[i - 1].materialData) // Check if texture has been changed
+                //{
+                materialData = transRenderData[i].materialData;
+                if (materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                {
+                    m_deviceContext->PSSetConstantBuffers(1, 1, &materialData);
+                }
+                //}
+
+                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+
+                WorldMatrices t_worldMatrices;
+
+                DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&transRenderData[i].worldMatrix);
+                DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
+                t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
+                DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
+                t_worldMatrices.worldMat = transRenderData[i].worldMatrix;
+                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
+                m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+                if (transRenderData[i].indexData != nullptr)
+                {
+                    m_deviceContext->IASetIndexBuffer(transRenderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                    m_deviceContext->DrawIndexed(transRenderData[i].indexCount, 0, 0);
+                }
+                else
+                {
+                    m_deviceContext->Draw(transRenderData[i].vertexCount, 0);
+                }
+            }
+            transRenderData.clear(); // Empty the vector
+        }
+
         void DirectXManagerImpl::RenderSkeletalMesh()
         {
             // Sort the data according after mesh then texture
@@ -772,9 +889,9 @@ namespace DoremiEngine
         {
             ID3D11ShaderResourceView* nullSRV = { NULL };
             ID3D11UnorderedAccessView* nullUAV = { NULL };
-            ID3D11RenderTargetView* nullRTV[2] = { NULL, NULL };
+            ID3D11RenderTargetView* nullRTV[3] = { NULL, NULL, NULL };
 
-            m_deviceContext->OMSetRenderTargets(2, nullRTV, nullptr);
+            m_deviceContext->OMSetRenderTargets(3, nullRTV, nullptr);
 
             //////BLUR HORIZONAL
             m_deviceContext->CSSetShaderResources(0, 1, &m_backbufferSRV);
@@ -787,7 +904,6 @@ namespace DoremiEngine
 
             /////////BLUR VERTICAL
 
-            // shader resource m_renderTargetSRV[0] and scene
             m_deviceContext->CSSetShaderResources(0, 1, &m_glowSRV);
             m_deviceContext->CSSetShaderResources(1, 1, &m_sceneSRV);
 
@@ -810,12 +926,23 @@ namespace DoremiEngine
         
         void DirectXManagerImpl::EndDraw()
         {
+
             ComputeGlow();
+
+            if (transRenderData.size() > 0)
+            {
+                SetRenderTargetNormal();
+                EnableBlend();
+                RenderTransMeshs();
+                DisableBlend();
+            }
+
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};
             m_deviceContext->ClearRenderTargetView(m_backBufferRTV, color);
             m_deviceContext->ClearRenderTargetView(m_sceneRTV, color);
             m_deviceContext->ClearRenderTargetView(m_glowRTV, color);
+            m_deviceContext->ClearRenderTargetView(m_depthRTV, color);
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         }
@@ -824,6 +951,11 @@ namespace DoremiEngine
         {
             // TODORT Could be redesigned so that this class asks MeshManager for it's data instead
             renderData.push_back(std::move(p_renderData));
+        }
+        void DirectXManagerImpl::AddTransMeshForRendering(MeshRenderData& p_renderData)
+        {
+            // TODORT Could be redesigned so that this class asks MeshManager for it's data instead
+            transRenderData.push_back(std::move(p_renderData));
         }
     }
 }

@@ -9,6 +9,8 @@ namespace DoremiEngine
     namespace Graphic
     {
         struct GraphicModuleContext;
+        struct PixelShader;
+        struct VertexShader;
         // class DepthStencilState;
         // class RasterizerState;
 
@@ -78,6 +80,10 @@ namespace DoremiEngine
             */
             void AddMeshForRendering(MeshRenderData& p_renderData);
             /**
+            Adds a transparent mesh for rendering after everything else
+            */
+            void AddTransMeshForRendering(MeshRenderData& p_renderData);
+            /**
             Creates depth stencil state
             */
             DepthStencilState* CreateDepthStencilState(D3D11_DEPTH_STENCIL_DESC p_depthStencilDesc) override;
@@ -112,6 +118,10 @@ namespace DoremiEngine
             */
             void RenderAllMeshs();
             /**
+            Render all meshes
+            */
+            void RenderTransMeshs();
+            /**
             Dispatch compute shaders for light culling
             */
             void DispatchCompute();
@@ -125,6 +135,7 @@ namespace DoremiEngine
             void BuildWorldMatrix();
 
             std::vector<MeshRenderData> renderData;
+            std::vector<MeshRenderData> transRenderData;
             const GraphicModuleContext& m_graphicContext;
             ID3D11Device* m_device;
             ID3D11DeviceContext* m_deviceContext;

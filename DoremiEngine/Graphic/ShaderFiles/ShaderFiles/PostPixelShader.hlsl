@@ -14,8 +14,6 @@ struct PixelInputType
 struct PixelOutputType
 {
     float4 diffuse : SV_Target0;
-    float4 glow : SV_Target1;
-    float4 depth : SV_Target2;
 };
 
 struct LightGridInfo
@@ -171,15 +169,8 @@ PixelOutputType PS_main(PixelInputType input)
             rgb += CalcPointLight(input, l);
 
     }
-    if (glowcolor.r < 0.5 && glowcolor.g < 0.5 && glowcolor.b < 0.5)
-        output.glow = float4(0, 0, 0, 0);
-    else
-        output.glow = normalize(texcolor) * 2;
 
     output.diffuse = float4(rgb, 1) * texcolor * 3.f;
-    //output.diffuse = float4( materialData.color, 1);
-    float depth = (input.position.x/input.position.y) + 1;
-    output.depth = float4(depth, depth, depth, 1);
 
     return output;
 

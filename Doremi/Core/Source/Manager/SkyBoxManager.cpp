@@ -50,7 +50,8 @@ namespace Doremi
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(m_rasterizerState->GetRasterizerState(),
                                                                                                   m_depthStencilState->GetDepthStencilState());
 
-
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_basicVertexShader);
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_basicPixelShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOLH this should not be here. Make another
             // manager that runs this. Has to be last and this
             // is the last one atm
@@ -58,7 +59,7 @@ namespace Doremi
 
         void SkyBoxManager::CreateSkyBox()
         {
-            m_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("EmptySpace.dds");
+            m_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("SkyBox.dds");
             D3D11_SAMPLER_DESC t_sampDesc;
             ZeroMemory(&t_sampDesc, sizeof(t_sampDesc));
             t_sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -75,11 +76,20 @@ namespace Doremi
 
             m_skyBoxPixelShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("SkyBoxPixelShader.hlsl");
+            m_basicPixelShader =
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("PostPixelShader.hlsl");
             D3D11_INPUT_ELEMENT_DESC ied[] = {
                 {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             };
             m_skyBoxVertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("SkyBoxVertexShader.hlsl", ied, ARRAYSIZE(ied));
+            D3D11_INPUT_ELEMENT_DESC ied2[] = {
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            };
+            m_basicVertexShader =
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl", ied2, ARRAYSIZE(ied2));
 
             // Create RasterizerState
             D3D11_RASTERIZER_DESC t_rasterDesc;

@@ -86,6 +86,8 @@ namespace Doremi
                     materialMessage.glowTexturePath = glowTextureName;
                     // delete glowTextureName;
                 }
+
+                materialMessage.nodeName = materialName;
                 // TODOKO save the texture name<
                 m_materials[materialName] = materialMessage;
 
@@ -125,6 +127,8 @@ namespace Doremi
                 char* diffuseTextureName = new char[diffuseTextureNameSize];
                 ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
                 if(diffuseTextureNameSize != 0) materialMessage.diffuseTexturePath = diffuseTextureName;
+
+                materialMessage.nodeName = materialName;
 
                 m_materials[materialName] = materialMessage;
 
