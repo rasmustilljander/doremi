@@ -169,12 +169,9 @@ namespace Doremi
                 entitySpawnComp->spawnRadius = 10000;
             }
 
-            float DEBUGoffset = 0;
             // If spawnpoint, set physic properties
             if(transformationData.attributes.spawnPointID > -1)
             {
-
-                DEBUGoffset = 200;
                 r_shouldCookStaticPhysics = false;
 
                 // If start point, we also set this as starting respawn
@@ -233,12 +230,12 @@ namespace Doremi
                 platComp->endPosition = transformationData.attributes.interactableEndPos;
                 platComp->startPosition.z *= -1.0f;
                 platComp->endPosition.z *= -1.0f;
-
+                // Fix to ensure platforms spawn where they start
+                transComp->position = platComp->startPosition;
 
                 // Physical material comp
                 PhysicsMaterialComponent* t_physMatComp = GetComponent<PhysicsMaterialComponent>(p_entityId);
                 t_physMatComp->p_materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
-
 
                 // Rigid body comp
                 RigidBodyComponent* t_rigidBodyComp = GetComponent<RigidBodyComponent>(p_entityId);
@@ -332,7 +329,6 @@ namespace Doremi
                         rigidBodyManager.AddCapsuleBodyDynamic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->height, bodyComp->radius);
                         break;
                     case RigidBodyGeometry::staticBox:
-                        transComp->position.y += DEBUGoffset;
                         rigidBodyManager.AddBoxBodyStatic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->boxDims, matComp->p_materialID);
                         break;
                     default:

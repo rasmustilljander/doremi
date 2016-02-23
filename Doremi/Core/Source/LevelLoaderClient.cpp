@@ -624,8 +624,9 @@ namespace Doremi
                 EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::NetworkObject) |
                                                                           static_cast<uint32_t>(ComponentType::RigidBody) |
                                                                           static_cast<uint32_t>(ComponentType::PhysicalMaterial));
-
-
+                // Fix to ensure platforms spawn where they start
+                transComp->position = transformationData.attributes.interactableStartPos;
+                transComp->position.z *= -1;
                 // Rigid body comp
                 RigidBodyComponent* t_rigidBodyComp = GetComponent<RigidBodyComponent>(p_entityId);
 
