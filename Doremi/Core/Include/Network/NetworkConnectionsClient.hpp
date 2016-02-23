@@ -28,10 +28,6 @@ namespace Doremi
 
             SocketHandle GetServerConnectingSocketHandle() { return m_serverConnectingSocketHandle; }
 
-            DoremiEngine::Network::Adress* GetServerAdress() { return m_serverAdress; }
-
-            DoremiEngine::Network::Adress* GetMasterAdress() { return m_masterAdress; }
-
             ServerConnectionFromClient m_serverConnectionState;
 
             MasterConnectionFromClient m_masterConnectionState;
@@ -44,14 +40,6 @@ namespace Doremi
             static NetworkConnectionsClient* m_singleton;
 
             const DoremiEngine::Core::SharedContext& m_sharedContext;
-
-            DoremiEngine::Network::Adress* m_serverAdress;
-
-            DoremiEngine::Network::Adress* m_masterAdress;
-
-            SocketHandle m_serverConnectedSocketHandle;
-
-            SocketHandle m_serverConnectingSocketHandle;
         };
     }
 }

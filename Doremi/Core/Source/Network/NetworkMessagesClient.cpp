@@ -5,11 +5,23 @@
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
 
+// Handlers
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+#include <Doremi/Core/Include/InterpolationHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
 
 // Streamer
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
+
+// Event receiver
+#include <Doremi\Core\Include\NetworkEventReceiver.hpp>
+
+// Standard
+#include <DirectXMath.h>
 
 namespace Doremi
 {
@@ -39,6 +51,10 @@ namespace Doremi
         NetworkMessagesClient::NetworkMessagesClient(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
         NetworkMessagesClient::~NetworkMessagesClient() {}
+
+        /**
+            == Receive Messages Connecting ==
+        */
 
         void NetworkMessagesClient::ReceiveVersionCheck(NetMessageConnectingFromServer& p_message)
         {
@@ -88,7 +104,7 @@ namespace Doremi
                 t_networkConnection->m_serverConnectionState.LastResponse = 0;
 
                 // Attempt connect to server
-                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->GetServerAdress(),
+                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnectionState.Adress,
                                                                                         t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
                 if(t_connected)
                 {
@@ -101,357 +117,318 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::ReceiveDisconnect(NetMessageConnectingFromServer& p_message) {}
-        void NetworkMessagesClient::RecieveConnected(NetMessageConnectedFromServer& p_message) {}
-        void NetworkMessagesClient::RecieveLoadWorld(NetMessageConnectedFromServer& p_message) {}
-        void NetworkMessagesClient::RecieveInGame(NetMessageConnectedFromServer& p_message) {}
-        void NetworkMessagesClient::SendConnectionRequest() {}
-        void NetworkMessagesClient::SendVersionCheck() {}
-        void NetworkMessagesClient::SendDisconnect() {}
-        void NetworkMessagesClient::SendConnected() {}
-        void NetworkMessagesClient::SendLoadWorld() {}
-        void NetworkMessagesClient::SendInGame() {}
-
-
-        void ClientNetworkManager::RecieveConnected(NetMessage& Message)
+        void NetworkMessagesClient::ReceiveDisconnect(NetMessageConnectingFromServer& p_message)
         {
-            NetworkStreamer Streamer = NetworkStreamer();
-            unsigned char* BufferPointer = Message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
-            m_numJoinEvents = Streamer.ReadUnsignedInt32();
-
-            bool GameStarts = Streamer.ReadBool();
-
-            // I think this one is unecessary for now, since we'll be start loading world when we receive that message...
-            if(GameStarts)
+            // If we're above intro phase, we restart
+            if(t_networkConnection->m_serverConnectionState > ServerConnectionStateFromClient::CONNECTING)
             {
-                m_serverConnectionState = ConnectionState::MAP_LOADING;
+                // Ready for read
+                NetworkStreamer t_streamer = NetworkStreamer();
+                unsigned char* t_bufferPointer = p_message.Data;
+                t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(p_message.Data));
+
+                // TODOCM print to message box why we disconnected
+                // Write disconnect string
+                std::string t_disconnectMessage = t_streamer.ReadString();
             }
         }
 
-        void ClientNetworkManager::RecieveMapLoading(NetMessage& p_message)
+        /**
+            == Receive Messages Connected ==
+        */
+
+        void NetworkMessagesClient::RecieveConnected(NetMessageConnectedFromServer& p_message)
         {
-            // If we're not in game, we care
-            if(m_serverConnectionState <= ConnectionState::IN_GAME)
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+
+            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
             {
-                // If we just connected, and receive this we move into map loading state
-                if(m_serverConnectionState == ConnectionState::CONNECTED)
-                {
-                    m_serverConnectionState = ConnectionState::MAP_LOADING;
-                }
+                // Ready for read
+                NetworkStreamer t_streamer = NetworkStreamer();
+                unsigned char* t_bufferPointer = p_message.Data;
+                t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(p_message.Data));
 
-                // Create streamer
-                NetworkStreamer Streamer = NetworkStreamer();
-                unsigned char* dataPointer = p_message.Data;
-                Streamer.SetTargetBuffer(dataPointer, sizeof(p_message.Data));
-
-                uint32_t t_bytesWritten = 0;
-
-
-                PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-
-                uint32_t t_previousNumEvents = t_playerHandler->GetLastJoinEventRead();
-
-                // Write events
-                t_playerHandler->ReadEventsForJoin(Streamer, sizeof(p_message.Data), t_bytesWritten);
-
-                // If we got something new, print! :3
-                uint32_t t_newNumEvents = t_playerHandler->GetLastJoinEventRead();
-                if(t_previousNumEvents != t_newNumEvents)
-                {
-                    cout << "Loaded: " << ((float)t_newNumEvents / (float)m_numJoinEvents) * 100.0f << "%..." << endl;
-                }
-
-                // Update last response
-                m_serverLastResponse = 0;
-            }
-            else
-            {
-                // TODOCM If reliable messge is wrong?
-                // Could be that we receive a late package.. so shouldn't be a problem.. and we're the client, so w/e...
+                // Update timeout
+                t_networkConnection->m_serverConnectionState.LastResponse = 0;
+                // TODOCM check if we need something here
             }
         }
 
-        void ClientNetworkManager::RecieveSnapshot(NetMessage& p_message, bool p_initial = false)
+        void NetworkMessagesClient::RecieveLoadWorld(NetMessageConnectedFromServer& p_message)
         {
-            if(m_serverConnectionState >= ConnectionState::MAP_LOADING)
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+            // We only care of this if we're loading map
+            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
             {
-                if(m_serverConnectionState == ConnectionState::MAP_LOADING)
+                // If we receive this we know we should load map, change state if we're in wrong state
+                if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
                 {
-                    m_serverConnectionState = ConnectionState::IN_GAME;
-
-                    // Create inputhandler used for client
-                    InputHandlerClient* t_newInputHandler = new InputHandlerClient(m_sharedContext);
-
-                    // Create player
-                    PlayerHandler::GetInstance()->CreateNewPlayer(m_playerID, t_newInputHandler);
+                    t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::LOAD_WORLD;
+                    // TODOCM change state of client as well, to load the map, but ignore events untill done there :):):):)
                 }
 
+                // Ready for read
+                NetworkStreamer t_streamer = NetworkStreamer();
+                unsigned char* t_bufferPointer = p_message.Data;
+                t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(p_message.Data));
 
-                // Update last response
-                m_serverLastResponse = 0;
+                // Counter for bytes read
+                uint32_t t_bytesRead = 0;
 
-                // Read and translate message, for each position we update buffer array?
-                NetworkStreamer Streamer = NetworkStreamer();
-                unsigned char* BufferPointer = p_message.Data;
-                Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
+                // Read how many join events there are
+                uint32_t t_numOfJoinEvents = t_streamer.ReadUnsignedInt32();
+                t_bytesRead += sizeof(uint32_t);
 
-                EntityHandler& EntityHandler = EntityHandler::GetInstance();
+                // Read join events
+                t_playerHandler->ReadEventsForJoin(t_streamer, sizeof(p_message.Data), t_bytesRead);
 
-                uint32_t ReadOffset = 0;
+                // Update timeout
+                t_networkConnection->m_serverConnectionState.LastResponse = 0;
 
-                // Update frequency buffer by acc
-                PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->UpdateBufferFromSequence(Streamer.ReadUnsignedInt8());
-                ReadOffset += sizeof(uint8_t);
+                // TODOCM Update loading screen
+            }
+        }
 
-                // Create new snapshot
-                Snapshot* NewSnapshot = new Snapshot();
+        void NetworkMessagesClient::RecieveInGame(NetMessageConnectedFromServer& p_message)
+        {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+            FrequencyBufferHandler* t_frequencyBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            NetworkEventReceiver* t_eventReciever = t_playerHandler->GetNetworkEventReceiverForPlayer(m_playerID);
 
-                // Read sequence of snapshot
-                NewSnapshot->SnapshotSequence = Streamer.ReadUnsignedInt8();
-                ReadOffset += sizeof(uint8_t);
+            // If we were at loading world, we assume server knows best and we're done loading!
+            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
+            {
+                t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::IN_GAME;
+            }
 
-                // Read events
-                NetworkEventReceiver* t_eventReciever =
-                    static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetNetworkEventReceiverForPlayer(m_playerID);
-                t_eventReciever->ReadEvents(Streamer, sizeof(p_message.Data), ReadOffset);
+            // Ready for read
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = p_message.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(p_message.Data));
 
-                // Save events to snapshot
-                NewSnapshot->Events = t_eventReciever->GetEventsReceivedFromServer();
+            // Bytes read counter
+            uint32_t t_bytesRead = 0;
 
-                if(p_initial)
-                {
-                    InterpolationHandler::GetInstance()->SetSequence(NewSnapshot->SnapshotSequence);
-                }
+            // Update frequency buffer by acc
+            uint8_t t_frequencyAccSequence = t_streamer.ReadUnsignedInt8());
+            t_bytesRead += sizeof(uint8_t);
 
-                // Check if we can read the next
-                if(sizeof(p_message.Data) - ReadOffset < sizeof(uint8_t) + sizeof(float) * 3)
-                {
-                    return;
-                }
+            // Update frequency buffer
+            t_frequencyBufferHandler->UpdateBufferFromSequence(t_frequencyAccSequence);
 
-                // Read sequence of incomming position
-                NewSnapshot->SequenceToCheckPosAgainst = Streamer.ReadUnsignedInt8();
+            // Create a new snapshot
+            Snapshot* t_newSnapshot = new Snapshot();
 
-                // Read position to check against
-                NewSnapshot->PlayerPositionToCheck = Streamer.ReadFloat3();
+            // Read sequence of snapshot
+            t_newSnapshot->SnapshotSequence = t_streamer.ReadUnsignedInt8();
+            t_bytesRead += sizeof(uint8_t);
 
-                ReadOffset += sizeof(uint8_t) + sizeof(float) * 3;
+            // Read sequence of incomming position
+            t_newSnapshot->SequenceToCheckPosAgainst = t_streamer.ReadUnsignedInt8();
+            t_bytesRead += sizeof(uint8_t);
 
-                // Check if we can read the next
-                if(sizeof(p_message.Data) - ReadOffset <= sizeof(uint8_t))
-                {
-                    return;
-                }
+            // Read position to check against
+            t_newSnapshot->PlayerPositionToCheck = t_streamer.ReadFloat3();
+            t_bytesRead += sizeof(float) * 3;
 
+
+            // Read events into the eventreceiver
+            t_eventReciever->ReadEvents(t_streamer, sizeof(p_message.Data), t_bytesRead);
+
+            // Get the events and save events to snapshot
+            t_newSnapshot->Events = t_eventReciever->GetEventsReceivedFromServer();
+
+            // If it was init message
+            if(p_initial)
+            {
+                InterpolationHandler::GetInstance()->SetSequence(t_newSnapshot->SnapshotSequence);
+            }
+
+            // Check if we can read even more!
+            if(sizeof(p_message.Data) - t_bytesRead > sizeof(uint8_t))
+            {
                 // Read how many objects we got in the message
-                NewSnapshot->NumOfObjects = Streamer.ReadUnsignedInt8();
-                ReadOffset += sizeof(uint8_t);
-
+                t_newSnapshot->NumOfObjects = t_streamer.ReadUnsignedInt8();
+                t_bytesRead += sizeof(uint8_t);
 
                 // Add objects to snapshot
-                for(size_t i = 0; i < NewSnapshot->NumOfObjects; i++)
+                for(size_t i = 0; i < t_newSnapshot->NumOfObjects; i++)
                 {
-                    NewSnapshot->Objects[i].EntityID = Streamer.ReadUnsignedInt32();
-                    XMFLOAT3 t_position = Streamer.ReadFloat3();
-                    XMFLOAT4 p_orientation = Streamer.ReadRotationQuaternion();
-                    NewSnapshot->Objects[i].Component =
-                        TransformComponentNext(t_position, p_orientation,
-                                               XMFLOAT3(1.0f, 1.0f, 1.0f)); // TODOXX setting scale here, not sure if want to send over network?
-                }
+                    t_newSnapshot->Objects[i].EntityID = t_streamer.ReadUnsignedInt32();
+                    DirectX::XMFLOAT3 t_position = t_streamer.ReadFloat3();
+                    DirectX::XMFLOAT4 p_orientation = t_streamer.ReadRotationQuaternion();
 
-                // Queue snapshot
-                InterpolationHandler::GetInstance()->QueueSnapshot(NewSnapshot);
-            }
-            else
-            {
-                // TODOCM If reliable messge is wrong?
-            }
-        }
-
-        void ClientNetworkManager::RecieveReliable(double p_dt)
-        {
-            if(m_serverConnectionState >= ConnectionState::CONNECTED)
-            {
-                DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-                NetMessage Message = NetMessage();
-
-                // Attempt recieve reliable message
-                while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle))
-                {
-
-                    switch(Message.MessageID)
-                    {
-                        case MessageID::CONNECTED:
-
-                            RecieveConnected(Message);
-                            break;
-
-                        case MessageID::LOAD_WORLD:
-
-                            RecieveMapLoading(Message);
-                            break;
-
-                        case MessageID::INIT_SNAPSHOT:
-
-                            RecieveSnapshot(Message, true);
-                            break;
-
-                        case MessageID::SNAPSHOT:
-
-                            RecieveSnapshot(Message);
-                            break;
-
-                        default:
-                            break;
-                    }
-
-
-                    Message = NetMessage();
+                    t_newSnapshot->Objects[i].Component = TransformComponentNext(t_position, p_orientation, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f)); // TODOXX setting scale here, not sure if want to send over network?
                 }
             }
+
+            // Queue snapshot
+            InterpolationHandler::GetInstance()->QueueSnapshot(t_newSnapshot);
+
+
+            // Update timeout
+            t_networkConnection->m_serverConnectionState.LastResponse = 0;
         }
 
-        void ClientNetworkManager::SendConnectRequestMessage()
+        /**
+            == Send Messages Connecting ==
+        */
+
+        void NetworkMessagesClient::SendConnectionRequest()
         {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+
             // Create a message
-            NetMessage Message = NetMessage();
+            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
 
-            // Set message ID to connection request
-            Message.MessageID = MessageID::CONNECT_REQUEST;
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::CONNECTION_REQUEST;
 
-
-            // Send Message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnectionState.Adress);
         }
 
-        void ClientNetworkManager::SendVersionMessage()
+        void NetworkMessagesClient::SendVersionCheck()
         {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+
             // Create a message
-            NetMessage Message = NetMessage();
+            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
 
-            // Set message ID to version check
-            Message.MessageID = MessageID::VERSION_CHECK;
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::VERSION_CHECK;
 
-            // TODOCM Write bits for stuff
-            NetworkStreamer Streamer = NetworkStreamer();
-            unsigned char* BufferPointer = Message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
-
-            Streamer.WriteUnsignedInt32(m_playerID);
-
-            std::cout << "Sending version message." << std::endl; // TODOCM logg instead
-
-            // Send Message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
-        }
-
-        void ClientNetworkManager::CreateInputMessage(NetMessage& p_message)
-        {
-            InputHandler* inputHandler = PlayerHandler::GetInstance()->GetDefaultInputHandler();
-
-            // Create a stream
-            NetworkStreamer Streamer = NetworkStreamer();
-
-            // Set message buffer to stream
-            unsigned char* BufferPointer = p_message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(p_message.Data));
-
-            uint32_t bytesWritten = 0;
-
-            // Write sequence
-            Streamer.WriteUnsignedInt8(InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
-            bytesWritten += sizeof(uint8_t);
-
-            // Write input(position directions) to stream
-            Streamer.WriteUnsignedInt32(inputHandler->GetInputBitMask());
-            bytesWritten += sizeof(uint32_t);
-
-            // Get orientation, shouldn't be a problem if wrong for now
-            EntityID id = 0;
-            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(id))
-            {
-                // cout << "wrong in createinput message" << endl;
-            }
-
-            // Write orientation and translation
-            Streamer.WriteRotationQuaternion(GetComponent<TransformComponent>(id)->rotation);
-            bytesWritten += sizeof(float) * 4;
-
-            Streamer.WriteFloat3(GetComponent<TransformComponent>(id)->position);
-            bytesWritten += sizeof(float) * 3;
-
-            // Write last sequence used for add remove
-            uint8_t lastSequenceUsed =
-                (static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance()))->GetNetworkEventReceiverForPlayer(m_playerID)->GetNextSequenceUsed();
-
-            Streamer.WriteUnsignedInt8(lastSequenceUsed);
-            bytesWritten += sizeof(uint8_t);
-
-            // Write sound frequency
-            PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler()->WriteFrequencies(Streamer, sizeof(p_message.Data), bytesWritten);
-        }
-
-        void ClientNetworkManager::SendConnectedMessage()
-        {
-            // Create a message
-            NetMessage Message = NetMessage();
-
-            Message.MessageID = MessageID::CONNECT;
-
-            // Send Message
-            m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
-        }
-
-        void ClientNetworkManager::SendMapLoadingMessage()
-        {
-            // Create message base
-            NetMessage Message = NetMessage();
-            Message.MessageID = MessageID::LOAD_WORLD;
-
-            // Create streamer
+            // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();
-            unsigned char* t_bufferPointer = Message.Data;
-            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(Message.Data));
+            unsigned char* t_bufferPointer = t_message.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
-            // Amount written
+            // Write playerID
+            t_streamer.WriteUnsignedInt32(t_networkConnection->m_serverConnectionState.PlayerID);
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnectionState.Adress);
+        }
+
+        void NetworkMessagesClient::SendDisconnect()
+        {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+
+            // Create a message
+            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
+
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::DISCONNECT;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnectionState.Adress);
+        }
+
+        /**
+            == Send Messages Connecting ==
+        */
+
+        void NetworkMessagesClient::SendConnected()
+        {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+
+            // Create a message
+            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
+
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::CONNECTED;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
+        }
+
+        void NetworkMessagesClient::SendLoadWorld()
+        {
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+            PlayerHandlerClient* t_playerhandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+            // Create a message
+            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
+
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::LOAD_WORLD;
+
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_message.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
+
+            // Bytes written counter
             uint32_t t_bytesWritten = 0;
 
-            // Write acked event
-            uint32_t eventAcc = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetLastJoinEventRead();
+            // Get number of events received
+            uint32_t eventAcc = t_playerhandler->GetLastJoinEventRead();
 
+            // Write it to the message
             t_streamer.WriteUnsignedInt32(eventAcc);
             t_bytesWritten += sizeof(uint32_t);
 
-            // Send Message
-            m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
+            // Send message
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
         }
 
-        void ClientNetworkManager::SendInGameMessage()
+        void NetworkMessagesClient::SendInGame()
         {
-            NetMessage Message = NetMessage();
-            Message.MessageID = MessageID::INPUT;
+            NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiverForPlayer(t_networkConnection->m_serverConnectionState.PlayerID);
+            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetDefaultFrequencyBufferHandler();
 
+            // Create a message
+            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
 
-            CreateInputMessage(Message);
+            // Set correct ID
+            t_message.MessageID = SendMessageIDFromClient::IN_GAME;
 
-            // Send Message
-            m_sharedContext.GetNetworkModule().SendReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle);
-        }
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_message.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
-        void ClientNetworkManager::SendDisconnectMessage()
-        {
-            // TODOCM remove world
+            // Bytes written counter
+            uint32_t t_bytesWritten = 0;
 
-            // Create disconnection message
-            NetMessage NewMessage = NetMessage();
-            NewMessage.MessageID = MessageID::DISCONNECT;
+            // Get current sequence used for snapshots
+            uint8_t t_currentSequence = InterpolationHandler::GetInstance()->GetRealSnapshotSequence();
 
-            // TODOCM add info
+            // Write sequence ack
+            t_streamer.WriteUnsignedInt8(t_currentSequence);
+            t_bytesWritten += sizeof(uint8_t);
+
+            // Get player transform component
+            EntityID t_playerEntityID = 0;
+            PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(t_playerEntityID);
+            TransformComponent* t_transformComp = GetComponent<TransformComponent>(t_playerEntityID);
+
+            // Write orientation
+            t_streamer.WriteRotationQuaternion(t_transformComp->rotation);
+            t_bytesWritten += sizeof(float) * 4;
+
+            // Get sequence acc for events
+            uint8_t t_eventSequenceAck = t_eventReceiver->GetNextSequenceUsed();
+
+            // Write event ack
+            t_streamer.WriteUnsignedInt8(t_eventSequenceAck);
+            t_bytesWritten += sizeof(uint8_t);
+
+            // Write sound frequencies
+            t_frequencyBufferHandler->WriteFrequencies(t_streamer, sizeof(t_message.Data), t_bytesWritten);
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&NewMessage, sizeof(NewMessage), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
         }
     }
 }

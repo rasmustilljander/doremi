@@ -69,28 +69,28 @@ namespace Doremi
 
         struct NetMessageConnectingFromClient
         {
-            NetMessageConnectingFromClient() {}
+            NetMessageConnectingFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE); }
             SendMessageIDFromClient MessageID; // 1 byte
             unsigned char Data[NET_MESSAGE_CONNECTING_DATA_SIZE]; // 1023 byte
         };
 
         struct NetMessageConnectedFromClient
         {
-            NetMessageConnectedFromClient() {}
+            NetMessageConnectedFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
             SendMessageIDFromClient MessageID;
             unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE];
         };
 
         struct NetMessageConnectingFromServer
         {
-            NetMessageConnectingFromServer() {}
+            NetMessageConnectingFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE); }
             SendMessageIDFromServer MessageID; // 1 byte
             unsigned char Data[NET_MESSAGE_CONNECTING_DATA_SIZE]; // 1023 byte
         };
 
         struct NetMessageConnectedFromServer
         {
-            NetMessageConnectedFromServer() {}
+            NetMessageConnectedFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
             SendMessageIDFromServer MessageID;
             unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE];
         };

@@ -56,7 +56,10 @@ namespace Doremi
         struct ServerConnectionFromClient
         {
             ServerConnectionStateFromClient ConnectionState;
+            SocketHandle ConnectingSocketHandle;
             SocketHandle ConnectedSocketHandle;
+            DoremiEngine::Network::Adress* Adress;
+
             PlayerID PlayerID;
 
             double UpdateInterval;
@@ -67,8 +70,8 @@ namespace Doremi
         struct MasterConnectionFromClient
         {
             MasterConnectionStateFromClient ConnectionState;
-            SocketHandle ConnectedSocketHandle;
-            PlayerID PlayerID;
+            SocketHandle ConnectingSocketHandle;
+            DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;
             bool NewConnection;

@@ -146,7 +146,11 @@ namespace Doremi
 
         void NetworkMessagesServer::ReceiveConnectedMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
-            // doesn't exit yet, do we need this?...
+            // If we're connected stage
+            if(p_connection->ConnectionState == ClientConnectionStateFromServer::CONNECTED)
+            {
+                p_connection->LastResponse = 0;
+            }
         }
 
         void NetworkMessagesServer::ReceiveLoadWorldMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
@@ -164,6 +168,9 @@ namespace Doremi
                 // Read acced event
                 uint32_t eventAcc = p_streamer.ReadUnsignedInt32();
                 bytesRead += sizeof(uint32_t);
+
+
+                // TODOCM add bool here if player has done loading-loading world
 
                 // Acc rejoin by acced event
                 bool t_receivedAllEvents =
@@ -310,13 +317,8 @@ namespace Doremi
             unsigned char* p_bufferPointer = t_newMessage.Data;
             p_streamer.SetTargetBuffer(p_bufferPointer, sizeof(t_newMessage.Data));
 
-            // Write max number of events for rejoin
-            uint32_t t_maxNumberOfEvents = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID);
-            p_streamer.WriteUnsignedInt32(t_maxNumberOfEvents);
-
             // Check if we should start game
             bool t_shouldStart = ServerStateHandler::GetInstance()->GetState() == ServerStates::IN_GAME;
-            p_streamer.WriteBool(t_shouldStart);
 
             // Change state to load world TODOCM revalueate if we need to do this
             if(t_shouldStart)
@@ -343,6 +345,11 @@ namespace Doremi
 
             // Counter for writes bitten
             uint32_t t_bytesWritten = 0;
+
+            // Write max number of events for rejoin
+            uint32_t t_maxNumberOfEvents = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID);
+            t_streamer.WriteUnsignedInt32(t_maxNumberOfEvents);
+            t_bytesWritten += sizeof(uint32_t);
 
             // Write join events
             static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())

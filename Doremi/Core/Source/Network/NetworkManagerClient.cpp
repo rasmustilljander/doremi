@@ -339,7 +339,48 @@ namespace Doremi
             }
         }
 
+        void ClientNetworkManager::RecieveReliable(double p_dt)
+        {
+            if(m_serverConnectionState >= ConnectionState::CONNECTED)
+            {
+                DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
+                NetMessage Message = NetMessage();
 
+                // Attempt recieve reliable message
+                while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle))
+                {
+
+                    switch(Message.MessageID)
+                    {
+                        case MessageID::CONNECTED:
+
+                            RecieveConnected(Message);
+                            break;
+
+                        case MessageID::LOAD_WORLD:
+
+                            RecieveMapLoading(Message);
+                            break;
+
+                        case MessageID::INIT_SNAPSHOT:
+
+                            RecieveSnapshot(Message, true);
+                            break;
+
+                        case MessageID::SNAPSHOT:
+
+                            RecieveSnapshot(Message);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+                    Message = NetMessage();
+                }
+            }
+        }
         void ClientNetworkManager::UpdateTimeouts(double p_dt)
         {
             if(m_serverConnectionState > ConnectionState::DISCONNECTED)
