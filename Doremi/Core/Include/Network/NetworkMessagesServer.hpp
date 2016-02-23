@@ -3,9 +3,13 @@
 
 namespace DoremiEngine
 {
-    namespace Core
+    namespace Network
     {
         class Adress;
+    }
+    namespace Core
+    {
+        class SharedContext;
     }
 }
 
@@ -20,6 +24,10 @@ namespace Doremi
         class NetworkMessagesServer
         {
         public:
+            static NetworkMessagesServer* GetInstance();
+
+            static void StartupNetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             /**
                 == Receive Messages Unreliable ==
             */
@@ -27,17 +35,17 @@ namespace Doremi
             /**
                 Receive a connection request message
             */
-            static void ReceiveConnectionRequest(const NetMessageConnectingFromClient& m_message, const DoremiEngine::Network::Adress& m_Adress);
+            void ReceiveConnectionRequest(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Receives a version check message
             */
-            static void ReceiveVersionCheck(const NetMessageConnectingFromClient& m_message, const DoremiEngine::Network::Adress& m_Adress);
+            void ReceiveVersionCheck(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Receives a disconnect message
             */
-            static void ReceiveDisconnect(const NetMessageConnectingFromClient& m_message, const DoremiEngine::Network::Adress& m_adress);
+            void ReceiveDisconnect(NetMessageConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress);
 
             /**
                 == Receive Messages Reliable ==
@@ -46,17 +54,17 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            static void ReceiveConnectedMessage(const NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveConnectedMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            static void ReceiveLoadWorldMessage(const NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveLoadWorldMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            static void ReceiveInGameMessage(const NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveInGameMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 == Send Messages Unreliable ==
@@ -65,17 +73,17 @@ namespace Doremi
             /**
                 Send version check message
             */
-            static void SendVersionCheck(const NetMessage& m_message, const DoremiEngine::Network::Adress& m_adress);
+            void SendVersionCheck(const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Send connect message
             */
-            static void SendConnect(const Connection* connection, const DoremiEngine::Network::Adress& m_adress);
+            void SendConnect(const ClientConnectionFromServer* p_connection, const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Send disconnect message to adress
             */
-            static void SendDisconnect(const DoremiEngine::Network::Adress& m_adress, std::string p_outString);
+            void SendDisconnect(const DoremiEngine::Network::Adress& p_adress, std::string p_string);
 
             /**
                 == Send Messages Reliable ==
@@ -84,17 +92,26 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            static void SendConnected(Connection* p_connection);
+            void SendConnected(ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            static void SendLoadWorld(Connection* p_connection);
+            void SendLoadWorld(ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            static void SendInGame(NetMessage& p_message, Connection* p_connection);
+            void SendInGame(ClientConnectionFromServer* p_connection);
+
+        private:
+            NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            ~NetworkMessagesServer();
+
+            static NetworkMessagesServer* m_singleton;
+
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
         };
     }
 }

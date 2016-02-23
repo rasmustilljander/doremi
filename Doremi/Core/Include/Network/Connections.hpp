@@ -30,9 +30,8 @@ namespace Doremi
 
         enum class ClientConnectionStateFromServer
         {
-            DISCONNECTED,
-            CONNECTING,
             VERSION_CHECK,
+            CONNECT,
             CONNECTED,
             LOAD_WORLD,
             IN_GAME
@@ -73,6 +72,7 @@ namespace Doremi
 
         struct ClientConnectionFromServer
         {
+            ClientConnectionFromServer() {}
             ClientConnectionStateFromServer ConnectionState;
             SocketHandle ConnectedSocketHandle;
             PlayerID PlayerID;
