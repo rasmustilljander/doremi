@@ -130,7 +130,6 @@ namespace Doremi
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         Core::TreeHandler::StartupTreeHandler(sharedContext);
 
-        Core::TreeHandler::GetInstance()->BuildTheTree();
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
         m_screenSpaceDrawer = new ScreenSpaceDrawer(sharedContext, m_screenRes);
@@ -174,6 +173,8 @@ namespace Doremi
 
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         BuildWorld(sharedContext);
+
+        Core::TreeHandler::GetInstance()->BuildTheTree();
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
