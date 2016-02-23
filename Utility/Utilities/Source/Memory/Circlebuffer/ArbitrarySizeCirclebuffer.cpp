@@ -36,7 +36,7 @@ namespace Doremi
                 }
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize, std::mutex* p_sharedMemoryMutex)
+            void ArbitrarySizeCirclebuffer::Initialize(const uint32_t& p_bufferSize, IO::Mutex* p_sharedMemoryMutex)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
@@ -45,7 +45,7 @@ namespace Doremi
                 SetupVariables();
             }
 
-            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, std::mutex* p_sharedMemoryMutex)
+            void ArbitrarySizeCirclebuffer::Initialize(void* const p_preAllocatedBuffer, const uint32_t& p_bufferSize, IO::Mutex* p_sharedMemoryMutex)
             {
                 AssertInitialize(p_bufferSize);
                 m_rawBufferSize = p_bufferSize;
