@@ -147,55 +147,8 @@ namespace Doremi
         AddToManagerList(new CharacterControlSyncManager(sharedContext)); // Must be after movement
         AddToManagerList(new TriggerManager(sharedContext)); // TODOKO should only be needed on server
         AddToGraphicalManagerList(new ExtraDrainSyncManager(sharedContext));
+        AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
 
-        m_screenSpaceDrawer = new Core::ScreenSpaceDrawer(sharedContext, m_screenRes);
-
-        ////////////////Example only////////////////
-        // Create manager
-        Core::Manager* t_renderManager = new Core::GraphicManager(sharedContext);
-        // Manager* t_physicsManager = new ExampleManager(sharedContext);
-        // Manager* t_playerManager = new PlayerManager(sharedContext);
-        Core::Manager* t_clientNetworkManager = new Core::ClientNetworkManager(sharedContext);
-        Core::Manager* t_movementManager = new Core::MovementManagerClient(sharedContext);
-        Core::Manager* t_audioManager = new Core::AudioManager(sharedContext);
-        Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
-        // Core::Manager* t_aiPathManager = new Core::AIPathManager(sharedContext);
-        Core::Manager* t_charSyncManager = new Core::CharacterControlSyncManager(sharedContext);
-        Core::Manager* t_jumpManager = new Core::JumpManager(sharedContext);
-        Core::Manager* t_gravManager = new Core::GravityManager(sharedContext);
-        Core::Manager* t_pressureParticleGraphicManager = new Core::PressureParticleGraphicManager(sharedContext);
-        Core::Manager* t_skyBoxManager = new Core::SkyBoxManager(sharedContext);
-        Core::Manager* t_lightManager = new Core::LightManager(sharedContext);
-        Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
-        Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
-        Core::Manager* t_groundZoneManagerClient = new Core::GroundEffectManagerClient(sharedContext);
-
-        Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext); // TODOKO should only be needed on server
-        // Add manager to list of managers
-
-        m_graphicalManagers.push_back(t_groundZoneManagerClient);
-        m_graphicalManagers.push_back(t_pressureParticleGraphicManager);
-        m_graphicalManagers.push_back(t_renderManager);
-        Core::Manager* t_skeletalAnimationManager = new Core::SkeletalAnimationCoreManager(sharedContext);
-        m_graphicalManagers.push_back(t_skeletalAnimationManager);
-        // Add manager to list of managers
-        m_graphicalManagers.push_back(t_skyBoxManager);
-        // m_managers.push_back(t_physicsManager);
-        // m_managers.push_back(t_playerManager);
-        m_managers.push_back(t_audioManager);
-        m_managers.push_back(t_clientNetworkManager);
-        m_managers.push_back(t_rigidTransSyndManager);
-        m_managers.push_back(t_pressureParticleManager);
-
-        m_managers.push_back(t_lightManager);
-        m_managers.push_back(t_jumpManager);
-        m_managers.push_back(t_gravManager);
-        // m_managers.push_back(t_aiPathManager);
-        m_managers.push_back(t_movementManager); // Must be after gravity/jump
-        m_managers.push_back(t_charSyncManager); // Must be after movement
-        m_managers.push_back(t_triggerManager); // TODOKO should only be needed on server
-
-        m_graphicalManagers.push_back(t_extraDrainManager);
         // Initialize menu
         std::vector<string> t_textureNamesForMenuButtons;
 
