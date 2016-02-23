@@ -1,5 +1,5 @@
 #include <Internal/PhysicsModuleImplementation.hpp>
-
+#include <iostream>
 
 namespace DoremiEngine
 {
@@ -71,6 +71,13 @@ namespace DoremiEngine
         PxFilterFlags TestFilter2(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
                                   PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
         {
+
+
+            if(filterData0.word2 == 8 || filterData1.word2 == 8)
+            {
+                int derp = 5;
+            }
+
             // generate contacts for all that were not filtered above
             pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
@@ -83,22 +90,24 @@ namespace DoremiEngine
                 pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
                 return PxFilterFlag::eDEFAULT;
             }
-
-            // General filter if they match
-            if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
-            {
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
-            }
-            // Touch lost check
-            if((filterData0.word0 & filterData1.word2) && (filterData1.word0 & filterData1.word2))
-            {
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
-            }
             // Kill check (if 0 wants to ignore 1 or 1 wants to ignore 0)
             if((filterData0.word3 & filterData1.word0) || (filterData1.word3 & filterData0.word0))
             {
                 return PxFilterFlag::eKILL;
             }
+            // General filter if they match
+            if((filterData0.word0 & filterData1.word1) || (filterData1.word0 & filterData0.word1))
+            {
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+                return PxFilterFlag::eDEFAULT;
+            }
+            // Touch lost check
+            if((filterData0.word0 & filterData1.word2) && (filterData1.word0 & filterData1.word2))
+            {
+                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
+                return PxFilterFlag::eDEFAULT;
+            }
+
 
             // TODOJB fix so it uses generic words. NOT hard-coded
             // Filter out collisions with ignore-bodies REALLY UGLY TODOJB Improve
@@ -201,7 +210,7 @@ namespace DoremiEngine
             {
                 const PxContactPair& cp = pairs[i];
                 CollisionPair collisionPair;
-
+                std::cout << "Pair found!" << std::endl;
                 // Check if this was a touch found collision callback
                 if(cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
                 {

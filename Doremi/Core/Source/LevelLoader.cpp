@@ -440,8 +440,9 @@ namespace Doremi
             Kinematic objects have the bitmask 0011 and ignore the bit 0010
             Static objects have the bitmask 0011 and ignore nothing.
             Thus, kinematic object ignores each other, and ignore the world,
-            but collides with everything else (enemies, projectiles etc.)*/
-            rigidBodyManager.SetCallbackFiltering(p_entityID, 3, 0, 0, 0);
+            but collides with everything else (enemies, projectiles etc.)
+            EDIT!! NO LONGER VALID. The method still works tho*/
+            rigidBodyManager.SetCallbackFiltering(p_entityID, 1, 0, 0, 0);
         }
 
 

@@ -37,7 +37,8 @@ namespace DoremiEngine
             m_controllers[p_id] = m_manager->createController(desc);
             m_IDsByControllers[m_controllers[p_id]] = p_id;
 
-            SetCallback(p_id, (1 << 0), (1 << 0));
+            // SetCallback(p_id, (1 << 0), (1 << 0));
+            SetCallbackFiltering(p_id, 1, 1, 0, 0);
 
             // Redundant return?
             return p_id;

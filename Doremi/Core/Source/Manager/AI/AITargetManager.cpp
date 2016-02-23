@@ -168,6 +168,7 @@ namespace Doremi
             XMFLOAT3 bulletOriginFloat;
             XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
             int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
+            m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetCallbackFiltering(id, 3, 1, 8, 2);
 
             // Add a force to the body TODOXX should not be hard coded the force amount
             direction *= 1500.0f;

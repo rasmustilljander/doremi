@@ -93,7 +93,7 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
                 // Remove all bullets that hit something, TODOKO review if this is what we want
-                if(removedBullets.count(t_bulletPairs[i].x) == 0)
+                if(true)//removedBullets.count(t_bulletPairs[i].x) == 0)
                 {
                     EntityHandler::GetInstance().RemoveEntity(t_bulletPairs[i].x);
                     removedBullets.insert(t_bulletPairs[i].x);
@@ -103,6 +103,8 @@ namespace Doremi
                     // The bullet did hit multiple targets but have already been removed, do nothing.
                 }
             }
+
+
             // Check if the player hit any enemies
             // Look through our entities for the enemies
             size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
