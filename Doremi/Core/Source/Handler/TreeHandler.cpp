@@ -33,7 +33,11 @@ namespace Doremi
         void TreeHandler::BuildTheTree() { m_treeCreator->CreateTree(); }
         TreeHandler::~TreeHandler() {}
 
-        void TreeHandler::Update() {}
+        void TreeHandler::Update()
+        {
+            // m_treeCreator->treeRoot
+            // TreeCreator::OctNode
+        }
         void TreeHandler::OnEvent(Event* p_event) {}
     }
 }

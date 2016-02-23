@@ -65,11 +65,11 @@ namespace Doremi
 
 
         private:
-            // uint16_t whereAreWe;
             OctNode* m_currentNode;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
-            void BuildTree();//OctNode& o_treeNode);
+            void BuildTree();
             void CreateAndDivideTheChildren(OctNode& o_treeNode);
+            // OctNode GetTree() const { return treeRoot; }
         };
     }
 }

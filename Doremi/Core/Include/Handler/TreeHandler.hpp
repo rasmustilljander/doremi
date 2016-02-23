@@ -36,7 +36,7 @@ namespace Doremi
             ~TreeHandler();
 
             static TreeHandler* m_singleton;
-
+            std::vector<TreeCreator::OctNode> m_boxesOfInterest;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             TreeCreator* m_treeCreator;
         };
