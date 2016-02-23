@@ -15,7 +15,11 @@ namespace Doremi
 
             FileMapMutex::FileMapMutex() : m_handle(nullptr) {}
 
-            FileMapMutex::~FileMapMutex() { ReleaseMutex(m_handle); }
+            FileMapMutex::~FileMapMutex()
+            {
+                ReleaseMutex(m_handle);
+                CloseHandle(m_handle);
+            }
 
             bool FileMapMutex::Initialize(const std::string& p_name)
             {
