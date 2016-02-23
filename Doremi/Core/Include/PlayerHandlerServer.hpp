@@ -12,6 +12,7 @@ namespace Doremi
         struct SetHealthEvent;
         struct SetTransformEvent;
         struct AnimationTransitionEvent;
+        struct DamageTakenEvent;
 
         /**
             TODOCM doc
@@ -178,6 +179,11 @@ namespace Doremi
                 TODOLH doc
             */
             void QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_setTransformEvent);
+
+            /**
+            TODOKO doc
+            */
+            void QueueDamageEventToPlayers(DamageTakenEvent* t_takeDamageEvent);
 
             /**
                 TODOCM doc

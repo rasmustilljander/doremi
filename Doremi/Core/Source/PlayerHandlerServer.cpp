@@ -24,6 +24,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -60,6 +61,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::PlayerRespawn, this);
             t_EventHandler->Subscribe(EventType::GunFireToggle, this);
             t_EventHandler->Subscribe(EventType::AnimationTransition, this);
+            t_EventHandler->Subscribe(EventType::DamageTaken, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
@@ -538,6 +540,16 @@ namespace Doremi
             }
         }
 
+        void PlayerHandlerServer::QueueDamageEventToPlayers(DamageTakenEvent* t_takeDamageEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new DamageTakenEvent(*t_takeDamageEvent));
+            }
+        }
+
         void PlayerHandlerServer::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -599,6 +611,12 @@ namespace Doremi
 
                     QueueAnimationTransitionToPlayers(t_animationTransitionEvent);
                     break;
+                }
+                case Doremi::Core::EventType::DamageTaken:
+                {
+                    DamageTakenEvent* t_damageTakenEvent = static_cast<DamageTakenEvent*>(p_event);
+
+                    QueueDamageEventToPlayers(t_damageTakenEvent);
                 }
                 default:
                     break;

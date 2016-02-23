@@ -10,7 +10,7 @@ namespace Doremi
     {
         struct PlaySoundEvent : public Event
         {
-            PlaySoundEvent() : Event(EventType::RemoveEntity) {}
+            PlaySoundEvent() : Event(EventType::Example) {}
             PlaySoundEvent(uint32_t p_entityID, int32_t p_soundType) : Event(EventType::PlaySound), entityID(p_entityID), soundType(p_soundType) {}
 
             /**

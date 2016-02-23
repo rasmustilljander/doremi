@@ -10,6 +10,7 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Events/ExampleEvent.hpp>
+#include <EventHandler/Events/DamageTakenEvent.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
@@ -33,6 +34,7 @@ namespace Doremi
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlaySound, this);
+            EventHandler::GetInstance()->Subscribe(EventType::DamageTaken, this);
             m_gunReloadButtonDown = false;
             m_timeThatGunButtonIsDown = 0;
         }
@@ -160,6 +162,7 @@ namespace Doremi
             switch(p_event->eventType)
             {
                 case EventType::PlaySound:
+                {
                     // Cast the event to the correct format
                     PlaySoundEvent* t_event = (PlaySoundEvent*)p_event;
                     uint32_t t_entityID = t_event->entityID;
@@ -184,6 +187,15 @@ namespace Doremi
                     // EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID)->m_soundEnumToChannelID =
                     // m_sharedContext.GetAudioModule().PlayASound(t_soundType);
                     break;
+                }
+                case EventType::DamageTaken:
+                {
+                    // A bit stupid... we send a event to our own class to play a sound when we take damage...
+                    DamageTakenEvent* t_event = static_cast<DamageTakenEvent*>(p_event);
+                    PlaySoundEvent* t_soundEvent = new PlaySoundEvent(t_event->entityId, (int32_t)AudioCompEnum::Death);
+                    EventHandler::GetInstance()->BroadcastEvent(t_soundEvent);
+                    break;
+                }
             }
         }
     }

@@ -71,6 +71,7 @@ namespace Doremi
             length = t_bulletPairs.size();
             for(auto pairs : t_players)
             {
+                float totalDamage = 0; // Used to accumulate the damage
                 for(size_t i = 0; i < length; i++)
                 {
                     if(pairs.second->m_playerEntityID == t_bulletPairs[i].y)
@@ -79,13 +80,15 @@ namespace Doremi
                         std::cout << "Hit vs player detected" << std::endl;
                         if(EntityHandler::GetInstance().HasComponents(pairs.second->m_playerEntityID, (int)ComponentType::Health))
                         {
-                            HealthComponent* hpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(pairs.second->m_playerEntityID);
-
-                            DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(10, pairs.second->m_playerEntityID);
-
-                            EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
+                            totalDamage += 10; // TODOCONFIG should probably be gathered from component or something
                         }
                     }
+                }
+                if(totalDamage != 0) // If we didnt take any damage dont send event
+                {
+                    DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(totalDamage, pairs.second->m_playerEntityID);
+
+                    EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
                 }
             }
             // We need this set to ensure that a bullet that hits multiple targets isnt removed twice
@@ -108,6 +111,7 @@ namespace Doremi
             // Check if the player hit any enemies
             // Look through our entities for the enemies
             size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
+            std::map<int, float> damageMap; // A map to save the total damage a entity have taken
             for(size_t i = 0; i < entitiesLength; i++)
             {
                 // Getting our particlesystem
@@ -124,12 +128,11 @@ namespace Doremi
                             if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], (int)ComponentType::Health | (int)ComponentType::AIAgent |
                                                                                               (int)ComponentType::Transform | (int)ComponentType::CharacterController))
                             {
-                                HealthComponent* drainHitHpComp = EntityHandler::GetInstance().GetComponentFromStorage<HealthComponent>(t_drainsHit[o]);
-                                // TODOEA Make it related to the guns damage and not hard coded
-                                // TODOCONFIG
-                                DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(2, t_drainsHit[o]);
-
-                                EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
+                                if(damageMap.count(t_drainsHit[o]) == 0)
+                                {
+                                    damageMap[t_drainsHit[o]] = 0;
+                                }
+                                damageMap[t_drainsHit[o]] += 2; // TODOCONFIG Player damage
                             }
                         }
                         else
@@ -138,6 +141,12 @@ namespace Doremi
                         }
                     }
                 }
+            }
+            // loop through every damaged entity and send event
+            for(auto pairs : damageMap)
+            {
+                DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(pairs.second, pairs.first);
+                EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
             }
         }
         void DamageManager::OnEvent(Event* p_event)
