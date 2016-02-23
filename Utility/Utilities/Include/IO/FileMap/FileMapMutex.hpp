@@ -47,7 +47,6 @@ namespace Doremi
 
                 std::string m_name;
                 void* m_handle;
-                size_t m_lockTime;
             };
         }
     }

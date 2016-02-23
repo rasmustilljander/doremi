@@ -13,13 +13,7 @@ namespace Doremi
             // TODORT Define better than 1000?
             const uint32_t DEFAULT_TIMEOUT = 1000;
 
-            FileMapMutex::FileMapMutex() : m_handle(nullptr)
-            {
-                // TODORT
-                // TODOXX
-                // TODOCONFIG
-                m_lockTime = 10000000000000;
-            }
+            FileMapMutex::FileMapMutex() : m_handle(nullptr) {}
 
             FileMapMutex::~FileMapMutex() { ReleaseMutex(m_handle); }
 
