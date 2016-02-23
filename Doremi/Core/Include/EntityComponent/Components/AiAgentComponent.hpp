@@ -7,18 +7,18 @@ namespace Doremi
         /**
         Contains different timers that the AI needs. Everything is in seconds
         */
-        struct AITimerComponent
+        struct AIAgentComponent
         {
             float attackFrequency;
             float attackTimer = 0;
             float pathfindingFrequency;
             float pathfindingTimer = 0;
 
-            AITimerComponent(const float& p_attackFrequency, const float& p_pathfindingFrequency)
+            AIAgentComponent(const float& p_attackFrequency, const float& p_pathfindingFrequency)
                 : attackFrequency(p_attackFrequency), pathfindingFrequency(p_pathfindingFrequency)
             {
             }
-            AITimerComponent() : attackFrequency(0), pathfindingFrequency(0) {}
+            AIAgentComponent() : attackFrequency(0), pathfindingFrequency(0) {}
         };
     }
 }

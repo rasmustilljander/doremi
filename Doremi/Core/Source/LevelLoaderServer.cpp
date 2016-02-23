@@ -136,7 +136,7 @@ namespace Doremi
                 // Create a new field with width and height calculated from bounding box.
                 // TODOCONFIG 50, 50 is hardcoded how many quads in x and z. should be calculated from a given quad size instead
                 DoremiEngine::AI::PotentialField* field =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 1, 1, centerPoint);
+                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
                 if(!transformationData.attributes.isStatic)
                 {
                     EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);

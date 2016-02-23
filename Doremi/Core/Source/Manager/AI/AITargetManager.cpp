@@ -9,7 +9,7 @@
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
-#include <EntityComponent/Components/AITimerComponent.hpp>
+#include <EntityComponent/Components/AiAgentComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 // Helper
@@ -49,9 +49,9 @@ namespace Doremi
             {
                 // Check and update the attack timer
                 bool shouldFire = false;
-                if(t_entityHandler.HasComponents(i, (int)ComponentType::AITimer | (int)ComponentType::AIAgent))
+                if(t_entityHandler.HasComponents(i, (int)ComponentType::AIAgent))
                 {
-                    AITimerComponent* timer = t_entityHandler.GetComponentFromStorage<AITimerComponent>(i);
+                    AIAgentComponent* timer = t_entityHandler.GetComponentFromStorage<AIAgentComponent>(i);
                     timer->attackTimer += p_dt;
                     // If above attack freq we should attack
                     if(timer->attackTimer > timer->attackFrequency)
@@ -105,7 +105,7 @@ namespace Doremi
                             XMFLOAT3 directionFloat;
                             XMStoreFloat3(&directionFloat, direction);
                             // Offset origin of ray so we dont hit ourself
-                            XMVECTOR rayOrigin = AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
+                            XMVECTOR rayOrigin = AIPos + direction * 3.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
                             // the bodies radius is larger than x.x
                             XMFLOAT3 rayOriginFloat;
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);

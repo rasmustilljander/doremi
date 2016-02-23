@@ -27,7 +27,7 @@
 #include <EntityComponent/Components/NetworkObjectComponent.hpp>
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
-#include <EntityComponent/Components/AITimerComponent.hpp>
+#include <EntityComponent/Components/AiAgentComponent.hpp>
 
 // Events
 #include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
@@ -305,9 +305,9 @@ namespace Doremi
                 {
                     memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
                 }
-                else if(iter->first == ComponentType::AITimer)
+                else if(iter->first == ComponentType::AIAgent)
                 {
-                    memcpy(GetComponent<AITimerComponent>(p_entityID), iter->second, sizeof(AITimerComponent));
+                    memcpy(GetComponent<AIAgentComponent>(p_entityID), iter->second, sizeof(AIAgentComponent));
                 }
                 else if(iter->first == ComponentType::LowerBodySkeletalAnimation)
                 {

@@ -24,7 +24,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/CharacterControlComponen.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/AITimerComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/AiAgentComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
@@ -254,8 +254,7 @@ namespace Doremi
             healthComponent->maxHealth = 100;
             healthComponent->currentHealth = 100;
             blueprint[ComponentType::Health] = healthComponent;
-            // Enemy ai agent comp
-            blueprint[ComponentType::AIAgent];
+
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
@@ -275,9 +274,9 @@ namespace Doremi
             group->Group = sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
             blueprint[ComponentType::AIGroup] = group;
 
-            // AI timers
-            AITimerComponent* aiTimers = new AITimerComponent(0.5f, 0.025f);
-            blueprint[ComponentType::AITimer] = aiTimers;
+            // AI timers as ai agent
+            AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
+            blueprint[ComponentType::AIAgent] = aiTimers;
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
@@ -367,8 +366,6 @@ namespace Doremi
             healthComponent->maxHealth = 200;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
-            // Enemy ai agent comp
-            blueprint[ComponentType::AIAgent];
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
@@ -383,9 +380,9 @@ namespace Doremi
             potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
 
-            // AI timers
-            AITimerComponent* aiTimers = new AITimerComponent(0.5f, 0.025f);
-            blueprint[ComponentType::AITimer] = aiTimers;
+            // Enemy ai agent comp
+            AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
+            blueprint[ComponentType::AIAgent] = aiTimers;
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();

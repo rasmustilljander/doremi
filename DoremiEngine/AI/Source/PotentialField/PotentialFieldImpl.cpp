@@ -12,7 +12,7 @@ namespace DoremiEngine
 {
     namespace AI
     {
-        PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(10), m_context(p_aiContext)
+        PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(15), m_context(p_aiContext)
         {
             m_jumpDistance = m_context.config.GetAllConfigurationValues().AIJumpDistance;
         }
@@ -204,58 +204,64 @@ namespace DoremiEngine
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
                 float quadCharge;
-                if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight && !m_grid[x + y * m_numberOfQuadsWidth].occupied)
+                if(!m_grid[x + y * m_numberOfQuadsWidth].occupied)
                 {
-                    // The quad exists!
 
-                    // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
-                    // This will probably never be used...
-                    if(p_staticCheck)
+
+                    if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight)
                     {
-                        quadCharge = m_grid[x + y * m_numberOfQuadsWidth].charge;
+                        // The quad exists!
+
+                        // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
+                        // This will probably never be used...
+                        if(p_staticCheck)
+                        {
+                            quadCharge = m_grid[x + y * m_numberOfQuadsWidth].charge;
+                        }
+                        else
+                        {
+                            // CalculateCharge takes both static and dynamic actors in to acount, and phermonetrails and stuff
+                            quadCharge = CalculateCharge(x, y, p_currentActor);
+                        }
+                        if(quadCharge > highestCharge)
+                        {
+                            highestCharge = quadCharge;
+                            highestChargedPos = GetGridQuadPosition(x, y);
+                        }
                     }
                     else
                     {
-                        // CalculateCharge takes both static and dynamic actors in to acount, and phermonetrails and stuff
-                        quadCharge = CalculateCharge(x, y, p_currentActor);
-                    }
-                    if(quadCharge > highestCharge)
-                    {
-                        highestCharge = quadCharge;
-                        highestChargedPos = GetGridQuadPosition(x, y);
-                    }
-                }
-                else
-                {
-                    // Tries to check outside the field
-                    // Here we create a imaginary quad and checks if that quad have a greater charge than the last,
-                    // if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
-                    // transition
+                        // Tries to check outside the field
+                        // Here we create a imaginary quad and checks if that quad have a greater charge than the last,
+                        // if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
+                        // transition
 
-                    // FInd the position the grid would have had
-                    XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
-                    // Use that position to set new unit position
+                        // FInd the position the grid would have had
+                        XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
+                        // Use that position to set new unit position
 
-                    // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add the
-                    // jump
-                    XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_jumpDistance), p_unitPosition.y,
-                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * m_jumpDistance));
-                    // Find what field the new position is in, if any
-                    PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(newUnitPosition));
-                    if(newField != nullptr)
-                    {
-                        // if a field was found check what grid point in that field we are in
-                        XMINT2 gridPoint = newField->WhatGridPosAmIOn(newUnitPosition);
-                        // if for some wierd reason we are in the field but not in a grid point screw it...
-                        if(gridPoint.x != -1)
+                        // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add
+                        // the
+                        // jump
+                        XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_jumpDistance), p_unitPosition.y,
+                                                            newPosition.y + (static_cast<float>(sign<int>(y)) * m_jumpDistance));
+                        // Find what field the new position is in, if any
+                        PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(newUnitPosition));
+                        if(newField != nullptr)
                         {
-                            // calculate a new charge from the new field
-                            quadCharge = newField->CalculateCharge(gridPoint.x, gridPoint.y, p_currentActor);
-                            // if higher set it as the new high
-                            if(quadCharge > highestCharge)
+                            // if a field was found check what grid point in that field we are in
+                            XMINT2 gridPoint = newField->WhatGridPosAmIOn(newUnitPosition);
+                            // if for some wierd reason we are in the field but not in a grid point screw it...
+                            if(gridPoint.x != -1)
                             {
-                                highestCharge = quadCharge;
-                                highestChargedPos = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
+                                // calculate a new charge from the new field
+                                quadCharge = newField->CalculateCharge(gridPoint.x, gridPoint.y, p_currentActor);
+                                // if higher set it as the new high
+                                if(quadCharge > highestCharge)
+                                {
+                                    highestCharge = quadCharge;
+                                    highestChargedPos = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
+                                }
                             }
                         }
                     }
