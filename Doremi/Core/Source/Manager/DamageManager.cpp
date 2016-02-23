@@ -93,7 +93,7 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
                 // Remove all bullets that hit something, TODOKO review if this is what we want
-                if(true)//removedBullets.count(t_bulletPairs[i].x) == 0)
+                if(removedBullets.count(t_bulletPairs[i].x) == 0)
                 {
                     EntityHandler::GetInstance().RemoveEntity(t_bulletPairs[i].x);
                     removedBullets.insert(t_bulletPairs[i].x);
