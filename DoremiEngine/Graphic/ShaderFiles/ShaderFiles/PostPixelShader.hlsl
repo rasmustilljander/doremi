@@ -146,8 +146,8 @@ PixelOutputType PS_main(PixelInputType input)
     float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
     float groupID = groupID2.x + (groupID2.y * 80);
     //extract data from light grid
-    int index = o_LightGrid[groupID].offset;
-    int value = o_LightGrid[groupID].value;
+    int index = t_LightGrid[groupID].offset;
+    int value = t_LightGrid[groupID].value;
 
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
     float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
@@ -158,7 +158,7 @@ PixelOutputType PS_main(PixelInputType input)
 
     for (int i = index; i < index + value; i++)
     {
-        Light l = light[o_LightIndexList[i]];
+        Light l = light[t_LightIndexList[i]];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
@@ -170,7 +170,7 @@ PixelOutputType PS_main(PixelInputType input)
 
     }
 
-    output.diffuse = /*float4(rgb, 1) * */texcolor/* * 3.f*/;
+    output.diffuse = float4(rgb * 3, 0) + texcolor;
 
     return output;
 

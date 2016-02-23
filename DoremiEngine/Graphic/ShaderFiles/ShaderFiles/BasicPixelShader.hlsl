@@ -90,6 +90,7 @@ Texture2D GlowTexture : register(t5);
 
 SamplerState ObjSamplerState : register(s0);
 
+
 float3 CalcDirectionalLight(PixelInputType input, Light l)
 {
     float3 lightDir;
@@ -107,9 +108,10 @@ float3 CalcSpotLight(PixelInputType input, Light l)
     return float3(0, 0, 0);
 }
 
-float3 CalcPointLight(PixelInputType input, Light l)
+float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
-    float4 texcolor = float4(0.5, 0.5, 0.5, 1);
+
+
     float3 normal = normalize(input.normal);
 
     float3 scatteredLight, reflectedLight;
@@ -156,11 +158,14 @@ PixelOutputType PS_main(PixelInputType input)
 
     texcolor = saturate(texcolor);
 
+
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
+    //for (int i = 0; i < 200; i++)
     {
         Light l = light[o_LightIndexList[i]];
+        //Light l = light[i];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
@@ -168,17 +173,18 @@ PixelOutputType PS_main(PixelInputType input)
         if (l.type == 2)
             rgb += CalcSpotLight(input, l);
         if (l.type == 3)
-            rgb += CalcPointLight(input, l);
-
+            rgb += CalcPointLight(input, l, texcolor.rgb);
     }
-    if (glowcolor.r < 0.5 && glowcolor.g < 0.5 && glowcolor.b < 0.5)
+
+    if (glowcolor.r < 0.5 && 
+        glowcolor.g < 0.5 && glowcolor.b < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
         output.glow = normalize(texcolor) * 2;
 
-    output.diffuse = float4(rgb, 1) * texcolor * 3.f;
-    //output.diffuse = float4( materialData.color, 1);
-    float depth = (input.position.x/input.position.y) + 1;
+    output.diffuse = float4(rgb, 1) * texcolor * 2.5f;
+
+    float depth = (input.position.z/input.position.w) + 1;
     output.depth = float4(depth, depth, depth, 1);
 
     return output;

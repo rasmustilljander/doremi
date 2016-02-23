@@ -623,7 +623,7 @@ namespace Doremi
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 0.5f;
+            jumpComp->intensity = 0.6f;
 
             // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;
@@ -738,7 +738,7 @@ namespace Doremi
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 0.5f;
+            jumpComp->intensity = 0.6f;
             // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;
 
@@ -749,7 +749,7 @@ namespace Doremi
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TTbullet.dds");
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
@@ -807,7 +807,7 @@ namespace Doremi
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("test.dds");
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TTbullet.dds");
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
