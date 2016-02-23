@@ -47,6 +47,7 @@ namespace DoremiEngine
             AnimationClip clip = p_skeletalInformation->GetAnimationClip(p_clipName);
             clip.Interpolate(t_timePos, t_toParentTransforms);
 
+
             // Traverse the heirarchy and transofrm all the bones to the root space
             std::vector<XMFLOAT4X4> t_toRootTransforms(t_numBones);
             // the root bone has index 0. The root bone has no parent. So the "parent transform" is just it's local transform

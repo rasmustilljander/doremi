@@ -218,7 +218,7 @@ namespace Doremi
             */
             std::map<uint32_t, Player*> m_playerMap;
 
-
+        private:
             // TODOEA add these attributes?
             // int m_bodyID;
             // int m_materialID;

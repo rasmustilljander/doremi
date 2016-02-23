@@ -11,6 +11,7 @@ namespace Doremi
         class NetworkStreamer;
         struct SetHealthEvent;
         struct SetTransformEvent;
+        struct AnimationTransitionEvent;
 
         /**
             TODOCM doc
@@ -172,6 +173,11 @@ namespace Doremi
                 TODOCM doc
             */
             void QueueSetTransformEventToPlayers(SetTransformEvent* t_setTransformEvent);
+
+            /**
+                TODOLH doc
+            */
+            void QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_setTransformEvent);
 
             /**
                 TODOCM doc

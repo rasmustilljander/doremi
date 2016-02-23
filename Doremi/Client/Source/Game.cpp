@@ -274,7 +274,7 @@ namespace Doremi
             // Update camera after we update positions
             CameraHandler::GetInstance()->UpdateDraw();
 
-            Draw(UpdateStepLen);
+            Draw(Frame);
             // Escape
             InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
             if(inputHandler != nullptr)

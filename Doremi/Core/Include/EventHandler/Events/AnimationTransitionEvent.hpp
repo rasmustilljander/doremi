@@ -8,11 +8,11 @@ namespace Doremi
 {
     namespace Core
     {
+        // RUN, IDLE, FIRE, HIT, DEATH, JUMP
         enum class Animation
         {
-            RUN,
-            IDLE,
-            FIRE,
+            STOPATTACK,
+            ATTACK,
             HIT,
             DEATH,
             JUMP,
@@ -42,8 +42,8 @@ namespace Doremi
             void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override
             {
                 entityID = p_streamer->ReadUnsignedInt32();
-                op_bitsRead += sizeof(uint32_t) * 8;
                 animation = static_cast<Animation>(p_streamer->ReadUnsignedInt8());
+                op_bitsRead += sizeof(uint32_t) * 8;
                 op_bitsRead += sizeof(uint8_t) * 8;
             }
 

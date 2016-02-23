@@ -23,6 +23,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
@@ -522,6 +523,16 @@ namespace Doremi
             }
         }
 
+        void PlayerHandlerServer::QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_setTransformEvent)
+        {
+            // Go through all players
+            std::map<uint32_t, Player*>::iterator iter;
+            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new AnimationTransitionEvent(*t_setTransformEvent));
+            }
+        }
+
         void PlayerHandlerServer::OnEvent(Event* p_event)
         {
             switch(p_event->eventType)
@@ -576,6 +587,12 @@ namespace Doremi
                     QueueSetTransformEventToPlayers(t_setTransformEvent);
 
                     break;
+                }
+                case Doremi::Core::EventType::AnimationTransition:
+                {
+                    AnimationTransitionEvent* t_animationTransitionEvent = static_cast<AnimationTransitionEvent*>(p_event);
+
+                    QueueAnimationTransitionToPlayers(t_animationTransitionEvent);
                 }
                 default:
                     break;

@@ -17,6 +17,11 @@
 #include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
+
+// EventStuff
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 #include <dxgi.h>
 #include <d3d11_1.h>
 
@@ -66,10 +71,145 @@ namespace Doremi
             depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
             depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
             m_depthStencilState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateDepthStencilState(depthStencilDesc);
+
+            EventHandler* t_eventHandler = EventHandler::GetInstance();
+            t_eventHandler->Subscribe(EventType::AnimationTransition, this);
         }
 
         SkeletalAnimationCoreManager::~SkeletalAnimationCoreManager() {}
 
+        bool SkeletalAnimationCoreManager::CheckANDPerformAnimationTransition(const size_t& p_entityID)
+        {
+            using namespace DirectX;
+            bool r_returnValue = false;
+            LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
+                EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(p_entityID);
+            SkeletalAnimationComponent* t_upperSkeletalAnimationComponent =
+                EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(p_entityID);
+            TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(p_entityID);
+            TransformComponentPrevious* t_transformComponentPrevious =
+                EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(p_entityID);
+
+            float t_epsilon = 0.001f;
+            XMFLOAT3 t_movementVector;
+            XMStoreFloat3(&t_movementVector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_transformComponentPrevious->position));
+            XMFLOAT3 t_movementLengthVector;
+            XMStoreFloat3(&t_movementLengthVector, XMVector3Length(XMLoadFloat3(&t_movementVector)));
+
+            // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
+            if(t_lowerSkeletalAnimationComponent->clipName != "Run")
+            {
+                // Kolla om vi rört på oss
+                if(t_movementLengthVector.x > t_epsilon)
+                {
+                    t_lowerSkeletalAnimationComponent->clipName = "Run";
+                    t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                }
+            }
+            // Om vi springer ska vi kolla om vi har stannat
+            else if(t_lowerSkeletalAnimationComponent->clipName == "Run")
+            {
+                // Kolla om vi stannat
+                if(t_movementLengthVector.x < t_epsilon)
+                {
+                    if(t_upperSkeletalAnimationComponent->clipName == "Attack")
+                    {
+                        t_lowerSkeletalAnimationComponent->clipName = "Attack";
+                        t_lowerSkeletalAnimationComponent->timePosition = t_upperSkeletalAnimationComponent->timePosition;
+                    }
+                    else
+                    {
+                        t_lowerSkeletalAnimationComponent->clipName = "Idle";
+                        t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                    }
+                }
+            }
+            if(t_upperSkeletalAnimationComponent->clipName != "Run" && t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName != "Attack")
+            {
+                t_upperSkeletalAnimationComponent->clipName = "Run";
+                if(t_lowerSkeletalAnimationComponent->clipName == "Run")
+                {
+                    t_upperSkeletalAnimationComponent->timePosition = t_lowerSkeletalAnimationComponent->timePosition;
+                }
+                else
+                {
+                    t_upperSkeletalAnimationComponent->timePosition = 0.0f;
+                }
+            }
+            if(t_upperSkeletalAnimationComponent->clipName == "Run" && t_movementLengthVector.x < t_epsilon)
+            {
+                t_upperSkeletalAnimationComponent->clipName = "Idle";
+                t_upperSkeletalAnimationComponent->timePosition = 0.0f;
+            }
+
+
+            if(t_lowerSkeletalAnimationComponent->clipName == "Run")
+            {
+                XMVECTOR t_orientationQuater = XMLoadFloat4(&t_transformComponentNext->rotation);
+                XMFLOAT3 t_frontVector;
+                XMStoreFloat3(&t_frontVector, XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), XMMatrixRotationQuaternion(t_orientationQuater)));
+
+                XMFLOAT2 t_frontVec2 = XMFLOAT2(t_frontVector.x, t_frontVector.z);
+                XMFLOAT2 t_moveVec2 = XMFLOAT2(t_movementVector.x, t_movementVector.z);
+                XMFLOAT2 t_positive;
+                XMStoreFloat2(&t_positive, XMVector2Cross(XMLoadFloat2(&t_frontVec2), XMLoadFloat2(&t_moveVec2)));
+                XMFLOAT3 angleVec;
+                XMStoreFloat3(&angleVec, XMVector2AngleBetweenVectors(XMLoadFloat2(&t_frontVec2), XMLoadFloat2(&t_moveVec2)));
+
+                if(t_positive.y < 0)
+                {
+                    t_positive.y = 1;
+                }
+                else if(t_positive.y > 0)
+                {
+                    t_positive.y = -1;
+                }
+                else
+                {
+                    t_positive.y = 0;
+                }
+                angleVec.x *= t_positive.y;
+                XMStoreFloat4(&t_lowerSkeletalAnimationComponent->orientation, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angleVec.x));
+            }
+
+            return r_returnValue;
+        }
+
+        void SkeletalAnimationCoreManager::OnEvent(Event* p_event)
+        {
+            switch(p_event->eventType)
+            {
+                case Doremi::Core::EventType::AnimationTransition:
+                {
+                    AnimationTransitionEvent* t_animationTransitionEvent = static_cast<AnimationTransitionEvent*>(p_event);
+                    LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
+                        EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(t_animationTransitionEvent->entityID);
+                    SkeletalAnimationComponent* t_upperSkeletalAnimationComponent =
+                        EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(t_animationTransitionEvent->entityID);
+                    if(t_animationTransitionEvent->animation == Animation::ATTACK)
+                    {
+                        t_upperSkeletalAnimationComponent->clipName = "Attack";
+                        t_upperSkeletalAnimationComponent->timePosition = 0.0f;
+                        if(t_lowerSkeletalAnimationComponent->clipName != "Run")
+                        {
+                            t_lowerSkeletalAnimationComponent->clipName = "Attack";
+                            t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                        }
+                    }
+                    else if(t_animationTransitionEvent->animation == Animation::STOPATTACK)
+                    {
+                        t_upperSkeletalAnimationComponent->clipName = "Idle";
+                        t_upperSkeletalAnimationComponent->timePosition = 0.0f;
+                        if(t_lowerSkeletalAnimationComponent->clipName == "Attack")
+                        {
+                            t_lowerSkeletalAnimationComponent->clipName = "Idle";
+                            t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                        }
+                    }
+                }
+                break;
+            }
+        }
 
         void SkeletalAnimationCoreManager::Update(double p_dt)
         {
@@ -96,42 +236,19 @@ namespace Doremi
                     t_skeletalAnimationComponent->timePosition += p_dt;
                     t_lowerSkeletalAnimationComponent->timePosition += p_dt;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
+                    CheckANDPerformAnimationTransition(j);
                     if(t_skeletalAnimationComponent->timePosition >
                        t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName))
                     {
-                        // if (t_skeletalAnimationComponent->clipName == "Run")
-                        //{
-                        //    t_skeletalAnimationComponent->clipName = "Walk";
-                        //}
-                        // else if(t_skeletalAnimationComponent->clipName == "Walk")
-                        //{
-                        //    t_skeletalAnimationComponent->clipName = "Idle";
-                        //}
-                        // else
-                        //{
-                        //    t_skeletalAnimationComponent->clipName = "Run";
-                        //}
-                        t_skeletalAnimationComponent->timePosition = 0.0f;
+                        t_skeletalAnimationComponent->timePosition -=
+                            t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName);
                     }
                     if(t_lowerSkeletalAnimationComponent->timePosition >
                        t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName))
                     {
-                        // if (t_lowerSkeletalAnimationComponent->clipName == "Run")
-                        //{
-                        //    t_lowerSkeletalAnimationComponent->clipName = "Walk";
-                        //}
-                        // else if (t_lowerSkeletalAnimationComponent->clipName == "Walk")
-                        //{
-                        //    t_lowerSkeletalAnimationComponent->clipName = "Idle";
-                        //}
-                        // else
-                        //{
-                        //    t_lowerSkeletalAnimationComponent->clipName = "Run";
-                        //}
-                        t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                        t_lowerSkeletalAnimationComponent->timePosition -=
+                            t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName);
                     }
-                    ///////////********WAAARNINNGGGGG tänk på att vi kommer lägga in rootnoden i både upper å lower. Det kan fakka med skit!!!!!!!
-                    /// Fortsätt med Loadern å hör med simon hur det ska se ut!
 
                     // Make a transformationmatrix per bone
                     int t_numberOfTransformationMatrices = t_skeletalAnimationComponent->skeletalInformation->GetBoneCount();
@@ -148,8 +265,10 @@ namespace Doremi
                         t_lowerSkeletalAnimationComponent->clipName, (float)t_lowerSkeletalAnimationComponent->timePosition,
                         t_lowerBodyFinalTransformations, t_lowerSkeletalAnimationComponent->skeletalInformation);
                     // Add the lowerbodytransformations to the list of upperbody and get ready to push the matrices to gpu
+                    XMMATRIX t_rotationMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&t_lowerSkeletalAnimationComponent->orientation));
                     for(size_t i = 1; i < t_numberOfLowerBodyTransforms; i++)
                     {
+                        XMStoreFloat4x4(&t_lowerBodyFinalTransformations[i], XMLoadFloat4x4(&t_lowerBodyFinalTransformations[i]) * t_rotationMatrix);
                         t_finalTransformations.push_back(t_lowerBodyFinalTransformations[i]);
                     }
                     // Push the matrices to the gpu

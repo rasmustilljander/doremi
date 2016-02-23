@@ -301,7 +301,14 @@ namespace Doremi
                         }
                         else
                         {
-                            // Do nothing
+                            if(y == p_animationInformations[t_animationInformationIndex].endFrame)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                // Do nothing
+                            }
                         }
                     }
                     DoremiEngine::Graphic::KeyFrame t_keyFrameTemp;
@@ -317,9 +324,11 @@ namespace Doremi
                     ifs.read((char*)&t_frame, sizeof(int));
                     t_frame -= p_animationInformations[t_animationInformationIndex].startFrame;
                     // Hårdkodat värde atm. Bör komma från maya (?) TODOLH. Bör iaf inte vara en variabel här
-                    float t_timeMax = 0.5f;
+                    float t_timeMax = 2.0f;
                     // Räkna ut vilken timestamp som ska sättas på denna frame.
-                    float t_currentTime = (t_timeMax / float(nrKeyFrames)) * t_frame;
+                    float t_currentTime = (t_timeMax / float(p_animationInformations[t_animationInformationIndex].endFrame -
+                                                             p_animationInformations[t_animationInformationIndex].startFrame)) *
+                                          t_frame;
                     t_keyFrameTemp.time = t_currentTime;
                     // Spara ner keyframedatan i benanimationsscructen som sedan pushbackas in i animationclipets benanimationsvector utanför
                     // forloopen

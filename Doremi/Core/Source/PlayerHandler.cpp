@@ -27,6 +27,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 /// Engine
 // AI
@@ -375,12 +376,16 @@ namespace Doremi
                         m_gunController.StartFireGun(entityID, m_sharedContext);
                         GunFireToggleEvent* gunFireEvent = new GunFireToggleEvent(iter->second->m_playerEntityID, true);
                         EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
+                        AnimationTransitionEvent* t_animationTransitionEvent = new AnimationTransitionEvent(iter->second->m_playerEntityID, Animation::ATTACK);
+                        EventHandler::GetInstance()->BroadcastEvent(t_animationTransitionEvent);
                     }
                     else if(inputHandler->CheckForRelease((int)UserCommandPlaying::LeftClick))
                     {
                         m_gunController.StopFireGun(entityID, m_sharedContext);
                         GunFireToggleEvent* gunFireEvent = new GunFireToggleEvent(iter->second->m_playerEntityID, false);
                         EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
+                        AnimationTransitionEvent* t_animationTransitionEvent = new AnimationTransitionEvent(iter->second->m_playerEntityID, Animation::STOPATTACK);
+                        EventHandler::GetInstance()->BroadcastEvent(t_animationTransitionEvent);
                     }
                 }
             }

@@ -668,7 +668,7 @@ namespace Doremi
             /*CharacterDataNames playerSkeletalCharData =
                loader.LoadSkeletalCharacter("Models/Gyros25.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation); */
             CharacterDataNames playerSkeletalCharData =
-                loader.LoadSkeletalCharacter("Models/SmallRobot10.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+                loader.LoadSkeletalCharacter("Models/SmallRobot11.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
 
 
             /// Fill with components
@@ -683,13 +683,13 @@ namespace Doremi
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
             t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
             t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Run";
+            t_upperBodySkeletalAnimationComp->clipName = "Idle";
             t_upperBodySkeletalAnimationComp->timePosition = 0;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
             t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Run";
+            t_lowerBodySkeletalAnimationComp->clipName = "Attack";
             t_lowerBodySkeletalAnimationComp->timePosition = 0;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
 
