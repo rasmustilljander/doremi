@@ -236,20 +236,36 @@ namespace Doremi
                     t_skeletalAnimationComponent->timePosition += p_dt;
                     t_lowerSkeletalAnimationComponent->timePosition += p_dt;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
-                    CheckANDPerformAnimationTransition(j);
-                    if(t_skeletalAnimationComponent->timePosition >
-                       t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName))
+                    float t_upperBodyClipTime = t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName);
+                    float t_lowerBodyClipTime =
+                        t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName);
+                    if(t_skeletalAnimationComponent->timePosition > t_upperBodyClipTime)
                     {
-                        t_skeletalAnimationComponent->timePosition -=
-                            t_skeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_skeletalAnimationComponent->clipName);
+                        if(!t_skeletalAnimationComponent->skeletalInformation->GetAnimationClip(t_skeletalAnimationComponent->clipName).loop)
+                        {
+                            t_skeletalAnimationComponent->clipName = "Idle";
+                            t_skeletalAnimationComponent->timePosition = 0.0f;
+                        }
+                        else
+                        {
+                            t_skeletalAnimationComponent->timePosition -= t_upperBodyClipTime;
+                        }
                     }
-                    if(t_lowerSkeletalAnimationComponent->timePosition >
-                       t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName))
+                    if(t_lowerSkeletalAnimationComponent->timePosition > t_lowerBodyClipTime)
                     {
-                        t_lowerSkeletalAnimationComponent->timePosition -=
-                            t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName);
+                        if(!t_skeletalAnimationComponent->skeletalInformation->GetAnimationClip(t_skeletalAnimationComponent->clipName).loop)
+                        {
+                            t_skeletalAnimationComponent->clipName = "Idle";
+                            t_skeletalAnimationComponent->timePosition = 0.0f;
+                        }
+                        else
+                        {
+                            t_lowerSkeletalAnimationComponent->timePosition -= t_lowerBodyClipTime;
+                        }
                     }
 
+                    // Check if this enity should change animation and start the transition
+                    CheckANDPerformAnimationTransition(j);
                     // Make a transformationmatrix per bone
                     int t_numberOfTransformationMatrices = t_skeletalAnimationComponent->skeletalInformation->GetBoneCount();
                     int t_numberOfLowerBodyTransforms = t_lowerSkeletalAnimationComponent->skeletalInformation->GetBoneCount();
@@ -268,6 +284,7 @@ namespace Doremi
                     XMMATRIX t_rotationMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&t_lowerSkeletalAnimationComponent->orientation));
                     for(size_t i = 1; i < t_numberOfLowerBodyTransforms; i++)
                     {
+                        // Rotate with the extra quaternion we calculated earlier. So that we can run backwards and sideways in that funny way u know
                         XMStoreFloat4x4(&t_lowerBodyFinalTransformations[i], XMLoadFloat4x4(&t_lowerBodyFinalTransformations[i]) * t_rotationMatrix);
                         t_finalTransformations.push_back(t_lowerBodyFinalTransformations[i]);
                     }

@@ -50,6 +50,8 @@ namespace Doremi
                 int startFrame;
                 int endFrame;
                 int prioPart;
+                float maxTime;
+                bool loop;
             };
             std::vector<DoremiEngine::Graphic::SkeletalVertex>
             LoadSkeletalMesh(std::ifstream& ifs, const int& p_nrOfMeshes, const std::map<std::string, DirectX::XMFLOAT4X4>& p_transformMap);

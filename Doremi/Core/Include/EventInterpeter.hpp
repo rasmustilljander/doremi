@@ -13,6 +13,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
@@ -93,6 +94,10 @@ namespace Doremi
 
                 case Doremi::Core::EventType::SetTransform:
                     p_newEvent = new SetTransformEvent();
+                    break;
+
+                case Doremi::Core::EventType::AnimationTransition:
+                    p_newEvent = new AnimationTransitionEvent();
                     break;
 
                 default:

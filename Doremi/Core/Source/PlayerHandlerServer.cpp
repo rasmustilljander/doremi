@@ -59,6 +59,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::EntityCreated, this);
             t_EventHandler->Subscribe(EventType::PlayerRespawn, this);
             t_EventHandler->Subscribe(EventType::GunFireToggle, this);
+            t_EventHandler->Subscribe(EventType::AnimationTransition, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
@@ -523,13 +524,17 @@ namespace Doremi
             }
         }
 
-        void PlayerHandlerServer::QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_setTransformEvent)
+        void PlayerHandlerServer::QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_animationTransitionEvent)
         {
             // Go through all players
             std::map<uint32_t, Player*>::iterator iter;
             for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new AnimationTransitionEvent(*t_setTransformEvent));
+                if(iter->second->m_playerEntityID == t_animationTransitionEvent->entityID)
+                {
+                    continue;
+                }
+                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new AnimationTransitionEvent(*t_animationTransitionEvent));
             }
         }
 
@@ -593,6 +598,7 @@ namespace Doremi
                     AnimationTransitionEvent* t_animationTransitionEvent = static_cast<AnimationTransitionEvent*>(p_event);
 
                     QueueAnimationTransitionToPlayers(t_animationTransitionEvent);
+                    break;
                 }
                 default:
                     break;

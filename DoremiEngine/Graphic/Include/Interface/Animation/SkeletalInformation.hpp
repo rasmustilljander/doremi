@@ -141,7 +141,7 @@ namespace DoremiEngine
                     BoneAnimations[i].Interpolate(p_time, p_boneTransforms[i]);
                 }
             }
-
+            bool loop;
             std::vector<BoneAnimation> BoneAnimations;
         };
 

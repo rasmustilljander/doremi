@@ -186,8 +186,9 @@ namespace Doremi
                 ifs.read((char*)&t_animationInfo.startFrame, sizeof(int));
                 ifs.read((char*)&t_animationInfo.endFrame, sizeof(int));
                 ifs.read((char*)&t_animationInfo.prioPart, sizeof(int));
-                float maxTime;
-                ifs.read((char*)&maxTime, sizeof(float));
+                ifs.read((char*)&t_animationInfo.maxTime, sizeof(float));
+                t_animationInfo.loop = true;
+                // ifs.read((char*)&t_animationInfo.loop, sizeof(bool)); TODOLH lägg till!!
                 t_animationInformations[i] = t_animationInfo;
             }
             return t_animationInformations;
@@ -268,30 +269,38 @@ namespace Doremi
                 int t_animationInformationIndex = 0;
                 for(int y = 0; y < nrKeyFrames; y++)
                 {
+                    // Looopa över alla animationer och lista ut vilken animation som denna keyframe förhåller sig till
                     for(size_t p = 0; p < p_nrOfAnimations; p++)
                     {
+                        // Check för att se om keyframen är relevant för animationsclippet.
                         if(y >= p_animationInformations[p].startFrame && y < p_animationInformations[p].endFrame) //>= ?
                         {
+                            // Kolla om du just bytt ifrån ett klipp till ett annat. Eftersom klippen läses in i ordning betyder detta att klippet
+                            // innan är färdigläst och bör därför sparas ned
                             if(t_animationInformationIndex != p)
                             {
-                                // Nu är alla keyframes för denna benets fulla animation sparat. Då ska benanimationsdatan sparas undan i
+                                // Nu är alla keyframes för denna benets fulla animation läst. Då ska benanimationsdatan sparas undan i
                                 // animationsclippet. Där sparas alla dessa benanimationer
                                 if(bodyPartID == 1)
                                 {
                                     o_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    o_upperBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
                                 }
                                 else if(bodyPartID == 2)
                                 {
                                     o_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    o_lowerBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
                                 }
                                 else if(bodyPartID == 0)
                                 {
                                     o_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    o_upperBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
                                     o_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
+                                    o_lowerBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
                                 }
-                                // t_animationVector[p-1].BoneAnimations.push_back(t_boneAnimation);
-                                // Sätts många gånger i onödan...
+                                // Spara ner animationsnamnet på rätt plats i animationsnamnslistan
                                 o_animationNames[p - 1] = p_animationInformations[p - 1].name;
+                                // Resetta boneanimationsvariabeln
                                 t_boneAnimation = DoremiEngine::Graphic::BoneAnimation();
                                 t_animationInformationIndex = p;
                                 break;
@@ -303,6 +312,7 @@ namespace Doremi
                         }
                         else
                         {
+                            // Tror denna är onödig. MenMen
                             if(y == p_animationInformations[t_animationInformationIndex].endFrame)
                             {
                                 break;
@@ -326,7 +336,7 @@ namespace Doremi
                     ifs.read((char*)&t_frame, sizeof(int));
                     t_frame -= p_animationInformations[t_animationInformationIndex].startFrame;
                     // Hårdkodat värde atm. Bör komma från maya (?) TODOLH. Bör iaf inte vara en variabel här
-                    float t_timeMax = 2.0f;
+                    float t_timeMax = p_animationInformations[t_animationInformationIndex].maxTime;
                     // Räkna ut vilken timestamp som ska sättas på denna frame.
                     float t_currentTime = (t_timeMax / float(p_animationInformations[t_animationInformationIndex].endFrame -
                                                              p_animationInformations[t_animationInformationIndex].startFrame)) *
@@ -335,6 +345,9 @@ namespace Doremi
                     // Spara ner keyframedatan i benanimationsscructen som sedan pushbackas in i animationclipets benanimationsvector utanför
                     // forloopen
                     t_boneAnimation.Keyframes.push_back(t_keyFrameTemp);
+                    // Den sista keyframen får vi fulhaxxa lite iomed att jag har gjort så att man lägger in datan rundan efter man läst klart. Här
+                    // funkar det dock smidigt för att jag vill lägga
+                    // TIll information om ifall animationsklippet ska loopas eller inte å det vill jag bara göra en gång.
                     if((nrKeyFrames - 1) == y)
                     {
                         // Nu är alla keyframes för denna benets fulla animation sparat. Då ska benanimationsdatan sparas undan i
@@ -342,15 +355,19 @@ namespace Doremi
                         if(bodyPartID == 1)
                         {
                             o_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            o_upperBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
                         }
                         else if(bodyPartID == 2)
                         {
                             o_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
                         }
                         else if(bodyPartID == 0)
                         {
                             o_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            o_upperBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
                             o_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
                         }
                         // t_animationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
                         // Sätts många gånger i onödan...

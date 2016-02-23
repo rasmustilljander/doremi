@@ -12,6 +12,11 @@
 #include <EntityComponent/Components/AiAgentComponent.hpp>
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
+
+// Events
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
+
 // Helper
 #include <Helper/ProximityChecker.hpp>
 
@@ -190,6 +195,8 @@ namespace Doremi
             XMFLOAT3 force;
             XMStoreFloat3(&force, direction);
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
+            AnimationTransitionEvent* t_animationTransition = new AnimationTransitionEvent(p_enemyID, Animation::ATTACK);
+            EventHandler::GetInstance()->BroadcastEvent(t_animationTransition);
         }
     }
 }
