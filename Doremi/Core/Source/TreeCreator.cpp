@@ -31,63 +31,22 @@ namespace Doremi
 
         void TreeCreator::CreateTree()
         {
-           // int myID = MAX_NUM_ENTITIES;
-           //(( m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID,)
-            // int materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
-            //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic((myID, quadCenter, XMFLOAT4(0, 0, 0, 1),XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),materialID);
-            // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-
-            // Get the max entities so we can collect all of the draw objects in the world
-           // size_t maxEntities = EntityHandler::GetInstance().GetLastEntityIndex();
-            // Loop over all entities to add the things that have render components into the list.
-           // for(size_t j = 0; j < maxEntities; j++)
-           // {
-                  // Check if entity will be affected by the render.
-               // if(EntityHandler::GetInstance().HasComponents(j, (int)ComponentType::Render))
-              //  {
-                    // If they are colliding with the rootTree box we add them to the list.
-                  //  if(true)
-                   // {
-                        // Colliding with the box and it is a render component
-                        //treeRoot.objectsInTheArea.push_back(j);
-                   // }
-                   // else
-                    //{
-                        // Not colliding with the box but are a render component
-                   // }
-               // }
-          //  }
-
             // Start building the tree
-            BuildTree();//  treeRoot);
-
-
+            BuildTree();
             int hej10 = 0;
         }
 
-        void TreeCreator::BuildTree()//OctNode& o_treeNode)
+        void TreeCreator::BuildTree()
         {
             bool t_isDone = false;
             //bool t_maxDepthReached = false;
             int t_whatChild = 0;
+
             // Hör till debuggen i while satsen.
             //int materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             m_currentNode = &treeRoot;
             DirectX::XMFLOAT3 physicsCollideFloat;
-            //while ()
-            //{
-            //    // if there is a collision between the child box and any object that needs drawing
-            //    if (true) // TODOEA Here should be the collision check between all the objects in the objectsInTheArea list
-            //    {
-            //        if (m_whatNode->depth < m_treeDepth - 1)
-            //        {
-            //            // Collision and max depth wasn't reached
-            //            // Prepare the next BuildTree() function with 8 newly created children
-            //            CreateAndDivideTheChildren(*m_whatNode);
-            //            m_whatNode = m_whatNode->children[t_whatChild];
-            //        }
-            //    }
-            //}
+
             while (!t_isDone)
             {
                 ////// DEBUG!
@@ -113,7 +72,7 @@ namespace Doremi
                     XMVECTOR t_halfDimensions = XMLoadFloat3(&m_currentNode->boxDimensions);
 
 
-                    // DIviding it by two so we can use it as half extents as needed in the physicsfunction
+                    // Dividing it by two so we can use it as half extents as needed in the physicsfunction
                     XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
                     t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(m_currentNode->center, physicsCollideFloat);
                     // For the loop
@@ -125,7 +84,7 @@ namespace Doremi
                     {
                         m_currentNode->empty = false;
 
-                        // If max depth isnt reached , minus two is needed to get the depth wanted.
+                        // If max depth isnt reached , minus two is needed to get the depth wanted
                         if (m_currentNode->depth < m_treeDepth - 1)
                         {
                             // Collision and max depth wasn't reached
@@ -134,10 +93,6 @@ namespace Doremi
                             if (m_currentNode->loopInfo == 0)
                             {
                                 CreateAndDivideTheChildren(*m_currentNode);
-                                // for (size_t i = 0; i < numberOfHits; i++)
-                                // {
-                                //     m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
-                                // }
                             }
 
                             // Add the things we collided with to the list.
@@ -195,46 +150,6 @@ namespace Doremi
 
 
             }
-            //// Looping through the
-            //for(size_t i = 0; i < 8; i++)
-            //{
-            //    // if there is a collision between the child box and any object that needs drawing
-            //    if(true) // TODOEA Here should be the collision check between all the objects in the objectsInTheArea list
-            //    {
-            //        // Since we had a collision, there is something in this box
-            //        o_treeNode.empty = false;
-
-            //        // If max depth isnt reached , minus two is needed to get the depth wanted.
-            //        if(o_treeNode.depth < m_treeDepth - 1)
-            //        {
-            //            // Collision and max depth wasn't reached
-
-            //            // Prepare the next BuildTree() function with 8 newly created children
-            //            CreateAndDivideTheChildren(*o_treeNode.children[i]);
-
-            //            // We start over in the next node to see if we can split it even further
-            //            // BuildTree(*o_treeNode.children[i]);
-            //        }
-            //        else if(o_treeNode.depth == m_treeDepth - 1)
-            //        {
-            //            // int hejsan = 0;
-            //            // Collision but we reached max depth
-            //            // Check where the objects will be placed in this nodes children
-            //        }
-            //        else
-            //        {
-            //            // Collision but we're beyond max depth
-            //        }
-            //    }
-            //    else
-            //    {
-            //        // No collision
-            //        o_treeNode.empty = true;
-            //    }
-            //}
-            //
-
-
 
             //// Looping through the
             // for(size_t i = 0; i < 8; i++)
