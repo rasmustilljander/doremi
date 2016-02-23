@@ -10,6 +10,8 @@ namespace Doremi
             class Mutex : public std::mutex
             {
             public:
+                virtual ~Mutex() {}
+
                 /**
                 Returns true if successfully initialized
                 */
