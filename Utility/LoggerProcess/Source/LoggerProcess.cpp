@@ -149,7 +149,7 @@ void LoggerProcess::SetupCircleBuffer() { m_ingoingBuffer = new Memory::Arbitrar
 IO::Mutex* LoggerProcess::CreateFileMapMutex()
 {
     IO::Mutex* mutex = new IO::FileMapMutex();
-    const bool success = mutex->Initialize(Constants::IPC_FILEMAP_MUTEX_NAME);
+    const bool success = mutex->Initialize(Logging::BuildFileMapMutexName(m_processIdOfGame));
     if(success)
     {
         return mutex;
