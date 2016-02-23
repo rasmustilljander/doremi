@@ -25,6 +25,7 @@ namespace DoremiEngine
 {
     namespace Logging
     {
+        struct ThreadMetaData;
 
         class LoggerImpl : public Logger
         {
@@ -54,13 +55,14 @@ namespace DoremiEngine
             void* InitializeFileMap(const std::size_t& p_size);
             std::wstring BuildLoggingProcessArgumentString();
             void StartLoggingProcess();
+            Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
 
             Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_localBuffer;
             Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer;
             Doremi::Utilities::IO::FileMap* m_fileMap;
             Doremi::Utilities::IO::Mutex* m_mutex;
-            Doremi::Utilities::IO::Mutex* CreateFileMapMutex();
             bool* m_applicationRunning;
+            ThreadMetaData* m_threadMetaData;
             int m_uniqueId;
         };
     }

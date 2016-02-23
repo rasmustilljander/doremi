@@ -5,6 +5,8 @@ namespace DoremiEngine
     namespace Logging
     {
         class LoggingModuleImplementation;
+        class LoggerImpl;
+        class ConsoleManagerImpl;
 
         class SubmoduleManagerImpl : public SubmoduleManager
         {
@@ -37,8 +39,8 @@ namespace DoremiEngine
             LoggingModuleImplementation GetLoggingModule() const;
 
         private:
-            Logger* m_logger;
-            ConsoleManager* m_consoleManager;
+            LoggerImpl* m_logger;
+            ConsoleManagerImpl* m_consoleManager;
             LoggingModuleImplementation* m_loggingModule;
         };
     }

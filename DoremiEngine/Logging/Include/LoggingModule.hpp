@@ -19,6 +19,8 @@ namespace DoremiEngine
             TODORT
             */
             virtual SubmoduleManager& GetSubModuleManager() const = 0;
+
+            virtual ~LoggingModule() {}
         };
     }
 }

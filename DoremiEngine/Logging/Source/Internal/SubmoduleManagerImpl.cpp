@@ -2,6 +2,7 @@
 #include <Internal/Logger/LoggerImpl.hpp>
 #include <Internal/Console/ConsoleManagerImpl.hpp>
 #include <Internal/LoggingModuleImplementation.hpp>
+#include <Internal/Logger/LoggerImpl.hpp>
 
 namespace DoremiEngine
 {
@@ -22,11 +23,6 @@ namespace DoremiEngine
             if(m_consoleManager != nullptr)
             {
                 delete m_consoleManager;
-            }
-
-            if(m_loggingModule != nullptr)
-            {
-                delete m_loggingModule;
             }
         }
 

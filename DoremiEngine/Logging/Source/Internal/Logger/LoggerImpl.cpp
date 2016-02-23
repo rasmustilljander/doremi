@@ -20,13 +20,36 @@ namespace DoremiEngine
 {
     namespace Logging
     {
+        // TODORT, move to cpp
+        struct ThreadMetaData
+        {
+            ThreadMetaData() : isApplicationOnline(nullptr), isThreadStillRunning(nullptr) {}
+
+            ThreadMetaData(bool* p_isApplicationOnline, bool p_isThreadStillRunning)
+                : isApplicationOnline(p_isApplicationOnline), isThreadStillRunning(new bool(p_isThreadStillRunning))
+            {
+            }
+
+            ~ThreadMetaData()
+            {
+                if(isThreadStillRunning != nullptr)
+                {
+                    delete isThreadStillRunning;
+                }
+            }
+            ThreadMetaData(const ThreadMetaData& threadMetaData) = delete;
+
+            const bool* isApplicationOnline;
+            bool* isThreadStillRunning;
+        };
+
         using namespace Doremi::Utilities;
         using namespace Doremi::Utilities::Logging;
 
-        void threadWork(bool* p_applicationOnline, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer);
+        void ThreadWork(ThreadMetaData* p_threadMetaData, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer);
 
         LoggerImpl::LoggerImpl()
-            : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr)
+            : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr), m_threadMetaData(nullptr)
         {
             m_uniqueId = GetCurrentProcessId();
             Initialize();
@@ -34,6 +57,28 @@ namespace DoremiEngine
 
         LoggerImpl::~LoggerImpl()
         {
+            try
+            {
+                if(m_threadMetaData != nullptr)
+                {
+                    *m_applicationRunning = false;
+                    while(*m_threadMetaData->isThreadStillRunning == true)
+                    {
+                        using namespace std::literals;
+                        std::this_thread::sleep_for(1ms);
+                    }
+                }
+            }
+            catch(...)
+            {
+                std::cout << "Failed to shutdown threads properly" << std::endl;
+            }
+
+            if(m_fileMap != nullptr)
+            {
+                delete m_fileMap;
+            }
+
             if(m_localBuffer != nullptr)
             {
                 delete m_localBuffer;
@@ -42,14 +87,13 @@ namespace DoremiEngine
             {
                 delete m_outGoingBuffer;
             }
-
-            if(m_fileMap != nullptr)
-            {
-                delete m_fileMap;
-            }
             if(m_mutex != nullptr)
             {
                 delete m_mutex;
+            }
+            if(m_threadMetaData != nullptr)
+            {
+                delete m_threadMetaData;
             }
             if(m_applicationRunning != nullptr)
             {
@@ -78,7 +122,8 @@ namespace DoremiEngine
             m_outGoingBuffer->Initialize(fileMapMemory, Constants::IPC_FILEMAP_SIZE);
             m_applicationRunning = new bool(true);
 
-            std::thread outGoingLoggingThread(threadWork, m_applicationRunning, m_localBuffer, m_outGoingBuffer);
+            m_threadMetaData = new ThreadMetaData(m_applicationRunning, new bool(true));
+            std::thread outGoingLoggingThread(ThreadWork, m_threadMetaData, m_localBuffer, m_outGoingBuffer);
             outGoingLoggingThread.detach();
 
 #ifdef NO_LOGGER
@@ -98,7 +143,6 @@ namespace DoremiEngine
             std::string message;
             String::toString(message, p_format, args);
             va_end(args);
-
 
             // Allocate buffer
             const uint16_t functionSize = p_function.size() + 1; // The plus one comes as the null terminator
@@ -143,7 +187,6 @@ namespace DoremiEngine
                 }
             }
 #endif
-
             free(buffer);
         }
 
@@ -201,51 +244,58 @@ namespace DoremiEngine
             CloseHandle(processInformation.hThread);
         }
 
-        void threadWork(bool* p_applicationOnline, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer)
+        void ThreadWork(ThreadMetaData* p_threadMetaData, Memory::ArbitrarySizeCirclebuffer* p_localBuffer, Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer)
         {
-            bool messageExist = true;
-            const uint32_t sizeofBuffer = 1000;
-            void* buffer = malloc(sizeofBuffer); // TODORT TODOXX Might need to find a better value.
-            Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
-            header->packageSize = sizeofBuffer; // TODORT TODOXX Might need to find a better value.
-            bool succeed = false;
-
-            // As long as the application is running or if there are some messages ongoing
-            while(*p_applicationOnline || messageExist)
+            try
             {
-                using namespace std::literals;
-                messageExist = p_localBuffer->Consume(header, buffer, sizeofBuffer);
-                if(messageExist)
-                {
+                bool messageExist = true;
+                const uint32_t sizeofBuffer = 1000;
+                void* buffer = malloc(sizeofBuffer); // TODORT TODOXX Might need to find a better value.
+                Memory::CircleBufferHeader* header = new Memory::CircleBufferHeader();
+                header->packageSize = sizeofBuffer; // TODORT TODOXX Might need to find a better value.
+                bool succeed = false;
 
-#ifdef NO_LOGGER
-                    m_outGoingBuffer->Produce(*header, data);
-#else
-                    succeed = false;
-                    while(!succeed)
-                    {
-                        try
-                        {
-                            m_outGoingBuffer->Produce(*header, buffer);
-                            succeed = true;
-                        }
-                        catch(...)
-                        {
-                            std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT); // TODORT NOt very performance nice
-                        }
-                    }
-#endif
-                }
-                else
+                // As long as the application is running or if there are some messages ongoing
+                while(*p_threadMetaData->isApplicationOnline || messageExist)
                 {
-                    // TODORT
-                    // TODOXX Might not be long enough, or might be longer than required.
-                    std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
+                    using namespace std::literals;
+                    messageExist = p_localBuffer->Consume(header, buffer, sizeofBuffer);
+                    if(messageExist)
+                    {
+#ifdef NO_LOGGER
+                        m_outGoingBuffer->Produce(*header, data);
+#else
+                        succeed = false;
+                        while(!succeed)
+                        {
+                            try
+                            {
+                                m_outGoingBuffer->Produce(*header, buffer);
+                                succeed = true;
+                            }
+                            catch(...)
+                            {
+                                std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT); // TODORT NOt very performance nice
+                            }
+                        }
+#endif
+                    }
+                    else
+                    {
+                        // TODORT
+                        // TODOXX Might not be long enough, or might be longer than required.
+                        std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
+                    }
                 }
+
+                free(buffer);
+                delete header;
+                *p_threadMetaData->isThreadStillRunning = false;
             }
-            free(buffer);
-            delete header;
-            delete p_applicationOnline;
+            catch(...)
+            {
+                *p_threadMetaData->isThreadStillRunning = false;
+            }
         }
     }
 }

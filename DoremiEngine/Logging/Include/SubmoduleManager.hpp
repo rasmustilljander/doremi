@@ -10,6 +10,8 @@ namespace DoremiEngine
         class SubmoduleManager
         {
         public:
+            virtual ~SubmoduleManager() {}
+
             /**
             Fetches the main application logger.
             */
