@@ -366,7 +366,6 @@ namespace Doremi
                 m_data->currentHeadOffset = 0;
             }
 
-
             uint32_t ArbitrarySizeCirclebuffer::ComputeDiffBetweenProducedAndConsumed()
             {
                 const uint32_t consumed = m_data->totalConsumedMemoryInBytes;
