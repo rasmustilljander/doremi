@@ -6,6 +6,8 @@ namespace DoremiEngine
 {
     namespace Logging
     {
+        class SubmoduleManagerImpl;
+
         class LoggingModuleImplementation : public LoggingModule
         {
 
@@ -41,7 +43,7 @@ namespace DoremiEngine
             const DoremiEngine::Core::SharedContext& GetEngineSharedContext() const;
 
         private:
-            SubmoduleManager* m_submoduleManager;
+            SubmoduleManagerImpl* m_submoduleManager;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
         };
     }
