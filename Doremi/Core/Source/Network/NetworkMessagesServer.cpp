@@ -21,6 +21,7 @@
 #include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
+#include <Doremi/Core/Include/ServerStateHandler.hpp>
 
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
 
@@ -313,281 +314,116 @@ namespace Doremi
             uint32_t t_maxNumberOfEvents = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID);
             p_streamer.WriteUnsignedInt32(t_maxNumberOfEvents);
 
-            // Start game YES
-            p_streamer.WriteBool(true);
-        }
+            // Check if we should start game
+            bool t_shouldStart = ServerStateHandler::GetInstance()->GetState() == ServerStates::IN_GAME;
+            p_streamer.WriteBool(t_shouldStart);
 
-
-        void ServerNetworkManager::SendConnected(Connection* p_connection)
-        {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-
-            NetMessage Message = NetMessage();
-
-            Message.MessageID = MessageID::CONNECTED;
-
-            NetworkStreamer Streamer = NetworkStreamer();
-            unsigned char* BufferPointer = Message.Data;
-            Streamer.SetTargetBuffer(BufferPointer, sizeof(Message.Data));
-
-            Streamer.WriteUnsignedInt32(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID));
-
-            // Start game YES
-            Streamer.WriteBool(true);
-
-            p_connection->ConnectionState = ConnectionState::MAP_LOADING;
-
-            // Send message
-            NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);
-        }
-
-        void NetworkMessagesServer::SendLoadWorld(Connection* p_connection) {}
-
-        void NetworkMessagesServer::SendInGame(NetMessage& p_message, Connection* p_connection)
-        {
-            // Check name
-        }
-
-
-        // TODOCM maybe move to somewhere else
-        void ServerNetworkManager::CreateSnapshot(unsigned char* p_buffer, uint32_t p_bufferSize, Connection* p_connection)
-        {
-            // For all objects
-            // That have a position component
-            // That has a flag that it is active
-            // We put info to render
-            InputHandlerServer* inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
-
-            NetworkStreamer Streamer = NetworkStreamer();
-            Streamer.SetTargetBuffer(p_buffer, p_bufferSize);
-
-            uint32_t BytesWritten = 0;
-
-            // Write sequence acc for frequence
-            uint8_t sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
-
-            // Write snapshot sequence
-            Streamer.WriteUnsignedInt8(sequenceAcc);
-            BytesWritten += sizeof(uint8_t);
-
-            // Write snapshot ID (1 byte
-            Streamer.WriteUnsignedInt8(m_nextSnapshotSequence);
-            BytesWritten += sizeof(uint8_t);
-
-            // Add new Add/Remove items
-            bool wroteAllEvents = false;
-            static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())
-                ->GetNetworkEventSenderForPlayer(p_connection->PlayerID)
-                ->WriteEvents(Streamer, p_bufferSize, BytesWritten, wroteAllEvents);
-
-            // If we have enough to write snapshot with player
-            if(p_bufferSize - BytesWritten < sizeof(uint8_t) + sizeof(float) * 3)
+            // Change state to load world TODOCM revalueate if we need to do this
+            if(t_shouldStart)
             {
-                return;
+                p_connection->ConnectionState = ClientConnectionStateFromServer::LOAD_WORLD;
             }
 
-            // Write client last sequence (1 byte
-            Streamer.WriteUnsignedInt8(inputHandler->GetSequenceByLastInput());
-
-            // Write position of that sequence ( 12 byte
-            Streamer.WriteFloat3(inputHandler->GetPositionByLastInput());
-
-            BytesWritten += sizeof(uint8_t) + sizeof(float) * 3;
-
-            // Get networkPriorityHandler
-            NetworkPriorityHandler* netPrioHandler =
-                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
-
-            // Write objects from priority
-            netPrioHandler->WriteObjectsByPriority(Streamer, p_bufferSize, BytesWritten);
+            // Send the message
+            t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
         }
 
-        void ServerNetworkManager::SendMessages(double p_dt)
+        void NetworkMessagesServer::SendLoadWorld(ClientConnectionFromServer* p_connection)
         {
-            // Remove time
-            m_nextUpdateTimer -= m_updateInterval;
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
-            // Update sequence here because of the error checking..
-            m_nextSnapshotSequence++;
+            // Create new load world message
+            NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
+            t_newMessage.MessageID = SendMessageIDFromServer::LOAD_WORLD;
 
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_newMessage.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_newMessage.Data));
 
-            // For all connected clients we send messages
-            for(std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter = m_connections.begin(); iter != m_connections.end(); ++iter)
-            {
-                if(iter->second->ConnectionState >= ConnectionState::CONNECTED)
-                {
-                    // Create global message
-                    NetMessage Message = NetMessage();
-                    Message.MessageID = MessageID::SNAPSHOT;
-
-
-                    // TODOCM add snapshot info here
-                    // TODOCM Now we always create a snapshot, might want to change this by a state of the server?
-                    CreateSnapshot(Message.Data, sizeof(Message.Data), iter->second);
-
-                    switch(iter->second->ConnectionState)
-                    {
-                        case ConnectionState::CONNECTED:
-
-                            SendConnected(iter->second);
-                            break;
-
-                        case ConnectionState::MAP_LOADING:
-
-                            SendLoadWorld(iter->second);
-                            break;
-
-                        case ConnectionState::IN_GAME:
-
-                            SendInGame(Message, iter->second);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-
-
-        void ServerNetworkManager::SendLoadWorld(Connection* p_connection)
-        {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-
-            NetMessage Message = NetMessage();
-
-            // Set message ID
-            Message.MessageID = MessageID::LOAD_WORLD;
-
-
-            // TODOCM send all add/removed stuff here
-            NetworkStreamer Streamer = NetworkStreamer();
-            unsigned char* bufferPointer = Message.Data;
-            Streamer.SetTargetBuffer(bufferPointer, sizeof(Message.Data));
-
+            // Counter for writes bitten
             uint32_t t_bytesWritten = 0;
 
-            // Write events
+            // Write join events
             static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())
-                ->WriteQueuedEventsFromLateJoin(Streamer, sizeof(Message.Data), t_bytesWritten, p_connection->PlayerID);
+                ->WriteQueuedEventsFromLateJoin(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten, p_connection->PlayerID);
 
-            // Send message
-            NetworkModule.SendReliableData(&Message, sizeof(Message), p_connection->ReliableSocketHandle);
+            // Send the message
+            t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
         }
 
-        void ServerNetworkManager::SendInGame(NetMessage& p_message, Connection* p_connection)
+        void NetworkMessagesServer::SendInGame(ClientConnectionFromServer* p_connection)
         {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            InputHandlerServer* t_inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
+            NetworkEventSender* t_networkEventSender =
+                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
+            NetworkPriorityHandler* t_networkPriorityHandler =
+                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
+
+
+            // Create message
+            NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
 
             // If we're a new connection we send a initialise snapshot, might need this later
             if(p_connection->NewConnection)
             {
-                p_message.MessageID = MessageID::INIT_SNAPSHOT;
+                t_newMessage.MessageID = SendMessageIDFromServer::INIT_IN_GAME;
+                // MOVE THOSE..... not sure where yet
                 p_connection->NewConnection = false;
-                ((InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID))->SetSequence(m_nextSnapshotSequence);
+                t_inputHandler->SetSequence(m_messageSequence);
             }
             else
             {
-                counter++; // TODOCM remove test
-                int checkValue;
-
-                if(counter < 30)
-                {
-                    checkValue = 100;
-                }
-                else
-                {
-
-                    counter = -1;
-                    checkValue = -1;
-                }
-
-                // TODOCM remove, packet loss experiment
-
-                if(100 == checkValue)
-                {
-                    // return;
-                }
+                t_newMessage.MessageID = SendMessageIDFromServer::IN_GAME;
             }
 
-            // Send message
-            if(!NetworkModule.SendReliableData(&p_message, sizeof(p_message), p_connection->ReliableSocketHandle))
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_newMessage.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_newMessage.Data));
+
+            // Bytes written counter
+            uint32_t t_bytesWritten = 0;
+
+            // Get sequence acc for frequence
+            uint8_t t_sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
+
+            // Write the frequence sequence acc
+            t_streamer.WriteUnsignedInt8(t_sequenceAcc);
+            t_bytesWritten += sizeof(uint8_t);
+
+            // Write snapshot ID (1 byte
+            t_streamer.WriteUnsignedInt8(m_messageSequence);
+            t_bytesWritten += sizeof(uint8_t);
+
+            // Write events
+            bool wroteAllEvents = false;
+            t_networkEventSender->WriteEvents(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten, wroteAllEvents);
+
+            // If we wrote all events and have enough to write snapshot with player
+            if(!wroteAllEvents && sizeof(t_newMessage.Data) - t_bytesWritten > sizeof(uint8_t) + sizeof(float) * 3)
             {
-                cout << "Failed to send, disconnecting..." << endl;
-                p_connection->LastResponse = 100000;
+                // Write client last sequence (1 byte
+                t_streamer.WriteUnsignedInt8(t_inputHandler->GetSequenceByLastInput());
+                t_bytesWritten += sizeof(uint8_t);
+
+                // Write position of that sequence ( 12 byte
+                t_streamer.WriteFloat3(t_inputHandler->GetPositionByLastInput());
+                t_bytesWritten += sizeof(float) * 3;
+
+                // Write objects from priority
+                t_networkPriorityHandler->WriteObjectsByPriority(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten);
             }
-        }
 
-        void ServerNetworkManager::CheckForConnections()
-        {
-            DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-            size_t OutSocketID = 0;
-            DoremiEngine::Network::Adress* OutAdress =
-                NetworkModule.CreateAdress(); // TODOCM really really bad, dynamically allocating every frame, should do something about this
+            // Send the message
+            bool t_sendFailed = !t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
 
-            // Check if anyone is attempting to accept on our channel
-            if(NetworkModule.AcceptConnection(m_reliableSocketHandle, OutSocketID, OutAdress))
+            // If fail, we disconnect next
+            if(t_sendFailed)
             {
-                bool foundConnection = false;
-
-                // Check if we have any connection like that
-                std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter;
-                for(iter = m_connections.begin(); iter != m_connections.end(); ++iter)
-                {
-                    // Custom check for only adress the same ( not port)
-                    if(*iter->first *= *OutAdress)
-                    {
-                        // If the client trying to connect is at the right stage connect
-                        if(iter->second->ConnectionState == ConnectionState::VERSION_CHECK)
-                        {
-                            // Set state as connected
-                            iter->second->ConnectionState = ConnectionState::CONNECTED;
-
-                            // Update last response
-                            iter->second->LastResponse = 0;
-
-                            // Add socketID
-                            iter->second->ReliableSocketHandle = OutSocketID;
-
-                            iter->second->NewConnection = true;
-
-                            foundConnection = true;
-
-                            // Create new InputHandler
-                            InputHandlerServer* NewInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
-
-                            // Create player
-                            PlayerHandler::GetInstance()->CreateNewPlayer(iter->second->PlayerID, NewInputHandler);
-
-
-                            break;
-                        }
-                        // I think this didn't work cause we connected from same computer = same IP, but different games, how do we tell apart?
-                        // else // If not, either wrong stage or something happened, or bot.. problem here is that if we play from 2 clients.. if
-                        // wrong stage it will
-                        //{
-                        //    // Send disconnect message
-                        //    SendDisconnect(*OutAdress, "Bad adress/pattern in check for connections");
-
-                        //    // Set their state to disconnected
-                        //    iter->second->ConnectionState = ConnectionState::DISCONNECTED;
-
-                        //    iter->second->NewConnection = false;
-                        //}
-                        //// Break loop
-                        //// TODOCM maybe send disconnect even if we dont have him in list?
-                    }
-                }
-
-                // If we didn't find connection, close socket
-                if(!foundConnection)
-                {
-                    // TODOCM remove socket
-                }
+                p_connection->LastResponse = 100000; // TODOCM hard coded disconnect value =D
             }
-
-            // Delete socketadress
-            delete OutAdress;
         }
     }
 }

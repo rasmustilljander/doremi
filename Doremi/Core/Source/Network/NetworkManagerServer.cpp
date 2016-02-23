@@ -9,6 +9,7 @@
 
 // Handlers
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
+#include <Doremi/Core/Include/InputHandlerServer.hpp>
 
 // Net messages
 #include <Doremi/Core/Include/Network/NetMessages.hpp>
@@ -36,6 +37,7 @@ namespace Doremi
               m_nextSnapshotSequence(0),
               m_maxConnectMessagesPerFrame(20),
               m_maxConnectedMessagesPerFrame(10),
+              m_maxAcceptConnectionsPerFrame(5),
         {
             // Startup network messages, TODOCM could change position of this
             NetworkMessagesServer::StartupNetworkMessagesServer(p_sharedContext);
@@ -66,8 +68,8 @@ namespace Doremi
             // Receive Messages
             ReceiveMessages();
 
-            // Send Messages
-            SendMessages();
+            // Send Messages for connected clients
+            SendConnectedMessages();
 
             // Check for connections TODOCM not sure if I want this if we going for UDP only
             CheckForConnections();
@@ -91,8 +93,10 @@ namespace Doremi
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
             // Create adress we can use, we don't know the incomming adress before we receive message
-            // We delete this end of function
             DoremiEngine::Network::Adress* t_incommingAdress = t_networkModule.CreateAdress();
+
+            // Get the socket used for connecting
+            SocketHandle t_connectingSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectingSocketHandle();
 
             // Create buffer NetworkMessage
             NetMessageBuffer t_networkMessage = NetMessageBuffer();
@@ -102,7 +106,7 @@ namespace Doremi
 
             // Check for incomming messages
             size_t t_NumOfMessagesReceived = 0;
-            while(t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), m_unreliableSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
+            while(t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_connectingSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
                   t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
             {
                 // Increment number of messages received
@@ -215,6 +219,106 @@ namespace Doremi
                     }
                 }
             }
+        }
+
+        void NetworkManagerServer::SendConnectedMessages()
+        {
+            NetworkMessagesServer::GetInstance()->UpdateSequence();
+            NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
+
+            // Get connected clients
+            auto& t_connections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
+
+            // For each connected client
+            for(auto& t_connection : t_connections)
+            {
+                // Send message based on state
+                switch(t_connection.second->ConnectionState)
+                {
+                    case ClientConnectionStateFromServer::CONNECTED:
+                    {
+                        t_netMessages->SendConnected(t_connection.second);
+
+                        break;
+                    }
+                    case ClientConnectionStateFromServer::LOAD_WORLD:
+                    {
+                        t_netMessages->SendLoadWorld(t_connection.second);
+
+                        break;
+                    }
+                    case ClientConnectionStateFromServer::IN_GAME:
+                    {
+                        t_netMessages->SendInGame(t_connection.second);
+
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        void NetworkManagerServer::CheckForConnections()
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkConnectionsServer* t_netConnections = NetworkConnectionsServer::GetInstance();
+
+            // Get values
+            SocketHandle t_connectedSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectedSocketHandle();
+            SocketHandle t_outSocketHandle = 0;
+            DoremiEngine::Network::Adress* t_outAdress = t_networkModule.CreateAdress();
+            ClientConnectionFromServer* t_connection = nullptr;
+
+            uint32_t t_connectCounter = 0;
+
+            // Try to accept connections
+            while(t_networkModule.AcceptConnection(t_connectedSocketHandle, t_outSocketHandle, t_outAdress) && t_connectCounter < m_maxAcceptConnectionsPerFrame)
+            {
+                t_connectCounter++;
+
+                // If we have a pending connection
+                if(t_netConnections->AdressExistInConnecting(*t_outAdress, t_connection))
+                {
+                    // If the connection is in connect mode
+                    if(t_connection->ConnectionState == ClientConnectionStateFromServer::CONNECT)
+                    {
+                        // Update connection
+                        t_connection->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
+
+                        // Update last response
+                        t_connection->LastResponse = 0;
+
+                        // Add socketID
+                        t_connection->ConnectedSocketHandle = t_outSocketHandle;
+
+                        // New connection... TODOCM CHECK THIS........
+                        t_connection->NewConnection = true;
+
+                        // Create new InputHandler
+                        InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
+
+                        // Create player
+                        PlayerHandler::GetInstance()->CreateNewPlayer(t_connection->PlayerID, t_newInputHandler);
+                    }
+                    else
+                    {
+                        // If we're not in the connect stage, its bad pattern
+                        // TODOXX This will trigger if there are two on same IP joining at same time, will crash hard
+                        NetworkMessagesServer::GetInstance()->SendDisconnect(*t_outAdress, "Bad pattern: Error in connect");
+                    }
+                }
+                else
+                {
+                    // If we're not in the connect stage, its bad pattern
+                    NetworkMessagesServer::GetInstance()->SendDisconnect(*t_outAdress, "Bad pattern: Multiple connect attempts");
+                }
+            }
+
+            // Delete the adress
+            delete t_outAdress;
         }
 
         void NetworkManagerServer::UpdateTimeouts(double t_dt)

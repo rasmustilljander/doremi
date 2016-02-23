@@ -41,7 +41,9 @@ namespace Doremi
 
             void RemoveConnection(DoremiEngine::Network::Adress& p_adress);
 
-            bool AdressExist(const DoremiEngine::Network::Adress& p_Adress, ClientConnectionFromServer*& m_connection);
+            bool AdressWithPortExist(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection);
+
+            bool AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection);
 
         private:
             NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);

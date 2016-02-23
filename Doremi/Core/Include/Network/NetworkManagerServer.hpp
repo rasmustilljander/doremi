@@ -57,6 +57,11 @@ namespace Doremi
             */
             void ReceiveConnectedMessages();
 
+            /**
+                Send messages to connected clients
+            */
+            void SendConnectedMessages();
+
 
             /**
                 Check for reliable connections to accept
@@ -69,20 +74,9 @@ namespace Doremi
             void UpdateTimeouts(double t_dt);
 
             /**
-                Timer for next send
-            */
-            double m_nextUpdateTimer;
-
-            /**
-                Time interval to next send
-            */
-            double m_updateInterval;
-
-            /**
                 Time interval for timeouts
             */
             double m_timeoutInterval;
-
 
             /**
                 Max number of connections
@@ -108,6 +102,8 @@ namespace Doremi
             uint8_t m_maxConnectingMessagesPerFrame;
 
             uint8_t m_maxConnectedMessagesPerFrame;
+
+            uint8_t m_maxAcceptConnectionsPerFrame;
         };
     }
 }

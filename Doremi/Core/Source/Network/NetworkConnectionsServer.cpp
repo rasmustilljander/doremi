@@ -59,16 +59,16 @@ namespace Doremi
             m_connectingClientConnections.erase(&p_adress);
         }
 
-        bool NetworkConnectionsServer::AdressExist(const DoremiEngine::Network::Adress& p_Adress, ClientConnectionFromServer*& m_connection)
+        bool NetworkConnectionsServer::AdressWithPortExist(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection)
         {
             // Check all connectd connections
             for(auto& t_connection : m_connectedClientConnections)
             {
                 // Custom check cause of adress interface ( check AdressImplementation )
                 // Check if we have same IP and Port
-                if(*(t_connection.first) == p_Adress)
+                if(*(t_connection.first) == p_adress)
                 {
-                    m_connection = t_connection.second;
+                    o_connection = t_connection.second;
                     return true;
                 }
             }
@@ -79,9 +79,9 @@ namespace Doremi
             {
                 // Custom check cause of adress interface ( check AdressImplementation )
                 // Check if we have same IP and Port
-                if(*(t_connection.first) == p_Adress)
+                if(*(t_connection.first) == p_adress)
                 {
-                    m_connection = t_connection.second;
+                    o_connection = t_connection.second;
                     return true;
                 }
             }
@@ -89,19 +89,17 @@ namespace Doremi
             return false;
         }
 
-
-        bool ServerNetworkManager::AdressExist(const DoremiEngine::Network::Adress& m_Adress, Connection*& m_connection)
+        bool NetworkConnectionsServer::AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection)
         {
-            // Create iterator for outside use
-            std::map<DoremiEngine::Network::Adress*, Connection*>::iterator iter;
-
-            // Check if we got adress already stored
-            for(iter = m_connections.begin(); iter != m_connections.end(); ++iter)
+            // TODOCM evaluate if we need to check for connected connections
+            // Check all connecting connections
+            for(auto& t_connection : m_connectingClientConnections)
             {
                 // Custom check cause of adress interface ( check AdressImplementation )
-                if(*(iter->first) == m_Adress)
+                // Check if we have same IP
+                if(*(t_connection.first) *= p_adress)
                 {
-                    m_connection = iter->second;
+                    o_connection = t_connection.second;
                     return true;
                 }
             }

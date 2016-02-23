@@ -104,6 +104,11 @@ namespace Doremi
             */
             void SendInGame(ClientConnectionFromServer* p_connection);
 
+            /**
+                Update message sequence
+            */
+            UpdateSequence() { m_messageSequence++; }
+
         private:
             NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
@@ -112,6 +117,8 @@ namespace Doremi
             static NetworkMessagesServer* m_singleton;
 
             const DoremiEngine::Core::SharedContext& m_sharedContext;
+
+            uint8_t m_messageSequence;
         };
     }
 }
