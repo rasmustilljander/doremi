@@ -83,6 +83,8 @@ namespace Doremi
                                                                     DoremiEngine::Graphic::SkeletalInformation& p_upperBodySkeletalInformation,
                                                                     DoremiEngine::Graphic::SkeletalInformation& p_lowerBodySkeletalInformation)
         {
+
+            // TODOLH Fixa så att vi använder tidigare inladdad data om det finns
             // Get the full path
             string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
 

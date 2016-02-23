@@ -150,11 +150,33 @@ namespace Doremi
             blueprint[ComponentType::Transform] = transComp;
             // Render
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
-            CharacterDataNames enemyCharData = loader.LoadCharacter("Models/RobotSmall.drm");
+            CharacterDataNames enemyCharData =
+                loader.LoadCharacter("Models/RobotSmall.drm"); // TODOLH ta bort denna å fixa så att vi använde material för skeletalanimations
+            // Load SkeletalAnimation character
+            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+            enemyCharData = loader.LoadSkeletalCharacter("Models/SmallRobot11.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
             blueprint[ComponentType::Render] = renderComp;
+
+            // SkeletalAnimationComponent
+            SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
+            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
+            t_upperBodySkeletalAnimationComp->clipName = "Idle";
+            t_upperBodySkeletalAnimationComp->timePosition = 0;
+
+            LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
+            blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
+            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
+            t_lowerBodySkeletalAnimationComp->clipName = "Idle";
+            t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
@@ -658,15 +680,6 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros15TvåJointsunderEN.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros16TommaJoints.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/Gyros14MedTranslateradeMeshTransforms.drm",
-            // *t_skeletalInformation);
-
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/RobotSmallTest.drm", *t_skeletalInformation);
-            // CharacterDataNames playerSkeletalCharData = loader.LoadSkeletalCharacter("Models/SmallRobotNew5.drm", *t_skeletalInformation);
-            /*CharacterDataNames playerSkeletalCharData =
-               loader.LoadSkeletalCharacter("Models/Gyros25.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation); */
             CharacterDataNames playerSkeletalCharData =
                 loader.LoadSkeletalCharacter("Models/SmallRobot11.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
 
