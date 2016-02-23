@@ -2,7 +2,6 @@
 
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
-#include <Doremi/Core/Include/Manager/Network/ConnectionState.hpp>
 
 namespace DoremiEngine
 {
@@ -20,109 +19,63 @@ namespace Doremi
         /**
             Manager class for Client, contains the logic for the connection pattern
         */
-        class ClientNetworkManager : public Manager
+        class NetworkManagerClient : public Manager
         {
         public:
             /**
                 TODOCM doc
             */
-            ClientNetworkManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            NetworkManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODOCM doc
             */
-            virtual ~ClientNetworkManager();
+            virtual ~NetworkManagerClient();
 
             /**
                 Load IP to server and playerID
             */
             void LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
-            /**
-                TODOCM doc
-            */
-            void Update(double p_dt) override;
 
             /**
                 TODOCM doc
             */
             void SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d);
 
+            /**
+                TODOCM doc
+            */
+            void Update(double p_dt) override;
+
+
         private:
             /**
-                Recieves reliable & unreliable messages
+                Receives connecting and connected messages
             */
-            void RecieveMessages(double p_dt);
+            void ReceiveMessages();
+
+            /**
+                Recieves connecting messages from server
+            */
+            void ReceiveConnectingMessages();
+
+            /**
+                Recieves connected messages from server
+            */
+            void ReceiveConnectedMessages();
 
             /**
                 Sends reliable & unreliable messages
             */
             void SendMessages(double p_dt);
 
-            /**
-                Sends a connection request message to server
-            */
-            void SendConnectRequestMessage();
-
-            /**
-                Sends a version check messag eto server
-            */
-            void SendVersionMessage();
-
-            /**
-                Sends a connected message to server
-            */
-            void SendConnectedMessage();
-
-            /**
-                TODOCM doc
-            */
-            void SendMapLoadingMessage();
-
-            /**
-                TODOCM doc
-            */
-            void SendInGameMessage();
-
-            /**
-                Sends a disconnect message to server
-            */
-            void SendDisconnectMessage();
-
-            /**
-                Send unreliable message dependent on connectionstate
-            */
-            void RecieveUnreliable(double p_dt);
-
-            /**
-                Recieves reliable data from server
-            */
-            void RecieveReliable(double p_dt);
-
-            /**
-                TODOCM doc
-            */
-            void RecieveConnected(NetMessage& p_message);
-
-            /**
-                TODOCM doc
-            */
-            void RecieveMapLoading(NetMessage& p_message);
-
-            /**
-                TODOCM doc
-            */
-            void RecieveSnapshot(NetMessage& p_message, bool p_initial);
 
             /**
                 Update timeout to server and disconnects if too long
             */
             void UpdateTimeouts(double p_dt);
 
-            /**
-                TODOCM doc
-            */
-            void CreateInputMessage(NetMessage& p_message);
 
             /**
                 Timer for next update(send data)

@@ -29,7 +29,7 @@ namespace Doremi
             static void StartupNetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
-                == Receive Messages Unreliable ==
+                == Receive Messages Connecting ==
             */
 
             /**
@@ -48,7 +48,7 @@ namespace Doremi
             void ReceiveDisconnect(NetMessageConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress);
 
             /**
-                == Receive Messages Reliable ==
+                == Receive Messages Connected ==
             */
 
             /**
@@ -67,7 +67,7 @@ namespace Doremi
             void ReceiveInGameMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
-                == Send Messages Unreliable ==
+                == Send Messages Connecting ==
             */
 
             /**
@@ -86,7 +86,7 @@ namespace Doremi
             void SendDisconnect(const DoremiEngine::Network::Adress& p_adress, std::string p_string);
 
             /**
-                == Send Messages Reliable ==
+                == Send Messages Connected ==
             */
 
             /**
@@ -107,7 +107,7 @@ namespace Doremi
             /**
                 Update message sequence
             */
-            UpdateSequence() { m_messageSequence++; }
+            void UpdateSequence() { m_messageSequence++; }
 
         private:
             NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);

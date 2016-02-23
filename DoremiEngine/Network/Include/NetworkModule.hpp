@@ -90,7 +90,7 @@ namespace DoremiEngine
             /**
                 Create a socket and connects to a reliable standby socket
             */
-            virtual size_t ConnectToReliable(const Adress* p_adressToConnectTo) = 0;
+            virtual bool ConnectToReliable(const Adress* p_adressToConnectTo, size_t& o_socketHandle) = 0;
 
             /**
                 Create a socket in standby, which will be able to recieve reliable connections

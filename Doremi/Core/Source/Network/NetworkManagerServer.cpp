@@ -30,33 +30,13 @@ namespace Doremi
     {
         NetworkManagerServer::NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "ServerNetworkManager"),
-              m_nextUpdateTimer(0.0f),
-              m_updateInterval(0.017f),
               m_timeoutInterval(3.0f),
-              m_maxConnection(16),
-              m_nextSnapshotSequence(0),
-              m_maxConnectMessagesPerFrame(20),
-              m_maxConnectedMessagesPerFrame(10),
-              m_maxAcceptConnectionsPerFrame(5),
+              m_maxConnectedMessagesPerFrame(20),
+              m_maxConnectingMessagesPerFrame(10),
+              m_maxAcceptConnectionsPerFrame(5)
         {
             // Startup network messages, TODOCM could change position of this
             NetworkMessagesServer::StartupNetworkMessagesServer(p_sharedContext);
-
-            DoremiEngine::Network::NetworkModule& NetworkModule = p_sharedContext.GetNetworkModule();
-
-            // Create adress for ALL incomming IP and port 5050
-            DoremiEngine::Network::Adress* UnreliableAdress = NetworkModule.CreateAdress(5050);
-
-            // Create adress for ALL incomming IP and port 4050
-            DoremiEngine::Network::Adress* ReliableAdress = NetworkModule.CreateAdress(4050);
-
-            // Create socket for unrealiable
-            m_unreliableSocketHandle = NetworkModule.CreateUnreliableWaitingSocket(UnreliableAdress);
-
-            // Create socket for relialbe
-            m_reliableSocketHandle = NetworkModule.CreateReliableConnection(ReliableAdress, m_maxConnection);
-
-            counter = 0;
 
             srand(time(NULL));
         }
@@ -91,6 +71,9 @@ namespace Doremi
         {
             // Get Nework module
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+
+            // Get message class
+            NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
 
             // Create adress we can use, we don't know the incomming adress before we receive message
             DoremiEngine::Network::Adress* t_incommingAdress = t_networkModule.CreateAdress();
@@ -129,21 +112,21 @@ namespace Doremi
                     case SendMessageIDFromClient::CONNECTION_REQUEST:
                     {
                         std::cout << "Connection Request." << std::endl; // TODOCM logg instead
-                        NetworkMessagesServer::GetInstance()->ReceiveConnectionRequest(t_netMessageConnecting, *t_incommingAdress);
+                        t_netMessages->ReceiveConnectionRequest(t_netMessageConnecting, *t_incommingAdress);
 
                         break;
                     }
                     case SendMessageIDFromClient::VERSION_CHECK:
                     {
                         std::cout << "Version Check" << std::endl; // TODOCM logg instead
-                        NetworkMessagesServer::GetInstance()->ReceiveVersionCheck(t_netMessageConnecting, *t_incommingAdress);
+                        t_netMessages->ReceiveVersionCheck(t_netMessageConnecting, *t_incommingAdress);
 
                         break;
                     }
                     case SendMessageIDFromClient::DISCONNECT:
                     {
                         std::cout << "Disconnect" << std::endl; // TODOCM logg instead
-                        NetworkMessagesServer::GetInstance()->ReceiveDisconnect(t_netMessageConnecting, *t_incommingAdress);
+                        t_netMessages->ReceiveDisconnect(t_netMessageConnecting, *t_incommingAdress);
 
                         break;
                     }
@@ -164,6 +147,7 @@ namespace Doremi
         void NetworkManagerServer::ReceiveConnectedMessages()
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
 
             // For each connection
             auto& t_connectedClientConnections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
@@ -189,19 +173,19 @@ namespace Doremi
                         {
                             case SendMessageIDFromClient::CONNECTED:
                             {
-                                NetworkMessagesServer::GetInstance()->ReceiveConnectedMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveConnectedMessage(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
                             case SendMessageIDFromClient::LOAD_WORLD:
                             {
-                                NetworkMessagesServer::GetInstance()->ReceiveLoadWorldMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveLoadWorldMessage(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
                             case SendMessageIDFromClient::IN_GAME:
                             {
-                                NetworkMessagesServer::GetInstance()->ReceiveInGameMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveInGameMessage(t_connectedMessage, t_connection.second);
 
                                 break;
                             }

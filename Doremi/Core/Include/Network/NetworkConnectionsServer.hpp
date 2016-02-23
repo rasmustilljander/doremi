@@ -55,6 +55,11 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             /**
+                Max number of connections
+            */
+            uint8_t m_maxConnections;
+
+            /**
                 Socket for incomming connecting messages
             */
             SocketHandle m_connectingSocketHandle;

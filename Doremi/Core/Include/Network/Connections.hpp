@@ -2,6 +2,9 @@
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
+#define CONNECTING_UPDATE_INTERVAL 0.017f
+#define CONNECTED_UPDATE_INTERVAL 0.033f
+
 namespace Doremi
 {
     namespace Core
@@ -56,6 +59,7 @@ namespace Doremi
             SocketHandle ConnectedSocketHandle;
             PlayerID PlayerID;
 
+            double UpdateInterval;
             double LastResponse;
             bool NewConnection;
         };

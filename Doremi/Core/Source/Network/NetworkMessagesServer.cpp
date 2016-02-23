@@ -55,7 +55,7 @@ namespace Doremi
         NetworkMessagesServer::~NetworkMessagesServer() {}
 
         /**
-            == Receive Messages Unreliable ==
+            == Receive Messages Connecting ==
         */
         void NetworkMessagesServer::ReceiveConnectionRequest(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress)
         {
@@ -82,7 +82,7 @@ namespace Doremi
             ClientConnectionFromServer* t_connection = nullptr;
 
             // If we have the adress we ignore (might be late packet?), and wait for timeout
-            if(NetworkConnectionsServer::GetInstance()->AdressExist(p_adress, t_connection))
+            if(NetworkConnectionsServer::GetInstance()->AdressWithPortExist(p_adress, t_connection))
             {
                 // If the state is version checking, we check if version check is ok and turn connection to connect, else we let it timeout
                 if(t_connection->ConnectionState == ClientConnectionStateFromServer::VERSION_CHECK)
@@ -134,14 +134,14 @@ namespace Doremi
             ClientConnectionFromServer* t_connection = nullptr;
 
             // If we have the adress we ignore (might be late packet?), and wait for timeout
-            if(NetworkConnectionsServer::GetInstance()->AdressExist(p_adress, t_connection))
+            if(NetworkConnectionsServer::GetInstance()->AdressWithPortExist(p_adress, t_connection))
             {
                 NetworkConnectionsServer::GetInstance()->RemoveConnection(p_adress);
             }
         }
 
         /**
-            == Receive Messages Reliable ==
+            == Receive Messages Connected ==
         */
 
         void NetworkMessagesServer::ReceiveConnectedMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
@@ -234,7 +234,7 @@ namespace Doremi
         }
 
         /**
-            == Send Messages Unreliable ==
+            == Send Messages Connecting ==
         */
 
         void NetworkMessagesServer::SendVersionCheck(const DoremiEngine::Network::Adress& p_adress)
@@ -294,7 +294,7 @@ namespace Doremi
         }
 
         /**
-            == Send Messages Reliable ==
+            == Send Messages Connected ==
         */
 
         void NetworkMessagesServer::SendConnected(ClientConnectionFromServer* p_connection)

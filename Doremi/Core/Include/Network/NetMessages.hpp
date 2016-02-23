@@ -27,10 +27,13 @@ namespace Doremi
         */
         enum class SendMessageIDFromServer : uint8_t
         {
+            // Connecting
             VERSION_CHECK,
             CONNECT,
-            CONNECTED,
             DISCONNECT,
+
+            // Connected
+            CONNECTED,
             LOAD_WORLD,
             INIT_IN_GAME,
             IN_GAME,

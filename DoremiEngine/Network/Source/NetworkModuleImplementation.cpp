@@ -137,20 +137,23 @@ namespace DoremiEngine
             return RecieveSuccessful;
         }
 
-        size_t NetworkModuleImplementation::ConnectToReliable(const Adress* p_adressToConnectTo)
+        bool NetworkModuleImplementation::ConnectToReliable(const Adress* p_adressToConnectTo, size_t& o_socketHandle)
         {
             // TODOCM add try catch here, remove test code
             Socket* newSocket = new Socket();
 
             // Create a socket and attempt connect it to a socket used for incomming
-            newSocket->CreateAndConnectTCPSocket(*(AdressImplementation*)p_adressToConnectTo);
+            bool r_connected = newSocket->CreateAndConnectTCPSocket(*(AdressImplementation*)p_adressToConnectTo);
 
             // Save socket to map
             std::hash<Socket*> HashMap;
             size_t key = HashMap(newSocket);
             m_socketHandleMap[key] = newSocket;
 
-            return key;
+            // Set out value
+            o_socketHandle = key;
+
+            return r_connected;
         }
 
         size_t NetworkModuleImplementation::CreateReliableConnection(const Adress* p_adressToConnectTo, uint8_t p_maxWaitingConnections)

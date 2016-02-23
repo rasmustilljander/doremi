@@ -31,7 +31,23 @@ namespace Doremi
             m_singleton = new NetworkConnectionsServer(p_sharedContext);
         }
 
-        NetworkConnectionsServer::NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext) {}
+        NetworkConnectionsServer::NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : m_sharedContext(p_sharedContext), m_maxConnections(16)
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
+
+            // Create adress for ALL incomming IP and port 5050
+            DoremiEngine::Network::Adress* UnreliableAdress = t_networkModule.CreateAdress(5050);
+
+            // Create adress for ALL incomming IP and port 4050
+            DoremiEngine::Network::Adress* ReliableAdress = t_networkModule.CreateAdress(4050);
+
+            // Create socket for unrealiable
+            m_connectingSocketHandle = t_networkModule.CreateUnreliableWaitingSocket(UnreliableAdress);
+
+            // Create socket for relialbe
+            m_connectedSocketHandle = t_networkModule.CreateReliableConnection(ReliableAdress, m_maxConnections);
+        }
 
         NetworkConnectionsServer::~NetworkConnectionsServer() {}
 

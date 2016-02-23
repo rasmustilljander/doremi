@@ -62,7 +62,6 @@ namespace Doremi
             */
             void SendConnectedMessages();
 
-
             /**
                 Check for reliable connections to accept
             */
@@ -79,26 +78,8 @@ namespace Doremi
             double m_timeoutInterval;
 
             /**
-                Max number of connections
-            */
-            uint8_t m_maxConnection;
-
-            /**
                 TODOCM doc
             */
-            uint8_t m_nextSnapshotSequence;
-            /**
-
-                test
-            */
-            uint32_t counter;
-
-            /**
-                TODOCM doc
-                TODOCM move to external place?
-            */
-            std::list<uint32_t> m_SavedPlayerIDs;
-
             uint8_t m_maxConnectingMessagesPerFrame;
 
             uint8_t m_maxConnectedMessagesPerFrame;

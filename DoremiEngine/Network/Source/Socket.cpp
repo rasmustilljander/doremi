@@ -58,13 +58,13 @@ namespace DoremiEngine
             listen(m_socketHandle, p_maxConnections);
         }
 
-        void Socket::CreateAndConnectTCPSocket(const AdressImplementation& p_connectAdress)
+        bool Socket::CreateAndConnectTCPSocket(const AdressImplementation& p_connectAdress)
         {
             // Create Socket
             CreateTCPSocket();
 
             // Connect to adress
-            ConnectSocket(p_connectAdress);
+            return ConnectSocket(p_connectAdress);
         }
 
         bool Socket::AcceptTCPConnection(SOCKET& p_socketHandle, AdressImplementation& p_adress)
@@ -335,7 +335,7 @@ namespace DoremiEngine
             }
         }
 
-        void Socket::ConnectSocket(const AdressImplementation& p_connectAdress)
+        bool Socket::ConnectSocket(const AdressImplementation& p_connectAdress)
         {
             // Attempt to connect to another socket with the IP and port specified
             int32_t Result = connect(m_socketHandle, (SOCKADDR*)&p_connectAdress.GetAdress(), sizeof(SOCKADDR));
@@ -344,10 +344,7 @@ namespace DoremiEngine
             if(Result == SOCKET_ERROR)
             {
                 DWORD errorCode = WSAGetLastError();
-                /*std::string Out =
-                    "Failed to connect to socket with IP: " + p_connectAdress.GetIPToString() + " To port: " +
-                std::to_string(p_connectAdress.GetPort());
-                throw std::runtime_error(Out.c_str());*/
+                return false;
             }
 
             // TODOCM TEST TEST TEST, warning might cause undefined behaviour cause of nonblocking nature
@@ -357,6 +354,7 @@ namespace DoremiEngine
             {
                 throw std::runtime_error("Failed setting TCP to non blocking.");
             }
+            return true;
         }
     }
 }

@@ -95,7 +95,7 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            size_t ConnectToReliable(const Adress* p_adressToConnectTo) override;
+            bool ConnectToReliable(const Adress* p_adressToConnectTo, size_t& o_socketHandle) override;
 
             /**
                 TODOCM docs

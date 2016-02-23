@@ -42,7 +42,7 @@ namespace DoremiEngine
             /**
                 Create a TCP socket and connect to an adress
             */
-            void CreateAndConnectTCPSocket(const AdressImplementation& p_connectAdress);
+            bool CreateAndConnectTCPSocket(const AdressImplementation& p_connectAdress);
 
             /**
                 Accept a TCP connection if CreateWaitingTCPSocket is called
@@ -96,19 +96,19 @@ namespace DoremiEngine
             void CreateUDPSocket();
 
             /**
-                Set Socket to not Block on Recieve calls
-            */
-            void SetNonBlocking();
-
-            /**
                 Bind TCP socket to incomming connections
             */
             void BindSocket(const AdressImplementation& p_adress);
 
             /**
+                Set Socket to not Block on Recieve calls
+            */
+            void SetNonBlocking();
+
+            /**
                 Connect socket to adress
             */
-            void ConnectSocket(const AdressImplementation& p_connectAdress);
+            bool ConnectSocket(const AdressImplementation& p_connectAdress);
 
             /**
                 Socket handle used for API calls
