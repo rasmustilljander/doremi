@@ -12,6 +12,7 @@ namespace Doremi
         {
             Jump,
             Death,
+            DamageTaken,
             DebugSound,
 
             Num_Sounds,
