@@ -38,7 +38,62 @@ namespace DoremiEngine
             return newField;
         }
 
-        PotentialField* PotentialFieldSubModuleImpl::CreateNewFieldFromFile(const std::string& p_fileName) { return nullptr; }
+        PotentialField* PotentialFieldSubModuleImpl::CreateNewFieldFromFile(const std::string& p_fileName)
+        {
+            using namespace std;
+            using namespace DirectX;
+            // Change the file name and then open the file
+            string fullFileName = m_context.WorkingDirectory + "PotentialField/" + p_fileName + ".drmpf";
+            ifstream file(fullFileName, ofstream::in | ofstream::binary);
+            if(!file.is_open())
+            {
+                // TODOKO log error, couldnt open file
+                return nullptr;
+            }
+            // create variable to contatin what the field gives us
+            int quadsX;
+            int quadsZ;
+
+            XMFLOAT3 center;
+
+            float width;
+            float height;
+
+            // read some one of a kind values
+            file.read((char*)&center, sizeof(XMFLOAT3));
+
+            file.read((char*)&width, sizeof(float));
+            file.read((char*)&height, sizeof(float));
+
+            // Save down nubmer of quads in x and z so we know how many to read later on. Also used to calc quad size
+            file.read((char*)&quadsX, sizeof(int));
+            file.read((char*)&quadsZ, sizeof(int));
+
+            // Now that we know how many quads there is allocate some memory
+            PotentialFieldGridPoint* grid = (PotentialFieldGridPoint*)malloc(sizeof(PotentialFieldGridPoint) * quadsX * quadsZ);
+
+            // Now we save down every quad in the grid
+            file.read((char*)grid, sizeof(PotentialFieldGridPoint) * quadsX * quadsZ);
+            // Everything we need is saved, close file
+            file.close();
+
+            // Calculate the size of a quad
+            XMFLOAT2 quadSize;
+
+            quadSize.x = width / static_cast<float>(quadsX);
+            quadSize.y = height / static_cast<float>(quadsZ);
+            // Create a new field
+            PotentialField* newField = new PotentialFieldImpl(m_context);
+
+            // Save the values to the field
+            newField->SetGrid(grid);
+            newField->SetCenter(center);
+            newField->SetHeight(height);
+            newField->SetWidth(width);
+            newField->SetQuadSize(quadSize);
+            newField->SetNumberOfQuads(quadsX, quadsZ);
+            m_fields.push_back(newField);
+        }
 
         bool PotentialFieldSubModuleImpl::SaveFieldToFile(const PotentialField& p_fieldToSave, const std::string& p_fileName)
         {
@@ -78,7 +133,7 @@ namespace DoremiEngine
 
             // Everything we need is saved, close file
             file.close();
-            return false;
+            return true;
         }
 
         PotentialGroup* PotentialFieldSubModuleImpl::CreateNewPotentialGroup()
