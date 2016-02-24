@@ -3,6 +3,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <Doremi/Core/Include/Handler/TreeHandler.hpp>
 // Engine
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -66,15 +67,18 @@ namespace Doremi
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
 
             EntityHandler& entityHandler = EntityHandler::GetInstance();
-            const size_t length = entityHandler.GetLastEntityIndex();
+            // const size_t length = entityHandler.GetLastEntityIndex();
+            std::vector<uint32_t> t_theseShouldBeDrawn = TreeHandler::GetInstance()->Update();
+            const size_t length = t_theseShouldBeDrawn.size();
+            
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {
-                if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
-                   !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
+                if(entityHandler.HasComponents(t_theseShouldBeDrawn[i], mask) && !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::LowerBodySkeletalAnimation) &&
+                   !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::UpperBodySkeletalAnimation))
                 {
-                    RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
-                    TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                    RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(t_theseShouldBeDrawn[i]);
+                    TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(t_theseShouldBeDrawn[i]);
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
 
