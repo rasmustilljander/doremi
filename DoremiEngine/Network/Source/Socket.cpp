@@ -191,6 +191,8 @@ namespace DoremiEngine
             // Attempt to recieve data from socket
             int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, (SOCKADDR*)&Adress, &AdressSize);
 
+            p_dataSizeReceived = Return;
+
             // If some error
             if(Return == SOCKET_ERROR)
             {
@@ -220,6 +222,8 @@ namespace DoremiEngine
         {
             // Attempt to recieve data from socket
             int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, nullptr, nullptr);
+
+            p_dataSizeReceived = Return;
 
             // If some error or
             if(Return == SOCKET_ERROR)
@@ -281,10 +285,12 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveTCP(void* p_data, const uint32_t& p_dataSize)
+        bool Socket::RecieveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
             // Attempt to recieve data from socket
             int32_t Return = recv(m_socketHandle, (char*)p_data, p_dataSize, 0);
+
+            p_dataSizeReceived = Return;
 
             // If some error or
             if(Return == SOCKET_ERROR)

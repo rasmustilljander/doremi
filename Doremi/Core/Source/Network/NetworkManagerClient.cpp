@@ -79,7 +79,6 @@ namespace Doremi
             delete IPArray;
         }
 
-
         void ClientNetworkManager::SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
         {
             // Change IP on unreliable socket
@@ -159,16 +158,20 @@ namespace Doremi
                 {
                     case SendMessageIDFromServer::VERSION_CHECK:
                     {
-                        t_netMessages->
+                        t_netMessages->ReceiveVersionCheck(t_messageConnecting);
 
-                            break;
+                        break;
                     }
                     case SendMessageIDFromServer::CONNECT:
                     {
+                        t_netMessages->ReceiveConnect(t_messageConnecting);
+
                         break;
                     }
                     case SendMessageIDFromServer::DISCONNECT:
                     {
+                        t_netMessages->ReceiveDisconnect(t_messageConnecting);
+
                         break;
                     }
                     default:
@@ -182,223 +185,160 @@ namespace Doremi
             }
         }
 
-
-        void ClientNetworkManager::RecieveUnreliable(double p_dt)
+        void NetworkManagerClient::ReceiveConnectedMessages()
         {
-            // If we're actually trying to connect to something
-            if(m_serverConnectionState > ConnectionState::DISCONNECTED)
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // TODOCM check if we need to check if we're connected
+
+            // Create buffer message
+            NetMessageBuffer t_newMessage = NetMessageBuffer();
+
+            // To check how much we received
+            uint32_t t_dataSizeReceived = 0;
+
+            // Try receive messages
+            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnectionState.ConnectedSocketHandle, t_dataSizeReceived))
             {
-                DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-                NetMessage Message = NetMessage();
-
-                // See if we have any messages
-                while(NetworkModule.RecieveUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress))
+                // If wrong size of message
+                if(t_dataSizeReceived != sizeof(NetMessageConnectedFromServer))
                 {
-                    std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
-
-                    switch(Message.MessageID)
-                    {
-                        case MessageID::VERSION_CHECK:
-
-                            std::cout << "Version Check." << std::endl;
-                            ; // TODOCM logg instead
-
-                            // If we're connecting we set our state to version checking
-                            if(m_serverConnectionState == ConnectionState::CONNECTING)
-                            {
-                                m_serverConnectionState = ConnectionState::VERSION_CHECK;
-                                m_serverLastResponse = 0;
-                            }
-
-                            break;
-                        case MessageID::CONNECT:
-
-                            std::cout << "Connect." << std::endl;
-                            ; // TODOCM logg instead
-
-                            // If our state was version checking we get info about how to set up reliable connection
-                            if(m_serverConnectionState == ConnectionState::VERSION_CHECK)
-                            {
-                                m_serverConnectionState = ConnectionState::CONNECTED;
-
-                                // Get the player ID
-                                NetworkStreamer Streamer = NetworkStreamer();
-                                unsigned char* DataPointer = Message.Data;
-                                Streamer.SetTargetBuffer(DataPointer, sizeof(Message.Data));
-
-                                // Get playerID from server
-                                uint32_t t_lastPlayerID = m_playerID;
-                                m_playerID = Streamer.ReadUnsignedInt32();
-
-                                // If it changed, we want to update config file for now
-                                // TODO change not to write to config file all times we get new value?
-                                if(t_lastPlayerID != m_playerID)
-                                {
-                                    // Update the value
-                                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID = m_playerID;
-
-                                    // TODOXX if we change config file name, this will crash like hell
-                                    m_sharedContext.GetConfigurationModule().WriteConfigurationValuesToFile("Configuration.txt");
-                                    cout << "Writing new playerID to file.." << m_playerID << endl;
-                                }
-
-                                // Increase the rate of which we send messages
-                                m_updateInterval = 0.017f;
-
-                                m_serverLastResponse = 0;
-
-                                // TODOCM add code for actuall port here
-                                // TODOCM check we dont get in lock here if wrong port
-
-                                // Connect to server
-                                m_serverReliableSocketHandle = NetworkModule.ConnectToReliable(m_reliableServerAdress);
-
-                                // TODOCM check if we need to save this adress or we can just bind it
-                                // delete m_reliableServerAdress;
-                            }
-
-                            break;
-                        case MessageID::DISCONNECT:
-
-                            std::cout << "Disconnect." << std::endl;
-                            ; // TODOCM logg instead
-
-                            // TODOCM add if we're disconnected already we skip connecting back
-
-                            // Something went wrong or we disconnected
-                            m_serverConnectionState = ConnectionState::CONNECTING;
-                            m_serverLastResponse = 0;
-                            m_updateInterval = 1.0f;
-
-                            // TODOCM remove world
-
-                            break;
-                        default:
-                            break;
-                    }
+                    t_newMessage = NetMessageBuffer();
+                    continue;
                 }
-            }
-        }
 
-        void ClientNetworkManager::SendMessages(double p_dt)
-        {
-            // Update DeltaTime
-            m_nextUpdateTimer += p_dt;
+                // Convert message to proper
+                NetMessageConnectedFromServer& t_messageConnecting = *reinterpret_cast<NetMessageConnectedFromServer*>(&t_newMessage);
 
-
-            if(m_nextUpdateTimer >= m_updateInterval)
-            {
-                m_nextUpdateTimer -= m_updateInterval;
-
-                // Based on our state we send different message
-                switch(m_serverConnectionState)
+                // Check ID and interpet
+                switch(t_messageConnecting.MessageID)
                 {
-                    case ConnectionState::DISCONNECTED:
+                    case SendMessageIDFromServer::CONNECTED:
+                    {
+                        t_netMessages->ReceiveConnected(t_messageConnecting);
 
-                        // Nothing yet
                         break;
+                    }
+                    case SendMessageIDFromServer::LOAD_WORLD:
+                    {
+                        t_netMessages->ReceiveLoadWorld(t_messageConnecting);
 
-                    case ConnectionState::CONNECTING:
-
-                        // Send a connecting message
-                        SendConnectRequestMessage();
                         break;
+                    }
+                    case SendMessageIDFromServer::IN_GAME:
+                    {
+                        t_netMessages->ReceiveInGame(t_messageConnecting);
 
-                    case ConnectionState::VERSION_CHECK:
-
-                        // Send a version message
-                        SendVersionMessage();
                         break;
+                    }
 
                     default:
                         break;
                 }
-            }
 
-
-            // Always send if were connected
-            switch(m_serverConnectionState)
-            {
-                case ConnectionState::CONNECTED:
-
-                    // TODOCM Send ping to keep an update with server?
-                    SendConnectedMessage();
-                    break;
-
-                case ConnectionState::MAP_LOADING:
-
-                    SendMapLoadingMessage();
-                    break;
-
-                case ConnectionState::IN_GAME:
-
-                    SendInGameMessage();
-                    break;
-                default:
-                    break;
+                // Reset message
+                t_newMessage = NetMessageBuffer();
             }
         }
 
-        void ClientNetworkManager::RecieveReliable(double p_dt)
+        void NetworkManagerClient::SendMessages(double p_dt)
         {
-            if(m_serverConnectionState >= ConnectionState::CONNECTED)
+            // Send connecting messages if we're in those states
+            SendConnectingMessages(p_dt);
+
+            // Send connected messages if we're in those states
+            SendConnectedMessages();
+        }
+
+        void NetworkManagerClient::SendConnectingMessages(double p_dt)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // Update timer
+            m_nextUpdateTimer += p_dt;
+
+            // If we're not connected we only send at intervals
+            if(m_nextUpdateTimer >= m_updateInterval)
             {
-                DoremiEngine::Network::NetworkModule& NetworkModule = m_sharedContext.GetNetworkModule();
-                NetMessage Message = NetMessage();
+                // Reduce timer
+                m_nextUpdateTimer -= m_updateInterval;
 
-                // Attempt recieve reliable message
-                while(NetworkModule.RecieveReliableData(&Message, sizeof(Message), m_serverReliableSocketHandle))
+                // Based on our state we send different message
+                switch(t_connections->m_serverConnectionState.ConnectionState)
                 {
-
-                    switch(Message.MessageID)
+                    case ServerConnectionStateFromClient::CONNECTING:
                     {
-                        case MessageID::CONNECTED:
-
-                            RecieveConnected(Message);
-                            break;
-
-                        case MessageID::LOAD_WORLD:
-
-                            RecieveMapLoading(Message);
-                            break;
-
-                        case MessageID::INIT_SNAPSHOT:
-
-                            RecieveSnapshot(Message, true);
-                            break;
-
-                        case MessageID::SNAPSHOT:
-
-                            RecieveSnapshot(Message);
-                            break;
-
-                        default:
-                            break;
+                        t_netMessages->SendConnectionRequest();
                     }
-
-
-                    Message = NetMessage();
+                    case ServerConnectionStateFromClient::VERSION_CHECK:
+                    {
+                        t_netMessages->SendVersionCheck();
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
             }
         }
-        void ClientNetworkManager::UpdateTimeouts(double p_dt)
+
+        void NetworkManagerClient::SendConnectedMessages()
         {
-            if(m_serverConnectionState > ConnectionState::DISCONNECTED)
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // If we're connected we always send based on connection
+            switch(m_serverConnectionState)
+            {
+                case ServerConnectionStateFromClient::CONNECTED:
+                {
+                    t_netMessages->SendConnected();
+
+                    break;
+                }
+                case ServerConnectionStateFromClient::LOAD_WORLD:
+                {
+                    t_netMessages->SendLoadWorld();
+
+                    break;
+                }
+                case ServerConnectionStateFromClient::IN_GAME:
+                {
+                    t_netMessages->SendInGame();
+
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
+        void NetworkManagerClient::UpdateTimeouts(double p_dt)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // If we're not disconnected we want to disconnect if timeout
+            if(t_connections->m_serverConnectionState.ConnectionState > ServerConnectionStateFromClient::DISCONNECTED)
             {
                 // Update timer
-                m_serverLastResponse += p_dt;
+                t_connections->m_serverConnectionState.LastResponse += p_dt;
 
                 // Check if exceeded timeout
-                if(m_serverLastResponse > m_timeoutInterval)
+                if(t_connections->m_serverConnectionState.LastResponse > m_timeoutInterval)
                 {
                     // Set state as disconnected
-                    // TODOCM change this to DISCONNECT perhaps
-                    m_serverConnectionState = ConnectionState::CONNECTING;
+                    m_serverConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
 
                     // Send disconnection message to server for good measure
-                    SendDisconnectMessage();
+                    t_netMessages->SendDisconnect();
 
-                    // TODOCM send disconnection event to game
+                    // TODO send change gamestate event
                 }
             }
         }

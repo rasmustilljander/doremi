@@ -46,17 +46,17 @@ namespace Doremi
             /**
                 Receive connected message
             */
-            void RecieveConnected(NetMessageConnectedFromServer& p_message);
+            void ReceiveConnected(NetMessageConnectedFromServer& p_message);
 
             /**
                 Receive load world message
             */
-            void RecieveLoadWorld(NetMessageConnectedFromServer& p_message);
+            void ReceiveLoadWorld(NetMessageConnectedFromServer& p_message);
 
             /**
                 Receive in game message
             */
-            void RecieveInGame(NetMessageConnectedFromServer& p_message);
+            void ReceiveInGame(NetMessageConnectedFromServer& p_message);
 
             /**
                 == Send Messages Connecting ==

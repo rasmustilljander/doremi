@@ -69,7 +69,7 @@ namespace DoremiEngine
             /**
                 Recieve data from a specified socket, returns true if successful
             */
-            virtual bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket) = 0;
+            virtual bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket, uint32_t& p_dataSizeReceived) = 0;
 
             /**
                 Send data to a specific socket with adress, returns true if successfull

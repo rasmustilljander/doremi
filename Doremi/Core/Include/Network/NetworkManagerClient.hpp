@@ -70,6 +70,16 @@ namespace Doremi
             */
             void SendMessages(double p_dt);
 
+            /**
+                TODOCM doc
+            */
+            void SendConnectingMessages(double p_dt);
+
+            /**
+                TODOCM doc
+            */
+            void SendConnectedMessages();
+
 
             /**
                 Update timeout to server and disconnects if too long
@@ -157,6 +167,13 @@ namespace Doremi
                 TODOCM doc
             */
             uint32_t m_numJoinEvents;
+
+            /**
+                TODOCM doc
+            */
+            uint8_t m_maxConnectingMessagesPerFrame;
+
+            uint8_t m_maxConnectedMessagesPerFrame;
         };
     }
 }

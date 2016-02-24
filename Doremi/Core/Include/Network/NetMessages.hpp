@@ -35,7 +35,6 @@ namespace Doremi
             // Connected
             CONNECTED,
             LOAD_WORLD,
-            INIT_IN_GAME,
             IN_GAME,
         };
 

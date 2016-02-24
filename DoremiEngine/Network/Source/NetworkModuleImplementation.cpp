@@ -92,13 +92,13 @@ namespace DoremiEngine
             return SendSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket)
+        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket, uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocket);
 
             // Attempt to recieve data, returns true if all data is sent
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize);
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize, p_dataSizeReceived);
 
             return RecieveSuccessful;
         }
@@ -115,24 +115,26 @@ namespace DoremiEngine
             return true;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut)
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle,
+                                                                Adress* p_AdressOut, uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
 
             // Recieve data and fetch adress recieved from
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize);
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize, p_dataSizeReceived);
 
             return RecieveSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle)
+        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle,
+                                                                uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
 
             // Recieve data from a bound socket
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(p_data, p_dataSize);
+            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(p_data, p_dataSize, p_dataSizeReceived);
 
             return RecieveSuccessful;
         }

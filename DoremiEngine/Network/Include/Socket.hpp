@@ -82,7 +82,7 @@ namespace DoremiEngine
             /**
                 Recieve data from socket
             */
-            bool RecieveTCP(void* p_data, const uint32_t& p_dataSize);
+            bool RecieveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
         private:
             /**

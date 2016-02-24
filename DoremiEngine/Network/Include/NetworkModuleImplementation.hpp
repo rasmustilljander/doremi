@@ -74,23 +74,23 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket) override;
+            bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket, uint32_t& p_dataSizeReceived) override;
 
             /**
                 TODOCM docs
             */
-            bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo,
-                                    uint32_t& p_dataSizeReceived) override;
+            bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) override;
 
             /**
                 TODOCM docs
             */
-            bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut) override;
+            bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut,
+                                       uint32_t& p_dataSizeReceived) override;
 
             /**
                 TODOCM docs
             */
-            bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle) override;
+            bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, uint32_t& p_dataSizeReceived) override;
 
             /**
                 TODOCM docs

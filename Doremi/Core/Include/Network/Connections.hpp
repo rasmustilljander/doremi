@@ -62,7 +62,6 @@ namespace Doremi
 
             PlayerID PlayerID;
 
-            double UpdateInterval;
             double LastResponse;
             bool NewConnection;
         };

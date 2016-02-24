@@ -139,7 +139,7 @@ namespace Doremi
             == Receive Messages Connected ==
         */
 
-        void NetworkMessagesClient::RecieveConnected(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveConnected(NetMessageConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
@@ -156,7 +156,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::RecieveLoadWorld(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveLoadWorld(NetMessageConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
@@ -193,12 +193,12 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::RecieveInGame(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveInGame(NetMessageConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             FrequencyBufferHandler* t_frequencyBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            NetworkEventReceiver* t_eventReciever = t_playerHandler->GetNetworkEventReceiverForPlayer(m_playerID);
+            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiverForPlayer(t_networkConnection->m_serverConnectionState.PlayerID);
 
             // If we were at loading world, we assume server knows best and we're done loading!
             if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
@@ -238,10 +238,10 @@ namespace Doremi
 
 
             // Read events into the eventreceiver
-            t_eventReciever->ReadEvents(t_streamer, sizeof(p_message.Data), t_bytesRead);
+            t_eventReceiver->ReadEvents(t_streamer, sizeof(p_message.Data), t_bytesRead);
 
             // Get the events and save events to snapshot
-            t_newSnapshot->Events = t_eventReciever->GetEventsReceivedFromServer();
+            t_newSnapshot->Events = t_eventReceiver->GetEventsReceivedFromServer();
 
             // If it was init message
             if(p_initial)
