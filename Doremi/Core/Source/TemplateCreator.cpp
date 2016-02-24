@@ -158,7 +158,7 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            enemyCharData = loader.LoadSkeletalCharacter("Models/SmallRobot11.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+            enemyCharData = loader.LoadSkeletalCharacter("Models/SmallRobot12.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
@@ -683,7 +683,7 @@ namespace Doremi
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             CharacterDataNames playerSkeletalCharData =
-                loader.LoadSkeletalCharacter("Models/SmallRobot11.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+                loader.LoadSkeletalCharacter("Models/SmallRobot12.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
 
 
             /// Fill with components

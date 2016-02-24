@@ -857,7 +857,6 @@ namespace DoremiEngine
         {
             float blendFactor[4];
 
-
             // Setup the blend factor.
             blendFactor[0] = 1.0f;
             blendFactor[1] = 1.0f;
@@ -871,7 +870,6 @@ namespace DoremiEngine
         void DirectXManagerImpl::DisableBlend()
         {
             float blendFactor[4];
-
 
             // Setup the blend factor.
             blendFactor[0] = 0.0f;

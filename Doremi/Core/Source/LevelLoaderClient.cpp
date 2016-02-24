@@ -187,8 +187,7 @@ namespace Doremi
                 ifs.read((char*)&t_animationInfo.endFrame, sizeof(int));
                 ifs.read((char*)&t_animationInfo.prioPart, sizeof(int));
                 ifs.read((char*)&t_animationInfo.maxTime, sizeof(float));
-                t_animationInfo.loop = true;
-                // ifs.read((char*)&t_animationInfo.loop, sizeof(bool)); TODOLH lägg till!!
+                ifs.read((char*)&t_animationInfo.loop, sizeof(int));
                 t_animationInformations[i] = t_animationInfo;
             }
             return t_animationInformations;

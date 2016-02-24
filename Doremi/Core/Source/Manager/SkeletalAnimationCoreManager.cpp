@@ -22,6 +22,7 @@
 // EventStuff
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 #include <dxgi.h>
 #include <d3d11_1.h>
 
@@ -74,6 +75,7 @@ namespace Doremi
 
             EventHandler* t_eventHandler = EventHandler::GetInstance();
             t_eventHandler->Subscribe(EventType::AnimationTransition, this);
+            t_eventHandler->Subscribe(EventType::DamageTaken, this);
         }
 
         SkeletalAnimationCoreManager::~SkeletalAnimationCoreManager() {}
@@ -96,6 +98,8 @@ namespace Doremi
             XMFLOAT3 t_movementLengthVector;
             XMStoreFloat3(&t_movementLengthVector, XMVector3Length(XMLoadFloat3(&t_movementVector)));
 
+            // Lower animation flow
+
             // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
             if(t_lowerSkeletalAnimationComponent->clipName != "Run")
             {
@@ -112,19 +116,14 @@ namespace Doremi
                 // Kolla om vi stannat
                 if(t_movementLengthVector.x < t_epsilon)
                 {
-                    if(t_upperSkeletalAnimationComponent->clipName == "Attack")
-                    {
-                        t_lowerSkeletalAnimationComponent->clipName = "Attack";
-                        t_lowerSkeletalAnimationComponent->timePosition = t_upperSkeletalAnimationComponent->timePosition;
-                    }
-                    else
-                    {
-                        t_lowerSkeletalAnimationComponent->clipName = "Idle";
-                        t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
-                    }
+                    // Gör samma som överkroppen
+                    t_lowerSkeletalAnimationComponent->clipName = t_upperSkeletalAnimationComponent->clipName;
+                    t_lowerSkeletalAnimationComponent->timePosition = t_upperSkeletalAnimationComponent->timePosition;
                 }
             }
-            if(t_upperSkeletalAnimationComponent->clipName != "Run" && t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName != "Attack")
+            // Överkroppens animations flow
+            // Om du har rört dig men din animation är idle. Så ska du sättas till run
+            if(t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName == "Idle")
             {
                 t_upperSkeletalAnimationComponent->clipName = "Run";
                 if(t_lowerSkeletalAnimationComponent->clipName == "Run")
@@ -136,13 +135,14 @@ namespace Doremi
                     t_upperSkeletalAnimationComponent->timePosition = 0.0f;
                 }
             }
+            // Om överkroppen är i runmode men du har stannat ska du köra idle istället
             if(t_upperSkeletalAnimationComponent->clipName == "Run" && t_movementLengthVector.x < t_epsilon)
             {
                 t_upperSkeletalAnimationComponent->clipName = "Idle";
                 t_upperSkeletalAnimationComponent->timePosition = 0.0f;
             }
 
-
+            // Orientera underkroppens logik
             if(t_lowerSkeletalAnimationComponent->clipName == "Run")
             {
                 XMVECTOR t_orientationQuater = XMLoadFloat4(&t_transformComponentNext->rotation);
@@ -206,6 +206,22 @@ namespace Doremi
                             t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
                         }
                     }
+                }
+                case EventType::DamageTaken:
+                {
+                    // A bit stupid... we send a event to our own class to play a sound when we take damage...
+                    DamageTakenEvent* t_event = static_cast<DamageTakenEvent*>(p_event);
+                    LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
+                        EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(t_event->entityId);
+                    SkeletalAnimationComponent* t_upperSkeletalAnimationComponent =
+                        EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(t_event->entityId);
+                    t_upperSkeletalAnimationComponent->clipName = "Hit";
+                    t_upperSkeletalAnimationComponent->timePosition = 0.0f;
+                    if(t_lowerSkeletalAnimationComponent->clipName != "Run")
+                    {
+                        t_lowerSkeletalAnimationComponent->clipName = "Hit";
+                    }
+                    break;
                 }
                 break;
             }
