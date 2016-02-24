@@ -33,8 +33,8 @@ namespace DoremiEngine
                                                     PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) override;
             DirectX::XMFLOAT2 GetGridQuadPosition(const int& p_x, const int& p_z) override;
 
-            int GetNumberOfQuadsWidth() override { return m_numberOfQuadsWidth; };
-            int GetNumberOfQuadsHeight() override { return m_numberOfQuadsHeight; };
+            const int& GetNumberOfQuadsWidth() const override { return m_numberOfQuadsWidth; };
+            const int& GetNumberOfQuadsHeight() const override { return m_numberOfQuadsHeight; };
 
             // Not in interface
             float CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor);

@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <vector>
+#include <string>
 namespace DoremiEngine
 {
     namespace AI
@@ -20,6 +21,23 @@ namespace DoremiEngine
             */
             virtual PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
                                                    const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center) = 0;
+            /**
+            Reads field from given .drmpf file and returns the field. The fields have the charges saved but no dynamic or static actors
+            The static actors impact on the field is however saved down to the grid which means the actors themself shouldnt
+            be requierd. The dynamic actors needs to be added again though after the file is loaded
+            Returns nullptr if failed
+            */
+            virtual PotentialField* CreateNewFieldFromFile(const std::string& p_fileName) = 0;
+
+            /**
+            Saves the fields grid to a .drmpf file, the file ending is added automaticly. Note that all the actors, both dynamic and static, are
+            removed.
+            The static actors impact on the field is however saved down to the grid which means the actors themself shouldnt
+            be requierd. The dynamic actors needs to be added again though after the file is loaded.
+            The file will end up in the PotentialFields folder.
+            Returns true for success and false for fail
+            */
+            virtual bool SaveFieldToFile(const PotentialField& p_fieldToSave, const std::string& p_fileName) = 0;
             /**
             Creates a new potential group with no actors
             */

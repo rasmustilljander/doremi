@@ -3,7 +3,9 @@
 #include <Internal/PotentialField/PotentialFieldImpl.hpp>
 #include <Internal/PotentialField/PotentialGroupImpl.hpp>
 #include <Internal/PotentialField/PotentialFieldActorImpl.hpp>
+
 #include <iostream>
+#include <fstream>
 namespace DoremiEngine
 {
     namespace AI
@@ -35,6 +37,50 @@ namespace DoremiEngine
             m_fields.push_back(newField);
             return newField;
         }
+
+        PotentialField* PotentialFieldSubModuleImpl::CreateNewFieldFromFile(const std::string& p_fileName) { return nullptr; }
+
+        bool PotentialFieldSubModuleImpl::SaveFieldToFile(const PotentialField& p_fieldToSave, const std::string& p_fileName)
+        {
+            using namespace std;
+            using namespace DirectX;
+            // Get the needed values from the field
+            int quadsX = p_fieldToSave.GetNumberOfQuadsWidth();
+            int quadsZ = p_fieldToSave.GetNumberOfQuadsHeight();
+
+            const PotentialFieldGridPoint* grid = p_fieldToSave.GetGrid();
+            XMFLOAT3 center = p_fieldToSave.GetCenter();
+
+            XMFLOAT2 quadSize = p_fieldToSave.GetQuadSize();
+            float width = quadSize.x * static_cast<float>(quadsX);
+            float height = quadSize.y * static_cast<float>(quadsZ);
+
+            // Change the file name and then open the file, if no one exists a new file should be created
+            string fullFileName = m_context.WorkingDirectory + "PotentialField/" + p_fileName + ".drmpf";
+            ofstream file(fullFileName, ofstream::out | ofstream::binary);
+            if(!file.is_open())
+            {
+                // TODOKO log error, couldnt create file?
+                return false;
+            }
+            // Save down some one of a kind values
+            file.write((char*)&center, sizeof(XMFLOAT3));
+
+            file.write((char*)&width, sizeof(float));
+            file.write((char*)&height, sizeof(float));
+
+            // Save down nubmer of quads in x and z so we know how many to read later on. Also used to calc quad size
+            file.write((char*)&quadsX, sizeof(int));
+            file.write((char*)&quadsZ, sizeof(int));
+
+            // Now we save down every quad in the grid
+            file.write((char*)grid, sizeof(PotentialFieldGridPoint) * quadsX * quadsZ);
+
+            // Everything we need is saved, close file
+            file.close();
+            return false;
+        }
+
         PotentialGroup* PotentialFieldSubModuleImpl::CreateNewPotentialGroup()
         {
             PotentialGroup* newGroup = new PotentialGroupImpl();

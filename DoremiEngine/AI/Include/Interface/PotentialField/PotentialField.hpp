@@ -81,12 +81,12 @@ namespace DoremiEngine
             /**
             returns number of quads in x/width
             */
-            virtual int GetNumberOfQuadsWidth() = 0;
+            virtual const int& GetNumberOfQuadsWidth() const = 0;
 
             /**
             returns number of quads in z/height
             */
-            virtual int GetNumberOfQuadsHeight() = 0;
+            virtual const int& GetNumberOfQuadsHeight() const = 0;
         };
     }
 }

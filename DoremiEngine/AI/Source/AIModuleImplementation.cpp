@@ -25,6 +25,7 @@ namespace DoremiEngine
             m_context->AStarModule = m_aStarSubModuleImpl;
             m_context->PFModule = m_potentialFieldSubModuleImpl;
             m_context->Module = this;
+            m_context->WorkingDirectory = m_sharedContext.GetWorkingDirectory();
         }
 
 

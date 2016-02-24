@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 namespace DoremiEngine
 {
     namespace Configuration
@@ -17,6 +18,7 @@ namespace DoremiEngine
             AStarSubModuleImpl* AStarModule;
             PotentialFieldSubModuleImpl* PFModule;
             Configuration::ConfigurationModule& config;
+            std::string WorkingDirectory;
             AIContext(Configuration::ConfigurationModule& p_config) : config(p_config){};
         };
     }
