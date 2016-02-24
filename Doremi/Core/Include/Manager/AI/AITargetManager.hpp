@@ -1,3 +1,4 @@
+#pragma once
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 namespace Doremi
 {
@@ -8,6 +9,9 @@ namespace Doremi
         public:
             AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AITargetManager();
+            /**
+            Makes the enemies look at the closest visible player in range and fires if possible
+            */
             void Update(double p_dt) override;
 
         private:

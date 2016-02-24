@@ -27,6 +27,9 @@ namespace Doremi
         public:
             AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AIPathManager();
+            /**
+            Gets the new wanted position for every AI agent with move component
+            */
             void Update(double p_dt) override;
             /**
             Subscribed to events: AIGroupActorCreation and PotentialFieldActorCreation
@@ -36,8 +39,6 @@ namespace Doremi
 
         private:
             void SetEnemyPotentialFieldStuff(const size_t& p_entityID, const std::vector<DoremiEngine::AI::PotentialChargeInformation>& p_specialCharges);
-
-            bool firstUpdate;
         };
     }
 }

@@ -22,7 +22,13 @@ namespace Doremi
 
             int32_t m_enumToSoundID[(int32_t)(AudioCompEnum::Num_Sounds)]; // +1]; //Todo maybe bugs out
             // int mySoundID = sounds[(int)AudioCompEnum::Jump];
-            AudioComponent() {}
+            AudioComponent()
+            {
+                for(int32_t i = 0; i < (int32_t)AudioCompEnum::Num_Sounds; i++)
+                {
+                    m_enumToSoundID[i] = (int32_t)AudioCompEnum::DebugSound;
+                }
+            }
         };
     }
 }

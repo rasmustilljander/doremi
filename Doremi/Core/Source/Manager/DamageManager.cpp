@@ -112,13 +112,13 @@ namespace Doremi
             // Look through our entities for the enemies
             size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
             std::map<int, float> damageMap; // A map to save the total damage a entity have taken
-            for(size_t i = 0; i < entitiesLength; i++)
+            for(auto pairs : t_players)
             {
                 // Getting our particlesystem
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PressureParticleSystem))
+                if(EntityHandler::GetInstance().HasComponents(pairs.second->m_playerEntityID, (int)ComponentType::PressureParticleSystem))
                 {
                     // checking if the particles in the particle system hit any drains.
-                    std::vector<int> t_drainsHit = m_sharedContext.GetPhysicsModule().GetFluidManager().GetDrainsHit(i);
+                    std::vector<int> t_drainsHit = m_sharedContext.GetPhysicsModule().GetFluidManager().GetDrainsHit(pairs.second->m_playerEntityID);
                     size_t particleVecLength = t_drainsHit.size();
                     for(size_t o = 0; o < particleVecLength; o++)
                     {
@@ -142,7 +142,7 @@ namespace Doremi
                     }
                 }
             }
-            // loop through every damaged entity and send event
+            // loop through every damaged entity and send event. This is done so we dont send multiple events per damaged object
             for(auto pairs : damageMap)
             {
                 DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(pairs.second, pairs.first);

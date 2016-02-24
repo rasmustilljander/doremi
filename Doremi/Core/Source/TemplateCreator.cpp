@@ -440,7 +440,7 @@ namespace Doremi
 
             // Life time component
             LifeTimeComponent* lifeTimeComp = new LifeTimeComponent();
-            lifeTimeComp->LifeTime = 5;
+            lifeTimeComp->LifeTime = 5; // TODOXX should be high enough for it only to occure when the bullet is outside the map or otherwise bugged
             blueprint[ComponentType::LifeTime] = lifeTimeComp;
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);

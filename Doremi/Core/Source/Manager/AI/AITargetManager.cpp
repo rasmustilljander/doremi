@@ -109,11 +109,13 @@ namespace Doremi
                             direction = XMVector3Normalize(direction);
                             XMFLOAT3 directionFloat;
                             XMStoreFloat3(&directionFloat, direction);
+
                             // Offset origin of ray so we dont hit ourself
                             XMVECTOR rayOrigin = AIPos + direction * 3.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
                             // the bodies radius is larger than x.x
                             XMFLOAT3 rayOriginFloat;
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);
+
                             // Send it to physx for raycast calculation
                             int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, aiRange->range);
                             if(bodyHit == -1)
@@ -190,7 +192,7 @@ namespace Doremi
             int id = t_entityHandler.CreateEntity(Blueprints::BulletEntity, bulletOriginFloat);
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetCallbackFiltering(id, 3, 1, 8, 2);
 
-            // Add a force to the body TODOXX should not be hard coded the force amount
+            // Add a force to the body TODOCONFIG should not be hard coded the force amount
             direction *= 1500.0f;
             XMFLOAT3 force;
             XMStoreFloat3(&force, direction);

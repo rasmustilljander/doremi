@@ -8,7 +8,7 @@ namespace Doremi
         */
         struct LifeTimeComponent
         {
-            float LifeTime = 0;
+            float LifeTime = 0; // In seconds
             LifeTimeComponent(){};
         };
     }

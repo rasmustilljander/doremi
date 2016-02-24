@@ -42,17 +42,9 @@ namespace Doremi
     {
         AIPathManager::AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AIPathManager")
         {
-            // TODOKO do this in a better place, might not work to have here in the future
-            // m_field =
-            //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(250, 230, 100, 100,
-            //                                                                              XMFLOAT3(-60, 3.0f, -40)); // Fits for first platform
-            // m_topField =
-            //    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(350, 500, 50, 50,
-            //        XMFLOAT3(-280, 150.0f, -85)); // Fits for top platform
             EventHandler::GetInstance()->Subscribe(EventType::RangedEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::MeleeEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
-            //////////////////////// Fixa PotFält
         }
 
         AIPathManager::~AIPathManager() {}
@@ -62,11 +54,6 @@ namespace Doremi
         {
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
 
-            // TODOKO Test wall
-            if(firstUpdate)
-            {
-                firstUpdate = false;
-            }
             for(size_t i = 0; i < length; i++)
             {
                 // Update actors position, should perhaps not be here...
@@ -130,14 +117,12 @@ namespace Doremi
                         }
                     }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
-                    // XMFLOAT3 groupImpact = group->GetForceDirection(unitPos, currentActor); // The groups impact
-                    // XMVECTOR groupImpactVec = XMLoadFloat3(&groupImpact);
+
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
                     XMVECTOR dirVec = desiredPosVec - unitPosVec;
                     dirVec = XMVector3Normalize(dirVec);
-                    // dirVec += groupImpactVec * 0.2f; // TODOKO remove this variable!! Its there to make the static field more influencial
-                    //  dirVec = XMVector3Normalize(dirVec);
+
                     XMFLOAT3 direction;
                     XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
@@ -218,17 +203,6 @@ namespace Doremi
                     actor->AddPotentialVsOther(p_specialCharges[i]);
                 }
 
-                // If we are to use PF instead of group when calculating enemies this is unecessary
-                // The enemy should have a group before it enters this function, otherwise create a new
-                //DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(p_entityID)->Group;
-                //if(group == nullptr)
-                //{
-                //    // TODOKO Log error and what happens
-                //    group = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewPotentialGroup();
-                //}
-                //group->AddActor(actor);
-
-                // If we are to use groups instead of PF when calculating enemies this is unecessary
                 DoremiEngine::AI::PotentialField* field;
                 // Find the best suited field
                 field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().FindBestPotentialField(actor->GetPosition());
