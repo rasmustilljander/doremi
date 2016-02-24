@@ -26,6 +26,10 @@ namespace Doremi
 
         void MovementManagerServer::Update(double p_dt)
         {
+            // Some debug bools just to test various effects. We'll have these read some other way later
+            bool iceEffect = false;
+            bool fireEffect = false;
+
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Movement | (int)ComponentType::CharacterController;
             for(size_t i = 0; i < length; i++)
@@ -38,7 +42,34 @@ namespace Doremi
                     {
                         EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i)->travelSpeed = 0;
                     }
-                    movementComp->movement = XMFLOAT3(0, 0, 0);
+
+                    /// Fix so we don't move uber-fast
+                    // Clamp down XZ movement to maximum movement speed (we don't mess with y due to jump/gravity)
+                    XMVECTOR movementXZVec = XMLoadFloat2(&XMFLOAT2(movementComp->movement.x, movementComp->movement.z));
+                    movementXZVec = XMVector2ClampLength(movementXZVec, 0, 0.8f);
+                    // Store it back
+                    XMFLOAT2 movementXZ;
+                    XMStoreFloat2(&movementXZ, movementXZVec);
+                    movementComp->movement.x = movementXZ.x;
+                    movementComp->movement.z = movementXZ.y;
+
+                    // If we're sliding around, only reduce speed, don't entierly reset it
+                    if(iceEffect)
+                    {
+                        float iceSlowdownFactor = 0.9f * 1 - p_dt;
+                        movementComp->movement.x *= iceSlowdownFactor;
+                        movementComp->movement.z *= iceSlowdownFactor;
+                    }
+
+                    // If we're not running on fire (or ice) we can stop
+                    else if(!fireEffect)
+                    {
+                        movementComp->movement = XMFLOAT3(0, 0, 0);
+                    }
+
+                    // Always reset y movement. Again, we don't mess with y
+                    movementComp->movement.y = 0;
+
 
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
                     // XMFLOAT3 currentVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(rigidBody->p_bodyID);
