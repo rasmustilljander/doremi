@@ -204,7 +204,7 @@ namespace DoremiEngine
                             XMStoreFloat3(&velocity, particleVelocityVec);
                             velocities.push_back(velocity);
                             // Add position (only emitts from the center of the emitter atm
-                            float launchOffset = 1; // Intended hard coded value
+                            float launchOffset = 1.8f; // Intended hard coded value. TODOJB Set as parameter based on movement speed?
                             XMVECTOR positionVec = XMLoadFloat3(&m_this.m_position);
                             positionVec += launchOffset * XMVector3Normalize(particleVelocityVec);
                             XMFLOAT3 position;
