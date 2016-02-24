@@ -27,7 +27,7 @@ namespace DoremiEngine
                 96 * sizeof(DirectX::XMFLOAT4X4); // TODOXX hardcoded value. This is max bones in a rig Matches the skeletalanimation vertexshader
             bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            HRESULT res = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDevice()->CreateBuffer(&bd, NULL, &m_matricesBuffer);
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDevice()->CreateBuffer(&bd, NULL, &m_matricesBuffer);
         }
         SkeletalInformation* SkeletalAnimationManagerImpl::CreateSkeletalInformation()
         {
@@ -35,7 +35,7 @@ namespace DoremiEngine
             return t_skeletalInformation;
         }
 
-        void SkeletalAnimationManagerImpl::GetFinalTransforms(const std::string& p_clipName, float t_timePos, std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
+        void SkeletalAnimationManagerImpl::GetFinalTransforms(const std::string& p_clipName, float p_timePos, std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
                                                               SkeletalInformation* p_skeletalInformation) const
         {
             using namespace DirectX;
@@ -45,7 +45,7 @@ namespace DoremiEngine
 
             // Interpolate all the bones of this clip at the current time
             AnimationClip clip = p_skeletalInformation->GetAnimationClip(p_clipName);
-            clip.Interpolate(t_timePos, t_toParentTransforms);
+            clip.Interpolate(p_timePos, t_toParentTransforms);
 
 
             // Traverse the heirarchy and transofrm all the bones to the root space
@@ -77,11 +77,12 @@ namespace DoremiEngine
             using namespace DirectX;
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             D3D11_MAPPED_SUBRESOURCE tMS;
+            // Transpose all the matrices
             for(size_t i = 0; i < p_transformsToPush.size(); i++)
             {
-                XMVECTOR t_determinant = XMMatrixDeterminant(XMLoadFloat4x4(&p_transformsToPush[i]));
                 XMStoreFloat4x4(&p_transformsToPush[i], XMMatrixTranspose(XMLoadFloat4x4(&p_transformsToPush[i])));
             }
+            // Send to gpu
             m_directX.GetDeviceContext()->Map(m_matricesBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, p_transformsToPush.data(), sizeof(DirectX::XMFLOAT4X4) * p_transformsToPush.size());
             m_directX.GetDeviceContext()->Unmap(m_matricesBuffer, NULL);

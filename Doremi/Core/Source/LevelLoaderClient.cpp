@@ -170,21 +170,31 @@ namespace Doremi
 
         std::vector<LevelLoaderClient::AnimationInformation> LevelLoaderClient::LoadAnimationInformation(std::ifstream& ifs, const int& p_nrOfAnimationInformations)
         {
+            // Ladda in animations informationer!! Först skapar vi en vector med informationer
             std::vector<AnimationInformation> t_animationInformations(p_nrOfAnimationInformations);
             for(size_t i = 0; i < p_nrOfAnimationInformations; i++)
             {
-                int t_nameSize;
                 AnimationInformation t_animationInfo;
+                // Loopa och läs datan.
+                // Läs namnet på animationsclippet
+                int t_nameSize;
                 ifs.read((char*)&t_nameSize, sizeof(int));
                 char* t_animationName = new char[t_nameSize];
                 ifs.read((char*)t_animationName, sizeof(char) * t_nameSize);
+                // Spara ned namnet som en string istället för char
                 std::string t_animationString(t_animationName);
                 t_animationInfo.name = t_animationString;
                 delete[] t_animationName;
+                // Läs resten av datan
+                // Vilken frame börjar animationen på?
                 ifs.read((char*)&t_animationInfo.startFrame, sizeof(int));
+                // Vilken frame slutar animationen på?
                 ifs.read((char*)&t_animationInfo.endFrame, sizeof(int));
+                // Den här används inte och bör tas bort TODOLH
                 ifs.read((char*)&t_animationInfo.prioPart, sizeof(int));
+                // Hur lång tid tar animationen att spela?
                 ifs.read((char*)&t_animationInfo.maxTime, sizeof(float));
+                // Ska animationen loopas?
                 ifs.read((char*)&t_animationInfo.loop, sizeof(int));
                 t_animationInformations[i] = t_animationInfo;
             }
@@ -198,9 +208,9 @@ namespace Doremi
                                                     std::vector<int>& o_upperBodyJointHeirarchy, std::vector<std::string>& o_animationNames)
         {
             // Per joint
-            int nrKeyFrames;
             for(int i = 0; i < p_nrOfJoints; i++)
             {
+                int nrKeyFrames;
                 int ID, parentID; // joint IDs
                 int nrChildrenTransforms;
                 // int nrKeyFrames;
@@ -459,13 +469,13 @@ namespace Doremi
                 int meshID;
                 p_ifs.read((char*)&meshID, sizeof(int)); // nog inget som används atm
                 DoremiEditor::Core::MeshData meshData;
-
+                // Läs MeshData
                 p_ifs.read((char*)&meshData.vertCount, sizeof(int));
                 p_ifs.read((char*)&meshData.normalCount, sizeof(int));
                 p_ifs.read((char*)&meshData.UVCount, sizeof(int));
                 p_ifs.read((char*)&meshData.indCount, sizeof(int));
                 p_ifs.read((char*)&meshData.triCount, sizeof(int));
-
+                // Skapa och allokera plats för meshdata information
                 meshData.positions = new XMFLOAT3[meshData.vertCount];
                 meshData.normals = new XMFLOAT3[meshData.normalCount];
                 meshData.uvs = new XMFLOAT2[meshData.UVCount];
@@ -475,6 +485,7 @@ namespace Doremi
                 meshData.indexUVs = new int[meshData.indCount];
                 meshData.trianglesPerFace = new int[meshData.triCount];
                 vector<XMFLOAT3> poss;
+                // Läs meshdata och spara ner
                 p_ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.vertCount);
                 p_ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.normalCount);
                 p_ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.UVCount);

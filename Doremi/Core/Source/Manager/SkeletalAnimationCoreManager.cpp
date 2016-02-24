@@ -1,12 +1,17 @@
 // Project specific
 #include <Manager/SkeletalAnimationCoreManager.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <Doremi/Core/Include/PlayerHandler.hpp>
+
+// Components
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/SkeletalAnimationComponent.hpp>
 #include <EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
+
+// Graphic
 #include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -17,7 +22,6 @@
 #include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
-#include <Doremi/Core/Include/EntityComponent/Components/PressureParticleComponent.hpp>
 
 // EventStuff
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
@@ -41,18 +45,19 @@ namespace Doremi
         SkeletalAnimationCoreManager::SkeletalAnimationCoreManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "SkeletalAnimationManager")
         {
-
+            // Skapa Vertex layout
             D3D11_INPUT_ELEMENT_DESC ied[] = {
                 {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
                 {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
                 {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
                 {"MATRIXINDEX", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             };
+            // Skapa shaders
             m_vertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("SkeletalAnimationVertexShader.hlsl",
                                                                                                               ied, ARRAYSIZE(ied));
             m_pixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("BasicPixelShader.hlsl");
-
+            // SKapa rasterizer
             D3D11_RASTERIZER_DESC rastDesc;
             ZeroMemory(&rastDesc, sizeof(rastDesc));
             rastDesc.FillMode = D3D11_FILL_SOLID;
@@ -66,13 +71,14 @@ namespace Doremi
             rastDesc.MultisampleEnable = true;
             rastDesc.AntialiasedLineEnable = false;
             m_rasterizerState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateRasterizerState(rastDesc);
+            // Skapa depthstensicl
             D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
             ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
             depthStencilDesc.DepthEnable = true;
             depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
             depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
             m_depthStencilState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateDepthStencilState(depthStencilDesc);
-
+            // Subscribe to events
             EventHandler* t_eventHandler = EventHandler::GetInstance();
             t_eventHandler->Subscribe(EventType::AnimationTransition, this);
             t_eventHandler->Subscribe(EventType::DamageTaken, this);
@@ -80,10 +86,10 @@ namespace Doremi
 
         SkeletalAnimationCoreManager::~SkeletalAnimationCoreManager() {}
 
-        bool SkeletalAnimationCoreManager::CheckANDPerformAnimationTransition(const size_t& p_entityID)
+        void SkeletalAnimationCoreManager::CheckANDPerformAnimationTransition(const size_t& p_entityID)
         {
             using namespace DirectX;
-            bool r_returnValue = false;
+            // Hämta komponenter för animation och för rörelse
             LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
                 EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(p_entityID);
             SkeletalAnimationComponent* t_upperSkeletalAnimationComponent =
@@ -91,15 +97,16 @@ namespace Doremi
             TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(p_entityID);
             TransformComponentPrevious* t_transformComponentPrevious =
                 EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(p_entityID);
-
+            // epsilon för ett litet värde
             float t_epsilon = 0.001f;
             XMFLOAT3 t_movementVector;
+            // Skapa en vector mellan förra positionen och nya positionen
             XMStoreFloat3(&t_movementVector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_transformComponentPrevious->position));
             XMFLOAT3 t_movementLengthVector;
+            // Calculate the length of this vector
             XMStoreFloat3(&t_movementLengthVector, XMVector3Length(XMLoadFloat3(&t_movementVector)));
 
             // Lower animation flow
-
             // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
             if(t_lowerSkeletalAnimationComponent->clipName != "Run")
             {
@@ -121,8 +128,8 @@ namespace Doremi
                     t_lowerSkeletalAnimationComponent->timePosition = t_upperSkeletalAnimationComponent->timePosition;
                 }
             }
-            // Överkroppens animations flow
-            // Om du har rört dig men din animation är idle. Så ska du sättas till run
+            // Överkroppens animationsflow
+            // Om du har rört dig och din animation är idle. Så ska du sättas till run annars ska alla andra animationer få köra klart sitt
             if(t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName == "Idle")
             {
                 t_upperSkeletalAnimationComponent->clipName = "Run";
@@ -142,20 +149,25 @@ namespace Doremi
                 t_upperSkeletalAnimationComponent->timePosition = 0.0f;
             }
 
-            // Orientera underkroppens logik
+            // Orientera underkroppenlogik
             if(t_lowerSkeletalAnimationComponent->clipName == "Run")
             {
+                // Hämta orientationen för meshen
                 XMVECTOR t_orientationQuater = XMLoadFloat4(&t_transformComponentNext->rotation);
                 XMFLOAT3 t_frontVector;
+                // Rotera en enhetsvector enligt orientationen på meshen
                 XMStoreFloat3(&t_frontVector, XMVector3Transform(XMLoadFloat3(&XMFLOAT3(0, 0, 1)), XMMatrixRotationQuaternion(t_orientationQuater)));
 
+                // Skapa två vectorer i 2dplanet för att undvika att hopp ska influera
                 XMFLOAT2 t_frontVec2 = XMFLOAT2(t_frontVector.x, t_frontVector.z);
                 XMFLOAT2 t_moveVec2 = XMFLOAT2(t_movementVector.x, t_movementVector.z);
                 XMFLOAT2 t_positive;
+                // Ta reda på åt vilket håll spelaren springer åt. För att kunna sätta vinkeln positiv eller negativ
                 XMStoreFloat2(&t_positive, XMVector2Cross(XMLoadFloat2(&t_frontVec2), XMLoadFloat2(&t_moveVec2)));
                 XMFLOAT3 angleVec;
+                // Calculate angle between the vectors
                 XMStoreFloat3(&angleVec, XMVector2AngleBetweenVectors(XMLoadFloat2(&t_frontVec2), XMLoadFloat2(&t_moveVec2)));
-
+                // Sign operation
                 if(t_positive.y < 0)
                 {
                     t_positive.y = 1;
@@ -168,11 +180,11 @@ namespace Doremi
                 {
                     t_positive.y = 0;
                 }
+                // Change the sign of the angle and then create an orientation quaternion describing a rotation around yaxis with the angle we
+                // calculated
                 angleVec.x *= t_positive.y;
                 XMStoreFloat4(&t_lowerSkeletalAnimationComponent->orientation, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angleVec.x));
             }
-
-            return r_returnValue;
         }
 
         void SkeletalAnimationCoreManager::OnEvent(Event* p_event)
@@ -206,10 +218,10 @@ namespace Doremi
                             t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
                         }
                     }
+                    break;
                 }
-                case EventType::DamageTaken:
+                case Doremi::Core::EventType::DamageTaken:
                 {
-                    // A bit stupid... we send a event to our own class to play a sound when we take damage...
                     DamageTakenEvent* t_event = static_cast<DamageTakenEvent*>(p_event);
                     LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(t_event->entityId);
@@ -230,25 +242,25 @@ namespace Doremi
         void SkeletalAnimationCoreManager::Update(double p_dt)
         {
             // Loop through all entities
-            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t t_length = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to perform various functions on enteties that have skeletal animation
-            int mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
-                       (int)ComponentType::LowerBodySkeletalAnimation;
+            int t_mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
+                         (int)ComponentType::LowerBodySkeletalAnimation;
             // Set shaders
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
-            for(size_t j = 0; j < length; j++)
+            for(size_t j = 0; j < t_length; j++)
             {
                 // Check if entity has skeletalanimation
-                if(EntityHandler::GetInstance().HasComponents(j, mask))
+                if(EntityHandler::GetInstance().HasComponents(j, t_mask))
                 {
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(j);
                     LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(j);
-
+                    // Uppdatera tiderna
                     t_skeletalAnimationComponent->timePosition += p_dt;
                     t_lowerSkeletalAnimationComponent->timePosition += p_dt;
                     // Check if animationtimeelapsed is more than the cliplength. If so reset cliptime
@@ -257,6 +269,7 @@ namespace Doremi
                         t_lowerSkeletalAnimationComponent->skeletalInformation->GetClipEndTime(t_lowerSkeletalAnimationComponent->clipName);
                     if(t_skeletalAnimationComponent->timePosition > t_upperBodyClipTime)
                     {
+                        // Check if this clip is supposed to be looped. If not start playing idle
                         if(!t_skeletalAnimationComponent->skeletalInformation->GetAnimationClip(t_skeletalAnimationComponent->clipName).loop)
                         {
                             t_skeletalAnimationComponent->clipName = "Idle";
@@ -269,17 +282,17 @@ namespace Doremi
                     }
                     if(t_lowerSkeletalAnimationComponent->timePosition > t_lowerBodyClipTime)
                     {
-                        if(!t_skeletalAnimationComponent->skeletalInformation->GetAnimationClip(t_skeletalAnimationComponent->clipName).loop)
+                        // Check if this clip is supposed to be looped. If not start playing idle
+                        if(!t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationClip(t_lowerSkeletalAnimationComponent->clipName).loop)
                         {
-                            t_skeletalAnimationComponent->clipName = "Idle";
-                            t_skeletalAnimationComponent->timePosition = 0.0f;
+                            t_lowerSkeletalAnimationComponent->clipName = "Idle";
+                            t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
                         }
                         else
                         {
                             t_lowerSkeletalAnimationComponent->timePosition -= t_lowerBodyClipTime;
                         }
                     }
-
                     // Check if this enity should change animation and start the transition
                     CheckANDPerformAnimationTransition(j);
                     // Make a transformationmatrix per bone
@@ -306,7 +319,6 @@ namespace Doremi
                     }
                     // Push the matrices to the gpu
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().PushMatricesToDevice(t_finalTransformations);
-
                     // Start draw pipeline Copypasted from graphic manager
                     RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(j);
                     TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(j);

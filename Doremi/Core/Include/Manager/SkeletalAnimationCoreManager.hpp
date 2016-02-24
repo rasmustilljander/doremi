@@ -41,7 +41,7 @@ namespace Doremi
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
             DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
-            bool CheckANDPerformAnimationTransition(const size_t& p_entityID);
+            void CheckANDPerformAnimationTransition(const size_t& p_entityID);
         };
     }
 }
