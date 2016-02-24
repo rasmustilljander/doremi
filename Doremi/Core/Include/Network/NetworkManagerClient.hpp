@@ -80,12 +80,10 @@ namespace Doremi
             */
             void SendConnectedMessages();
 
-
             /**
                 Update timeout to server and disconnects if too long
             */
             void UpdateTimeouts(double p_dt);
-
 
             /**
                 Timer for next update(send data)
@@ -98,62 +96,6 @@ namespace Doremi
             double m_updateInterval;
 
             /**
-                State of connection towards master
-            */
-            ConnectionState m_masterConnectionState;
-
-            /**
-                State of connection towards server (can only be connected to one server)
-            */
-            ConnectionState m_serverConnectionState;
-
-            /**
-                Adress to server unreliable
-            */
-            DoremiEngine::Network::Adress* m_unreliableServerAdress;
-
-            /**
-                TODOCM doc
-            */
-            DoremiEngine::Network::Adress* m_reliableServerAdress;
-
-            /**
-                Adress to server reliable
-            */
-            DoremiEngine::Network::Adress* m_masterServerAdress;
-
-            /**
-                Socket for unreliable data to server
-            */
-            size_t m_serverUnreliableSocketHandle;
-
-            /**
-                Socket for reliable data to server
-            */
-            size_t m_serverReliableSocketHandle;
-
-            /**
-                Socket for unreliable data to master
-            */
-            size_t m_masterUnreliableServerSocketHandle;
-
-            /**
-                Socket for reliable data to master
-                TODOCM not sure if need this, maybe for meta data?
-            */
-            size_t m_masterReliableServerSocketHandle;
-
-            /**
-                Last response time in milliseconds to master server
-            */
-            double m_masterServerLastResponse;
-
-            /**
-                Last response time in milliseconds to server
-            */
-            double m_serverLastResponse;
-
-            /**
                 Time to disconnect from server
             */
             double m_timeoutInterval;
@@ -161,18 +103,11 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            uint32_t m_playerID;
-
-            /**
-                TODOCM doc
-            */
-            uint32_t m_numJoinEvents;
-
-            /**
-                TODOCM doc
-            */
             uint8_t m_maxConnectingMessagesPerFrame;
 
+            /**
+                TODOCM doc
+            */
             uint8_t m_maxConnectedMessagesPerFrame;
         };
     }

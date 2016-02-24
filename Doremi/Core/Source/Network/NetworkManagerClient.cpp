@@ -3,6 +3,7 @@
 
 // Engine
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
 // Connections
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
@@ -16,89 +17,86 @@ namespace Doremi
     namespace Core
     {
         NetworkManagerClient::NetworkManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "ClientNetworkManager"),
-              m_masterConnectionState(ConnectionState::DISCONNECTED),
-              m_serverConnectionState(ConnectionState::CONNECTING),
-              m_nextUpdateTimer(0.0f),
-              m_updateInterval(1.0f),
-              m_timeoutInterval(3.0f),
-              m_numJoinEvents(0)
+            : Manager(p_sharedContext, "ClientNetworkManager"), m_nextUpdateTimer(0.0f), m_updateInterval(1.0f), m_timeoutInterval(3.0f)
         {
             LoadConfigFile(p_sharedContext);
-
-            m_serverUnreliableSocketHandle = p_sharedContext.GetNetworkModule().CreateUnreliableSocket();
-
-            NetMessage Message = NetMessage();
-            Message.MessageID = MessageID::CONNECT_REQUEST;
-            p_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
         }
 
         NetworkManagerClient::~NetworkManagerClient() {}
 
-        void ClientNetworkManager::LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void NetworkManagerClient::LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
+            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
             DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
 
             // Get last playerID
-            m_playerID = t_configInfo.LastServerPlayerID;
+            t_connections->m_serverConnectionState.PlayerID = t_configInfo.LastServerPlayerID;
 
             // Get IP from config file
-            std::string IPString = t_configInfo.IPToServer;
-            char* IPCharPointer = new char[IPString.size() + 1];
+            std::string t_IPString = t_configInfo.IPToServer;
 
-            // We need it as a char pointer
-            IPString.copy(IPCharPointer, IPString.size());
+            // Create pointer to use
+            char* t_IPCharPointer = new char[t_IPString.size() + 1];
 
-            int* IPArray = new int[4];
+            // Copy string to pointer
+            t_IPString.copy(t_IPCharPointer, t_IPString.size());
 
-            char* ToCheck;
+            // Create int array to hold IP values
+            int* t_IPArray = new int[4];
 
-            ToCheck = strtok(IPCharPointer, ".");
+            // Pointer to part of string to check
+            char* t_ToCheck;
+            t_ToCheck = strtok(t_IPCharPointer, ".");
 
-            size_t counter = 0;
-            while(ToCheck != NULL && counter < 4)
+            size_t t_counter = 0;
+            while(t_ToCheck != NULL && t_counter < 4)
             {
-                IPArray[counter] = std::stoi(std::string(ToCheck));
-                ToCheck = strtok(NULL, ".");
-                counter++;
+                // Save string part as int to array
+                t_IPArray[t_counter] = std::stoi(std::string(t_ToCheck));
+                t_ToCheck = strtok(NULL, ".");
+                t_counter++;
             }
 
-            // If we got values for all
-            if(counter == 4)
+            // If we got values for all int slots we got an actual IP
+            if(t_counter == 4)
             {
-                m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(IPArray[0], IPArray[1], IPArray[2], IPArray[3], 5050); // TODOCM remove test code
-                m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(IPArray[0], IPArray[1], IPArray[2], IPArray[3], 4050);
+                // TODOCM Read port ? as well, change to master as well probobly
+                t_connections->m_serverConnectionState.ConnectingAdress =
+                    t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 5050); // TODOCM remove test code
+                t_connections->m_serverConnectionState.ConnectedAdress =
+                    t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 4050);
             }
             else
             {
-                m_unreliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 5050); // TODOCM remove test code
-                m_reliableServerAdress = p_sharedContext.GetNetworkModule().CreateAdress(127, 0, 0, 1, 4050);
+                t_connections->m_serverConnectionState.ConnectingAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 5050);
+                t_connections->m_serverConnectionState.ConnectedAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 4050);
             }
 
-            delete IPCharPointer;
-            delete IPArray;
+            delete t_IPCharPointer;
+            delete t_IPArray;
         }
 
-        void ClientNetworkManager::SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
+        void NetworkManagerClient::SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
         {
-            // Change IP on unreliable socket
-            m_unreliableServerAdress->SetIP(a, b, c, d);
-            m_unreliableServerAdress->ComposeAdress();
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
-            // Change IP on reliable socket
-            m_reliableServerAdress->SetIP(a, b, c, d);
-            m_reliableServerAdress->ComposeAdress();
+            // Change IP on connecting socket
+            t_connections->m_serverConnectionState.ConnectingAdress->SetIP(a, b, c, d);
+            t_connections->m_serverConnectionState.ConnectingAdress->ComposeAdress();
+
+            // TODOCM remove this when we get connected socket by message
+            // Change IP on connected socket
+            t_connections->m_serverConnectionState.ConnectedAdress->SetIP(a, b, c, d);
+            t_connections->m_serverConnectionState.ConnectedAdress->ComposeAdress();
 
             // Remove the old sockets
-            m_sharedContext.GetNetworkModule().DeleteSocket(m_serverUnreliableSocketHandle);
+            t_networkModule.DeleteSocket(t_connections->m_serverConnectionState.ConnectingSocketHandle);
+            t_networkModule.DeleteSocket(t_connections->m_serverConnectionState.ConnectedSocketHandle);
 
-            // Create new sockets
-            m_serverUnreliableSocketHandle = m_sharedContext.GetNetworkModule().CreateUnreliableSocket();
-
-            // Send intro message
-            NetMessage Message = NetMessage();
-            Message.MessageID = MessageID::CONNECT_REQUEST;
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&Message, sizeof(Message), m_serverUnreliableSocketHandle, m_unreliableServerAdress);
+            // Create new socket for unreliable
+            t_connections->m_serverConnectionState.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
         }
 
         void NetworkManagerClient::Update(double p_dt)
@@ -107,7 +105,7 @@ namespace Doremi
             ReceiveMessages();
 
             // Send Messages
-            SendMessages();
+            SendMessages(p_dt);
 
             // Check for timed out connections
             UpdateTimeouts(p_dt);
@@ -126,12 +124,13 @@ namespace Doremi
         void NetworkManagerClient::ReceiveConnectingMessages()
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
 
             // Get message class
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // Get connecting socket
-            SocketHandle t_serverConnectingSocketHandle = NetworkConnectionsClient::GetInstance()->GetServerConnectingSocketHandle();
+            SocketHandle t_serverConnectingSocketHandle = t_connections->m_serverConnectionState.ConnectingSocketHandle;
 
             // Create buffer message
             NetMessageBuffer t_newMessage = NetMessageBuffer();
@@ -291,7 +290,7 @@ namespace Doremi
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // If we're connected we always send based on connection
-            switch(m_serverConnectionState)
+            switch(t_connections->m_serverConnectionState.ConnectionState)
             {
                 case ServerConnectionStateFromClient::CONNECTED:
                 {
@@ -333,7 +332,7 @@ namespace Doremi
                 if(t_connections->m_serverConnectionState.LastResponse > m_timeoutInterval)
                 {
                     // Set state as disconnected
-                    m_serverConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
 
                     // Send disconnection message to server for good measure
                     t_netMessages->SendDisconnect();

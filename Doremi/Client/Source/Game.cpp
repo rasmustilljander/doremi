@@ -38,7 +38,7 @@
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/SkeletalAnimationCoreManager.hpp>
-#include <Doremi/Core/Include/Manager/Network/ClientNetworkManager.hpp>
+#include <Doremi/Core/Include/Network/NetworkManagerClient.hpp>
 #include <Doremi/Core/Include/Manager/MovementManagerClient.hpp>
 #include <Doremi/Core/Include/Manager/AudioManager.hpp>
 #include <Doremi/Core/Include/Manager/AI/AIPathManager.hpp>
@@ -137,7 +137,7 @@ namespace Doremi
         AddToGraphicalManagerList(new SkeletalAnimationCoreManager(sharedContext));
         AddToGraphicalManagerList(new SkyBoxManager(sharedContext));
         AddToManagerList(new AudioManager(sharedContext));
-        AddToManagerList(new ClientNetworkManager(sharedContext));
+        AddToManagerList(new NetworkManagerClient(sharedContext));
         AddToManagerList(new RigidTransformSyncManager(sharedContext));
         AddToManagerList(new PressureParticleManager(sharedContext));
         AddToManagerList(new LightManager(sharedContext));

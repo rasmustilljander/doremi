@@ -1,9 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
+#include <DoremiEngine/Network/Include/Adress.hpp>
 
-#define CONNECTING_UPDATE_INTERVAL 0.017f
-#define CONNECTED_UPDATE_INTERVAL 0.033f
 
 namespace Doremi
 {
@@ -58,7 +57,8 @@ namespace Doremi
             ServerConnectionStateFromClient ConnectionState;
             SocketHandle ConnectingSocketHandle;
             SocketHandle ConnectedSocketHandle;
-            DoremiEngine::Network::Adress* Adress;
+            DoremiEngine::Network::Adress* ConnectingAdress;
+            DoremiEngine::Network::Adress* ConnectedAdress;
 
             PlayerID PlayerID;
 

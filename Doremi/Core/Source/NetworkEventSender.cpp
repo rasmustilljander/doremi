@@ -1,5 +1,5 @@
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
-#include <Doremi/Core/Include/Manager/Network/NetMessage.hpp>
+#include <Doremi/Core/Include/Network/NetMessages.hpp>
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/SequenceMath.hpp>

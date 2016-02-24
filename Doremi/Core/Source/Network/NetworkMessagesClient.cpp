@@ -104,15 +104,12 @@ namespace Doremi
                 t_networkConnection->m_serverConnectionState.LastResponse = 0;
 
                 // Attempt connect to server
-                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnectionState.Adress,
+                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnectionState.ConnectedAdress,
                                                                                         t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
                 if(t_connected)
                 {
                     // Update state
                     t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::CONNECTED;
-
-                    // Set update interval to connected
-                    t_networkConnection->m_serverConnectionState.UpdateInterval = CONNECTED_UPDATE_INTERVAL;
                 }
             }
         }
@@ -122,7 +119,7 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // If we're above intro phase, we restart
-            if(t_networkConnection->m_serverConnectionState > ServerConnectionStateFromClient::CONNECTING)
+            if(t_networkConnection->m_serverConnectionState.ConnectionState > ServerConnectionStateFromClient::CONNECTING)
             {
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
@@ -215,7 +212,7 @@ namespace Doremi
             uint32_t t_bytesRead = 0;
 
             // Update frequency buffer by acc
-            uint8_t t_frequencyAccSequence = t_streamer.ReadUnsignedInt8());
+            uint8_t t_frequencyAccSequence = t_streamer.ReadUnsignedInt8();
             t_bytesRead += sizeof(uint8_t);
 
             // Update frequency buffer
@@ -244,9 +241,12 @@ namespace Doremi
             t_newSnapshot->Events = t_eventReceiver->GetEventsReceivedFromServer();
 
             // If it was init message
-            if(p_initial)
+            if(t_networkConnection->m_serverConnectionState.NewConnection)
             {
                 InterpolationHandler::GetInstance()->SetSequence(t_newSnapshot->SnapshotSequence);
+
+                // Set our connection to not so special anymore
+                t_networkConnection->m_serverConnectionState.NewConnection = false;
             }
 
             // Check if we can read even more!
@@ -291,7 +291,7 @@ namespace Doremi
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.Adress);
+                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
         }
 
         void NetworkMessagesClient::SendVersionCheck()
@@ -314,7 +314,7 @@ namespace Doremi
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.Adress);
+                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
         }
 
         void NetworkMessagesClient::SendDisconnect()
@@ -329,7 +329,7 @@ namespace Doremi
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.Adress);
+                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
         }
 
         /**

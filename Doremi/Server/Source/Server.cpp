@@ -34,7 +34,7 @@
 
 // Managers
 #include <Doremi/Core/Include/Manager/Manager.hpp>
-#include <Doremi/Core/Include/Manager/Network/ServerNetworkManager.hpp>
+#include <Doremi/Core/Include/Network/NetworkManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/MovementManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/FrequencyAffectedObjectManager.hpp>
@@ -99,7 +99,7 @@ namespace Doremi
         Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
         t_levelLoader->LoadLevel("Levels/IntroScene.drm");
 
-        Core::Manager* t_serverNetworkManager = new Core::ServerNetworkManager(sharedContext);
+        Core::Manager* t_serverNetworkManager = new Core::NetworkManagerServer(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManagerServer(sharedContext);
         Core::Manager* t_rigidTransSyndManager = new Core::RigidTransformSyncManager(sharedContext);
         Core::Manager* t_entitySpawnManager = new Core::EntitySpawnManager(sharedContext);

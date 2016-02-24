@@ -159,13 +159,24 @@ namespace Doremi
                 // Max message counter
                 uint32_t t_messageCounter = 0;
 
+                // To check how much we received
+                uint32_t t_dataSizeReceived = 0;
+
                 // If we're connected
                 if(t_connection.second->ConnectionState >= ClientConnectionStateFromServer::CONNECTED)
                 {
                     // While we have something to receive and still less then max messages per frame
-                    while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle) &&
+                    while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle, t_dataSizeReceived) &&
                           t_messageCounter < m_maxConnectedMessagesPerFrame)
                     {
+                        // If we received a correct message
+                        if(t_dataSizeReceived != sizeof(NetMessageConnectedFromClient))
+                        {
+                            t_message = NetMessageBuffer();
+                            continue;
+                        }
+
+                        // Convert to correct message
                         NetMessageConnectedFromClient& t_connectedMessage = *reinterpret_cast<NetMessageConnectedFromClient*>(&t_message);
 
                         // Interpet message based on type
@@ -324,10 +335,10 @@ namespace Doremi
                         NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
 
                         // Remove socket
-                        m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
+                        m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
 
                         // Remove and save player if it exists, it should
-                        static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(iter->second->PlayerID);
+                        static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(t_connection->second->PlayerID);
 
                         // Delete the memory here
                         delete t_connection->first;
@@ -361,7 +372,7 @@ namespace Doremi
                         NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
 
                         // Remove socket
-                        m_sharedContext.GetNetworkModule().DeleteSocket(iter->second->ReliableSocketHandle);
+                        m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
 
                         // Delete the memory here
                         delete t_connection->first;

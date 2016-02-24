@@ -12,8 +12,6 @@
 #include <Manager/Manager.hpp>
 #include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
-#include <Manager/Network/ClientNetworkManager.hpp>
-#include <Manager/Network/ServerNetworkManager.hpp>
 #include <Manager/GraphicManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>
 #include <Manager/CharacterControlSyncManager.hpp>

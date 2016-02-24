@@ -62,7 +62,7 @@ namespace Doremi
             ClientConnectionFromServer* t_connection = nullptr;
 
             // If we have the adress we ignore (might be late packet?), and wait for timeout
-            if(!NetworkConnectionsServer::GetInstance()->AdressExist(p_adress, t_connection))
+            if(!NetworkConnectionsServer::GetInstance()->AdressWithPortExist(p_adress, t_connection))
             {
                 NetworkConnectionsServer::GetInstance()->CreateNewConnecting(p_adress);
 
@@ -371,18 +371,14 @@ namespace Doremi
 
             // Create message
             NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
+            t_newMessage.MessageID = SendMessageIDFromServer::IN_GAME;
 
             // If we're a new connection we send a initialise snapshot, might need this later
             if(p_connection->NewConnection)
             {
-                t_newMessage.MessageID = SendMessageIDFromServer::INIT_IN_GAME;
                 // MOVE THOSE..... not sure where yet
                 p_connection->NewConnection = false;
                 t_inputHandler->SetSequence(m_messageSequence);
-            }
-            else
-            {
-                t_newMessage.MessageID = SendMessageIDFromServer::IN_GAME;
             }
 
             // Ready for write
