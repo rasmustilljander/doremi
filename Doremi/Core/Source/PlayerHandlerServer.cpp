@@ -111,14 +111,14 @@ namespace Doremi
         void PlayerHandlerServer::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
         {
             // Error check if we create duplicate, shouoldn't be able to happen
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-            if(iter != m_playerMap.end())
+            if(m_playerMap.count(p_playerID) == 0)
             {
                 std::runtime_error("Creating player twice with same ID.");
             }
 
             PlayerServer* NewPlayer;
             XMFLOAT3 newPosition;
+            EntityHandler& entityHandler = EntityHandler::GetInstance();
 
             // If we got the id saved as a disconnect, we use the saved values
             std::map<uint32_t, InactivePlayerServer*>::iterator iterInact = m_inactivePlayers.find(p_playerID);
@@ -127,8 +127,8 @@ namespace Doremi
                 newPosition = iterInact->second->m_savedPosition;
 
                 // Create the actual playerentity
-                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, iterInact->second->m_savedPosition,
-                                                                                iterInact->second->m_savedOrientation, XMFLOAT3(0.25, 0.25, 0.25));
+                EntityID t_EntityID = entityHandler.CreateEntity(Blueprints::PlayerEntity, iterInact->second->m_savedPosition,
+                                                                 iterInact->second->m_savedOrientation, XMFLOAT3(0.25, 0.25, 0.25));
 
                 // Set health
                 EventHandler::GetInstance()->BroadcastEvent(new SetHealthEvent(t_EntityID, iterInact->second->m_savedHealth));
@@ -158,7 +158,7 @@ namespace Doremi
                 NetworkPriorityHandler* newNetworkPriorityHandler = new NetworkPriorityHandler(m_sharedContext);
 
                 // Create the actual playerentity
-                EntityID t_EntityID = EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation);
+                const EntityID t_EntityID = entityHandler.CreateEntity(Blueprints::PlayerEntity, t_triggerPosition, t_triggerOrientation);
 
                 // Create a new player
                 NewPlayer = new PlayerServer(t_EntityID, p_inputHandler, newFrequencyHandler, newNetworkPriorityHandler, newNetworkEventSender);
@@ -169,13 +169,12 @@ namespace Doremi
 
             /// Add a new potential field actor to the player
             // Check if we have a actor, different from server and client...
-            if(EntityHandler::GetInstance().HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
+            if(entityHandler.HasComponents(NewPlayer->m_playerEntityID, (int)ComponentType::PotentialField))
             {
-                PotentialFieldComponent* pfComponent = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
+                PotentialFieldComponent* pfComponent = entityHandler.GetComponentFromStorage<PotentialFieldComponent>(NewPlayer->m_playerEntityID);
                 pfComponent->ChargedActor =
                     m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(newPosition, 30, 60, false, DoremiEngine::AI::AIActorType::Player);
             }
-
 
             // Set start and endEvent for client
             SetupRejoin(p_playerID);
@@ -187,22 +186,20 @@ namespace Doremi
 
         void PlayerHandlerServer::RemoveAndSavePlayer(uint32_t p_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
             // If playerID exist
-            if(iter != m_playerMap.end())
+            if(m_playerMap.count(p_playerID))
             {
                 // Create new inactive player
                 InactivePlayerServer* t_newInactivePlayer = new InactivePlayerServer();
 
                 // Get transcomp and player object
-                TransformComponent* t_transComp = GetComponent<TransformComponent>(iter->second->m_playerEntityID);
-                PlayerServer* t_playerServ = static_cast<PlayerServer*>(iter->second);
+                const TransformComponent* const t_transComp = GetComponent<TransformComponent>(m_playerMap.at(p_playerID)->m_playerEntityID);
+                PlayerServer* t_playerServ = static_cast<PlayerServer*>(m_playerMap.at(p_playerID));
 
                 // Save position, orientation, health
                 t_newInactivePlayer->m_savedPosition = t_transComp->position;
                 t_newInactivePlayer->m_savedOrientation = t_transComp->rotation;
-                t_newInactivePlayer->m_savedHealth = GetComponent<HealthComponent>(iter->second->m_playerEntityID)->currentHealth;
+                t_newInactivePlayer->m_savedHealth = GetComponent<HealthComponent>(m_playerMap.at(p_playerID)->m_playerEntityID)->currentHealth;
                 t_newInactivePlayer->m_savedPlayer = t_playerServ;
 
                 // Set input to 0, and clear buffer
@@ -297,23 +294,21 @@ namespace Doremi
 
         void PlayerHandlerServer::AddNetObjectToPlayers(const EntityID& p_entityID)
         {
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& i : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
+                static_cast<PlayerServer*>(i.second)->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
             }
         }
 
         void PlayerHandlerServer::SetupRejoin(uint32_t t_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
-            if(iter == m_playerMap.end())
+            if(m_playerMap.count(t_playerID) == 0)
             {
                 // Something really wrong
                 cout << "Error when setup rejoin, playerID missing." << endl;
                 std::runtime_error("Error when setup rejoin, playerID missing.");
             }
-            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+            PlayerServer* const t_player = static_cast<PlayerServer*>(m_playerMap.at(t_playerID));
 
             // reset start and set new end
             t_player->m_StartEvent = 0;
@@ -324,7 +319,7 @@ namespace Doremi
 
             // Now when we created the event box, we can add health events and setposition
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-            size_t t_numEntities = t_entityHandler.GetLastEntityIndex();
+            const size_t t_numEntities = t_entityHandler.GetLastEntityIndex();
             uint32_t t_mask = static_cast<uint32_t>(ComponentType::Health);
             for(size_t entityID = 0; entityID < t_numEntities; entityID++)
             {
@@ -348,14 +343,13 @@ namespace Doremi
 
         bool PlayerHandlerServer::UpdateRejoinQueueForPlayer(uint32_t p_EventSlot, uint32_t t_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
-            if(iter == m_playerMap.end())
+            if(m_playerMap.count(t_playerID) == 0)
             {
                 // Something really wrong
                 cout << "Error when setup rejoin, playerID missing." << endl;
                 std::runtime_error("Error when setup rejoin, playerID missing.");
             }
-            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+            PlayerServer* t_player = static_cast<PlayerServer*>(m_playerMap.at(t_playerID));
 
             // If we acc something larger or same (case of 0), then our start
             if(p_EventSlot >= t_player->m_StartEvent)
@@ -378,24 +372,23 @@ namespace Doremi
 
         void PlayerHandlerServer::WriteQueuedEventsFromLateJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesWritten, uint32_t t_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(t_playerID);
-            if(iter == m_playerMap.end())
+            if(m_playerMap.count(t_playerID) == 0)
             {
                 // Something really wrong
                 cout << "Error when sending events on rejoin, playerID missing." << endl;
                 std::runtime_error("Error when sending events on rejoin, playerID missing.");
             }
-            PlayerServer* t_player = static_cast<PlayerServer*>(iter->second);
+            PlayerServer* const t_player = static_cast<PlayerServer*>(m_playerMap.at(t_playerID));
 
             // Write start event
-            uint32_t t_eventStart = t_player->m_StartEvent;
-            size_t t_eventEnd = t_player->m_EndEvent;
+            const uint32_t t_eventStart = t_player->m_StartEvent;
+            const size_t t_eventEnd = t_player->m_EndEvent;
             p_streamer.WriteUnsignedInt32(t_eventStart);
             op_bytesWritten += sizeof(uint32_t);
 
             // Save position to wirte number of events
             uint32_t t_numOfEvents = 0;
-            uint32_t t_posToWriteNumEvents = op_bytesWritten;
+            const uint32_t t_posToWriteNumEvents = op_bytesWritten;
             op_bytesWritten += sizeof(uint32_t);
             p_streamer.SetReadWritePosition(op_bytesWritten);
 
@@ -403,9 +396,8 @@ namespace Doremi
             uint32_t t_bitIncrement = 0;
             uint32_t t_bitsLeftToWrite = (p_bufferSize - op_bytesWritten) * 8;
 
-
             // While we got events left to send and we have space left to wirte
-            for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; i++)
+            for(size_t i = t_eventStart; i < t_eventEnd && t_bitsWritten < t_bitsLeftToWrite; ++i)
             {
                 t_bitIncrement = 0;
                 p_streamer.WriteUnsignedInt8(static_cast<uint8_t>(m_lateJoinEventQueue[i]->eventType));
@@ -413,14 +405,14 @@ namespace Doremi
 
                 m_lateJoinEventQueue[i]->Write(&p_streamer, t_bitIncrement);
                 t_bitsWritten += t_bitIncrement;
-                t_numOfEvents++;
+                ++t_numOfEvents;
             }
 
             // if we overdid it, take a step back
             if(t_bitsWritten > t_bitsLeftToWrite)
             {
                 t_bitsWritten -= t_bitIncrement;
-                t_numOfEvents--;
+                --t_numOfEvents;
             }
             op_bytesWritten += ceil(t_bitsWritten / 8.0f);
 
