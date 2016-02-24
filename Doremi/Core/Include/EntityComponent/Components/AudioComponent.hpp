@@ -27,7 +27,7 @@ namespace Doremi
             {
                 for(int32_t i = 0; i < (int32_t)AudioCompEnum::Num_Sounds; i++)
                 {
-                    m_enumToSoundID[i] = (int32_t)AudioCompEnum::DebugSound;
+                    m_enumToSoundID[i] = -1;
                 }
             }
         };
