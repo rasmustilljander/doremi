@@ -10,6 +10,7 @@
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
 
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
@@ -130,7 +131,7 @@ namespace Doremi
                 // Write disconnect string
                 std::string t_disconnectMessage = t_streamer.ReadString();
 
-                cout << t_disconnectMessage << endl;
+                cout << "Sending disconnect: " << t_disconnectMessage << endl;
             }
         }
 
@@ -195,9 +196,9 @@ namespace Doremi
         void NetworkMessagesClient::ReceiveInGame(NetMessageConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
-            FrequencyBufferHandler* t_frequencyBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiverForPlayer(t_networkConnection->m_serverConnectionState.PlayerID);
+            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetFrequencyBufferHandler();
+            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
 
             // If we were at loading world, we assume server knows best and we're done loading!
             if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
@@ -234,7 +235,6 @@ namespace Doremi
             // Read position to check against
             t_newSnapshot->PlayerPositionToCheck = t_streamer.ReadFloat3();
             t_bytesRead += sizeof(float) * 3;
-
 
             // Read events into the eventreceiver
             t_eventReceiver->ReadEvents(t_streamer, sizeof(p_message.Data), t_bytesRead);
@@ -386,8 +386,9 @@ namespace Doremi
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiverForPlayer(t_networkConnection->m_serverConnectionState.PlayerID);
-            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetDefaultFrequencyBufferHandler();
+            NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
+            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetFrequencyBufferHandler();
+            InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
 
             // Create a message
             NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
@@ -410,9 +411,12 @@ namespace Doremi
             t_streamer.WriteUnsignedInt8(t_currentSequence);
             t_bytesWritten += sizeof(uint8_t);
 
+            // Write input bitmask
+            t_streamer.WriteUnsignedInt32(t_inputHandler->GetInputBitMask());
+            t_bytesWritten += sizeof(uint32_t);
+
             // Get player transform component
-            EntityID t_playerEntityID = 0;
-            PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(t_playerEntityID);
+            EntityID t_playerEntityID = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetPlayerEntityID();
             TransformComponent* t_transformComp = GetComponent<TransformComponent>(t_playerEntityID);
 
             // Write orientation

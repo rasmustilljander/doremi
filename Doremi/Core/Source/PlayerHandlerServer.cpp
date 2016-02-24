@@ -91,15 +91,15 @@ namespace Doremi
             }
         }
 
-        InputHandler* PlayerHandlerServer::GetInputHandlerForPlayer(uint32_t p_playerID)
+        InputHandlerServer* PlayerHandlerServer::GetInputHandlerForPlayer(uint32_t p_playerID)
         {
             std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
 
-            InputHandler* outPointer = nullptr;
+            InputHandlerServer* outPointer = nullptr;
 
             if(iter != m_playerMap.end())
             {
-                outPointer = iter->second->m_inputHandler;
+                outPointer = static_cast<InputHandlerServer*>(iter->second->m_inputHandler);
             }
 
             return outPointer;
@@ -378,6 +378,8 @@ namespace Doremi
             t_player->m_StartEvent = 0;
             t_player->m_EndEvent = m_lateJoinEventQueue.size();
 
+            cout << "Readying" << t_player->m_EndEvent << " number of events to send!" << endl;
+
             // Get network event sender
             NetworkEventSender* t_netEventSender = t_player->m_networkEventSender;
 
@@ -506,6 +508,10 @@ namespace Doremi
                 {
                     blueprint = Blueprints::NetworkPlayerEntity;
                 }
+                static int objectsAdded = 0;
+                cout << objectsAdded << " with id: " << p_entityCreatedEvent->entityID << " and blueprint: " << (uint32_t)p_entityCreatedEvent->bluepirnt << endl;
+                objectsAdded++;
+
 
                 (static_cast<PlayerServer*>(t_player.second))
                     ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint,

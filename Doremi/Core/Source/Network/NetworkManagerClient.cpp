@@ -245,21 +245,18 @@ namespace Doremi
                 {
                     case SendMessageIDFromServer::CONNECTED:
                     {
-                        std::cout << "Received connected" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveConnected(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::LOAD_WORLD:
                     {
-                        std::cout << "Received load world" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveLoadWorld(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::IN_GAME:
                     {
-                        std::cout << "Received in game" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveInGame(t_messageConnecting);
 
                         break;

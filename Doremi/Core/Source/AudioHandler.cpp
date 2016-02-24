@@ -10,7 +10,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
 #include <iostream>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <FrequencyBufferHandler.hpp>
 
 // Events
@@ -237,28 +237,26 @@ namespace Doremi
                     break;
             }
 
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
-            if(inputHandler != nullptr)
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
+            FrequencyBufferHandler* t_frequencyBuffer = t_playerHandler->GetFrequencyBufferHandler();
+            if(t_playerHandler->PlayerExists())
             {
 
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency0))
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency0))
                 {
                     m_currentFrequency = 0;
                 }
-                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency500))
+                else if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency500))
                 {
                     m_currentFrequency = 500;
                 }
-                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency1000))
+                else if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::SetFrequency1000))
                 {
                     m_currentFrequency = 1000;
                 }
-            }
-            // Send frequence to buffer
-            FrequencyBufferHandler* freqBufferHandler = PlayerHandlerClient::GetInstance()->GetDefaultFrequencyBufferHandler();
-            if(freqBufferHandler != nullptr)
-            {
-                freqBufferHandler->BufferFrequency(m_currentFrequency);
+
+                t_frequencyBuffer->BufferFrequency(m_currentFrequency);
                 using namespace Doremi::Utilities::Logging;
                 m_logger->DebugLog(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
             }

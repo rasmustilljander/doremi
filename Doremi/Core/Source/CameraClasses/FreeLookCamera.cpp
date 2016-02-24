@@ -1,5 +1,5 @@
 #include <CameraClasses/FreeLookCamera.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <InputHandlerClient.hpp>
 
 // Engine
@@ -69,30 +69,33 @@ namespace Doremi
 
         void FreeLookCamera::HandleUserCMD(double pDT)
         {
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
 
-            if(inputHandler != nullptr)
+
+            if(t_playerHandler->PlayerExists())
             {
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
+                InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
+
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugLeft))
                 {
                     m_moveLeftRight -= m_speed * pDT;
                 }
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugRight))
                 {
                     m_moveLeftRight += m_speed * pDT;
                 }
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugForward))
                 {
                     m_moveForwardBackward += m_speed * pDT;
                 }
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::DebugBackward))
                 {
                     m_moveForwardBackward -= m_speed * pDT;
                 }
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::RightClick))
+                if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::RightClick))
                 {
-                    m_camYaw += inputHandler->GetMouseMovementX() * 0.001f;
-                    m_camPitch += inputHandler->GetMouseMovementY() * 0.001f;
+                    m_camYaw += t_inputHandler->GetMouseMovementX() * 0.001f;
+                    m_camPitch += t_inputHandler->GetMouseMovementY() * 0.001f;
                 }
             }
         }

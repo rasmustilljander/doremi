@@ -7,6 +7,7 @@ namespace Doremi
     {
         class NetworkEventSender;
         class NetworkPriorityHandler;
+        class InputHandlerServer;
         struct GunFireToggleEvent;
         class NetworkStreamer;
         struct SetHealthEvent;
@@ -103,7 +104,7 @@ namespace Doremi
 
             bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID& outID);
 
-            InputHandler* GetInputHandlerForPlayer(uint32_t p_playerID);
+            InputHandlerServer* GetInputHandlerForPlayer(uint32_t p_playerID);
 
             FrequencyBufferHandler* GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID);
 

@@ -2,7 +2,7 @@
 #include <InputHandler.hpp>
 #include <CameraClasses/ThirdPersonCamera.hpp>
 #include <CameraClasses/FreeLookCamera.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <InputHandlerClient.hpp>
 // Engine
 #include <DoremiEngine/Graphic/Include/Interface/Camera/Camera.hpp>
@@ -61,8 +61,10 @@ namespace Doremi
         void CameraHandler::UpdateInput(double p_dt)
         {
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
-            if(inputHandler != nullptr)
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
+
+            if(t_playerHandler->PlayerExists())
             {
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugButton))
                 {
@@ -98,8 +100,9 @@ namespace Doremi
         void CameraHandler::UpdateDraw()
         {
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
-            if(inputHandler != nullptr)
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+            if(t_playerHandler->PlayerExists())
             {
                 switch(m_currentCamera)
                 {

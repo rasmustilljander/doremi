@@ -14,7 +14,7 @@
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 
 #include <DirectXMath.h>
@@ -113,19 +113,20 @@ namespace Doremi
             // m_dominantFrequency = AudioHandler::GetInstance()->GetRepeatableSoundFrequency();
             // std::cout << "Freq = " << m_dominantFrequency << std::endl; /**TODOLH ta bort när debugging är klart*/
 
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
 
-            if(inputHandler != nullptr)
+            if(t_playerHandler->PlayerExists())
             {
                 // Check if player just pressed ä. Then start the process of repeatable audio recording + cutting + analysing + saving to array
-                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording) && !m_gunReloadButtonDown)
+                if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::StartRepeatableAudioRecording) && !m_gunReloadButtonDown)
                 {
                     AudioHandler::GetInstance()->StartRepeatableRecording();
                     m_gunReloadButtonDown = true;
                     m_timeThatGunButtonIsDown = 0;
                 }
                 // Check if the player is holding down the ä button If so add time to the variable used for cutting soundlength
-                else if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
+                else if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
                 {
                     if(m_timeThatGunButtonIsDown < 4.8f)
                     {
@@ -137,13 +138,13 @@ namespace Doremi
                     }
                 }
                 // Check if ä button is released to reset the bool and send the time button was down to audio handler.
-                else if(!inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
+                else if(!t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::StartRepeatableAudioRecording) && m_gunReloadButtonDown)
                 {
                     m_gunReloadButtonDown = false;
                     AudioHandler::GetInstance()->SetGunButtonDownTime(m_timeThatGunButtonIsDown + 0.017);
                 }
                 // Check if ö button is pressed to play sound
-                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
+                if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::PlayRepeatableAudioRecording))
                 {
                     AudioHandler::GetInstance()->PlayRepeatableRecordedSound();
                 }

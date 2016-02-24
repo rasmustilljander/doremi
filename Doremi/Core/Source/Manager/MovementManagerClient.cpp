@@ -6,7 +6,7 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <PositionCorrectionHandler.hpp>
 #include <InterpolationHandler.hpp>
 
@@ -34,8 +34,9 @@ namespace Doremi
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::Movement | (int)ComponentType::CharacterController;
 
-            EntityID p_playerEntityID = 0;
-            bool playerExist = PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(p_playerEntityID);
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            bool playerExist = t_playerHandler->PlayerExists();
+            EntityID p_playerEntityID = t_playerHandler->GetPlayerEntityID();
 
             for(size_t i = 0; i < length; i++)
             {

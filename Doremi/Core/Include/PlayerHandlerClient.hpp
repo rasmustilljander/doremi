@@ -1,5 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/NetworkEventReceiver.hpp>
 
 namespace DoremiEngine
 {
@@ -13,9 +14,8 @@ namespace Doremi
 {
     namespace Core
     {
-        class NetworkEventReceiver;
-        class NetworkStreamer;
-
+        class InputHandlerClient;
+        class FrequencyBufferHandler;
         /**
             TODOCM doc
         */
@@ -44,6 +44,10 @@ namespace Doremi
 
             EntityID GetPlayerEntityID();
 
+            InputHandlerClient* GetInputHandler();
+
+            FrequencyBufferHandler* GetFrequencyBufferHandler();
+
             void Update(double p_dt) override;
 
             void UpdatePlayerRotations(Player* p_player);
@@ -52,7 +56,7 @@ namespace Doremi
 
             void SetNewPlayerEntityID(const EntityID& p_entityID);
 
-            NetworkEventReceiver* GetNetworkEventReceiverForPlayer(uint32_t p_playerID);
+            NetworkEventReceiver* GetNetworkEventReceiver();
 
             /**
                 TODOCM doc
@@ -75,12 +79,7 @@ namespace Doremi
 
             DoremiEngine::Logging::Logger* m_logger;
 
-            /**
-                PlayerID don't think we need it here
-            */
-            uint32_t m_PlayerID;
-
-            PlayerClient m_player;
+            PlayerClient* m_player;
 
             /**
                 Last event read in range of 0-N

@@ -43,6 +43,10 @@ namespace Doremi
             {
                 Event* t_tempEvent = InterpetEvent(p_streamer, op_bitsRead);
 
+                // static int eventAdded = 0;
+                // std::cout << eventAdded << " with type: " << (uint32_t)(t_tempEvent->eventType) << std::endl;
+                // eventAdded++;
+
                 // Queue events
                 m_frameQueuedEvents.push_back(t_tempEvent);
             }
@@ -105,6 +109,7 @@ namespace Doremi
             // While we still have sequences left to read
             while(NumOfSequencesLeft)
             {
+                std::cout << "One wave.." << std::endl;
                 uint32_t t_bitsRead = 0;
 
                 // If we don't have enough memory to read next line

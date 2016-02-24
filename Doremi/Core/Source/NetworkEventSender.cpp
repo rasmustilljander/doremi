@@ -26,7 +26,7 @@ namespace Doremi
 
             if(numOfRemoves > m_bufferedQueuesOfEvent.size())
             {
-                // cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << endl;
+                std::cout << "Error in acc, more exist then pattern provides, shouldn't be possible in the real game" << std::endl;
             }
 
             // Check if we can remove (error check), then remove the number of accs in difference
@@ -41,7 +41,14 @@ namespace Doremi
             }
         }
 
-        void NetworkEventSender::QueueEventToFrame(Event* p_frameEvent) { m_frameQueuedEvents.push_back(p_frameEvent); }
+        void NetworkEventSender::QueueEventToFrame(Event* p_frameEvent)
+        {
+            // static int eventAdded = 0;
+            // cout << eventAdded << " with type: " << (uint32_t)p_frameEvent->eventType << endl;
+            // eventAdded++;
+
+            m_frameQueuedEvents.push_back(p_frameEvent);
+        }
 
         void NetworkEventSender::AddFrameQueuedObjectsToBuffer()
         {
@@ -101,7 +108,6 @@ namespace Doremi
             {
                 // Counter for items
                 uint32_t numOfItems = 0;
-                // uint32_t bytesToWrite = sizeof(uint8_t) + numOfItems * (sizeof(uint32_t) + sizeof(float) * 3) + ceil((float)numOfItems / 8.0f);
 
                 // If we don't have enough memory to write header
                 if(bytesLeftToWrite < sizeof(uint8_t))
@@ -143,16 +149,29 @@ namespace Doremi
                 }
 
                 // If we went too far, also need to move back the memory pointer
-                if(t_bitsLeftToWrite < 0)
+                if(t_bitsLeftToWrite <= 0)
                 {
                     // Should cause us to go into next if statement
                     --iterEvents;
+
+                    // Reduce the number of events to send
+                    --numOfItems;
 
                     // Rollback the memory that is invalid
                     t_totalBitsWritten += t_bitsLeftToWrite;
 
                     // Set to not finished
                     p_finished = false;
+                }
+
+                // If we didn't write anything
+                if(numOfItems == 0)
+                {
+                    // Remove the header for number of events
+                    bytesLeftToWrite += sizeof(uint8_t);
+                    op_BytesWritten -= sizeof(uint8_t);
+
+                    break;
                 }
 
                 // If we didn't reach the last one, we push the items left in front of the next
@@ -200,134 +219,6 @@ namespace Doremi
             // set back streamer
             p_streamer.SetReadWritePosition(op_BytesWritten);
         }
-
-        //    void NetworkEventSender::WriteAddRemoves(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten)
-        //    {
-        //        // Queue new objects
-        //        AddFrameQueuedObjectsToBuffer();
-
-        //        // Check how many bytes we have left to write
-        //        uint32_t bytesLeftToWrite = p_bufferSize - op_BytesWritten;
-
-        //        // If we can't even start header
-        //        if(bytesLeftToWrite < (sizeof(uint8_t) * 2))
-        //        {
-        //            return;
-        //        }
-
-        //        // Either when we save the latest sequence client got we remove the redudant there, or we do it now
-
-        //        // Save position for later writing
-        //        // TODOCM could do without this if bytesWRitten doesn't change
-        //        uint32_t WritePositionForNumSequences = op_BytesWritten;
-
-        //        // Skip for number of sequences in packet
-        //        p_streamer.SetReadWritePosition(WritePositionForNumSequences + sizeof(uint8_t));
-
-        //        // Write oldest sequence
-        //        p_streamer.WriteUnsignedInt8(m_nextSequence);
-
-        //        // Remove from
-        //        bytesLeftToWrite -= sizeof(uint8_t) * 2;
-        //        op_BytesWritten += sizeof(uint8_t) * 2;
-
-        //        // Number of sequences counter
-        //        uint8_t numOfSequences = 0;
-
-        //        // Start going through the buffered one with oldest first, and after each write move one byte ahead, and check if next one will fir
-        //        into
-        //        // the message, if not we have to split it into smaller ones
-        //        std::list<list<ObjectToAddOrRemove>>::iterator iter = m_BufferedAddRemoveObjects.begin();
-
-        //        for(; iter != m_BufferedAddRemoveObjects.end(); ++iter)
-        //        {
-        //            // Check if we have enough space left
-        //            uint32_t numOfItems = iter->size();
-        //            uint32_t bytesToWrite = sizeof(uint8_t) + numOfItems * (sizeof(uint32_t) + sizeof(float) * 3) + ceil((float)numOfItems / 8.0f);
-
-        //            if(bytesLeftToWrite < bytesToWrite)
-        //            {
-        //                // Skip over the number of objects for now
-        //                p_streamer.SetReadWritePosition(op_BytesWritten + sizeof(uint8_t));
-        //                bytesLeftToWrite -= sizeof(uint8_t);
-
-        //                // We change how many bytes we write, excluding bits
-        //                bytesToWrite = sizeof(uint32_t) + sizeof(float) * 3;
-
-        //                // Counter for bits
-        //                uint8_t nextItemToBeWritten = 1;
-
-        //                // We add items manually
-        //                list<ObjectToAddOrRemove>::iterator iterItems = iter->begin();
-        //                for(; iterItems != iter->end() && bytesLeftToWrite >= (bytesToWrite + ceil((float)nextItemToBeWritten / 8.0f)); ++iterItems)
-        //                {
-        //                    bytesLeftToWrite -= bytesToWrite;
-        //                    nextItemToBeWritten++;
-
-        //                    p_streamer.WriteBool(iterItems->AddObject);
-        //                    p_streamer.WriteUnsignedInt32(iterItems->BluePrintOrEntityID);
-        //                    p_streamer.WriteFloat3(iterItems->Position);
-        //                }
-
-        //                // from the iterator to the end we split into a new sequence and put it between the big iterator
-
-        //                //// Create new list from leftovers
-        //                // std::list<ObjectToAddOrRemove> newList = std::list<ObjectToAddOrRemove>(iterItems, iter->end());
-
-        //                //// Remove from list
-        //                // iter->erase(iterItems, iter->end());
-
-        //                // Direct copy
-        //                std::list<ObjectToAddOrRemove> newList;
-        //                newList.splice(newList.begin(), *iter, iterItems, iter->end());
-
-        //                // Insert new list in between
-        //                m_BufferedAddRemoveObjects.insert(iter, newList);
-
-        //                // Set writing position to valid
-        //                numOfSequences++;
-
-        //                // Step back in buffer and write the number of items we added
-        //                p_streamer.SetReadWritePosition(op_BytesWritten);
-        //                p_streamer.WriteUnsignedInt8(nextItemToBeWritten - 1);
-
-        //                // Add how many bytes we've written
-        //                op_BytesWritten += bytesToWrite + ceil((float)(nextItemToBeWritten - 1) / 8.0f);
-
-        //                break;
-        //            }
-
-        //            // Remove from our bytes left to write
-        //            bytesLeftToWrite -= bytesToWrite;
-
-        //            // Write number of items
-        //            p_streamer.WriteUnsignedInt8(numOfItems);
-
-        //            // Go through all items and write them to message
-        //            list<ObjectToAddOrRemove>::iterator iterItems = iter->begin();
-        //            for(; iterItems != iter->end(); ++iterItems)
-        //            {
-        //                p_streamer.WriteBool(iterItems->AddObject);
-        //                p_streamer.WriteUnsignedInt32(iterItems->BluePrintOrEntityID);
-        //                p_streamer.WriteFloat3(iterItems->Position);
-        //            }
-
-        //            // Increment how many bytes we've written
-        //            op_BytesWritten += sizeof(uint8_t) + numOfItems * (sizeof(uint32_t) + sizeof(float) * 3) + ceil((float)numOfItems / 8.0f);
-
-        //            // Move our position to whole new byte
-        //            p_streamer.SetReadWritePosition(op_BytesWritten);
-
-        //            numOfSequences++;
-        //        }
-
-        //        // Write number of sequences
-        //        p_streamer.SetReadWritePosition(WritePositionForNumSequences);
-        //        p_streamer.WriteUnsignedInt8(numOfSequences);
-
-        //        // Set writing position to right position
-        //        p_streamer.SetReadWritePosition(op_BytesWritten);
-        //    }
 
         uint8_t NetworkEventSender::GetNextSequenceUsed() { return m_nextSequence; }
     }

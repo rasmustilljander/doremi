@@ -1,5 +1,5 @@
 #include <CameraClasses/ThirdPersonCamera.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerClient.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <InputHandlerClient.hpp>
@@ -25,11 +25,15 @@ namespace Doremi
         {
             using namespace DirectX;
 
-            EntityID playerID = 0;
-            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerID))
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+            // If player exists
+            if(!t_playerHandler->PlayerExists())
             {
                 return;
             }
+
+            EntityID playerID = t_playerHandler->GetPlayerEntityID();
             // m_angle = 0;
             TransformComponent* playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerID);
             XMFLOAT4 orientation = playerTransform->rotation;
@@ -64,9 +68,11 @@ namespace Doremi
 
         void ThirdPersonCamera::UpdateInput(const double& p_dt)
         {
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
+
             float wantedAngle = m_angle; // the angle we want to reach
-            wantedAngle -= inputHandler->GetMouseMovementY() * 0.001;
+            wantedAngle -= t_inputHandler->GetMouseMovementY() * 0.001;
             if(wantedAngle < m_maxAngle && wantedAngle > m_minAngle)
             {
                 m_angle = wantedAngle;

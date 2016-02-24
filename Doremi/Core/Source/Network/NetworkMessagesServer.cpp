@@ -182,7 +182,7 @@ namespace Doremi
                 if(t_receivedAllEvents)
                 {
                     // TODOCM log
-                    // cout << "A player finished loading the map..." << endl;
+                    std::cout << "A player finished loading the map..." << std::endl;
                     p_connection->ConnectionState = ClientConnectionStateFromServer::IN_GAME;
 
                     // Update all network objects, so that all objects attempt to send their stuff right away
@@ -196,10 +196,10 @@ namespace Doremi
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::IN_GAME)
             {
                 // Get input handler and frequencyhandler
-                InputHandlerServer* t_inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
-                FrequencyBufferHandler* t_frequencyHandler = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
-                NetworkEventSender* t_networkEventSender =
-                    (static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance()))->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
+                PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
+                InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->PlayerID);
+                FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
+                NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
 
                 // Ready for read
                 NetworkStreamer p_streamer = NetworkStreamer();
@@ -221,7 +221,7 @@ namespace Doremi
                 EntityID entityID = 0;
 
                 // Ignore checks, we should have a entityID
-                PlayerHandler::GetInstance()->GetEntityIDForPlayer(p_connection->PlayerID, entityID);
+                t_playerHandler->GetEntityIDForPlayer(p_connection->PlayerID, entityID);
 
                 // Read orientation to update with
                 DirectX::XMFLOAT4 t_playerOrientation = p_streamer.ReadRotationQuaternion();
@@ -365,11 +365,11 @@ namespace Doremi
         void NetworkMessagesServer::SendInGame(ClientConnectionFromServer* p_connection)
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
-            InputHandlerServer* t_inputHandler = (InputHandlerServer*)PlayerHandler::GetInstance()->GetInputHandlerForPlayer(p_connection->PlayerID);
-            NetworkEventSender* t_networkEventSender =
-                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
-            NetworkPriorityHandler* t_networkPriorityHandler =
-                static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
+            PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
+            InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->PlayerID);
+            FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
+            NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
+            NetworkPriorityHandler* t_networkPriorityHandler = t_playerHandler->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
 
 
             // Create message
@@ -393,7 +393,7 @@ namespace Doremi
             uint32_t t_bytesWritten = 0;
 
             // Get sequence acc for frequence
-            uint8_t t_sequenceAcc = PlayerHandler::GetInstance()->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID)->GetNextSequenceUsed();
+            uint8_t t_sequenceAcc = t_frequencyHandler->GetNextSequenceUsed();
 
             // Write the frequence sequence acc
             t_streamer.WriteUnsignedInt8(t_sequenceAcc);
@@ -403,21 +403,21 @@ namespace Doremi
             t_streamer.WriteUnsignedInt8(m_messageSequence);
             t_bytesWritten += sizeof(uint8_t);
 
+            // Write client last sequence (1 byte
+            t_streamer.WriteUnsignedInt8(t_inputHandler->GetSequenceByLastInput());
+            t_bytesWritten += sizeof(uint8_t);
+
+            // Write position of that sequence ( 12 byte
+            t_streamer.WriteFloat3(t_inputHandler->GetPositionByLastInput());
+            t_bytesWritten += sizeof(float) * 3;
+
             // Write events
             bool wroteAllEvents = false;
             t_networkEventSender->WriteEvents(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten, wroteAllEvents);
 
             // If we wrote all events and have enough to write snapshot with player
-            if(!wroteAllEvents && sizeof(t_newMessage.Data) - t_bytesWritten > sizeof(uint8_t) + sizeof(float) * 3)
+            if(wroteAllEvents)
             {
-                // Write client last sequence (1 byte
-                t_streamer.WriteUnsignedInt8(t_inputHandler->GetSequenceByLastInput());
-                t_bytesWritten += sizeof(uint8_t);
-
-                // Write position of that sequence ( 12 byte
-                t_streamer.WriteFloat3(t_inputHandler->GetPositionByLastInput());
-                t_bytesWritten += sizeof(float) * 3;
-
                 // Write objects from priority
                 t_networkPriorityHandler->WriteObjectsByPriority(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten);
             }

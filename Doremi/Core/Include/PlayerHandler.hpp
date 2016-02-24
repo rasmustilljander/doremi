@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <DirectXMath.h>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>

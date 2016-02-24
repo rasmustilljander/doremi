@@ -61,12 +61,11 @@ namespace Doremi
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
 
             InputHandlerClient* m_inputHandler = new InputHandlerClient(p_sharedContext);
-            ;
             NetworkEventReceiver* newNetworkEventReceiver = new NetworkEventReceiver();
             FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
 
             // Create player object thing
-            m_player = PlayerClient(0, m_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
+            m_player = new PlayerClient(0, m_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
         }
 
         PlayerHandlerClient::~PlayerHandlerClient()
@@ -84,18 +83,24 @@ namespace Doremi
         }
 
 
-        EntityID PlayerHandlerClient::GetPlayerEntityID() { return m_player.m_playerEntityID; }
+        EntityID PlayerHandlerClient::GetPlayerEntityID() { return m_player->m_playerEntityID; }
+
+
+        InputHandlerClient* PlayerHandlerClient::GetInputHandler() { return static_cast<InputHandlerClient*>(m_player->m_inputHandler); }
+
+        FrequencyBufferHandler* PlayerHandlerClient::GetFrequencyBufferHandler() { return m_player->m_frequencyBufferHandler; }
+
 
         void PlayerHandlerClient::Update(double p_dt)
         {
             TIME_FUNCTION_START
 
             // If player is created we can update it
-            if(m_player.IsCreated)
+            if(m_player->IsCreated)
             {
-                UpdatePlayerPositions(&m_player);
-                UpdatePlayerRotations(&m_player);
-                UpdateFiring(&m_player);
+                UpdatePlayerPositions(m_player);
+                UpdatePlayerRotations(m_player);
+                UpdateFiring(m_player);
             }
 
             TIME_FUNCTION_STOP
@@ -154,11 +159,11 @@ namespace Doremi
             m_sharedContext.GetInputModule().Update();
 
             // Update the inputhandler
-            InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(m_player.m_inputHandler);
+            InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(m_player->m_inputHandler);
             inputHandler->Update();
 
             // If player is created, I think we want to logg input
-            if(m_player.IsCreated)
+            if(m_player->IsCreated)
             {
                 using namespace Doremi::Utilities::Logging;
                 m_logger->DebugLog(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
@@ -170,14 +175,14 @@ namespace Doremi
 
         void PlayerHandlerClient::SetNewPlayerEntityID(const EntityID& p_entityID)
         {
-            if(m_player.IsCreated)
+            if(m_player->IsCreated)
             {
                 std::runtime_error("Player created multiple times");
             }
 
             // Set id and set it created
-            m_player.IsCreated = true;
-            m_player.m_playerEntityID = p_entityID;
+            m_player->IsCreated = true;
+            m_player->m_playerEntityID = p_entityID;
 
             // Create event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(p_entityID);
@@ -187,7 +192,7 @@ namespace Doremi
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
-        NetworkEventReceiver* PlayerHandlerClient::GetNetworkEventReceiverForPlayer(uint32_t p_playerID) { return m_player.m_networkEventReceiver; }
+        NetworkEventReceiver* PlayerHandlerClient::GetNetworkEventReceiver() { return m_player->m_networkEventReceiver; }
 
         void PlayerHandlerClient::ReadEventsForJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesRead)
         {
@@ -237,7 +242,7 @@ namespace Doremi
             p_streamer.SetReadWritePosition(op_bytesRead);
         }
 
-        bool PlayerHandlerClient::PlayerExists() { return m_player.IsCreated; }
+        bool PlayerHandlerClient::PlayerExists() { return m_player->IsCreated; }
 
         void PlayerHandlerClient::OnEvent(Event* p_event)
         {
@@ -246,9 +251,7 @@ namespace Doremi
                 GunFireToggleEvent* t_gunFireToggleEvent = static_cast<GunFireToggleEvent*>(p_event);
 
                 // If it's not ourselves we fire
-                EntityID t_entityID = 0;
-                GetDefaultPlayerEntityID(t_entityID);
-                if(t_gunFireToggleEvent->entityID != t_entityID)
+                if(m_player->IsCreated && t_gunFireToggleEvent->entityID != m_player->m_playerEntityID)
                 {
                     if(t_gunFireToggleEvent->isFiring)
                     {

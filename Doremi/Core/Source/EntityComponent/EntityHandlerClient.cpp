@@ -43,19 +43,21 @@ namespace Doremi
         {
             if(p_event->eventType == EventType::EntityCreated)
             {
+
                 EntityCreatedEvent* p_entityCreated = (EntityCreatedEvent*)p_event;
+                EntityID t_entityID;
 
                 if(p_entityCreated->bluepirnt == Blueprints::NetworkPlayerEntity)
                 {
                     // Create entity
-                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
-                                                DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
+                                                             DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
                 }
                 else if(p_entityCreated->bluepirnt == Blueprints::PlayerEntity)
                 {
                     // Create entity
-                    EntityID t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position,
-                                                                      p_entityCreated->orientation, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, p_entityCreated->orientation,
+                                                             DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
                     // Create player
                     static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->SetNewPlayerEntityID(t_entityID);
@@ -63,8 +65,12 @@ namespace Doremi
                 else
                 {
                     // Create entity
-                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
+                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
                 }
+
+                static int objectsAdded = 0;
+                cout << objectsAdded << " with id: " << t_entityID << " and blueprint: " << (uint32_t)p_entityCreated->bluepirnt << endl;
+                objectsAdded++;
             }
             else if(p_event->eventType == EventType::RemoveEntity)
             {

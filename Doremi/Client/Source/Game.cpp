@@ -275,8 +275,10 @@ namespace Doremi
             CameraHandler::GetInstance()->UpdateDraw();
 
             Draw(Frame);
+
             // Escape
-            InputHandlerClient* inputHandler = (InputHandlerClient*)PlayerHandler::GetInstance()->GetDefaultInputHandler();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
             if(inputHandler != nullptr)
             {
                 if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::ExitGame))

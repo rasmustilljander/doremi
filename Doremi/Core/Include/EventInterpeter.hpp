@@ -16,7 +16,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
-
+#include <iostream>
 
 namespace Doremi
 {
@@ -101,6 +101,7 @@ namespace Doremi
                     break;
 
                 default:
+                    std::cout << "Warning...warning.. something is wrong.. event not interpeteted right.." << std::endl;
                     p_newEvent = new ExampleEvent();
                     break;
             }
