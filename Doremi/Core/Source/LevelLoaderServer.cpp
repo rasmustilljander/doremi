@@ -28,6 +28,7 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/SubModule/PotentialFieldSubModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
+#include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialField.hpp>
 // Debug?
 #include <PotentialFieldGridCreator.hpp>
 
@@ -71,6 +72,7 @@ namespace Doremi
                 ifs.read((char*)&sceneNameSize, sizeof(int));
                 char* sceneName = new char[sceneNameSize];
                 ifs.read((char*)sceneName, sizeof(char) * sceneNameSize);
+                m_sceneName = sceneName; // this should work even if we delete the char * TODOXX
 
                 // how much different stuff there is
                 int nrMats, nrTransforms, nrMeshes, nrLights;
@@ -90,7 +92,13 @@ namespace Doremi
                 PotentialFieldGridCreator t_gridCreator = PotentialFieldGridCreator(m_sharedContext);
                 for(size_t i = 0; i < length; i++)
                 {
-                    t_gridCreator.BuildGridUsingPhysicXAndGrid(potentialFields[i]);
+                    // Do we really need to update this field?
+                    if(potentialFields[i]->GetNeedUpdating())
+                    {
+                        std::cout << "----------FIELD STARTED-------------- " << std::endl;
+                        t_gridCreator.BuildGridUsingPhysicXAndGrid(potentialFields[i]);
+                        std::cout << "----------FIELD END-------------- " << std::endl;
+                    }
                 }
                 LoadTriggers();
             }
@@ -127,16 +135,27 @@ namespace Doremi
             {
                 // Should build a potential field around this mesh
                 using namespace DirectX;
-                // Get the aabb box around the mesh with a AIGround attribute
-                XMFLOAT3 centerPoint, minPoint, maxPoint;
-                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+                DoremiEngine::AI::PotentialField* field;
 
-                // Set it to the top of the mesh since we bassicly want a 2d field offset to a Y value
-                centerPoint.y = maxPoint.y;
-                // Create a new field with width and height calculated from bounding box.
-                // TODOCONFIG 50, 50 is hardcoded how many quads in x and z. should be calculated from a given quad size instead
-                DoremiEngine::AI::PotentialField* field =
-                    m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z, 50, 50, centerPoint);
+                // The field name, both file name and field name
+                std::string fieldName = m_sceneName + "_" + meshCoupling.transformName;
+                // See if the field already exists in file
+                field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewFieldFromFile(fieldName);
+
+                // The field did not exists, create new
+                if(field == nullptr)
+                {
+                    // Get the aabb box around the mesh with a AIGround attribute
+                    XMFLOAT3 centerPoint, minPoint, maxPoint;
+                    CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+
+                    // Set it to the top of the mesh since we bassicly want a 2d field offset to a Y value
+                    centerPoint.y = maxPoint.y;
+                    // Create a new field with width and height calculated from bounding box.
+                    // TODOCONFIG 50, 50 is hardcoded how many quads in x and z. should be calculated from a given quad size instead
+                    field = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewField(maxPoint.x - minPoint.x, maxPoint.z - minPoint.z,
+                                                                                                      50, 50, centerPoint, fieldName);
+                }
                 if(!transformationData.attributes.isStatic)
                 {
                     EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::PotentialField);

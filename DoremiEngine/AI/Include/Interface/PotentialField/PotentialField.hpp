@@ -30,6 +30,24 @@ namespace DoremiEngine
             virtual void SetNumberOfQuads(const int& p_numberOfQuadsWidth, const int& p_numberOfQuadsHeight) = 0;
 
             /**
+            Set name of the field
+            */
+            virtual void SetName(const std::string& p_name) = 0;
+
+            /**
+            Gets the fields name
+            */
+            virtual const std::string& GetName() const = 0;
+
+            /**
+            Sets if the field needs updating
+            */
+            virtual void SetNeedUpdating(const bool& p_needsUpdating) = 0;
+            /**
+            Gets if the field needs updating
+            */
+            virtual const bool& GetNeedUpdating() const = 0;
+            /**
             Set the quadsize in that field.
             */
             virtual void SetQuadSize(const DirectX::XMFLOAT2& p_quadSize) = 0;

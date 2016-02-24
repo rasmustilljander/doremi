@@ -22,6 +22,10 @@ namespace DoremiEngine
                 m_numberOfQuadsHeight = p_numberOfQuadsHeight;
                 m_numberOfQuadsWidth = p_numberOfQuadsWidth;
             };
+            void SetName(const std::string& p_name) override { m_name = p_name; };
+            const std::string& GetName() const override { return m_name; };
+            void SetNeedUpdating(const bool& p_needsUpdating) override { m_needsUpdate = p_needsUpdating; };
+            const bool& GetNeedUpdating() const override { return m_needsUpdate; };
             const DirectX::XMFLOAT3& GetCenter() const override { return m_center; };
             const DirectX::XMFLOAT2& GetQuadSize() const override { return m_quadSize; };
             const PotentialFieldGridPoint* GetGrid() const override { return m_grid; }
@@ -58,6 +62,9 @@ namespace DoremiEngine
             float m_phermoneEffect;
             AIContext& m_context;
             float m_jumpDistance;
+
+            std::string m_name; // Used as id and to save to correct file
+            bool m_needsUpdate; // used to determine if the field needs updating
         };
     }
 }

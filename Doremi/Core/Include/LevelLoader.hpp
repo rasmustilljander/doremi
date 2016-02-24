@@ -68,6 +68,8 @@ namespace Doremi
 
             // Help functions
 
+            std::string m_sceneName;
+
             std::map<std::string, DoremiEditor::Core::TransformData> m_transforms;
 
             std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!

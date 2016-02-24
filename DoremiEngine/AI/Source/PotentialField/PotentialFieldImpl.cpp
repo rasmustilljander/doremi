@@ -78,6 +78,7 @@ namespace DoremiEngine
                 }
                 std::cout << std::endl;
             }
+            m_needsUpdate = false;
         }
         void PotentialFieldImpl::AddActor(PotentialFieldActor* p_newActor)
         {
@@ -85,6 +86,7 @@ namespace DoremiEngine
             {
                 // The actor is static and not in list
                 m_staticActors.insert(p_newActor);
+                m_needsUpdate = true;
             }
             else if(!p_newActor->IsStatic())
             {

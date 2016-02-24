@@ -17,14 +17,15 @@ namespace DoremiEngine
         {
         public:
             /**
-            Creates a new potential field with no actors
+            Creates a new potential field with no actors.
             */
             virtual PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
-                                                   const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center) = 0;
+                                                   const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center, const std::string& p_fieldName) = 0;
             /**
             Reads field from given .drmpf file and returns the field. The fields have the charges saved but no dynamic or static actors
             The static actors impact on the field is however saved down to the grid which means the actors themself shouldnt
             be requierd. The dynamic actors needs to be added again though after the file is loaded
+            The file name will be the fields name
             Returns nullptr if failed
             */
             virtual PotentialField* CreateNewFieldFromFile(const std::string& p_fileName) = 0;

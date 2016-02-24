@@ -53,17 +53,7 @@ namespace Doremi
                     // 1), boxHalfExtents, materialID);
                     std::vector<int> sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(sweepOrigin, boxHalfExtents);
 
-                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
-                    //                                                                           XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),
-                    //                                                                           materialID);
-                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                    // m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
-                    // std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs(); //
-                    // GetCollisionPairs();
-
-                    // size_t collisionListLength = collisionPairs.size();
                     size_t numberOfHits = sweepHits.size();
-                    // int hej = t_entityHandler.GetInstance().GetLastEntityIndex();
                     for(size_t i = 0; i < numberOfHits; ++i)
                     {
                         int objectID = sweepHits[i];
@@ -83,7 +73,8 @@ namespace Doremi
             }
             // Någon fysikclass ska in
             op_field->Update();
-            std::cout << "Field done " << std::endl;
+
+            m_sharedContext.GetAIModule().GetPotentialFieldSubModule().SaveFieldToFile(*op_field, op_field->GetName());
             // op_field->
         }
     }

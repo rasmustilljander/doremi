@@ -12,7 +12,7 @@ namespace DoremiEngine
             PotentialFieldSubModuleImpl(AIContext& p_aiContext);
             virtual ~PotentialFieldSubModuleImpl();
             PotentialField* CreateNewField(const float& p_width, const float& p_height, const int& p_numberOfQuadsWidth,
-                                           const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center) override;
+                                           const int& p_numberOfQuadsHeight, const DirectX::XMFLOAT3& p_center, const std::string& p_fieldName) override;
             PotentialField* CreateNewFieldFromFile(const std::string& p_fileName) override;
             bool SaveFieldToFile(const PotentialField& p_fieldToSave, const std::string& p_fileName) override;
             PotentialGroup* CreateNewPotentialGroup() override;
