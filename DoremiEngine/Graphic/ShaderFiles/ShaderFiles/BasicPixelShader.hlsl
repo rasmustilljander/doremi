@@ -180,7 +180,7 @@ PixelOutputType PS_main(PixelInputType input)
         glowcolor.g < 0.5 && glowcolor.b < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
-        output.glow = normalize(texcolor) * 2;
+        output.glow = normalize(texcolor) * glowcolor.r;
 
     output.diffuse = float4(rgb, 1) * texcolor * 2.5f;
 
