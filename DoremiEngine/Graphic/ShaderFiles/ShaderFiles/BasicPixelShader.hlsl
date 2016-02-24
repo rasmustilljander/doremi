@@ -38,18 +38,18 @@ struct Light
     float3 pad;
 };
 
-struct MaterialData
-{
-    int mapMasks;
-    float3 color;
-    float diffuse;
-    float3 ambColor;
-    float specCosine;
-    float3 specColor;
-    float specEccentricity;
-    float specRollOff;
-    float2 pad;
-};
+//struct MaterialData
+//{
+//    int mapMasks;
+//    float3 color;
+//    float diffuse;
+//    float3 ambColor;
+//    float specCosine;
+//    float3 specColor;
+//    float specEccentricity;
+//    float specRollOff;
+//    float2 pad;
+//};
 
 struct Plane
 {
@@ -73,16 +73,29 @@ cbuffer LightInfo : register(b0)
     Light light[NUM_LIGHTS];
 };
 
-cbuffer MaterialMessage : register(b1)
+//cbuffer MaterialMessage : register(b1)
+//{
+//    float nodeName;
+//    float diffuseTexturePath;
+//    float glowTexturePath;
+//    float specTexturePath;
+//    float bumpTexturePath;
+//    int type;
+//    float2 pad;
+//    MaterialData materialData;
+//};
+
+cbuffer MaterialData : register(b1)
 {
-    float nodeName;
-    float diffuseTexturePath;
-    float glowTexturePath;
-    float specTexturePath;
-    float bumpTexturePath;
-    int type;
+    int mapMasks;
+    float3 color;
+    float diffuse;
+    float3 ambColor;
+    float specCosine;
+    float3 specColor;
+    float specEccentricity;
+    float specRollOff;
     float2 pad;
-    MaterialData materialData;
 };
 
 Texture2D ObjTexture : register(t0);
@@ -153,8 +166,19 @@ PixelOutputType PS_main(PixelInputType input)
     int index = o_LightGrid[groupID].offset;
     int value = o_LightGrid[groupID].value;
 
-    float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
-    float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
+    float4 texcolor;
+    float4 glowcolor;
+
+    if (mapMasks == 0)
+    {
+        texcolor = float4(color, 1);
+        glowcolor = float4(color, 1);
+    }
+    else 
+    {
+        texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
+        glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
+    }
 
     texcolor = saturate(texcolor);
 

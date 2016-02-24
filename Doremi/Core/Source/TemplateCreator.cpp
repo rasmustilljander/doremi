@@ -44,6 +44,9 @@
 // Timing
 #include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
 
+// Material
+#include <DoremiEditor/Core/Include/MaterialMessage.hpp>
+
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <DirectXMath.h>
@@ -462,8 +465,8 @@ namespace Doremi
 
             // Render
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("Test.dds");
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
             blueprint[ComponentType::Render] = renderComp;
 
             // Net object
@@ -748,8 +751,15 @@ namespace Doremi
 
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
-            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TTbullet.dds");
+            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
+            DoremiEditor::Core::MaterialMessage material;
+            DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
+            data.setColor(0.1, 0.5, 0.9);
+            material.data = data;
+            material.nodeName = "TTBulletMaterial";
+            material.diffuseTexturePath = "Test.dds";
+            material.glowTexturePath = "glow.dds";
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(material);
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
@@ -807,8 +817,8 @@ namespace Doremi
 
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
-            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo("hej");
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("TTbullet.dds");
+            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("hej", 20, 20);
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);

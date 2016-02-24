@@ -628,7 +628,6 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
 
-                std::string textureName = m_materials[meshCoupling.materialName].diffuseTexturePath;
 
                 renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
             }

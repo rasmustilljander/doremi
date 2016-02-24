@@ -93,6 +93,7 @@ namespace DoremiEngine
             int size = sizeof(Vertex) * vertices.size();
 
             o_meshInfo->SetVerticeCount(vertices.size());
+
             D3D11_BUFFER_DESC bd;
             ZeroMemory(&bd, sizeof(bd));
 

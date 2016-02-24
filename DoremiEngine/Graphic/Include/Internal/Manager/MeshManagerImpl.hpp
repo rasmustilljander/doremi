@@ -15,6 +15,7 @@ namespace DoremiEngine
     {
         struct GraphicModuleContext;
         class ModelLoader;
+        // struct MaterialMessage;
         class MeshManagerImpl : public MeshManager
         {
         public:

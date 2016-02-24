@@ -132,7 +132,7 @@ namespace DoremiEngine
             /**
             Updates world matrix
             */
-            void BuildWorldMatrix();
+            void BuildConstantBuffers();
 
             std::vector<MeshRenderData> renderData;
             std::vector<MeshRenderData> transRenderData;
@@ -159,6 +159,7 @@ namespace DoremiEngine
             ID3D11Texture2D* m_renderTargetTexture[2];
             ID3D11DepthStencilView* m_depthView;
             ID3D11Buffer* m_worldMatrix;
+            ID3D11Buffer* m_materialBuffer;
             ID3D11SamplerState* m_defaultSamplerState;
             ID3D11BlendState* m_enableBlendState;
             ID3D11BlendState* m_disableBlendState;

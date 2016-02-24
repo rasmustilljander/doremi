@@ -36,19 +36,6 @@ struct Light
     float3 pad;
 };
 
-struct MaterialData
-{
-    int mapMasks;
-    float3 color;
-    float diffuse;
-    float3 ambColor;
-    float specCosine;
-    float3 specColor;
-    float specEccentricity;
-    float specRollOff;
-    float2 pad;
-};
-
 struct Plane
 {
     float3 N;   // Plane normal.
@@ -65,22 +52,22 @@ StructuredBuffer<uint> t_LightIndexList : register(t2);
 StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
 StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 
-
 cbuffer LightInfo : register(b0)
 {
     Light light[NUM_LIGHTS];
 };
 
-cbuffer MaterialMessage : register(b1)
+cbuffer MaterialData : register(b1)
 {
-    float nodeName;
-    float diffuseTexturePath;
-    float glowTexturePath;
-    float specTexturePath;
-    float bumpTexturePath;
-    int type;
+    int mapMasks;
+    float3 color;
+    float diffuse;
+    float3 ambColor;
+    float specCosine;
+    float3 specColor;
+    float specEccentricity;
+    float specRollOff;
     float2 pad;
-    MaterialData materialData;
 };
 
 Texture2D ObjTexture : register(t0);
@@ -169,8 +156,14 @@ PixelOutputType PS_main(PixelInputType input)
             rgb += CalcPointLight(input, l);
 
     }
-
-    output.diffuse = float4(rgb * 3, 0) + texcolor;
+    if (mapMasks == 0)
+    {
+        output.diffuse = float4(color, 1);
+    }
+    else
+    {
+        output.diffuse = float4(rgb * 3, 0) + texcolor;
+    }
 
     return output;
 
