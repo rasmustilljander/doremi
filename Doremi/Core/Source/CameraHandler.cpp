@@ -136,5 +136,20 @@ namespace Doremi
             }
             // TODO Returnpath
         }
+        const DoremiEngine::Graphic::Camera& CameraHandler::GetActiveCamera()
+        {
+            switch(m_currentCamera)
+            {
+                case Doremi::Core::CameraType::FREELOOK:
+                    return m_freeLookCamera->GetCamera();
+                    break;
+                case Doremi::Core::CameraType::THIRDPERSON:
+                    return m_thirdPersonCamera->GetCamera();
+                    break;
+                default:
+                    break;
+            }
+        }
+        const DoremiEngine::Graphic::Camera& CameraHandler::GetThirdPersonCamera() { return m_thirdPersonCamera->GetCamera(); }
     }
 }
