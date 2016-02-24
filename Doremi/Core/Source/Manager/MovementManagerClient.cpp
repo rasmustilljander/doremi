@@ -46,10 +46,11 @@ namespace Doremi
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
                     DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
+                    /// 1 Get comp
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
 
 
-                    /// Fix so we don't move uber-fast
+                    ///  2 Clamp speed
                     // Clamp down XZ movement to maximum movement speed (we don't mess with y due to jump/gravity)
                     XMVECTOR movementXZVec = XMLoadFloat2(&XMFLOAT2(movementComp->movement.x, movementComp->movement.z));
                     movementXZVec = XMVector2ClampLength(movementXZVec, 0, 0.8f);
@@ -59,8 +60,8 @@ namespace Doremi
                     movementComp->movement.x = movementXZ.x;
                     movementComp->movement.z = movementXZ.y;
 
-
-                    // If player exist and we're player
+                    /// 3 Move controller
+                    // If player exist and we're player, confirm move with server
                     if(playerExist && p_playerEntityID == i)
                     {
                         XMFLOAT3 position = charControlManager.GetPosition(i);
@@ -69,17 +70,18 @@ namespace Doremi
                         PositionCorrectionHandler::GetInstance()->QueuePlayerPositionForCheck(position, orientation, movementComp->movement,
                                                                                               InterpolationHandler::GetInstance()->GetRealSnapshotSequence());
                     }
-
+                    // Perform move
                     bool hitGround = charControlManager.MoveController(i, movementComp->movement, p_dt);
                     if(hitGround)
                     {
                         EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i)->travelSpeed = 0;
                     }
 
+                    /// 4 Fix speed for next iteration
                     // If we're sliding around, only reduce speed, don't entierly reset it
                     if(iceEffect)
                     {
-                        float iceSlowdownFactor = 0.9f * 1 - p_dt;
+                        float iceSlowdownFactor = 0.99f * (1 - p_dt);
                         movementComp->movement.x *= iceSlowdownFactor;
                         movementComp->movement.z *= iceSlowdownFactor;
                     }
