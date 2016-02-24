@@ -15,7 +15,7 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 3;
+            m_treeDepth = 2;
 
             // Set the box for the world
             treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
@@ -109,11 +109,13 @@ namespace Doremi
                                 if (m_currentNode->depth == 0)
                                 {
                                     // Is done
+                            m_currentNode->loopInfo = 0;
                                     t_isDone = true;
                                 }
                                 else
                                 {
                                     // Maybe remove everyone in the nodelist of objects.
+                            m_currentNode->loopInfo = 0;
                                     m_currentNode = m_currentNode->parent;
                                 }
                             }
@@ -131,6 +133,7 @@ namespace Doremi
                                     m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
                                 }
                             }
+                            m_currentNode->loopInfo = 0;
                             m_currentNode = m_currentNode->parent;
                         }
                     }       
@@ -140,11 +143,13 @@ namespace Doremi
                         if (m_currentNode->depth < m_treeDepth - 1)
                         {
                             m_currentNode->empty = true;
+                            m_currentNode->loopInfo = 0;
                             m_currentNode = m_currentNode->parent;
 
                         }
                         else
                         {
+                            m_currentNode->loopInfo = 0;
                             m_currentNode = m_currentNode->parent;
                         }
                     }

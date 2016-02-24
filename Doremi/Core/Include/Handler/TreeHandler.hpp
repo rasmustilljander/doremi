@@ -27,18 +27,20 @@ namespace Doremi
 
             void BuildTheTree();
 
-            void Update();
+            std::vector<uint32_t> Update();
 
             void OnEvent(Event* p_event) override;
 
         private:
             TreeHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~TreeHandler();
-            void TrimTheTree();
             static TreeHandler* m_singleton;
             std::vector<uint32_t> m_objectsToDraw;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             TreeCreator* m_treeCreator;
+            uint32_t m_viewDist;
+            DirectX::XMFLOAT4 m_planes[6];
+            bool CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions);
         };
     }
 }
