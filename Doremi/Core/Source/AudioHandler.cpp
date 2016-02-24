@@ -273,8 +273,11 @@ namespace Doremi
 
                 if(t_stateEvent->state == DoremiStates::RUNGAME)
                 {
-                    DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
-                    t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
+                    if(m_backgroundSounds.count(BackgroundSound::InGameMainTheme) != 0)
+                    {
+                        DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                        t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
+                    }
                 }
             }
         }
