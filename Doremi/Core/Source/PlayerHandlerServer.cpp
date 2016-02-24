@@ -74,37 +74,106 @@ namespace Doremi
             }
             m_singleton = new PlayerHandlerServer(p_sharedContext);
         }
+        std::map<uint32_t, PlayerServer*>& PlayerHandlerServer::GetPlayerMap() { return m_playerMap; }
+
+        bool PlayerHandlerServer::GetEntityIDForPlayer(uint32_t p_playerID, EntityID& outID)
+        {
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
+
+            if(iter != m_playerMap.end())
+            {
+                outID = iter->second->m_playerEntityID;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        InputHandler* PlayerHandlerServer::GetInputHandlerForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
+
+            InputHandler* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_inputHandler;
+            }
+
+            return outPointer;
+        }
+
+        FrequencyBufferHandler* PlayerHandlerServer::GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID)
+        {
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
+
+            FrequencyBufferHandler* outPointer = nullptr;
+
+            if(iter != m_playerMap.end())
+            {
+                outPointer = iter->second->m_frequencyBufferHandler;
+            }
+
+            return outPointer;
+        }
+
+        bool PlayerHandlerServer::IsPlayer(EntityID p_entityID)
+        {
+            for(std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            {
+                if(iter->second->m_playerEntityID == p_entityID)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         void PlayerHandlerServer::Update(double p_dt)
         {
             TIME_FUNCTION_START
-            UpdatePlayerInputs();
-            UpdatePlayerPositions();
-            UpdatePlayerRotationsServer();
-            UpdateFiring();
-            UpdateNetworkObjectPriority(p_dt);
 
-            // Hotfix
-            std::map<uint32_t, Player*>::iterator iter;
-
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            // Update all players
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_frequencyBufferHandler->Update();
+                UpdatePlayerInputs(t_player.second);
+                UpdatePlayerPositions(t_player.second);
+                UpdatePlayerRotations(t_player.second);
+                UpdateFiring(t_player.second);
+                UpdateNetworkObjectPriority(t_player.second, p_dt);
+                t_player.second->m_frequencyBufferHandler->Update();
             }
 
 
             TIME_FUNCTION_STOP
         }
 
-        void PlayerHandlerServer::UpdatePlayerInputs()
+        void PlayerHandlerServer::UpdatePlayerInputs(Player* t_player)
         {
             TIME_FUNCTION_START
-            std::map<uint32_t, Player*>::iterator iter;
 
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+                ((InputHandlerServer*)t_player->m_inputHandler)
+                    ->Update(t_player->m_playerEntityID);
+
+            TIME_FUNCTION_STOP
+        }
+
+        void PlayerHandlerServer::UpdatePlayerRotations(Player* t_player)
+        {
+            TIME_FUNCTION_START
+
+            InputHandlerServer* inputHandler = (InputHandlerServer*)t_player->m_inputHandler;
+
+            EntityID entityID = t_player->m_playerEntityID;
+
+            if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
             {
-                ((InputHandlerServer*)iter->second->m_inputHandler)->Update(iter->second->m_playerEntityID);
+                TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
+                transComp->rotation = inputHandler->GetOrientationFromInput();
             }
+
             TIME_FUNCTION_STOP
         }
 
@@ -230,7 +299,7 @@ namespace Doremi
 
         bool PlayerHandlerServer::ActivePlayerIDExists(const uint32_t& p_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
             if(iter != m_playerMap.end())
             {
                 cout << "Found active playerID..." << endl;
@@ -242,7 +311,7 @@ namespace Doremi
 
         uint32_t PlayerHandlerServer::GetMaxEventForPlayer(uint32_t p_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
 
             NetworkEventSender* outPointer = nullptr;
 
@@ -256,7 +325,7 @@ namespace Doremi
 
         NetworkEventSender* PlayerHandlerServer::GetNetworkEventSenderForPlayer(uint32_t p_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
 
             NetworkEventSender* outPointer = nullptr;
 
@@ -270,7 +339,7 @@ namespace Doremi
 
         NetworkPriorityHandler* PlayerHandlerServer::GetNetworkPriorityHandlerForplayer(uint32_t p_playerID)
         {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
+            std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
 
             NetworkPriorityHandler* outPointer = nullptr;
 
@@ -282,21 +351,16 @@ namespace Doremi
             return outPointer;
         }
 
-        void PlayerHandlerServer::UpdateNetworkObjectPriority(double p_dt)
+        void PlayerHandlerServer::UpdateNetworkObjectPriority(Player* t_player, double p_dt)
         {
-            // For each player we update their networkobj priorities
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
-            {
-                (static_cast<PlayerServer*>(iter->second))->m_networkPriorityHandler->Update(iter->second->m_playerEntityID, p_dt);
-            }
+            (static_cast<PlayerServer*>(t_player))->m_networkPriorityHandler->Update(t_player->m_playerEntityID, p_dt);
         }
 
         void PlayerHandlerServer::AddNetObjectToPlayers(const EntityID& p_entityID)
         {
-            for(auto& i : m_playerMap)
+            for(auto& t_player : m_playerMap)
             {
-                static_cast<PlayerServer*>(i.second)->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
+                t_player.second->m_networkPriorityHandler->UpdateNetworkObject(p_entityID);
             }
         }
 
@@ -433,18 +497,17 @@ namespace Doremi
             }
 
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
                 Blueprints blueprint = p_entityCreatedEvent->bluepirnt;
 
                 // If we create a player entity, we want to create a network player on other clients
-                if(blueprint == Blueprints::PlayerEntity && !p_entityCreatedEvent->entityID == iter->second->m_playerEntityID)
+                if(blueprint == Blueprints::PlayerEntity && !p_entityCreatedEvent->entityID == t_player.second->m_playerEntityID)
                 {
                     blueprint = Blueprints::NetworkPlayerEntity;
                 }
 
-                (static_cast<PlayerServer*>(iter->second))
+                (static_cast<PlayerServer*>(t_player.second))
                     ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint,
                                                                                      p_entityCreatedEvent->position, p_entityCreatedEvent->orientation));
             }
@@ -464,10 +527,9 @@ namespace Doremi
         void PlayerHandlerServer::QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new RemoveEntityEvent(*p_removeEvent));
+                t_player.second->m_networkEventSender->QueueEventToFrame(new RemoveEntityEvent(*p_removeEvent));
             }
 
             // Save it for later joins
@@ -477,44 +539,40 @@ namespace Doremi
         void PlayerHandlerServer::QueuePlayerRespawnEventToPlayers(PlayerRespawnEvent* p_playerRespawnEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new PlayerRespawnEvent(*p_playerRespawnEvent));
+                t_player.second->m_networkEventSender->QueueEventToFrame(new PlayerRespawnEvent(*p_playerRespawnEvent));
             }
         }
 
         void PlayerHandlerServer::QueueGunFireToggleEventToPlayers(GunFireToggleEvent* t_gunFireToggleEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                if(iter->second->m_playerEntityID == t_gunFireToggleEvent->entityID)
+                if(t_player.second->m_playerEntityID == t_gunFireToggleEvent->entityID)
                 {
                     continue;
                 }
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new GunFireToggleEvent(*t_gunFireToggleEvent));
+                (static_cast<PlayerServer*>(t_player.second))->m_networkEventSender->QueueEventToFrame(new GunFireToggleEvent(*t_gunFireToggleEvent));
             }
         }
 
         void PlayerHandlerServer::QueueSetHealthEventToPlayers(SetHealthEvent* t_setHealthEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new SetHealthEvent(*t_setHealthEvent));
+                (static_cast<PlayerServer*>(t_player.second))->m_networkEventSender->QueueEventToFrame(new SetHealthEvent(*t_setHealthEvent));
             }
         }
 
         void PlayerHandlerServer::QueueSetTransformEventToPlayers(SetTransformEvent* t_setTransformEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new SetTransformEvent(*t_setTransformEvent));
+                t_player.second->m_networkEventSender->QueueEventToFrame(new SetTransformEvent(*t_setTransformEvent));
             }
         }
 

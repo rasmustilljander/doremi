@@ -12,6 +12,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 
 namespace Doremi
 {
@@ -115,6 +116,8 @@ namespace Doremi
 
             DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
             EntityHandler& entityHandler = EntityHandler::GetInstance();
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
             size_t NumEntities = entityHandler.GetLastEntityIndex();
             int mask = (int)ComponentType::NetworkObject | (int)ComponentType::Transform;
 
@@ -289,12 +292,11 @@ namespace Doremi
                         }
                     }
 
-                    // Check if we have a player, should always have a player if we have a snapshot
-                    // TODOCM not to nice check if we have player, maybe remove or change
-                    std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
-                    if(playerMap.begin() != playerMap.end())
+                    // If player exist, we interpolate it
+
+                    if(t_playerHandler->PlayerExists())
                     {
-                        PositionCorrectionHandler::GetInstance()->InterpolatePositionFromServer(playerMap.begin()->first, SnapshotToUse->PlayerPositionToCheck,
+                        PositionCorrectionHandler::GetInstance()->InterpolatePositionFromServer(SnapshotToUse->PlayerPositionToCheck,
                                                                                                 SnapshotToUse->SequenceToCheckPosAgainst);
                     }
 
@@ -330,11 +332,9 @@ namespace Doremi
                     }
 
                     // Check if we have a player, and move update the next transform
-                    // TODOCM not to nice check if we have player, maybe remove or change
-                    std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
-                    if(playerMap.begin() != playerMap.end())
+                    if(t_playerHandler->PlayerExists())
                     {
-                        PositionCorrectionHandler::GetInstance()->ExtrapolatePosition(playerMap.begin()->first);
+                        PositionCorrectionHandler::GetInstance()->ExtrapolatePosition();
                     }
                 }
             }
@@ -344,11 +344,9 @@ namespace Doremi
                 // std::cout << "Doing a long interpolation..." << std::endl;
 
                 // Check if we have a player, and move update the next transform
-                // TODOCM not to nice check if we have player, maybe remove or change
-                std::map<uint32_t, Player*>& playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
-                if(playerMap.begin() != playerMap.end())
+                if(t_playerHandler->PlayerExists())
                 {
-                    PositionCorrectionHandler::GetInstance()->ExtrapolatePosition(playerMap.begin()->first);
+                    PositionCorrectionHandler::GetInstance()->ExtrapolatePosition();
                 }
             }
             m_snapshotSequenceReal++;

@@ -60,7 +60,6 @@ namespace Doremi
         }
         void StateHandler::OnEvent(Event* p_event)
         {
-            std::map<uint32_t, Player*> t_players = PlayerHandler::GetInstance()->GetPlayerMap();
             if(p_event->eventType == EventType::ChangeMenuState)
             {
                 ChangeMenuState* realEvent = static_cast<ChangeMenuState*>(p_event);

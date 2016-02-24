@@ -41,8 +41,7 @@ namespace Doremi
                   m_autoRetardation(50.0f),
                   m_inputHandler(p_inputHandler),
                   m_frequencyBufferHandler(p_frequencyBufferHandler),
-                  m_turnSpeed(0.01f),
-                  m_isFullyInitialized(true)
+                  m_turnSpeed(0.01f)
             {
             }
             ~Player()
@@ -86,11 +85,6 @@ namespace Doremi
                 TODOEA doc
             */
             float m_turnSpeed;
-
-            /**
-                TODOCM doc
-            */
-            bool m_isFullyInitialized;
         };
 
         /**
@@ -115,88 +109,21 @@ namespace Doremi
             ~PlayerHandler();
 
             /**
-                TODOEA doc
-            */
-            InputHandler* GetDefaultInputHandler();
-
-            /**
-                TODOCM doc
-            */
-            FrequencyBufferHandler* GetDefaultFrequencyBufferHandler();
-
-            /**
-                TODOCM doc
-            */
-            FrequencyBufferHandler* GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID);
-
-            /**
-                TODOCM doc
-            */
-            bool GetDefaultPlayerEntityID(EntityID& o_outID);
-
-            /**
-                TODOCM doc
-            */
-            bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID& p_entityID);
-
-            /**
-                TODOCM doc
-            */
-            InputHandler* GetInputHandlerForPlayer(uint32_t p_playerID);
-
-
-            /**
                 TODOCM doc
             */
             virtual void Update(double p_dt) = 0;
 
-            /**
-                TODOCM doc
-            */
-            virtual void UpdatePlayerInputs() = 0;
-
-            /**
-            TODOCM doc
-            TODOCM maybe change the way a player is created due to the need of external creation of inputHandler cause of difference in client and
-            server
-            */
-            virtual void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) = 0;
-
-            /**
-                TODOCM doc
-            */
-            uint32_t GetNumOfPlayers();
-
-            /**
-                Check if entityID belongs to player
-            */
-            bool IsPlayer(EntityID p_entityID);
-
-            /**
-                Returns the map of players
-            */
-            std::map<uint32_t, Player*>& GetPlayerMap();
 
         protected:
             /**
                 TODOEA doc
             */
-            void UpdatePlayerPositions();
+            void UpdatePlayerPositions(Player* p_player);
 
             /**
                 TODOCM doc
             */
-            void UpdatePlayerRotationsClient();
-
-            /**
-                TODOCM doc
-            */
-            void UpdatePlayerRotationsServer();
-
-            /**
-                TODOCM doc
-            */
-            void UpdateFiring();
+            void UpdateFiring(Player* p_player);
 
             /**
                 TODOCM doc
@@ -212,16 +139,6 @@ namespace Doremi
                 TODOEA doc
             */
             GunController m_gunController;
-
-            /**
-                Map from playerID to player struct, playerID != EntityID
-            */
-            std::map<uint32_t, Player*> m_playerMap;
-
-        private:
-            // TODOEA add these attributes?
-            // int m_bodyID;
-            // int m_materialID;
         };
     }
 }

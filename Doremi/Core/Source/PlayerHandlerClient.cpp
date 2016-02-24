@@ -59,6 +59,14 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::SetHealth, this);
             EventHandler::GetInstance()->Subscribe(EventType::SetTransform, this);
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
+
+            InputHandlerClient* m_inputHandler = new InputHandlerClient(p_sharedContext);
+            ;
+            NetworkEventReceiver* newNetworkEventReceiver = new NetworkEventReceiver();
+            FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
+
+            // Create player object thing
+            m_player = PlayerClient(0, m_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
         }
 
         PlayerHandlerClient::~PlayerHandlerClient()
@@ -75,12 +83,68 @@ namespace Doremi
             m_singleton = new PlayerHandlerClient(p_sharedContext);
         }
 
+
+        EntityID PlayerHandlerClient::GetPlayerEntityID() { return m_player.m_playerEntityID; }
+
         void PlayerHandlerClient::Update(double p_dt)
         {
             TIME_FUNCTION_START
-            UpdatePlayerPositions();
-            UpdatePlayerRotationsClient();
-            UpdateFiring();
+
+            // If player is created we can update it
+            if(m_player.IsCreated)
+            {
+                UpdatePlayerPositions(&m_player);
+                UpdatePlayerRotations(&m_player);
+                UpdateFiring(&m_player);
+            }
+
+            TIME_FUNCTION_STOP
+        }
+
+        void PlayerHandlerClient::UpdatePlayerRotations(Player* p_player)
+        {
+            TIME_FUNCTION_START
+
+            InputHandlerClient* inputHandler = (InputHandlerClient*)p_player->m_inputHandler;
+
+            EntityID entityID = p_player->m_playerEntityID;
+
+            if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
+            {
+                /// Handle mouse input
+                // Get mouse input
+                int t_mouseMovementX = inputHandler->GetMouseMovementX();
+                if(t_mouseMovementX)
+                {
+                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
+                    // Get direction
+                    XMFLOAT4 orientation = transComp->rotation;
+
+                    // Create rotation matrix with orientation quaternion
+                    XMVECTOR orientationVec = XMLoadFloat4(&orientation);
+
+                    // Get current angle
+                    float angle;
+                    XMVECTOR oldDir; // This really is only needed for the parameter below...
+                    XMQuaternionToAxisAngle(&oldDir, &angle, orientationVec);
+                    // Change the angle
+                    angle += t_mouseMovementX * p_player->m_turnSpeed;
+                    // Single quaternions don't really like angles over 2*pi, we do this
+                    if(angle > 2.0f * 3.1415f)
+                    {
+                        angle -= 2.0f * 3.1415f;
+                    }
+                    else if(angle < 0)
+                    {
+                        angle += 2.0f * 3.1415f;
+                    }
+                    // Create a new quaternion with the new angle
+                    orientationVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angle);
+                    // Store results
+                    XMStoreFloat4(&transComp->rotation, orientationVec);
+                }
+            }
+
             TIME_FUNCTION_STOP
         }
 
@@ -89,65 +153,41 @@ namespace Doremi
             TIME_FUNCTION_START
             m_sharedContext.GetInputModule().Update();
 
-            for(auto& input : m_playerMap)
+            // Update the inputhandler
+            InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(m_player.m_inputHandler);
+            inputHandler->Update();
+
+            // If player is created, I think we want to logg input
+            if(m_player.IsCreated)
             {
                 using namespace Doremi::Utilities::Logging;
-                InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(input.second->m_inputHandler);
-                inputHandler->Update();
                 m_logger->DebugLog(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
-                                   inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
+                    inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
             }
+
             TIME_FUNCTION_STOP
-        }
-
-        void PlayerHandlerClient::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)
-        {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-            if(iter != m_playerMap.end())
-            {
-                std::runtime_error("Creating player twice with same ID.");
-            }
-
-            //// TODOCM hard coded entityID for new players
-            // DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(5.0f, 30.0f, 0.0f);
-            // EntityID t_EntityID =
-            //    EntityHandler::GetInstance().CreateEntity(Blueprints::PlayerEntity, position, XMFLOAT4(0, 0, 0, 1), XMFLOAT3(0.25, 0.25, 0.25));
-
-            NetworkEventReceiver* newNetworkEventReceiver = new NetworkEventReceiver();
-            FrequencyBufferHandler* newFrequencyHandler = new FrequencyBufferHandler();
-
-            Player* NewPlayer = new PlayerClient(0, p_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
-            NewPlayer->m_isFullyInitialized = false;
-
-            m_playerMap[p_playerID] = NewPlayer;
         }
 
         void PlayerHandlerClient::SetNewPlayerEntityID(const EntityID& p_entityID)
         {
-            m_playerMap.begin()->second->m_playerEntityID = p_entityID;
-            m_playerMap.begin()->second->m_isFullyInitialized = true;
+            if(m_player.IsCreated)
+            {
+                std::runtime_error("Player created multiple times");
+            }
+
+            // Set id and set it created
+            m_player.IsCreated = true;
+            m_player.m_playerEntityID = p_entityID;
 
             // Create event
             PlayerCreationEvent* playerCreateEvent = new PlayerCreationEvent(p_entityID);
 
             // Broadcast event
+            // TODOXX If we create this event on server and send this might be removed
             EventHandler::GetInstance()->BroadcastEvent(playerCreateEvent);
         }
 
-        NetworkEventReceiver* PlayerHandlerClient::GetNetworkEventReceiverForPlayer(uint32_t p_playerID)
-        {
-            std::map<uint32_t, Player*>::iterator iter = m_playerMap.find(p_playerID);
-
-            NetworkEventReceiver* outPointer = nullptr;
-
-            if(iter != m_playerMap.end())
-            {
-                outPointer = (static_cast<PlayerClient*>(iter->second))->m_networkEventReceiver;
-            }
-
-            return outPointer;
-        }
+        NetworkEventReceiver* PlayerHandlerClient::GetNetworkEventReceiverForPlayer(uint32_t p_playerID) { return m_player.m_networkEventReceiver; }
 
         void PlayerHandlerClient::ReadEventsForJoin(NetworkStreamer& p_streamer, const uint32_t& p_bufferSize, uint32_t& op_bytesRead)
         {
@@ -196,6 +236,8 @@ namespace Doremi
             // Set position back
             p_streamer.SetReadWritePosition(op_bytesRead);
         }
+
+        bool PlayerHandlerClient::PlayerExists() { return m_player.IsCreated; }
 
         void PlayerHandlerClient::OnEvent(Event* p_event)
         {

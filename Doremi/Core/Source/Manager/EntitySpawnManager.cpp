@@ -5,7 +5,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/EntityHandlerServer.hpp>
 #include <EventHandler/EventHandler.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerServer.hpp>
 // Components
 #include <EntityComponent/Components/EntitySpawnerComponent.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
@@ -52,6 +52,10 @@ namespace Doremi
         {
             static int DEBUGcount = 0;
             EntityHandler& entityHandler = EntityHandler::GetInstance();
+
+            // if there are any players
+            bool t_playersExist = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap().size() > 0;
+
             // Loop through all entities
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             for(size_t i = 0; i < length; i++)
@@ -70,7 +74,7 @@ namespace Doremi
                         if(spawnComp->timeSinceLastSpawn >= spawnComp->timeBetweenSpawns && spawnComp->currentNumSpawnedEntities < spawnComp->maxNumSpawnedEntites)
                         {
                             // Hax to ensure nothing spawns when no players are active, which apparently is a no-can-do
-                            if(PlayerHandler::GetInstance()->GetPlayerMap().size() > 0)
+                            if(t_playersExist)
                             {
                                 // We should spawn something
                                 CreateEntity(spawnComp->entityBlueprint, i);

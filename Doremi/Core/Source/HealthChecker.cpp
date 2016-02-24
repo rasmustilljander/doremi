@@ -3,7 +3,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/RemoveEntityEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
@@ -29,7 +29,7 @@ namespace Doremi
         void HealthChecker::Update()
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
-            PlayerHandler* t_playerHandler = PlayerHandler::GetInstance();
+            PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
             PlayerSpawnerHandler* t_playerRespawnHandler = PlayerSpawnerHandler::GetInstance();
 
             size_t NumEntities = t_entityHandler.GetLastEntityIndex();

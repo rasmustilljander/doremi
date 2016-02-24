@@ -1,5 +1,5 @@
 #include <PositionCorrectionHandler.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -41,14 +41,9 @@ namespace Doremi
 
         PositionCorrectionHandler::~PositionCorrectionHandler() {}
 
-        void PositionCorrectionHandler::InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
+        void PositionCorrectionHandler::InterpolatePositionFromServer(DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition)
         {
-            EntityID playerEntityID = 0;
-            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerEntityID))
-            {
-                // std::cout << "Error player entityID in PositionCorrectionHandler" << std::endl;
-                return;
-            }
+            EntityID playerEntityID = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetPlayerEntityID();
 
             DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
 
@@ -87,18 +82,13 @@ namespace Doremi
                 TransformComponentNext(charControlManager.GetPosition(playerEntityID), realTrans->rotation, realTrans->scale);
         }
 
-        void PositionCorrectionHandler::ExtrapolatePosition(uint32_t p_playerID)
+        void PositionCorrectionHandler::ExtrapolatePosition()
         {
             // TODOCM this doesn't really extrapolate, but sets the position with movement it should interpolate
             // Could in some way fix this if we save the position we get corrected from each frame, and see if there's a movement, then use this to
             // extrapolate
             // Get player Entity ID
-            EntityID playerEntityID = 0;
-            if(!PlayerHandler::GetInstance()->GetDefaultPlayerEntityID(playerEntityID))
-            {
-                // std::cout << "Error player entityID in PositionCorrectionHandler, might not be an error right now" << std::endl;
-                return;
-            }
+            EntityID playerEntityID = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetPlayerEntityID();
 
             DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
 

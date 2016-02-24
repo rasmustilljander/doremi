@@ -322,7 +322,7 @@ namespace Doremi
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
-        Core::PlayerHandler::GetInstance()->UpdatePlayerInputs();
+        static_cast<PlayerHandlerClient*>(Core::PlayerHandler::GetInstance())->UpdatePlayerInputs();
 
         AudioHandler::GetInstance()->Update(p_deltaTime);
 

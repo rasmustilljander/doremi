@@ -7,7 +7,7 @@
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/PlatformPatrolComponent.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/Helper/ProximityChecker.hpp>
 #include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 
@@ -35,7 +35,7 @@ namespace Doremi
         void FrequencyAffectedObjectManager::Update(double p_dt)
         {
             // First get the playermap from player handler
-            std::map<uint32_t, Player*> t_playerMap = PlayerHandler::GetInstance()->GetPlayerMap();
+            std::map<uint32_t, PlayerServer*> t_playerMap = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
 
             /*for(auto playerID = t_playerMap.begin(); playerID != t_playerMap.end(); playerID++)*/
 

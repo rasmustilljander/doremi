@@ -11,7 +11,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <iostream>
 
 namespace Doremi
@@ -85,7 +85,7 @@ namespace Doremi
                 // If spawn point trigger
                 if(t_triggEvent->triggerType == TriggerType::NewSpawnPointTrigger)
                 {
-                    if(PlayerHandler::GetInstance()->IsPlayer(t_triggEvent->objectEntityID))
+                    if(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->IsPlayer(t_triggEvent->objectEntityID))
                     {
                         // Could get who got the spawner here as well? If we want player specific spawners
                         m_currentPlayerSpawner = t_triggEvent->triggerEntityID;

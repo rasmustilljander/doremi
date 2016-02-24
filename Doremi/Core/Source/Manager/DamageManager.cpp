@@ -1,6 +1,6 @@
 /// Project
 #include <Manager/DamageManager.hpp>
-#include <PlayerHandler.hpp>
+#include <PlayerHandlerServer.hpp>
 // Components
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/EntityTypeComponent.hpp>
@@ -38,7 +38,7 @@ namespace Doremi
         DamageManager::~DamageManager() {}
         void DamageManager::Update(double p_dt)
         {
-            std::map<uint32_t, Player*> t_players = PlayerHandler::GetInstance()->GetPlayerMap();
+            std::map<uint32_t, PlayerServer*> t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Check if the player was hit by any enemy bullet
@@ -160,7 +160,7 @@ namespace Doremi
                 {
                     if(EntityHandler::GetInstance().HasComponents(t_triggerEvent->objectEntityID, static_cast<uint32_t>(ComponentType::Health)))
                     {
-                        if(PlayerHandler::GetInstance()->IsPlayer(t_triggerEvent->objectEntityID))
+                        if(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->IsPlayer(t_triggerEvent->objectEntityID))
                         {
                             PlayerSpawnerHandler::GetInstance()->RespawnPlayer(t_triggerEvent->objectEntityID);
 

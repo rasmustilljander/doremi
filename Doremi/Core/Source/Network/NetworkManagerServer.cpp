@@ -260,6 +260,7 @@ namespace Doremi
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
             NetworkConnectionsServer* t_netConnections = NetworkConnectionsServer::GetInstance();
+            PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
 
             // Get values
             SocketHandle t_connectedSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectedSocketHandle();
@@ -298,7 +299,7 @@ namespace Doremi
                         InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                         // Create player
-                        PlayerHandler::GetInstance()->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
+                        t_playerHandler->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
 
                         // Upgrade connection to connected
                         t_netConnections->SetConnecting(t_connection);

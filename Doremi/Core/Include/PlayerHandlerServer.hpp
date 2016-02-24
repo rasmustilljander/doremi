@@ -99,11 +99,23 @@ namespace Doremi
 
             static void StartPlayerHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            std::map<uint32_t, PlayerServer*>& GetPlayerMap();
+
+            bool GetEntityIDForPlayer(uint32_t p_playerID, EntityID& outID);
+
+            InputHandler* GetInputHandlerForPlayer(uint32_t p_playerID);
+
+            FrequencyBufferHandler* GetFrequencyBufferHandlerForPlayer(uint32_t p_playerID);
+
+            bool IsPlayer(EntityID p_entityID);
+
             void Update(double p_dt) override;
 
-            void UpdatePlayerInputs() override;
+            void UpdatePlayerInputs(Player* t_player);
 
-            void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler) override;
+            void UpdatePlayerRotations(Player* t_player);
+
+            void CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler);
 
             void RemoveAndSavePlayer(uint32_t p_playerID);
 
@@ -120,7 +132,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void UpdateNetworkObjectPriority(double p_dt);
+            void UpdateNetworkObjectPriority(Player* t_player, double p_dt);
 
             /**
                 TODOCM doc
@@ -194,6 +206,11 @@ namespace Doremi
                 TODOCM doc
             */
             std::map<uint32_t, InactivePlayerServer*> m_inactivePlayers;
+
+            /**
+                Map from playerID to player struct, playerID != EntityID
+            */
+            std::map<uint32_t, PlayerServer*> m_playerMap;
         };
     }
 }

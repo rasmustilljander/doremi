@@ -52,12 +52,12 @@ namespace Doremi
             /**
                 Checks a position retrieved from server and sets the correction to the next interpolation goal
             */
-            void InterpolatePositionFromServer(uint32_t p_playerID, DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
+            void InterpolatePositionFromServer(DirectX::XMFLOAT3 p_positionToCheck, uint8_t p_sequenceOfPosition);
 
             /**
                 Doesn't extrapolate for now, but actually applies the physics position to the transform
             */
-            void ExtrapolatePosition(uint32_t p_playerEntityID);
+            void ExtrapolatePosition();
 
             /**
                 Queues position and movement, used as we check vs server later

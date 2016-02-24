@@ -255,7 +255,7 @@ namespace Doremi
                 }
             }
             // Send frequence to buffer
-            FrequencyBufferHandler* freqBufferHandler = PlayerHandler::GetInstance()->GetDefaultFrequencyBufferHandler();
+            FrequencyBufferHandler* freqBufferHandler = PlayerHandlerClient::GetInstance()->GetDefaultFrequencyBufferHandler();
             if(freqBufferHandler != nullptr)
             {
                 freqBufferHandler->BufferFrequency(m_currentFrequency);
