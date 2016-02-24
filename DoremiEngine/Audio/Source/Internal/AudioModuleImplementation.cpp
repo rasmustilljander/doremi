@@ -232,6 +232,11 @@ namespace DoremiEngine
 
         void AudioModuleImplementation::PlayASound(int p_soundID, bool p_loop, int& p_channelID)
         {
+            if(p_soundID < 0 || p_soundID >= m_fmodSoundBuffer.size())
+            {
+                // TODOKO log error, no sound with that id
+                return;
+            }
             if(p_loop)
             {
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_NORMAL);
@@ -283,6 +288,10 @@ namespace DoremiEngine
 
         int AudioModuleImplementation::SetVolumeOnChannel(const int& p_channelID, float p_volume)
         {
+            if(p_channelID < 0 || p_channelID >= m_fmodSoundBuffer.size())
+            {
+                return 0;
+            }
             m_fmodChannel[p_channelID]->setVolume(p_volume);
             return 0;
         }

@@ -196,7 +196,7 @@ namespace Doremi
                 {
                     // A bit stupid... we send a event to our own class to play a sound when we take damage...
                     DamageTakenEvent* t_event = static_cast<DamageTakenEvent*>(p_event);
-                    PlaySoundEvent* t_soundEvent = new PlaySoundEvent(t_event->entityId, (int32_t)AudioCompEnum::Death);
+                    PlaySoundEvent* t_soundEvent = new PlaySoundEvent(t_event->entityId, (int32_t)AudioCompEnum::DamageTaken);
                     EventHandler::GetInstance()->BroadcastEvent(t_soundEvent);
                     break;
                 }
