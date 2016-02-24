@@ -47,6 +47,8 @@ namespace Doremi
             void ChangeCamera(CameraType p_type);
 
             DirectX::XMFLOAT3 GetActiveCameraPosition();
+            const DoremiEngine::Graphic::Camera& GetActiveCamera();
+            const DoremiEngine::Graphic::Camera& GetThirdPersonCamera();
 
             void UpdateCameraProjection();
 

@@ -4,6 +4,8 @@
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/RayCastManager.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <Doremi/Core/Include/CameraHandler.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Camera/Camera.hpp>
 #include <DirectXMath.h>
 #include <iostream>
 
@@ -53,17 +55,21 @@ namespace Doremi
             {
                 if(!t_currentNode->empty)
                 {
-                    ////////// COLLISION test
-                    // Loading the float to a vector so we can manipulate it
-                    DirectX::XMVECTOR t_halfDimensions = DirectX::XMLoadFloat3(&t_currentNode->boxDimensions);
+
+                    //////////////// COLLISION test
+                    //////// Loading the float to a vector so we can manipulate it
+                    //////DirectX::XMVECTOR t_halfDimensions = DirectX::XMLoadFloat3(&t_currentNode->boxDimensions);
 
 
-                    // Dividing it by two so we can use it as half extents as needed in the physicsfunction
-                    DirectX::XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
-                    t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(t_currentNode->center, physicsCollideFloat);
-                    // For the loop
-                    numberOfHits = t_sweepHits.size();
-                    ///////////
+                    //////// Dividing it by two so we can use it as half extents as needed in the physicsfunction
+                    //////DirectX::XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
+                    //////t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(t_currentNode->center,
+                    /// physicsCollideFloat);
+                    //////// For the loop
+                    //////numberOfHits = t_sweepHits.size();
+                    /////////////////
+                    const DoremiEngine::Graphic::Camera& t_playerCamera = CameraHandler::GetInstance()->GetThirdPersonCamera();
+                    const DoremiEngine::Graphic::CameraMatrices t_camMatrices = t_playerCamera.GetCameraMatrices();
 
                     // Collision with the frustum planes.
                     if(true)
