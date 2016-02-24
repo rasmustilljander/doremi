@@ -120,7 +120,7 @@ namespace Doremi
         EntityHandlerClient::StartupEntityHandlerClient(sharedContext);
         PlayerHandlerClient::StartPlayerHandlerClient(sharedContext);
         InterpolationHandler::StartInterpolationHandler(sharedContext);
-        AudioHandler::StartAudioHandler(sharedContext);
+        AudioHandler::StartAudioHandler(sharedContext); // Needs to be stareted after event handler
         StateHandler::StartStateHandler(sharedContext);
         CameraHandler::StartCameraHandler(sharedContext);
         PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);

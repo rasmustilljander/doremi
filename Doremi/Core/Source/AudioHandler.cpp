@@ -13,6 +13,10 @@
 #include <PlayerHandler.hpp>
 #include <FrequencyBufferHandler.hpp>
 
+// Events
+#include <EventHandler/EventHandler.hpp>
+#include <EventHandler/Events/ChangeMenuState.hpp>
+
 // Logging
 #include <DoremiEngine/Logging/Include/LoggingModule.hpp>
 #include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
@@ -28,6 +32,25 @@ namespace Doremi
         AudioHandler::AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext), m_logger(nullptr)
         {
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
+
+            m_currentFrequency = 0;
+            /* 99999 is a default "error" value. It is used to create a new channel in module. We send the channelID to the module and if it is 99999
+            it is treated as uninitialized This has been fixed. 999999 is now -1
+            and starts a new channel that is returned to the variable.*/
+            m_continuousFrequencyAnalyserChannelID = -1;
+            m_continuousFrequencyAnalyserSoundID = 0;
+            m_repeatableFrequencyAnalyserChannelID = -1;
+            m_repeatableFrequencyAnalyserSoundID = 0;
+            m_outputRepeatableSoundChannelID = -1;
+            m_outputRepeatableSoundID = 0;
+            m_accumulatedDeltaTime = 0;
+            m_repeatableAnalysisComplete = false;
+            m_frequencyVectorPrecision = 0.01f;
+            m_timeGunReloadButtonWasPressed = 0.0f;
+
+            // Load the background sounds
+            m_backgroundSounds[BackgroundSound::InGameMainTheme] = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
+            EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
         }
 
         AudioHandler::~AudioHandler()
@@ -49,23 +72,7 @@ namespace Doremi
             m_singleton = nullptr;
         }
 
-        void AudioHandler::Initialize()
-        {
-            m_currentFrequency = 0;
-            /* 99999 is a default "error" value. It is used to create a new channel in module. We send the channelID to the module and if it is 99999
-            it is treated as uninitialized This has been fixed. 999999 is now -1
-            and starts a new channel that is returned to the variable.*/
-            m_continuousFrequencyAnalyserChannelID = -1;
-            m_continuousFrequencyAnalyserSoundID = 0;
-            m_repeatableFrequencyAnalyserChannelID = -1;
-            m_repeatableFrequencyAnalyserSoundID = 0;
-            m_outputRepeatableSoundChannelID = -1;
-            m_outputRepeatableSoundID = 0;
-            m_accumulatedDeltaTime = 0;
-            m_repeatableAnalysisComplete = false;
-            m_frequencyVectorPrecision = 0.01f;
-            m_timeGunReloadButtonWasPressed = 0.0f;
-        }
+        void AudioHandler::Initialize() {}
 
         AudioHandler* AudioHandler::m_singleton = nullptr;
 
@@ -256,6 +263,20 @@ namespace Doremi
             }
 
             TIME_FUNCTION_STOP
+        }
+
+        void AudioHandler::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::ChangeMenuState)
+            {
+                ChangeMenuState* t_stateEvent = static_cast<ChangeMenuState*>(p_event);
+
+                if(t_stateEvent->state == DoremiStates::RUNGAME)
+                {
+                    DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                    t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
+                }
+            }
         }
     }
 }

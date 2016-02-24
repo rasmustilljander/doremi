@@ -1,7 +1,9 @@
 #pragma once
 // Project specific
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 // Standard Libraries
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <DirectXMath.h>
 
@@ -25,10 +27,13 @@ namespace Doremi
     {
 
         class InputHandler;
-        class AudioHandler
+        /**
+        Handles recording and analysis. Also handles background sound depending on game state
+        */
+        class AudioHandler : public Subscriber
         {
         public:
-            /** Is a singleton. Use this method to get the EventManager*/
+            /** Is a singleton. Use this method to get the AudioHandler*/
             static AudioHandler* GetInstance();
             static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             static void StopAudioHandler();
@@ -55,6 +60,8 @@ namespace Doremi
             // playing sound.
             float GetRepeatableSoundFrequency();
 
+            void OnEvent(Event* p_event) override;
+
         private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
@@ -79,7 +86,14 @@ namespace Doremi
             bool m_repeatableAnalysisComplete;
             // Keeps the time that the gunreloadbutton was pressed down
             double m_timeGunReloadButtonWasPressed;
-
+            // Holds the different background sounds for the game
+            enum class BackgroundSound
+            {
+                InGameMainTheme,
+                MenuMainTheme,
+            };
+            std::map<BackgroundSound, int> m_backgroundSounds;
+            int m_backgroundChannelId;
             // Used to control the flow of the update function
             enum SoundState
             {

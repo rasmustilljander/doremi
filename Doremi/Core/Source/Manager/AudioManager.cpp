@@ -166,6 +166,10 @@ namespace Doremi
                     // Cast the event to the correct format
                     PlaySoundEvent* t_event = (PlaySoundEvent*)p_event;
                     uint32_t t_entityID = t_event->entityID;
+                    if(!EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::Audio))
+                    {
+                        break;
+                    }
                     uint32_t t_soundType = t_event->soundType;
                     if(EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::AudioActive))
                     {
