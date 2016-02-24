@@ -46,10 +46,8 @@ namespace Doremi
                 // Check if we have a pressure particle system. TODOXX This will be really funny if we have just ambient particle systems
                 if(entityHandler.HasComponents(i, mask))
                 {
-                    // Merge new positions into already existing positions
+                    // Get new positions where we want to color. These are positions where particles have collided with something
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
-                    m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
-                    m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
                     // Add us a shape to the arbitrary body thingy
                     for(size_t j = 0; j < newPositions.size(); j++)
                     {
@@ -58,7 +56,7 @@ namespace Doremi
 
                     /// Time to draw!
                     ParticlePressureComponent* particleComp = entityHandler.GetComponentFromStorage<ParticlePressureComponent>(i);
-                    // Get our positions
+                    // Get the positions and radii of the shapes of the giant color blob body
                     vector<XMFLOAT3> positions;
                     vector<float> radii;
                     m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetShapeData(-15, positions, radii);
@@ -67,7 +65,6 @@ namespace Doremi
                     int size = positions.size();
                     for(size_t j = 0; j < size; j++)
                     {
-
                         XMFLOAT4X4 mat;
                         XMStoreFloat4x4(&mat, XMMatrixTranspose(XMMatrixScaling(radii[j], radii[j], radii[j]) *
                                                                 XMMatrixTranslation(positions[j].x, positions[j].y, positions[j].z)));

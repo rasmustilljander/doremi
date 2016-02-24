@@ -37,10 +37,8 @@ namespace Doremi
                 // Check if we have a pressure particle system. TODOXX This will be really funny if we have just ambient particle systems
                 if(entityHandler.HasComponents(i, mask))
                 {
-                    // Merge new positions into already existing positions
+                    // Get new positions where we want to color. These are positions where particles have collided with something
                     const vector<XMFLOAT3>& newPositions = m_sharedContext.GetPhysicsModule().GetFluidManager().GetRemovedParticlesPositions(i);
-                    // m_groundEffectPoints.reserve(m_groundEffectPoints.size() + newPositions.size());
-                    // m_groundEffectPoints.insert(m_groundEffectPoints.end(), newPositions.begin(), newPositions.end());
 
                     // Loop through new positions
                     size_t size = newPositions.size();
