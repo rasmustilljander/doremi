@@ -255,7 +255,7 @@ namespace DoremiEngine
                     // Do nothing
                 }
             }
-            if(p_channelID == -1)
+            if(p_channelID <= -1)
             {
                 FMOD::Channel* t_channel = 0;
                 m_fmodChannel.push_back(t_channel);

@@ -45,7 +45,7 @@ namespace DoremiEngine
             */
             virtual double GetSoundLength(const int& p_soundID) = 0;
             /**
-            Plays a sound that is already in the system
+            Plays a sound that is already in the system. chennelID should be < 0 the first time
             */
             virtual void PlayASound(int p_soundID, bool p_loop, int& p_channelID) = 0;
             /**

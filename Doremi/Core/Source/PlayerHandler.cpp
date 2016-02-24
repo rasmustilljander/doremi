@@ -226,9 +226,8 @@ namespace Doremi
                             {
                                 t_jumpComponent->StartJump();
                                 // Send jump event.
-                                AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
-                                PlaySoundEvent* playSoundEvent =
-                                    new PlaySoundEvent(iter->second->m_playerEntityID, audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Jump]);
+                                // AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
+                                PlaySoundEvent* playSoundEvent = new PlaySoundEvent(iter->second->m_playerEntityID, (int32_t)AudioCompEnum::Jump);
                                 EventHandler::GetInstance()->BroadcastEvent(playSoundEvent);
                             }
                             // EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID)->StartJump();
