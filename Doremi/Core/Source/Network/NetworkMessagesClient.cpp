@@ -129,6 +129,8 @@ namespace Doremi
                 // TODOCM print to message box why we disconnected
                 // Write disconnect string
                 std::string t_disconnectMessage = t_streamer.ReadString();
+
+                cout << t_disconnectMessage << endl;
             }
         }
 
@@ -159,7 +161,7 @@ namespace Doremi
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
 
             // We only care of this if we're loading map
-            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
+            if(t_networkConnection->m_serverConnectionState.ConnectionState >= ServerConnectionStateFromClient::CONNECTED)
             {
                 // If we receive this we know we should load map, change state if we're in wrong state
                 if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTED)

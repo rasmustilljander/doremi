@@ -54,6 +54,10 @@ namespace Doremi
         */
         struct ServerConnectionFromClient
         {
+            ServerConnectionFromClient()
+                : ConnectionState(ServerConnectionStateFromClient::DISCONNECTED), PlayerID(0), LastResponse(0), NewConnection(true)
+            {
+            }
             ServerConnectionStateFromClient ConnectionState;
             SocketHandle ConnectingSocketHandle;
             SocketHandle ConnectedSocketHandle;

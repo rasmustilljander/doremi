@@ -100,7 +100,7 @@ namespace DoremiEngine
             /**
                 Accept an incomming connection to a socket in standby(CreateReliableConnection)
             */
-            virtual size_t AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) = 0;
+            virtual bool AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) = 0;
 
             /**
                 Creates a socket to use recieve/send, need to use SendUnreliableData first to be able to use RecieveUnreliableData from a specific

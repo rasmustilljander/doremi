@@ -12,13 +12,26 @@
 #include <Doremi/Core/Include/Network/NetMessages.hpp>
 #include <Doremi/Core/Include/Network/NetworkMessagesClient.hpp>
 
+// Events
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
+
+#include <iostream> // TODOCM remove only debug
+
 namespace Doremi
 {
     namespace Core
     {
         NetworkManagerClient::NetworkManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "ClientNetworkManager"), m_nextUpdateTimer(0.0f), m_updateInterval(1.0f), m_timeoutInterval(3.0f)
+            : Manager(p_sharedContext, "ClientNetworkManager"), m_nextUpdateTimer(0.0f), m_updateInterval(1.0f), m_timeoutInterval(20.0f)
         {
+            // Subscribe to events
+            EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
+
+            // Startup network messages and connection, TODOCM could change position of this
+            NetworkMessagesClient::StartupNetworkMessagesClient(p_sharedContext);
+            NetworkConnectionsClient::StartupNetworkConnectionsClient(p_sharedContext);
+
             LoadConfigFile(p_sharedContext);
         }
 
@@ -73,6 +86,9 @@ namespace Doremi
                 t_connections->m_serverConnectionState.ConnectedAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 4050);
             }
 
+            // Create new socket for unreliable
+            t_connections->m_serverConnectionState.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
+
             delete t_IPCharPointer;
             delete t_IPArray;
         }
@@ -111,7 +127,6 @@ namespace Doremi
             UpdateTimeouts(p_dt);
         }
 
-
         void NetworkManagerClient::ReceiveMessages()
         {
             // Receive connecting messages
@@ -138,13 +153,19 @@ namespace Doremi
             // To check how much we received
             uint32_t t_dataSizeReceived = 0;
 
+            // Counter for checking we dont read to much
+            uint32_t t_numOfMessages = 0;
+
             // Receive messages
             // TODOCM not sure if need to send in out adress here
-            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle, t_dataSizeReceived))
+            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle, t_dataSizeReceived) &&
+                  ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
+
                 // If wrong size of message
                 if(t_dataSizeReceived != sizeof(NetMessageConnectingFromServer))
                 {
+                    std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
                     t_newMessage = NetMessageBuffer();
                     continue;
                 }
@@ -157,18 +178,21 @@ namespace Doremi
                 {
                     case SendMessageIDFromServer::VERSION_CHECK:
                     {
+                        std::cout << "Received version check" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveVersionCheck(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::CONNECT:
                     {
+                        std::cout << "Received connect" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveConnect(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::DISCONNECT:
                     {
+                        std::cout << "Received disconnect" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveDisconnect(t_messageConnecting);
 
                         break;
@@ -198,12 +222,17 @@ namespace Doremi
             // To check how much we received
             uint32_t t_dataSizeReceived = 0;
 
+            // Counter for checking we dont read to much
+            uint32_t t_numOfMessages = 0;
+
             // Try receive messages
-            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnectionState.ConnectedSocketHandle, t_dataSizeReceived))
+            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnectionState.ConnectedSocketHandle, t_dataSizeReceived) &&
+                  ++t_numOfMessages < m_maxConnectedMessagesPerFrame)
             {
                 // If wrong size of message
                 if(t_dataSizeReceived != sizeof(NetMessageConnectedFromServer))
                 {
+                    std::cout << "wrong size message connected" << std::endl; // TODOCM remove deubgg
                     t_newMessage = NetMessageBuffer();
                     continue;
                 }
@@ -216,18 +245,21 @@ namespace Doremi
                 {
                     case SendMessageIDFromServer::CONNECTED:
                     {
+                        std::cout << "Received connected" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveConnected(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::LOAD_WORLD:
                     {
+                        std::cout << "Received load world" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveLoadWorld(t_messageConnecting);
 
                         break;
                     }
                     case SendMessageIDFromServer::IN_GAME:
                     {
+                        std::cout << "Received in game" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveInGame(t_messageConnecting);
 
                         break;
@@ -270,10 +302,12 @@ namespace Doremi
                 {
                     case ServerConnectionStateFromClient::CONNECTING:
                     {
+                        std::cout << "Sending connecting" << std::endl; // TODOCM remove deubgg
                         t_netMessages->SendConnectionRequest();
                     }
                     case ServerConnectionStateFromClient::VERSION_CHECK:
                     {
+                        std::cout << "Sending version check" << std::endl; // TODOCM remove deubgg
                         t_netMessages->SendVersionCheck();
                     }
                     default:
@@ -338,6 +372,30 @@ namespace Doremi
                     t_netMessages->SendDisconnect();
 
                     // TODO send change gamestate event
+                }
+            }
+        }
+
+        void NetworkManagerClient::OnEvent(Event* p_event)
+        {
+            if(p_event->eventType == EventType::ChangeMenuState)
+            {
+                ChangeMenuState* t_changeMenuEvent = static_cast<ChangeMenuState*>(p_event);
+                NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+
+                // If we are processing to run game we set us to connecting
+                if(t_changeMenuEvent->state == DoremiStates::RUNGAME)
+                {
+                    // Change connection state
+                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::CONNECTING;
+
+                    // TODOCM maybe send first message here, or check vs other event that sends IP to server or something
+                }
+                else
+                {
+                    // TODOXX if we want multiple states(in game top menu) this wont work
+                    // Change connection state
+                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
                 }
             }
         }

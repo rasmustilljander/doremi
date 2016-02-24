@@ -22,7 +22,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        void NetworkConnectionsServer::StartupConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void NetworkConnectionsServer::StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             if(m_singleton != nullptr)
             {
@@ -68,6 +68,14 @@ namespace Doremi
             m_connectingClientConnections[t_newAdress] = t_newConnection;
         }
 
+        void NetworkConnectionsServer::SetConnecting(const std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*>& p_connection)
+        {
+            // Remove from connecting and add to connected
+            m_connectedClientConnections[p_connection.first] = p_connection.second;
+            m_connectingClientConnections.erase(p_connection.first);
+        }
+
+
         void NetworkConnectionsServer::RemoveConnection(DoremiEngine::Network::Adress& p_adress)
         {
             // Try to remove from both maps
@@ -105,7 +113,8 @@ namespace Doremi
             return false;
         }
 
-        bool NetworkConnectionsServer::AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection)
+        bool NetworkConnectionsServer::AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress,
+                                                               std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*>& o_connection)
         {
             // TODOCM evaluate if we need to check for connected connections
             // Check all connecting connections
@@ -115,7 +124,7 @@ namespace Doremi
                 // Check if we have same IP
                 if(*(t_connection.first) *= p_adress)
                 {
-                    o_connection = t_connection.second;
+                    o_connection = t_connection;
                     return true;
                 }
             }

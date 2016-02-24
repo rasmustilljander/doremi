@@ -25,6 +25,8 @@
 
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
 
+#include <iostream> // TODOCM remove this debug
+
 namespace Doremi
 {
     namespace Core
@@ -246,6 +248,7 @@ namespace Doremi
 
         void NetworkMessagesServer::SendVersionCheck(const DoremiEngine::Network::Adress& p_adress)
         {
+            std::cout << "Sending version check" << std::endl; // TODOCM remove deubgg
             // Create message
             NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
             t_newMessage.MessageID = SendMessageIDFromServer::VERSION_CHECK;

@@ -105,7 +105,7 @@ namespace DoremiEngine
             /**
                 TODOCM docs
             */
-            size_t AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) override;
+            bool AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) override;
 
             /**
                 TODOCM docs

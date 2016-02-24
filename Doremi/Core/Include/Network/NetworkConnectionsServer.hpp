@@ -23,7 +23,7 @@ namespace Doremi
         public:
             static NetworkConnectionsServer* GetInstance();
 
-            static void StartupConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static void StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             auto GetConnectedClientConnections() { return m_connectedClientConnections; }
 
@@ -39,11 +39,14 @@ namespace Doremi
 
             void CreateNewConnecting(const DoremiEngine::Network::Adress& p_adress);
 
+            void SetConnecting(const std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*>& p_connection);
+
             void RemoveConnection(DoremiEngine::Network::Adress& p_adress);
 
             bool AdressWithPortExist(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection);
 
-            bool AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress, ClientConnectionFromServer*& o_connection);
+            bool AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress,
+                                         std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*>& o_connection);
 
         private:
             NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);

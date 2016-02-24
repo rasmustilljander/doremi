@@ -2,6 +2,7 @@
 
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
+#include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 
 namespace DoremiEngine
 {
@@ -19,7 +20,7 @@ namespace Doremi
         /**
             Manager class for Client, contains the logic for the connection pattern
         */
-        class NetworkManagerClient : public Manager
+        class NetworkManagerClient : public Manager, public Subscriber
         {
         public:
             /**
@@ -48,6 +49,10 @@ namespace Doremi
             */
             void Update(double p_dt) override;
 
+            /**
+                TODOCM doc
+            */
+            void OnEvent(Event* p_event);
 
         private:
             /**

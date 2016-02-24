@@ -171,13 +171,6 @@ namespace DoremiEngine
                 }
                 return false;
             }
-            // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if(Return != p_dataSize)
-            {
-                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
-                          << std::endl; // TODOCM Solution to sent = req data sent
-                return false;
-            }
 
             return true;
         }
@@ -205,13 +198,6 @@ namespace DoremiEngine
                 }
                 return false;
             }
-            // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if(Return != p_dataSize)
-            {
-                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
-                          << std::endl; // TODOCM Solution to sent = req data sent
-                return false;
-            }
 
             p_Adress.SetAdress(Adress);
 
@@ -232,16 +218,8 @@ namespace DoremiEngine
                 int Error = WSAGetLastError();
                 if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
-                    // TODOCM Fix better message
-                    throw std::runtime_error("Failed to recieve UDP data.");
+                    return false;
                 }
-                return false;
-            }
-            // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if(Return != p_dataSize)
-            {
-                std::cout << "Requested recieved data and recieved data was not equal, confront Christian if this problem arises."
-                          << std::endl; // TODOCM Solution to sent = req data sent
                 return false;
             }
 
@@ -267,18 +245,9 @@ namespace DoremiEngine
                 int errorCode = WSAGetLastError();
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
-                    // TODOCM Fix better message
-                    // throw std::runtime_error("Failed to send TCP data.");
-                    std::cout << "Failed to send TCP data." << std::endl;
+                    // TODOCM Log message
                     return false;
                 }
-                return false;
-            }
-            // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if(Return != p_dataSize)
-            {
-                std::cout << "Requested sent data and sent data was not equal, confront Christian if this problem arises."
-                          << std::endl; // TODOCM Solution to sent = req data sent
                 return false;
             }
 
@@ -299,19 +268,10 @@ namespace DoremiEngine
                 int errorCode = WSAGetLastError();
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
-                    // TODOCM Fix better message
-                    // throw std::runtime_error("Failed to recieve TCP data.");
-                    std::cout << "Failed to recieve TCP data." << std::endl;
+                    // TODOCM Log message
                     return false;
                 }
 
-                return false;
-            }
-            // If returned data is other size then requested, if this is a possibility we will need to fix this
-            else if(Return != p_dataSize)
-            {
-                std::cout << "Requested recieved data and recieved data was not equal, confront Christian if this problem arises."
-                          << std::endl; // TODOCM Solution to sent = req data sent
                 return false;
             }
 

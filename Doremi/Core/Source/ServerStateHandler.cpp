@@ -15,7 +15,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        ServerStateHandler::ServerStateHandler() : m_state(ServerStates::LOBBY) {}
+        ServerStateHandler::ServerStateHandler() : m_state(ServerStates::IN_GAME) {}
 
         ServerStateHandler::~ServerStateHandler() {}
     }

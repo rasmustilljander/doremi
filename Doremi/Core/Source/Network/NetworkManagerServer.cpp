@@ -35,8 +35,9 @@ namespace Doremi
               m_maxConnectingMessagesPerFrame(10),
               m_maxAcceptConnectionsPerFrame(5)
         {
-            // Startup network messages, TODOCM could change position of this
+            // Startup network messages and connection, TODOCM could change position of this
             NetworkMessagesServer::StartupNetworkMessagesServer(p_sharedContext);
+            NetworkConnectionsServer::StartupNetworkConnectionsClient(p_sharedContext);
 
             srand(time(NULL));
         }
@@ -90,14 +91,12 @@ namespace Doremi
             // Check for incomming messages
             size_t t_NumOfMessagesReceived = 0;
             while(t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_connectingSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
-                  t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
+                  ++t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
             {
-                // Increment number of messages received
-                t_NumOfMessagesReceived++;
-
                 // If we don't have of that size
                 if(t_dataSizeReceived != sizeof(NetMessageConnectingFromClient))
                 {
+                    std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
                     // Null message and conitinue
                     t_networkMessage = NetMessageBuffer();
                     continue;
@@ -167,11 +166,12 @@ namespace Doremi
                 {
                     // While we have something to receive and still less then max messages per frame
                     while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle, t_dataSizeReceived) &&
-                          t_messageCounter < m_maxConnectedMessagesPerFrame)
+                          ++t_messageCounter < m_maxConnectedMessagesPerFrame)
                     {
                         // If we received a correct message
                         if(t_dataSizeReceived != sizeof(NetMessageConnectedFromClient))
                         {
+                            std::cout << "wrong size message connected" << std::endl; // TODOCM remove deubgg
                             t_message = NetMessageBuffer();
                             continue;
                         }
@@ -265,38 +265,43 @@ namespace Doremi
             SocketHandle t_connectedSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectedSocketHandle();
             SocketHandle t_outSocketHandle = 0;
             DoremiEngine::Network::Adress* t_outAdress = t_networkModule.CreateAdress();
-            ClientConnectionFromServer* t_connection = nullptr;
+            DoremiEngine::Network::Adress* t_savedAdress = t_networkModule.CreateAdress();
 
+            // Holder for the connection we want to fetch
+            std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*> t_connection;
+
+            // Counter to not get stuck
             uint32_t t_connectCounter = 0;
 
             // Try to accept connections
-            while(t_networkModule.AcceptConnection(t_connectedSocketHandle, t_outSocketHandle, t_outAdress) && t_connectCounter < m_maxAcceptConnectionsPerFrame)
+            while(t_networkModule.AcceptConnection(t_connectedSocketHandle, t_outSocketHandle, t_outAdress) && ++t_connectCounter < m_maxAcceptConnectionsPerFrame)
             {
-                t_connectCounter++;
-
                 // If we have a pending connection
                 if(t_netConnections->AdressExistInConnecting(*t_outAdress, t_connection))
                 {
                     // If the connection is in connect mode
-                    if(t_connection->ConnectionState == ClientConnectionStateFromServer::CONNECT)
+                    if(t_connection.second->ConnectionState == ClientConnectionStateFromServer::CONNECT)
                     {
                         // Update connection
-                        t_connection->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
+                        t_connection.second->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
 
                         // Update last response
-                        t_connection->LastResponse = 0;
+                        t_connection.second->LastResponse = 0;
 
                         // Add socketID
-                        t_connection->ConnectedSocketHandle = t_outSocketHandle;
+                        t_connection.second->ConnectedSocketHandle = t_outSocketHandle;
 
                         // New connection... TODOCM CHECK THIS........
-                        t_connection->NewConnection = true;
+                        t_connection.second->NewConnection = true;
 
                         // Create new InputHandler
                         InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                         // Create player
-                        PlayerHandler::GetInstance()->CreateNewPlayer(t_connection->PlayerID, t_newInputHandler);
+                        PlayerHandler::GetInstance()->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
+
+                        // Upgrade connection to connected
+                        t_netConnections->SetConnecting(t_connection);
                     }
                     else
                     {

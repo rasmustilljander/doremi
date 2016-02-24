@@ -86,6 +86,11 @@ namespace DoremiEngine
             // Get socket from map
             Socket* socketToSendTo = GetSocketFromMap(p_sendToSocket);
 
+            if(socketToSendTo == nullptr)
+            {
+                return false;
+            }
+
             // Attempt to send data, returns true if all data is sent
             bool SendSuccessful = socketToSendTo->SendTCP(t_data, t_dataSize);
 
@@ -97,6 +102,11 @@ namespace DoremiEngine
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocket);
 
+            if(socketToRecieveFrom == nullptr)
+            {
+                return false;
+            }
+
             // Attempt to recieve data, returns true if all data is sent
             bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize, p_dataSizeReceived);
 
@@ -107,6 +117,11 @@ namespace DoremiEngine
         {
             // Get socket from map
             Socket* socketToSendTo = GetSocketFromMap(p_sendToSocketHandle);
+
+            if(socketToSendTo == nullptr)
+            {
+                return false;
+            }
 
             // Send Message ( will bind socket implicit)
             bool SendSuccessful = socketToSendTo->SendUDP(*(AdressImplementation*)p_adressToSendTo, p_data, p_dataSize);
@@ -121,6 +136,11 @@ namespace DoremiEngine
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
 
+            if(socketToRecieveFrom == nullptr)
+            {
+                return false;
+            }
+
             // Recieve data and fetch adress recieved from
             bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize, p_dataSizeReceived);
 
@@ -132,6 +152,11 @@ namespace DoremiEngine
         {
             // Get socket from map
             Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
+
+            if(socketToRecieveFrom == nullptr)
+            {
+                return false;
+            }
 
             // Recieve data from a bound socket
             bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(p_data, p_dataSize, p_dataSizeReceived);
@@ -174,7 +199,7 @@ namespace DoremiEngine
             return key;
         }
 
-        size_t NetworkModuleImplementation::AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut)
+        bool NetworkModuleImplementation::AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut)
         {
             // TODOCM add parameters, speculate if we send adress from outside or not(on other
             // functions as well)
@@ -183,6 +208,11 @@ namespace DoremiEngine
 
             // Get socket from map
             Socket* socketToAcceptFrom = GetSocketFromMap(p_socketID);
+
+            if(socketToAcceptFrom == nullptr)
+            {
+                return false;
+            }
 
             // Out socket (instead of dynamically allocating every frame)
             SOCKET newSocketHandle;
