@@ -9,6 +9,22 @@ namespace DoremiEditor
 
         struct MeshData
         {
+            MeshData()
+                : positions(nullptr), normals(nullptr), uvs(nullptr), indexPositions(nullptr), indexNormals(nullptr), indexUVs(nullptr), trianglesPerFace(nullptr)
+            {
+            }
+
+            ~MeshData()
+            {
+                delete positions;
+                delete normals;
+                delete uvs;
+                delete indexPositions;
+                delete indexNormals;
+                delete indexUVs;
+                delete trianglesPerFace;
+            }
+
             int vertCount;
             int normalCount;
             int UVCount;
@@ -22,18 +38,6 @@ namespace DoremiEditor
             int* indexNormals;
             int* indexUVs;
             int* trianglesPerFace;
-            ~MeshData()
-            {
-                // TODOXX FIX should be deleted/..... Needed for HAX though
-                // delete(positions);
-                // delete(normals);
-                // delete(uvs);
-
-                // delete(indexPositions);
-                // delete(indexNormals);
-                // delete(indexUVs);
-                // delete(trianglesPerFace);
-            }
         };
     }
 }

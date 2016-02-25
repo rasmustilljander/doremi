@@ -38,7 +38,7 @@ namespace Doremi
     namespace Core
     {
         LevelLoader::LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
-        LevelLoader::~LevelLoader() {}
+        LevelLoader::~LevelLoader() { m_meshes.clear(); }
 
         void LevelLoader::LoadMaterial(std::ifstream& ifs, int nrMats)
         {
@@ -231,7 +231,8 @@ namespace Doremi
                 int meshID;
                 ifs.read((char*)&meshID, sizeof(int));
 
-                MeshData meshData;
+                m_meshes.emplace(meshName, MeshData());
+                MeshData& meshData = m_meshes[meshName];
 
                 ifs.read((char*)&meshData.vertCount, sizeof(int));
                 ifs.read((char*)&meshData.normalCount, sizeof(int));
@@ -257,12 +258,20 @@ namespace Doremi
                 ifs.read((char*)meshData.indexUVs, sizeof(int) * meshData.indCount);
                 ifs.read((char*)meshData.trianglesPerFace, sizeof(int) * meshData.triCount);
 
-                m_meshes[meshName] = meshData;
                 // All the transform that this mesh should be placed at and puts it in the coupling vector
                 for(size_t i = 0; i < nrOfTransforms; i++)
                 {
-                    m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], meshName, materialName));
+                    m_meshCoupling.push_back(ObjectCouplingInfo(transformNames[i], std::string(meshName), std::string(materialName)));
                 }
+
+                // Cleanup
+                delete meshName;
+                delete materialName;
+                for(auto& i : transformNames)
+                {
+                    delete i;
+                }
+                transformNames.clear();
             }
         }
 
