@@ -5,16 +5,10 @@ namespace Doremi
 {
     namespace Core
     {
-        ComponentTable* ComponentTable::mSingleton = nullptr;
-
         ComponentTable* ComponentTable::GetInstance()
         {
-            if(mSingleton == nullptr)
-            {
-                mSingleton = new ComponentTable();
-            }
-
-            return mSingleton;
+            static ComponentTable componentTable;
+            return &componentTable;
         }
 
         ComponentTable::ComponentTable()
