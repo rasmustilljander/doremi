@@ -339,9 +339,9 @@ namespace Doremi
             // Special case for transform component
             ComponentTable::GetInstance()->AddComponent(tNewEntityID, (int)ComponentType::Transform);
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
-            transComp->position = XMFLOAT3(0, 0, 0);
-            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
-            transComp->scale = XMFLOAT3(1, 1, 1);
+            transComp->position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+            transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
             CreateComponents(tNewEntityID, p_blueprintID);
             return tNewEntityID;
@@ -355,8 +355,8 @@ namespace Doremi
             ComponentTable::GetInstance()->AddComponent(tNewEntityID, (int)ComponentType::Transform);
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
-            transComp->rotation = XMFLOAT4(0, 0, 0, 1);
-            transComp->scale = XMFLOAT3(1, 1, 1);
+            transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
@@ -377,7 +377,7 @@ namespace Doremi
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
             transComp->rotation = p_orientation;
-            transComp->scale = XMFLOAT3(1, 1, 1);
+            transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
