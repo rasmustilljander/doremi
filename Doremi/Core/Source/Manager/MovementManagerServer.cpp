@@ -5,6 +5,7 @@
 #include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent\Components\GravityComponent.hpp>
+#include <EntityComponent/Components/CharacterEffectComponent.hpp>
 // Engine
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -58,22 +59,33 @@ namespace Doremi
                     }
 
                     /// 4 Fix speed for next iteration
-                    // If we're sliding around, only reduce speed, don't entierly reset it
-                    if(iceEffect)
+                    // Check if we have special things to do because we're affected by character effects
+                    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::CharacterEffect))
                     {
-                        float iceSlowdownFactor = 0.99f * (1 - p_dt);
-                        movementComp->movement.x *= iceSlowdownFactor;
-                        movementComp->movement.z *= iceSlowdownFactor;
-                    }
+                        CharacterEffectComponent* effectComp = EntityHandler::GetInstance().GetComponentFromStorage<CharacterEffectComponent>(i);
+                        int currentEffects = (int)effectComp->effect;
+                        // If we're sliding around, only reduce speed, don't entierly reset it
+                        if(currentEffects & (int)CharacterEffect::IceSliding)
+                        {
+                            float iceSlowdownFactor = 0.99f * (1 - p_dt);
+                            movementComp->movement.x *= iceSlowdownFactor;
+                            movementComp->movement.z *= iceSlowdownFactor;
+                        }
 
-                    // If we're not running on fire (or ice) we can stop
-                    else if(!fireEffect)
+                        // If we're not running on fire (or ice) we can stop
+                        else if(currentEffects & (int)CharacterEffect::CantStop)
+                        {
+                            movementComp->movement = XMFLOAT3(0, 0, 0);
+                        }
+
+                        // Always reset y movement. Again, we don't mess with y
+                        movementComp->movement.y = 0;
+                    }
+                    else
                     {
+                        // We weren't effected in any strange way. Just reset movement
                         movementComp->movement = XMFLOAT3(0, 0, 0);
                     }
-
-                    // Always reset y movement. Again, we don't mess with y
-                    movementComp->movement.y = 0;
 
 
                     // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
