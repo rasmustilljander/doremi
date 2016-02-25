@@ -149,7 +149,7 @@ namespace DoremiEngine
             return returnPosition;
         }
 
-        DirectX::XMFLOAT3 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField,
+        DirectX::XMFLOAT3 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange,
                                                                     PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
             using namespace DirectX;
@@ -157,6 +157,7 @@ namespace DoremiEngine
             bool goalInRange = AnyPositiveGoalInRange(p_unitPosition);
             if(!goalInRange)
             {
+                p_goalInRange = false;
                 return p_unitPosition;
             }
 

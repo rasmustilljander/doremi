@@ -36,7 +36,8 @@ namespace DoremiEngine
             void SetActivePotentialVsType(const AIActorType& p_type, bool p_active) override;
             bool GetUsePhermonetrail() const override { return m_usePhermonetrail; }
             void SetUsePhermonetrail(const bool& p_active) override { m_usePhermonetrail = p_active; }
-
+            const DirectX::XMFLOAT3& GetWantedPosition() const override { return m_wantedPosition; };
+            void SetWantedPosition(const DirectX::XMFLOAT3& p_wantedPosition) override { m_wantedPosition = p_wantedPosition; };
         private:
             std::vector<DirectX::XMINT2> m_phermoneTrail;
             std::vector<DirectX::XMINT2> m_occupiedQuads; // TODOKO review if it should be set to enable checking for duplicates
@@ -44,8 +45,8 @@ namespace DoremiEngine
             float m_range;
             float m_charge;
             DirectX::XMINT2 m_prevGridPos;
-            /*DirectX::XMINT2 m_gridPos;*/
             DirectX::XMFLOAT3 m_position;
+            DirectX::XMFLOAT3 m_wantedPosition; // This is so we dont have to check every time
             AIActorType m_actorType;
             bool m_static;
             bool m_usePhermonetrail;

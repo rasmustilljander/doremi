@@ -40,6 +40,9 @@ namespace Doremi
         private:
             void SetEnemyPotentialFieldStuff(const size_t& p_entityID, const std::vector<DoremiEngine::AI::PotentialChargeInformation>& p_specialCharges);
             void PerformJump(const int32_t& p_entityID);
+
+            int m_maxActorsUpdated;
+            int m_actorToUpdate;
         };
     }
 }

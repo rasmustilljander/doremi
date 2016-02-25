@@ -47,6 +47,8 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::RangedEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::MeleeEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
+            m_maxActorsUpdated = 1; // We may only update one AI per update... TODOCONFIG
+            m_actorToUpdate = 0;
         }
 
         AIPathManager::~AIPathManager() {}
@@ -54,10 +56,19 @@ namespace Doremi
 
         void AIPathManager::Update(double p_dt)
         {
+            int updatedActors = 0;
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-
-            for(size_t i = 0; i < length; i++)
+            int lastUpdatedActor = 0;
+            for(size_t i = m_actorToUpdate + 1; i != m_actorToUpdate; i++)
             {
+                if(i > length)
+                {
+                    i = 0;
+                    if(i == m_actorToUpdate)
+                    {
+                        break;
+                    }
+                }
                 // Update actors position, should perhaps not be here...
                 if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::PotentialField | (int)ComponentType::Transform))
                 { // This is so the player updates his position too...
@@ -84,8 +95,10 @@ namespace Doremi
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
                     // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
-                    if(field != nullptr)
+
+                    if(field != nullptr && updatedActors < m_maxActorsUpdated)
                     {
+                        lastUpdatedActor = i;
                         if(currentActor->GetPrevGridPos().x == field->WhatGridPosAmIOn(currentActor->GetPosition()).x &&
                            currentActor->GetPrevGridPos().y == field->WhatGridPosAmIOn(currentActor->GetPosition()).y)
                         {
@@ -104,7 +117,13 @@ namespace Doremi
                             }
                         }
                         bool inField;
-                        desiredPos = field->GetAttractionPosition(unitPos, inField, currentActor, false);
+                        bool goalInRange;
+                        desiredPos = field->GetAttractionPosition(unitPos, inField, goalInRange, currentActor, false);
+
+                        if(goalInRange)
+                        {
+                            updatedActors++;
+                        }
                         if(!inField)
                         {
                             // We are not in the current field, this means we are in another field. Lets change!
@@ -117,7 +136,11 @@ namespace Doremi
                                 EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field = newField;
                             }
                         }
+                        currentActor->SetWantedPosition(desiredPos);
                     }
+                    desiredPos = currentActor->GetWantedPosition();
+
+
                     // Should we jump?
                     float distance = ProximityChecker::GetInstance().CalculateDistance(desiredPos, unitPos);
                     if(distance > 8)
@@ -141,6 +164,7 @@ namespace Doremi
                                                            false); // We dont know if we see the enemy so dont use this field
                 }
             }
+            m_actorToUpdate = lastUpdatedActor;
         }
 
         void AIPathManager::OnEvent(Event* p_event)

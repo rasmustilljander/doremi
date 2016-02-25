@@ -142,6 +142,14 @@ namespace DoremiEngine
             Sets wheter or not the phermonetrail should be active
             */
             virtual void SetUsePhermonetrail(const bool& p_active) = 0;
+            /**
+            Get the actors wanted position
+            */
+            virtual const DirectX::XMFLOAT3& GetWantedPosition() const = 0;
+            /**
+            Set the actor wanted position
+            */
+            virtual void SetWantedPosition(const DirectX::XMFLOAT3& p_wantedPosition) = 0;
         };
     }
 }
