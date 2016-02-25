@@ -247,24 +247,23 @@ namespace DoremiEngine
                         float chargeFromField;
                         DirectX::XMFLOAT3 positionFromField;
                         AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
-                        if (chargeFromField > highestCharge)
+                        if(chargeFromField > highestCharge)
                         {
                             highestCharge = chargeFromField;
-                            highestChargedPos = XMFLOAT2( positionFromField.x, positionFromField.z);
+                            highestChargedPos = XMFLOAT2(positionFromField.x, positionFromField.z);
                         }
                         else
                         {
                             // Try a jump!
                             newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * 5), p_unitPosition.y,
-                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * 5));
+                                                       newPosition.y + (static_cast<float>(sign<int>(y)) * 5));
                             AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
-                            if (chargeFromField > highestCharge)
+                            if(chargeFromField > highestCharge)
                             {
                                 highestCharge = chargeFromField;
                                 highestChargedPos = XMFLOAT2(positionFromField.x, positionFromField.z);
                             }
                         }
-
                     }
                 }
             }
@@ -281,12 +280,12 @@ namespace DoremiEngine
             using namespace DirectX;
             PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(p_position));
             o_charge = std::numeric_limits<float>::min();
-            if (newField != nullptr)
+            if(newField != nullptr)
             {
                 // if a field was found check what grid point in that field we are in
                 XMINT2 gridPoint = newField->WhatGridPosAmIOn(p_position);
                 // if for some wierd reason we are in the field but not in a grid point screw it...
-                if (gridPoint.x != -1)
+                if(gridPoint.x != -1)
                 {
                     // calculate a new charge from the new field
                     o_charge = newField->CalculateCharge(gridPoint.x, gridPoint.y, nullptr);
@@ -309,7 +308,7 @@ namespace DoremiEngine
                     // This is for the actors influence
                     totalCharge += GetChargeInfluenceFromActor(quadPos, *actor);
                     // This is for the current actors special influence, if any TODOKO Might be a speed up to do this only if we are in range of actor
-                    if (p_currentActor != nullptr)
+                    if(p_currentActor != nullptr)
                     {
                         totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor, usePhermone);
                     }
