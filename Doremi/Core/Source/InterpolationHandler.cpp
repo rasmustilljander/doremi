@@ -42,7 +42,7 @@ namespace Doremi
         }
         // TODOXX snapshotdelay must be less then sequencedleay in inputhandlerserver
         InterpolationHandler::InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(20)
+            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(3)
         {
         }
 
@@ -167,8 +167,6 @@ namespace Doremi
                         }
                         else if(m_DelayedSnapshots.size() > 1)
                         {
-                            cout << "Shouldn't be able to get here without major overflowing the sequence." << endl;
-
                             if((*iter)->Events.size() > 0)
                             {
                                 t_tempEventList.merge((*iter)->Events);
@@ -384,12 +382,11 @@ namespace Doremi
 
         void InterpolationHandler::QueueSnapshot(Snapshot* p_newSnapshot)
         {
-            if(m_DelayedSnapshots.size() > m_snapshotDelay * 2)
+            if(m_DelayedSnapshots.size() > m_snapshotDelay * 5)
             {
                 cout << "Many more snapshots queued then should: " << m_DelayedSnapshots.size()
                      << endl; // TODOCM Check if we can update this from time to time
             }
-
 
             // If we get n' old snapshot
             if(sequence_more_recent(m_snapshotSequenceUsed, p_newSnapshot->SnapshotSequence, 255)) // TODOCM check if it should be equal less

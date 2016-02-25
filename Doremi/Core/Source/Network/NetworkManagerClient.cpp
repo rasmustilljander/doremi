@@ -367,6 +367,7 @@ namespace Doremi
             {
                 // Update timer
                 t_connections->m_serverConnectionState.LastResponse += p_dt;
+                t_connections->m_serverConnectionState.LastSequenceUpdate += p_dt;
 
                 // Check if exceeded timeout
                 if(t_connections->m_serverConnectionState.LastResponse > m_timeoutInterval)

@@ -59,7 +59,7 @@ namespace Doremi
             // First thing we do is version checking
             t_newConnection->ConnectionState = ClientConnectionStateFromServer::VERSION_CHECK;
             t_newConnection->LastResponse = 0;
-            t_newConnection->NewConnection = true; // TODOCM evalueate if still needed
+            t_newConnection->LastSequenceUpdate = SEQUENCE_TIMER_START; // High because we want update :)
 
             // Copy adress
             DoremiEngine::Network::Adress* t_newAdress = m_sharedContext.GetNetworkModule().CreateAdress(p_adress);

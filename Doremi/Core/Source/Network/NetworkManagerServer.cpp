@@ -294,8 +294,8 @@ namespace Doremi
                         // Add socketID
                         t_connection.second->ConnectedSocketHandle = t_outSocketHandle;
 
-                        // New connection... TODOCM CHECK THIS........
-                        t_connection.second->NewConnection = true;
+                        // New connection
+                        t_connection.second->LastSequenceUpdate = SEQUENCE_TIMER_START; // High because we want update
 
                         // Create new InputHandler
                         InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
@@ -335,6 +335,7 @@ namespace Doremi
                 {
                     // Update timer
                     t_connection->second->LastResponse += t_dt;
+                    t_connection->second->LastSequenceUpdate += t_dt;
 
                     // If exceed timout
                     if(t_connection->second->LastResponse >= m_timeoutInterval)

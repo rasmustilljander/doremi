@@ -236,12 +236,12 @@ namespace Doremi
             t_newSnapshot->Events = t_eventReceiver->GetEventsReceivedFromServer();
 
             // If it was init message
-            if(t_networkConnection->m_serverConnectionState.NewConnection)
+            if(t_networkConnection->m_serverConnectionState.LastSequenceUpdate >= SEQUENCE_UPDATE_TIMER)
             {
                 InterpolationHandler::GetInstance()->SetSequence(t_newSnapshot->SnapshotSequence);
 
                 // Set our connection to not so special anymore
-                t_networkConnection->m_serverConnectionState.NewConnection = false;
+                t_networkConnection->m_serverConnectionState.LastSequenceUpdate = 0.0f;
             }
 
             // Check if we can read even more!

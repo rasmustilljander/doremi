@@ -8,6 +8,11 @@ namespace Doremi
 {
     namespace Core
     {
+//  Every one hour we update sequences if the connection changes, why not?
+// I did this because I though I had a bug with TCP first packet beeing delayed...
+// But it wasn't, I only forgot to change the delayed sequence value..
+#define SEQUENCE_UPDATE_TIMER 360.0f
+#define SEQUENCE_TIMER_START 1000.0f
         /*
             Connectionstate for clients and servers
             TODOCM not sure if master servers will have the same connectionstate
@@ -61,8 +66,8 @@ namespace Doremi
                   ConnectingAdress(nullptr),
                   ConnectedAdress(nullptr),
                   PlayerID(0),
-                  LastResponse(0),
-                  NewConnection(true)
+                  LastSequenceUpdate(SEQUENCE_TIMER_START),
+                  LastResponse(0)
             {
             }
             ServerConnectionStateFromClient ConnectionState;
@@ -73,8 +78,8 @@ namespace Doremi
 
             PlayerID PlayerID;
 
+            double LastSequenceUpdate;
             double LastResponse;
-            bool NewConnection;
         };
 
         struct MasterConnectionFromClient
@@ -84,21 +89,24 @@ namespace Doremi
             DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;
-            bool NewConnection;
         };
 
         struct ClientConnectionFromServer
         {
             ClientConnectionFromServer()
-                : ConnectionState(ClientConnectionStateFromServer::VERSION_CHECK), ConnectedSocketHandle(0), PlayerID(0), LastResponse(0), NewConnection(true)
+                : ConnectionState(ClientConnectionStateFromServer::VERSION_CHECK),
+                  ConnectedSocketHandle(0),
+                  PlayerID(0),
+                  LastSequenceUpdate(SEQUENCE_TIMER_START),
+                  LastResponse(0)
             {
             }
             ClientConnectionStateFromServer ConnectionState;
             SocketHandle ConnectedSocketHandle;
             PlayerID PlayerID;
 
+            double LastSequenceUpdate;
             double LastResponse;
-            bool NewConnection;
         };
 
         struct MasterConnectionFromServer
@@ -108,7 +116,6 @@ namespace Doremi
             PlayerID PlayerID;
 
             double LastResponse;
-            bool NewConnection;
         };
     }
 }

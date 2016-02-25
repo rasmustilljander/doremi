@@ -235,10 +235,10 @@ namespace Doremi
                 t_bytesRead += sizeof(float) * 4;
 
                 // If we're a new connection we save the first sequence
-                if(p_connection->NewConnection)
+                if(p_connection->LastSequenceUpdate >= SEQUENCE_UPDATE_TIMER)
                 {
                     // MOVE THOSE..... not sure where yet
-                    p_connection->NewConnection = false;
+                    p_connection->LastSequenceUpdate = 0.0f;
                     t_inputHandler->SetSequence(t_newSequence);
                     t_frequencyHandler->SetSequence(t_newSequence);
                 }
