@@ -522,5 +522,86 @@ namespace Doremi
             XMStoreFloat3(&o_max, maxVector);
             XMStoreFloat3(&o_min, minVector);
         }
+        void LevelLoader::CalculateOBBoundingBox(std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer, const DoremiEditor::Core::TransformData & p_transformationData, DirectX::XMFLOAT3 & o_max, DirectX::XMFLOAT3 & o_min, DirectX::XMFLOAT3 & o_center)
+        {
+            // Max and min that a int can have
+            int maxInt = std::numeric_limits<int>::max();
+            int minInt = std::numeric_limits<int>::min();
+            DirectX::XMFLOAT3 maxPosition = DirectX::XMFLOAT3(minInt, minInt, minInt); // THe lowest possible position a int can have
+            DirectX::XMFLOAT3 minPosition = DirectX::XMFLOAT3(maxInt, maxInt, maxInt); // The highest possible position a int can have
+            //DirectX::XMVECTOR rotation = DirectX::XMLoadFloat4(&p_transformationData.rotation);
+            DirectX::XMMATRIX translation = XMMatrixTranslationFromVector(XMLoadFloat3(&p_transformationData.translation));
+            DirectX::XMMATRIX scale = XMMatrixScalingFromVector(XMLoadFloat3(&p_transformationData.scale));
+            size_t length = p_vertexBuffer.size();
+            for (size_t i = 0; i < length; i++)
+            {
+                // Rotate positions
+                DirectX::XMVECTOR positionVec = XMLoadFloat3(&p_vertexBuffer[i].position);
+
+                //positionVec = XMVector3Transform(positionVec, scale);
+                //positionVec = XMVector3Rotate(positionVec, rotation);
+                //positionVec = XMVector3Transform(positionVec, translation);
+
+
+                XMFLOAT3 rotatedPos;
+                XMStoreFloat3(&rotatedPos, positionVec);
+                // Finding max value
+
+                if (rotatedPos.x > maxPosition.x)
+                {
+                    maxPosition.x = rotatedPos.x;
+                }
+                if (rotatedPos.y > maxPosition.y)
+                {
+                    maxPosition.y = rotatedPos.y;
+                }
+                if (rotatedPos.z > maxPosition.z)
+                {
+                    maxPosition.z = rotatedPos.z;
+                }
+
+                // FInding min value
+                if (rotatedPos.x < minPosition.x)
+                {
+                    minPosition.x = rotatedPos.x;
+                }
+                if (rotatedPos.y < minPosition.y)
+                {
+                    minPosition.y = rotatedPos.y;
+                }
+                if (rotatedPos.z < minPosition.z)
+                {
+                    minPosition.z = rotatedPos.z;
+                }
+            }
+            // Max and min are now centered around origo with no scale and no rotation...
+            DirectX::XMVECTOR maxVector = XMLoadFloat3(&maxPosition);
+            DirectX::XMVECTOR minVector = XMLoadFloat3(&minPosition);
+            // Create scale and translation matrices
+
+
+            // scale first then translate the points
+            // maxVector = XMVector3Transform(maxVector, scale);
+            // maxVector = XMVector3Transform(maxVector, translation);
+            // minVector = XMVector3Transform(minVector, scale);
+            // minVector = XMVector3Transform(minVector, translation);
+
+            // The center is taken from the heighest point and the lowest point
+            DirectX::XMFLOAT3 centerPoint;
+            XMStoreFloat3(&o_center, (maxVector + minVector) / 2);
+
+            minVector = XMVector3Transform(minVector, scale);            
+            maxVector = XMVector3Transform(maxVector, scale);
+            
+            XMStoreFloat3(&o_max, maxVector);
+            XMStoreFloat3(&o_min, minVector);
+
+            for (size_t i = 0; i < length; i++)
+            {                
+                p_vertexBuffer[i].position.x -= o_center.x;
+                p_vertexBuffer[i].position.y -= o_center.y;
+                p_vertexBuffer[i].position.z -= o_center.z;
+            }
+        }
     }
 }
