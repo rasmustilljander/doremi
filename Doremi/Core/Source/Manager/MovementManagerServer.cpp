@@ -86,23 +86,6 @@ namespace Doremi
                         // We weren't effected in any strange way. Just reset movement
                         movementComp->movement = XMFLOAT3(0, 0, 0);
                     }
-
-
-                    // RigidBodyComponent* rigidBody = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
-                    // XMFLOAT3 currentVelocity = m_sharedContext.GetPhysicsModule().GetRigidBodyManager().GetBodyVelocity(rigidBody->p_bodyID);
-                    // XMVECTOR forward = XMLoadFloat3(&movement->direction);
-                    // XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
-                    // XMVECTOR right = XMVector3Cross(up, forward);
-                    // right *= movement->rightAcceleration;
-                    // forward *= movement->forwardAcceleration;
-                    // XMVECTOR moveForce = right + forward;
-                    // XMVECTOR currentVel = XMLoadFloat3(&currentVelocity);
-                    //// moveForce -= (XMVector3Length(currentVel)/movement->maxSpeed) * moveForce ;
-                    // XMFLOAT3 force;
-                    // XMStoreFloat3(&force, moveForce);
-
-
-                    // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(rigidBody->p_bodyID, force);
                 }
             }
         }
