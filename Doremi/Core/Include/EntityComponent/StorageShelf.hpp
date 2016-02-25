@@ -11,38 +11,22 @@ public:
     static StorageShelf<T>* GetInstance();
     T* mItems;
 
-    // TODOCM bad solution to swap pointers of singleton, fix when there's time
-    void SetSingleton(void* p_pointer);
-
     T* GetPointerToArray() { return mItems; }
-
-    void SetPointerToArray(void* p_InPointer) { mItems = (T*)p_InPointer; }
 
 private:
     StorageShelf();
     ~StorageShelf();
-    static StorageShelf<T>* mSingleton;
 };
-
-
-template <class T> StorageShelf<T>* StorageShelf<T>::mSingleton = nullptr;
 
 template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
 {
-    if(mSingleton == nullptr)
-    {
-        mSingleton = new StorageShelf<T>();
-    }
-
-    return mSingleton;
+    static StorageShelf<T> storageShelf;
+    return &storageShelf;
 }
-
-template <class T> void StorageShelf<T>::SetSingleton(void* p_pointer) { mSingleton = (StorageShelf<T>*)p_pointer; }
 
 template <class T> StorageShelf<T>::StorageShelf() { mItems = new T[MAX_NUM_ENTITIES](); }
 
-template <class T> StorageShelf<T>::~StorageShelf() {}
-
+template <class T> StorageShelf<T>::~StorageShelf() { delete[] mItems; }
 
 // This is the magic about singletons
 // Find the right shelf for the needed component
@@ -51,22 +35,6 @@ template <class T> static T* GetComponent(EntityID pEntityID)
     StorageShelf<T>* tNeededShelf = tNeededShelf->GetInstance();
 
     return &tNeededShelf->mItems[pEntityID];
-}
-
-template <class T, class U> static void SwapShelf()
-{
-    if(sizeof(T) != sizeof(U))
-    {
-        std::runtime_error("Attempting to swap two different sized shelfs!");
-    }
-
-    // Get Pointers
-    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
-    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
-
-    // Set pointers
-    tFirstShelf->SetSingleton(tSecondShelf);
-    tSecondShelf->SetSingleton(tFirstShelf);
 }
 
 /**
@@ -86,50 +54,4 @@ template <class T, class U> static void CloneShelf()
     // Memcpy
     // TODO could take parameter of how many entities we have active
     memcpy(tSecondShelf->mItems, tFirstShelf->mItems, sizeof(T) * MAX_NUM_ENTITIES);
-}
-
-/**
-    TODOCM doc
-*/
-template <class T, class U, class V> static void RotateShelfs()
-{
-    if(sizeof(T) != sizeof(U) || sizeof(T) != sizeof(V))
-    {
-        std::runtime_error("Attempting to memcpy two different sized shelfs!");
-    }
-    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
-    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
-    StorageShelf<V>* tThirdShelf = tThirdShelf->GetInstance();
-
-
-    // Get Pointers
-    T* tFirstArray = tFirstShelf->GetInstance()->GetPointerToArray();
-    U* tSecondArray = tSecondShelf->GetInstance()->GetPointerToArray();
-    V* tThirdArray = tThirdShelf->GetInstance()->GetPointerToArray();
-
-    // Swap arrays
-    tFirstShelf->SetPointerToArray(tThirdArray);
-    tSecondShelf->SetPointerToArray(tFirstArray);
-    tThirdShelf->SetPointerToArray(tSecondArray);
-}
-
-/**
-TODOCM doc
-*/
-template <class T, class U> static void SwapShelfs()
-{
-    if(sizeof(T) != sizeof(U))
-    {
-        std::runtime_error("Attempting to memcpy two different sized shelfs!");
-    }
-    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
-    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
-
-    // Get Pointers
-    T* tFirstArray = tFirstShelf->GetInstance()->GetPointerToArray();
-    U* tSecondArray = tSecondShelf->GetInstance()->GetPointerToArray();
-
-    // Swap arrays
-    tFirstShelf->SetPointerToArray(tSecondShelf);
-    tSecondShelf->SetPointerToArray(tFirstArray);
 }
