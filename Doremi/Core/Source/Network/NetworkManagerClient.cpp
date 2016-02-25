@@ -39,10 +39,6 @@ namespace Doremi
             NetworkConnectionsClient::StartupNetworkConnectionsClient(p_sharedContext);
 
             LoadConfigFile(p_sharedContext);
-            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
-            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
-            p_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_connections->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_connections->m_serverConnectionState.ConnectingAdress);
         }
 
         NetworkManagerClient::~NetworkManagerClient() {}
@@ -175,7 +171,6 @@ namespace Doremi
                 // If wrong size of message
                 if(t_dataSizeReceived != sizeof(NetMessageConnectingFromServer))
                 {
-                    std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
                     t_newMessage = NetMessageConnectingFromServer();
                     continue;
                 }
@@ -243,7 +238,6 @@ namespace Doremi
                 // If wrong size of message
                 if(t_dataSizeReceived != sizeof(NetMessageConnectedFromServer))
                 {
-                    std::cout << "wrong size message connected" << std::endl; // TODOCM remove deubgg
                     t_newMessage = NetMessageBuffer();
                     continue;
                 }

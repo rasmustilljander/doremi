@@ -63,7 +63,7 @@ namespace Doremi
         {
             NetMessageBuffer() { ZeroMemory(Data, NET_MESSAGE_BUFFER_DATA_SIZE); }
             uint8_t MessageID; // 1 byte
-            unsigned char Data[NET_MESSAGE_BUFFER_DATA_SIZE]; // 1023 byte
+            unsigned char Data[NET_MESSAGE_BUFFER_DATA_SIZE]; // 2047 byte
         };
 
         struct NetMessageConnectingFromClient
@@ -77,7 +77,7 @@ namespace Doremi
         {
             NetMessageConnectedFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
             SendMessageIDFromClient MessageID;
-            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE];
+            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
         };
 
         struct NetMessageConnectingFromServer
@@ -91,7 +91,7 @@ namespace Doremi
         {
             NetMessageConnectedFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
             SendMessageIDFromServer MessageID;
-            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE];
+            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
         };
     }
 }

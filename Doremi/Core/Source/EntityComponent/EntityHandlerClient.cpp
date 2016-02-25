@@ -43,32 +43,31 @@ namespace Doremi
         {
             if(p_event->eventType == EventType::EntityCreated)
             {
-
                 EntityCreatedEvent* p_entityCreated = (EntityCreatedEvent*)p_event;
-                EntityID t_entityID;
 
                 if(p_entityCreated->bluepirnt == Blueprints::NetworkPlayerEntity)
                 {
                     // Create entity
-                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
-                                                             DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
+                                                DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    cout << "Created Network player" << endl;
                 }
                 else if(p_entityCreated->bluepirnt == Blueprints::PlayerEntity)
                 {
                     // Create entity
-                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, p_entityCreated->orientation,
-                                                             DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    EntityID t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position,
+                                                                      p_entityCreated->orientation, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
                     // Create player
                     static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->SetNewPlayerEntityID(t_entityID);
+
+                    cout << "Created my player" << endl;
                 }
                 else
                 {
                     // Create entity
-                    t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
+                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
                 }
-
-                std::cout << "Entity Created with ID: " << t_entityID << std::endl;
             }
             else if(p_event->eventType == EventType::RemoveEntity)
             {

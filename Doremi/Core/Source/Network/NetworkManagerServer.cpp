@@ -96,7 +96,6 @@ namespace Doremi
                 // If we don't have of that size
                 if(t_dataSizeReceived != sizeof(NetMessageConnectingFromClient))
                 {
-                    std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
                     // Null message and conitinue
                     t_networkMessage = NetMessageConnectingFromClient();
                     continue;
@@ -171,7 +170,6 @@ namespace Doremi
                         // If we received a correct message
                         if(t_dataSizeReceived != sizeof(NetMessageConnectedFromClient))
                         {
-                            std::cout << "wrong size message connected" << std::endl; // TODOCM remove deubgg
                             t_message = NetMessageBuffer();
                             continue;
                         }

@@ -205,6 +205,9 @@ namespace Doremi
                 // Create a "new" player
                 NewPlayer = iterInact->second->m_savedPlayer;
 
+                // Set entityID
+                NewPlayer->m_playerEntityID = t_EntityID;
+
                 // Add player to map and remove from inactive
                 m_playerMap[p_playerID] = NewPlayer;
                 m_inactivePlayers.erase(iterInact);
@@ -502,9 +505,10 @@ namespace Doremi
                 Blueprints blueprint = p_entityCreatedEvent->bluepirnt;
 
                 // If we create a player entity, we want to create a network player on other clients
-                if(blueprint == Blueprints::PlayerEntity && !p_entityCreatedEvent->entityID == t_player.second->m_playerEntityID)
+                if(blueprint == Blueprints::PlayerEntity && !(p_entityCreatedEvent->entityID == t_player.second->m_playerEntityID))
                 {
                     blueprint = Blueprints::NetworkPlayerEntity;
+                    cout << "Changed to Network player" << endl;
                 }
 
                 (static_cast<PlayerServer*>(t_player.second))
@@ -522,7 +526,6 @@ namespace Doremi
 
             // Save it for later joins
             m_lateJoinEventQueue.push_back(new EntityCreatedEvent(*p_entityCreatedEvent));
-            std::cout << "Entity Created with ID: " << p_entityCreatedEvent->entityID << std::endl;
         }
 
         void PlayerHandlerServer::QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent)

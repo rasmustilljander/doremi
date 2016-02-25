@@ -168,7 +168,6 @@ namespace DoremiEngine
                 if(Error != WSAEWOULDBLOCK)
                 {
                     // TODOCM log message
-                    std::cout << "Error send udp: " << Error << std::endl;
                 }
                 return false;
             }
@@ -194,7 +193,6 @@ namespace DoremiEngine
                 int Error = WSAGetLastError();
                 if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
-                    std::cout << "Error recv udp: " << Error << std::endl;
                     // TODOCM log message
                 }
                 return false;
@@ -219,8 +217,7 @@ namespace DoremiEngine
                 int Error = WSAGetLastError();
                 if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
-                    std::cout << "Error recv udp: " << Error << std::endl;
-                    return false;
+                    // TODOCM Log message
                 }
                 return false;
             }
@@ -248,7 +245,6 @@ namespace DoremiEngine
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Log message
-                    return false;
                 }
                 return false;
             }
@@ -271,7 +267,6 @@ namespace DoremiEngine
                 if(errorCode != WSAEWOULDBLOCK && errorCode != WSAECONNABORTED)
                 {
                     // TODOCM Log message
-                    return false;
                 }
 
                 return false;
