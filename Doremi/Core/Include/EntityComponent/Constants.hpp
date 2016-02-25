@@ -12,7 +12,7 @@ typedef uint32_t EntityID;
 enum class ComponentType : int
 {
     None = 0x00,
-    Example = 0x01,
+    CharacterEffect = 0x01,
     Example2 = 0x02,
     Audio = 0x04,
     AudioActive = 0x08,
