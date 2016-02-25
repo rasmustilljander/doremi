@@ -9,6 +9,8 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/AIGroupComponent.hpp>
+#include <EntityComponent/Components/JumpComponent.hpp>
+#include <EntityComponent/Components/GravityComponent.hpp>
 #include <Doremi/Core/Include/PotentialFieldGridCreator.hpp>
 #include <EntityComponent/Components/PhysicsMaterialComponent.hpp>
 // Events
@@ -116,6 +118,12 @@ namespace Doremi
                             }
                         }
                     }
+                    // Should we jump?
+                    float distance = ProximityChecker::GetInstance().CalculateDistance(desiredPos, unitPos);
+                    if(distance > 8)
+                    {
+                        PerformJump(i);
+                    }
                     XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.z); // The fields impact
 
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
@@ -124,7 +132,7 @@ namespace Doremi
                     dirVec = XMVector3Normalize(dirVec);
 
                     XMFLOAT3 direction;
-                    XMStoreFloat3(&direction, dirVec * 0.2f); // TODOKO remove this hard coded shiat
+                    XMStoreFloat3(&direction, dirVec * 0.5f); // TODOKO remove this hard coded shiat
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
 
@@ -222,6 +230,23 @@ namespace Doremi
             else
             {
                 // TODOKO Log error no PF comp
+            }
+        }
+
+        void AIPathManager::PerformJump(const int32_t& p_entityID)
+        {
+            if(EntityHandler::GetInstance().HasComponents(p_entityID, (int)ComponentType::Jump | (int)ComponentType::Gravity))
+            {
+                if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(p_entityID)->travelSpeed > 0)
+                {
+                    // check if we have the jump component
+
+                    JumpComponent* jumpComp = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(p_entityID);
+                    if(!jumpComp->active)
+                    {
+                        jumpComp->StartJump();
+                    }
+                }
             }
         }
     }

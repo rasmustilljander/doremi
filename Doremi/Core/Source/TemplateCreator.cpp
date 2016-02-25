@@ -296,6 +296,11 @@ namespace Doremi
             //// Has an extra drain follow it around
             // blueprint[ComponentType::ExtraDrain];
 
+            // Jump comp
+            JumpComponent* jumpComp = new JumpComponent();
+            jumpComp->intensity = 1;
+            blueprint[ComponentType::Jump] = jumpComp;
+
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
             TIME_FUNCTION_STOP
@@ -401,6 +406,11 @@ namespace Doremi
 
             //// Has an extra drain follow it around
             // blueprint[ComponentType::ExtraDrain];
+
+            // Jump comp
+            JumpComponent* jumpComp = new JumpComponent();
+            jumpComp->intensity = 1;
+            blueprint[ComponentType::Jump] = jumpComp;
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);

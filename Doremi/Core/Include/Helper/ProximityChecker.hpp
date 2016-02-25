@@ -28,6 +28,10 @@ namespace Doremi
             Returns the distance between 2 entities
             */
             float GetDistanceBetweenEntities(const size_t& p_firstEntityID, const size_t& p_secondEntityID);
+            /**
+            Returns the distance between float3
+            */
+            float CalculateDistance(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2);
 
         protected:
             static ProximityChecker* m_singleton;
@@ -35,7 +39,6 @@ namespace Doremi
 
             // Help functions
             bool IsInProximity(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2, const float& p_range);
-            float CalculateDistance(const DirectX::XMFLOAT3& p_position1, const DirectX::XMFLOAT3& p_position2);
         };
     }
 }

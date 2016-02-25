@@ -198,7 +198,7 @@ namespace DoremiEngine
                 if(m_grid[quadNrX + quadNrY * m_numberOfQuadsWidth].occupied)
                 {
                     // If the one we are in is occupied set highest charge to low just to get out
-                    highestCharge = std::numeric_limits<float>::min();
+                    highestCharge = std::numeric_limits<float>::lowest();
                     // THis might happen when the AI is cutting corners
                 }
             }
@@ -209,63 +209,66 @@ namespace DoremiEngine
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
                 float quadCharge;
-                if(!m_grid[x + y * m_numberOfQuadsWidth].occupied)
+
+                if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight)
                 {
-
-
-                    if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight)
+                    if(m_grid[x + y * m_numberOfQuadsWidth].occupied)
                     {
-                        // The quad exists!
+                        continue;
+                    }
+                    // The quad exists!
 
-                        // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
-                        // This will probably never be used...
-                        if(p_staticCheck)
-                        {
-                            quadCharge = m_grid[x + y * m_numberOfQuadsWidth].charge;
-                        }
-                        else
-                        {
-                            // CalculateCharge takes both static and dynamic actors in to acount, and phermonetrails and stuff
-                            quadCharge = CalculateCharge(x, y, p_currentActor);
-                        }
-                        if(quadCharge > highestCharge)
-                        {
-                            highestCharge = quadCharge;
-                            highestChargedPos = GetGridQuadPosition(x, y);
-                        }
+                    // If we are performing a static check we only check vs static actors and only need to take the value saved in the grid
+                    // This will probably never be used...
+                    if(p_staticCheck)
+                    {
+                        quadCharge = m_grid[x + y * m_numberOfQuadsWidth].charge;
                     }
                     else
                     {
-                        // Tries to check outside the field
+                        // CalculateCharge takes both static and dynamic actors in to acount, and phermonetrails and stuff
+                        quadCharge = CalculateCharge(x, y, p_currentActor);
+                    }
+                    if(quadCharge > highestCharge)
+                    {
+                        highestCharge = quadCharge;
+                        highestChargedPos = GetGridQuadPosition(x, y);
+                    }
+                }
+                else
+                {
+                    // Tries to check outside the field
 
-                        // FInd the position the grid would have had
-                        XMFLOAT3 newPosition = GetGridQuadPosition(x, y);
-                        // Use that position to set new unit position
+                    // FInd the position the grid would have had
+                    XMFLOAT3 newPosition = GetGridQuadPosition(x, y);
 
-                        // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add
-                        // the jump
-                        XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_stepDistance), p_unitPosition.y,
-                                                            newPosition.z + (static_cast<float>(sign<int>(y)) * m_stepDistance));
-                        // Find what field the new position is in, if any
-                        float chargeFromField;
-                        DirectX::XMFLOAT3 positionFromField;
+                    // Calculate where we are outside the field, <0 = outside bottom, 0 = inside, >0 = outside top
+                    int outsideX = std::floor(static_cast<float>(x) / static_cast<float>(m_numberOfQuadsWidth));
+                    int outsideZ = std::floor(static_cast<float>(y) / static_cast<float>(m_numberOfQuadsHeight));
+                    // Use that position to set new unit position
+                    // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add
+                    // the jump
+                    XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(outsideX)) * m_stepDistance), p_unitPosition.y,
+                                                        newPosition.z + (static_cast<float>(sign<int>(outsideZ)) * m_stepDistance));
+                    // Find what field the new position is in, if any
+                    float chargeFromField;
+                    DirectX::XMFLOAT3 positionFromField;
+                    AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
+                    if(chargeFromField > highestCharge)
+                    {
+                        highestCharge = chargeFromField;
+                        highestChargedPos = positionFromField;
+                    }
+                    else
+                    {
+                        // Try a jump!
+                        newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(outsideX)) * 20), p_unitPosition.y,
+                                                   newPosition.z + (static_cast<float>(sign<int>(outsideZ)) * 20));
                         AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
                         if(chargeFromField > highestCharge)
                         {
                             highestCharge = chargeFromField;
                             highestChargedPos = positionFromField;
-                        }
-                        else
-                        {
-                            // Try a jump!
-                            newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * 5), p_unitPosition.y,
-                                                       newPosition.z + (static_cast<float>(sign<int>(y)) * 5));
-                            AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
-                            if(chargeFromField > highestCharge)
-                            {
-                                highestCharge = chargeFromField;
-                                highestChargedPos = positionFromField;
-                            }
                         }
                     }
                 }
@@ -282,7 +285,7 @@ namespace DoremiEngine
         {
             using namespace DirectX;
             PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(p_position));
-            o_charge = std::numeric_limits<float>::min();
+            o_charge = std::numeric_limits<float>::lowest();
             if(newField != nullptr)
             {
                 // if a field was found check what grid point in that field we are in
