@@ -97,7 +97,7 @@ namespace Doremi
 
         // Manager* t_physicsManager = new ExampleManager(sharedContext);
         Core::LevelLoaderServer* t_levelLoader = new Core::LevelLoaderServer(sharedContext);
-        t_levelLoader->LoadLevel("Levels/IntroScene.drm");
+        t_levelLoader->LoadLevel("Levels/AIChangePFTest.drm");
 
         Core::Manager* t_serverNetworkManager = new Core::NetworkManagerServer(sharedContext);
         Core::Manager* t_movementManager = new Core::MovementManagerServer(sharedContext);

@@ -45,6 +45,7 @@ namespace DoremiEngine
 
         private:
             // Help functions
+            void AttemptJumpToNewField(const DirectX::XMFLOAT3& p_position, float& o_charge, DirectX::XMFLOAT3& o_newPosition);
 
             bool AnyPositiveGoalInRange(const DirectX::XMFLOAT3& p_position);
             float GetChargeInfluenceFromActor(const DirectX::XMFLOAT2& p_position, const PotentialFieldActor& p_actor);
@@ -61,7 +62,7 @@ namespace DoremiEngine
             int m_numberOfQuadsHeight; // z
             float m_phermoneEffect;
             AIContext& m_context;
-            float m_jumpDistance;
+            float m_stepDistance;
 
             std::string m_name; // Used as id and to save to correct file
             bool m_needsUpdate; // used to determine if the field needs updating

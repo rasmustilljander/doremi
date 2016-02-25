@@ -14,7 +14,7 @@ namespace DoremiEngine
     {
         PotentialFieldImpl::PotentialFieldImpl(AIContext& p_aiContext) : m_phermoneEffect(15), m_context(p_aiContext)
         {
-            m_jumpDistance = m_context.config.GetAllConfigurationValues().AIJumpDistance;
+            m_stepDistance = m_context.config.GetAllConfigurationValues().AIJumpDistance;
         }
         PotentialFieldImpl::~PotentialFieldImpl() {}
         void PotentialFieldImpl::SetGrid(PotentialFieldGridPoint* p_grid)
@@ -234,38 +234,37 @@ namespace DoremiEngine
                     else
                     {
                         // Tries to check outside the field
-                        // Here we create a imaginary quad and checks if that quad have a greater charge than the last,
-                        // if this is true we check what field that imaginary quad would belong to and sees if it's walkable. Should work for field
-                        // transition
 
                         // FInd the position the grid would have had
                         XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
                         // Use that position to set new unit position
 
                         // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add
-                        // the
-                        // jump
-                        XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_jumpDistance), p_unitPosition.y,
-                                                            newPosition.y + (static_cast<float>(sign<int>(y)) * m_jumpDistance));
+                        // the jump
+                        XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_stepDistance), p_unitPosition.y,
+                                                            newPosition.y + (static_cast<float>(sign<int>(y)) * m_stepDistance));
                         // Find what field the new position is in, if any
-                        PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(newUnitPosition));
-                        if(newField != nullptr)
+                        float chargeFromField;
+                        DirectX::XMFLOAT3 positionFromField;
+                        AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
+                        if (chargeFromField > highestCharge)
                         {
-                            // if a field was found check what grid point in that field we are in
-                            XMINT2 gridPoint = newField->WhatGridPosAmIOn(newUnitPosition);
-                            // if for some wierd reason we are in the field but not in a grid point screw it...
-                            if(gridPoint.x != -1)
+                            highestCharge = chargeFromField;
+                            highestChargedPos = XMFLOAT2( positionFromField.x, positionFromField.z);
+                        }
+                        else
+                        {
+                            // Try a jump!
+                            newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * 5), p_unitPosition.y,
+                                                        newPosition.y + (static_cast<float>(sign<int>(y)) * 5));
+                            AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
+                            if (chargeFromField > highestCharge)
                             {
-                                // calculate a new charge from the new field
-                                quadCharge = newField->CalculateCharge(gridPoint.x, gridPoint.y, p_currentActor);
-                                // if higher set it as the new high
-                                if(quadCharge > highestCharge)
-                                {
-                                    highestCharge = quadCharge;
-                                    highestChargedPos = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
-                                }
+                                highestCharge = chargeFromField;
+                                highestChargedPos = XMFLOAT2(positionFromField.x, positionFromField.z);
                             }
                         }
+
                     }
                 }
             }
@@ -275,6 +274,26 @@ namespace DoremiEngine
                 p_inField = false;
             }
             return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
+        }
+
+        void PotentialFieldImpl::AttemptJumpToNewField(const DirectX::XMFLOAT3& p_position, float& o_charge, DirectX::XMFLOAT3& o_newPosition)
+        {
+            using namespace DirectX;
+            PotentialFieldImpl* newField = static_cast<PotentialFieldImpl*>(m_context.PFModule->FindBestPotentialField(p_position));
+            o_charge = std::numeric_limits<float>::min();
+            if (newField != nullptr)
+            {
+                // if a field was found check what grid point in that field we are in
+                XMINT2 gridPoint = newField->WhatGridPosAmIOn(p_position);
+                // if for some wierd reason we are in the field but not in a grid point screw it...
+                if (gridPoint.x != -1)
+                {
+                    // calculate a new charge from the new field
+                    o_charge = newField->CalculateCharge(gridPoint.x, gridPoint.y, nullptr);
+                    XMFLOAT2 newPos2d = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
+                    o_newPosition = XMFLOAT3(newPos2d.x, newField->GetCenter().y, newPos2d.y);
+                }
+            }
         }
 
         float PotentialFieldImpl::CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor)
@@ -290,7 +309,10 @@ namespace DoremiEngine
                     // This is for the actors influence
                     totalCharge += GetChargeInfluenceFromActor(quadPos, *actor);
                     // This is for the current actors special influence, if any TODOKO Might be a speed up to do this only if we are in range of actor
-                    totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor, usePhermone);
+                    if (p_currentActor != nullptr)
+                    {
+                        totalCharge += GetSpecialInfluenceBetweenActors(quadPos, *actor, *p_currentActor, usePhermone);
+                    }
                 }
             }
             // std::cout << p_quadX << " " << p_quadY << " " << totalCharge << std::endl;
