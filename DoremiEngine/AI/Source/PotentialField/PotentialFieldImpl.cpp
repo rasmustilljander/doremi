@@ -32,7 +32,8 @@ namespace DoremiEngine
             {
                 for(size_t y = 0; y < m_numberOfQuadsHeight; y++)
                 {
-                    XMFLOAT2 quadPos = GetGridQuadPosition(x, y);
+                    XMFLOAT3 quadnPos3d = GetGridQuadPosition(x, y);
+                    XMFLOAT2 quadPos = XMFLOAT2(quadnPos3d.x, quadnPos3d.z);
                     float totalCharge = 0;
                     for(auto actor : m_staticActors)
                     {
@@ -44,7 +45,8 @@ namespace DoremiEngine
                             m_grid[x + m_numberOfQuadsWidth * y].occupied = true;
                             // std::cout << "x " << x << " y " << y << std::endl;
                         }
-                        XMFLOAT2 actorQuadPosition = GetGridQuadPosition(closestQuad.x, closestQuad.y);
+                        XMFLOAT3 actorQuadPos3d = GetGridQuadPosition(closestQuad.x, closestQuad.y);
+                        XMFLOAT2 actorQuadPosition = XMFLOAT2(actorQuadPos3d.x, actorQuadPos3d.z);
 
                         float actorCharge = actor->GetCharge();
                         float actorRange = actor->GetRange();
@@ -135,18 +137,19 @@ namespace DoremiEngine
             }
         }
 
-        DirectX::XMFLOAT2 PotentialFieldImpl::GetGridQuadPosition(const int& p_x, const int& p_z)
+        DirectX::XMFLOAT3 PotentialFieldImpl::GetGridQuadPosition(const int& p_x, const int& p_z)
         {
             using namespace DirectX;
-            XMFLOAT2 returnPosition; // position to be returned
+            XMFLOAT3 returnPosition; // position to be returned
             float quadWidth = m_quadSize.x;
             float quadHeight = m_quadSize.y;
             XMFLOAT2 bottomLeft = XMFLOAT2(m_center.x - m_width * 0.5f, m_center.z - m_height * 0.5f);
-            returnPosition = XMFLOAT2((float)p_x * quadWidth + bottomLeft.x + quadWidth * 0.5f, (float)p_z * quadHeight + bottomLeft.y + quadHeight * 0.5f);
+            returnPosition =
+                XMFLOAT3((float)p_x * quadWidth + bottomLeft.x + quadWidth * 0.5f, m_center.y, (float)p_z * quadHeight + bottomLeft.y + quadHeight * 0.5f);
             return returnPosition;
         }
 
-        DirectX::XMFLOAT2 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField,
+        DirectX::XMFLOAT3 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField,
                                                                     PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
             using namespace DirectX;
@@ -154,7 +157,7 @@ namespace DoremiEngine
             bool goalInRange = AnyPositiveGoalInRange(p_unitPosition);
             if(!goalInRange)
             {
-                return XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+                return p_unitPosition;
             }
 
             // Good thing to note is that the grid is originated from bottom left corner so [0][0] is bottom left corner
@@ -184,14 +187,14 @@ namespace DoremiEngine
 
             // Check for special cases
             size_t length = quadsToCheck.size();
-            XMFLOAT2 highestChargedPos = XMFLOAT2(m_center.x, m_center.z); // if we are outside the field we should walk to center
+            XMFLOAT3 highestChargedPos = m_center; // if we are outside the field we should walk to center
             float highestCharge = 0;
             if(quadNrX >= 0 && quadNrX < m_numberOfQuadsWidth && quadNrY >= 0 && quadNrY < m_numberOfQuadsHeight)
             {
                 // take the quad the unit is in as the highest charge. If all the qauds have the same charge the unit shouldnt move
                 highestCharge =
                     CalculateCharge(quadNrX, quadNrY, p_currentActor); // +5 since that the max number of phermonetrails in the list TODOCONFIG
-                highestChargedPos = XMFLOAT2(p_unitPosition.x, p_unitPosition.z);
+                highestChargedPos = p_unitPosition;
                 if(m_grid[quadNrX + quadNrY * m_numberOfQuadsWidth].occupied)
                 {
                     // If the one we are in is occupied set highest charge to low just to get out
@@ -236,13 +239,13 @@ namespace DoremiEngine
                         // Tries to check outside the field
 
                         // FInd the position the grid would have had
-                        XMFLOAT2 newPosition = GetGridQuadPosition(x, y);
+                        XMFLOAT3 newPosition = GetGridQuadPosition(x, y);
                         // Use that position to set new unit position
 
                         // The sign gets wheter or not we are moving outside the field in positive or negativ hence we know in what direction to add
                         // the jump
                         XMFLOAT3 newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * m_stepDistance), p_unitPosition.y,
-                                                            newPosition.y + (static_cast<float>(sign<int>(y)) * m_stepDistance));
+                                                            newPosition.z + (static_cast<float>(sign<int>(y)) * m_stepDistance));
                         // Find what field the new position is in, if any
                         float chargeFromField;
                         DirectX::XMFLOAT3 positionFromField;
@@ -250,29 +253,29 @@ namespace DoremiEngine
                         if(chargeFromField > highestCharge)
                         {
                             highestCharge = chargeFromField;
-                            highestChargedPos = XMFLOAT2(positionFromField.x, positionFromField.z);
+                            highestChargedPos = positionFromField;
                         }
                         else
                         {
                             // Try a jump!
                             newUnitPosition = XMFLOAT3(newPosition.x + (static_cast<float>(sign<int>(x)) * 5), p_unitPosition.y,
-                                                       newPosition.y + (static_cast<float>(sign<int>(y)) * 5));
+                                                       newPosition.z + (static_cast<float>(sign<int>(y)) * 5));
                             AttemptJumpToNewField(newUnitPosition, chargeFromField, positionFromField);
                             if(chargeFromField > highestCharge)
                             {
                                 highestCharge = chargeFromField;
-                                highestChargedPos = XMFLOAT2(positionFromField.x, positionFromField.z);
+                                highestChargedPos = positionFromField;
                             }
                         }
                     }
                 }
             }
             // if the wanted position is outside the current field we should change field
-            if(WhatGridPosAmIOn(XMFLOAT3(highestChargedPos.x, p_unitPosition.y, highestChargedPos.y)).x == -1)
+            if(WhatGridPosAmIOn(highestChargedPos).x == -1)
             {
                 p_inField = false;
             }
-            return XMFLOAT2(highestChargedPos.x, highestChargedPos.y); // TODOEA Kanske skicka bak en xmfloat3
+            return highestChargedPos;
         }
 
         void PotentialFieldImpl::AttemptJumpToNewField(const DirectX::XMFLOAT3& p_position, float& o_charge, DirectX::XMFLOAT3& o_newPosition)
@@ -289,8 +292,7 @@ namespace DoremiEngine
                 {
                     // calculate a new charge from the new field
                     o_charge = newField->CalculateCharge(gridPoint.x, gridPoint.y, nullptr);
-                    XMFLOAT2 newPos2d = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
-                    o_newPosition = XMFLOAT3(newPos2d.x, newField->GetCenter().y, newPos2d.y);
+                    o_newPosition = newField->GetGridQuadPosition(gridPoint.x, gridPoint.y);
                 }
             }
         }
@@ -298,7 +300,8 @@ namespace DoremiEngine
         float PotentialFieldImpl::CalculateCharge(int p_quadX, int p_quadY, const PotentialFieldActor* p_currentActor)
         {
             using namespace DirectX;
-            XMFLOAT2 quadPos = GetGridQuadPosition(p_quadX, p_quadY);
+            XMFLOAT3 quadPos3d = GetGridQuadPosition(p_quadX, p_quadY);
+            XMFLOAT2 quadPos = XMFLOAT2(quadPos3d.x, quadPos3d.z);
             float totalCharge = 0;
             bool usePhermone = true;
             for(auto actor : m_dynamicActors)
@@ -324,7 +327,8 @@ namespace DoremiEngine
                 for(size_t i = 0; i < t_vecSize; ++i)
                 {
                     // Create a smal charge on the phermone position
-                    XMFLOAT2 phermonePos = GetGridQuadPosition(phermoneVector[i].x, phermoneVector[i].y);
+                    XMFLOAT3 phermonePos3d = GetGridQuadPosition(phermoneVector[i].x, phermoneVector[i].y);
+                    XMFLOAT2 phermonePos = XMFLOAT2(phermonePos3d.x, phermonePos3d.z);
                     XMVECTOR phermonePosVec = XMLoadFloat2(&phermonePos);
                     XMVECTOR quadPosVec = XMLoadFloat2(&quadPos);
 

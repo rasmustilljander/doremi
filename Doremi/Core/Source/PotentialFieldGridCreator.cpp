@@ -45,8 +45,7 @@ namespace Doremi
             {
                 for(size_t z = 0; z < gridSizeZ; ++z)
                 {
-                    XMFLOAT2 gridQUadPosition = op_field->GetGridQuadPosition(x, z);
-                    XMFLOAT3 sweepOrigin = XMFLOAT3(gridQUadPosition.x, centerGridY, gridQUadPosition.y);
+                    XMFLOAT3 sweepOrigin = op_field->GetGridQuadPosition(x, z);
                     XMFLOAT3 boxHalfExtents = XMFLOAT3(quadSize.x * 0.5f, 2, quadSize.y * 0.5);
                     int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(MAX_NUM_ENTITIES + 1, sweepOrigin, XMFLOAT4(0, 0, 0,

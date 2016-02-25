@@ -74,7 +74,7 @@ namespace Doremi
                                                                      (int)ComponentType::Movement | (int)ComponentType::PotentialField))
                 {
                     // Get the needed components
-                    XMFLOAT2 desiredPos;
+                    XMFLOAT3 desiredPos;
                     TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
                     XMFLOAT3 unitPos = transComp->position;
                     // DoremiEngine::AI::PotentialGroup* group = EntityHandler::GetInstance().GetComponentFromStorage<AIGroupComponent>(i)->Group;
@@ -116,7 +116,7 @@ namespace Doremi
                             }
                         }
                     }
-                    XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.y); // The fields impact
+                    XMFLOAT3 desiredPos3D = XMFLOAT3(desiredPos.x, unitPos.y, desiredPos.z); // The fields impact
 
                     XMVECTOR desiredPosVec = XMLoadFloat3(&desiredPos3D);
                     XMVECTOR unitPosVec = XMLoadFloat3(&unitPos);
