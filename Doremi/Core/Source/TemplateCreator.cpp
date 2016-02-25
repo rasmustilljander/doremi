@@ -754,11 +754,15 @@ namespace Doremi
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
-            data.setColor(0.1, 0.5, 0.9);
+            float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+            data.setColor(r, g, b);
             material.data = data;
-            material.nodeName = "TTBulletMaterial";
+            material.nodeName = "BulletMaterial";
             material.diffuseTexturePath = "Test.dds";
-            material.glowTexturePath = "glow.dds";
+            material.glowTexturePath = "glow2.dds";
             particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(material);
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;

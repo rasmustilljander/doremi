@@ -8,6 +8,7 @@ namespace DoremiEditor
     {
         struct MaterialMessage
         {
+            void SetColor(float r, float g, float b) { data.setColor(r, g, b); }
             char* nodeName;
             char* diffuseTexturePath;
             char* glowTexturePath;

@@ -651,7 +651,6 @@ namespace DoremiEngine
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = transRenderData[0].vertexData;
             MaterialMessage materialData = transRenderData[0].materialMessage;
-            if(materialData.nodeName == "TTBulletMaterial") int a = 2;
             ID3D11ShaderResourceView* texture = transRenderData[0].diffuseTexture;
             ID3D11ShaderResourceView* glowtexture = transRenderData[0].glowTexture;
             ID3D11SamplerState* samplerState = transRenderData[0].samplerState;
@@ -732,11 +731,11 @@ namespace DoremiEngine
                     if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         // Just for the luls
-                        float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-                        float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-                        float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-
-                        transRenderData[i].materialMessage.data.setColor(r, g, b);
+                        // float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+                        // float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+                        // float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+                        //
+                        // transRenderData[i].materialMessage.SetColor(r, g, b);
 
                         D3D11_MAPPED_SUBRESOURCE tMS;
                         m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);

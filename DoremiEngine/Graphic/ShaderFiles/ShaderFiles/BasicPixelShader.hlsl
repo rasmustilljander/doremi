@@ -172,7 +172,7 @@ PixelOutputType PS_main(PixelInputType input)
     if (mapMasks == 0)
     {
         texcolor = float4(color, 1);
-        glowcolor = float4(color, 1);
+        glowcolor = GlowTexture.Sample(ObjSamplerState, float2(0, 0));
     }
     else 
     {

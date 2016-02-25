@@ -21,8 +21,9 @@ namespace DoremiEngine
             virtual void SetGlowTexture(ID3D11ShaderResourceView* p_texture) = 0;
             virtual void SetMaterialData(DoremiEditor::Core::MaterialMessage p_data) = 0;
             virtual void SetSamplerState(ID3D11SamplerState* p_samplerState) = 0;
+            virtual void SetColor(float r, float g, float b) = 0;
 
-        private:
+        protected:
             std::string materialName;
             // int mapMasks;
             // float diffuse;
