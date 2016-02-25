@@ -73,7 +73,7 @@ namespace Doremi
                         }
 
                         // If we're not running on fire (or ice) we can stop
-                        else if(currentEffects & (int)CharacterEffect::CantStop)
+                        else if(!(currentEffects & (int)CharacterEffect::CantStop))
                         {
                             movementComp->movement = XMFLOAT3(0, 0, 0);
                         }
