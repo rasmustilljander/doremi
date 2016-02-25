@@ -89,7 +89,8 @@ namespace Doremi
 
                 materialMessage.nodeName = materialName;
                 // TODOKO save the texture name<
-                m_materials.emplace(materialName, materialMessage);
+                m_materials[materialName] = materialMessage;
+
 
                 // delete materialName;
             }
