@@ -232,8 +232,6 @@ namespace Doremi
             // Has an extra drain follow it around
             blueprint[ComponentType::ExtraDrain];
 
-            blueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
-
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
             TIME_FUNCTION_STOP
         }
@@ -406,6 +404,8 @@ namespace Doremi
 
             //// Has an extra drain follow it around
             // blueprint[ComponentType::ExtraDrain];
+
+            blueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);
@@ -670,6 +670,9 @@ namespace Doremi
             hpComp->currentHealth = 50;
             hpComp->maxHealth = 50;
             t_avatarBlueprint[ComponentType::Health] = hpComp;
+
+            t_avatarBlueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
             TIME_FUNCTION_STOP
@@ -779,6 +782,8 @@ namespace Doremi
             // Net object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
             t_avatarBlueprint[ComponentType::NetworkObject] = netObjComp;
+
+            t_avatarBlueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
 
             // Audio comp
             AudioComponent* audioComp = new AudioComponent();
