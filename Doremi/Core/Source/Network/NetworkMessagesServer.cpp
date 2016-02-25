@@ -139,7 +139,7 @@ namespace Doremi
             if(NetworkConnectionsServer::GetInstance()->AdressWithPortExist(p_adress, t_connection))
             {
                 std::cout << "Received disconnect! This might be a problem if not intentinal..." << std::endl;
-                NetworkConnectionsServer::GetInstance()->RemoveConnection(p_adress);
+                t_connection->LastResponse = 10000000; // Hard coded to disconnect
             }
         }
 
@@ -427,6 +427,12 @@ namespace Doremi
             {
                 // Write objects from priority
                 t_networkPriorityHandler->WriteObjectsByPriority(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten);
+            }
+            else
+            {
+                // Write 0 objects, if we started to write something bad in the events
+                t_streamer.WriteUnsignedInt8(0);
+                t_bytesWritten += sizeof(uint8_t);
             }
 
             // Send the message

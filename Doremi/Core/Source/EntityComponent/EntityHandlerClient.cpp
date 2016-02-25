@@ -68,9 +68,7 @@ namespace Doremi
                     t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position);
                 }
 
-                static int objectsAdded = 0;
-                cout << objectsAdded << " with id: " << t_entityID << " and blueprint: " << (uint32_t)p_entityCreated->bluepirnt << endl;
-                objectsAdded++;
+                std::cout << "Entity Created with ID: " << t_entityID << std::endl;
             }
             else if(p_event->eventType == EventType::RemoveEntity)
             {

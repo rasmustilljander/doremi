@@ -25,9 +25,9 @@ namespace Doremi
 
             static void StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
-            auto GetConnectedClientConnections() { return m_connectedClientConnections; }
+            auto& GetConnectedClientConnections() { return m_connectedClientConnections; }
 
-            auto GetConnectingClientConnections() { return m_connectingClientConnections; }
+            auto& GetConnectingClientConnections() { return m_connectingClientConnections; }
 
             SocketHandle GetConnectingSocketHandle() { return m_connectingSocketHandle; }
 

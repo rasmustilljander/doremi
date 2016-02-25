@@ -42,7 +42,7 @@ namespace Doremi
         }
         // TODOXX snapshotdelay must be less then sequencedleay in inputhandlerserver
         InterpolationHandler::InterpolationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(3)
+            : m_sharedContext(p_sharedContext), m_snapshotSequenceReal(0), m_snapshotDelay(20)
         {
         }
 
@@ -155,6 +155,9 @@ namespace Doremi
 
                     int AmountOfSnapshots = m_DelayedSnapshots.size();
 
+                    // Temporary list for other wise removed events
+                    std::list<Event*> t_tempEventList;
+
                     for(iter = m_DelayedSnapshots.rbegin(); iter != iterEnd; ++iter)
                     {
                         if(sequence_more_recent((*iter)->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
@@ -164,7 +167,12 @@ namespace Doremi
                         }
                         else if(m_DelayedSnapshots.size() > 1)
                         {
-                            cout << "Didn't know it was possible to get here..." << endl;
+                            cout << "Shouldn't be able to get here without major overflowing the sequence." << endl;
+
+                            if((*iter)->Events.size() > 0)
+                            {
+                                t_tempEventList.merge((*iter)->Events);
+                            }
 
                             // Remove it
                             iterRemoveStart = --iter.base();
@@ -184,6 +192,18 @@ namespace Doremi
 
                     // We somehow need to check if it's the last anyway because of the alpha?
                     Snapshot* SnapshotToUse = m_DelayedSnapshots.back();
+
+                    if(t_tempEventList.size())
+                    {
+                        cout << "Not tested code - hard to test" << std::endl;
+                        cout << "Adding: " << t_tempEventList.size() << "Pre: " << SnapshotToUse->Events.size() << endl;
+
+                        // Add other wise removed events
+                        SnapshotToUse->Events.insert(SnapshotToUse->Events.begin(), t_tempEventList.begin(), t_tempEventList.end());
+
+                        cout << "After: " << t_tempEventList.size() << ".. : " << SnapshotToUse->Events.size() << endl;
+                    }
+
 
                     // If the snapshot we are to use is ahead, we check how far ahead it is, else we just interpolate it one frame
                     if(sequence_more_recent(SnapshotToUse->SnapshotSequence, m_snapshotSequenceReal - 1, 255))
@@ -364,14 +384,30 @@ namespace Doremi
 
         void InterpolationHandler::QueueSnapshot(Snapshot* p_newSnapshot)
         {
+            if(m_DelayedSnapshots.size() > m_snapshotDelay * 2)
+            {
+                cout << "Many more snapshots queued then should: " << m_DelayedSnapshots.size()
+                     << endl; // TODOCM Check if we can update this from time to time
+            }
+
+
             // If we get n' old snapshot
             if(sequence_more_recent(m_snapshotSequenceUsed, p_newSnapshot->SnapshotSequence, 255)) // TODOCM check if it should be equal less
             {
                 if(p_newSnapshot->Events.size())
                 {
-                    cout << "WARNING: Something's wrong, removing snapshot with events!!!" << endl;
+                    // If there's any event already, add to it, shouldn't be possible
+                    if(m_DelayedSnapshots.size())
+                    {
+                        std::cout << "Saving other wise dropped events to last snapshot" << std::endl;
+                        (*m_DelayedSnapshots.begin())->Events.merge(p_newSnapshot->Events);
+                    }
+                    else
+                    {
+                        std::cout << "Well.. this is a big problem.. interpolationhandler" << std::endl;
+                    }
                 }
-                // std::cout << "Throwing snapshot" << std::endl;
+
                 delete p_newSnapshot;
                 return;
             }
@@ -388,11 +424,20 @@ namespace Doremi
             // TODOXX we should check what snapshot events belong to and swap them there, else we'll get visual bugs when we get packets in bad order
             // Else we check for all if our sequence is newer(If we got them in wrong order)
             std::list<Snapshot*>::iterator iter;
+            int counter = 0;
             for(iter = m_DelayedSnapshots.begin(); iter != m_DelayedSnapshots.end(); ++iter)
             {
+                counter++;
                 // If the iterator is larger then snapshotID, we push the new snapshot at the back
                 if(sequence_more_recent(p_newSnapshot->SnapshotSequence, (*iter)->SnapshotSequence, 255))
                 {
+                    // If we're not checking the last, this can't be true.. at all
+                    if(p_newSnapshot->Events.size() && counter != 1)
+                    {
+                        std::cout
+                            << "This shouldn't be able to happen at all, if this happens the world is upside down... or eventReceiver is broken.."
+                            << std::endl;
+                    }
                     m_DelayedSnapshots.insert(iter, p_newSnapshot);
                     return;
                 }

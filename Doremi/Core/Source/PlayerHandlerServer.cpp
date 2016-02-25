@@ -378,8 +378,6 @@ namespace Doremi
             t_player->m_StartEvent = 0;
             t_player->m_EndEvent = m_lateJoinEventQueue.size();
 
-            cout << "Readying" << t_player->m_EndEvent << " number of events to send!" << endl;
-
             // Get network event sender
             NetworkEventSender* t_netEventSender = t_player->m_networkEventSender;
 
@@ -508,10 +506,6 @@ namespace Doremi
                 {
                     blueprint = Blueprints::NetworkPlayerEntity;
                 }
-                static int objectsAdded = 0;
-                cout << objectsAdded << " with id: " << p_entityCreatedEvent->entityID << " and blueprint: " << (uint32_t)p_entityCreatedEvent->bluepirnt << endl;
-                objectsAdded++;
-
 
                 (static_cast<PlayerServer*>(t_player.second))
                     ->m_networkEventSender->QueueEventToFrame(new EntityCreatedEvent(p_entityCreatedEvent->entityID, blueprint,
@@ -528,6 +522,7 @@ namespace Doremi
 
             // Save it for later joins
             m_lateJoinEventQueue.push_back(new EntityCreatedEvent(*p_entityCreatedEvent));
+            std::cout << "Entity Created with ID: " << p_entityCreatedEvent->entityID << std::endl;
         }
 
         void PlayerHandlerServer::QueueRemoveEntityEventToPlayers(RemoveEntityEvent* p_removeEvent)

@@ -224,6 +224,8 @@ namespace Doremi
             // Get connected clients
             auto& t_connections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
 
+            // std::cout << t_connections.size() << std::endl;
+
             // For each connected client
             for(auto& t_connection : t_connections)
             {

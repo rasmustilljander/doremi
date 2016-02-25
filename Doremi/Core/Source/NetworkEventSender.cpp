@@ -125,6 +125,7 @@ namespace Doremi
 
                 // Need a variable to check bits written
                 uint32_t t_totalBitsWritten = 0;
+                uint32_t t_bitsWrittenPerObject = 0;
 
                 int32_t t_bitsLeftToWrite = bytesLeftToWrite * 8;
 
@@ -132,7 +133,7 @@ namespace Doremi
                 list<Event*>::iterator iterEvents = iter->begin();
                 for(; iterEvents != iter->end() && t_bitsLeftToWrite > 0 && numOfItems < 255; ++iterEvents)
                 {
-                    uint32_t t_bitsWrittenPerObject = 0;
+                    t_bitsWrittenPerObject = 0;
 
                     // Write event id
                     p_streamer.WriteUnsignedInt8(static_cast<uint8_t>((*iterEvents)->eventType));
@@ -158,7 +159,8 @@ namespace Doremi
                     --numOfItems;
 
                     // Rollback the memory that is invalid
-                    t_totalBitsWritten += t_bitsLeftToWrite;
+                    t_bitsLeftToWrite += t_bitsWrittenPerObject;
+                    t_totalBitsWritten -= t_bitsWrittenPerObject;
 
                     // Set to not finished
                     p_finished = false;
