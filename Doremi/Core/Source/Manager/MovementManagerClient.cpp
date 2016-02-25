@@ -107,6 +107,10 @@ namespace Doremi
                         movementComp->movement = XMFLOAT3(0, 0, 0);
                     }
                 }
+                else
+                {
+                    // Didn't have component. Move on to next entity
+                }
             }
         }
 
