@@ -65,22 +65,22 @@ namespace DoremiEngine
             Gets a vector if all collision pairs. A collision pair consists of ids
             of two bodies which have collided in the last simulation. This list is
             automatically cleared before each new simulation*/
-            virtual std::vector<CollisionPair> GetCollisionPairs() = 0;
+            virtual std::vector<CollisionPair>& GetCollisionPairs() = 0;
 
             /**
             Gets a vector of all trigger collision pairs. The firstID is always the
             id of the trigger, and the secondID is always the id of the actor which
             collided with the trigger. It's awesome that way*/
-            virtual std::vector<CollisionPair> GetTriggerPairs() = 0;
+            virtual std::vector<CollisionPair>& GetTriggerPairs() = 0;
 
             /**
             Gets a vector of all objects which have recently left contact with eachother*/
-            virtual std::vector<CollisionPair> GetLeftCollisionPairs() = 0;
+            virtual std::vector<CollisionPair>& GetLeftCollisionPairs() = 0;
 
             /**
             Gets a vector of all objects which have recently left contact with a trigger.
             The first ID is always the trigger*/
-            virtual std::vector<CollisionPair> GetLeftTriggerPairs() = 0;
+            virtual std::vector<CollisionPair>& GetLeftTriggerPairs() = 0;
         };
     }
 }

@@ -77,10 +77,10 @@ namespace DoremiEngine
             FluidManager& GetFluidManager() override;
             RayCastManager& GetRayCastManager() override;
 
-            vector<CollisionPair> GetCollisionPairs() override;
-            vector<CollisionPair> GetTriggerPairs() override;
-            vector<CollisionPair> GetLeftCollisionPairs() override;
-            vector<CollisionPair> GetLeftTriggerPairs() override;
+            vector<CollisionPair>& GetCollisionPairs() override;
+            vector<CollisionPair>& GetTriggerPairs() override;
+            vector<CollisionPair>& GetLeftCollisionPairs() override;
+            vector<CollisionPair>& GetLeftTriggerPairs() override;
 
         private:
             // Creates the world as a scene. TODOJB create SceneManager somehow

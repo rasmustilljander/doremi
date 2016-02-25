@@ -62,11 +62,11 @@ namespace DoremiEngine
         FluidManager& PhysicsModuleImplementation::GetFluidManager() { return *m_utils.m_fluidManager; }
         RayCastManager& PhysicsModuleImplementation::GetRayCastManager() { return *m_utils.m_rayCastManager; };
 
-        vector<CollisionPair> PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
-        vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
-        vector<CollisionPair> PhysicsModuleImplementation::GetLeftCollisionPairs() { return m_leftCollisionPairs; }
+        vector<CollisionPair>& PhysicsModuleImplementation::GetCollisionPairs() { return m_collisionPairs; }
+        vector<CollisionPair>& PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
+        vector<CollisionPair>& PhysicsModuleImplementation::GetLeftCollisionPairs() { return m_leftCollisionPairs; }
 
-        vector<CollisionPair> PhysicsModuleImplementation::GetLeftTriggerPairs() { return m_leftTriggerPairs; }
+        vector<CollisionPair>& PhysicsModuleImplementation::GetLeftTriggerPairs() { return m_leftTriggerPairs; }
 
         // New fancier collision filter
         PxFilterFlags TestFilter2(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
