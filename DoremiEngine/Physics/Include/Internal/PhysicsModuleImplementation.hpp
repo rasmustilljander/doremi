@@ -80,6 +80,7 @@ namespace DoremiEngine
             vector<CollisionPair> GetCollisionPairs() override;
             vector<CollisionPair> GetTriggerPairs() override;
             vector<CollisionPair> GetLeftCollisionPairs() override;
+            vector<CollisionPair> GetLeftTriggerPairs() override;
 
         private:
             // Creates the world as a scene. TODOJB create SceneManager somehow
@@ -116,6 +117,7 @@ namespace DoremiEngine
             vector<CollisionPair> m_collisionPairs;
             vector<CollisionPair> m_triggerPairs;
             vector<CollisionPair> m_leftCollisionPairs;
+            vector<CollisionPair> m_leftTriggerPairs;
         };
     }
 }

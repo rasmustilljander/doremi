@@ -66,6 +66,8 @@ namespace DoremiEngine
         vector<CollisionPair> PhysicsModuleImplementation::GetTriggerPairs() { return m_triggerPairs; }
         vector<CollisionPair> PhysicsModuleImplementation::GetLeftCollisionPairs() { return m_leftCollisionPairs; }
 
+        vector<CollisionPair> PhysicsModuleImplementation::GetLeftTriggerPairs() { return m_leftTriggerPairs; }
+
         // New fancier collision filter
         PxFilterFlags TestFilter2(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1,
                                   PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)

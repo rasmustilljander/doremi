@@ -76,6 +76,11 @@ namespace DoremiEngine
             /**
             Gets a vector of all objects which have recently left contact with eachother*/
             virtual std::vector<CollisionPair> GetLeftCollisionPairs() = 0;
+
+            /**
+            Gets a vector of all objects which have recently left contact with a trigger.
+            The first ID is always the trigger*/
+            virtual std::vector<CollisionPair> GetLeftTriggerPairs() = 0;
         };
     }
 }
