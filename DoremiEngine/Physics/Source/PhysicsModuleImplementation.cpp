@@ -50,6 +50,7 @@ namespace DoremiEngine
             m_collisionPairs.clear();
             m_triggerPairs.clear();
             m_leftCollisionPairs.clear();
+            m_leftTriggerPairs.clear();
             m_utils.m_fluidManager->Update(p_dt);
             m_utils.m_worldScene->simulate(p_dt);
             m_utils.m_rigidBodyManager->ClearRecentlyWakeStatusLists();
