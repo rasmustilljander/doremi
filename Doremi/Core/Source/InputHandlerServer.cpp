@@ -37,6 +37,11 @@ namespace Doremi
                 // Insert it
                 m_queuedInputs.insert(iter, InputItem(p_bitMask, p_orienation, p_sequence));
             }
+            // TODOCM remove debugg
+            if(m_queuedInputs.size() > 30)
+            {
+                cout << "Got more then 30 inputs buffered, real num: " << m_queuedInputs.size() << endl;
+            }
         }
 
         void InputHandlerServer::Update(EntityID p_entityID)

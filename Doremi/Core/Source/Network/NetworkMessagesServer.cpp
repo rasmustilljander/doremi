@@ -138,6 +138,7 @@ namespace Doremi
             // If we have the adress we ignore (might be late packet?), and wait for timeout
             if(NetworkConnectionsServer::GetInstance()->AdressWithPortExist(p_adress, t_connection))
             {
+                std::cout << "Received disconnect! This might be a problem if not intentinal..." << std::endl;
                 NetworkConnectionsServer::GetInstance()->RemoveConnection(p_adress);
             }
         }
@@ -159,6 +160,9 @@ namespace Doremi
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::LOAD_WORLD)
             {
+                // Reset last response
+                p_connection->LastResponse = 0;
+
                 // Ready for read
                 NetworkStreamer p_streamer = NetworkStreamer();
                 unsigned char* p_bufferPointer = p_message.Data;
@@ -195,6 +199,9 @@ namespace Doremi
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::IN_GAME)
             {
+                // Reset last response
+                p_connection->LastResponse = 0;
+
                 // Get input handler and frequencyhandler
                 PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
                 InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->PlayerID);
@@ -226,6 +233,14 @@ namespace Doremi
                 // Read orientation to update with
                 DirectX::XMFLOAT4 t_playerOrientation = p_streamer.ReadRotationQuaternion();
                 t_bytesRead += sizeof(float) * 4;
+
+                // If we're a new connection we save the first sequence
+                if(p_connection->NewConnection)
+                {
+                    // MOVE THOSE..... not sure where yet
+                    p_connection->NewConnection = false;
+                    t_inputHandler->SetSequence(t_newSequence);
+                }
 
                 // Queue input with sequence
                 t_inputHandler->QueueInput(t_inputMask, t_playerOrientation, t_newSequence);
@@ -375,14 +390,6 @@ namespace Doremi
             // Create message
             NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
             t_newMessage.MessageID = SendMessageIDFromServer::IN_GAME;
-
-            // If we're a new connection we send a initialise snapshot, might need this later
-            if(p_connection->NewConnection)
-            {
-                // MOVE THOSE..... not sure where yet
-                p_connection->NewConnection = false;
-                t_inputHandler->SetSequence(m_messageSequence);
-            }
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();

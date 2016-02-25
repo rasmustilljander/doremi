@@ -23,7 +23,13 @@ namespace Doremi
     namespace Core
     {
         NetworkManagerClient::NetworkManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "ClientNetworkManager"), m_nextUpdateTimer(0.0f), m_updateInterval(1.0f), m_timeoutInterval(20.0f)
+            : Manager(p_sharedContext, "ClientNetworkManager"),
+              m_nextUpdateTimer(0.0f),
+              m_updateInterval(1.0f),
+              m_timeoutInterval(20.0f),
+              m_maxConnectingMessagesPerFrame(10),
+              m_maxConnectedMessagesPerFrame(10)
+
         {
             // Subscribe to events
             EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
@@ -33,6 +39,10 @@ namespace Doremi
             NetworkConnectionsClient::StartupNetworkConnectionsClient(p_sharedContext);
 
             LoadConfigFile(p_sharedContext);
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
+            p_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_connections->m_serverConnectionState.ConnectingSocketHandle,
+                                                                  t_connections->m_serverConnectionState.ConnectingAdress);
         }
 
         NetworkManagerClient::~NetworkManagerClient() {}
@@ -148,7 +158,7 @@ namespace Doremi
             SocketHandle t_serverConnectingSocketHandle = t_connections->m_serverConnectionState.ConnectingSocketHandle;
 
             // Create buffer message
-            NetMessageBuffer t_newMessage = NetMessageBuffer();
+            NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
 
             // To check how much we received
             uint32_t t_dataSizeReceived = 0;
@@ -158,15 +168,15 @@ namespace Doremi
 
             // Receive messages
             // TODOCM not sure if need to send in out adress here
-            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle, t_dataSizeReceived) &&
+            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle,
+                                                        t_connections->m_serverConnectionState.ConnectingAdress, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
-
                 // If wrong size of message
                 if(t_dataSizeReceived != sizeof(NetMessageConnectingFromServer))
                 {
                     std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
-                    t_newMessage = NetMessageBuffer();
+                    t_newMessage = NetMessageConnectingFromServer();
                     continue;
                 }
 
@@ -199,12 +209,13 @@ namespace Doremi
                     }
                     default:
                     {
+                        std::cout << "Some error message received" << std::endl; // TODOCM remove deubgg
                         break;
                     }
                 }
 
                 // Reset message
-                t_newMessage = NetMessageBuffer();
+                t_newMessage = NetMessageConnectingFromServer();
             }
         }
 
@@ -301,11 +312,15 @@ namespace Doremi
                     {
                         std::cout << "Sending connecting" << std::endl; // TODOCM remove deubgg
                         t_netMessages->SendConnectionRequest();
+
+                        break;
                     }
                     case ServerConnectionStateFromClient::VERSION_CHECK:
                     {
                         std::cout << "Sending version check" << std::endl; // TODOCM remove deubgg
                         t_netMessages->SendVersionCheck();
+
+                        break;
                     }
                     default:
                     {

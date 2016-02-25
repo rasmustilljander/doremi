@@ -164,10 +164,11 @@ namespace DoremiEngine
             if(Return == SOCKET_ERROR)
             {
                 // Error cause of Socket is buissy in non-blocking mode, non-fatal error
-                if(WSAGetLastError() != WSAEWOULDBLOCK)
+                int Error = WSAGetLastError();
+                if(Error != WSAEWOULDBLOCK)
                 {
-                    // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send UDP data.");
+                    // TODOCM log message
+                    std::cout << "Error send udp: " << Error << std::endl;
                 }
                 return false;
             }
@@ -193,8 +194,8 @@ namespace DoremiEngine
                 int Error = WSAGetLastError();
                 if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
-                    // TODOCM Fix better message
-                    throw std::runtime_error("Failed to send UDP data.");
+                    std::cout << "Error recv udp: " << Error << std::endl;
+                    // TODOCM log message
                 }
                 return false;
             }
@@ -218,6 +219,7 @@ namespace DoremiEngine
                 int Error = WSAGetLastError();
                 if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
                 {
+                    std::cout << "Error recv udp: " << Error << std::endl;
                     return false;
                 }
                 return false;

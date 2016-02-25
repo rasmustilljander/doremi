@@ -83,7 +83,7 @@ namespace Doremi
             SocketHandle t_connectingSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectingSocketHandle();
 
             // Create buffer NetworkMessage
-            NetMessageBuffer t_networkMessage = NetMessageBuffer();
+            NetMessageConnectingFromClient t_networkMessage = NetMessageConnectingFromClient();
 
             // How much data we received
             uint32_t t_dataSizeReceived = 0;
@@ -98,7 +98,7 @@ namespace Doremi
                 {
                     std::cout << "wrong size message connecting" << std::endl; // TODOCM remove deubgg
                     // Null message and conitinue
-                    t_networkMessage = NetMessageBuffer();
+                    t_networkMessage = NetMessageConnectingFromClient();
                     continue;
                 }
 
@@ -136,7 +136,7 @@ namespace Doremi
                 }
 
                 // Reset message
-                t_networkMessage = NetMessageBuffer();
+                t_networkMessage = NetMessageConnectingFromClient();
             }
 
             // Delete the adress holder
@@ -283,6 +283,8 @@ namespace Doremi
                     // If the connection is in connect mode
                     if(t_connection.second->ConnectionState == ClientConnectionStateFromServer::CONNECT)
                     {
+                        std::cout << "Accepting connection" << std::endl;
+
                         // Update connection
                         t_connection.second->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
 
