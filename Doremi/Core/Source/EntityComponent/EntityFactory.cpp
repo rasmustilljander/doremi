@@ -327,7 +327,7 @@ namespace Doremi
 
         void EntityFactory::RegisterEntityTemplate(Blueprints p_blueprintID, EntityBlueprint pComponents)
         {
-            mEntityBlueprints[p_blueprintID] = pComponents;
+            mEntityBlueprints.emplace(p_blueprintID, pComponents);
         }
 
         EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID)
