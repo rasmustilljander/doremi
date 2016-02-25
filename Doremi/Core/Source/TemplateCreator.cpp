@@ -27,6 +27,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/AiAgentComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/LifeTimeComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/CharacterEffectComponent.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
@@ -231,6 +232,8 @@ namespace Doremi
             // Has an extra drain follow it around
             blueprint[ComponentType::ExtraDrain];
 
+            blueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
+
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
             TIME_FUNCTION_STOP
         }
@@ -295,6 +298,8 @@ namespace Doremi
 
             //// Has an extra drain follow it around
             // blueprint[ComponentType::ExtraDrain];
+
+            blueprint[ComponentType::CharacterEffect] = new CharacterEffectComponent();
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
