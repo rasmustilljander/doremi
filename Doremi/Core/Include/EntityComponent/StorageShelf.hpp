@@ -1,11 +1,12 @@
 #pragma once
 // Project specific
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
-
-using namespace std;
+#include <type_traits>
+#include <Doremi/Core/Include/EntityComponent/Components/LowerSkeletalAnimationComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/SkeletalAnimationComponent.hpp>
 
 // where we store the actual components/data
-template <class T> class StorageShelf
+template <typename T> class StorageShelf
 {
 public:
     static StorageShelf<T>* GetInstance();
@@ -14,19 +15,26 @@ public:
     T* GetPointerToArray() { return mItems; }
 
 private:
-    StorageShelf();
-    ~StorageShelf();
+    StorageShelf() : mItems(nullptr) { mItems = new T[MAX_NUM_ENTITIES](); }
+
+    ~StorageShelf() { FreeHelper(); }
+
+    void FreeHelper() { delete[] mItems; }
 };
+
+// Temporary fix, when FreeHelper is called and the Template is LowerSkeletalAnimationComponent, do nothing, as the usual destruction crashes, TODOXX,
+// TODORT
+void StorageShelf<Doremi::Core::LowerSkeletalAnimationComponent>::FreeHelper() {}
+
+// Temporary fix, when FreeHelper is called and the Template is SkeletalAnimationComponent, do nothing, as the usual destruction crashes, TODOXX,
+// TODORT
+void StorageShelf<Doremi::Core::SkeletalAnimationComponent>::FreeHelper() {}
 
 template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
 {
     static StorageShelf<T> storageShelf;
     return &storageShelf;
 }
-
-template <class T> StorageShelf<T>::StorageShelf() : mItems(nullptr) { mItems = new T[MAX_NUM_ENTITIES](); }
-
-template <class T> StorageShelf<T>::~StorageShelf() { delete[] mItems; }
 
 // This is the magic about singletons
 // Find the right shelf for the needed component
