@@ -9,6 +9,14 @@ namespace Doremi
     {
         class NetworkStreamer;
 
+        struct FrequenceItem
+        {
+            FrequenceItem(float p_frequence, uint8_t p_sequence) : Frequence(p_frequence), Sequence(p_sequence) {}
+
+            float Frequence;
+            uint8_t Sequence;
+        };
+
         /**
             Used to buffer frequency for send, and recieve
         */
@@ -25,53 +33,23 @@ namespace Doremi
             */
             ~FrequencyBufferHandler();
 
-            /**
-                Returns the frequency for the current frame, if none is buffered 0 is returned
-            */
-            float GetFrequencyForFrame();
-
-            /**
-                Buffer a frequency used for send
-            */
-            void BufferFrequency(float p_frequency);
-
-            /**
-                Update buffer queue from acced sequence
-            */
-            void UpdateBufferFromSequence(uint8_t p_sequence);
 
             void Update();
 
-            /**
-                Read incomming frequencies from a buffer
-            */
-            void ReadNewFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead);
+            void QueueFrequency(float p_frequency, uint8_t p_sequence);
 
-            /**
-                Write outgoing frequencies to a buffer
-            */
-            void WriteFrequencies(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesWritten);
+            float GetFrequencyForFrame();
 
             /**
                 Initialize the sequence
             */
-            void SetStartingSequence(uint8_t p_sequence);
-
-            /**
-                Returns the sequence used in next update
-            */
-            uint8_t GetNextSequenceUsed();
+            void SetSequence(uint8_t p_sequence);
 
         private:
             /**
                 Buffered frequencies, both for incomming and sending
             */
-            std::list<float> m_bufferedFrequencies;
-
-            /**
-                The next one we will recieve
-            */
-            uint8_t m_nextSequence;
+            std::list<FrequenceItem> m_bufferedFrequencies;
 
             /**
                 The sequence we are using now
@@ -83,11 +61,15 @@ namespace Doremi
             */
             uint8_t m_bufferDelay;
 
+            float m_frequence;
+
+            uint8_t m_sequenceByLastFrequence;
+
             /**
                 A hotfix to initialize sequencce
                 TODOCM remove later
             */
-            bool m_first;
+            // bool m_first;
         };
     }
 }

@@ -239,7 +239,7 @@ namespace Doremi
 
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
             InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
-            FrequencyBufferHandler* t_frequencyBuffer = t_playerHandler->GetFrequencyBufferHandler();
+
             if(t_playerHandler->PlayerExists())
             {
 
@@ -256,7 +256,7 @@ namespace Doremi
                     m_currentFrequency = 1000;
                 }
 
-                t_frequencyBuffer->BufferFrequency(m_currentFrequency);
+
                 using namespace Doremi::Utilities::Logging;
                 m_logger->DebugLog(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
             }

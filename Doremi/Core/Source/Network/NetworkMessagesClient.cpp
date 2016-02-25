@@ -11,6 +11,7 @@
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <Doremi/Core/Include/AudioHandler.hpp>
 
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
@@ -197,7 +198,6 @@ namespace Doremi
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetFrequencyBufferHandler();
             NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
 
             // If we were at loading world, we assume server knows best and we're done loading!
@@ -213,13 +213,6 @@ namespace Doremi
 
             // Bytes read counter
             uint32_t t_bytesRead = 0;
-
-            // Update frequency buffer by acc
-            uint8_t t_frequencyAccSequence = t_streamer.ReadUnsignedInt8();
-            t_bytesRead += sizeof(uint8_t);
-
-            // Update frequency buffer
-            t_frequencyBufferHandler->UpdateBufferFromSequence(t_frequencyAccSequence);
 
             // Create a new snapshot
             Snapshot* t_newSnapshot = new Snapshot();
@@ -387,7 +380,7 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
             NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
-            FrequencyBufferHandler* t_frequencyBufferHandler = t_playerHandler->GetFrequencyBufferHandler();
+            AudioHandler* t_audioHandler = AudioHandler::GetInstance();
             InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
 
             // Create a message
@@ -431,7 +424,9 @@ namespace Doremi
             t_bytesWritten += sizeof(uint8_t);
 
             // Write sound frequencies
-            t_frequencyBufferHandler->WriteFrequencies(t_streamer, sizeof(t_message.Data), t_bytesWritten);
+            float t_frequency = t_audioHandler->GetFrequency();
+            t_streamer.WriteFloat(t_frequency);
+            t_bytesWritten += sizeof(float);
 
             // Send message
             m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);

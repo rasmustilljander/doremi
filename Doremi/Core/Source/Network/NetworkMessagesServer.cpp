@@ -240,6 +240,7 @@ namespace Doremi
                     // MOVE THOSE..... not sure where yet
                     p_connection->NewConnection = false;
                     t_inputHandler->SetSequence(t_newSequence);
+                    t_frequencyHandler->SetSequence(t_newSequence);
                 }
 
                 // Queue input with sequence
@@ -252,8 +253,10 @@ namespace Doremi
                 // Update event queue with acc sequence
                 t_networkEventSender->UpdateBufferWithRecievedClientSequenceAcc(t_clientEventSequence);
 
-                // Read frequencies
-                t_frequencyHandler->ReadNewFrequencies(p_streamer, sizeof(p_message.Data), t_bytesRead);
+                // Read frequency
+                float t_frequency = p_streamer.ReadFloat();
+                t_bytesRead += sizeof(float);
+                t_frequencyHandler->QueueFrequency(t_frequency, t_newSequence);
             }
         }
 
@@ -398,13 +401,6 @@ namespace Doremi
 
             // Bytes written counter
             uint32_t t_bytesWritten = 0;
-
-            // Get sequence acc for frequence
-            uint8_t t_sequenceAcc = t_frequencyHandler->GetNextSequenceUsed();
-
-            // Write the frequence sequence acc
-            t_streamer.WriteUnsignedInt8(t_sequenceAcc);
-            t_bytesWritten += sizeof(uint8_t);
 
             // Write snapshot ID (1 byte
             t_streamer.WriteUnsignedInt8(m_messageSequence);
