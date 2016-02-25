@@ -24,7 +24,7 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
     return &storageShelf;
 }
 
-template <class T> StorageShelf<T>::StorageShelf() { mItems = new T[MAX_NUM_ENTITIES](); }
+template <class T> StorageShelf<T>::StorageShelf() : mItems(nullptr) { mItems = new T[MAX_NUM_ENTITIES](); }
 
 template <class T> StorageShelf<T>::~StorageShelf() { delete[] mItems; }
 
