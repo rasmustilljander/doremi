@@ -7,6 +7,7 @@
 #include <EventHandler/Events/TriggerEvent.hpp>
 #include <EntityComponent/Components/TriggerComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
+#include <EntityComponent/Components/CharacterEffectComponent.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
 
@@ -27,40 +28,38 @@ namespace Doremi
 
         void TriggerManager::Update(double p_dt)
         {
-            // TODOXX If a trigger has the same wall as another trigger it acts weird. It will(tried it once) trigger one triggertype on the way out
-            // and one on the
-            // way in
-            // Loop through all entities
-            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            for(size_t i = 0; i < length; i++)
+            // Get the collisionpairs from physicmodule
+            std::vector<DoremiEngine::Physics::CollisionPair> collisionTriggerPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();
+            size_t collisionListLength = collisionTriggerPairs.size();
+            for(size_t k = 0; k < collisionListLength; ++k)
             {
-                // Check that the current entity has the relevant components
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody))
+                // There might be bodies that aren't entities...
+                if(collisionTriggerPairs[k].firstID >= 0)
                 {
-
-                    // Get the collisionpairs from physicmodule
-                    std::vector<DoremiEngine::Physics::CollisionPair> collisionTriggerPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs();
-                    size_t collisionListLength = collisionTriggerPairs.size();
-                    for(size_t k = 0; k < collisionListLength; ++k)
+                    if(EntityHandler::GetInstance().HasComponents(collisionTriggerPairs[k].firstID,
+                                                                  (int)ComponentType::Trigger | (int)ComponentType::Transform | (int)ComponentType::RigidBody))
                     {
-                        // The first id will always be the trigger.
-                        if(i == collisionTriggerPairs[k].firstID)
-                        {
-                            // setting up an event to broadcast the triggertype from the component trigger.
-                            TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(i);
-                            TriggerEvent* myEvent =
-                                new TriggerEvent(triggComp->triggerType, collisionTriggerPairs[k].secondID, collisionTriggerPairs[k].firstID);
-                            EventHandler::GetInstance()->BroadcastEvent(myEvent);
-                        }
-                        else
-                        {
-                            // Do nothing
-                        }
+                        // setting up an event to broadcast the triggertype from the component trigger.
+                        TriggerComponent* triggComp = EntityHandler::GetInstance().GetComponentFromStorage<TriggerComponent>(collisionTriggerPairs[k].firstID);
+                        TriggerEvent* myEvent = new TriggerEvent(triggComp->triggerType, collisionTriggerPairs[k].secondID, collisionTriggerPairs[k].firstID);
+                        EventHandler::GetInstance()->BroadcastEvent(myEvent);
+                    }
+                    else
+                    {
+                        // There was an entity for this trigger, but no component. This should NEVER happen
                     }
                 }
                 else
                 {
-                    // Do nothing
+                    // This is one of the special non-entity triggers (Ground effect bodies, for instance)
+                    if(collisionTriggerPairs[k].firstID == -15 && // TODOJB shouldn't be hard-coded to 15
+                       EntityHandler::GetInstance().HasComponents(collisionTriggerPairs[k].secondID,
+                                                                  (int)ComponentType::CharacterController | (int)ComponentType::CharacterEffect))
+                    {
+                        cout << "should apply effect" << endl;
+                        EntityHandler::GetInstance().GetComponentFromStorage<CharacterEffectComponent>(collisionTriggerPairs[k].secondID)->effect =
+                            CharacterEffect::CantStop;
+                    }
                 }
             }
         }
