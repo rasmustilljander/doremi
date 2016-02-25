@@ -37,31 +37,31 @@ namespace Doremi
 
         void ExampleManager::Update(double p_dt)
         {
-            // Example on how to create and Broadcast a event
-            ExampleEvent* myEvent = new ExampleEvent();
-            myEvent->eventType = EventType::Example;
-            myEvent->myInt = 42;
-            EventHandler::GetInstance()->BroadcastEvent(myEvent);
+            //// Example on how to create and Broadcast a event
+            // ExampleEvent* myEvent = new ExampleEvent();
+            // myEvent->eventType = EventType::Example;
+            // myEvent->myInt = 42;
+            // EventHandler::GetInstance()->BroadcastEvent(myEvent);
 
-            // Loop through all entities
-            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
-            for(size_t i = 0; i < length; i++)
-            {
-                // Check that the current entity has the relevant components
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
-                {
-                    // Get component
-                    ExampleComponent* t_example = EntityHandler::GetInstance().GetComponentFromStorage<ExampleComponent>(i);
-                    Example2Component* t_example2 = EntityHandler::GetInstance().GetComponentFromStorage<Example2Component>(i);
+            //// Loop through all entities
+            // const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            // for(size_t i = 0; i < length; i++)
+            //{
+            //    // Check that the current entity has the relevant components
+            //    if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Example) | (int)ComponentType::Example2)
+            //    {
+            //        // Get component
+            //        ExampleComponent* t_example = EntityHandler::GetInstance().GetComponentFromStorage<ExampleComponent>(i);
+            //        Example2Component* t_example2 = EntityHandler::GetInstance().GetComponentFromStorage<Example2Component>(i);
 
-                    // Perform desired operation
-                    t_example->posX++;
+            //        // Perform desired operation
+            //        t_example->posX++;
 
-                    // Test run GraphicsModule
+            //        // Test run GraphicsModule
 
-                    m_sharedContext.GetInputModule().Update(); // TODOEA
-                }
-            }
+            //        m_sharedContext.GetInputModule().Update(); // TODOEA
+            //    }
+            //}
         }
         void ExampleManager::OnEvent(Event* p_event)
         {

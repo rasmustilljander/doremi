@@ -29,6 +29,7 @@
 #include <EntityComponent/Components/CharacterControlComponen.hpp>
 #include <EntityComponent/Components/AiAgentComponent.hpp>
 #include <EntityComponent/Components/LifeTimeComponent.hpp>
+#include <EntityComponent/Components/CharacterEffectComponent.hpp>
 
 // Events
 #include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
@@ -115,11 +116,7 @@ namespace Doremi
 
 
                 // Check which component we copy
-                if(iter->first == ComponentType::Example)
-                {
-                    memcpy(GetComponent<ExampleComponent>(p_entityID), iter->second, sizeof(ExampleComponent));
-                }
-                else if(iter->first == ComponentType::Example2)
+                if(iter->first == ComponentType::Example2)
                 {
                     memcpy(GetComponent<Example2Component>(p_entityID), iter->second, sizeof(Example2Component));
                 }
@@ -317,6 +314,14 @@ namespace Doremi
                 else if(iter->first == ComponentType::LifeTime)
                 {
                     memcpy(GetComponent<LifeTimeComponent>(p_entityID), iter->second, sizeof(LifeTimeComponent));
+                }
+                else if(iter->first == ComponentType::AudioActive)
+                {
+                    memcpy(GetComponent<AudioActiveComponent>(p_entityID), iter->second, sizeof(AudioActiveComponent));
+                }
+                else if(iter->first == ComponentType::CharacterEffect)
+                {
+                    memcpy(GetComponent<CharacterEffectComponent>(p_entityID), iter->second, sizeof(CharacterEffectComponent));
                 }
                 // Add bitmask. This is now done last due to transform being a dick
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
