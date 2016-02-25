@@ -618,20 +618,6 @@ namespace Doremi
                 r_shouldBuildPhysics = true;
             }
 
-            // If render, create grapic properties
-            if(transformationData.attributes.isRendered)
-            {
-                EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Render);
-
-                RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(p_entityId);
-
-                DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-                renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
-
-
-                renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
-            }
-
             // if frequency platform
             if(transformationData.attributes.frequencyAffected)
             {
@@ -667,7 +653,8 @@ namespace Doremi
 
                 // calulate aab
                 XMFLOAT3 centerPoint, minPoint, maxPoint;
-                CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+                //CalculateAABBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
+                CalculateOBBoundingBox(p_vertexBuffer, transformationData, maxPoint, minPoint, centerPoint);
 
                 XMFLOAT3 dimension = XMFLOAT3(abs(minPoint.x - maxPoint.x) / 2.0f, abs(minPoint.y - maxPoint.y) / 2.0f, abs(minPoint.z - maxPoint.z) / 2.0f);
                 RigidBodyComponent* bodyComp = GetComponent<RigidBodyComponent>(p_entityId);
@@ -679,10 +666,14 @@ namespace Doremi
                 PhysicsMaterialComponent* matComp = GetComponent<PhysicsMaterialComponent>(p_entityId);
                 matComp->p_materialID = materialTriggID;
 
+                transComp->position.x += centerPoint.x;
+                transComp->position.y += centerPoint.y;
+                transComp->position.z += centerPoint.z;
+
                 switch(bodyComp->geometry)
                 {
                     case RigidBodyGeometry::dynamicBox:
-                        rigidBodyManager.AddBoxBodyDynamic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->boxDims, matComp->p_materialID);
+                        rigidBodyManager.AddBoxBodyDynamic(p_entityId, transComp->position, transformationData.rotation, bodyComp->boxDims, matComp->p_materialID);
                         break;
                     case RigidBodyGeometry::dynamicSphere:
                         rigidBodyManager.AddSphereBodyDynamic(p_entityId, transComp->position, bodyComp->radius);
@@ -691,7 +682,7 @@ namespace Doremi
                         rigidBodyManager.AddCapsuleBodyDynamic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->height, bodyComp->radius);
                         break;
                     case RigidBodyGeometry::staticBox:
-                        rigidBodyManager.AddBoxBodyStatic(p_entityId, transComp->position, XMFLOAT4(0, 0, 0, 1), bodyComp->boxDims, matComp->p_materialID);
+                        rigidBodyManager.AddBoxBodyStatic(p_entityId, transComp->position, transformationData.rotation, bodyComp->boxDims, matComp->p_materialID);
                         break;
                     default:
                         break;
@@ -718,6 +709,19 @@ namespace Doremi
                 }
             }
 
+                        // If render, create grapic properties
+            if(transformationData.attributes.isRendered)
+            {
+                EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::Render);
+
+                RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(p_entityId);
+
+                DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+                renderComp->mesh = meshManager.BuildMeshInfoFromBuffer(p_vertexBuffer, meshCoupling.meshName);
+
+
+                renderComp->material = meshManager.BuildMaterialInfo(m_materials[meshCoupling.materialName]);
+            }
 
             return r_shouldBuildPhysics;
         }
