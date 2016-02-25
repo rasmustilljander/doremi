@@ -583,24 +583,22 @@ namespace Doremi
         void PlayerHandlerServer::QueueAnimationTransitionToPlayers(AnimationTransitionEvent* t_animationTransitionEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                if(iter->second->m_playerEntityID == t_animationTransitionEvent->entityID)
+                if(t_player.second->m_playerEntityID == t_animationTransitionEvent->entityID)
                 {
                     continue;
                 }
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new AnimationTransitionEvent(*t_animationTransitionEvent));
+                t_player.second->m_networkEventSender->QueueEventToFrame(new AnimationTransitionEvent(*t_animationTransitionEvent));
             }
         }
 
         void PlayerHandlerServer::QueueDamageEventToPlayers(DamageTakenEvent* t_takeDamageEvent)
         {
             // Go through all players
-            std::map<uint32_t, Player*>::iterator iter;
-            for(iter = m_playerMap.begin(); iter != m_playerMap.end(); ++iter)
+            for(auto& t_player : m_playerMap)
             {
-                (static_cast<PlayerServer*>(iter->second))->m_networkEventSender->QueueEventToFrame(new DamageTakenEvent(*t_takeDamageEvent));
+                t_player.second->m_networkEventSender->QueueEventToFrame(new DamageTakenEvent(*t_takeDamageEvent));
             }
         }
 
