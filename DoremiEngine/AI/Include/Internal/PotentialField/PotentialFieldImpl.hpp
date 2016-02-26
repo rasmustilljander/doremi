@@ -33,7 +33,7 @@ namespace DoremiEngine
             void AddActor(PotentialFieldActor* p_newActor) override;
             void RemoveActor(PotentialFieldActor* p_newActor) override;
             DirectX::XMINT2 WhatGridPosAmIOn(const DirectX::XMFLOAT3& p_unitPosition);
-            DirectX::XMFLOAT3 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange,
+            DirectX::XMFLOAT3 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange, bool& p_shouldJump,
                                                     PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) override;
             DirectX::XMFLOAT3 GetGridQuadPosition(const int& p_x, const int& p_z) override;
 

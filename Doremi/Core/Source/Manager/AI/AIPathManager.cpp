@@ -95,7 +95,7 @@ namespace Doremi
                         EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->ChargedActor;
                     DoremiEngine::AI::PotentialField* field = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(i)->Field;
                     // TODOEA BORDE SPARA UNDAN O INTE KOLLA X O Y EFTER VARANN
-
+                    bool shouldJump = false;
                     if(field != nullptr && updatedActors < m_maxActorsUpdated)
                     {
                         lastUpdatedActor = i;
@@ -118,7 +118,7 @@ namespace Doremi
                         }
                         bool inField;
                         bool goalInRange;
-                        desiredPos = field->GetAttractionPosition(unitPos, inField, goalInRange, currentActor, false);
+                        desiredPos = field->GetAttractionPosition(unitPos, inField, goalInRange, shouldJump, currentActor, false);
 
                         if(goalInRange)
                         {
@@ -140,10 +140,7 @@ namespace Doremi
                     }
                     desiredPos = currentActor->GetWantedPosition();
 
-
-                    // Should we jump?
-                    float distance = ProximityChecker::GetInstance().CalculateDistance(desiredPos, unitPos);
-                    if(distance > 8)
+                    if(shouldJump)
                     {
                         PerformJump(i);
                     }

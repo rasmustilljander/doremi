@@ -83,7 +83,7 @@ namespace DoremiEngine
             the function will calculate the charges of the surrounding quads on the fly. This is usale if the field is dynamic since the whole field
             never needs updating.
             */
-            virtual DirectX::XMFLOAT3 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange,
+            virtual DirectX::XMFLOAT3 GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange, bool& p_shouldJump,
                                                             PotentialFieldActor* p_currentActor = nullptr, const bool& p_staticCheck = true) = 0;
             /**
             By sending in the units position you will get what gridpos it is on.

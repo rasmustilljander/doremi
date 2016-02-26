@@ -150,7 +150,7 @@ namespace DoremiEngine
         }
 
         DirectX::XMFLOAT3 PotentialFieldImpl::GetAttractionPosition(const DirectX::XMFLOAT3& p_unitPosition, bool& p_inField, bool& p_goalInRange,
-                                                                    PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
+                                                                    bool& p_shouldJump, PotentialFieldActor* p_currentActor, const bool& p_staticCheck)
         {
             using namespace DirectX;
             // If there is no positive actor/goal to go to simply dont move!
@@ -234,6 +234,7 @@ namespace DoremiEngine
                     {
                         highestCharge = quadCharge;
                         highestChargedPos = GetGridQuadPosition(x, y);
+                        p_shouldJump = false;
                     }
                 }
                 else
@@ -259,6 +260,7 @@ namespace DoremiEngine
                     {
                         highestCharge = chargeFromField;
                         highestChargedPos = positionFromField;
+                        p_shouldJump = false;
                     }
                     else
                     {
@@ -270,6 +272,7 @@ namespace DoremiEngine
                         {
                             highestCharge = chargeFromField;
                             highestChargedPos = positionFromField;
+                            p_shouldJump = true;
                         }
                     }
                 }
