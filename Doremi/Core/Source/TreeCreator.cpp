@@ -15,13 +15,13 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 2;
+            m_treeDepth = 7;
 
             // Set the box for the world
             treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
 
             // Set the center for the box of the world
-            treeRoot.center = DirectX::XMFLOAT3(-485, 158, -2041); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske
+            treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske
 
             // Start up for the oct tree. Without this function we don't have anything to start with
             // CreateAndDivideTheChildren(treeRoot);
@@ -43,24 +43,26 @@ namespace Doremi
             int t_whatChild = 0;
 
             // Hör till debuggen i while satsen.
-            //int materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            int materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
             m_currentNode = &treeRoot;
             DirectX::XMFLOAT3 physicsCollideFloat;
 
             while(!t_isDone)
             {
                 ////// DEBUG!
-                // int myID = MAX_NUM_ENTITIES;
-                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, m_whatNode->center, DirectX::XMFLOAT4(0, 0, 0, 0),
-                // m_whatNode->boxDimensions, materialID);
-                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyDynamic(myID, quadCenter, XMFLOAT4(0, 0, 0, 1),
-                //                                                                           XMFLOAT3(quadSize.x * 0.5f, 0.5f, quadSize.y * 0.5f),
-                //                                                                           materialID);
-                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                // m_sharedContext.GetPhysicsModule().Update(0.017); // is this needed?
-                // std::vector<DoremiEngine::Physics::CollisionPair> collisionPairs = m_sharedContext.GetPhysicsModule().GetTriggerPairs(); //
-                // GetCollisionPairs();
-                // DEBUG SLUT
+                if (m_currentNode->depth == m_treeDepth -1)
+                {
+                  //int myID = MAX_NUM_ENTITIES;
+                  //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                  //m_currentNode->boxDimensions, materialID);
+                  //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                    //int myID = MAX_NUM_ENTITIES;
+                    //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                    //    DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
+                    //
+                    //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                }
+                 // DEBUG SLUT
 
                 // Kan optimera med detta senare.
                 // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetCallbackFiltering(triggerid, 0, );
@@ -81,78 +83,83 @@ namespace Doremi
                 }
 
                 // if there is a collision between the child box and any object that needs drawing
-                    if (numberOfHits > 0 || m_currentNode->empty == false)
+                if (numberOfHits > 0 || m_currentNode->empty == false)
+                {
+                    m_currentNode->empty = false;
+
+                    // If max depth isnt reached , minus one is needed to get the depth wanted
+                    if(m_currentNode->depth < m_treeDepth - 1)
                     {
-                        m_currentNode->empty = false;
+                        // Collision and max depth wasn't reached
 
-                        // If max depth isnt reached , minus one is needed to get the depth wanted
-                        if(m_currentNode->depth < m_treeDepth - 1)
+                        // If we haven't created the children, we do so
+                        if(m_currentNode->loopInfo == 0)
                         {
-                            // Collision and max depth wasn't reached
+                            CreateAndDivideTheChildren(*m_currentNode);
+                        }
 
-                            // If we haven't created the children, we do so
-                            if(m_currentNode->loopInfo == 0)
+                        // Add the things we collided with to the list.
+                        // Where to start next, if we reached t_maxdepth last loop we have to
+                        if (m_currentNode->loopInfo <= 7)
+                        {
+                            // Adding the value before and subtracting it in the array because we want to keep track of it before we change pointer
+                            ++m_currentNode->loopInfo;
+                            m_currentNode = m_currentNode->children[m_currentNode->loopInfo - 1];
+                        }
+                        else
+                        {
+                            if (m_currentNode->depth == 0)
                             {
-                                CreateAndDivideTheChildren(*m_currentNode);
-                            }
+                                // Is done
+                                m_currentNode->loopInfo = 0;                                
+                                //int myID = MAX_NUM_ENTITIES;
+                                //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                                //    DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
 
-                            // Add the things we collided with to the list.
-                            // Where to start next, if we reached t_maxdepth last loop we have to
-                            if (m_currentNode->loopInfo <= 7)
-                            {
-                                // Adding the value before and subtracting it in the array because we want to keep track of it before we change pointer
-                                ++m_currentNode->loopInfo;
-                                m_currentNode = m_currentNode->children[m_currentNode->loopInfo - 1];
+                                //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                                t_isDone = true;
                             }
                             else
                             {
-                                if (m_currentNode->depth == 0)
-                                {
-                                    // Is done
-                            m_currentNode->loopInfo = 0;
-                                    t_isDone = true;
-                                }
-                                else
-                                {
-                                    // Maybe remove everyone in the nodelist of objects.
-                            m_currentNode->loopInfo = 0;
-                                    m_currentNode = m_currentNode->parent;
-                                }
+                                // Maybe remove everyone in the nodelist of objects.
+                                m_currentNode->loopInfo = 0;
+                                m_currentNode = m_currentNode->parent;
                             }
-                        }
-
-                        else
-                        {
-                            // Collision but we reached max depth
-                            for(size_t i = 0; i < numberOfHits; ++i)
-                            {
-                                // Check if entity will be affected by the render.
-                                // Placing all the render components into the leaf that collided with the box.
-                                if(EntityHandler::GetInstance().HasComponents(t_sweepHits[i], (int)ComponentType::Render))
-                                {
-                                    m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
-                                }
-                            }
-                            m_currentNode->loopInfo = 0;
-                            m_currentNode = m_currentNode->parent;
-                        }
-                    }       
-                    else
-                    {
-                        // No collision
-                        if (m_currentNode->depth < m_treeDepth - 1)
-                        {
-                            m_currentNode->empty = true;
-                            m_currentNode->loopInfo = 0;
-                            m_currentNode = m_currentNode->parent;
-
-                        }
-                        else
-                        {
-                            m_currentNode->loopInfo = 0;
-                            m_currentNode = m_currentNode->parent;
                         }
                     }
+
+                    else
+                    {
+                        // Collision but we reached max depth
+                        for(size_t i = 0; i < numberOfHits; ++i)
+                        {
+                            // Check if entity will be affected by the render.
+                            // Placing all the render components into the leaf that collided with the box.
+                            if(EntityHandler::GetInstance().HasComponents(t_sweepHits[i], (int)ComponentType::Render))
+                            {
+                                m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
+                            }
+                        }
+                        m_currentNode->loopInfo = 0;
+                        m_currentNode = m_currentNode->parent;
+                    }
+                }       
+                else
+                {
+                    // No collision
+                    if (m_currentNode->depth < m_treeDepth - 1)
+                    {
+                        m_currentNode->empty = true;
+                        m_currentNode->loopInfo = 0;
+                        m_currentNode = m_currentNode->parent;
+
+                    }
+                    else
+                    {
+                        m_currentNode->loopInfo = 0;
+                        m_currentNode = m_currentNode->parent;
+                    }
+                }
 
 
             }

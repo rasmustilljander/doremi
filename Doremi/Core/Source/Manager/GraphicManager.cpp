@@ -19,6 +19,7 @@
 #include <dxgi.h>
 #include <d3d11_1.h>
 
+#include <iostream>
 namespace Doremi
 {
     namespace Core
@@ -69,8 +70,13 @@ namespace Doremi
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             // const size_t length = entityHandler.GetLastEntityIndex();
             std::vector<uint32_t> t_theseShouldBeDrawn = TreeHandler::GetInstance()->Update();
-            const size_t length = t_theseShouldBeDrawn.size();
-            
+            size_t length = t_theseShouldBeDrawn.size();
+            if (drawedLastUpdate != length )//|| drawedLastUpdate != 0)
+            {
+                std::cout << length << std::endl;
+            }
+            drawedLastUpdate = length;
+
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
             for(size_t i = 0; i < length; i++)
             {
@@ -93,6 +99,7 @@ namespace Doremi
             m_rasterizerState->GetRasterizerState();
             m_depthStencilState->GetDepthStencilState();
             submoduleManager.GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
+            TreeHandler::GetInstance()->ResetObjectsToDraw();
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}

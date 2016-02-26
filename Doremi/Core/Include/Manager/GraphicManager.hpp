@@ -34,6 +34,8 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
+            // DEBUG
+            uint32_t drawedLastUpdate = 0;
             DoremiEngine::Graphic::PixelShader* m_pixelShader;
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
