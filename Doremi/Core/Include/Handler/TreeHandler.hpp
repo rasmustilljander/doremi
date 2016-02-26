@@ -13,6 +13,15 @@ namespace DoremiEngine
     {
         class SharedContext;
     }
+
+        namespace Graphic
+        {
+            class DepthStencilState;
+            class RasterizerState;
+            class PixelShader;
+            class VertexShader;
+        }
+    
 }
 namespace Doremi
 {
@@ -30,7 +39,7 @@ namespace Doremi
             std::vector<uint32_t> Update();
 
             void OnEvent(Event* p_event) override;
-
+            void ResetObjectsToDraw();
         private:
             TreeHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~TreeHandler();
@@ -41,6 +50,13 @@ namespace Doremi
             uint32_t m_viewDist;
             DirectX::XMFLOAT4 m_planes[6];
             bool CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions);
+            // SKITKOD TODOEA
+            uint32_t drawedLastUpdate = 0;
+            DoremiEngine::Graphic::PixelShader* m_pixelShader;
+            DoremiEngine::Graphic::VertexShader* m_vertexShader;
+            DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
+            DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
+            ////
         };
     }
 }

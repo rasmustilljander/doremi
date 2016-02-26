@@ -8,7 +8,37 @@
 #include <DoremiEngine/Graphic/Include/Interface/Camera/Camera.hpp>
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <DirectXMath.h>
+#include <DoremiEngine/Graphic/Include/VertexStruct.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 #include <iostream>
+#include <algorithm>
+#include <Windows.h>
+
+// SKITKOD TODOEA
+// Project specific
+#include <Manager/GraphicManager.hpp>
+#include <EntityComponent/EntityHandler.hpp>
+#include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/TransformComponent.hpp>
+#include <Doremi/Core/Include/Handler/TreeHandler.hpp>
+// Engine
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/PixelShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
+#include <dxgi.h>
+#include <d3d11_1.h>
 
 namespace Doremi
 {
@@ -20,6 +50,39 @@ namespace Doremi
         {
             m_treeCreator = new TreeCreator(p_sharedContext);
             m_viewDist = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().CameraViewDistance;
+
+            //// SKITKOD TODOEA
+            // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
+            // TODOLH Maybe shouldnt be here either. Moved it from shadermodulemanagerImplementation cos this guy needs to be able to switch shader
+            // before drawing
+            D3D11_INPUT_ELEMENT_DESC ied[] = {
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            };
+            m_vertexShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl",
+                ied, ARRAYSIZE(ied));
+            m_pixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("BasicPixelShader.hlsl");
+
+            D3D11_RASTERIZER_DESC rastDesc;
+            ZeroMemory(&rastDesc, sizeof(rastDesc));
+            rastDesc.FillMode = D3D11_FILL_SOLID;
+            rastDesc.CullMode = D3D11_CULL_NONE;
+            rastDesc.FrontCounterClockwise = false;
+            rastDesc.DepthBias = 0;
+            rastDesc.DepthBiasClamp = 0.0f;
+            rastDesc.SlopeScaledDepthBias = 0.0f;
+            rastDesc.DepthClipEnable = false;
+            rastDesc.ScissorEnable = false;
+            rastDesc.MultisampleEnable = true;
+            rastDesc.AntialiasedLineEnable = false;
+            m_rasterizerState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateRasterizerState(rastDesc);
+            D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+            ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+            depthStencilDesc.DepthEnable = true;
+            depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+            m_depthStencilState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateDepthStencilState(depthStencilDesc);
         }
 
         TreeHandler* TreeHandler::GetInstance()
@@ -45,6 +108,14 @@ namespace Doremi
             // Check if any one point of the cube is in the view frustum.
             for (int i = 0; i < 6; ++i)
             {
+
+                //DirectX::XMFLOAT3 t_collideCheckFloats;
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center)))));
+                //if (t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x <= 0)
+                //{
+                //    return false;
+                //}
+
                 DirectX::XMFLOAT3 t_collideCheckFloats;
                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
                 if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
@@ -61,12 +132,12 @@ namespace Doremi
                 {
                     continue;
                 }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
                 if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
                 {
                     continue;
                 }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
                 if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
                 {
                     continue;
@@ -112,14 +183,112 @@ namespace Doremi
             // DirectX::XMFLOAT4X4 t_view4x4 = t_camMatrices.ViewMatrix;
             float t_zMin;
             float r;
+
+
+
+
+
+
+
+
+
+
+
+
+             DoremiEngine::Graphic::VertexBasic tQuad[] = {
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f }, // 1 //Lilla boxen
+                 { -1.0f, -1.0f, -0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f }, // 2//Framsidan
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f }, // 3
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f }, // 1//Framsidan
+                 { 1.0f, 1.0f, -0.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f }, // 4
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f }, // 3
+             
+                 { -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f }, // 4
+                 { -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f }, // 5  Baksidan
+                 { 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f }, // 6
+                 { -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f }, // 4  Baksidan
+                 { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }, // 7
+                 { 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f }, // 6
+             
+             
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // ovanpå 8
+                 { -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f }, //// 9
+                 { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f }, ////10
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // ovanpå 8
+                 { 1.0f, 1.0f, -0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }, // 11
+                 { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f }, ////10
+             
+             
+                 { -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f }, // under 12
+                 { -1.0f, -1.0f, -0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f }, //// 13
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f }, ////14
+                 { -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f }, // under 12
+                 { 1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f }, // 15
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f }, ////14
+             
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f }, // vänster 16
+                 { -1.0f, -1.0f, -0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f }, //// 17
+                 { -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f }, ////18
+                 { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f }, // vänster 16
+                 { -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f }, // 19
+                 { -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f }, ////18
+             
+                 { 1.0f, 1.0f,1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, // höger 20
+                 { 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f }, //// 21
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f }, ////22
+                 { 1.0f, 1.0f,1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, // höger 20
+                 { 1.0f, 1.0f, -0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f }, // 23
+                 { 1.0f, -1.0f, -0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f }, ////22
+             };
+
+
+
+             int hej = ARRAYSIZE(tQuad);
+             std::vector<DoremiEngine::Graphic::Vertex> bufferList;
+             for (size_t i = 0; i < hej; i++)
+             {
+                 DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(tQuad[i].x, tQuad[i].y, tQuad[i].z));
+                 pos = DirectX::XMVector3Transform(pos, (DirectX::XMLoadFloat4x4( &t_camMatrices.ProjectionMatrix)));
+                 DirectX::XMFLOAT3 posFloat;
+                 DirectX::XMStoreFloat3(&posFloat, pos);
+                 DoremiEngine::Graphic::Vertex intoListVertex;
+                 intoListVertex.normal = DirectX::XMFLOAT3(tQuad[i].nx, tQuad[i].ny, tQuad[i].nz);
+                 intoListVertex.position = posFloat;
+                 intoListVertex.textureCoordinate.x = tQuad[i].texcoord[0];
+                 intoListVertex.textureCoordinate.y = tQuad[i].texcoord[1];
+                 bufferList.push_back(intoListVertex);
+                 // tQuad[i].x = posFloat.x;
+                 // tQuad[i].y = posFloat.y;
+                 // tQuad[i].z = posFloat.z;
+             }
+             static int meshSHit = 0;
+             DoremiEngine::Graphic::MaterialInfo* materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("AngryFace.dds");
+             DoremiEngine::Graphic::MeshInfo* meshInfoFrustum = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfoFromBuffer(bufferList, "FrustumMesasdasdh" + std::to_string(meshSHit));
+             DirectX::XMFLOAT4X4A orianteiionFLoat;
+             DirectX::XMStoreFloat4x4(&orianteiionFLoat, DirectX::XMMatrixIdentity());
+             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*meshInfoFrustum, *materialInfo, orianteiionFLoat);
+             meshSHit++;
+
+
+
+
+
+
+
+
             DirectX::XMMATRIX t_viewAndProjectionMatrix;
-            t_zMin = t_projection4x4._43 / t_projection4x4._33;
+            t_zMin = -t_projection4x4._43 / t_projection4x4._33;
             r = m_viewDist / (m_viewDist - t_zMin);
             t_projection4x4._33 = r;
             t_projection4x4._43 = -r * t_zMin;
-            t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(XMLoadFloat4x4(&t_projection4x4), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr ,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
             DirectX::XMFLOAT4X4 t_viewAndProjection4x4;
             DirectX::XMStoreFloat4x4(&t_viewAndProjection4x4, t_viewAndProjectionMatrix);
+
+
+
+            //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
+
 
             // Calculate near plane of frustum.
             m_planes[0].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._13;
@@ -211,11 +380,13 @@ namespace Doremi
                                 if(t_currentNode->depth == 0)
                                 {
                                     // Is done, we went through all children at the depth of zero which means we are at the root node
+                                    t_currentNode->loopInfo = 0;
                                     t_isDone = true;
                                 }
                                 else
                                 {
                                     // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
+                                    t_currentNode->loopInfo = 0;
                                     t_currentNode = t_currentNode->parent;
                                 }
                             }
@@ -229,8 +400,61 @@ namespace Doremi
                             for(size_t i = 0; i < loopSize; ++i)
                             {
                                 // TODOEA Have to do a check if the object allready is in the list
-                                m_objectsToDraw.push_back(t_currentNode->objectsInTheArea[i]);
+                                if (std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) != m_objectsToDraw.end()) 
+                                {
+                                    // Nothing
+                                }
+                                else 
+                                {
+                                    m_objectsToDraw.push_back(t_currentNode->objectsInTheArea[i]);
+                                }
                             }
+                            t_currentNode->loopInfo = 0;
+                            t_currentNode = t_currentNode->parent;
+                        }
+                    }
+                    else
+                    {                        // If max depth isnt reached , minus one is needed to get the depth wanted
+                        if (t_currentNode->depth < m_treeCreator->m_treeDepth - 1)
+                        {
+                            // no collision with frustum
+                            // Where to start next, if we reached t_maxdepth last loop we have to
+                            if (t_currentNode->loopInfo <= 7)
+                            {
+                                // Adding the value before and subtracting it in the array because we want to keep track of it before we change
+                                // pointer
+                                ++t_currentNode->loopInfo;
+                                if (!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
+                                {
+                                    t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
+                                }
+                                else
+                                {
+                                    // Do nothing, we will do the loop again without going into the child and going to the next since we added
+                                    // loopinfo.
+                                }
+                            }
+                            else
+                            {
+                                if (t_currentNode->depth == 0)
+                                {
+                                    // Is done, we went through all children at the depth of zero which means we are at the root node
+                                    t_currentNode->loopInfo = 0;
+                                    t_isDone = true;
+                                }
+                                else
+                                {
+                                    // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
+                                    t_currentNode->loopInfo = 0;
+                                    t_currentNode = t_currentNode->parent;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Max depth reached, these will be the interesting objects to draw.
+
+                            t_currentNode->loopInfo = 0;
                             t_currentNode = t_currentNode->parent;
                         }
                     }
@@ -238,11 +462,16 @@ namespace Doremi
                 else
                 {
                     // if is empty we back out to the parent
+                    t_currentNode->loopInfo = 0;
                     t_currentNode = t_currentNode->parent;
                 }
             }
             return m_objectsToDraw;
         }
         void TreeHandler::OnEvent(Event* p_event) {}
+        void TreeHandler::ResetObjectsToDraw()
+        {
+            m_objectsToDraw.clear();
+        }
     }
 }
