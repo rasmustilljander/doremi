@@ -2,7 +2,6 @@
 #define NOMINMAX
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
-#include <vector>
 #include <map>
 #include <algorithm>
 #include <limits>
@@ -27,13 +26,15 @@ namespace DoremiEngine
                 Sets the values of this class
             */
             void Set(std::vector<int>& p_boneHierarchy,
-                     /*std::vector<DirectX::XMFLOAT4X4>& p_boneOffsets,*/ std::map<std::string, AnimationClip>& p_animations) override;
+                     /*std::vector<DirectX::XMFLOAT4X4>& p_boneOffsets,*/ std::map<std::string, AnimationBlend>& p_animations) override;
 
             unsigned int GetBoneCount() const override;
             float GetClipStartTime(const std::string& clipName) const override;
             float GetClipEndTime(const std::string& clipName) const override;
             AnimationClip GetAnimationClip(const std::string& p_clipName) const override;
             int GetParentIndex(const int& p_childIndex) const override;
+            AnimationBlend& GetAnimationBlend(const std::string& p_clipName) override;
+            std::vector<std::string> GetAnimationNames() const override;
             // std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets() const;
 
 
@@ -49,7 +50,7 @@ namespace DoremiEngine
             /**
                 map of animationclips to their respective names
             */
-            std::map<std::string, AnimationClip> m_animations;
+            std::map<std::string, AnimationBlend> m_animations;
         };
     }
 }

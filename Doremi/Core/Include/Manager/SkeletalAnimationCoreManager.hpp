@@ -7,8 +7,6 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        class SkeletalAnimationImpl;
-
         class DepthStencilState;
         class RasterizerState;
         class PixelShader;
@@ -20,6 +18,8 @@ namespace Doremi
 {
     namespace Core
     {
+        struct SkeletalAnimationComponent;
+        struct LowerSkeletalAnimationComponent;
         /**
             This manager updates the skeletalanimations. It increases the timer of every animation and fetches + updates the bonetransforms.
         */
@@ -36,12 +36,17 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
-            DoremiEngine::Graphic::SkeletalAnimationImpl* m_animator;
             DoremiEngine::Graphic::PixelShader* m_pixelShader;
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
             DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
             void CheckANDPerformAnimationTransition(const size_t& p_entityID);
+            /**
+                Updates the transitiontimers and switches animaitonclip
+            */
+            void UpdateTransitions(SkeletalAnimationComponent& p_skeltalAnimationComponent,
+                                   LowerSkeletalAnimationComponent& p_lowerSkeletalAnimationComponent, double p_dt);
+            double m_animationTransitionTime;
         };
     }
 }

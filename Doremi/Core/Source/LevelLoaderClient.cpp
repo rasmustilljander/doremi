@@ -109,8 +109,8 @@ namespace Doremi
                 std::vector<int> t_upperBodyJointHeirarchy;
                 std::vector<int> t_lowerBodyJointHeirarchy;
                 // All the animations this is used as final map and used in skeletalanimations
-                std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_upperBodyAnimations;
-                std::map<std::string, DoremiEngine::Graphic::AnimationClip> t_lowerBodyAnimations;
+                std::map<std::string, DoremiEngine::Graphic::AnimationBlend> t_upperBodyAnimations;
+                std::map<std::string, DoremiEngine::Graphic::AnimationBlend> t_lowerBodyAnimations;
 
                 // Läs animationsinformation. Innehåller information som behövs för jointinformationsladdningen
                 // Read how many animation this file contains
@@ -123,8 +123,8 @@ namespace Doremi
 
                 /// Ladda jointanimationerna
                 // Temporary savings of the animations.
-                std::vector<DoremiEngine::Graphic::AnimationClip> t_upperBodyAnimationVector(t_nrAnimations);
-                std::vector<DoremiEngine::Graphic::AnimationClip> t_lowerBodyAnimationVector(t_nrAnimations);
+                std::vector<DoremiEngine::Graphic::AnimationBlend> t_upperBodyAnimationVector(t_nrAnimations);
+                std::vector<DoremiEngine::Graphic::AnimationBlend> t_lowerBodyAnimationVector(t_nrAnimations);
                 // Load the jointAnimations. We save the jointHeirarchy as outparameters in t_lowerBodyJointHeirachy and t_upperBodyJointHeirachy
                 // We also save the animationVectors for both upper and lower body in the outparameter t_upperBodyAnimationVector and
                 // t_lowerBodyAnimationVector.
@@ -134,6 +134,8 @@ namespace Doremi
                 // ordning.
                 for(size_t i = 0; i < t_nrAnimations; i++)
                 {
+                    t_upperBodyAnimationVector[i].timeElapsed = 0;
+                    t_lowerBodyAnimationVector[i].timeElapsed = 0;
                     t_upperBodyAnimations.emplace(t_animationNames[i], t_upperBodyAnimationVector[i]);
                     t_lowerBodyAnimations.emplace(t_animationNames[i], t_lowerBodyAnimationVector[i]);
                 }
@@ -202,8 +204,8 @@ namespace Doremi
         }
 
         void LevelLoaderClient::LoadJointAnimations(std::ifstream& ifs, const int& p_nrOfJoints, const int& p_nrOfAnimations,
-                                                    std::vector<DoremiEngine::Graphic::AnimationClip>& o_upperBodyAnimationVector,
-                                                    std::vector<DoremiEngine::Graphic::AnimationClip>& o_lowerBodyAnimationVector,
+                                                    std::vector<DoremiEngine::Graphic::AnimationBlend>& o_upperBodyAnimationVector,
+                                                    std::vector<DoremiEngine::Graphic::AnimationBlend>& o_lowerBodyAnimationVector,
                                                     std::vector<AnimationInformation> p_animationInformations, std::vector<int>& o_lowerBodyJointHeirarchy,
                                                     std::vector<int>& o_upperBodyJointHeirarchy, std::vector<std::string>& o_animationNames)
         {
@@ -290,20 +292,20 @@ namespace Doremi
                                 // animationsclippet. Där sparas alla dessa benanimationer
                                 if(bodyPartID == 1)
                                 {
-                                    o_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
-                                    o_upperBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
+                                    o_upperBodyAnimationVector[p - 1].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                                    o_upperBodyAnimationVector[p - 1].animationClip.loop = p_animationInformations[p - 1].loop;
                                 }
                                 else if(bodyPartID == 2)
                                 {
-                                    o_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
-                                    o_lowerBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
+                                    o_lowerBodyAnimationVector[p - 1].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                                    o_lowerBodyAnimationVector[p - 1].animationClip.loop = p_animationInformations[p - 1].loop;
                                 }
                                 else if(bodyPartID == 0)
                                 {
-                                    o_upperBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
-                                    o_upperBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
-                                    o_lowerBodyAnimationVector[p - 1].BoneAnimations.push_back(t_boneAnimation);
-                                    o_lowerBodyAnimationVector[p - 1].loop = p_animationInformations[p - 1].loop;
+                                    o_upperBodyAnimationVector[p - 1].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                                    o_upperBodyAnimationVector[p - 1].animationClip.loop = p_animationInformations[p - 1].loop;
+                                    o_lowerBodyAnimationVector[p - 1].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                                    o_lowerBodyAnimationVector[p - 1].animationClip.loop = p_animationInformations[p - 1].loop;
                                 }
                                 // Spara ner animationsnamnet på rätt plats i animationsnamnslistan
                                 o_animationNames[p - 1] = p_animationInformations[p - 1].name;
@@ -361,20 +363,24 @@ namespace Doremi
                         // animationsclippet. Där sparas alla dessa benanimationer
                         if(bodyPartID == 1)
                         {
-                            o_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
-                            o_upperBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
+                            o_upperBodyAnimationVector[t_animationInformationIndex].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                            o_upperBodyAnimationVector[t_animationInformationIndex].animationClip.loop =
+                                p_animationInformations[t_animationInformationIndex].loop;
                         }
                         else if(bodyPartID == 2)
                         {
-                            o_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
-                            o_lowerBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].animationClip.loop =
+                                p_animationInformations[t_animationInformationIndex].loop;
                         }
                         else if(bodyPartID == 0)
                         {
-                            o_upperBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
-                            o_upperBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
-                            o_lowerBodyAnimationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
-                            o_lowerBodyAnimationVector[t_animationInformationIndex].loop = p_animationInformations[t_animationInformationIndex].loop;
+                            o_upperBodyAnimationVector[t_animationInformationIndex].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                            o_upperBodyAnimationVector[t_animationInformationIndex].animationClip.loop =
+                                p_animationInformations[t_animationInformationIndex].loop;
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].animationClip.BoneAnimations.push_back(t_boneAnimation);
+                            o_lowerBodyAnimationVector[t_animationInformationIndex].animationClip.loop =
+                                p_animationInformations[t_animationInformationIndex].loop;
                         }
                         // t_animationVector[t_animationInformationIndex].BoneAnimations.push_back(t_boneAnimation);
                         // Sätts många gånger i onödan...

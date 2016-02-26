@@ -169,18 +169,18 @@ namespace Doremi
             blueprint[ComponentType::Render] = renderComp;
 
             // SkeletalAnimationComponent
-            SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
-            blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
-            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Idle";
-            t_upperBodySkeletalAnimationComp->timePosition = 0;
-
-            LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
-            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Idle";
-            t_lowerBodySkeletalAnimationComp->timePosition = 0;
-            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            // SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            // blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
+            // t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
+            // t_upperBodySkeletalAnimationComp->clipName = "Idle";
+            // t_upperBodySkeletalAnimationComp->timePosition = 0;
+            //
+            // LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
+            // blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
+            // t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
+            // t_lowerBodySkeletalAnimationComp->clipName = "Idle";
+            // t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            // t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();

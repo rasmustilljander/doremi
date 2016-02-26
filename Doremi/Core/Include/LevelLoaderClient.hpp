@@ -10,6 +10,7 @@ namespace DoremiEngine
         class SkeletalInformation;
         struct SkeletalVertex;
         struct AnimationClip;
+        struct AnimationBlend;
     }
 }
 
@@ -57,8 +58,8 @@ namespace Doremi
             LoadSkeletalMesh(std::ifstream& ifs, const int& p_nrOfMeshes, const std::map<std::string, DirectX::XMFLOAT4X4>& p_transformMap);
             std::map<std::string, DirectX::XMFLOAT4X4> LoadSkeletalTransforms(std::ifstream& ifs, const int& p_nrOfTransforms);
             void LoadJointAnimations(std::ifstream& ifs, const int& p_nrOfJoints, const int& p_nrOfAnimations,
-                                     std::vector<DoremiEngine::Graphic::AnimationClip>& o_upperBodyAnimations,
-                                     std::vector<DoremiEngine::Graphic::AnimationClip>& o_lowerBodyAnimations,
+                                     std::vector<DoremiEngine::Graphic::AnimationBlend>& o_upperBodyAnimations,
+                                     std::vector<DoremiEngine::Graphic::AnimationBlend>& o_lowerBodyAnimations,
                                      std::vector<AnimationInformation> p_animationInformations, std::vector<int>& o_lowerBodyJointHeirarchy,
                                      std::vector<int>& o_upperBodyJointHeirarchy, std::vector<std::string>& o_animationNames);
             std::vector<AnimationInformation> LoadAnimationInformation(std::ifstream& ifs, const int& p_nrOfAnimationInformations);
