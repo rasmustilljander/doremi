@@ -29,7 +29,7 @@ namespace Doremi
     namespace Core
     {
         NetworkManagerServer::NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "ServerNetworkManager"),
+            : Manager(p_sharedContext, "NetworkManagerServer"),
               m_timeoutIntervalConnecting(5.0f),
               m_timeoutIntervalConnected(1.0f),
               m_maxConnectedMessagesPerFrame(20),

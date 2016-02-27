@@ -23,7 +23,7 @@ namespace Doremi
     namespace Core
     {
         NetworkManagerClient::NetworkManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "ClientNetworkManager"),
+            : Manager(p_sharedContext, "NetworkManagerClient"),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
               m_timeoutIntervalConnecting(5.0f),
