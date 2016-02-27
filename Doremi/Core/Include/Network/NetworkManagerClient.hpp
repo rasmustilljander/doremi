@@ -103,7 +103,12 @@ namespace Doremi
             /**
                 Time to disconnect from server
             */
-            double m_timeoutInterval;
+            double m_timeoutIntervalConnecting;
+
+            /**
+                TODOCM doc
+            */
+            double m_timeoutIntervalConnected;
 
             /**
                 TODOCM doc

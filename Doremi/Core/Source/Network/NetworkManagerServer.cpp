@@ -30,7 +30,8 @@ namespace Doremi
     {
         NetworkManagerServer::NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "ServerNetworkManager"),
-              m_timeoutInterval(20.0f),
+              m_timeoutIntervalConnecting(5.0f),
+              m_timeoutIntervalConnected(1.0f),
               m_maxConnectedMessagesPerFrame(20),
               m_maxConnectingMessagesPerFrame(10),
               m_maxAcceptConnectionsPerFrame(5)
@@ -338,8 +339,10 @@ namespace Doremi
                     t_connection->second->LastSequenceUpdate += t_dt;
 
                     // If exceed timout
-                    if(t_connection->second->LastResponse >= m_timeoutInterval)
+                    if(t_connection->second->LastResponse >= m_timeoutIntervalConnected)
                     {
+                        std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
+
                         // Send disconnection message
                         NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
 
@@ -375,8 +378,9 @@ namespace Doremi
                     t_connection->second->LastResponse += t_dt;
 
                     // If exceed timout
-                    if(t_connection->second->LastResponse >= m_timeoutInterval)
+                    if(t_connection->second->LastResponse >= m_timeoutIntervalConnecting)
                     {
+                        std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
                         // Send disconnection message
                         NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
 

@@ -26,7 +26,8 @@ namespace Doremi
             : Manager(p_sharedContext, "ClientNetworkManager"),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
-              m_timeoutInterval(20.0f),
+              m_timeoutIntervalConnecting(5.0f),
+              m_timeoutIntervalConnected(1.0f),
               m_maxConnectingMessagesPerFrame(10),
               m_maxConnectedMessagesPerFrame(10)
 
@@ -370,8 +371,13 @@ namespace Doremi
                 t_connections->m_serverConnectionState.LastSequenceUpdate += p_dt;
 
                 // Check if exceeded timeout
-                if(t_connections->m_serverConnectionState.LastResponse > m_timeoutInterval)
+                if(t_connections->m_serverConnectionState.ConnectionState >= ServerConnectionStateFromClient::CONNECTED &&
+                    t_connections->m_serverConnectionState.LastResponse > m_timeoutIntervalConnected ||
+                    t_connections->m_serverConnectionState.ConnectionState < ServerConnectionStateFromClient::CONNECTED &&
+                    t_connections->m_serverConnectionState.LastResponse > m_timeoutIntervalConnecting)
                 {
+                    std::cout << "Timeout server: " << t_connections->m_serverConnectionState.LastResponse << " seconds." << std::endl;
+
                     // Set state as disconnected
                     t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
 

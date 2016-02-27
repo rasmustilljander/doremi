@@ -435,10 +435,11 @@ namespace Doremi
             bool t_sendFailed = !t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
 
             // If fail, we disconnect next
-            if(t_sendFailed)
-            {
-                p_connection->LastResponse = 100000; // TODOCM hard coded disconnect value =D
-            }
+            //if(t_sendFailed)
+            //{
+            //    std::cout << "Send failed, disconnecting" << std::endl;
+            //    p_connection->LastResponse = 100000; // TODOCM hard coded disconnect value =D
+            //}
         }
     }
 }

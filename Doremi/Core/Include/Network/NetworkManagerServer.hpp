@@ -75,7 +75,12 @@ namespace Doremi
             /**
                 Time interval for timeouts
             */
-            double m_timeoutInterval;
+            double m_timeoutIntervalConnecting;
+
+            /**
+                Time interval for timeouts
+            */
+            double m_timeoutIntervalConnected;
 
             /**
                 TODOCM doc
