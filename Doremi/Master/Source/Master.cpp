@@ -10,7 +10,7 @@
 
 
 // Managers
-#include <Doremi/Core/Include/Network/NetworkManagerServer.hpp>
+#include <Doremi/Core/Include/Network/NetworkManagerMaster.hpp>
 
 
 // Timer
@@ -33,14 +33,13 @@ namespace Doremi
     void MasterMain::Initialize()
     {
         TIME_FUNCTION_START
-            const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(
-                DoremiEngine::Core::EngineModuleEnum::NETWORK);
+        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
 
 
-        Core::Manager* t_masterNetworkManager = new Core::NetworkManagerServer(sharedContext);
+        Core::Manager* t_masterNetworkManager = new Core::NetworkManagerMaster(sharedContext);
 
         // Add manager to list of managers
         // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)

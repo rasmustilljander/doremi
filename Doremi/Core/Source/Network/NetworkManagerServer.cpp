@@ -10,6 +10,7 @@
 // Handlers
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
+#include <Doremi/Core/Include/ServerStateHandler.hpp>
 
 // Net messages
 #include <Doremi/Core/Include/Network/NetMessages.hpp>
@@ -32,6 +33,9 @@ namespace Doremi
             : Manager(p_sharedContext, "NetworkManagerServer"),
               m_timeoutIntervalConnecting(5.0f),
               m_timeoutIntervalConnected(1.0f),
+              m_timeoutIntervalMaster(5.0f),
+              m_masterNextUpdateTimer(0.0f),
+              m_masterUpdateInterval(1.0f),
               m_maxConnectedMessagesPerFrame(20),
               m_maxConnectingMessagesPerFrame(10),
               m_maxAcceptConnectionsPerFrame(5)
@@ -53,6 +57,9 @@ namespace Doremi
             // Send Messages for connected clients
             SendConnectedMessages();
 
+            // Send messges to master
+            SendMasterMessages(p_dt);
+
             // Check for connections TODOCM not sure if I want this if we going for UDP only
             CheckForConnections();
 
@@ -67,6 +74,9 @@ namespace Doremi
 
             // Recieve connecting messages from connected clients
             ReceiveConnectedMessages();
+
+            // Receive messages from master
+            ReceiveMasterMessages();
         }
 
         void NetworkManagerServer::ReceiveConnectingMessages()
@@ -182,19 +192,19 @@ namespace Doremi
                         {
                             case SendMessageIDToServerFromClient::CONNECTED:
                             {
-                                t_netMessages->ReceiveConnectedMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveConnected(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
                             case SendMessageIDToServerFromClient::LOAD_WORLD:
                             {
-                                t_netMessages->ReceiveLoadWorldMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveLoadWorld(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
                             case SendMessageIDToServerFromClient::IN_GAME:
                             {
-                                t_netMessages->ReceiveInGameMessage(t_connectedMessage, t_connection.second);
+                                t_netMessages->ReceiveInGame(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
@@ -211,6 +221,66 @@ namespace Doremi
                         t_message = NetMessageBuffer();
                     }
                 }
+            }
+        }
+
+        void NetworkManagerServer::ReceiveMasterMessages()
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+
+            // Get message class
+            NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
+
+            // Get connecting socket
+            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.SocketHandle;
+
+            // Create buffer message
+            NetMessageMasterServerFromMaster t_newMessage = NetMessageMasterServerFromMaster();
+
+            // To check how much we received
+            uint32_t t_dataSizeReceived = 0;
+
+            // Counter for checking we dont read to much
+            uint32_t t_numOfMessages = 0;
+
+            // Receive messages
+            // TODOCM not sure if need to send in out adress here
+            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
+                                                        t_connections->m_masterConnection.Adress, t_dataSizeReceived) &&
+                  ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
+            {
+                // If wrong size of message
+                if(t_dataSizeReceived != sizeof(NetMessageMasterServerFromMaster))
+                {
+                    t_newMessage = NetMessageMasterServerFromMaster();
+                    continue;
+                }
+
+                // Check ID and interpet
+                switch(t_newMessage.MessageID)
+                {
+                    case SendMessageIDToServerFromMaster::CONNECTED:
+                    {
+                        t_netMessages->ReceiveConnectedMaster(t_newMessage);
+
+                        break;
+                    }
+                    case SendMessageIDToServerFromMaster::DISCONNECT:
+                    {
+                        t_netMessages->ReceiveDisconnectMaster(t_newMessage);
+
+                        break;
+                    }
+                    default:
+                    {
+                        std::cout << "Some error message received" << std::endl; // TODOCM remove deubgg
+                        break;
+                    }
+                }
+
+                // Reset message
+                t_newMessage = NetMessageMasterServerFromMaster();
             }
         }
 
@@ -256,11 +326,49 @@ namespace Doremi
             }
         }
 
+        void NetworkManagerServer::SendMasterMessages(double p_dt)
+        {
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
+
+            // Update timer
+            m_masterNextUpdateTimer += p_dt;
+
+            // If we're not connected we only send at intervals
+            if(m_masterNextUpdateTimer >= m_masterUpdateInterval)
+            {
+                // Reduce timer
+                m_masterNextUpdateTimer -= m_masterUpdateInterval;
+
+                // Based on our state we send different message
+                switch(t_connections->m_masterConnection.ConnectionState)
+                {
+                    case MasterConnectionStateFromServer::CONNECTING:
+                    {
+                        t_netMessages->SendConnectionRequestMaster();
+
+                        break;
+                    }
+                    case MasterConnectionStateFromServer::CONNECTED:
+                    {
+                        t_netMessages->SendConnectedMaster();
+
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         void NetworkManagerServer::CheckForConnections()
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
             NetworkConnectionsServer* t_netConnections = NetworkConnectionsServer::GetInstance();
             PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
+            ServerStateHandler* t_serverStateHandler = ServerStateHandler::GetInstance();
 
             // Get values
             SocketHandle t_connectedSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectedSocketHandle();
@@ -283,28 +391,41 @@ namespace Doremi
                     // If the connection is in connect mode
                     if(t_connection.second->ConnectionState == ClientConnectionStateFromServer::CONNECT)
                     {
-                        std::cout << "Accepting connection" << std::endl;
+                        uint8_t currentPlayers = t_netConnections->GetConnectedClientConnections().size();
+                        uint8_t maxPlayers = t_serverStateHandler->GetMaxPlayers();
 
-                        // Update connection
-                        t_connection.second->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
+                        // If server isn't full
+                        if(currentPlayers < maxPlayers)
+                        {
+                            std::cout << "Accepting connection" << std::endl;
 
-                        // Update last response
-                        t_connection.second->LastResponse = 0;
+                            // Update connection
+                            t_connection.second->ConnectionState = ClientConnectionStateFromServer::CONNECTED;
 
-                        // Add socketID
-                        t_connection.second->ConnectedSocketHandle = t_outSocketHandle;
+                            // Update last response
+                            t_connection.second->LastResponse = 0;
 
-                        // New connection
-                        t_connection.second->LastSequenceUpdate = SEQUENCE_TIMER_START; // High because we want update
+                            // Add socketID
+                            t_connection.second->ConnectedSocketHandle = t_outSocketHandle;
 
-                        // Create new InputHandler
-                        InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
+                            // New connection
+                            t_connection.second->LastSequenceUpdate = SEQUENCE_TIMER_START; // High because we want update
 
-                        // Create player
-                        t_playerHandler->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
+                            // Create new InputHandler
+                            InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
-                        // Upgrade connection to connected
-                        t_netConnections->SetConnecting(t_connection);
+                            // Create player
+                            t_playerHandler->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
+
+                            // Upgrade connection to connected
+                            t_netConnections->SetConnecting(t_connection);
+                        }
+                        else
+                        {
+                            // If we're not in the connect stage, its bad pattern
+                            // TODOXX This will trigger if there are two on same IP joining at same time, will crash hard
+                            NetworkMessagesServer::GetInstance()->SendDisconnect(*t_outAdress, "Server is full");
+                        }
                     }
                     else
                     {
@@ -324,81 +445,111 @@ namespace Doremi
             delete t_outAdress;
         }
 
-        void NetworkManagerServer::UpdateTimeouts(double t_dt)
+        void NetworkManagerServer::UpdateTimeouts(double p_dt)
         {
             // Check all connected connections
-            {
-                auto& t_connectedConnections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
-                auto t_connection = t_connectedConnections.begin();
-
-                while(t_connection != t_connectedConnections.end())
-                {
-                    // Update timer
-                    t_connection->second->LastResponse += t_dt;
-                    t_connection->second->LastSequenceUpdate += t_dt;
-
-                    // If exceed timout
-                    if(t_connection->second->LastResponse >= m_timeoutIntervalConnected)
-                    {
-                        std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
-
-                        // Send disconnection message
-                        NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
-
-                        // Remove socket
-                        m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
-
-                        // Remove and save player if it exists, it should
-                        static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(t_connection->second->PlayerID);
-
-                        // Delete the memory here
-                        delete t_connection->first;
-                        delete t_connection->second;
-
-                        // Erase from map
-                        t_connection = t_connectedConnections.erase(t_connection);
-                    }
-                    else
-                    {
-                        // Else just increment
-                        t_connection++;
-                    }
-                }
-            }
+            UpdateTimeoutsConnecting(p_dt);
 
             // Check all connecting connections
+            UpdateTimeoutsConnected(p_dt);
+
+            // Check master timeout
+            UpdateTimeoutsMaster(p_dt);
+        }
+
+        void NetworkManagerServer::UpdateTimeoutsConnecting(double p_dt)
+        {
+            auto& t_connectedConnections = NetworkConnectionsServer::GetInstance()->GetConnectedClientConnections();
+            auto t_connection = t_connectedConnections.begin();
+
+            while(t_connection != t_connectedConnections.end())
             {
-                auto& t_connectingConnections = NetworkConnectionsServer::GetInstance()->GetConnectingClientConnections();
-                auto t_connection = t_connectingConnections.begin();
+                // Update timer
+                t_connection->second->LastResponse += p_dt;
+                t_connection->second->LastSequenceUpdate += p_dt;
 
-                while(t_connection != t_connectingConnections.end())
+                // If exceed timout
+                if(t_connection->second->LastResponse >= m_timeoutIntervalConnected)
                 {
-                    // Update timer
-                    t_connection->second->LastResponse += t_dt;
+                    std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
 
-                    // If exceed timout
-                    if(t_connection->second->LastResponse >= m_timeoutIntervalConnecting)
-                    {
-                        std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
-                        // Send disconnection message
-                        NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
+                    // Send disconnection message
+                    NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
 
-                        // Remove socket
-                        m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
+                    // Remove socket
+                    m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
 
-                        // Delete the memory here
-                        delete t_connection->first;
-                        delete t_connection->second;
+                    // Remove and save player if it exists, it should
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(t_connection->second->PlayerID);
 
-                        // Erase from map
-                        t_connection = t_connectingConnections.erase(t_connection);
-                    }
-                    else
-                    {
-                        // Else just increment
-                        t_connection++;
-                    }
+                    // Delete the memory here
+                    delete t_connection->first;
+                    delete t_connection->second;
+
+                    // Erase from map
+                    t_connection = t_connectedConnections.erase(t_connection);
                 }
+                else
+                {
+                    // Else just increment
+                    t_connection++;
+                }
+            }
+        }
+
+        void NetworkManagerServer::UpdateTimeoutsConnected(double p_dt)
+        {
+            auto& t_connectingConnections = NetworkConnectionsServer::GetInstance()->GetConnectingClientConnections();
+            auto t_connection = t_connectingConnections.begin();
+
+            while(t_connection != t_connectingConnections.end())
+            {
+                // Update timer
+                t_connection->second->LastResponse += p_dt;
+
+                // If exceed timout
+                if(t_connection->second->LastResponse >= m_timeoutIntervalConnecting)
+                {
+                    std::cout << "Timeout client: " << t_connection->second->LastResponse << " seconds." << std::endl;
+                    // Send disconnection message
+                    NetworkMessagesServer::GetInstance()->SendDisconnect(*t_connection->first, "Timeout");
+
+                    // Remove socket
+                    m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
+
+                    // Delete the memory here
+                    delete t_connection->first;
+                    delete t_connection->second;
+
+                    // Erase from map
+                    t_connection = t_connectingConnections.erase(t_connection);
+                }
+                else
+                {
+                    // Else just increment
+                    t_connection++;
+                }
+            }
+        }
+
+        void NetworkManagerServer::UpdateTimeoutsMaster(double p_dt)
+        {
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+
+            // Update timer
+            t_connections->m_masterConnection.LastResponse += p_dt;
+
+            // If exceed timout
+            if(t_connections->m_masterConnection.LastResponse >= m_timeoutIntervalMaster &&
+               t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromServer::DISCONNECTED)
+            {
+                std::cout << "Timeout master: " << t_connections->m_masterConnection.LastResponse << " seconds." << std::endl;
+
+                t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromServer::CONNECTING;
+                t_connections->m_masterConnection.LastResponse = 0;
+
+                // Send disconnection message
+                NetworkMessagesServer::GetInstance()->SendDisconnectMaster();
             }
         }
     }

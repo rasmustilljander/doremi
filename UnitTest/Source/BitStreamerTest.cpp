@@ -78,3 +78,16 @@ TEST_F(BitStreamerTest, writeOutsideMemoryBitsThenByte)
     }
     m_streamer->ReadUnsignedInt32();
 }
+
+// TEST_F(BitStreamerTest, writeReadString)
+//{
+//    m_streamer->WriteStringShort("Test");
+//
+//    unsigned char* point = m_netMessage->Data;
+//    m_streamer->SetTargetBuffer(point, sizeof(m_netMessage->Data));
+//
+//    std::string outString;
+//    m_streamer->ReadStringShort(outString);
+//
+//    int a = 3;
+//}

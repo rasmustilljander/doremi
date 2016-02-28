@@ -51,7 +51,6 @@ namespace Doremi
             m_singleton = new NetworkMessagesServer(p_sharedContext);
         }
 
-
         NetworkMessagesServer::NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
 
         NetworkMessagesServer::~NetworkMessagesServer() {}
@@ -147,7 +146,7 @@ namespace Doremi
             == Receive Messages Connected ==
         */
 
-        void NetworkMessagesServer::ReceiveConnectedMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveConnected(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             // If we're connected stage
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::CONNECTED)
@@ -156,7 +155,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesServer::ReceiveLoadWorldMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveLoadWorld(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::LOAD_WORLD)
             {
@@ -195,7 +194,7 @@ namespace Doremi
             }
         }
         //////////////////// Should have some init sequence
-        void NetworkMessagesServer::ReceiveInGameMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveInGame(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::IN_GAME)
             {
@@ -440,6 +439,113 @@ namespace Doremi
             //    std::cout << "Send failed, disconnecting" << std::endl;
             //    p_connection->LastResponse = 100000; // TODOCM hard coded disconnect value =D
             //}
+        }
+
+
+        void NetworkMessagesServer::ReceiveConnectedMaster(NetMessageMasterServerFromMaster& p_message)
+        {
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            if(t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromServer::DISCONNECTED)
+            {
+                // If we're connecting we're now connected
+                if(t_connections->m_masterConnection.ConnectionState == MasterConnectionStateFromServer::CONNECTING)
+                {
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromServer::CONNECTED;
+                }
+
+                // Ready for read
+                NetworkStreamer t_streamer = NetworkStreamer();
+                unsigned char* p_bufferPointer = p_message.Data;
+                t_streamer.SetTargetBuffer(p_bufferPointer, sizeof(p_message.Data));
+
+                // Read sequence ack
+                t_connections->m_masterConnection.AckSequence = t_streamer.ReadUnsignedInt8();
+
+                // Update last reposnse
+                t_connections->m_masterConnection.LastResponse = 0;
+            }
+        }
+
+        void NetworkMessagesServer::ReceiveDisconnectMaster(NetMessageMasterServerFromMaster& p_message)
+        {
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            if(t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromServer::DISCONNECTED)
+            {
+                // If we were connected or something above(future), we retry connecting
+                if(t_connections->m_masterConnection.ConnectionState >= MasterConnectionStateFromServer::CONNECTED)
+                {
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromServer::CONNECTING;
+                }
+            }
+        }
+
+        void NetworkMessagesServer::SendConnectionRequestMaster()
+        {
+            // Create connection request message
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            ServerStateHandler* t_serverStateHandler = ServerStateHandler::GetInstance();
+
+            NetMessageMasterServerFromServer t_newMessage = NetMessageMasterServerFromServer();
+            t_newMessage.MessageID = SendMessageIDToMasterFromServer::CONNECTION_REQUEST;
+
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_newMessage.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_newMessage.Data));
+
+            t_streamer.WriteStringShort(t_serverStateHandler->GetServerName()); // 20 bytes
+            t_streamer.WriteUnsignedInt8(static_cast<uint8_t>(t_serverStateHandler->GetState())); // 1 byte
+            t_streamer.WriteUnsignedInt8(static_cast<uint8_t>(t_serverStateHandler->GetMap())); // 1 byte
+
+            uint8_t t_currentNumClients = t_connections->GetConnectedClientConnections().size();
+            t_streamer.WriteUnsignedInt8(t_currentNumClients); // 1 byte
+            t_streamer.WriteUnsignedInt8(t_serverStateHandler->GetMaxPlayers()); // 1 byte
+
+            t_streamer.WriteUnsignedInt16(t_connections->GetPortConnecting()); // 2 byte
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
+        }
+
+        void NetworkMessagesServer::SendConnectedMaster()
+        {
+            // Create connected message
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            NetMessageMasterServerFromServer t_newMessage = NetMessageMasterServerFromServer();
+            t_newMessage.MessageID = SendMessageIDToMasterFromServer::CONNECTED;
+
+            // Ready for write
+            NetworkStreamer t_streamer = NetworkStreamer();
+            unsigned char* t_bufferPointer = t_newMessage.Data;
+            t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_newMessage.Data));
+
+            // Write ack sequence
+            t_streamer.WriteUnsignedInt8(t_connections->m_masterConnection.AckSequence);
+
+            // Write current state
+            ServerStates t_serverState = ServerStateHandler::GetInstance()->GetState();
+            t_streamer.WriteUnsignedInt8(static_cast<uint8_t>(t_serverState));
+
+            // Write current number of clients
+            uint8_t t_currentNumClients = t_connections->GetConnectedClientConnections().size();
+            t_streamer.WriteUnsignedInt8(t_currentNumClients);
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
+        }
+
+        void NetworkMessagesServer::SendDisconnectMaster()
+        {
+            // Create disconnect message
+            NetworkConnectionsServer* t_connections = NetworkConnectionsServer::GetInstance();
+            NetMessageMasterServerFromServer t_newMessage = NetMessageMasterServerFromServer();
+            t_newMessage.MessageID = SendMessageIDToMasterFromServer::DISCONNECT;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
         }
     }
 }

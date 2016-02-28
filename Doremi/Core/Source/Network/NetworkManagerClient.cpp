@@ -16,6 +16,8 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
+#include <Doremi/Core/Include/ServerListHandler.hpp>
+
 #include <iostream> // TODOCM remove only debug
 
 namespace Doremi
@@ -26,8 +28,11 @@ namespace Doremi
             : Manager(p_sharedContext, "NetworkManagerClient"),
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
+              m_masterNextUpdateTimer(0.0f),
+              m_masterUpdateInterval(1.0f),
               m_timeoutIntervalConnecting(5.0f),
               m_timeoutIntervalConnected(1.0f),
+              m_timeoutIntervalMaster(5.0f),
               m_maxConnectingMessagesPerFrame(10),
               m_maxConnectedMessagesPerFrame(10)
 
@@ -51,7 +56,7 @@ namespace Doremi
             NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
 
             // Get last playerID
-            t_connections->m_serverConnectionState.PlayerID = t_configInfo.LastServerPlayerID;
+            t_connections->m_serverConnection.PlayerID = t_configInfo.LastServerPlayerID;
 
             // Get IP from config file
             std::string t_IPString = t_configInfo.IPToServer;
@@ -82,19 +87,18 @@ namespace Doremi
             if(t_counter == 4)
             {
                 // TODOCM Read port ? as well, change to master as well probobly
-                t_connections->m_serverConnectionState.ConnectingAdress =
+                t_connections->m_serverConnection.ConnectingAdress =
                     t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 5050); // TODOCM remove test code
-                t_connections->m_serverConnectionState.ConnectedAdress =
-                    t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 4050);
+                t_connections->m_serverConnection.ConnectedAdress = t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 4050);
             }
             else
             {
-                t_connections->m_serverConnectionState.ConnectingAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 5050);
-                t_connections->m_serverConnectionState.ConnectedAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 4050);
+                t_connections->m_serverConnection.ConnectingAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 5050);
+                t_connections->m_serverConnection.ConnectedAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 4050);
             }
 
             // Create new socket for unreliable
-            t_connections->m_serverConnectionState.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
+            t_connections->m_serverConnection.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
 
             delete t_IPCharPointer;
             delete t_IPArray;
@@ -106,20 +110,20 @@ namespace Doremi
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
             // Change IP on connecting socket
-            t_connections->m_serverConnectionState.ConnectingAdress->SetIP(a, b, c, d);
-            t_connections->m_serverConnectionState.ConnectingAdress->ComposeAdress();
+            t_connections->m_serverConnection.ConnectingAdress->SetIP(a, b, c, d);
+            t_connections->m_serverConnection.ConnectingAdress->ComposeAdress();
 
             // TODOCM remove this when we get connected socket by message
             // Change IP on connected socket
-            t_connections->m_serverConnectionState.ConnectedAdress->SetIP(a, b, c, d);
-            t_connections->m_serverConnectionState.ConnectedAdress->ComposeAdress();
+            t_connections->m_serverConnection.ConnectedAdress->SetIP(a, b, c, d);
+            t_connections->m_serverConnection.ConnectedAdress->ComposeAdress();
 
             // Remove the old sockets
-            t_networkModule.DeleteSocket(t_connections->m_serverConnectionState.ConnectingSocketHandle);
-            t_networkModule.DeleteSocket(t_connections->m_serverConnectionState.ConnectedSocketHandle);
+            t_networkModule.DeleteSocket(t_connections->m_serverConnection.ConnectingSocketHandle);
+            t_networkModule.DeleteSocket(t_connections->m_serverConnection.ConnectedSocketHandle);
 
             // Create new socket for unreliable
-            t_connections->m_serverConnectionState.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
+            t_connections->m_serverConnection.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
         }
 
         void NetworkManagerClient::Update(double p_dt)
@@ -132,6 +136,12 @@ namespace Doremi
 
             // Check for timed out connections
             UpdateTimeouts(p_dt);
+
+            // Update server list if we're not disconnecetd from master
+            if(NetworkConnectionsClient::GetInstance()->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
+            {
+                ServerListHandler::GetInstance()->Update(p_dt);
+            }
         }
 
         void NetworkManagerClient::ReceiveMessages()
@@ -141,6 +151,9 @@ namespace Doremi
 
             // Receive conneted messages
             ReceiveConnectedMessages();
+
+            // Receive messages from master
+            ReceiveMasterMessages();
         }
 
         void NetworkManagerClient::ReceiveConnectingMessages()
@@ -152,7 +165,7 @@ namespace Doremi
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // Get connecting socket
-            SocketHandle t_serverConnectingSocketHandle = t_connections->m_serverConnectionState.ConnectingSocketHandle;
+            SocketHandle t_serverConnectingSocketHandle = t_connections->m_serverConnection.ConnectingSocketHandle;
 
             // Create buffer message
             NetMessageServerClientConnectingFromServer t_newMessage = NetMessageServerClientConnectingFromServer();
@@ -166,7 +179,7 @@ namespace Doremi
             // Receive messages
             // TODOCM not sure if need to send in out adress here
             while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle,
-                                                        t_connections->m_serverConnectionState.ConnectingAdress, t_dataSizeReceived) &&
+                                                        t_connections->m_serverConnection.ConnectingAdress, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
                 // If wrong size of message
@@ -233,7 +246,7 @@ namespace Doremi
             uint32_t t_numOfMessages = 0;
 
             // Try receive messages
-            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnectionState.ConnectedSocketHandle, t_dataSizeReceived) &&
+            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnection.ConnectedSocketHandle, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectedMessagesPerFrame)
             {
                 // If wrong size of message
@@ -277,6 +290,66 @@ namespace Doremi
             }
         }
 
+        void NetworkManagerClient::ReceiveMasterMessages()
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+
+            // Get message class
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // Get connecting socket
+            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.SocketHandle;
+
+            // Create buffer message
+            NetMessageMasterClientFromMaster t_newMessage = NetMessageMasterClientFromMaster();
+
+            // To check how much we received
+            uint32_t t_dataSizeReceived = 0;
+
+            // Counter for checking we dont read to much
+            uint32_t t_numOfMessages = 0;
+
+            // Receive messages
+            // TODOCM not sure if need to send in out adress here
+            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
+                                                        t_connections->m_masterConnection.Adress, t_dataSizeReceived) &&
+                  ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
+            {
+                // If wrong size of message
+                if(t_dataSizeReceived != sizeof(NetMessageMasterClientFromMaster))
+                {
+                    t_newMessage = NetMessageMasterClientFromMaster();
+                    continue;
+                }
+
+                // Check ID and interpet
+                switch(t_newMessage.MessageID)
+                {
+                    case SendMessageIDToClientFromMaster::CONNECTED:
+                    {
+                        t_netMessages->ReceiveConnectedMaster(t_newMessage);
+
+                        break;
+                    }
+                    case SendMessageIDToClientFromMaster::DISCONNECT:
+                    {
+                        t_netMessages->ReceiveDisconnectMaster(t_newMessage);
+
+                        break;
+                    }
+                    default:
+                    {
+                        std::cout << "Some error message received" << std::endl; // TODOCM remove deubgg
+                        break;
+                    }
+                }
+
+                // Reset message
+                t_newMessage = NetMessageMasterClientFromMaster();
+            }
+        }
+
         void NetworkManagerClient::SendMessages(double p_dt)
         {
             // Send connecting messages if we're in those states
@@ -284,6 +357,9 @@ namespace Doremi
 
             // Send connected messages if we're in those states
             SendConnectedMessages();
+
+            // Send messages to master
+            SendMasterMessages(p_dt);
         }
 
         void NetworkManagerClient::SendConnectingMessages(double p_dt)
@@ -301,7 +377,7 @@ namespace Doremi
                 m_nextUpdateTimer -= m_updateInterval;
 
                 // Based on our state we send different message
-                switch(t_connections->m_serverConnectionState.ConnectionState)
+                switch(t_connections->m_serverConnection.ConnectionState)
                 {
                     case ServerConnectionStateFromClient::CONNECTING:
                     {
@@ -331,7 +407,7 @@ namespace Doremi
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // If we're connected we always send based on connection
-            switch(t_connections->m_serverConnectionState.ConnectionState)
+            switch(t_connections->m_serverConnection.ConnectionState)
             {
                 case ServerConnectionStateFromClient::CONNECTED:
                 {
@@ -358,34 +434,101 @@ namespace Doremi
             }
         }
 
+        void NetworkManagerClient::SendMasterMessages(double p_dt)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
+
+            // Update timer
+            m_masterNextUpdateTimer += p_dt;
+
+            // If we're not connected we only send at intervals
+            if(m_masterNextUpdateTimer >= m_masterUpdateInterval)
+            {
+                // Reduce timer
+                m_masterNextUpdateTimer -= m_masterUpdateInterval;
+
+                // Based on our state we send different message
+                switch(t_connections->m_masterConnection.ConnectionState)
+                {
+                    case MasterConnectionStateFromClient::CONNECTING:
+                    {
+                        t_netMessages->SendConnectionRequestMaster();
+
+                        break;
+                    }
+                    case MasterConnectionStateFromClient::CONNECTED:
+                    {
+                        t_netMessages->SendConnectedMaster();
+
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         void NetworkManagerClient::UpdateTimeouts(double p_dt)
+        {
+            // Update server
+            UpdateTimeoutsServer(p_dt);
+
+            // Update master
+            UpdateTimeoutsMaster(p_dt);
+        }
+
+        void NetworkManagerClient::UpdateTimeoutsServer(double p_dt)
         {
             NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // If we're not disconnected we want to disconnect if timeout
-            if(t_connections->m_serverConnectionState.ConnectionState > ServerConnectionStateFromClient::DISCONNECTED)
+            if(t_connections->m_serverConnection.ConnectionState > ServerConnectionStateFromClient::DISCONNECTED)
             {
                 // Update timer
-                t_connections->m_serverConnectionState.LastResponse += p_dt;
-                t_connections->m_serverConnectionState.LastSequenceUpdate += p_dt;
+                t_connections->m_serverConnection.LastResponse += p_dt;
+                t_connections->m_serverConnection.LastSequenceUpdate += p_dt;
 
                 // Check if exceeded timeout
-                if(t_connections->m_serverConnectionState.ConnectionState >= ServerConnectionStateFromClient::CONNECTED &&
-                    t_connections->m_serverConnectionState.LastResponse > m_timeoutIntervalConnected ||
-                    t_connections->m_serverConnectionState.ConnectionState < ServerConnectionStateFromClient::CONNECTED &&
-                    t_connections->m_serverConnectionState.LastResponse > m_timeoutIntervalConnecting)
+                if(t_connections->m_serverConnection.ConnectionState >= ServerConnectionStateFromClient::CONNECTED &&
+                       t_connections->m_serverConnection.LastResponse > m_timeoutIntervalConnected ||
+                   t_connections->m_serverConnection.ConnectionState < ServerConnectionStateFromClient::CONNECTED &&
+                       t_connections->m_serverConnection.LastResponse > m_timeoutIntervalConnecting)
                 {
-                    std::cout << "Timeout server: " << t_connections->m_serverConnectionState.LastResponse << " seconds." << std::endl;
+                    std::cout << "Timeout server: " << t_connections->m_serverConnection.LastResponse << " seconds." << std::endl;
 
                     // Set state as disconnected
-                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
 
                     // Send disconnection message to server for good measure
                     t_netMessages->SendDisconnect();
 
                     // TODO send change gamestate event
                 }
+            }
+        }
+
+        void NetworkManagerClient::UpdateTimeoutsMaster(double p_dt)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+
+            // Update timer
+            t_connections->m_masterConnection.LastResponse += p_dt;
+
+            // If exceed timout
+            if(t_connections->m_masterConnection.LastResponse >= m_timeoutIntervalMaster &&
+               t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
+            {
+                std::cout << "Timeout master: " << t_connections->m_masterConnection.LastResponse << " seconds." << std::endl;
+
+                t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::CONNECTING;
+                t_connections->m_masterConnection.LastResponse = 0;
+
+                // Send disconnection message
+                NetworkMessagesClient::GetInstance()->SendDisconnectMaster();
             }
         }
 
@@ -400,7 +543,7 @@ namespace Doremi
                 if(t_changeMenuEvent->state == DoremiStates::RUNGAME)
                 {
                     // Change connection state
-                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::CONNECTING;
+                    t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::CONNECTING;
 
                     // TODOCM maybe send first message here, or check vs other event that sends IP to server or something
                 }
@@ -408,7 +551,7 @@ namespace Doremi
                 {
                     // TODOXX if we want multiple states(in game top menu) this wont work
                     // Change connection state
-                    t_connections->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
                 }
             }
         }

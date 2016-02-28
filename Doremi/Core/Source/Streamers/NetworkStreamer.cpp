@@ -525,7 +525,7 @@ namespace Doremi
 
         std::string NetworkStreamer::ReadString()
         {
-            std::string OutString;
+            std::string OutString = "";
 
             uint32_t StringLength = 0;
             uint32_t AmountRead = ReadBits(&StringLength, sizeof(int32_t) * 8);
@@ -539,17 +539,18 @@ namespace Doremi
                 AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);
                 StringArray[i] = (char)Value;
             }
-            StringArray[StringLength] = 0;
+            StringArray[StringLength] = '\0';
+            ;
             OutString = std::string(StringArray);
 
-            delete StringArray;
+            delete[] StringArray;
 
             return OutString;
         }
 
         std::string NetworkStreamer::ReadStringShort()
         {
-            std::string OutString;
+            std::string OutString = "";
 
             uint32_t StringLength = 0;
             uint8_t AmountRead = ReadBits(&StringLength, sizeof(int8_t) * 8);
@@ -563,10 +564,10 @@ namespace Doremi
                 AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);
                 StringArray[i] = (char)Value;
             }
-            StringArray[StringLength] = 0;
+            StringArray[StringLength] = '\0';
             OutString = std::string(StringArray);
 
-            delete StringArray;
+            delete[] StringArray;
 
             return OutString;
         }

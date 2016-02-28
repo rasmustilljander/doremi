@@ -1,5 +1,4 @@
 #pragma once
-#include <Doremi/Core/Include/Network/NetMessages.hpp>
 
 namespace DoremiEngine
 {
@@ -13,6 +12,10 @@ namespace Doremi
 {
     namespace Core
     {
+        struct NetMessageServerClientConnectingFromServer;
+        struct NetMessageServerClientConnectedFromServer;
+        struct NetMessageMasterClientFromMaster;
+
         class NetworkMessagesClient
         {
         public:
@@ -95,6 +98,16 @@ namespace Doremi
                 Send a in game message
             */
             void SendInGame();
+
+            void ReceiveConnectedMaster(NetMessageMasterClientFromMaster& p_message);
+
+            void ReceiveDisconnectMaster(NetMessageMasterClientFromMaster& p_message);
+
+            void SendConnectionRequestMaster();
+
+            void SendConnectedMaster();
+
+            void SendDisconnectMaster();
 
         private:
             NetworkMessagesClient(const DoremiEngine::Core::SharedContext& p_sharedContext);

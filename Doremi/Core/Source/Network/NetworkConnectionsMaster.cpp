@@ -86,7 +86,7 @@ namespace Doremi
             return false;
         }
 
-        void NetworkConnectionsMaster::CreateNewConnectionClients(const DoremiEngine::Network::Adress& p_adress)
+        ClientConnectionFromMaster* NetworkConnectionsMaster::CreateNewConnectionClients(const DoremiEngine::Network::Adress& p_adress)
         {
             // Create new connection and initialize values( could do this in constructor but nice to see)
             ClientConnectionFromMaster* t_newConnection = new ClientConnectionFromMaster();
@@ -100,9 +100,11 @@ namespace Doremi
 
             // Add connection to map
             m_clientConnections[t_newAdress] = t_newConnection;
+
+            return t_newConnection;
         }
 
-        void NetworkConnectionsMaster::CreateNewConnectionServers(const DoremiEngine::Network::Adress& p_adress)
+        ServerConnectionFromMaster* NetworkConnectionsMaster::CreateNewConnectionServers(const DoremiEngine::Network::Adress& p_adress)
         {
             // Create new connection and initialize values( could do this in constructor but nice to see)
             ServerConnectionFromMaster* t_newConnection = new ServerConnectionFromMaster();
@@ -116,6 +118,8 @@ namespace Doremi
 
             // Add connection to map
             m_serverConnections[t_newAdress] = t_newConnection;
+
+            return t_newConnection;
         }
     }
 }

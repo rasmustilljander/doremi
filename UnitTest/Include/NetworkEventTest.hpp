@@ -3,7 +3,7 @@
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
 #include <Doremi/Core/Include/NetworkEventReceiver.hpp>
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
-#include <Doremi/Core/Include/Manager/Network/NetMessage.hpp>
+#include <Doremi/Core/Include/Network/NetMessages.hpp>
 
 class NetworkEventTest : public testing::Test
 {
@@ -16,7 +16,7 @@ public:
     Doremi::Core::NetworkEventReceiver* m_networkEventReceiver;
     Doremi::Core::NetworkStreamer* m_streamer;
     Doremi::Core::NetworkStreamer* m_streamerRead;
-    Doremi::Core::NetMessage* m_netMessage;
+    Doremi::Core::NetMessageBuffer* m_netMessage;
     uint32_t m_bytesWritten;
     uint32_t m_bytesRead;
     bool m_finished;
@@ -27,7 +27,7 @@ public:
         m_networkEventReceiver = new Doremi::Core::NetworkEventReceiver();
         m_streamer = new Doremi::Core::NetworkStreamer();
         m_streamerRead = new Doremi::Core::NetworkStreamer();
-        m_netMessage = new Doremi::Core::NetMessage();
+        m_netMessage = new Doremi::Core::NetMessageBuffer();
         m_bytesWritten = 0;
         m_bytesRead = 0;
         m_finished = false;

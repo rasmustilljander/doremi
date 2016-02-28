@@ -36,17 +36,24 @@ namespace Doremi
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
 
+            m_portConnecting = 5050;
+            m_portConnected = 4050;
+
             // Create adress for ALL incomming IP and port 5050
-            DoremiEngine::Network::Adress* UnreliableAdress = t_networkModule.CreateAdress(5050);
+            DoremiEngine::Network::Adress* UnreliableAdress = t_networkModule.CreateAdress(m_portConnecting);
 
             // Create adress for ALL incomming IP and port 4050
-            DoremiEngine::Network::Adress* ReliableAdress = t_networkModule.CreateAdress(4050);
+            DoremiEngine::Network::Adress* ReliableAdress = t_networkModule.CreateAdress(m_portConnected);
 
             // Create socket for unrealiable
             m_connectingSocketHandle = t_networkModule.CreateUnreliableWaitingSocket(UnreliableAdress);
 
             // Create socket for relialbe
             m_connectedSocketHandle = t_networkModule.CreateReliableConnection(ReliableAdress, m_maxConnections);
+
+            // Create adress and socket for master
+            m_masterConnection.Adress = t_networkModule.CreateAdress(127, 0, 0, 1, 3201);
+            m_masterConnection.SocketHandle = t_networkModule.CreateUnreliableSocket();
         }
 
         NetworkConnectionsServer::~NetworkConnectionsServer() {}

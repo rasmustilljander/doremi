@@ -1,7 +1,7 @@
 #pragma once
 #include <gtest/gtest.h>
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
-#include <Doremi/Core/Include/Manager/Network/NetMessage.hpp>
+#include <Doremi/Core/Include/Network/NetMessages.hpp>
 
 class BitStreamerTest : public testing::Test
 {
@@ -11,7 +11,7 @@ public:
     ~BitStreamerTest() {}
 
     Doremi::Core::NetworkStreamer* m_streamer;
-    Doremi::Core::NetMessage* m_netMessage;
+    Doremi::Core::NetMessageBuffer* m_netMessage;
     uint32_t m_bytesWritten;
     uint32_t m_bytesRead;
     bool m_finished;
@@ -19,7 +19,7 @@ public:
     void SetUp()
     {
         m_streamer = new Doremi::Core::NetworkStreamer();
-        m_netMessage = new Doremi::Core::NetMessage();
+        m_netMessage = new Doremi::Core::NetMessageBuffer();
         m_bytesWritten = 0;
         m_bytesRead = 0;
         m_finished = false;

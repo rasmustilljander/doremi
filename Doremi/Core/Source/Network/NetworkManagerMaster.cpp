@@ -28,14 +28,14 @@ namespace Doremi
 {
     namespace Core
     {
-        NetworkManagerMaster::NetworkManagerMaster(const DoremiEngine::Core::SharedContext & p_sharedContext) : Manager(p_sharedContext, "NetworkManagerMaster"), m_timeoutInterval(10) , m_maxClientMessagesPerFrame(10), m_maxServerMessagesPerFrame(10)
+        NetworkManagerMaster::NetworkManagerMaster(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : Manager(p_sharedContext, "NetworkManagerMaster"), m_timeoutInterval(10), m_maxClientMessagesPerFrame(10), m_maxServerMessagesPerFrame(10)
         {
             NetworkConnectionsMaster::StartupNetworkConnectionsMaster(p_sharedContext);
+            NetworkMessagesMaster::StartupNetworkMessagesMaster(p_sharedContext);
         }
 
-        NetworkManagerMaster::~NetworkManagerMaster()
-        {
-        }
+        NetworkManagerMaster::~NetworkManagerMaster() {}
 
         void NetworkManagerMaster::Update(double p_dt)
         {
@@ -137,7 +137,7 @@ namespace Doremi
             DoremiEngine::Network::Adress* t_incommingAdress = t_networkModule.CreateAdress();
 
             // Get the socket used for connecting
-            SocketHandle t_socketHandle = NetworkConnectionsMaster::GetInstance()->GetSocketHandleForClients();
+            SocketHandle t_socketHandle = NetworkConnectionsMaster::GetInstance()->GetSocketHandleForServers();
 
             // Create buffer NetworkMessage
             NetMessageMasterServerFromServer t_networkMessage = NetMessageMasterServerFromServer();

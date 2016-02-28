@@ -21,6 +21,7 @@ namespace Doremi
         struct ClientConnectionFromServer;
         struct NetMessageServerClientConnectingFromClient;
         struct NetMessageServerClientConnectedFromClient;
+        struct NetMessageMasterServerFromMaster;
 
         class NetworkMessagesServer
         {
@@ -55,17 +56,17 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void ReceiveConnectedMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveConnected(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            void ReceiveLoadWorldMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveLoadWorld(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            void ReceiveInGameMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveInGame(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 == Send Messages Connecting ==
@@ -109,6 +110,20 @@ namespace Doremi
                 Update message sequence
             */
             void UpdateSequence() { m_messageSequence++; }
+
+            /**
+                Master receive
+            */
+
+            void ReceiveConnectedMaster(NetMessageMasterServerFromMaster& p_message);
+
+            void ReceiveDisconnectMaster(NetMessageMasterServerFromMaster& p_message);
+
+            void SendConnectionRequestMaster();
+
+            void SendConnectedMaster();
+
+            void SendDisconnectMaster();
 
         private:
             NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);

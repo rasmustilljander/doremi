@@ -92,8 +92,12 @@ namespace Doremi
 
         struct MasterConnectionFromClient
         {
+            MasterConnectionFromClient()
+                : ConnectionState(MasterConnectionStateFromClient::CONNECTING), SocketHandle(0), Adress(nullptr), LastResponse(0)
+            {
+            }
             MasterConnectionStateFromClient ConnectionState;
-            SocketHandle ConnectingSocketHandle;
+            SocketHandle SocketHandle;
             DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;
@@ -119,15 +123,21 @@ namespace Doremi
 
         struct MasterConnectionFromServer
         {
+            MasterConnectionFromServer()
+                : ConnectionState(MasterConnectionStateFromServer::CONNECTING), SocketHandle(0), Adress(nullptr), LastResponse(0.0f), AckSequence(0)
+            {
+            }
             MasterConnectionStateFromServer ConnectionState;
-            SocketHandle ConnectedSocketHandle;
-            PlayerID PlayerID;
+            SocketHandle SocketHandle;
+            DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;
+            uint8_t AckSequence;
         };
 
         struct ClientConnectionFromMaster
         {
+            ClientConnectionFromMaster() : ConnectionState(ClientConnectionStateFromMaster::CONNECTED), LastResponse(0.0f) {}
             ClientConnectionStateFromMaster ConnectionState;
 
             double LastResponse;
@@ -135,6 +145,25 @@ namespace Doremi
 
         struct ServerConnectionFromMaster
         {
+            ServerConnectionFromMaster()
+                : ConnectionState(ServerConnectionStateFromMaster::CONNECTED),
+                  LastResponse(0.0f),
+                  CurrentSequence(0),
+                  SequenceToCheck(0),
+                  SequenceLastResponse(0.0f),
+                  ServerName(""),
+                  ServerState(0),
+                  Map(0),
+                  Ping(0),
+                  CurrentPlayers(0),
+                  MaxPlayers(0),
+                  ConnectingPort(0),
+                  IP_a(0),
+                  IP_b(0),
+                  IP_c(0),
+                  IP_d(0)
+            {
+            }
             ServerConnectionStateFromMaster ConnectionState;
             double LastResponse;
 

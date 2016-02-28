@@ -49,6 +49,12 @@ namespace DoremiEngine
 
             // Performs big-endian on the IP (network necessary)
             m_IP = htonl(ToConvertIP);
+
+            // Set ip parts
+            m_IP_a = p_a;
+            m_IP_b = p_b;
+            m_IP_c = p_c;
+            m_IP_d = p_d;
         }
 
         void AdressImplementation::SetNetPort(uint16_t p_port) { m_port = p_port; }
@@ -57,6 +63,12 @@ namespace DoremiEngine
         {
             // TODOCM save port and IP here aswell if possible
             m_Adress = p_adress;
+
+            // Set ip parts
+            m_IP_a = m_Adress.sin_addr.S_un.S_un_b.s_b1;
+            m_IP_b = m_Adress.sin_addr.S_un.S_un_b.s_b2;
+            m_IP_c = m_Adress.sin_addr.S_un.S_un_b.s_b3;
+            m_IP_d = m_Adress.sin_addr.S_un.S_un_b.s_b4;
         }
 
         void AdressImplementation::ComposeAdress()

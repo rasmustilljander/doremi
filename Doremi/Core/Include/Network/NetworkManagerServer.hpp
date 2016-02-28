@@ -58,9 +58,16 @@ namespace Doremi
             void ReceiveConnectedMessages();
 
             /**
+                Check incomming messages from master
+            */
+            void ReceiveMasterMessages();
+
+            /**
                 Send messages to connected clients
             */
             void SendConnectedMessages();
+
+            void SendMasterMessages(double p_dt);
 
             /**
                 Check for reliable connections to accept
@@ -70,7 +77,13 @@ namespace Doremi
             /**
                 Update timers for clients, and check if anyone got timeouted
             */
-            void UpdateTimeouts(double t_dt);
+            void UpdateTimeouts(double p_dt);
+
+            void UpdateTimeoutsConnecting(double p_dt);
+
+            void UpdateTimeoutsConnected(double p_dt);
+
+            void UpdateTimeoutsMaster(double p_dt);
 
             /**
                 Time interval for timeouts
@@ -81,6 +94,12 @@ namespace Doremi
                 Time interval for timeouts
             */
             double m_timeoutIntervalConnected;
+
+            double m_timeoutIntervalMaster;
+
+            double m_masterNextUpdateTimer;
+
+            double m_masterUpdateInterval;
 
             /**
                 TODOCM doc

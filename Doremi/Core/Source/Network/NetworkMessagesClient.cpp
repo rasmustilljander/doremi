@@ -12,9 +12,13 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
+#include <Doremi/Core/Include/ServerListHandler.hpp>
 
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
+
+// Messages
+#include <Doremi/Core/Include/Network/NetMessages.hpp>
 
 // Streamer
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
@@ -63,11 +67,11 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // If our connection state is connecting
-            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTING)
+            if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::CONNECTING)
             {
                 // Change state to version check
-                t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::VERSION_CHECK;
-                t_networkConnection->m_serverConnectionState.LastResponse = 0;
+                t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::VERSION_CHECK;
+                t_networkConnection->m_serverConnection.LastResponse = 0;
             }
         }
 
@@ -76,7 +80,7 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // If our connection state is version check
-            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::VERSION_CHECK)
+            if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::VERSION_CHECK)
             {
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
@@ -84,34 +88,33 @@ namespace Doremi
                 t_streamer.SetTargetBuffer(t_dataPointer, sizeof(p_message.Data));
 
                 // Get playerID from server
-                uint32_t t_lastPlayerID = t_networkConnection->m_serverConnectionState.PlayerID;
-                t_networkConnection->m_serverConnectionState.PlayerID = t_streamer.ReadUnsignedInt32();
+                uint32_t t_lastPlayerID = t_networkConnection->m_serverConnection.PlayerID;
+                t_networkConnection->m_serverConnection.PlayerID = t_streamer.ReadUnsignedInt32();
 
                 // Get port to join with
                 uint32_t t_portToJoinWith = t_streamer.ReadUnsignedInt32();
 
                 // If it changed, we want to update config file for now
                 // TODO change not to write to config file all times we get new value?
-                if(t_lastPlayerID != t_networkConnection->m_serverConnectionState.PlayerID)
+                if(t_lastPlayerID != t_networkConnection->m_serverConnection.PlayerID)
                 {
                     // Update the value
-                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID =
-                        t_networkConnection->m_serverConnectionState.PlayerID;
+                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID = t_networkConnection->m_serverConnection.PlayerID;
 
                     // TODOXX if we change config file name, this will crash like hell
                     m_sharedContext.GetConfigurationModule().WriteConfigurationValuesToFile("Configuration.txt");
                 }
 
                 // Update last response
-                t_networkConnection->m_serverConnectionState.LastResponse = 0;
+                t_networkConnection->m_serverConnection.LastResponse = 0;
 
                 // Attempt connect to server
-                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnectionState.ConnectedAdress,
-                                                                                        t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
+                bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnection.ConnectedAdress,
+                                                                                        t_networkConnection->m_serverConnection.ConnectedSocketHandle);
                 if(t_connected)
                 {
                     // Update state
-                    t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::CONNECTED;
+                    t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::CONNECTED;
                 }
             }
         }
@@ -121,7 +124,7 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // If we're above intro phase, we restart
-            if(t_networkConnection->m_serverConnectionState.ConnectionState > ServerConnectionStateFromClient::CONNECTING)
+            if(t_networkConnection->m_serverConnection.ConnectionState > ServerConnectionStateFromClient::CONNECTING)
             {
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
@@ -144,7 +147,7 @@ namespace Doremi
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
-            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
+            if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
             {
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
@@ -152,7 +155,7 @@ namespace Doremi
                 t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(p_message.Data));
 
                 // Update timeout
-                t_networkConnection->m_serverConnectionState.LastResponse = 0;
+                t_networkConnection->m_serverConnection.LastResponse = 0;
                 // TODOCM check if we need something here
             }
         }
@@ -163,12 +166,12 @@ namespace Doremi
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
 
             // We only care of this if we're loading map
-            if(t_networkConnection->m_serverConnectionState.ConnectionState >= ServerConnectionStateFromClient::CONNECTED)
+            if(t_networkConnection->m_serverConnection.ConnectionState >= ServerConnectionStateFromClient::CONNECTED)
             {
                 // If we receive this we know we should load map, change state if we're in wrong state
-                if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
+                if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::CONNECTED)
                 {
-                    t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::LOAD_WORLD;
+                    t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::LOAD_WORLD;
                     // TODOCM change state of client as well, to load the map, but ignore events untill done there :):):):)
                 }
 
@@ -188,7 +191,7 @@ namespace Doremi
                 t_playerHandler->ReadEventsForJoin(t_streamer, sizeof(p_message.Data), t_bytesRead);
 
                 // Update timeout
-                t_networkConnection->m_serverConnectionState.LastResponse = 0;
+                t_networkConnection->m_serverConnection.LastResponse = 0;
 
                 // TODOCM Update loading screen
             }
@@ -201,9 +204,9 @@ namespace Doremi
             NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
 
             // If we were at loading world, we assume server knows best and we're done loading!
-            if(t_networkConnection->m_serverConnectionState.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
+            if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
             {
-                t_networkConnection->m_serverConnectionState.ConnectionState = ServerConnectionStateFromClient::IN_GAME;
+                t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::IN_GAME;
             }
 
             // Ready for read
@@ -236,12 +239,12 @@ namespace Doremi
             t_newSnapshot->Events = t_eventReceiver->GetEventsReceivedFromServer();
 
             // If it was init message
-            if(t_networkConnection->m_serverConnectionState.LastSequenceUpdate >= SEQUENCE_UPDATE_TIMER)
+            if(t_networkConnection->m_serverConnection.LastSequenceUpdate >= SEQUENCE_UPDATE_TIMER)
             {
                 InterpolationHandler::GetInstance()->SetSequence(t_newSnapshot->SnapshotSequence);
 
                 // Set our connection to not so special anymore
-                t_networkConnection->m_serverConnectionState.LastSequenceUpdate = 0.0f;
+                t_networkConnection->m_serverConnection.LastSequenceUpdate = 0.0f;
             }
 
             // Check if we can read even more!
@@ -267,7 +270,7 @@ namespace Doremi
 
 
             // Update timeout
-            t_networkConnection->m_serverConnectionState.LastResponse = 0;
+            t_networkConnection->m_serverConnection.LastResponse = 0;
         }
 
         /**
@@ -285,8 +288,8 @@ namespace Doremi
             t_message.MessageID = SendMessageIDToServerFromClient::CONNECTION_REQUEST;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnection.ConnectingAdress);
         }
 
         void NetworkMessagesClient::SendVersionCheck()
@@ -305,11 +308,11 @@ namespace Doremi
             t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
             // Write playerID
-            t_streamer.WriteUnsignedInt32(t_networkConnection->m_serverConnectionState.PlayerID);
+            t_streamer.WriteUnsignedInt32(t_networkConnection->m_serverConnection.PlayerID);
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnection.ConnectingAdress);
         }
 
         void NetworkMessagesClient::SendDisconnect()
@@ -323,8 +326,8 @@ namespace Doremi
             t_message.MessageID = SendMessageIDToServerFromClient::DISCONNECT;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
-                                                                  t_networkConnection->m_serverConnectionState.ConnectingAdress);
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectingSocketHandle,
+                                                                  t_networkConnection->m_serverConnection.ConnectingAdress);
         }
 
         /**
@@ -342,7 +345,7 @@ namespace Doremi
             t_message.MessageID = SendMessageIDToServerFromClient::CONNECTED;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectedSocketHandle);
         }
 
         void NetworkMessagesClient::SendLoadWorld()
@@ -372,7 +375,7 @@ namespace Doremi
             t_bytesWritten += sizeof(uint32_t);
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectedSocketHandle);
         }
 
         void NetworkMessagesClient::SendInGame()
@@ -429,7 +432,110 @@ namespace Doremi
             t_bytesWritten += sizeof(float);
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
+            m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectedSocketHandle);
+        }
+
+        void NetworkMessagesClient::ReceiveConnectedMaster(NetMessageMasterClientFromMaster& p_message)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            ServerListHandler* t_serverListHandler = ServerListHandler::GetInstance();
+
+            if(t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
+            {
+                // If we're connecting we're now connected
+                if(t_connections->m_masterConnection.ConnectionState == MasterConnectionStateFromClient::CONNECTING)
+                {
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::CONNECTED;
+                }
+
+                // Ready for read
+                NetworkStreamer t_streamer = NetworkStreamer();
+                unsigned char* p_bufferPointer = p_message.Data;
+                t_streamer.SetTargetBuffer(p_bufferPointer, sizeof(p_message.Data));
+
+                // Read number of servers
+                uint8_t t_numberOfServers = t_streamer.ReadUnsignedInt8();
+
+
+                for(size_t i = 0; i < t_numberOfServers; i++)
+                {
+                    std::string t_name = t_streamer.ReadStringShort(); // 20 bytes
+                    ServerStates t_serverState = static_cast<ServerStates>(t_streamer.ReadUnsignedInt8()); // 1 byte
+                    GameMap t_map = static_cast<GameMap>(t_streamer.ReadUnsignedInt8()); // 1 byte
+                    uint16_t t_ping = t_streamer.ReadUnsignedInt16(); // 2 bytes
+
+                    uint8_t t_curNumPlayers = t_streamer.ReadUnsignedInt8(); // 1 byte
+                    uint8_t t_maxNumPlayers = t_streamer.ReadUnsignedInt8(); // 1 byte
+
+                    uint16_t t_port = t_streamer.ReadUnsignedInt16(); // 2 byte
+                    uint8_t t_IP_a = t_streamer.ReadUnsignedInt8(); // 1 byte
+                    uint8_t t_IP_b = t_streamer.ReadUnsignedInt8(); // 1 byte
+                    uint8_t t_IP_c = t_streamer.ReadUnsignedInt8(); // 1 byte
+                    uint8_t t_IP_d = t_streamer.ReadUnsignedInt8(); // 1 byte
+
+                    cout << "Received server: " << t_name << "In state: " << (uint32_t)t_serverState << " With map: " << (uint32_t)t_map << endl;
+                    cout << "Players:" << (uint32_t)t_curNumPlayers << "/" << (uint32_t)t_maxNumPlayers << endl;
+                    cout << "IP: " << (uint32_t)t_IP_a << "." << (uint32_t)t_IP_b << "." << (uint32_t)t_IP_c << "." << (uint32_t)t_IP_d
+                         << " with port: " << t_port << endl;
+
+                    // Update the server list
+                    t_serverListHandler->UpdateServer(t_name, t_serverState, t_map, t_ping, t_curNumPlayers, t_maxNumPlayers, t_port, t_IP_a, t_IP_b,
+                                                      t_IP_c, t_IP_d);
+                }
+
+                // Update last reposnse
+                t_connections->m_masterConnection.LastResponse = 0;
+            }
+        }
+
+        void NetworkMessagesClient::ReceiveDisconnectMaster(NetMessageMasterClientFromMaster& p_message)
+        {
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            if(t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
+            {
+                // If we were connected or something above(future), we retry connecting
+                if(t_connections->m_masterConnection.ConnectionState >= MasterConnectionStateFromClient::CONNECTED)
+                {
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::CONNECTING;
+                }
+            }
+        }
+
+        void NetworkMessagesClient::SendConnectionRequestMaster()
+        {
+            // Create connection request message
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+
+            NetMessageMasterClientFromClient t_newMessage = NetMessageMasterClientFromClient();
+            t_newMessage.MessageID = SendMessageIDToMasterFromClient::CONNECTION_REQUEST;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
+        }
+
+        void NetworkMessagesClient::SendConnectedMaster()
+        {
+            // Create connected message
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetMessageMasterClientFromClient t_newMessage = NetMessageMasterClientFromClient();
+            t_newMessage.MessageID = SendMessageIDToMasterFromClient::CONNECTED;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
+        }
+
+        void NetworkMessagesClient::SendDisconnectMaster()
+        {
+            // Create disconnect message
+            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
+            NetMessageMasterClientFromClient t_newMessage = NetMessageMasterClientFromClient();
+            t_newMessage.MessageID = SendMessageIDToMasterFromClient::DISCONNECT;
+
+            // Send message
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+                                                                  t_connections->m_masterConnection.Adress);
         }
     }
 }

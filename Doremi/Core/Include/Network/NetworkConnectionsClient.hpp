@@ -24,9 +24,9 @@ namespace Doremi
 
             static void StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
-            ServerConnectionFromClient m_serverConnectionState;
+            ServerConnectionFromClient m_serverConnection;
 
-            MasterConnectionFromClient m_masterConnectionState;
+            MasterConnectionFromClient m_masterConnection;
 
         private:
             NetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);

@@ -37,9 +37,9 @@ namespace Doremi
 
             bool AdressWithPortExistServers(const DoremiEngine::Network::Adress& p_adress, ServerConnectionFromMaster*& o_connection);
 
-            void CreateNewConnectionClients(const DoremiEngine::Network::Adress & p_adress);
+            ClientConnectionFromMaster* CreateNewConnectionClients(const DoremiEngine::Network::Adress& p_adress);
 
-            void CreateNewConnectionServers(const DoremiEngine::Network::Adress & p_adress);
+            ServerConnectionFromMaster* CreateNewConnectionServers(const DoremiEngine::Network::Adress& p_adress);
 
             NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext);
 

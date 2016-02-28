@@ -14,9 +14,29 @@ namespace DoremiEngine
             virtual uint16_t GetPort() const = 0;
 
             /**
-                Returns IP
+                Returns IP big endian, only usable if created yourself
             */
             virtual uint32_t GetIP() const = 0;
+
+            /**
+                Returns IP part a
+            */
+            virtual uint8_t GetIP_A() const = 0;
+
+            /**
+                Returns IP part b
+            */
+            virtual uint8_t GetIP_B() const = 0;
+
+            /**
+                Returns IP part c
+            */
+            virtual uint8_t GetIP_C() const = 0;
+
+            /**
+                Returns IP part d
+            */
+            virtual uint8_t GetIP_D() const = 0;
 
             /**
                 Set the IP in format "p_a.p_b.p_c.p_d" as in "255.255.255.255", use ComposeAdress to

@@ -72,9 +72,10 @@ namespace Doremi
         void NetworkMessagesMaster::ReceiveConnectedClient(NetMessageMasterClientFromClient& p_message, DoremiEngine::Network::Adress& p_adress)
         {
             ClientConnectionFromMaster* t_connection;
-            if (NetworkConnectionsMaster::GetInstance()->AdressWithPortExistClients(p_adress, t_connection))
+            if(NetworkConnectionsMaster::GetInstance()->AdressWithPortExistClients(p_adress, t_connection))
             {
                 t_connection->LastResponse = 0;
+                SendConnectedClient(p_adress);
             }
         }
 
@@ -99,14 +100,15 @@ namespace Doremi
             ServerConnectionFromMaster* t_connection = nullptr;
 
             // If we have the adress we ignore (might be late packet?), and wait for timeout
-            if (!NetworkConnectionsMaster::GetInstance()->AdressWithPortExistServers(p_adress, t_connection))
+            if(!NetworkConnectionsMaster::GetInstance()->AdressWithPortExistServers(p_adress, t_connection))
             {
-                NetworkConnectionsMaster::GetInstance()->CreateNewConnectionServers(p_adress);
-                
+                t_connection = NetworkConnectionsMaster::GetInstance()->CreateNewConnectionServers(p_adress);
+
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
                 unsigned char* p_bufferPointer = p_message.Data;
                 t_streamer.SetTargetBuffer(p_bufferPointer, sizeof(p_message.Data));
+
 
                 t_connection->ServerName = t_streamer.ReadStringShort(); // 20 bytes
                 t_connection->ServerName.resize(19);
@@ -117,10 +119,12 @@ namespace Doremi
                 t_connection->MaxPlayers = t_streamer.ReadUnsignedInt8(); // 1 byte
 
                 t_connection->ConnectingPort = t_streamer.ReadUnsignedInt16(); // 2 byte
-                t_connection->IP_a = t_streamer.ReadUnsignedInt8(); // 1 byte
-                t_connection->IP_b = t_streamer.ReadUnsignedInt8(); // 1 byte
-                t_connection->IP_c = t_streamer.ReadUnsignedInt8(); // 1 byte
-                t_connection->IP_d = t_streamer.ReadUnsignedInt8(); // 1 byte
+
+                // Get IP from adress
+                t_connection->IP_a = p_adress.GetIP_A();
+                t_connection->IP_b = p_adress.GetIP_B();
+                t_connection->IP_c = p_adress.GetIP_C();
+                t_connection->IP_d = p_adress.GetIP_D();
 
                 // Send connected message
                 SendConnectedServer(p_adress, t_connection->CurrentSequence);
@@ -143,10 +147,11 @@ namespace Doremi
                 uint8_t SequenceIncomming = t_streamer.ReadUnsignedInt8();
 
                 // If it is sequence we check ping vs
-                if (SequenceIncomming == t_connection->SequenceToCheck)
+                if(SequenceIncomming == t_connection->SequenceToCheck)
                 {
                     // Ping should be round trip time
-                    t_connection->Ping = t_connection->SequenceLastResponse;
+                    t_connection->Ping = static_cast<uint16_t>(t_connection->SequenceLastResponse * 1000.0f);
+                    // TODOCM this isn't the real ping
 
                     // New sequence
                     t_connection->SequenceToCheck = t_connection->CurrentSequence;
@@ -168,7 +173,7 @@ namespace Doremi
 
                 t_connection->LastResponse = 0;
 
-                SendConnectedServer(p_adress,t_connection->CurrentSequence);
+                SendConnectedServer(p_adress, t_connection->CurrentSequence);
             }
         }
 
@@ -276,10 +281,9 @@ namespace Doremi
             // Write sequence
             t_streamer.WriteUnsignedInt8(p_sequence);
 
-
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage),
-                NetworkConnectionsMaster::GetInstance()->GetSocketHandleForServers(), &p_adress);
+                                                                  NetworkConnectionsMaster::GetInstance()->GetSocketHandleForServers(), &p_adress);
         }
 
         void NetworkMessagesMaster::SendDisconnectServer(DoremiEngine::Network::Adress& p_adress)

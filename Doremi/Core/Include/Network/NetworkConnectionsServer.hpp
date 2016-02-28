@@ -33,9 +33,9 @@ namespace Doremi
 
             SocketHandle GetConnectedSocketHandle() { return m_connectedSocketHandle; }
 
-            uint32_t GetPortConnecting() { return m_portConnecting; }
+            uint16_t GetPortConnecting() { return m_portConnecting; }
 
-            uint32_t GetPortConnected() { return m_portConnected; }
+            uint16_t GetPortConnected() { return m_portConnected; }
 
             void CreateNewConnecting(const DoremiEngine::Network::Adress& p_adress);
 
@@ -47,6 +47,11 @@ namespace Doremi
 
             bool AdressExistInConnecting(const DoremiEngine::Network::Adress& p_adress,
                                          std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*>& o_connection);
+
+            /**
+                Connection to master server
+            */
+            MasterConnectionFromServer m_masterConnection;
 
         private:
             NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -75,17 +80,13 @@ namespace Doremi
             /**
                 Port for connecting
             */
-            uint32_t m_portConnecting;
+            uint16_t m_portConnecting;
 
             /**
                 Port for connected
             */
-            uint32_t m_portConnected;
+            uint16_t m_portConnected;
 
-            /**
-                Connection to master server
-            */
-            MasterConnectionFromServer m_masterConnection;
 
             /**
                 Map with connecting clients

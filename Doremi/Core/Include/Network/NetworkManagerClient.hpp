@@ -70,6 +70,8 @@ namespace Doremi
             */
             void ReceiveConnectedMessages();
 
+            void ReceiveMasterMessages();
+
             /**
                 Sends reliable & unreliable messages
             */
@@ -85,15 +87,31 @@ namespace Doremi
             */
             void SendConnectedMessages();
 
+            void SendMasterMessages(double p_dt);
+
             /**
                 Update timeout to server and disconnects if too long
             */
             void UpdateTimeouts(double p_dt);
 
+            void UpdateTimeoutsServer(double p_dt);
+
+            void UpdateTimeoutsMaster(double p_dt);
+
             /**
                 Timer for next update(send data)
             */
             double m_nextUpdateTimer;
+
+            /**
+            TODOCM doc
+            */
+            double m_masterNextUpdateTimer;
+
+            /**
+            TODOCM doc
+            */
+            double m_masterUpdateInterval;
 
             /**
                 Time until next update(send data)
@@ -109,6 +127,11 @@ namespace Doremi
                 TODOCM doc
             */
             double m_timeoutIntervalConnected;
+
+            /**
+            TODOCM doc
+            */
+            double m_timeoutIntervalMaster;
 
             /**
                 TODOCM doc

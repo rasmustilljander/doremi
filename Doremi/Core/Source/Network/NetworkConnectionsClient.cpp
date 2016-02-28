@@ -1,4 +1,5 @@
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
+#include <DoremiEngine\Network\Include\NetworkModule.hpp>
 
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 
@@ -29,6 +30,11 @@ namespace Doremi
         NetworkConnectionsClient::NetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : m_sharedContext(p_sharedContext)
         {
+            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
+
+            // Create adress and socket for master
+            m_masterConnection.Adress = t_networkModule.CreateAdress(127, 0, 0, 1, 3200);
+            m_masterConnection.SocketHandle = t_networkModule.CreateUnreliableSocket();
         }
 
         NetworkConnectionsClient::~NetworkConnectionsClient() {}

@@ -47,6 +47,14 @@ namespace DoremiEngine
             */
             uint32_t GetIP() const override { return m_IP; };
 
+            uint8_t GetIP_A() const override { return m_IP_a; }
+
+            uint8_t GetIP_B() const override { return m_IP_b; }
+
+            uint8_t GetIP_C() const override { return m_IP_c; }
+
+            uint8_t GetIP_D() const override { return m_IP_d; }
+
             /**
                 Returns composed Adress used for socket binding
             */
@@ -114,6 +122,14 @@ namespace DoremiEngine
                 IP in form of Big Endian
             */
             uint32_t m_IP;
+
+            /**
+                IP in parts
+            */
+            uint8_t m_IP_a;
+            uint8_t m_IP_b;
+            uint8_t m_IP_c;
+            uint8_t m_IP_d;
 
             /**
                 Port for either in/out
