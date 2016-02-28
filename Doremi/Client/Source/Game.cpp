@@ -34,6 +34,7 @@
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
+#include <Doremi/Core/Include/TimeHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -211,45 +212,20 @@ namespace Doremi
         TIME_FUNCTION_START
         // TODOCM remove for better timer
         // GameLoop is not currently set
+        TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
-        std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
-        PreviousClock = std::chrono::high_resolution_clock::now();
-
-        double Frame = 0;
-        double Offset = 0;
-        double Accum = 0;
-        double GameTime = 0;
-        double UpdateStepLen = 0.017f * 2;
-        double MaxFrameTime = 0.25f;
+        t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
 
         while(true)
         {
-            CurrentClock = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
-            Frame = duration.count() + Offset;
-            Offset = 0;
-
-
-            // We simulate maximum 250 milliseconds each frame
-            // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-            if(Frame > MaxFrameTime)
-            {
-                Offset = Frame - MaxFrameTime;
-                Frame = MaxFrameTime;
-                cout << "Frame took more then " << MaxFrameTime << " Seconds" << endl;
-            }
-
-            // Update the previous position with frametime so we can catch up if we slow down
-            PreviousClock = CurrentClock;
-
-            // Update Accumulator (how much we will work this frame)
-            Accum += Frame;
+            // Tick time
+            t_timeHandler->Tick();
 
             // Loop as many update-steps we will take this frame
-            while(Accum >= UpdateStepLen)
+            while(t_timeHandler->ShouldUpdateFrame())
             {
                 // Update game based on state
-                Update(UpdateStepLen);
+                Update(t_timeHandler->UpdateStepLen);
 
                 // Update interpolation transforms from snapshots
                 Core::InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
@@ -257,16 +233,12 @@ namespace Doremi
                 // Deliver events
                 static_cast<Core::EventHandlerClient*>(Core::EventHandler::GetInstance())->DeliverEvents();
 
-                // Remove time from accumulator
-                // Accumulator -= UpdateTimeStepLength;
-                Accum -= UpdateStepLen;
-
-                // Add time to start
-                GameTime += UpdateStepLen;
+                // Update accumulator and gametime
+                t_timeHandler->UpdateAccumulatorAndGameTime();
             }
 
             // Update alpha usd for inteprolation
-            double alpha = Accum / UpdateStepLen;
+            double alpha = t_timeHandler->GetFrameAlpha();
 
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
@@ -274,7 +246,7 @@ namespace Doremi
             // Update camera after we update positions
             CameraHandler::GetInstance()->UpdateDraw();
 
-            Draw(Frame);
+            Draw(t_timeHandler->Frame);
 
             // Escape
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());

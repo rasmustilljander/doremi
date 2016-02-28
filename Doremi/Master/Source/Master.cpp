@@ -7,6 +7,7 @@
 
 // Game
 #include <Doremi/Core/Include/GameCore.hpp>
+#include <Doremi/Core/Include/TimeHandler.hpp>
 
 
 // Managers
@@ -26,6 +27,8 @@
 
 namespace Doremi
 {
+    using namespace Core;
+
     MasterMain::MasterMain() {}
 
     MasterMain::~MasterMain() {}
@@ -51,51 +54,23 @@ namespace Doremi
 
     void MasterMain::Run()
     {
-        TIME_FUNCTION_START
-        std::chrono::time_point<std::chrono::high_resolution_clock> CurrentClock, PreviousClock;
-        PreviousClock = std::chrono::high_resolution_clock::now();
+        TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
-        double Frame = 0;
-        double Offset = 0;
-        double Accum = 0;
-        double GameTime = 0;
-        double UpdateStepLen = 0.017 * 2; // Limit to 30 fps for debug purposes TODOJB Change back to 60 fps
-        double MaxFrameTime = 0.25;
+        t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
 
-        while (true)
+        while(true)
         {
-            CurrentClock = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> duration = (CurrentClock - PreviousClock);
-            Frame = duration.count() + Offset;
-            Offset = 0;
-
-
-            // We simulate maximum 250 milliseconds each frame
-            // If we would let it be alone we would get mayor stops instead of lesser ones that will slowly catch up
-            if (Frame > MaxFrameTime)
-            {
-                Offset = Frame - MaxFrameTime;
-                Frame = MaxFrameTime;
-                std::cout << "Frame took more then " << MaxFrameTime << " Seconds" << std::endl;
-            }
-
-            // Update the previous position with frametime so we can catch up if we slow down
-            PreviousClock = CurrentClock;
-
-            // Update Accumulator (how much we will work this frame)
-            Accum += Frame;
+            // Tick time
+            t_timeHandler->Tick();
 
             // Loop as many update-steps we will take this frame
-            while (Accum >= UpdateStepLen)
+            while(t_timeHandler->ShouldUpdateFrame())
             {
                 // Update Game logic
-                Update(UpdateStepLen);
+                Update(t_timeHandler->UpdateStepLen);
 
-                // Remove time from accumulator
-                Accum -= UpdateStepLen;
-
-                // Add time to start
-                GameTime += UpdateStepLen;
+                // Update accumulator and gametime
+                t_timeHandler->UpdateAccumulatorAndGameTime();
             }
         }
         TIME_FUNCTION_STOP
