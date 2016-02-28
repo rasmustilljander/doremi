@@ -108,6 +108,15 @@ namespace Doremi
                 // Update last response
                 t_networkConnection->m_serverConnection.LastResponse = 0;
 
+                // Create connected adress
+                uint8_t IP_a = t_networkConnection->m_serverConnection.ConnectingAdress->GetIP_A();
+                uint8_t IP_b = t_networkConnection->m_serverConnection.ConnectingAdress->GetIP_B();
+                uint8_t IP_c = t_networkConnection->m_serverConnection.ConnectingAdress->GetIP_C();
+                uint8_t IP_d = t_networkConnection->m_serverConnection.ConnectingAdress->GetIP_D();
+
+                t_networkConnection->m_serverConnection.ConnectedAdress =
+                    m_sharedContext.GetNetworkModule().CreateAdress(IP_a, IP_b, IP_c, IP_d, t_portToJoinWith);
+
                 // Attempt connect to server
                 bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnection.ConnectedAdress,
                                                                                         t_networkConnection->m_serverConnection.ConnectedSocketHandle);

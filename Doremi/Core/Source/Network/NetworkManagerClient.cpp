@@ -89,12 +89,10 @@ namespace Doremi
                 // TODOCM Read port ? as well, change to master as well probobly
                 t_connections->m_serverConnection.ConnectingAdress =
                     t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 5050); // TODOCM remove test code
-                t_connections->m_serverConnection.ConnectedAdress = t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 4050);
             }
             else
             {
                 t_connections->m_serverConnection.ConnectingAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 5050);
-                t_connections->m_serverConnection.ConnectedAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 4050);
             }
 
             // Create new socket for unreliable

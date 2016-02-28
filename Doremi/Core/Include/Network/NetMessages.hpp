@@ -82,6 +82,7 @@ namespace Doremi
 #define NET_MESSAGE_BUFFER_DATA_SIZE 2047
 #define NET_MESSAGE_CONNECTING_DATA_SIZE 1023 // TODOCM change
 #define NET_MESSAGE_CONNECTED_DATA_SIZE NET_MESSAGE_BUFFER_DATA_SIZE
+#define NET_MESSAGE_SMALL 511
 
         /**
             Message sent as buffer from Network Module
@@ -138,9 +139,9 @@ namespace Doremi
 
         struct NetMessageMasterClientFromClient
         {
-            NetMessageMasterClientFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageMasterClientFromClient() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
             SendMessageIDToMasterFromClient MessageID;
-            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
+            unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };
 
         /**
@@ -148,16 +149,16 @@ namespace Doremi
         */
         struct NetMessageMasterServerFromMaster
         {
-            NetMessageMasterServerFromMaster() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageMasterServerFromMaster() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
             SendMessageIDToServerFromMaster MessageID;
-            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
+            unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };
 
         struct NetMessageMasterServerFromServer
         {
-            NetMessageMasterServerFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageMasterServerFromServer() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
             SendMessageIDToMasterFromServer MessageID;
-            unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
+            unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };
     }
 }
