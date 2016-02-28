@@ -31,6 +31,10 @@ namespace Doremi
         private:
             NetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            void LoadMasterFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            void LoadServerFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~NetworkConnectionsClient();
 
             static NetworkConnectionsClient* m_singleton;

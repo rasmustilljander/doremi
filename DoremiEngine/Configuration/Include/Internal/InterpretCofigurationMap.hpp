@@ -74,6 +74,34 @@ namespace DoremiEngine
             {
                 o_info.CameraFieldOfView = std::stoi(p_mapToInterpret.at("CameraFieldOfView"));
             }
+            if(p_mapToInterpret.count("UseIPMaster"))
+            {
+                o_info.UseIPMaster = std::stoi(p_mapToInterpret.at("UseIPMaster"));
+            }
+            if(p_mapToInterpret.count("URLMaster"))
+            {
+                o_info.URLMaster = p_mapToInterpret.at("URLMaster");
+            }
+            if(p_mapToInterpret.count("IPToMaster"))
+            {
+                o_info.IPToMaster = p_mapToInterpret.at("IPToMaster");
+            }
+            if(p_mapToInterpret.count("PortMasterClient"))
+            {
+                o_info.PortMasterClient = std::stoi(p_mapToInterpret.at("PortMasterClient"));
+            }
+            if(p_mapToInterpret.count("PortMasterServer"))
+            {
+                o_info.PortMasterServer = std::stoi(p_mapToInterpret.at("PortMasterServer"));
+            }
+            if(p_mapToInterpret.count("PortServerConnecting"))
+            {
+                o_info.PortServerConnecting = std::stoi(p_mapToInterpret.at("PortServerConnecting"));
+            }
+            if(p_mapToInterpret.count("PortServerConnected"))
+            {
+                o_info.PortServerConnected = std::stoi(p_mapToInterpret.at("PortServerConnected"));
+            }
             if(p_mapToInterpret.count("IPToServer"))
             {
                 o_info.IPToServer = p_mapToInterpret.at("IPToServer");
@@ -112,6 +140,13 @@ namespace DoremiEngine
             returnMap["CameraSpeedY"] = std::to_string(p_info.CameraSpeedY);
             returnMap["CameraViewDistance"] = std::to_string(p_info.CameraViewDistance);
             returnMap["CameraFieldOfView"] = std::to_string(p_info.CameraFieldOfView);
+            returnMap["UseIPMaster"] = std::to_string(p_info.UseIPMaster);
+            returnMap["URLMaster"] = p_info.URLMaster;
+            returnMap["IPToMaster"] = p_info.IPToMaster;
+            returnMap["PortMasterClient"] = std::to_string(p_info.PortMasterClient);
+            returnMap["PortMasterServer"] = std::to_string(p_info.PortMasterServer);
+            returnMap["PortServerConnecting"] = std::to_string(p_info.PortServerConnecting);
+            returnMap["PortServerConnected"] = std::to_string(p_info.PortServerConnected);
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
             returnMap["AIJumpDistance"] = std::to_string(p_info.AIJumpDistance);

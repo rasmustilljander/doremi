@@ -43,64 +43,9 @@ namespace Doremi
             // Startup network messages and connection, TODOCM could change position of this
             NetworkMessagesClient::StartupNetworkMessagesClient(p_sharedContext);
             NetworkConnectionsClient::StartupNetworkConnectionsClient(p_sharedContext);
-
-            LoadConfigFile(p_sharedContext);
         }
 
         NetworkManagerClient::~NetworkManagerClient() {}
-
-        void NetworkManagerClient::LoadConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
-        {
-            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
-            DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
-            NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
-
-            // Get last playerID
-            t_connections->m_serverConnection.PlayerID = t_configInfo.LastServerPlayerID;
-
-            // Get IP from config file
-            std::string t_IPString = t_configInfo.IPToServer;
-
-            // Create pointer to use
-            char* t_IPCharPointer = new char[t_IPString.size() + 1];
-
-            // Copy string to pointer
-            t_IPString.copy(t_IPCharPointer, t_IPString.size());
-
-            // Create int array to hold IP values
-            int* t_IPArray = new int[4];
-
-            // Pointer to part of string to check
-            char* t_ToCheck;
-            t_ToCheck = strtok(t_IPCharPointer, ".");
-
-            size_t t_counter = 0;
-            while(t_ToCheck != NULL && t_counter < 4)
-            {
-                // Save string part as int to array
-                t_IPArray[t_counter] = std::stoi(std::string(t_ToCheck));
-                t_ToCheck = strtok(NULL, ".");
-                t_counter++;
-            }
-
-            // If we got values for all int slots we got an actual IP
-            if(t_counter == 4)
-            {
-                // TODOCM Read port ? as well, change to master as well probobly
-                t_connections->m_serverConnection.ConnectingAdress =
-                    t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3], 5050); // TODOCM remove test code
-            }
-            else
-            {
-                t_connections->m_serverConnection.ConnectingAdress = t_networkModule.CreateAdress(127, 0, 0, 1, 5050);
-            }
-
-            // Create new socket for unreliable
-            t_connections->m_serverConnection.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
-
-            delete t_IPCharPointer;
-            delete t_IPArray;
-        }
 
         void NetworkManagerClient::SetServerIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
         {

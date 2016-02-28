@@ -2,6 +2,7 @@
 
 // Engine
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
 // Network
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
@@ -35,14 +36,15 @@ namespace Doremi
             : m_sharedContext(p_sharedContext), m_maxConnections(16)
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
+            const DoremiEngine::Configuration::ConfiguartionInfo& t_config = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
 
-            m_portConnecting = 5050;
-            m_portConnected = 4050;
+            m_portConnecting = t_config.PortServerConnecting;
+            m_portConnected = t_config.PortServerConnected;
 
-            // Create adress for ALL incomming IP and port 5050
+            // Create adress for ALL incomming
             DoremiEngine::Network::Adress* UnreliableAdress = t_networkModule.CreateAdress(m_portConnecting);
 
-            // Create adress for ALL incomming IP and port 4050
+            // Create adress for ALL incomming
             DoremiEngine::Network::Adress* ReliableAdress = t_networkModule.CreateAdress(m_portConnected);
 
             // Create socket for unrealiable
@@ -51,9 +53,57 @@ namespace Doremi
             // Create socket for relialbe
             m_connectedSocketHandle = t_networkModule.CreateReliableConnection(ReliableAdress, m_maxConnections);
 
-            // Create adress and socket for master
-            m_masterConnection.Adress = t_networkModule.CreateAdress(127, 0, 0, 1, 3201);
+            // Load master ip and port
+            LoadMasterFromConfigFile(p_sharedContext);
+        }
+
+        void NetworkConnectionsServer::LoadMasterFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
+            DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+
+            // Get IP from config file
+            std::string t_IPString = t_configInfo.IPToMaster;
+
+            // Create pointer to use
+            char* t_IPCharPointer = new char[t_IPString.size() + 1];
+
+            // Copy string to pointer
+            t_IPString.copy(t_IPCharPointer, t_IPString.size());
+
+            // Create int array to hold IP values
+            int* t_IPArray = new int[4];
+
+            // Pointer to part of string to check
+            char* t_ToCheck;
+            t_ToCheck = strtok(t_IPCharPointer, ".");
+
+            size_t t_counter = 0;
+            while(t_ToCheck != NULL && t_counter < 4)
+            {
+                // Save string part as int to array
+                t_IPArray[t_counter] = std::stoi(std::string(t_ToCheck));
+                t_ToCheck = strtok(NULL, ".");
+                t_counter++;
+            }
+
+            // If we got values for all int slots we got an actual IP
+            if(t_counter == 4)
+            {
+                // TODOCM Read port ? as well, change to master as well probobly
+                m_masterConnection.Adress = t_networkModule.CreateAdress(t_IPArray[0], t_IPArray[1], t_IPArray[2], t_IPArray[3],
+                                                                         t_configInfo.PortMasterServer); // TODOCM remove test code
+            }
+            else
+            {
+                m_masterConnection.Adress = t_networkModule.CreateAdress(127, 0, 0, 1, t_configInfo.PortMasterServer);
+            }
+
+            // Create new socket for unreliable
             m_masterConnection.SocketHandle = t_networkModule.CreateUnreliableSocket();
+
+            delete t_IPCharPointer;
+            delete t_IPArray;
         }
 
         NetworkConnectionsServer::~NetworkConnectionsServer() {}

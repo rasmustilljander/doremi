@@ -2,6 +2,7 @@
 
 // Engine
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
 // Network
 #include <DoremiEngine/Network/Include/NetworkModule.hpp>
@@ -35,12 +36,13 @@ namespace Doremi
             : m_sharedContext(p_sharedContext)
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
+            const DoremiEngine::Configuration::ConfiguartionInfo& t_config = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
 
             // Create adress for ALL incomming IP and port 3200 clients
-            DoremiEngine::Network::Adress* AdressClients = t_networkModule.CreateAdress(3200);
+            DoremiEngine::Network::Adress* AdressClients = t_networkModule.CreateAdress(t_config.PortMasterClient);
 
             // Create adress for ALL incomming IP and port 3201 servers
-            DoremiEngine::Network::Adress* AdressServers = t_networkModule.CreateAdress(3201);
+            DoremiEngine::Network::Adress* AdressServers = t_networkModule.CreateAdress(t_config.PortMasterServer);
 
             // Create socket for clients
             m_socketHandleClients = t_networkModule.CreateUnreliableWaitingSocket(AdressClients);

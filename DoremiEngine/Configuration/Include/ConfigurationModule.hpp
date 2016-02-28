@@ -32,6 +32,14 @@ namespace DoremiEngine
             float Volume = 0.5f;
 
             // Network stuff
+            int UseIPMaster = 1;
+            std::string URLMaster = "http://www.doremithegame.com/";
+            std::string IPToMaster = "127.0.0.1";
+            int PortMasterClient = 3200;
+            int PortMasterServer = 3201;
+            int PortServerConnecting = 5050;
+            int PortServerConnected = 4050;
+
             std::string IPToServer = "127.0.0.1";
             uint32_t LastServerPlayerID = 0;
 

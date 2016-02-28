@@ -56,6 +56,8 @@ namespace Doremi
         private:
             NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            void LoadMasterFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~NetworkConnectionsServer();
 
             static NetworkConnectionsServer* m_singleton;
