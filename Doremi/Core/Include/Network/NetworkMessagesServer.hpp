@@ -19,8 +19,8 @@ namespace Doremi
     namespace Core
     {
         struct ClientConnectionFromServer;
-        struct NetMessageConnectingFromClient;
-        struct NetMessageConnectedFromClient;
+        struct NetMessageServerClientConnectingFromClient;
+        struct NetMessageServerClientConnectedFromClient;
 
         class NetworkMessagesServer
         {
@@ -36,17 +36,17 @@ namespace Doremi
             /**
                 Receive a connection request message
             */
-            void ReceiveConnectionRequest(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
+            void ReceiveConnectionRequest(NetMessageServerClientConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Receives a version check message
             */
-            void ReceiveVersionCheck(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
+            void ReceiveVersionCheck(NetMessageServerClientConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress);
 
             /**
                 Receives a disconnect message
             */
-            void ReceiveDisconnect(NetMessageConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress);
+            void ReceiveDisconnect(NetMessageServerClientConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress);
 
             /**
                 == Receive Messages Connected ==
@@ -55,17 +55,17 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            void ReceiveConnectedMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveConnectedMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            void ReceiveLoadWorldMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveLoadWorldMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 TODOCM doc
             */
-            void ReceiveInGameMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
+            void ReceiveInGameMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection);
 
             /**
                 == Send Messages Connecting ==

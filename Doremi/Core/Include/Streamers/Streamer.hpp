@@ -174,9 +174,19 @@ namespace Doremi
             virtual bool WriteString(std::string p_Value) = 0;
 
             /**
+                Write string with 8 bit length
+            */
+            virtual bool WriteStringShort(std::string p_Value) = 0;
+
+            /**
                 Read string
             */
             virtual std::string ReadString() = 0;
+
+            /**
+                Read string short
+            */
+            virtual std::string ReadStringShort() = 0;
 
             /**
                 Write buffer byte for byte

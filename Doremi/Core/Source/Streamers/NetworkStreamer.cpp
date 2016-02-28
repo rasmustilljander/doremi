@@ -501,6 +501,28 @@ namespace Doremi
             return AmountWritten == StringLength * sizeof(unsigned char) * 8;
         }
 
+        bool NetworkStreamer::WriteStringShort(std::string p_Value)
+        {
+            uint32_t AmountWritten = 0;
+
+            uint8_t StringLength = p_Value.size();
+
+            // Write the length of the string
+            WriteUnsignedInt8(StringLength);
+
+            const char* CharArray = p_Value.c_str();
+
+            // Write all chars
+            for (size_t i = 0; i < StringLength; i++)
+            {
+                uint32_t Value = (uint32_t)CharArray[i];
+
+                AmountWritten += WriteBits(&Value, sizeof(unsigned char) * 8);
+            }
+
+            return AmountWritten == StringLength * sizeof(unsigned char) * 8;
+        }
+
         std::string NetworkStreamer::ReadString()
         {
             std::string OutString;
@@ -512,6 +534,30 @@ namespace Doremi
 
 
             for(size_t i = 0; i < StringLength; i++)
+            {
+                uint32_t Value = 0;
+                AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);
+                StringArray[i] = (char)Value;
+            }
+            StringArray[StringLength] = 0;
+            OutString = std::string(StringArray);
+
+            delete StringArray;
+
+            return OutString;
+        }
+
+        std::string NetworkStreamer::ReadStringShort()
+        {
+            std::string OutString;
+
+            uint32_t StringLength = 0;
+            uint8_t AmountRead = ReadBits(&StringLength, sizeof(int8_t) * 8);
+
+            char* StringArray = new char[StringLength + 1];
+
+
+            for (size_t i = 0; i < StringLength; i++)
             {
                 uint32_t Value = 0;
                 AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);

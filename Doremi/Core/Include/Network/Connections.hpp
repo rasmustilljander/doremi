@@ -31,7 +31,6 @@ namespace Doremi
         {
             DISCONNECTED,
             CONNECTING,
-            VERSION_CHECK,
             CONNECTED,
         };
 
@@ -48,7 +47,16 @@ namespace Doremi
         {
             DISCONNECTED,
             CONNECTING,
-            VERSION_CHECK,
+            CONNECTED,
+        };
+
+        enum class ClientConnectionStateFromMaster
+        {
+            CONNECTED,
+        };
+
+        enum class ServerConnectionStateFromMaster
+        {
             CONNECTED,
         };
 
@@ -116,6 +124,37 @@ namespace Doremi
             PlayerID PlayerID;
 
             double LastResponse;
+        };
+
+        struct ClientConnectionFromMaster
+        {
+            ClientConnectionStateFromMaster ConnectionState;
+
+            double LastResponse;
+        };
+
+        struct ServerConnectionFromMaster
+        {
+            ServerConnectionStateFromMaster ConnectionState;
+            double LastResponse;
+
+            uint8_t CurrentSequence;
+            uint8_t SequenceToCheck;
+            double SequenceLastResponse;
+
+            std::string ServerName;
+            uint8_t ServerState;
+            uint8_t Map;
+            uint16_t Ping;
+
+            uint8_t CurrentPlayers;
+            uint8_t MaxPlayers;
+
+            uint16_t ConnectingPort;
+            uint8_t IP_a;
+            uint8_t IP_b;
+            uint8_t IP_c;
+            uint8_t IP_d;
         };
     }
 }

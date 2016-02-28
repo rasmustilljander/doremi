@@ -23,7 +23,7 @@ namespace Doremi
         public:
             static NetworkConnectionsServer* GetInstance();
 
-            static void StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static void StartupNetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             auto& GetConnectedClientConnections() { return m_connectedClientConnections; }
 

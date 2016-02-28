@@ -50,23 +50,17 @@ namespace Doremi
 
             void ReceiveMessagesServers();
 
-
-            /**
-                Send messages to connected clients
-            */
-            void SendMessages();
-
-            void SendMessagesClients();
-
-            void SendMessagesServers();
-
             /**
             Update timers for clients, and check if anyone got timeouted
             */
-            void UpdateTimeouts(double t_dt);
+            void UpdateTimeouts(double p_dt);
+
+            void UpdateTimeoutsClients(double p_dt);
+
+            void UpdateTimeoutsServers(double p_dt);
 
             /**
-            Time interval for timeouts
+                Time interval for timeouts
             */
             double m_timeoutInterval;
 

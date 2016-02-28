@@ -186,9 +186,19 @@ namespace Doremi
             bool WriteString(std::string p_Value) override;
 
             /**
+                Write string with 8 bit length
+            */
+            bool WriteStringShort(std::string p_Value) override;
+
+            /**
                 Read string
             */
             std::string ReadString() override;
+
+            /**
+                Read string short
+            */
+            virtual std::string ReadStringShort() override;
 
             /**
                 Write buffer byte for byte

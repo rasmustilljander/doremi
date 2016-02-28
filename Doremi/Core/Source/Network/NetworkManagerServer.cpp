@@ -38,7 +38,7 @@ namespace Doremi
         {
             // Startup network messages and connection, TODOCM could change position of this
             NetworkMessagesServer::StartupNetworkMessagesServer(p_sharedContext);
-            NetworkConnectionsServer::StartupNetworkConnectionsClient(p_sharedContext);
+            NetworkConnectionsServer::StartupNetworkConnectionsServer(p_sharedContext);
 
             srand(time(NULL));
         }
@@ -84,7 +84,7 @@ namespace Doremi
             SocketHandle t_connectingSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectingSocketHandle();
 
             // Create buffer NetworkMessage
-            NetMessageConnectingFromClient t_networkMessage = NetMessageConnectingFromClient();
+            NetMessageServerClientConnectingFromClient t_networkMessage = NetMessageServerClientConnectingFromClient();
 
             // How much data we received
             uint32_t t_dataSizeReceived = 0;
@@ -95,34 +95,33 @@ namespace Doremi
                   ++t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
             {
                 // If we don't have of that size
-                if(t_dataSizeReceived != sizeof(NetMessageConnectingFromClient))
+                if(t_dataSizeReceived != sizeof(NetMessageServerClientConnectingFromClient))
                 {
                     // Null message and conitinue
-                    t_networkMessage = NetMessageConnectingFromClient();
+                    t_networkMessage = NetMessageServerClientConnectingFromClient();
                     continue;
                 }
 
                 std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
-                NetMessageConnectingFromClient& t_netMessageConnecting = *reinterpret_cast<NetMessageConnectingFromClient*>(&t_networkMessage);
-
+                NetMessageServerClientConnectingFromClient& t_netMessageConnecting = *reinterpret_cast<NetMessageServerClientConnectingFromClient*>(&t_networkMessage);
                 // Switch on what kind of message
                 switch(t_netMessageConnecting.MessageID)
                 {
-                    case SendMessageIDFromClient::CONNECTION_REQUEST:
+                    case SendMessageIDToServerFromClient::CONNECTION_REQUEST:
                     {
                         std::cout << "Connection Request." << std::endl; // TODOCM logg instead
                         t_netMessages->ReceiveConnectionRequest(t_netMessageConnecting, *t_incommingAdress);
 
                         break;
                     }
-                    case SendMessageIDFromClient::VERSION_CHECK:
+                    case SendMessageIDToServerFromClient::VERSION_CHECK:
                     {
                         std::cout << "Version Check" << std::endl; // TODOCM logg instead
                         t_netMessages->ReceiveVersionCheck(t_netMessageConnecting, *t_incommingAdress);
 
                         break;
                     }
-                    case SendMessageIDFromClient::DISCONNECT:
+                    case SendMessageIDToServerFromClient::DISCONNECT:
                     {
                         std::cout << "Disconnect" << std::endl; // TODOCM logg instead
                         t_netMessages->ReceiveDisconnect(t_netMessageConnecting, *t_incommingAdress);
@@ -136,7 +135,7 @@ namespace Doremi
                 }
 
                 // Reset message
-                t_networkMessage = NetMessageConnectingFromClient();
+                t_networkMessage = NetMessageServerClientConnectingFromClient();
             }
 
             // Delete the adress holder
@@ -169,31 +168,31 @@ namespace Doremi
                           ++t_messageCounter < m_maxConnectedMessagesPerFrame)
                     {
                         // If we received a correct message
-                        if(t_dataSizeReceived != sizeof(NetMessageConnectedFromClient))
+                        if(t_dataSizeReceived != sizeof(NetMessageServerClientConnectedFromClient))
                         {
                             t_message = NetMessageBuffer();
                             continue;
                         }
 
                         // Convert to correct message
-                        NetMessageConnectedFromClient& t_connectedMessage = *reinterpret_cast<NetMessageConnectedFromClient*>(&t_message);
+                        NetMessageServerClientConnectedFromClient& t_connectedMessage = *reinterpret_cast<NetMessageServerClientConnectedFromClient*>(&t_message);
 
                         // Interpet message based on type
                         switch(t_connectedMessage.MessageID)
                         {
-                            case SendMessageIDFromClient::CONNECTED:
+                            case SendMessageIDToServerFromClient::CONNECTED:
                             {
                                 t_netMessages->ReceiveConnectedMessage(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
-                            case SendMessageIDFromClient::LOAD_WORLD:
+                            case SendMessageIDToServerFromClient::LOAD_WORLD:
                             {
                                 t_netMessages->ReceiveLoadWorldMessage(t_connectedMessage, t_connection.second);
 
                                 break;
                             }
-                            case SendMessageIDFromClient::IN_GAME:
+                            case SendMessageIDToServerFromClient::IN_GAME:
                             {
                                 t_netMessages->ReceiveInGameMessage(t_connectedMessage, t_connection.second);
 

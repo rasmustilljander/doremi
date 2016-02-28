@@ -58,7 +58,7 @@ namespace Doremi
             == Receive Messages Connecting ==
         */
 
-        void NetworkMessagesClient::ReceiveVersionCheck(NetMessageConnectingFromServer& p_message)
+        void NetworkMessagesClient::ReceiveVersionCheck(NetMessageServerClientConnectingFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
@@ -71,7 +71,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::ReceiveConnect(NetMessageConnectingFromServer& p_message)
+        void NetworkMessagesClient::ReceiveConnect(NetMessageServerClientConnectingFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
@@ -116,7 +116,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::ReceiveDisconnect(NetMessageConnectingFromServer& p_message)
+        void NetworkMessagesClient::ReceiveDisconnect(NetMessageServerClientConnectingFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
@@ -140,7 +140,7 @@ namespace Doremi
             == Receive Messages Connected ==
         */
 
-        void NetworkMessagesClient::ReceiveConnected(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveConnected(NetMessageServerClientConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
@@ -157,7 +157,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::ReceiveLoadWorld(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveLoadWorld(NetMessageServerClientConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
@@ -194,7 +194,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesClient::ReceiveInGame(NetMessageConnectedFromServer& p_message)
+        void NetworkMessagesClient::ReceiveInGame(NetMessageServerClientConnectedFromServer& p_message)
         {
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
@@ -279,10 +279,10 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // Create a message
-            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
+            NetMessageServerClientConnectingFromClient t_message = NetMessageServerClientConnectingFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::CONNECTION_REQUEST;
+            t_message.MessageID = SendMessageIDToServerFromClient::CONNECTION_REQUEST;
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
@@ -294,10 +294,10 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // Create a message
-            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
+            NetMessageServerClientConnectingFromClient t_message = NetMessageServerClientConnectingFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::VERSION_CHECK;
+            t_message.MessageID = SendMessageIDToServerFromClient::VERSION_CHECK;
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();
@@ -317,10 +317,10 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // Create a message
-            NetMessageConnectingFromClient t_message = NetMessageConnectingFromClient();
+            NetMessageServerClientConnectingFromClient t_message = NetMessageServerClientConnectingFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::DISCONNECT;
+            t_message.MessageID = SendMessageIDToServerFromClient::DISCONNECT;
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectingSocketHandle,
@@ -336,10 +336,10 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
 
             // Create a message
-            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
+            NetMessageServerClientConnectedFromClient t_message = NetMessageServerClientConnectedFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::CONNECTED;
+            t_message.MessageID = SendMessageIDToServerFromClient::CONNECTED;
 
             // Send message
             m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnectionState.ConnectedSocketHandle);
@@ -351,10 +351,10 @@ namespace Doremi
             PlayerHandlerClient* t_playerhandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
 
             // Create a message
-            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
+            NetMessageServerClientConnectedFromClient t_message = NetMessageServerClientConnectedFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::LOAD_WORLD;
+            t_message.MessageID = SendMessageIDToServerFromClient::LOAD_WORLD;
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();
@@ -384,10 +384,10 @@ namespace Doremi
             InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
 
             // Create a message
-            NetMessageConnectedFromClient t_message = NetMessageConnectedFromClient();
+            NetMessageServerClientConnectedFromClient t_message = NetMessageServerClientConnectedFromClient();
 
             // Set correct ID
-            t_message.MessageID = SendMessageIDFromClient::IN_GAME;
+            t_message.MessageID = SendMessageIDToServerFromClient::IN_GAME;
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();

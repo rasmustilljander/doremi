@@ -27,17 +27,17 @@ namespace Doremi
             /**
                 Receive a version check message
             */
-            void ReceiveVersionCheck(NetMessageConnectingFromServer& p_message);
+            void ReceiveVersionCheck(NetMessageServerClientConnectingFromServer& p_message);
 
             /**
                 Receive a connect message
             */
-            void ReceiveConnect(NetMessageConnectingFromServer& p_message);
+            void ReceiveConnect(NetMessageServerClientConnectingFromServer& p_message);
 
             /**
                 Receive a disconnect messages
             */
-            void ReceiveDisconnect(NetMessageConnectingFromServer& p_message);
+            void ReceiveDisconnect(NetMessageServerClientConnectingFromServer& p_message);
 
             /**
                 == Receive Messages Connected ==
@@ -46,17 +46,17 @@ namespace Doremi
             /**
                 Receive connected message
             */
-            void ReceiveConnected(NetMessageConnectedFromServer& p_message);
+            void ReceiveConnected(NetMessageServerClientConnectedFromServer& p_message);
 
             /**
                 Receive load world message
             */
-            void ReceiveLoadWorld(NetMessageConnectedFromServer& p_message);
+            void ReceiveLoadWorld(NetMessageServerClientConnectedFromServer& p_message);
 
             /**
                 Receive in game message
             */
-            void ReceiveInGame(NetMessageConnectedFromServer& p_message);
+            void ReceiveInGame(NetMessageServerClientConnectedFromServer& p_message);
 
             /**
                 == Send Messages Connecting ==

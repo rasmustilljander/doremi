@@ -155,7 +155,7 @@ namespace Doremi
             SocketHandle t_serverConnectingSocketHandle = t_connections->m_serverConnectionState.ConnectingSocketHandle;
 
             // Create buffer message
-            NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
+            NetMessageServerClientConnectingFromServer t_newMessage = NetMessageServerClientConnectingFromServer();
 
             // To check how much we received
             uint32_t t_dataSizeReceived = 0;
@@ -170,33 +170,33 @@ namespace Doremi
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
                 // If wrong size of message
-                if(t_dataSizeReceived != sizeof(NetMessageConnectingFromServer))
+                if(t_dataSizeReceived != sizeof(NetMessageServerClientConnectingFromServer))
                 {
-                    t_newMessage = NetMessageConnectingFromServer();
+                    t_newMessage = NetMessageServerClientConnectingFromServer();
                     continue;
                 }
 
                 // Convert message to proper
-                NetMessageConnectingFromServer& t_messageConnecting = *reinterpret_cast<NetMessageConnectingFromServer*>(&t_newMessage);
+                NetMessageServerClientConnectingFromServer& t_messageConnecting = *reinterpret_cast<NetMessageServerClientConnectingFromServer*>(&t_newMessage);
 
                 // Check ID and interpet
                 switch(t_messageConnecting.MessageID)
                 {
-                    case SendMessageIDFromServer::VERSION_CHECK:
+                    case SendMessageIDToClientFromServer::VERSION_CHECK:
                     {
                         std::cout << "Received version check" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveVersionCheck(t_messageConnecting);
 
                         break;
                     }
-                    case SendMessageIDFromServer::CONNECT:
+                    case SendMessageIDToClientFromServer::CONNECT:
                     {
                         std::cout << "Received connect" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveConnect(t_messageConnecting);
 
                         break;
                     }
-                    case SendMessageIDFromServer::DISCONNECT:
+                    case SendMessageIDToClientFromServer::DISCONNECT:
                     {
                         std::cout << "Received disconnect" << std::endl; // TODOCM remove deubgg
                         t_netMessages->ReceiveDisconnect(t_messageConnecting);
@@ -211,7 +211,7 @@ namespace Doremi
                 }
 
                 // Reset message
-                t_newMessage = NetMessageConnectingFromServer();
+                t_newMessage = NetMessageServerClientConnectingFromServer();
             }
         }
 
@@ -237,31 +237,31 @@ namespace Doremi
                   ++t_numOfMessages < m_maxConnectedMessagesPerFrame)
             {
                 // If wrong size of message
-                if(t_dataSizeReceived != sizeof(NetMessageConnectedFromServer))
+                if(t_dataSizeReceived != sizeof(NetMessageServerClientConnectedFromServer))
                 {
                     t_newMessage = NetMessageBuffer();
                     continue;
                 }
 
                 // Convert message to proper
-                NetMessageConnectedFromServer& t_messageConnecting = *reinterpret_cast<NetMessageConnectedFromServer*>(&t_newMessage);
+                NetMessageServerClientConnectedFromServer& t_messageConnecting = *reinterpret_cast<NetMessageServerClientConnectedFromServer*>(&t_newMessage);
 
                 // Check ID and interpet
                 switch(t_messageConnecting.MessageID)
                 {
-                    case SendMessageIDFromServer::CONNECTED:
+                    case SendMessageIDToClientFromServer::CONNECTED:
                     {
                         t_netMessages->ReceiveConnected(t_messageConnecting);
 
                         break;
                     }
-                    case SendMessageIDFromServer::LOAD_WORLD:
+                    case SendMessageIDToClientFromServer::LOAD_WORLD:
                     {
                         t_netMessages->ReceiveLoadWorld(t_messageConnecting);
 
                         break;
                     }
-                    case SendMessageIDFromServer::IN_GAME:
+                    case SendMessageIDToClientFromServer::IN_GAME:
                     {
                         t_netMessages->ReceiveInGame(t_messageConnecting);
 

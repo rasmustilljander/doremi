@@ -22,7 +22,7 @@ namespace Doremi
             return m_singleton;
         }
 
-        void NetworkConnectionsServer::StartupNetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        void NetworkConnectionsServer::StartupNetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             if(m_singleton != nullptr)
             {

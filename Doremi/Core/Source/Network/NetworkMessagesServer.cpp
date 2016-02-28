@@ -59,7 +59,7 @@ namespace Doremi
         /**
             == Receive Messages Connecting ==
         */
-        void NetworkMessagesServer::ReceiveConnectionRequest(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress)
+        void NetworkMessagesServer::ReceiveConnectionRequest(NetMessageServerClientConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress)
         {
             ClientConnectionFromServer* t_connection = nullptr;
 
@@ -79,7 +79,7 @@ namespace Doremi
         }
 
 
-        void NetworkMessagesServer::ReceiveVersionCheck(NetMessageConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress)
+        void NetworkMessagesServer::ReceiveVersionCheck(NetMessageServerClientConnectingFromClient& p_message, const DoremiEngine::Network::Adress& p_adress)
         {
             ClientConnectionFromServer* t_connection = nullptr;
 
@@ -131,7 +131,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesServer::ReceiveDisconnect(NetMessageConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress)
+        void NetworkMessagesServer::ReceiveDisconnect(NetMessageServerClientConnectingFromClient& p_message, DoremiEngine::Network::Adress& p_adress)
         {
             ClientConnectionFromServer* t_connection = nullptr;
 
@@ -147,7 +147,7 @@ namespace Doremi
             == Receive Messages Connected ==
         */
 
-        void NetworkMessagesServer::ReceiveConnectedMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveConnectedMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             // If we're connected stage
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::CONNECTED)
@@ -156,7 +156,7 @@ namespace Doremi
             }
         }
 
-        void NetworkMessagesServer::ReceiveLoadWorldMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveLoadWorldMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::LOAD_WORLD)
             {
@@ -195,7 +195,7 @@ namespace Doremi
             }
         }
         //////////////////// Should have some init sequence
-        void NetworkMessagesServer::ReceiveInGameMessage(NetMessageConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
+        void NetworkMessagesServer::ReceiveInGameMessage(NetMessageServerClientConnectedFromClient& p_message, ClientConnectionFromServer* p_connection)
         {
             if(p_connection->ConnectionState == ClientConnectionStateFromServer::IN_GAME)
             {
@@ -268,8 +268,8 @@ namespace Doremi
         {
             std::cout << "Sending version check" << std::endl; // TODOCM remove deubgg
             // Create message
-            NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::VERSION_CHECK;
+            NetMessageServerClientConnectingFromServer t_newMessage = NetMessageServerClientConnectingFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::VERSION_CHECK;
 
             // TODOCM add version check info?
 
@@ -281,8 +281,8 @@ namespace Doremi
         void NetworkMessagesServer::SendConnect(const ClientConnectionFromServer* p_connection, const DoremiEngine::Network::Adress& p_adress)
         {
             // Create version check message
-            NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::CONNECT;
+            NetMessageServerClientConnectingFromServer t_newMessage = NetMessageServerClientConnectingFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::CONNECT;
 
             // TODOCM add info - like port etc...
 
@@ -305,8 +305,8 @@ namespace Doremi
         void NetworkMessagesServer::SendDisconnect(const DoremiEngine::Network::Adress& p_adress, std::string p_string)
         {
             // Create disconnection message
-            NetMessageConnectingFromServer t_newMessage = NetMessageConnectingFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::DISCONNECT;
+            NetMessageServerClientConnectingFromServer t_newMessage = NetMessageServerClientConnectingFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::DISCONNECT;
 
             // Ready for write
             NetworkStreamer p_streamer = NetworkStreamer();
@@ -330,8 +330,8 @@ namespace Doremi
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
             // Create connected message
-            NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::CONNECTED;
+            NetMessageServerClientConnectedFromServer t_newMessage = NetMessageServerClientConnectedFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::CONNECTED;
 
             // Ready for write
             NetworkStreamer p_streamer = NetworkStreamer();
@@ -356,8 +356,8 @@ namespace Doremi
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
 
             // Create new load world message
-            NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::LOAD_WORLD;
+            NetMessageServerClientConnectedFromServer t_newMessage = NetMessageServerClientConnectedFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::LOAD_WORLD;
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();
@@ -391,8 +391,8 @@ namespace Doremi
 
 
             // Create message
-            NetMessageConnectedFromServer t_newMessage = NetMessageConnectedFromServer();
-            t_newMessage.MessageID = SendMessageIDFromServer::IN_GAME;
+            NetMessageServerClientConnectedFromServer t_newMessage = NetMessageServerClientConnectedFromServer();
+            t_newMessage.MessageID = SendMessageIDToClientFromServer::IN_GAME;
 
             // Ready for write
             NetworkStreamer t_streamer = NetworkStreamer();
