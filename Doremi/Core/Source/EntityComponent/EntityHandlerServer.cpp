@@ -64,6 +64,7 @@ namespace Doremi
 
         void EntityHandlerServer::RemoveEntity(int p_entityID) { EventHandler::GetInstance()->BroadcastEvent(new RemoveEntityEvent(p_entityID)); }
 
+
         void EntityHandlerServer::OnEvent(Event* p_event)
         {
             if(p_event->eventType == EventType::RemoveEntity)

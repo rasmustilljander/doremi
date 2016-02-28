@@ -60,6 +60,18 @@ namespace Doremi
             float t_buttonWidthExtent = m_resolution.x * 0.25f;
             // Positionera I mitten av skärmen
             float t_buttonXPosition = m_resolution.x * 0.5f;
+
+            // TODOCM remove hotfix for better solution
+            if(p_buttonTextureNames.size() > 3)
+            {
+                std::runtime_error("Somone changed the number of buttons without adding states...");
+            }
+
+            DoremiStates statesForButtons[3];
+            statesForButtons[0] = DoremiStates::RUNGAME;
+            statesForButtons[1] = DoremiStates::OPTIONS;
+            statesForButtons[2] = DoremiStates::EXIT;
+
             length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
             for(size_t i = 0; i < length; i++)
             {
@@ -82,7 +94,7 @@ namespace Doremi
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
                 // Skapa knapp å stoppa in i listan Menustate är riskmodd. Hårdkodat mot vilken ordning som namnen laddas in. Finns kommentarer till
                 // detta androp om ordning
-                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, (Core::DoremiStates)((int)pow(2, (int)i))));
+                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, statesForButtons[i]));
             }
             m_inputHandler = new InputHandlerClient(m_sharedContext);
         }

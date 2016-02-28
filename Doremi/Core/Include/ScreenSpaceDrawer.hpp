@@ -31,6 +31,7 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             // Help functions
             void DrawMainMenu();
+            void DrawServerBrowser();
             void DrawVictoryScreen();
             void CreateVictoryScreen();
             DirectX::XMFLOAT2 ConvertWithResolution(DirectX::XMFLOAT2 t_point);

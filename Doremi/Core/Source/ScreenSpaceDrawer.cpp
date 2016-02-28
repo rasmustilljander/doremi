@@ -66,24 +66,43 @@ namespace Doremi
             DoremiStates t_state = StateHandler::GetInstance()->GetState();
             switch(t_state)
             {
-                case Doremi::Core::DoremiStates::RUNGAME:
-                    // Nothing to draw, the manager will handle this. Maybe HUD though? TODOKO
-                    break;
-                case Doremi::Core::DoremiStates::OPTIONS:
-                    // Draw options screen. TODOKO implement
-                    break;
-                case Doremi::Core::DoremiStates::EXIT:
-                    break;
-                case Doremi::Core::DoremiStates::PAUSE:
-                    break;
                 case Doremi::Core::DoremiStates::MAINMENU:
+                {
                     DrawMainMenu();
                     break;
+                }
+                case Doremi::Core::DoremiStates::SERVER_BROWSER:
+                {
+                    DrawServerBrowser();
+                    break;
+                }
+                case Doremi::Core::DoremiStates::OPTIONS:
+                {
+                    // Draw options screen. TODOKO implement
+                    break;
+                }
+                case Doremi::Core::DoremiStates::RUNGAME:
+                {
+                    // Nothing to draw, the manager will handle this. Maybe HUD though? TODOKO
+                    break;
+                }
+                case Doremi::Core::DoremiStates::PAUSE:
+                {
+                    break;
+                }
                 case Doremi::Core::DoremiStates::VICTORY:
+                {
                     DrawVictoryScreen();
                     break;
-                default:
+                }
+                case Doremi::Core::DoremiStates::EXIT:
+                {
                     break;
+                }
+                default:
+                {
+                    break;
+                }
             }
         }
 
@@ -139,5 +158,7 @@ namespace Doremi
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere
             // else too...
         }
+
+        void ScreenSpaceDrawer::DrawServerBrowser() {}
     }
 }

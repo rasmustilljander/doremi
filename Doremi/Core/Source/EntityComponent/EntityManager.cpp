@@ -17,6 +17,7 @@ namespace Doremi
             return mSingleton;
         }
 
+
         EntityManager::EntityManager() { mNextSlot = 0; }
 
 
@@ -53,6 +54,12 @@ namespace Doremi
             {
                 mFreeEntitySlots.push_back(pEntityID);
             }
+        }
+
+        void EntityManager::Reset()
+        {
+            mNextSlot = 0;
+            mFreeEntitySlots.clear();
         }
     }
 }

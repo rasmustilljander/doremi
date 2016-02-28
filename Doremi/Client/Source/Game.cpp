@@ -305,26 +305,16 @@ namespace Doremi
         switch(t_state)
         {
             case Core::DoremiStates::MAINMENU:
+            {
                 // Update Menu Logic
                 MenuHandler::GetInstance()->Update(p_deltaTime);
                 break;
-            case Core::DoremiStates::RUNGAME:
-                // Update Game logic
-                UpdateGame(p_deltaTime);
-                break;
-            case Core::DoremiStates::EXIT:
-            {
-                std::cout << "You clicked exit its not ver effective state changed back to mainmenu" << std::endl;
-                // State is changed with events TODOXX should be removed from here once EXIT is implemented
-                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                menuEvent->state = Core::DoremiStates::MAINMENU;
-                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-                return;
             }
-            break;
-            case Core::DoremiStates::PAUSE:
-                // Update Pause Screen
+            case Core::DoremiStates::SERVER_BROWSER:
+            {
+
                 break;
+            }
             case Core::DoremiStates::OPTIONS:
             {
                 std::cout << "You clicked options button. It has no effect. State changed back to MAINMENU" << std::endl;
@@ -332,10 +322,32 @@ namespace Doremi
                 Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
                 menuEvent->state = Core::DoremiStates::MAINMENU;
                 Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-            }
-            // Update Options
-            default:
                 break;
+            }
+            case Core::DoremiStates::RUNGAME:
+            {
+                // Update Game logic
+                UpdateGame(p_deltaTime);
+                break;
+            }
+            case Core::DoremiStates::PAUSE:
+            {
+                // Update Pause Screen
+                break;
+            }
+            case Core::DoremiStates::EXIT:
+            {
+                std::cout << "You clicked exit its not ver effective state changed back to mainmenu" << std::endl;
+                // State is changed with events TODOXX should be removed from here once EXIT is implemented
+                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                menuEvent->state = Core::DoremiStates::MAINMENU;
+                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
         TIME_FUNCTION_STOP
     }

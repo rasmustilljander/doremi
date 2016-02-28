@@ -7,6 +7,7 @@
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <Doremi/Core/Include/LevelLoaderClient.hpp>
 
 #include <iostream>
 
@@ -29,6 +30,9 @@ namespace Doremi
 
             // Subscribing on remove entity
             EventHandler::GetInstance()->Subscribe(EventType::RemoveEntity, this);
+
+            // Subscribe for loading new world
+            EventHandler::GetInstance()->Subscribe(EventType::LoadNewWorld, this);
         }
 
         EntityHandlerClient::~EntityHandlerClient() {}
@@ -37,6 +41,21 @@ namespace Doremi
         {
             EntityFactory::GetInstance()->ScrapEntity(p_entityID);
             EntityManager::GetInstance()->RemoveEntity(p_entityID);
+        }
+
+
+        void EntityHandlerClient::ResetWorld()
+        {
+            EntityFactory* t_entityFactory = EntityFactory::GetInstance();
+            EntityManager* t_entityManager = EntityManager::GetInstance();
+
+            size_t NumEntities = t_entityManager->GetLastEntity();
+            for(size_t i = 0; i < NumEntities; i++)
+            {
+                t_entityFactory->ScrapEntity(i);
+            }
+
+            t_entityManager->Reset();
         }
 
         void EntityHandlerClient::OnEvent(Event* p_event)
@@ -74,6 +93,13 @@ namespace Doremi
                 RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
 
                 RemoveEntity(p_removeEvent->entityID);
+            }
+            else if(p_event->eventType == EventType::LoadNewWorld)
+            {
+                ResetWorld();
+
+                // LevelLoaderClient t_levelLoader = LevelLoaderClient();
+                // t_levelLoader.LoadLevel("Levels/IntroScene.drm");
             }
         }
     }

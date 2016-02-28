@@ -20,6 +20,8 @@ namespace Doremi
             /** Returns last entity ID*/
             const int GetLastEntity() { return mNextSlot; }
 
+            void Reset();
+
         private:
             EntityManager();
             ~EntityManager();

@@ -47,6 +47,7 @@ namespace Doremi
             */
             void RemoveEntity(int p_entityID) override;
 
+
             /**
                 On event for removes
             */
@@ -63,6 +64,9 @@ namespace Doremi
                 TODOCM doc
             */
             ~EntityHandlerServer();
+
+
+            void ResetWorld();
         };
     }
 }

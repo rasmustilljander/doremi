@@ -27,6 +27,7 @@ namespace Doremi
             */
             void RemoveEntity(int p_entityID);
 
+
             /**
             Checks events for add and remove objects
             */
@@ -35,6 +36,8 @@ namespace Doremi
         protected:
             EntityHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~EntityHandlerClient();
+
+            void ResetWorld();
 
             const DoremiEngine::Core::SharedContext& m_sharedContext;
         };

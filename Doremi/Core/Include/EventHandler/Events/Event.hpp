@@ -29,6 +29,7 @@ namespace Doremi
             SetHealth,
             SetTransform,
             AnimationTransition,
+            LoadNewWorld,
         };
 
         /**All events needs to inherit this struct*/

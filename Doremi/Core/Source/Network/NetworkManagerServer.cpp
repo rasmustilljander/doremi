@@ -550,8 +550,6 @@ namespace Doremi
             if(t_connections->m_masterConnection.LastResponse >= m_timeoutIntervalMaster &&
                t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromServer::DISCONNECTED)
             {
-                std::cout << "Timeout master: " << t_connections->m_masterConnection.LastResponse << " seconds." << std::endl;
-
                 t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromServer::CONNECTING;
                 t_connections->m_masterConnection.LastResponse = 0;
 
