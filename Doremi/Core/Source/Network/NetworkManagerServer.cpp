@@ -11,6 +11,7 @@
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/InputHandlerServer.hpp>
 #include <Doremi/Core/Include/ServerStateHandler.hpp>
+#include <Doremi/Core/Include/TimeHandler.hpp>
 
 // Net messages
 #include <Doremi/Core/Include/Network/NetMessages.hpp>
@@ -381,6 +382,12 @@ namespace Doremi
 
             // Counter to not get stuck
             uint32_t t_connectCounter = 0;
+
+            // Check if we can actually accept any connections with lagg condition
+            if(TimeHandler::GetInstance()->IsLagging())
+            {
+                return;
+            }
 
             // Try to accept connections
             while(t_networkModule.AcceptConnection(t_connectedSocketHandle, t_outSocketHandle, t_outAdress) && ++t_connectCounter < m_maxAcceptConnectionsPerFrame)

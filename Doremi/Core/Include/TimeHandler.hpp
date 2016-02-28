@@ -11,7 +11,7 @@ namespace Doremi
             static TimeHandler* GetInstance();
 
             double Frame = 0;
-            double Offset = 0;
+            double LaggTime = 0;
             double Accum = 0;
             double GameTime = 0;
             double UpdateStepLen = 0.017f;
@@ -27,6 +27,8 @@ namespace Doremi
             double GetFrameAlpha();
 
             bool ShouldUpdateFrame();
+
+            bool IsLagging();
 
         private:
             TimeHandler();

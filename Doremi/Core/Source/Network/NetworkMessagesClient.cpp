@@ -13,6 +13,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/ServerListHandler.hpp>
+#include <Doremi/Core/Include/TimeHandler.hpp>
 
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
@@ -82,6 +83,13 @@ namespace Doremi
             // If our connection state is version check
             if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::VERSION_CHECK)
             {
+                // Check if we lagg, we don't want to connect if we lagg
+                if(TimeHandler::GetInstance()->IsLagging())
+                {
+                    cout << "Declined connection, lagging" << endl;
+                    return;
+                }
+
                 // Ready for read
                 NetworkStreamer t_streamer = NetworkStreamer();
                 unsigned char* t_dataPointer = p_message.Data;
@@ -116,6 +124,7 @@ namespace Doremi
 
                 t_networkConnection->m_serverConnection.ConnectedAdress =
                     m_sharedContext.GetNetworkModule().CreateAdress(IP_a, IP_b, IP_c, IP_d, t_portToJoinWith);
+
 
                 // Attempt connect to server
                 bool t_connected = m_sharedContext.GetNetworkModule().ConnectToReliable(t_networkConnection->m_serverConnection.ConnectedAdress,
