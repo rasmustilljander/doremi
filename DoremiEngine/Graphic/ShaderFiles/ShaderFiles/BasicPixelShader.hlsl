@@ -176,7 +176,7 @@ PixelOutputType PS_main(PixelInputType input)
 
     output.diffuse = float4(rgb, 1) * texcolor * 2.5f + texcolor * 0.25;
 
-    float depth = (input.position.z/input.position.w) * -1 + 1.02;  //Add .02 to the depth as a buffer
+    float depth = (input.position.z/input.position.w) * -1 + 1.3;   //Add .03 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);
 
     return output;
