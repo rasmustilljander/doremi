@@ -11,6 +11,9 @@ namespace Doremi
         class EntityManager
         {
         public:
+            EntityManager(EntityManager const&) = delete;
+            void operator=(EntityManager const&) = delete;
+
             static EntityManager* GetInstance();
 
             /** Adds entity and returns id of newly added entity*/
@@ -25,7 +28,6 @@ namespace Doremi
         private:
             EntityManager();
             ~EntityManager();
-            static EntityManager* mSingleton;
 
             std::list<EntityID> mFreeEntitySlots;
             EntityID mNextSlot;

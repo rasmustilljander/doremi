@@ -6,15 +6,11 @@ namespace Doremi
 {
     namespace Core
     {
-        EntityManager* EntityManager::mSingleton = nullptr;
 
         EntityManager* EntityManager::GetInstance()
         {
-            if(mSingleton == nullptr)
-            {
-                mSingleton = new EntityManager();
-            }
-            return mSingleton;
+            static EntityManager singleton;
+            return &singleton;
         }
 
 
