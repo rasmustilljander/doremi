@@ -9,21 +9,21 @@ RWStructuredBuffer<Frustum> out_Frustums : register(u0);
 void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
-    uint3 numThreadGroups = uint3(80, 45, 1);
-    uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
+    uint3 numThreads = uint3(ceil(SCREEN_WIDTH / BLOCK_SIZE), ceil(SCREEN_HEIGHT / BLOCK_SIZE), 1);
+    uint3 numThreadGroups = uint3(ceil(numThreads.x / BLOCK_SIZE), ceil(numThreads.y / BLOCK_SIZE), 1);
     // View space eye position is always at the origin.
     const float3 eyePos = float3(0, 0, 0);
 
     float4 screenSpace[4];
     // Top left point
     //DEBUG groupID = dispatchThreadID
-    screenSpace[0] = float4(input.groupID.xy * BLOCK_SIZE, -1.0f, 1.0f);
+    screenSpace[0] = float4(input.dispatchThreadID.xy * BLOCK_SIZE, -1.0f, 1.0f);
     // Top right point
-    screenSpace[1] = float4(float2(input.groupID.x + 1, input.groupID.y) * BLOCK_SIZE, -1.0f, 1.0f);
+    screenSpace[1] = float4(float2(input.dispatchThreadID.x + 1, input.dispatchThreadID.y) * BLOCK_SIZE, -1.0f, 1.0f);
     // Bottom left point
-    screenSpace[2] = float4(float2(input.groupID.x, input.groupID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
+    screenSpace[2] = float4(float2(input.dispatchThreadID.x, input.dispatchThreadID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
     // Bottom right point
-    screenSpace[3] = float4(float2(input.groupID.x + 1, input.groupID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
+    screenSpace[3] = float4(float2(input.dispatchThreadID.x + 1, input.dispatchThreadID.y + 1) * BLOCK_SIZE, -1.0f, 1.0f);
 
     float3 viewSpace[4];
     Frustum frustum;
@@ -45,9 +45,9 @@ void CS_main(ComputeShaderInput input)
 
     // Store the computed frustum in global memory.
 
-    if (input.groupThreadID.x == 0 && input.groupThreadID.y == 0)
+    if (input.dispatchThreadID.x < numThreads.x && input.dispatchThreadID.y < numThreads.y)
     {
-        uint index = input.groupID.x + (input.groupID.y * numThreadGroups.x);
+        uint index = input.dispatchThreadID.x + (input.dispatchThreadID.y * numThreads.x);
         out_Frustums[index] = frustum;
     }
 

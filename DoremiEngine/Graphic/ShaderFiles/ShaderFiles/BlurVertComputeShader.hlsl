@@ -1,5 +1,4 @@
 #include "CommonInclude.hlsl"
-//#define BLUR_SIZE 5
 #define BLOCK_SIZE 256
 
 Texture2D glowmap : register (t0);

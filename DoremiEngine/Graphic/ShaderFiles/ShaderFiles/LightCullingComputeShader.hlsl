@@ -29,10 +29,6 @@ RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u4);
 RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u5);
 RWTexture2D<float4> backbuffer : register(u6);
 
-cbuffer LightInfo : register(b1)
-{
-    Light lights[NUM_LIGHTS];
-};
 
 groupshared uint uMinDepth;
 groupshared uint uMaxDepth;

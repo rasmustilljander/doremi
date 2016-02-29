@@ -38,19 +38,6 @@ struct Light
     float3 pad;
 };
 
-//struct MaterialData
-//{
-//    int mapMasks;
-//    float3 color;
-//    float diffuse;
-//    float3 ambColor;
-//    float specCosine;
-//    float3 specColor;
-//    float specEccentricity;
-//    float specRollOff;
-//    float2 pad;
-//};
-
 struct Plane
 {
     float3 N;   // Plane normal.
@@ -61,29 +48,15 @@ struct Frustum
     Plane plane[4];   // left, right, top, bottom frustum planes.
 };
 
-
 StructuredBuffer<uint> o_LightIndexList : register(t1);
 StructuredBuffer<uint> t_LightIndexList : register(t2);
 StructuredBuffer<LightGridInfo> o_LightGrid : register(t3);
 StructuredBuffer<LightGridInfo> t_LightGrid : register(t4);
 
-
 cbuffer LightInfo : register(b0)
 {
     Light light[NUM_LIGHTS];
 };
-
-//cbuffer MaterialMessage : register(b1)
-//{
-//    float nodeName;
-//    float diffuseTexturePath;
-//    float glowTexturePath;
-//    float specTexturePath;
-//    float bumpTexturePath;
-//    int type;
-//    float2 pad;
-//    MaterialData materialData;
-//};
 
 cbuffer MaterialData : register(b1)
 {
@@ -102,7 +75,6 @@ Texture2D ObjTexture : register(t0);
 Texture2D GlowTexture : register(t5);
 
 SamplerState ObjSamplerState : register(s0);
-
 
 float3 CalcDirectionalLight(PixelInputType input, Light l)
 {
@@ -123,8 +95,6 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
-
-
     float3 normal = normalize(input.normal);
 
     float3 scatteredLight, reflectedLight;
@@ -148,7 +118,6 @@ float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
         reflectedLight = l.color * specular * attenuation;
         return min(texcolor.rgb * scatteredLight + reflectedLight, float3(1, 1, 1)) * l.intensity;
     }
-
     return float3(0, 0, 0);
 }
 
@@ -182,7 +151,6 @@ PixelOutputType PS_main(PixelInputType input)
 
     texcolor = saturate(texcolor);
 
-
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
@@ -208,10 +176,8 @@ PixelOutputType PS_main(PixelInputType input)
 
     output.diffuse = float4(rgb, 1) * texcolor * 2.5f + texcolor * 0.25;
 
-    float depth = (input.position.z/input.position.w) + 1;
+    float depth = (input.position.z/input.position.w) * -1 + 1.02;  //Add .02 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);
 
     return output;
-
-
 }

@@ -67,6 +67,12 @@ cbuffer CameraMatrixBuffer : register(b0)
     float pad;
 };
 
+
+cbuffer LightInfo : register(b1)
+{
+    Light lights[NUM_LIGHTS];
+};
+
 struct Frustum
 {
     Plane plane[4];   // left, right, top, bottom frustum planes.
