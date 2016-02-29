@@ -10,6 +10,10 @@
 /// Engine
 // Audio
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
+// Graphic
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 /// Standard Libraries
 #include <unordered_map>
 #include <vector>
@@ -63,7 +67,16 @@ namespace Doremi
             if(p_event->eventType == EventType::ChangeMenuState)
             {
                 ChangeMenuState* realEvent = static_cast<ChangeMenuState*>(p_event);
-                m_state = realEvent->state;
+                // This is a bit ugly but since buttons only can send events for now i figured we do it here!
+                if(realEvent->state == DoremiStates::FULLSCREEN)
+                {
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetFullscreen(fullscreen);
+                    fullscreen = !fullscreen;
+                }
+                else
+                {
+                    m_state = realEvent->state;
+                }
             }
             else if(p_event->eventType == EventType::Trigger)
             {

@@ -39,6 +39,7 @@ namespace Doremi
             void CheckTrigger(TriggerEvent* p_event);
             DoremiStates m_state;
             int m_channel; // Used for playing the correct background sound for the state
+            bool fullscreen;
         };
     }
 }

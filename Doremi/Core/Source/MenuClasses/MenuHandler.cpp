@@ -69,7 +69,7 @@ namespace Doremi
 
             DoremiStates statesForButtons[3];
             statesForButtons[0] = DoremiStates::RUNGAME;
-            statesForButtons[1] = DoremiStates::OPTIONS;
+            statesForButtons[1] = DoremiStates::FULLSCREEN; // TODOXX This is really the options button...
             statesForButtons[2] = DoremiStates::EXIT;
 
             length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));

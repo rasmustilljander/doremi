@@ -4,6 +4,7 @@
 
 #include <vector>
 
+struct SDL_Window;
 namespace DoremiEngine
 {
     namespace Graphic
@@ -112,6 +113,8 @@ namespace DoremiEngine
             */
             void DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
+            void SetFullscreen(const bool& p_fullscreen) override;
+
         private:
             /**
             Render all meshes
@@ -166,6 +169,7 @@ namespace DoremiEngine
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;
             DirectX::XMFLOAT2 m_screenResolution;
+            SDL_Window* m_window = nullptr;
         };
     }
 }

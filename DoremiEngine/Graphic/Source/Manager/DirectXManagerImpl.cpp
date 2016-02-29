@@ -47,12 +47,23 @@ namespace DoremiEngine
 
             if(GetActiveWindow() == nullptr)
             {
-                SDL_Window* win = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
-                                                   SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
-                if(!win)
+                m_window = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
+                                            SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
+
+                if(!m_window)
                 {
                     std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
                     SDL_QUIT;
+                }
+            }
+            else
+            {
+                std::cout << "Window already initialized, some features might be disabled! Please try to initialize window through graphic module" << std::endl;
+                std::cout << "Will try to fetch window by ID, volotile function " << std::endl;
+                m_window = SDL_GetWindowFromID(0);
+                if(m_window == nullptr)
+                {
+                    std::cout << "Couldn't fetch window from ID, some options disabled " << std::endl;
                 }
             }
             DXGI_SWAP_CHAIN_DESC scd;
@@ -1007,6 +1018,25 @@ namespace DoremiEngine
         {
             // TODORT Could be redesigned so that this class asks MeshManager for it's data instead
             transRenderData.push_back(std::move(p_renderData));
+        }
+
+        void DirectXManagerImpl::SetFullscreen(const bool& p_fullscreen)
+        {
+            if(m_window == nullptr)
+            {
+                // No window for some strange reason, log error
+                std::cout << "No active sdl window when changing to fullscreen" << std::endl;
+                return;
+            }
+            if(p_fullscreen)
+            {
+
+                SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+            }
+            else
+            {
+                SDL_SetWindowFullscreen(m_window, 0);
+            }
         }
     }
 }

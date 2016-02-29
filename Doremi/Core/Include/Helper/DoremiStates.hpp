@@ -17,6 +17,7 @@ namespace Doremi
             PAUSE,
             VICTORY,
             EXIT,
+            FULLSCREEN,
         };
     }
 }
