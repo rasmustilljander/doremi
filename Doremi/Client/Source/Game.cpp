@@ -69,6 +69,7 @@
 
 // Timer
 #include <Doremi/Core/Include/Timing/TimerManager.hpp>
+#include <Utility/Utilities/Include/Chrono/Timer.hpp>
 
 // Third party
 
@@ -262,22 +263,15 @@ namespace Doremi
         size_t length = m_managers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
         // AudioHandler::GetInstance()->Update(p_deltaTime);
-        // TODORT
-        // TODOLOG
-        // Utility::Timer::MeasureTimer& timer = Utility::Timer::MeasureTimer::GetInstance();
         // Have all managers update
         for(size_t i = 0; i < length; i++)
         {
-            // TODORT
-            // TODOLOG
-            // Utility::Timer::MeasureInfo& info = timer.GetTimer(m_managers.at(i)->GetName());
-            // info.Reset().Start();
+            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
             m_managers.at(i)->Update(p_deltaTime);
-            // info.Stop();
+            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
 
         CameraHandler::GetInstance()->UpdateInput(p_deltaTime);
-
 
         // PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
 
@@ -360,7 +354,9 @@ namespace Doremi
         size_t length = m_graphicalManagers.size();
         for(size_t i = 0; i < length; i++)
         {
+            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
             m_graphicalManagers.at(i)->Update(p_deltaTime);
+            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
         TIME_FUNCTION_STOP
     }
