@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <Windows.h>
 
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 // SKITKOD TODOEA
 // Project specific
 #include <Manager/GraphicManager.hpp>
@@ -108,57 +109,106 @@ namespace Doremi
             // Check if any one point of the cube is in the view frustum.
             for (int i = 0; i < 6; ++i)
             {
-
-                //DirectX::XMFLOAT3 t_collideCheckFloats;
-                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center)))));
-                //if (t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x <= 0)
+                // for circle
+                DirectX::XMFLOAT3 t_collideCheckFloats;
+                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center)))));
+                if (/*t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x*/p_center.z > 0)
+                {
+                    return false;
+                }
+                //if (/*t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x*/p_center.x > 200)
                 //{
                 //    return false;
                 //}
-
-                DirectX::XMFLOAT3 t_collideCheckFloats;
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-                DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                {
-                    continue;
-                }
-
-                return false;
+                //if (/*t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x*/p_center.y > 200)
+                //{
+                //    return false;
+                //}
+                ///För box
+                //DirectX::XMFLOAT3 t_collideCheckFloats;
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //return false;
+                //DirectX::XMFLOAT3 t_collideCheckFloats;
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y - p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x, m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y + p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                //if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
+                //{
+                //    continue;
+                //}
+                //return false;
             }
             return true;
         }
@@ -183,11 +233,11 @@ namespace Doremi
             // DirectX::XMFLOAT4X4 t_view4x4 = t_camMatrices.ViewMatrix;
             float t_zMin;
             float r;
-
-
-
-
-
+            
+            PlayerHandlerClient* playerHandlerClient = (PlayerHandlerClient*)PlayerHandlerClient::GetInstance();
+            playerHandlerClient->
+                
+            
 
 
 
