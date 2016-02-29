@@ -15,7 +15,7 @@
 
 
 // Timer
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
 
 
 // Standard libraries
