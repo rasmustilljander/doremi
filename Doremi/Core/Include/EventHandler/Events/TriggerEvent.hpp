@@ -22,12 +22,24 @@ namespace Doremi
             /**
                 Write object to stream
             */
-            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override {}
+            void Write(Streamer* p_streamer, uint32_t& op_bitsWritten) override
+            {
+                p_streamer->WriteUnsignedInt32(triggerEntityID);
+                p_streamer->WriteUnsignedInt32(objectEntityID);
+                p_streamer->WriteUnsignedInt8((uint8_t)triggerType);
+                op_bitsWritten += sizeof(uint32_t) * 2 * 8 + sizeof(uint8_t) * 8;
+            }
 
             /**
                 Read object from stream
             */
-            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
+            void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override
+            {
+                triggerEntityID = p_streamer->ReadUnsignedInt32();
+                objectEntityID = p_streamer->ReadUnsignedInt32();
+                triggerType = (TriggerType)p_streamer->ReadUnsignedInt8();
+                op_bitsRead += sizeof(uint32_t) * 2 * 8 + sizeof(uint8_t) * 8;
+            }
 
             EntityID triggerEntityID;
             EntityID objectEntityID;
