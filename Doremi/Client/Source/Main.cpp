@@ -43,6 +43,7 @@ BOOL CtrlHandler(DWORD fdwCtrlType);
 namespace
 {
     Doremi::GameMain* gameMain = nullptr;
+    uint32_t closeFlag = 0;
 }
 
 void localMain()
@@ -111,12 +112,14 @@ void shutdown()
 {
     gameMain->Stop();
     delete gameMain;
+    gameMain = nullptr;
 }
 
 void attemptGracefulShutdown()
 {
     printStack();
     shutdown();
+    closeFlag = 1;
 #ifdef _DEBUG
     std::cin.get();
 #endif
@@ -161,11 +164,19 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
         // Handle the CTRL-C signal.
         case CTRL_C_EVENT:
             attemptGracefulShutdown();
+            while(closeFlag != 1)
+            {
+                Sleep(100);
+            }
             return (TRUE);
 
         // CTRL-CLOSE: confirm that the user wants to exit.
         case CTRL_CLOSE_EVENT:
             attemptGracefulShutdown();
+            while(closeFlag != 1)
+            {
+                Sleep(100);
+            }
             return (TRUE);
 
         default:
