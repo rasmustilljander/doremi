@@ -8,9 +8,9 @@ namespace Doremi
     namespace Core
     {
         class Manager;
-        class EntityInterface;
         class ScreenSpaceDrawer;
     }
+
     class GameMain : public Core::GameCore
     {
     public:
