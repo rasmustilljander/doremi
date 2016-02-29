@@ -51,15 +51,20 @@ namespace Doremi
         void MenuHandler::Initialize(std::vector<string> p_buttonTextureNames)
         {
             using namespace DirectX;
+
             // initialize currentbutton
             m_currentButton = -1;
+
             size_t length = p_buttonTextureNames.size();
             int offset = 5;
+
             // Gör höjden på varje knapp bero på upplösningen
             // Orienterad efter origin. Length används och fungerar även om den listan är för lång eftersom vi går efter extents från origin.
             float t_buttonHeightExtent = ((m_resolution.y - offset * 2) / static_cast<float>(length));
+
             // En knapp täcker halva skärmen. Extents åt båda hållen ger halva skärmen. Extentsen blir då en 4dedel
             float t_buttonWidthExtent = m_resolution.x * 0.25f;
+
             // Positionera I mitten av skärmen
             float t_buttonXPosition = m_resolution.x * 0.5f;
 
@@ -82,21 +87,27 @@ namespace Doremi
                 // Klassisk klur function i Y led. dirx startar resolution.y längs ner. Vi vill börja högst upp. Sedan subtrahera en hel knapp per i,
                 // och en offset för att första ska skjutas ned.
                 XMFLOAT2 t_position = XMFLOAT2(t_buttonXPosition, m_resolution.y - t_buttonHeightExtent * i * 2 - t_buttonHeightExtent + offset);
+
                 // Sätt size på knappen. Detta är extentsen...
                 XMFLOAT2 t_extent = XMFLOAT2(t_buttonWidthExtent, t_buttonHeightExtent - offset);
+
                 // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
                 Doremi::Core::ButtonMaterials t_buttonMaterials;
+
                 // Ladda materialinfo x2 Använder i+length som en ful hårdkodning... Därför måste listan med namn vara i rätt ordning där
                 // highlighttexturerna kommer sist.
                 t_buttonMaterials.m_vanillaMaterial =
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(p_buttonTextureNames[i]);
                 t_buttonMaterials.m_highLightedMaterial =
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(p_buttonTextureNames[i + length]);
+
                 // Ladda in meshen
                 DoremiEngine::Graphic::MeshInfo* t_meshInfo =
                     m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
+
                 // Skapa knapp å stoppa in i listan Menustate är riskmodd. Hårdkodat mot vilken ordning som namnen laddas in. Finns kommentarer till
                 // detta androp om ordning
+
                 m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, statesForButtons[i]));
             }
             m_inputHandler = new InputHandlerClient(m_sharedContext);

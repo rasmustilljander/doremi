@@ -32,3 +32,25 @@ VOut VS_main( VertexInputType input)
 	output.position = float4(vertexPosition_homoneneousspace, 0.0f, 1.0f);
 	return output;
 }
+
+//
+//cbuffer MatrixBuffer : register(b0)
+//{
+//    matrix worldMatrix;
+//};
+//
+//struct VertexInputOutput
+//{
+//    float2 position     : POSITION;
+//    float2 origo        : ORIGO;
+//    float2 halfize     : EXTENTS;
+//    float2 txtPos       : TEXCOORD;
+//    float2 txtSize      : TEXSIZE;
+//};
+//
+//
+//
+//VertexInputOutput VS_main(VertexInputOutput input)
+//{
+//    return input;
+//}

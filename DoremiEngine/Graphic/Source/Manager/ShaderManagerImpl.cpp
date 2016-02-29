@@ -6,6 +6,7 @@
 #include <Internal/Shader/PixelShaderImpl.hpp>
 #include <Internal/Shader/VertexShaderImpl.hpp>
 #include <Internal/Shader/ComputeShaderImpl.hpp>
+#include <Internal/Shader/GeometryShaderImpl.hpp>
 #include <Internal/Manager/ComputeShaderManagerImpl.hpp>
 #include <GraphicModuleContext.hpp>
 #include <string>
@@ -59,6 +60,30 @@ namespace DoremiEngine
             newShader->SetInputLayout(inputLayout);
             return newShader;
         }
+
+        GeometryShader* ShaderManagerImpl::BuildGeometryShader(const std::string& p_fileName)
+        {
+            // TODOKO make shaders save in map just like mesh info
+            std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
+            ID3D11GeometryShader* shader;
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+
+            DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined(DEBUG) || defined(_DEBUG)
+            shaderFlags |= D3DCOMPILE_DEBUG;
+            shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+            ID3DBlob* tShader;
+            std::wstring convertedName = StringToWstring(filePath);
+            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "GS_main", "ps_5_0", shaderFlags, 0, &tShader, 0);
+            res = m_directX.GetDevice()->CreateGeometryShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            GeometryShader* newShader = new GeometryShaderImpl();
+            newShader->SetShaderHandle(shader);
+            newShader->SetShaderName(p_fileName);
+            return newShader;
+        }
+
         PixelShader* ShaderManagerImpl::BuildPixelShader(const std::string& p_fileName)
         {
             // TODOKO make shaders save in map just like mesh info
@@ -114,10 +139,20 @@ namespace DoremiEngine
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->PSSetShader(p_shader->GetShaderHandle(), 0, 0);
         }
+        void ShaderManagerImpl::SetActiveGeometryShader(GeometryShader* p_shader)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            m_directX.GetDeviceContext()->GSSetShader(p_shader->GetShaderHandle(), 0, 0);
+        }
         void ShaderManagerImpl::SetActiveComputeShader(ComputeShader* p_shader)
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->CSSetShader(p_shader->GetShaderHandle(), 0, 0);
+        }
+        void ShaderManagerImpl::RemoveGeometryShader(GeometryShader* p_shader)
+        {
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            m_directX.GetDeviceContext()->GSSetShader(nullptr, 0, 0);
         }
     }
 }

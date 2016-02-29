@@ -15,10 +15,13 @@ namespace DoremiEngine
             virtual ~ShaderManagerImpl();
             VertexShader* BuildVertexShader(const std::string& p_fileName, D3D11_INPUT_ELEMENT_DESC p_inputDescription[], int p_arraySize) override;
             PixelShader* BuildPixelShader(const std::string& p_fileName) override;
+            GeometryShader* BuildGeometryShader(const std::string& p_fileName);
             ComputeShader* BuildComputeShader(const std::string& p_fileName) override;
 
             void SetActiveVertexShader(VertexShader* p_shader) override;
             void SetActivePixelShader(PixelShader* p_shader) override;
+            void SetActiveGeometryShader(GeometryShader* p_shader);
+            void RemoveGeometryShader(GeometryShader* p_shader);
             void SetActiveComputeShader(ComputeShader* p_shader) override;
 
         private:

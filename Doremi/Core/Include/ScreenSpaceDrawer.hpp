@@ -7,6 +7,7 @@ namespace DoremiEngine
         class RasterizerState;
         class PixelShader;
         class VertexShader;
+        class GeometryShader;
     }
     namespace Core
     {
@@ -27,6 +28,7 @@ namespace Doremi
             virtual ~ScreenSpaceDrawer();
             void Draw();
 
+
         private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             // Help functions
@@ -34,10 +36,16 @@ namespace Doremi
             void DrawServerBrowser();
             void DrawVictoryScreen();
             void CreateVictoryScreen();
+
+            void Begin2DDraw();
+
+            void End2DDraw();
+
             DirectX::XMFLOAT2 ConvertWithResolution(DirectX::XMFLOAT2 t_point);
             // Variables
             DoremiEngine::Graphic::PixelShader* m_menuPixelShader;
             DoremiEngine::Graphic::VertexShader* m_menuVertexShader;
+            DoremiEngine::Graphic::GeometryShader* m_menuGeometryShader;
             VictoryScreen* m_victoryScreen;
             DirectX::XMFLOAT2 m_resolution;
         };

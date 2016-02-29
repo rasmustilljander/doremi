@@ -86,10 +86,6 @@ namespace Doremi
         void DrawGame(double p_deltaTime);
 
         /**
-            Draws the menu screen
-        */
-        void DrawMenu(double p_deltaTime);
-        /**
             TOODCM doc
         */
         std::vector<Core::Manager*> m_managers;

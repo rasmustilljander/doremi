@@ -340,15 +340,6 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
-    void GameMain::DrawMenu(double p_deltaTime)
-    {
-
-        TIME_FUNCTION_START
-        MenuHandler* t_menuHandler = MenuHandler::GetInstance();
-        MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, t_menuHandler->GetButtons(), t_menuHandler->GetCurrentButton());
-        TIME_FUNCTION_STOP
-    }
-
     void GameMain::DrawGame(double p_deltaTime)
     {
         TIME_FUNCTION_START
@@ -379,6 +370,8 @@ namespace Doremi
         }
         // WE always draw 2d stuff
         m_screenSpaceDrawer->Draw();
+
+        m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
         TIME_FUNCTION_STOP
     }
 

@@ -33,9 +33,20 @@ namespace Doremi
                 {"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
                 {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             };
+
+            // D3D11_INPUT_ELEMENT_DESC ied[] = {
+            //    { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "ORIGO", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "EXTENTS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //    { "TEXSIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            //};
+
             m_menuVertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("TextVertexShader.hlsl", ied, ARRAYSIZE(ied));
 
+            /*m_menuGeometryShader =
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");*/
 
             CreateVictoryScreen();
         }
@@ -106,10 +117,27 @@ namespace Doremi
             }
         }
 
-        void ScreenSpaceDrawer::DrawVictoryScreen()
+        void ScreenSpaceDrawer::Begin2DDraw()
         {
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_menuPixelShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);
+            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveGeometryShader(m_menuGeometryShader);
+
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableBlend();
+        }
+
+        void ScreenSpaceDrawer::End2DDraw()
+        {
+
+            // Disable blend again?
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
+        }
+
+        void ScreenSpaceDrawer::DrawVictoryScreen()
+        {
+            Begin2DDraw();
+
+
             std::vector<ScreenObject*> t_screenObjects = m_victoryScreen->GetScreen();
             size_t length = t_screenObjects.size();
             for(size_t i = 0; i < length; i++)
@@ -127,17 +155,19 @@ namespace Doremi
             /*m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
                                                                                                                t_depthStencil->GetDepthStencilState());*/
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
-                                                                                                   t_depthStencil->GetDepthStencilState());
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere
-            // else too...
+                                                                                                  t_depthStencil->GetDepthStencilState());
+
+            End2DDraw();
         }
 
         void ScreenSpaceDrawer::DrawMainMenu()
         {
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableBlend();
+            Begin2DDraw();
+
+            // Get buttons to draw
             std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_menuPixelShader);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);
+
+            // For each button we add to render list
             size_t length = t_buttonsToDraw.size();
             for(size_t i = 0; i < length; i++)
             {
@@ -145,20 +175,26 @@ namespace Doremi
                                                                                                           *t_buttonsToDraw[i].m_materialInfo,
                                                                                                           t_buttonsToDraw[i].m_transformMatrix);
             }
+            // Set rasteriser to defau,t
             DoremiEngine::Graphic::RasterizerState* t_rasterizer =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
+
+
+            // Set depth stencil to default
             DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
-            //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
-            //                                                                                                   t_depthStencil->GetDepthStencilState());
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
-                                                                                                                   t_depthStencil->GetDepthStencilState());
 
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOXX should not be here if it\s somewhere
-            // else too...
+            // Draw the sprites
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
+                                                                                                  t_depthStencil->GetDepthStencilState());
+
+            End2DDraw();
         }
 
-        void ScreenSpaceDrawer::DrawServerBrowser() {}
+        void ScreenSpaceDrawer::DrawServerBrowser()
+        {
+            Begin2DDraw();
+            End2DDraw();
+        }
     }
 }
