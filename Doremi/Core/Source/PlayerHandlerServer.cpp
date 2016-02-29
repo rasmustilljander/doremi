@@ -62,6 +62,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::GunFireToggle, this);
             t_EventHandler->Subscribe(EventType::AnimationTransition, this);
             t_EventHandler->Subscribe(EventType::DamageTaken, this);
+            t_EventHandler->Subscribe(EventType::Trigger, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
@@ -669,6 +670,23 @@ namespace Doremi
                     DamageTakenEvent* t_damageTakenEvent = static_cast<DamageTakenEvent*>(p_event);
 
                     QueueDamageEventToPlayers(t_damageTakenEvent);
+                }
+                case Doremi::Core::EventType::Trigger:
+                {
+                    TriggerEvent* trigEvent = static_cast<TriggerEvent*>(p_event);
+                    // Check if an entity has entered a goal
+                    if(trigEvent->triggerType == TriggerType::GoalTrigger)
+                    {
+                        // Check if it was a player and send event
+                        for(auto& t_player : m_playerMap)
+                        {
+                            if(t_player.second->m_playerEntityID == trigEvent->objectEntityID)
+                            {
+                                t_player.second->m_networkEventSender->QueueEventToFrame(new TriggerEvent(*trigEvent));
+                            }
+                        }
+                    }
+                    break;
                 }
                 default:
                     break;
