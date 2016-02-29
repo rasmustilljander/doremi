@@ -121,7 +121,7 @@ namespace DoremiEngine
 
             Configuration::ConfigurationModule& GetConfigurationModule() const
             {
-                if(m_timing != nullptr)
+                if(m_configuration != nullptr)
                 {
                     return *m_configuration;
                 }
