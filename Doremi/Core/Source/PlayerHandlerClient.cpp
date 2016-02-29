@@ -9,6 +9,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/PlayerCreationEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/GunFireToggleEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
@@ -102,6 +103,16 @@ namespace Doremi
                 UpdatePlayerPositions(m_player);
                 UpdatePlayerRotations(m_player);
                 UpdateFiring(m_player);
+            }
+
+            // Check to exit TODO move place of code
+            if(m_player->m_inputHandler->CheckForOnePress(static_cast<uint32_t>(UserCommandPlaying::ExitGame)))
+            {
+                ChangeMenuState* t_newEvent = new ChangeMenuState();
+                t_newEvent->state = DoremiStates::MAINMENU;
+
+
+                EventHandler::GetInstance()->BroadcastEvent(t_newEvent);
             }
 
             TIME_FUNCTION_STOP
@@ -244,6 +255,13 @@ namespace Doremi
         }
 
         bool PlayerHandlerClient::PlayerExists() { return m_player->IsCreated; }
+
+        void PlayerHandlerClient::RemovePlayer()
+        {
+            m_player->IsCreated = false;
+            m_player->m_networkEventReceiver->Reset();
+            m_player->m_frequencyBufferHandler->Reset();
+        }
 
         void PlayerHandlerClient::OnEvent(Event* p_event)
         {

@@ -377,6 +377,9 @@ namespace Doremi
             // std::cout << "Setting new snapshotsequence" << std::endl;
             m_snapshotSequenceReal = p_sequence - m_snapshotDelay;
             m_snapshotSequenceUsed = p_sequence - m_snapshotDelay;
+
+            cout << "Setting sequence: " << (uint32_t)m_snapshotSequenceReal << " from: " << (uint32_t)p_sequence << endl;
+            cout << "Num of snapshots when setting sequence:" << m_DelayedSnapshots.size() << endl;
         }
 
 
@@ -445,5 +448,21 @@ namespace Doremi
         }
 
         uint8_t InterpolationHandler::GetRealSnapshotSequence() { return m_snapshotSequenceReal; }
+
+        void InterpolationHandler::Reset()
+        {
+            m_snapshotSequenceReal = 0;
+            m_snapshotSequenceUsed = 0;
+
+
+            for(auto& t_snapshot : m_DelayedSnapshots)
+            {
+                for(auto& t_event : t_snapshot->Events)
+                {
+                    delete t_event;
+                }
+            }
+            m_DelayedSnapshots.clear();
+        }
     }
 }

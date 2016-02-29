@@ -144,6 +144,16 @@ namespace Doremi
             return r_eventList;
         }
 
+        void NetworkEventReceiver::Reset()
+        {
+            for(auto& t_event : m_frameQueuedEvents)
+            {
+                delete t_event;
+            }
+            m_frameQueuedEvents.clear();
+            m_currentSequence = 0;
+        }
+
         // void NetworkEventSender::CheckNewAddRemoves(NetworkStreamer& p_streamer, uint32_t p_bufferSize, uint32_t& op_BytesRead)
         //{
         //    // Read AddRemove items

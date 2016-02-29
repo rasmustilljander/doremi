@@ -65,6 +65,8 @@ namespace Doremi
 
             bool PlayerExists();
 
+            void RemovePlayer();
+
             void OnEvent(Event* p_event) override;
 
             uint32_t GetLastJoinEventRead() { return m_lastJoinEventRead; }

@@ -104,6 +104,8 @@ namespace Doremi
             */
             uint8_t GetRealSnapshotSequence();
 
+            void Reset();
+
         private:
             /**
                 TODOCM doc

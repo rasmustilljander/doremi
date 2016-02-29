@@ -491,10 +491,10 @@ namespace Doremi
                     uint8_t t_IP_c = t_streamer.ReadUnsignedInt8(); // 1 byte
                     uint8_t t_IP_d = t_streamer.ReadUnsignedInt8(); // 1 byte
 
-                    cout << "Received server: " << t_name << "In state: " << (uint32_t)t_serverState << " With map: " << (uint32_t)t_map << endl;
-                    cout << "Players:" << (uint32_t)t_curNumPlayers << "/" << (uint32_t)t_maxNumPlayers << endl;
-                    cout << "IP: " << (uint32_t)t_IP_a << "." << (uint32_t)t_IP_b << "." << (uint32_t)t_IP_c << "." << (uint32_t)t_IP_d
-                         << " with port: " << t_port << endl;
+                    // cout << "Received server: " << t_name << "In state: " << (uint32_t)t_serverState << " With map: " << (uint32_t)t_map << endl;
+                    // cout << "Players:" << (uint32_t)t_curNumPlayers << "/" << (uint32_t)t_maxNumPlayers << endl;
+                    // cout << "IP: " << (uint32_t)t_IP_a << "." << (uint32_t)t_IP_b << "." << (uint32_t)t_IP_c << "." << (uint32_t)t_IP_d
+                    //     << " with port: " << t_port << endl;
 
                     // Update the server list
                     t_serverListHandler->UpdateServer(t_name, t_serverState, t_map, t_ping, t_curNumPlayers, t_maxNumPlayers, t_port, t_IP_a, t_IP_b,

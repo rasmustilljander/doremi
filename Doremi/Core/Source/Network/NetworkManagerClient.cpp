@@ -445,11 +445,18 @@ namespace Doremi
 
                     // Set state as disconnected
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnection.LastResponse = 0;
+                    t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
+
 
                     // Send disconnection message to server for good measure
                     t_netMessages->SendDisconnect();
 
-                    // TODO send change gamestate event
+                    // Create change state event
+                    ChangeMenuState* t_changeMenuEvent = new ChangeMenuState();
+                    t_changeMenuEvent->state = DoremiStates::MAINMENU;
+
+                    EventHandler::GetInstance()->BroadcastEvent(t_changeMenuEvent);
                 }
             }
         }
@@ -485,14 +492,44 @@ namespace Doremi
                 {
                     // Change connection state
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::CONNECTING;
+                    t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
 
-                    // TODOCM maybe send first message here, or check vs other event that sends IP to server or something
+                    // Create adress from selected server
+                    ServerListHandler* t_serverListHandler = ServerListHandler::GetInstance();
+                    IP_Split t_serverIP = t_serverListHandler->GetSelectedServerIP();
+                    uint16_t t_serverPort = t_serverListHandler->GetSelectedServerPort();
+
+
+                    DoremiEngine::Network::NetworkModule& t_NetworkModule = m_sharedContext.GetNetworkModule();
+                    t_connections->m_serverConnection.ConnectingSocketHandle = t_NetworkModule.CreateUnreliableSocket();
+
+                    // If adress exist we remove, we don't remove them on delete for rejoin?
+                    if(t_connections->m_serverConnection.ConnectingAdress != nullptr)
+                    {
+                        delete t_connections->m_serverConnection.ConnectingAdress;
+                    }
+                    if(t_connections->m_serverConnection.ConnectedAdress != nullptr)
+                    {
+                        delete t_connections->m_serverConnection.ConnectedAdress;
+                    }
+
+                    // Create connecting adress
+                    t_connections->m_serverConnection.ConnectingAdress = t_NetworkModule.CreateAdress(127, 0, 0, 1, 5050);
+                    // t_connections->m_serverConnection.ConnectingAdress = t_NetworkModule.CreateAdress(t_serverIP.IP_a, t_serverIP.IP_b,
+                    // t_serverIP.IP_c, t_serverIP.IP_d, t_serverPort);
+                    cout << (uint32_t)t_serverIP.IP_a << "." << (uint32_t)t_serverIP.IP_b << "." << (uint32_t)t_serverIP.IP_c << "."
+                         << (uint32_t)t_serverIP.IP_d << endl;
                 }
                 else
                 {
                     // TODOXX if we want multiple states(in game top menu) this wont work
                     // Change connection state
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+
+                    // Remove sockets
+                    DoremiEngine::Network::NetworkModule& t_NetworkModule = m_sharedContext.GetNetworkModule();
+                    t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectedSocketHandle);
+                    t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectingSocketHandle);
                 }
             }
         }

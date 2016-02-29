@@ -42,6 +42,10 @@ namespace Doremi
             void UpdateServer(std::string p_name, ServerStates p_serverState, GameMap p_map, uint16_t p_ping, uint8_t p_currentNumPlayers,
                               uint8_t p_maxNumPlayers, uint16_t p_port, uint8_t p_IP_a, uint8_t p_IP_b, uint8_t p_IP_c, uint8_t p_IP_d);
 
+            IP_Split GetSelectedServerIP();
+
+            uint16_t GetSelectedServerPort();
+
         private:
             ServerListHandler();
             ~ServerListHandler();

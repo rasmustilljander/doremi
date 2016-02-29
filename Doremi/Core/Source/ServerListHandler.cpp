@@ -81,5 +81,23 @@ namespace Doremi
             m_serversList[t_key].MaxNumPlayers = p_maxNumPlayers;
             m_serversList[t_key].LastResponse = 0;
         }
+
+        IP_Split ServerListHandler::GetSelectedServerIP()
+        {
+            if(m_serversList.size())
+            {
+                return m_serversList.begin()->first.first;
+            }
+            return IP_Split(127, 0, 0, 1);
+        }
+
+        uint16_t ServerListHandler::GetSelectedServerPort()
+        {
+            if(m_serversList.size())
+            {
+                return m_serversList.begin()->first.second;
+            }
+            return 0;
+        }
     }
 }

@@ -56,6 +56,11 @@ namespace Doremi
             */
             uint8_t GetNextSequenceUsed();
 
+            /**
+                TODOCM doc
+            */
+            void Clear();
+
         private:
             /**
                 Queued events for the current frame

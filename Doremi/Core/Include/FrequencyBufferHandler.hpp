@@ -45,6 +45,8 @@ namespace Doremi
             */
             void SetSequence(uint8_t p_sequence);
 
+            void Reset();
+
         private:
             /**
                 Buffered frequencies, both for incomming and sending

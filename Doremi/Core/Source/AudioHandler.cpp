@@ -53,6 +53,13 @@ namespace Doremi
             m_backgroundSounds[BackgroundSound::InGameMainTheme] = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
             EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
             m_backgroundChannelId = -1;
+
+            // Start background
+            if(m_backgroundSounds.count(BackgroundSound::InGameMainTheme) != 0)
+            {
+                DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
+            }
         }
 
         AudioHandler::~AudioHandler()

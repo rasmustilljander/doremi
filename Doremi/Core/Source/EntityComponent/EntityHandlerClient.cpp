@@ -9,6 +9,8 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/InterpolationHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandlerClient.hpp>
 
 #include <iostream>
 
@@ -54,9 +56,17 @@ namespace Doremi
             for(size_t i = 0; i < NumEntities; i++)
             {
                 t_entityFactory->ScrapEntity(i);
+                t_entityManager->RemoveEntity(i);
             }
 
             t_entityManager->Reset();
+
+            static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->RemovePlayer();
+            InterpolationHandler* t_interpolationHandler = InterpolationHandler::GetInstance();
+            t_interpolationHandler->Reset();
+
+            uint32_t t_numEvents = static_cast<EventHandlerClient*>(EventHandler::GetInstance())->GetNumberOfEvents();
+            cout << "Num events on reset:" << t_numEvents << endl;
         }
 
         void EntityHandlerClient::OnEvent(Event* p_event)

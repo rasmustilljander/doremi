@@ -2,7 +2,10 @@
 /// Project specific
 #include <Handler/StateHandler.hpp>
 #include <EventHandler/EventHandler.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
+#include <Doremi/Core/Include/InputHandlerClient.hpp>
+
+
 // Events
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
@@ -85,6 +88,14 @@ namespace Doremi
 
                         EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
                     }
+                    else if (realEvent->state == DoremiStates::MAINMENU)
+                    {
+                        // If we go back to main menu we set camera
+                        // Reset cursor to be visible
+                        InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
+                        t_inputHandler->SetCursorInvisibleAndMiddle(false);
+                    }
+
                     m_state = realEvent->state;
                 }
             }

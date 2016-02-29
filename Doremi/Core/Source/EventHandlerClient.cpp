@@ -69,5 +69,7 @@ namespace Doremi
             m_eventBox.clear();
             TIME_FUNCTION_STOP
         }
+
+        uint32_t EventHandlerClient::GetNumberOfEvents() { return m_eventBox.size(); }
     }
 }

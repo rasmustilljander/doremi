@@ -280,6 +280,9 @@ namespace Doremi
                 // TODOCM If we're based on 0 sequence or something we'll need to fix this, seems not to be a problem with input?
                 static_cast<InputHandlerServer*>(t_playerServ->m_inputHandler)->ClearInput();
 
+                // Clera event sender
+                t_playerServ->m_networkEventSender->Clear();
+
                 // Remove the entity
                 EntityHandler::GetInstance().RemoveEntity(t_playerServ->m_playerEntityID);
 

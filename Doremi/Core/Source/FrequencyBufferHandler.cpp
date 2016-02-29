@@ -86,5 +86,13 @@ namespace Doremi
         float FrequencyBufferHandler::GetFrequencyForFrame() { return m_frequence; }
 
         void FrequencyBufferHandler::SetSequence(uint8_t p_sequence) { m_realSequence = p_sequence - m_bufferDelay; }
+
+        void FrequencyBufferHandler::Reset()
+        {
+            m_bufferedFrequencies.clear();
+            m_realSequence = 0;
+            m_frequence = 0;
+            m_sequenceByLastFrequence = 0;
+        }
     }
 }

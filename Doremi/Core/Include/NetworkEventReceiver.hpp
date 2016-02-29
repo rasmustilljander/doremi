@@ -36,6 +36,8 @@ namespace Doremi
             */
             std::list<Event*> GetEventsReceivedFromServer();
 
+            void Reset();
+
         private:
             /**
                 Interpet events and remove them, used when we already have used the events

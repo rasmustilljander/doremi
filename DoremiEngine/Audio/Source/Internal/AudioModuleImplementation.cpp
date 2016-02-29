@@ -270,7 +270,7 @@ namespace DoremiEngine
             {
                 // Do nothing
             }
-            m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_FREE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
+            m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
             m_fmodChannel[p_channelID]->setVolume(0.5f);
         }
 

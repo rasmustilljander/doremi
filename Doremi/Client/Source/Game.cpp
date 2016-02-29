@@ -244,15 +244,15 @@ namespace Doremi
             Draw(t_timeHandler->Frame);
 
             // Escape
-            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
-            if(inputHandler != nullptr)
-            {
-                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::ExitGame))
-                {
-                    break;
-                }
-            }
+            // PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+            // InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
+            // if(inputHandler != nullptr)
+            //{
+            //    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::ExitGame))
+            //    {
+            //        break;
+            //    }
+            //}
         }
         TIME_FUNCTION_STOP
     }

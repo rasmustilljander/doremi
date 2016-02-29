@@ -26,6 +26,8 @@ namespace Doremi
             */
             void DeliverEvents();
 
+            uint32_t GetNumberOfEvents();
+
         private:
             EventHandlerClient();
             ~EventHandlerClient();

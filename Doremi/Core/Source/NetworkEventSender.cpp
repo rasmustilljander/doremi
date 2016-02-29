@@ -223,5 +223,26 @@ namespace Doremi
         }
 
         uint8_t NetworkEventSender::GetNextSequenceUsed() { return m_nextSequence; }
+
+        void NetworkEventSender::Clear()
+        {
+            for(auto& t_event : m_frameQueuedEvents)
+            {
+                delete t_event;
+            }
+            m_frameQueuedEvents.clear();
+
+            m_nextSequence = 0;
+
+            for(auto& t_eventLists : m_bufferedQueuesOfEvent)
+            {
+                for(auto& t_event : t_eventLists)
+                {
+                    delete t_event;
+                }
+                t_eventLists.clear();
+            }
+            m_bufferedQueuesOfEvent.clear();
+        }
     }
 }
