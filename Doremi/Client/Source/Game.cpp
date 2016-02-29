@@ -46,7 +46,7 @@
 #include <Doremi/Core/Include/Manager/CharacterControlSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/RigidTransformSyncManager.hpp>
 #include <Doremi/Core/Include/Manager/JumpManager.hpp>
-#include <Doremi/Core/Include/Manager/SkyBoxManager.hpp>
+#include <Doremi/Core/Include/SkyBoxHandler.hpp>
 #include <Doremi/Core/Include/Manager/GravityManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleGraphicManager.hpp>
 #include <Doremi/Core/Include/Manager/PressureParticleManager.hpp>
@@ -119,6 +119,7 @@ namespace Doremi
         PositionCorrectionHandler::StartPositionCorrectionHandler(sharedContext);
         EntityFactory::StartupEntityFactory(sharedContext);
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
+        SkyBoxHandler::StartupSkyBoxHandler(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
@@ -128,7 +129,6 @@ namespace Doremi
         AddToGraphicalManagerList(new PressureParticleGraphicManager(sharedContext));
         AddToGraphicalManagerList(new GraphicManager(sharedContext));
         AddToGraphicalManagerList(new SkeletalAnimationCoreManager(sharedContext));
-        AddToGraphicalManagerList(new SkyBoxManager(sharedContext));
         AddToManagerList(new AudioManager(sharedContext));
         AddToManagerList(new NetworkManagerClient(sharedContext));
         AddToManagerList(new RigidTransformSyncManager(sharedContext));
@@ -350,6 +350,8 @@ namespace Doremi
             m_graphicalManagers.at(i)->Update(p_deltaTime);
             Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
+
+        SkyBoxHandler::GetInstance()->Draw();
         TIME_FUNCTION_STOP
     }
 
@@ -368,6 +370,7 @@ namespace Doremi
             default:
                 break;
         }
+
         // WE always draw 2d stuff
         m_screenSpaceDrawer->Draw();
 

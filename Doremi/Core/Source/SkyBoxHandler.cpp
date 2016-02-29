@@ -1,5 +1,5 @@
 // Project specific
-#include <Manager/SkyBoxManager.hpp>
+#include <Doremi/Core/Include/SkyBoxHandler.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
@@ -21,15 +21,32 @@ namespace Doremi
 {
     namespace Core
     {
-        SkyBoxManager::SkyBoxManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "SkyBoxManager")
+        SkyBoxHandler* SkyBoxHandler::m_sigleton = nullptr;
+
+        void SkyBoxHandler::StartupSkyBoxHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            CreateSkyBox();
+            if(m_sigleton != nullptr)
+            {
+                std::runtime_error("StartupSkyBoxHandler was called multiple times");
+            }
+            m_sigleton = new SkyBoxHandler(p_sharedContext);
         }
 
-        SkyBoxManager::~SkyBoxManager() {}
+        SkyBoxHandler* SkyBoxHandler::GetInstance()
+        {
+            if(m_sigleton == nullptr)
+            {
+                std::runtime_error("GetInstance was called before StartupSkyBoxHandler");
+            }
+            return m_sigleton;
+        }
+
+        SkyBoxHandler::SkyBoxHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) { CreateSkyBox(); }
+
+        SkyBoxHandler::~SkyBoxHandler() {}
 
 
-        void SkyBoxManager::Update(double p_dt)
+        void SkyBoxHandler::Draw()
         {
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_skyBoxVertexShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_skyBoxPixelShader);
@@ -52,12 +69,9 @@ namespace Doremi
 
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_basicVertexShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_basicPixelShader);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw(); // TODOLH this should not be here. Make another
-            // manager that runs this. Has to be last and this
-            // is the last one atm
         }
 
-        void SkyBoxManager::CreateSkyBox()
+        void SkyBoxHandler::CreateSkyBox()
         {
             m_materialInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("SkyBox.dds");
             D3D11_SAMPLER_DESC t_sampDesc;
