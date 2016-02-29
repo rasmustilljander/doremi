@@ -109,7 +109,7 @@ namespace Doremi
             if(m_player->m_inputHandler->CheckForOnePress(static_cast<uint32_t>(UserCommandPlaying::ExitGame)))
             {
                 ChangeMenuState* t_newEvent = new ChangeMenuState();
-                t_newEvent->state = DoremiStates::MAINMENU;
+                t_newEvent->state = DoremiGameStates::MAINMENU;
 
 
                 EventHandler::GetInstance()->BroadcastEvent(t_newEvent);

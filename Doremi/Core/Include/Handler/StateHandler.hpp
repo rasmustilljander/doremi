@@ -30,16 +30,15 @@ namespace Doremi
             static void StartStateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             static void StopStateHandler();
             ~StateHandler();
-            DoremiStates GetState() const { return m_state; };
+            DoremiGameStates GetState() const { return m_state; };
         private:
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             StateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             static StateHandler* m_singleton;
             void OnEvent(Event* p_event) override;
             void CheckTrigger(TriggerEvent* p_event);
-            DoremiStates m_state;
+            DoremiGameStates m_state;
             int m_channel; // Used for playing the correct background sound for the state
-            bool fullscreen;
         };
     }
 }

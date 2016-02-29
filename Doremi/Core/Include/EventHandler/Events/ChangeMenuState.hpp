@@ -24,7 +24,7 @@ namespace Doremi
             */
             void Read(Streamer* p_streamer, uint32_t& op_bitsRead) override {}
 
-            DoremiStates state;
+            DoremiGameStates state;
         };
     }
 }

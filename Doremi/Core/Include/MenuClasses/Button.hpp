@@ -8,6 +8,18 @@ namespace Doremi
 {
     namespace Core
     {
+        enum class DoremiButtonActions
+        {
+            GO_TO_MAINMENU,
+            GO_TO_SERVER_BROWSER,
+            GO_TO_OPTIONS,
+            RUNGAME,
+            PAUSE,
+            VICTORY,
+            EXIT,
+            SET_FULLSCREEN,
+        };
+
         struct ButtonMaterials
         {
             DoremiEngine::Graphic::MaterialInfo* m_vanillaMaterial;
@@ -26,7 +38,7 @@ namespace Doremi
         {
         public:
             Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
-                   Core::DoremiStates p_menuState);
+                   Core::DoremiButtonActions p_menuState);
             Button();
             virtual ~Button();
             XMFLOAT2 m_position;
@@ -36,7 +48,7 @@ namespace Doremi
             // Kanske en texID för när den är highlightad?
             // Checks if mouse is inside this button
             bool CheckIfInside(int p_mousePosX, int p_mousePosY);
-            Core::DoremiStates m_menuState;
+            Core::DoremiButtonActions m_buttonAction;
             XMFLOAT4X4 m_transformMatrix;
 
         private:

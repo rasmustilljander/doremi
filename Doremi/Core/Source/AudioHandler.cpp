@@ -278,7 +278,7 @@ namespace Doremi
             {
                 ChangeMenuState* t_stateEvent = static_cast<ChangeMenuState*>(p_event);
 
-                if(t_stateEvent->state == DoremiStates::RUNGAME)
+                if(t_stateEvent->state == DoremiGameStates::RUNGAME)
                 {
                     if(m_backgroundSounds.count(BackgroundSound::InGameMainTheme) != 0)
                     {

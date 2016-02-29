@@ -454,7 +454,7 @@ namespace Doremi
 
                     // Create change state event
                     ChangeMenuState* t_changeMenuEvent = new ChangeMenuState();
-                    t_changeMenuEvent->state = DoremiStates::MAINMENU;
+                    t_changeMenuEvent->state = DoremiGameStates::MAINMENU;
 
                     EventHandler::GetInstance()->BroadcastEvent(t_changeMenuEvent);
                 }
@@ -488,7 +488,7 @@ namespace Doremi
                 NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
 
                 // If we are processing to run game we set us to connecting
-                if(t_changeMenuEvent->state == DoremiStates::RUNGAME)
+                if(t_changeMenuEvent->state == DoremiGameStates::RUNGAME)
                 {
                     // Change connection state
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::CONNECTING;

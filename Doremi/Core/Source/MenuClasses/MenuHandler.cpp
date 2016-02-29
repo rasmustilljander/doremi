@@ -5,6 +5,8 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 // Event
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
@@ -20,7 +22,7 @@ namespace Doremi
     namespace Core
     {
         MenuHandler::MenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
-            : m_sharedContext(p_sharedContext), m_resolution(p_resolution)
+            : m_sharedContext(p_sharedContext), m_resolution(p_resolution), m_isFullscreen(false)
         {
         }
 
@@ -67,11 +69,11 @@ namespace Doremi
                 std::runtime_error("Somone changed the number of buttons without adding states...");
             }
 
-            DoremiStates statesForButtons[4];
-            statesForButtons[0] = DoremiStates::RUNGAME;
-            statesForButtons[1] = DoremiStates::OPTIONS;
-            statesForButtons[2] = DoremiStates::EXIT;
-            statesForButtons[3] = DoremiStates::FULLSCREEN;
+            DoremiButtonActions statesForButtons[4];
+            statesForButtons[0] = DoremiButtonActions::RUNGAME;
+            statesForButtons[1] = DoremiButtonActions::GO_TO_OPTIONS;
+            statesForButtons[2] = DoremiButtonActions::EXIT;
+            statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
 
             length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
             for(size_t i = 0; i < length; i++)
@@ -128,10 +130,82 @@ namespace Doremi
             // check if player has clicked the mouse and is hovering over a button
             if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
             {
-                // passing state change event
-                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                menuEvent->state = m_buttonList[m_currentButton].m_menuState;
-                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+                switch(m_buttonList[m_currentButton].m_buttonAction)
+                {
+                    case Core::DoremiButtonActions::GO_TO_MAINMENU:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::MAINMENU;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::GO_TO_SERVER_BROWSER:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::SERVER_BROWSER;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::GO_TO_OPTIONS:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::OPTIONS;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::RUNGAME:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::RUNGAME;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::PAUSE:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::PAUSE;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::VICTORY:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::VICTORY;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::EXIT:
+                    {
+                        // passing state change event
+                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+                        menuEvent->state = DoremiGameStates::EXIT;
+                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+
+                        break;
+                    }
+                    case Core::DoremiButtonActions::SET_FULLSCREEN:
+                    {
+                        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetFullscreen(m_isFullscreen);
+                        m_isFullscreen = !m_isFullscreen;
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
             }
             else
             {

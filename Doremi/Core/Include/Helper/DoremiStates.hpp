@@ -8,7 +8,7 @@ namespace Doremi
 {
     namespace Core
     {
-        enum class DoremiStates
+        enum class DoremiGameStates
         {
             MAINMENU,
             SERVER_BROWSER,
@@ -17,7 +17,6 @@ namespace Doremi
             PAUSE,
             VICTORY,
             EXIT,
-            FULLSCREEN,
         };
     }
 }

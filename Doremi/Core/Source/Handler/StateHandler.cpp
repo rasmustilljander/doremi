@@ -64,7 +64,7 @@ namespace Doremi
         {
             EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
             EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
-            m_state = DoremiStates::MAINMENU;
+            m_state = DoremiGameStates::MAINMENU;
         }
         void StateHandler::OnEvent(Event* p_event)
         {
@@ -72,32 +72,23 @@ namespace Doremi
             {
                 ChangeMenuState* realEvent = static_cast<ChangeMenuState*>(p_event);
 
-                // This is a bit ugly but since buttons only can send events for now i figured we do it here!
-                if(realEvent->state == DoremiStates::FULLSCREEN)
+                // If the state is rungame, we should fetch what kind of map to load and later server to load
+                if(realEvent->state == DoremiGameStates::RUNGAME)
                 {
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetFullscreen(fullscreen);
-                    fullscreen = !fullscreen;
+                    LoadNewWorldEvent* t_loadWorldEvent = new LoadNewWorldEvent();
+                    t_loadWorldEvent->map = GameMap::BEST_MAP;
+
+                    EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
                 }
-                else
+                else if(realEvent->state == DoremiGameStates::MAINMENU)
                 {
-                    // If the state is rungame, we should fetch what kind of map to load and later server to load
-                    if (realEvent->state == DoremiStates::RUNGAME)
-                    {
-                        LoadNewWorldEvent* t_loadWorldEvent = new LoadNewWorldEvent();
-                        t_loadWorldEvent->map = GameMap::BEST_MAP;
-
-                        EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
-                    }
-                    else if (realEvent->state == DoremiStates::MAINMENU)
-                    {
-                        // If we go back to main menu we set camera
-                        // Reset cursor to be visible
-                        InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
-                        t_inputHandler->SetCursorInvisibleAndMiddle(false);
-                    }
-
-                    m_state = realEvent->state;
+                    // If we go back to main menu we set camera
+                    // Reset cursor to be visible
+                    InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
+                    t_inputHandler->SetCursorInvisibleAndMiddle(false);
                 }
+
+                m_state = realEvent->state;
             }
             else if(p_event->eventType == EventType::Trigger)
             {
@@ -113,7 +104,7 @@ namespace Doremi
             {
                 ChangeMenuState* menuStateEvent =
                     new ChangeMenuState(); // Send event so we easily can call the event changing algorithm to see if the new state is valid
-                menuStateEvent->state = DoremiStates::VICTORY;
+                menuStateEvent->state = DoremiGameStates::VICTORY;
                 EventHandler::GetInstance()->BroadcastEvent(menuStateEvent); // TODOKO review if this is a good idea
                 // m_state = DoremiStates::MAINMENU;
             }

@@ -16,8 +16,8 @@ namespace Doremi
     {
         using namespace DirectX;
         Button::Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials,
-                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, Core::DoremiStates p_menuState)
-            : m_position(p_position), m_size(p_size), m_buttonMaterials(p_buttonMaterials), m_meshInfo(p_meshInfo), m_menuState(p_menuState)
+                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, Core::DoremiButtonActions p_menuState)
+            : m_position(p_position), m_size(p_size), m_buttonMaterials(p_buttonMaterials), m_meshInfo(p_meshInfo), m_buttonAction(p_menuState)
         {
             // Building a transform matrix. needs no rotation or scaling orientation the variable can be reused. Scaling origin is 0,0,0 for the quad
             m_materialInfo = m_buttonMaterials.m_vanillaMaterial;
@@ -29,8 +29,11 @@ namespace Doremi
             XMMATRIX t_matrix = XMMatrixTranspose(XMLoadFloat4x4(&m_transformMatrix));
             XMStoreFloat4x4(&m_transformMatrix, t_matrix);
         }
+
         Button::Button() {}
+
         Button::~Button() {}
+
         bool Button::CheckIfInside(int p_mousePosX, int p_mousePosY)
         {
             m_mousePos.x = p_mousePosX;

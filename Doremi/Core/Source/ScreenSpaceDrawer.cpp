@@ -63,39 +63,39 @@ namespace Doremi
         ScreenSpaceDrawer::~ScreenSpaceDrawer() {}
         void ScreenSpaceDrawer::Draw()
         {
-            DoremiStates t_state = StateHandler::GetInstance()->GetState();
+            DoremiGameStates t_state = StateHandler::GetInstance()->GetState();
             switch(t_state)
             {
-                case Doremi::Core::DoremiStates::MAINMENU:
+                case Doremi::Core::DoremiGameStates::MAINMENU:
                 {
                     DrawMainMenu();
                     break;
                 }
-                case Doremi::Core::DoremiStates::SERVER_BROWSER:
+                case Doremi::Core::DoremiGameStates::SERVER_BROWSER:
                 {
                     DrawServerBrowser();
                     break;
                 }
-                case Doremi::Core::DoremiStates::OPTIONS:
+                case Doremi::Core::DoremiGameStates::OPTIONS:
                 {
                     // Draw options screen. TODOKO implement
                     break;
                 }
-                case Doremi::Core::DoremiStates::RUNGAME:
+                case Doremi::Core::DoremiGameStates::RUNGAME:
                 {
                     // Nothing to draw, the manager will handle this. Maybe HUD though? TODOKO
                     break;
                 }
-                case Doremi::Core::DoremiStates::PAUSE:
+                case Doremi::Core::DoremiGameStates::PAUSE:
                 {
                     break;
                 }
-                case Doremi::Core::DoremiStates::VICTORY:
+                case Doremi::Core::DoremiGameStates::VICTORY:
                 {
                     DrawVictoryScreen();
                     break;
                 }
-                case Doremi::Core::DoremiStates::EXIT:
+                case Doremi::Core::DoremiGameStates::EXIT:
                 {
                     break;
                 }
