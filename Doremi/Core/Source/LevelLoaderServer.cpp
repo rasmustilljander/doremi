@@ -33,7 +33,8 @@
 #include <PotentialFieldGridCreator.hpp>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
+
 
 // Physics
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>

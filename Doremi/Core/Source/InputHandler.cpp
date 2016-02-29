@@ -4,9 +4,6 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <iostream>
 
-// Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
-
 namespace Doremi
 {
     namespace Core

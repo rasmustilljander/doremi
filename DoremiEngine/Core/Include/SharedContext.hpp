@@ -48,14 +48,11 @@ namespace DoremiEngine
         class LoggingModule;
     }
 
-    namespace Timing
-    {
-        class TimingModule;
-    }
     namespace Configuration
     {
         class ConfigurationModule;
     }
+
     namespace Core
     {
         class SharedContext
@@ -72,7 +69,6 @@ namespace DoremiEngine
             virtual Input::InputModule& GetInputModule() const = 0;
             virtual AI::AIModule& GetAIModule() const = 0;
             virtual Logging::LoggingModule& GetLoggingModule() const = 0;
-            virtual Timing::TimingModule& GetTimingModule() const = 0;
             virtual Configuration::ConfigurationModule& GetConfigurationModule() const = 0;
         };
     }

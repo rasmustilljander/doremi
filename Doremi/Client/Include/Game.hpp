@@ -3,6 +3,14 @@
 #include <vector>
 #include <DirectXMath.h>
 
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -29,6 +37,18 @@ namespace Doremi
         */
         void Start();
 
+
+        /**
+        TODOCM doc
+        */
+        void Stop();
+
+        /**
+        TODOCM doc
+        */
+        void Run();
+
+
     private:
         /**
             TODOCM doc
@@ -40,10 +60,6 @@ namespace Doremi
         */
         void BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext);
 
-        /**
-            TODOCM doc
-        */
-        void Run();
 
         /**
             TODOCM doc
@@ -86,6 +102,8 @@ namespace Doremi
         Core::ScreenSpaceDrawer* m_screenSpaceDrawer;
 
         DirectX::XMFLOAT2 m_screenRes;
+
+        const DoremiEngine::Core::SharedContext* m_sharedContext;
 
     protected:
         void AddToManagerList(Core::Manager* p_manager);

@@ -4,9 +4,6 @@
 #include <EventHandler/EventHandler.hpp>
 #include <EventHandler/Subscriber.hpp>
 
-// Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
-
 namespace Doremi
 {
     namespace Core

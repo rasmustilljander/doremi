@@ -67,9 +67,8 @@
 #include <Doremi/Core/Include/EntityComponent/EntityFactory.hpp>
 #include <Doremi/Core/Include/ScreenSpaceDrawer.hpp>
 
-
 // Timer
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
 
 // Third party
 
@@ -81,17 +80,8 @@
 
 namespace Doremi
 {
-    namespace Core
-    {
-        class Manager;
-        class EntityInterface;
-    }
-}
-
-namespace Doremi
-{
     using namespace Core;
-    GameMain::GameMain() {}
+    GameMain::GameMain() : m_sharedContext(nullptr) {}
 
     GameMain::~GameMain()
     {
@@ -114,6 +104,7 @@ namespace Doremi
 
         using namespace Core;
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
+        m_sharedContext = &sharedContext;
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
@@ -356,6 +347,7 @@ namespace Doremi
 
     void GameMain::DrawMenu(double p_deltaTime)
     {
+
         TIME_FUNCTION_START
         MenuHandler* t_menuHandler = MenuHandler::GetInstance();
         MenuGraphicHandler::GetInstance()->DrawButtons(p_deltaTime, t_menuHandler->GetButtons(), t_menuHandler->GetCurrentButton());
@@ -400,4 +392,6 @@ namespace Doremi
         Run();
         TIME_FUNCTION_STOP
     }
+
+    void GameMain::Stop() { Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext); }
 }

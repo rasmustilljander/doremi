@@ -27,7 +27,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
 
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>

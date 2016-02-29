@@ -12,7 +12,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
 create_source_group("Source Files" "${CMAKE_CURRENT_SOURCE_DIR}/Source" ${SOURCES})
-set(LIBRARIES GameCore DbgHelp)
+set(LIBRARIES GameCore DbgHelp Utilities)
 
 # Add the target
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})

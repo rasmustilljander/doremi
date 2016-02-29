@@ -7,7 +7,7 @@
 #include <SequenceMath.hpp>
 #include <iostream>
 #include <algorithm>
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>

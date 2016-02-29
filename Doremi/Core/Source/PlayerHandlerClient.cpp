@@ -38,7 +38,8 @@
 #include <Doremi/Core/Include/EventInterpeter.hpp>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
+
 #include <iostream>
 
 // Logging

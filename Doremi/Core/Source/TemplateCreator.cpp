@@ -42,7 +42,8 @@
 #include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
+
 
 // Material
 #include <DoremiEditor/Core/Include/MaterialMessage.hpp>

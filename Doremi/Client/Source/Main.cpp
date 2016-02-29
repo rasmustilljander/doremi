@@ -1,8 +1,7 @@
 // Project specific
 #include <Game.hpp>
-//#include <Utility/Timer/Include/Measure/MeasureTimer.hpp>
-//#include <Utility/DebugLog/Include/ConsoleManager.hpp>
-
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 // Third party
 
@@ -19,7 +18,6 @@
 #include <exception>
 #include <iostream>
 #include <exception> // std::set_unexpected
-
 // Managing signals
 static void signalHandler(int signum);
 
@@ -42,12 +40,16 @@ void shutdown();
 // Controlhandler
 BOOL CtrlHandler(DWORD fdwCtrlType);
 
+namespace
+{
+    Doremi::GameMain* gameMain = nullptr;
+}
+
 void localMain()
 {
     try
     {
-        Doremi::GameMain gameMain;
-        gameMain.Start();
+        gameMain->Start();
     }
     catch(const std::exception& e)
     {
@@ -103,29 +105,12 @@ int main(int argc, const char* argv[])
 void g_unexpected() { attemptGracefulShutdown(); }
 void g_terminate() { attemptGracefulShutdown(); }
 
-void startup()
-{
-    // TODOLOG
-    // TODORT
-    /*
-    using namespace Utility::Timer;
-    using namespace Utility::DebugLog;
-    ConsoleManager::Startup();
-    MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
-    */
-}
+void startup() { gameMain = new Doremi::GameMain(); }
 
 void shutdown()
 {
-    // TODOLOG
-    // TODORT
-    /*
-    using namespace Utility::Timer;
-    using namespace Utility::DebugLog;
-    MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
-    MeasureTimer::GetInstance().DumpData("client_timings");
-    ConsoleManager::Shutdown();
-    */
+    gameMain->Stop();
+    delete gameMain;
 }
 
 void attemptGracefulShutdown()

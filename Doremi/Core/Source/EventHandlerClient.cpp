@@ -7,7 +7,7 @@
 #include <iostream>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
 
 namespace Doremi
 {

@@ -42,7 +42,8 @@
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 
 // Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Timing/TimerManager.hpp>
+
 
 #include <iostream>
 

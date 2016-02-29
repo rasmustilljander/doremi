@@ -59,7 +59,7 @@
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
 
 // Timer
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
 
 // Third party
 #include <DirectXMath.h>

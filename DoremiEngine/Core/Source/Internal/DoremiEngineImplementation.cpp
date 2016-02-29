@@ -8,7 +8,6 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/Logging/Include/LoggingModule.hpp>
-#include <DoremiEngine/Timing/Include/TimingModule.hpp>
 #include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <Utility/DynamicLoader/Include/DynamicLoader.hpp>
@@ -29,7 +28,6 @@ namespace DoremiEngine
               m_inputLibrary(nullptr),
               m_aiLibrary(nullptr),
               m_loggingLibrary(nullptr),
-              m_timingLibrary(nullptr),
               m_configurationLibrary(nullptr),
               m_audioModule(nullptr),
               m_graphicModule(nullptr),
@@ -38,7 +36,6 @@ namespace DoremiEngine
               m_inputModule(nullptr),
               m_aiModule(nullptr),
               m_loggingModule(nullptr),
-              m_timingModule(nullptr),
               m_logger(nullptr),
               m_configurationModule(nullptr)
         {
@@ -76,11 +73,6 @@ namespace DoremiEngine
                 delete m_loggingModule;
             }
 
-            if(m_timingModule != nullptr)
-            {
-                delete m_timingModule;
-            }
-
             if(m_configurationModule != nullptr)
             {
                 delete m_configurationModule;
@@ -112,11 +104,6 @@ namespace DoremiEngine
                 DynamicLoader::FreeSharedLibrary(m_loggingLibrary);
             }
 
-            if(m_timingLibrary != nullptr)
-            {
-                DynamicLoader::FreeSharedLibrary(m_timingLibrary);
-            }
-
             if(m_configurationLibrary != nullptr)
             {
                 DynamicLoader::FreeSharedLibrary(m_configurationLibrary);
@@ -130,7 +117,6 @@ namespace DoremiEngine
             BuildWorkingDirectory(*m_sharedContext);
 
             LoadLoggingModule(*m_sharedContext);
-            LoadTimingModule(*m_sharedContext);
             LoadConfigurationModule(*m_sharedContext);
             m_sharedContext->GetConfigurationModule().ReadConfigurationValuesFromFile("Configuration.txt");
             m_sharedContext->GetConfigurationModule().ReadConfigurationValuesFromFile("AIConfiguration.txt");
@@ -198,11 +184,6 @@ namespace DoremiEngine
                 m_loggingModule->Shutdown();
             }
 
-            if(m_timingModule != nullptr)
-            {
-                m_timingModule->Shutdown();
-            }
-
             if(m_configurationModule != nullptr)
             {
                 m_configurationModule->Shutdown();
@@ -251,38 +232,6 @@ namespace DoremiEngine
             else
             {
                 std::cout << "Loading Logging.dll - Failed" << std::endl;
-            }
-        }
-
-        void DoremiEngineImplementation::LoadTimingModule(SharedContextImplementation& o_sharedContext)
-        {
-            using namespace Doremi::Utilities::Logging;
-            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll");
-            m_timingLibrary = DynamicLoader::LoadSharedLibrary("Timing.dll");
-
-            if(m_timingLibrary != nullptr)
-            {
-                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Success");
-                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll");
-
-                CREATE_TIMING_MODULE functionCreateTimingModule =
-                    (CREATE_TIMING_MODULE)DynamicLoader::LoadProcess(m_timingLibrary, "CreateTimingModule");
-                if(functionCreateTimingModule != nullptr)
-                {
-                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Success");
-
-                    m_timingModule = static_cast<Timing::TimingModule*>(functionCreateTimingModule(o_sharedContext));
-                    m_timingModule->Startup();
-                    o_sharedContext.SetTimingModule(m_timingModule);
-                }
-                else
-                {
-                    m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading process from Timing.dll - Failed");
-                }
-            }
-            else
-            {
-                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Loading Timing.dll - Failed");
             }
         }
 
