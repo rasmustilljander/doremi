@@ -84,6 +84,10 @@ namespace DoremiEngine
             PxShape* m_bigBodyShapes[100];
             int m_triggerCounter;
 
+            /// More experiemntal stuff
+            void AddTriggerToBody(int p_id) override;
+
+
         private:
             InternalPhysicsUtils& m_utils;
             MeshCooker* m_meshCooker;

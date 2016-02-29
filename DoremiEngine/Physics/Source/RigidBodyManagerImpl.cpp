@@ -717,5 +717,34 @@ namespace DoremiEngine
                 }
             }
         }
+        void RigidBodyManagerImpl::AddTriggerToBody(int p_id)
+        {
+            PxRigidBody* body = (PxRigidBody*)m_bodies[p_id];
+            PxShape* mainShape;
+            body->getShapes(&mainShape, 1);
+            PxGeometryType::Enum geometryType = mainShape->getGeometryType();
+            PxShape* triggerShape;
+
+
+            /// Nub way below
+            switch(geometryType)
+            {
+                case PxGeometryType::eBOX:
+                    PxBoxGeometry boxGeometry;
+                    mainShape->getBoxGeometry(boxGeometry);
+                    triggerShape = m_utils.m_physics->createShape(boxGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), true, PxShapeFlag::eTRIGGER_SHAPE);
+                    break;
+                case PxGeometryType::eSPHERE:
+                    PxSphereGeometry sphereGeometry;
+                    mainShape->getSphereGeometry(sphereGeometry);
+                    triggerShape = m_utils.m_physics->createShape(sphereGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), true, PxShapeFlag::eTRIGGER_SHAPE);
+                    break;
+                default:
+                    break;
+            }
+
+
+            m_bodies[p_id]->attachShape(*triggerShape);
+        }
     }
 }

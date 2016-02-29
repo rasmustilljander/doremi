@@ -159,6 +159,10 @@ namespace DoremiEngine
             // Add shapes to body
             virtual void AddShapeToBody(int p_id, XMFLOAT3 p_position) = 0;
             virtual void GetShapeData(int p_id, vector<XMFLOAT3>& o_positions, vector<float>& o_radii) = 0;
+
+            /// Somre more experimental methods
+            // Adds a trigger to the body specified. ENSURE that it already exists!!
+            virtual void AddTriggerToBody(int p_id) = 0;
         };
     }
 }
