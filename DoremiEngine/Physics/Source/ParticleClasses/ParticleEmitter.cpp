@@ -143,9 +143,16 @@ namespace DoremiEngine
                     // Add index to release list
                     indicesOfParticlesToBeReleased.push_back(i);
                     // m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
-                    m_drainsHit.push_back(m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100));
-                    // Add the position to a the list of removed particles positions
-                    m_removedParticlesPositions.push_back(position);
+                    // Use internal method since we want to know which type of body we hit
+                    int flags;
+                    int id = m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100, flags);
+                    m_drainsHit.push_back(i);
+                    // We don't want to notify the game when particles hit kinematic objects
+                    if(!(flags == 0 || flags == 1))
+                    {
+                        // Add the position to a the list of removed particles positions
+                        m_removedParticlesPositions.push_back(position);
+                    }
                 }
             }
             if(indicesOfParticlesToBeReleased.size() != 0)
