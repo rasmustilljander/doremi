@@ -67,10 +67,11 @@ namespace Doremi
                 std::runtime_error("Somone changed the number of buttons without adding states...");
             }
 
-            DoremiStates statesForButtons[3];
+            DoremiStates statesForButtons[4];
             statesForButtons[0] = DoremiStates::RUNGAME;
-            statesForButtons[1] = DoremiStates::FULLSCREEN; // TODOXX This is really the options button...
+            statesForButtons[1] = DoremiStates::OPTIONS;
             statesForButtons[2] = DoremiStates::EXIT;
+            statesForButtons[3] = DoremiStates::FULLSCREEN;
 
             length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
             for(size_t i = 0; i < length; i++)
