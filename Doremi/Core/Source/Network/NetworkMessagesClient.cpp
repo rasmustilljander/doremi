@@ -205,6 +205,8 @@ namespace Doremi
                 uint32_t t_numOfJoinEvents = t_streamer.ReadUnsignedInt32();
                 t_bytesRead += sizeof(uint32_t);
 
+                t_playerHandler->SetMaximumNumberOfJoinEvents(t_numOfJoinEvents);
+
                 // Read join events
                 t_playerHandler->ReadEventsForJoin(t_streamer, sizeof(p_message.Data), t_bytesRead);
 
@@ -224,6 +226,12 @@ namespace Doremi
             // If we were at loading world, we assume server knows best and we're done loading!
             if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
             {
+                // If we didn't actually read all the events yet, we ignore this one, cause ther might be packet loss in UDP
+                if(t_playerHandler->GetLastJoinEventRead() != t_playerHandler->GetMaximumNumberOfJoinEvents())
+                {
+                    cout << "Didn't receive all events yet" << endl;
+                    return;
+                }
                 t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::IN_GAME;
             }
 

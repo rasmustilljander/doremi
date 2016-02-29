@@ -73,6 +73,8 @@ namespace Doremi
 
             uint32_t GetMaximumNumberOfJoinEvents() { return m_maxNumEvents; }
 
+            void SetMaximumNumberOfJoinEvents(uint32_t p_maxNumOfJoinEvents);
+
 
         private:
             PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);

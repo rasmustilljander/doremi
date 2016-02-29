@@ -221,7 +221,6 @@ namespace Doremi
 
             // Here is a thing, because we know all event exists beforehand, and because they are bunched to be sent according to acks
             // We can make the assumption that if we've already read the first one here, we've read all in the message
-
             uint32_t t_bitsRead = 0;
             if(t_messageStartEvent < m_lastJoinEventRead)
             {
@@ -229,6 +228,7 @@ namespace Doremi
                 {
                     // Read but ignore all events
                     Event* t_newEvent = InterpetEvent(p_streamer, t_bitsRead);
+
 
                     // TODO better way of creating, destroying events?(not just this place)
                     // delete them right away
@@ -261,7 +261,11 @@ namespace Doremi
             m_player->IsCreated = false;
             m_player->m_networkEventReceiver->Reset();
             m_player->m_frequencyBufferHandler->Reset();
+            m_lastJoinEventRead = 0;
+            m_maxNumEvents = 0;
         }
+
+        void PlayerHandlerClient::SetMaximumNumberOfJoinEvents(uint32_t p_maxNumOfJoinEvents) { m_maxNumEvents = p_maxNumOfJoinEvents; }
 
         void PlayerHandlerClient::OnEvent(Event* p_event)
         {

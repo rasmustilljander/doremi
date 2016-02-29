@@ -104,6 +104,9 @@ namespace Doremi
             */
             uint8_t GetRealSnapshotSequence();
 
+            /**
+                Remove saved snapshots and reset sequences
+            */
             void Reset();
 
         private:
