@@ -766,11 +766,8 @@ namespace Doremi
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
-            float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
-            data.setColor(1, 0, 0);
+            data.setColor(0.1, 0.2, 0.9);
             material.data = data;
             material.nodeName = "BulletMaterial";
             material.diffuseTexturePath = "Test.dds";
@@ -854,13 +851,12 @@ namespace Doremi
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
             particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
+
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
-            float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            data.setColor(0.1, 0.2, 0.9);
 
-            data.setColor(1, 0, 0);
             material.data = data;
             material.nodeName = "BulletMaterial";
             material.diffuseTexturePath = "Test.dds";

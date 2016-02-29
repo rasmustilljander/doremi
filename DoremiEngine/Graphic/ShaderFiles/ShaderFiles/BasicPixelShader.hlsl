@@ -204,9 +204,9 @@ PixelOutputType PS_main(PixelInputType input)
         glowcolor.g < 0.5 && glowcolor.b < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
-        output.glow = normalize(texcolor) * glowcolor.r;
+        output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
 
-    output.diffuse = float4(rgb, 1) * texcolor * 2.5f;
+    output.diffuse = float4(rgb, 1) * texcolor * 2.5f + texcolor * 0.25;
 
     float depth = (input.position.z/input.position.w) + 1;
     output.depth = float4(depth, depth, depth, 1);
