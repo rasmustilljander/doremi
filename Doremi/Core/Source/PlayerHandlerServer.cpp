@@ -145,6 +145,7 @@ namespace Doremi
                 UpdateFiring(t_player.second);
                 UpdateNetworkObjectPriority(t_player.second, p_dt);
                 t_player.second->m_frequencyBufferHandler->Update();
+                HandleChangeOfSpawnPoint(t_player.second); // TODOJB remove from final release?
             }
 
 
@@ -600,6 +601,21 @@ namespace Doremi
             for(auto& t_player : m_playerMap)
             {
                 t_player.second->m_networkEventSender->QueueEventToFrame(new DamageTakenEvent(*t_takeDamageEvent));
+            }
+        }
+
+        void PlayerHandlerServer::HandleChangeOfSpawnPoint(Player* p_player)
+        {
+            static int spawnerIndex = 0; // TODOXX TODOJB static ints? Better change this at some point?
+            if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugForward))
+            {
+                spawnerIndex++;
+                PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
+            }
+            if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugBackward))
+            {
+                spawnerIndex--;
+                PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
             }
         }
 

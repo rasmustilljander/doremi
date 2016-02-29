@@ -199,6 +199,10 @@ namespace Doremi
             void QueueDamageEventToPlayers(DamageTakenEvent* t_takeDamageEvent);
 
             /**
+            Debug method to change spawn point*/
+            void HandleChangeOfSpawnPoint(Player* p_player);
+
+            /**
                 TODOCM doc
             */
             std::vector<Event*> m_lateJoinEventQueue;

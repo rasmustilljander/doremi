@@ -38,7 +38,14 @@ namespace Doremi
             m_singleton = new PlayerSpawnerHandler(p_sharedContext);
         }
 
-        void PlayerSpawnerHandler::SetCurrentSpawner(int p_spawnerIndex) { m_currentPlayerSpawner = m_spawners[p_spawnerIndex]; }
+        void PlayerSpawnerHandler::SetCurrentSpawnerDebug(int p_spawnerIndex)
+        {
+            // Ensure that we don't go out of bounds
+            if(p_spawnerIndex < m_spawners.size() && p_spawnerIndex >= 0)
+            {
+                m_currentPlayerSpawner = m_spawners[p_spawnerIndex];
+            }
+        }
 
         PlayerSpawnerHandler::PlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {

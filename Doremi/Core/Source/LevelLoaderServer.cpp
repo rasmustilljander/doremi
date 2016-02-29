@@ -177,7 +177,6 @@ namespace Doremi
             if(transformationData.attributes.isSpawner)
             {
                 r_shouldCookStaticPhysics = false;
-
                 EntityHandler::GetInstance().AddComponent(p_entityId, (int)ComponentType::EntitySpawner);
                 EntitySpawnComponent* entitySpawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(p_entityId);
                 entitySpawnComp->entityBlueprint = static_cast<Blueprints>(transformationData.attributes.spawnTypeBlueprint);
@@ -210,6 +209,7 @@ namespace Doremi
                 RigidBodyComponent* t_rigidBody = GetComponent<RigidBodyComponent>(p_entityId);
                 t_rigidBody->flags = RigidBodyFlags::trigger;
                 t_rigidBody->geometry = RigidBodyGeometry::staticBox;
+                PlayerSpawnerHandler::GetInstance()->AddSpawner(p_entityId);
             }
             // If endpoint
             if(transformationData.attributes.startOrEndPoint == 2)

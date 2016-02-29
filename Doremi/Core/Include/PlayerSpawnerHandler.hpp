@@ -2,6 +2,8 @@
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 
+#include <vector>
+
 namespace DoremiEngine
 {
     namespace Core
@@ -52,7 +54,7 @@ namespace Doremi
             /**
             Debug method to set the current spawner based on its position
             in the member variable list*/
-            void SetCurrentSpawner(int p_spawnerIndex);
+            void SetCurrentSpawnerDebug(int p_spawnerIndex);
 
 
         private:
@@ -65,7 +67,7 @@ namespace Doremi
 
             EntityID m_currentPlayerSpawner;
 
-            vector<EntityID> m_spawners;
+            std::vector<EntityID> m_spawners;
         };
     }
 }
