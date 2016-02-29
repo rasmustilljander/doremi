@@ -139,7 +139,7 @@ namespace Doremi
         AddToManagerList(new MovementManagerClient(sharedContext)); // Must be after gravity/jump
         AddToManagerList(new CharacterControlSyncManager(sharedContext)); // Must be after movement
         AddToManagerList(new TriggerManager(sharedContext)); // TODOKO should only be needed on server
-        AddToGraphicalManagerList(new ExtraDrainSyncManager(sharedContext));
+        AddToManagerList(new ExtraDrainSyncManager(sharedContext));
         AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
 
         // Initialize menu
