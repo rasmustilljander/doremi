@@ -34,7 +34,6 @@ namespace Doremi
             DirectX::XMFLOAT2 m_resolution;
             int m_currentButton;
             InputHandlerClient* m_inputHandler;
-            Core::DoremiStates m_menuState;
         };
     }
 }

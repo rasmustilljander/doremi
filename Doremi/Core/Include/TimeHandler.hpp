@@ -30,6 +30,8 @@ namespace Doremi
 
             bool IsLagging();
 
+            void ResetTime();
+
         private:
             TimeHandler();
             ~TimeHandler();

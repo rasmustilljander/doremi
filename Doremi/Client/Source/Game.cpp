@@ -162,7 +162,7 @@ namespace Doremi
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
 
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
-        BuildWorld(sharedContext);
+        // BuildWorld(sharedContext);
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
@@ -177,28 +177,29 @@ namespace Doremi
 
     void GameMain::BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
-        TIME_FUNCTION_START
-        Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
-        Core::LevelLoaderClient t_levelLoader(sharedContext);
+        // TIME_FUNCTION_START
+        // Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
+        // Core::LevelLoaderClient t_levelLoader(sharedContext);
 
-        t_levelLoader.LoadLevel("Levels/IntroScene.drm");
+        // t_levelLoader.LoadLevel("Levels/IntroScene.drm");
 
 
-        // Create platforms
-        for(size_t i = 0; i < 1; i++)
-        {
-            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f), XMFLOAT4(0, 0, 0, 1));
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f); // why not pass as parameter in above method?
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
+        ////// Create platforms
+        ////for(size_t i = 0; i < 1; i++)
+        ////{
+        ////    int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f), XMFLOAT4(0, 0, 0,
+        /// 1));
+        ////    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f); // why not pass as parameter in above method?
+        ////    DirectX::XMFLOAT4 orientation = XMFLOAT4(0, 0, 0, 1);
 
-            Core::PlatformPatrolComponent* t_platformPatrolComponent =
-                Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
-            t_platformPatrolComponent->startPosition = position;
-            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140, position.z);
-        }
+        ////    Core::PlatformPatrolComponent* t_platformPatrolComponent =
+        ////        Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
+        ////    t_platformPatrolComponent->startPosition = position;
+        ////    t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140, position.z);
+        ////}
 
-        // Create an enemy spawner (only necessary to keep entityIDs aligned with server)
-        TIME_FUNCTION_STOP
+        //// Create an enemy spawner (only necessary to keep entityIDs aligned with server)
+        // TIME_FUNCTION_STOP
     }
 
     void GameMain::Run()

@@ -159,21 +159,21 @@ namespace Doremi
         TIME_FUNCTION_START
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
 
-        for(size_t i = 0; i < 1; i++)
-        {
-            DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
-            DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-            int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, position, orientation);
+        // for(size_t i = 0; i < 1; i++)
+        //{
+        //    DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(-165.75f, 4.6f, -103.74f);
+        //    DirectX::XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+        //    int entityID = t_entityFactory.CreateEntity(Blueprints::PlatformEntity, position, orientation);
 
 
-            // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0.0f, 0.0f, 0.0f));
-            // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
+        //    // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetBodyAngularVelocity(entityID, XMFLOAT3(0.0f, 0.0f, 0.0f));
+        //    // sharedContext.GetPhysicsModule().GetRigidBodyManager().SetKinematicActor(entityID, true);
 
-            Core::PlatformPatrolComponent* t_platformPatrolComponent =
-                Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
-            t_platformPatrolComponent->startPosition = position;
-            t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140.0f, position.z);
-        }
+        //    Core::PlatformPatrolComponent* t_platformPatrolComponent =
+        //        Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::PlatformPatrolComponent>(entityID);
+        //    t_platformPatrolComponent->startPosition = position;
+        //    t_platformPatrolComponent->endPosition = DirectX::XMFLOAT3(position.x, position.y + 140.0f, position.z);
+        //}
 
         // Create some enemies
         for(size_t i = 0; i < 0; i++)

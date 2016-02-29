@@ -65,6 +65,14 @@ namespace Doremi
             return false;
         }
 
+        void TimeHandler::ResetTime()
+        {
+            CurrentClock = std::chrono::high_resolution_clock::now();
+
+            // Update the previous position with frametime so we can catch up if we slow down
+            PreviousClock = CurrentClock;
+        }
+
         TimeHandler::TimeHandler() {}
 
         TimeHandler::~TimeHandler() {}

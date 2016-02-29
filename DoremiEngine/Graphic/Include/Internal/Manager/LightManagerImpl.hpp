@@ -35,6 +35,8 @@ namespace DoremiEngine
             */
             void UpdateLights() override;
 
+            void ClearLights() override;
+
         private:
             const GraphicModuleContext& m_graphicContext;
             ID3D11Device* m_device;

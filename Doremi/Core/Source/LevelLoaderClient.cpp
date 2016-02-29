@@ -727,6 +727,9 @@ namespace Doremi
         void LevelLoaderClient::BuildLights()
         {
             DoremiEngine::Graphic::LightManager& lightManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetLightManager();
+
+            lightManager.ClearLights();
+
             int i = 0;
             for(auto& light : m_lights)
             {

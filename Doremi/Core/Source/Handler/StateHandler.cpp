@@ -6,6 +6,7 @@
 // Events
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/LoadNewWorldEvent.hpp>
 
 /// Engine
 // Audio
@@ -67,6 +68,7 @@ namespace Doremi
             if(p_event->eventType == EventType::ChangeMenuState)
             {
                 ChangeMenuState* realEvent = static_cast<ChangeMenuState*>(p_event);
+
                 // This is a bit ugly but since buttons only can send events for now i figured we do it here!
                 if(realEvent->state == DoremiStates::FULLSCREEN)
                 {
@@ -75,6 +77,14 @@ namespace Doremi
                 }
                 else
                 {
+                    // If the state is rungame, we should fetch what kind of map to load and later server to load
+                    if (realEvent->state == DoremiStates::RUNGAME)
+                    {
+                        LoadNewWorldEvent* t_loadWorldEvent = new LoadNewWorldEvent();
+                        t_loadWorldEvent->map = GameMap::BEST_MAP;
+
+                        EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
+                    }
                     m_state = realEvent->state;
                 }
             }

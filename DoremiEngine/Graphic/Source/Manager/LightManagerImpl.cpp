@@ -71,5 +71,7 @@ namespace DoremiEngine
             m_deviceContext->PSSetConstantBuffers(0, 1, &m_lBuffer);
             m_deviceContext->CSSetConstantBuffers(1, 1, &m_lBuffer);
         }
+
+        void LightManagerImpl::ClearLights() { m_lightcount = 0; }
     }
 }

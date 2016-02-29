@@ -8,6 +8,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
+#include <Doremi/Core/Include/TimeHandler.hpp>
 
 #include <iostream>
 
@@ -96,10 +97,16 @@ namespace Doremi
             }
             else if(p_event->eventType == EventType::LoadNewWorld)
             {
+                // Reset world
                 ResetWorld();
 
-                // LevelLoaderClient t_levelLoader = LevelLoaderClient();
-                // t_levelLoader.LoadLevel("Levels/IntroScene.drm");
+                // Load new world
+                // TODO change load based on map in event
+                LevelLoaderClient t_levelLoader = LevelLoaderClient(m_sharedContext);
+                t_levelLoader.LoadLevel("Levels/IntroScene.drm");
+
+                TimeHandler* t_timeHandler = TimeHandler::GetInstance();
+                t_timeHandler->ResetTime();
             }
         }
     }
