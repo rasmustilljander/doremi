@@ -45,7 +45,7 @@ namespace DoremiEngine
             float t_lerpPercent;
             for(size_t i = 0; i < t_numberOfVectors; i++)
             {
-                t_lerpPercent = p_interpolatedVector[i].timeElapsed;
+                t_lerpPercent = p_interpolatedVector[i].timeElapsed / 0.5;
                 for(size_t k = 0; k < t_numberOfBones; k++)
                 {
                     XMStoreFloat3(&t_currentAnimation.position[k], XMVectorLerp(XMLoadFloat3(&t_currentAnimation.position[k]),

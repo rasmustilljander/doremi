@@ -720,9 +720,17 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+            // CharacterDataNames playerSkeletalCharData =
+            //    loader.LoadSkeletalCharacter("Models/SmallRobot12.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+            // CharacterDataNames playerSkeletalCharData =
+            // loader.LoadSkeletalCharacter("Models/CoolGubbeMedCoolaTjejer.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
             CharacterDataNames playerSkeletalCharData =
+<<<<<<< HEAD
                 loader.LoadSkeletalCharacter("Models/SmallRobot14.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
 
+=======
+                loader.LoadSkeletalCharacter("Models/BigRobot3.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+>>>>>>> Meckat med blend funkar fortfarande inte
 
             /// Fill with components
             // Render
@@ -737,13 +745,13 @@ namespace Doremi
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
             t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
             t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Idle";
+            t_upperBodySkeletalAnimationComp->clipName = "Run";
             t_upperBodySkeletalAnimationComp->timePosition = 0;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
             t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Attack";
+            t_lowerBodySkeletalAnimationComp->clipName = "Run";
             t_lowerBodySkeletalAnimationComp->timePosition = 0;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
 
