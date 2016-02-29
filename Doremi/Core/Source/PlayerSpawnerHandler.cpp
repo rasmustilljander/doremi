@@ -38,6 +38,8 @@ namespace Doremi
             m_singleton = new PlayerSpawnerHandler(p_sharedContext);
         }
 
+        void PlayerSpawnerHandler::SetCurrentSpawner(int p_spawnerIndex) { m_currentPlayerSpawner = m_spawners[p_spawnerIndex]; }
+
         PlayerSpawnerHandler::PlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
             EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
@@ -93,5 +95,6 @@ namespace Doremi
                 }
             }
         }
+        void PlayerSpawnerHandler::AddSpawner(EntityID p_entityID) { m_spawners.push_back(p_entityID); }
     }
 }

@@ -45,6 +45,16 @@ namespace Doremi
             */
             void OnEvent(Event* p_event) override;
 
+            /**
+            Adds an entity to the list of spawners*/
+            void AddSpawner(EntityID p_entityID);
+
+            /**
+            Debug method to set the current spawner based on its position
+            in the member variable list*/
+            void SetCurrentSpawner(int p_spawnerIndex);
+
+
         private:
             PlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~PlayerSpawnerHandler();
@@ -54,6 +64,8 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             EntityID m_currentPlayerSpawner;
+
+            vector<EntityID> m_spawners;
         };
     }
 }
