@@ -351,7 +351,7 @@ namespace Doremi
     void GameMain::DrawGame(double p_deltaTime)
     {
         TIME_FUNCTION_START
-        size_t length = m_graphicalManagers.size();
+        const size_t length = m_graphicalManagers.size();
         for(size_t i = 0; i < length; i++)
         {
             Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
