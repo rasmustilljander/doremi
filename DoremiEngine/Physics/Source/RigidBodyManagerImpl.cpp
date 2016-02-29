@@ -700,6 +700,7 @@ namespace DoremiEngine
             {
                 PxShape* shape = m_bigBodyShapes[i];
                 // Check if body exists
+
                 if(shape)
                 {
                     // Get radius
@@ -730,15 +731,20 @@ namespace DoremiEngine
             switch(geometryType)
             {
                 case PxGeometryType::eBOX:
+                {
                     PxBoxGeometry boxGeometry;
                     mainShape->getBoxGeometry(boxGeometry);
+                    PxBoxGeometry newGeometry = PxBoxGeometry(boxGeometry.halfExtents * 1.4);
                     triggerShape = m_utils.m_physics->createShape(boxGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), true, PxShapeFlag::eTRIGGER_SHAPE);
                     break;
+                }
                 case PxGeometryType::eSPHERE:
+                {
                     PxSphereGeometry sphereGeometry;
                     mainShape->getSphereGeometry(sphereGeometry);
                     triggerShape = m_utils.m_physics->createShape(sphereGeometry, *m_utils.m_physics->createMaterial(0, 0, 0), true, PxShapeFlag::eTRIGGER_SHAPE);
                     break;
+                }
                 default:
                     break;
             }

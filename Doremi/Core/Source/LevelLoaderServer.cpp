@@ -277,22 +277,28 @@ namespace Doremi
             if(transformationData.attributes.isDangerous)
             {
                 // check if we're character controlled or static death
-                if(EntityHandler::GetInstance().HasComponents(p_entityId, static_cast<uint32_t>(ComponentType::RigidBody)))
+                if(!transformationData.attributes.isStatic) // EntityHandler::GetInstance().HasComponents(p_entityId,
+                // static_cast<uint32_t>(ComponentType::RigidBody)))
                 {
-                    // Rigid body comp
-                    RigidBodyComponent* t_rigidBodyComp = GetComponent<RigidBodyComponent>(p_entityId);
-                    if(t_rigidBodyComp->geometry == RigidBodyGeometry::dynamicBox)
-                    {
-                        // We don't know how to do this yet...
-                    }
-                    else if(t_rigidBodyComp->geometry == RigidBodyGeometry::staticBox)
-                    {
-                        // Ok already cool data here
-                    }
-                    else
-                    {
-                        std::cout << "Code missing for dangerous object that are not static or dynamic box" << std::endl;
-                    }
+                    // Set end point values
+                    EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::Trigger));
+                    TriggerComponent* t_triggerComp = GetComponent<TriggerComponent>(p_entityId);
+                    t_triggerComp->triggerType = TriggerType::DeathTrigger;
+
+                    //// Rigid body comp
+                    // RigidBodyComponent* t_rigidBodyComp = GetComponent<RigidBodyComponent>(p_entityId);
+                    // if(t_rigidBodyComp->geometry == RigidBodyGeometry::dynamicBox)
+                    //{
+                    //    // We don't know how to do this yet...
+                    //}
+                    // else if(t_rigidBodyComp->geometry == RigidBodyGeometry::staticBox)
+                    //{
+                    //    // Ok already cool data here
+                    //}
+                    // else
+                    //{
+                    //    std::cout << "Code missing for dangerous object that are not static or dynamic box" << std::endl;
+                    //}
                 }
                 else
                 {
@@ -376,6 +382,10 @@ namespace Doremi
                 if(((int)bodyComp->flags & (int)RigidBodyFlags::kinematic) == (int)RigidBodyFlags::kinematic)
                 {
                     rigidBodyManager.SetKinematicActor(p_entityId, true);
+                    if(transformationData.attributes.isDangerous)
+                    {
+                        rigidBodyManager.AddTriggerToBody(p_entityId);
+                    }
 
                     // TODOJB TODOXX haxy callback filtering. Read comment in LevelLoader::SetPhysicalAttributesOnMesh
                     rigidBodyManager.SetCallbackFiltering(p_entityId, 3, 0, 0, 2);
