@@ -18,8 +18,6 @@
 #include <exception>
 #include <iostream>
 #include <exception> // std::set_unexpected
-// Managing signals
-static void signalHandler(int signum);
 
 // The method called when shutting down
 void attemptGracefulShutdown();
