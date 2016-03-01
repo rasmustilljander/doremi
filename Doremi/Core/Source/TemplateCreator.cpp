@@ -56,6 +56,7 @@ namespace Doremi
 {
     namespace Core
     {
+        XMFLOAT3 unitScale = XMFLOAT3(1, 1, 1);
         TemplateCreator* TemplateCreator::m_singleton = nullptr;
 
         TemplateCreator* TemplateCreator::GetInstance()
@@ -150,8 +151,7 @@ namespace Doremi
             TIME_FUNCTION_START
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
-
-
+            transComp->scale = unitScale;
             blueprint[ComponentType::Transform] = transComp;
             // Render
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
@@ -166,6 +166,7 @@ namespace Doremi
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
+            renderComp->offsetY = -3;
             blueprint[ComponentType::Render] = renderComp;
 
             // SkeletalAnimationComponent
@@ -199,8 +200,8 @@ namespace Doremi
 
             // Extra drain and rigid comp
             RigidBodyComponent* rigidComp = new RigidBodyComponent();
-            rigidComp->radius = 3;
-            rigidComp->height = 1.5;
+            rigidComp->radius = 1.5;
+            rigidComp->height = 3;
             rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
             rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
             blueprint[ComponentType::RigidBody] = rigidComp;
@@ -241,6 +242,7 @@ namespace Doremi
             TIME_FUNCTION_START
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
+            transComp->scale = unitScale;
             blueprint[ComponentType::Transform] = transComp;
 
             // PhysicsMaterialComp
@@ -610,6 +612,7 @@ namespace Doremi
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
+            // t_transformComp->scale = unitScale;
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
 
             // Physical material comp
@@ -623,7 +626,7 @@ namespace Doremi
 
             // Character Controller
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(1, 1);
+            charControlComp->dims = XMFLOAT2(3, 1.5);
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
@@ -724,8 +727,8 @@ namespace Doremi
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
+            // t_transformComp->scale = unitScale;
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
-            t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -738,7 +741,7 @@ namespace Doremi
 
             // Controller component
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(1, 1);
+            charControlComp->dims = XMFLOAT2(3, 1.5);
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
@@ -823,8 +826,8 @@ namespace Doremi
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();
+            // t_transformComp->scale = unitScale;
             t_avatarBlueprint[ComponentType::Transform] = t_transformComp;
-            t_transformComp->scale = XMFLOAT3(0.25f, 0.25f, 0.25f);
 
             // Net object
             NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);

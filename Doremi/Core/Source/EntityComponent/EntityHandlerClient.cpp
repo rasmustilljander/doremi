@@ -78,15 +78,13 @@ namespace Doremi
                 if(p_entityCreated->bluepirnt == Blueprints::NetworkPlayerEntity)
                 {
                     // Create entity
-                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1),
-                                                DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, DirectX::XMFLOAT4(0, 0, 0, 1));
                     cout << "Created Network player" << endl;
                 }
                 else if(p_entityCreated->bluepirnt == Blueprints::PlayerEntity)
                 {
                     // Create entity
-                    EntityID t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position,
-                                                                      p_entityCreated->orientation, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+                    EntityID t_entityID = EntityHandler::CreateEntity(p_entityCreated->bluepirnt, p_entityCreated->position, p_entityCreated->orientation);
 
                     // Create player
                     static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->SetNewPlayerEntityID(t_entityID);

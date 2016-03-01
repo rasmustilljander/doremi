@@ -14,7 +14,7 @@ namespace Doremi
         {
             DirectX::XMFLOAT3 position;
             DirectX::XMFLOAT4 rotation;
-            DirectX::XMFLOAT3 scale; // TODOKO Let him be!! no just kiddin, REMOVE!
+            DirectX::XMFLOAT3 scale; // This is the only variable that is used from blueprint
             TransformComponent() : position(DirectX::XMFLOAT3(0, 0, 0)), rotation(DirectX::XMFLOAT4(0, 0, 0, 1)), scale(DirectX::XMFLOAT3(1, 1, 1)) {}
             TransformComponent(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot, DirectX::XMFLOAT3 p_scale)
                 : position(p_pos), rotation(p_rot), scale(p_scale)

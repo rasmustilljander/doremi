@@ -77,10 +77,11 @@ namespace Doremi
                     TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+
                     DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
                         DirectX::XMMatrixRotationQuaternion(quaternion) *
-                        DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y, orientationComp->position.z));
+                        DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY, orientationComp->position.z));
                     DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
                     submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }

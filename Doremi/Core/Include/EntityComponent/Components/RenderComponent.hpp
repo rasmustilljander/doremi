@@ -19,6 +19,7 @@ namespace Doremi
         {
             DoremiEngine::Graphic::MeshInfo* mesh;
             DoremiEngine::Graphic::MaterialInfo* material;
+            float offsetY = 0; // Offset in Y to make characters stand on the ground
             RenderComponent(DoremiEngine::Graphic::MeshInfo* p_meshID, DoremiEngine::Graphic::MaterialInfo* p_materialID)
                 : mesh(p_meshID), material(p_materialID)
             {

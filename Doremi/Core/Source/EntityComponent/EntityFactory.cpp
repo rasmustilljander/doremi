@@ -343,6 +343,13 @@ namespace Doremi
             transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
+            EntityBlueprint tComponentMap = mEntityBlueprints[p_blueprintID];
+            if(tComponentMap.count(ComponentType::Transform) != 0)
+            {
+                TransformComponent* blueprintComp = static_cast<TransformComponent*>(tComponentMap.find(ComponentType::Transform)->second);
+                transComp->scale = blueprintComp->scale;
+            }
+
             CreateComponents(tNewEntityID, p_blueprintID);
             return tNewEntityID;
         }
@@ -353,10 +360,18 @@ namespace Doremi
             EntityID tNewEntityID = tEntityManager->AddEntity();
 
             ComponentTable::GetInstance()->AddComponent(tNewEntityID, (int)ComponentType::Transform);
+
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
             transComp->position = p_position;
             transComp->rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+            EntityBlueprint tComponentMap = mEntityBlueprints[p_blueprintID];
+            if(tComponentMap.count(ComponentType::Transform) != 0)
+            {
+                TransformComponent* blueprintComp = static_cast<TransformComponent*>(tComponentMap.find(ComponentType::Transform)->second);
+                transComp->scale = blueprintComp->scale;
+            }
+
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
@@ -378,6 +393,13 @@ namespace Doremi
             transComp->position = p_position;
             transComp->rotation = p_orientation;
             transComp->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+
+            EntityBlueprint tComponentMap = mEntityBlueprints[p_blueprintID];
+            if(tComponentMap.count(ComponentType::Transform) != 0)
+            {
+                TransformComponent* blueprintComp = static_cast<TransformComponent*>(tComponentMap.find(ComponentType::Transform)->second);
+                transComp->scale = blueprintComp->scale;
+            }
 
             memcpy(GetComponent<TransformComponentNext>(tNewEntityID), transComp, sizeof(TransformComponent));
             memcpy(GetComponent<TransformComponentPrevious>(tNewEntityID), transComp, sizeof(TransformComponent));
