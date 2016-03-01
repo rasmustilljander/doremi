@@ -1,7 +1,6 @@
 // Project specific
 #include <Server.hpp>
 
-
 // Third party
 
 // Standard libraries
@@ -33,12 +32,16 @@ void shutdown();
 // Controlhandler
 BOOL CtrlHandler(DWORD fdwCtrlType);
 
+namespace
+{
+    Doremi::ServerMain* serverMain = nullptr;
+}
+
 void localMain()
 {
     try
     {
-        Doremi::ServerMain gameMain;
-        gameMain.Start();
+        serverMain->Start();
     }
     catch(const std::exception& e)
     {
@@ -69,7 +72,6 @@ int main(int argc, const char* argv[])
     SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
     // Run startup code
-    startup();
 
     // TODORT
     // This row is required later as it disables the standard output terminal, we do now want that.
@@ -78,16 +80,17 @@ int main(int argc, const char* argv[])
 
     __try
     {
+        startup();
         localMain();
+        shutdown();
     }
     __except(EXCEPTION_EXECUTE_HANDLER)
     {
         attemptGracefulShutdown();
         exit(1);
     }
+    printf("Graceful shutdown.");
 
-    // Run shutdown code
-    shutdown();
     return 0;
 }
 
@@ -96,31 +99,39 @@ void g_terminate() { attemptGracefulShutdown(); }
 
 void startup()
 {
-    // TODORT
-    // TODOLOG
-    // using namespace Utility::Timer;
-    // using namespace Utility::DebugLog;
-    // ConsoleManager::Startup();
-    // MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Start();
+    try
+    {
+        serverMain = new Doremi::ServerMain();
+    }
+    catch(...)
+    {
+        printf("Failed with shutdown.");
+    }
 }
 
 void shutdown()
 {
-    // TODORT
-    // TODOLOG
-    // using namespace Utility::Timer;
-    // using namespace Utility::DebugLog;
-    // MeasureTimer::GetInstance().GetTimer(FILE_AND_FUNC).Stop();
-    // MeasureTimer::GetInstance().DumpData("client_timings");
-    // ConsoleManager::Shutdown();
+    try
+    {
+        delete serverMain;
+        serverMain = nullptr;
+    }
+    catch(...)
+    {
+        printf("Failed with shutdown.");
+    }
 }
 
 void attemptGracefulShutdown()
 {
-    shutdown();
-#ifdef _DEBUG
-    std::cin.get();
-#endif
+    try
+    {
+        serverMain->Stop();
+    }
+    catch(...)
+    {
+        printf("Failed with graceful shutdown.");
+    }
 }
 
 #ifdef _WIN32
@@ -128,20 +139,16 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
 {
     switch(fdwCtrlType)
     {
-        // Handle the CTRL-C signal.
-        case CTRL_C_EVENT:
+        case CTRL_LOGOFF_EVENT:
+        case CTRL_SHUTDOWN_EVENT:
+        case CTRL_CLOSE_EVENT: // CTRL-CLOSE: confirm that the user wants to exit
+        case CTRL_C_EVENT: // Handle the CTRL-C signal
+            printf("Shutting down\n");
             attemptGracefulShutdown();
-            return (TRUE);
-
-        // CTRL-CLOSE: confirm that the user wants to exit.
-        case CTRL_CLOSE_EVENT:
-            attemptGracefulShutdown();
-            return (TRUE);
-
+            Sleep(10000); // Sleep until 10 seconds, if process has been shutof during this time, this will exit correctly
+            return TRUE;
         default:
             return FALSE;
     }
 }
-
-
 #endif

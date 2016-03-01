@@ -9,6 +9,7 @@ namespace Doremi
         {
             LOBBY,
             IN_GAME,
+            EXIT
         };
 
         /**
@@ -26,6 +27,8 @@ namespace Doremi
 
             ServerStates GetState() { return m_state; }
 
+            void SetState(const ServerStates& p_serverState) { m_state = p_serverState; }
+
             GameMap GetMap() { return m_map; }
 
             uint8_t GetMaxPlayers() { return m_maxPlayers; }
@@ -33,7 +36,6 @@ namespace Doremi
             void SetServerName(std::string p_name);
 
             std::string GetServerName();
-
 
         private:
             ServerStateHandler();

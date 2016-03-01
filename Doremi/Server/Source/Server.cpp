@@ -32,6 +32,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/ServerStateHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/Manager.hpp>
@@ -205,7 +206,8 @@ namespace Doremi
 
         t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
 
-        while(true)
+        ServerStates state = ServerStates::LOBBY;
+        while(state != ServerStates::EXIT)
         {
             // Tick time
             t_timeHandler->Tick();
@@ -219,6 +221,7 @@ namespace Doremi
                 // Update accumulator and gametime
                 t_timeHandler->UpdateAccumulatorAndGameTime();
             }
+            state = Core::ServerStateHandler::GetInstance()->GetState();
         }
         TIME_FUNCTION_STOP
     }
@@ -262,5 +265,11 @@ namespace Doremi
         Initialize();
         Run();
         TIME_FUNCTION_STOP
+    }
+
+    void ServerMain::Stop()
+    {
+        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
+        Core::ServerStateHandler::GetInstance()->SetState(ServerStates::EXIT);
     }
 }

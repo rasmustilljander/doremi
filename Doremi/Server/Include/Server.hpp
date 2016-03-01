@@ -31,6 +31,11 @@ namespace Doremi
         */
         void Start();
 
+        /**
+        doc
+        */
+        void Stop();
+
     private:
         /**
             TODOCM doc
