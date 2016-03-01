@@ -34,6 +34,7 @@ namespace Doremi
         void GunController::StartFireGun(EntityID p_entityID, const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             GetComponent<ParticlePressureComponent>(p_entityID)->data.m_active = true;
+            printf("\n %i", p_entityID);
             p_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(p_entityID, GetComponent<ParticlePressureComponent>(p_entityID)->data);
         }
 

@@ -30,10 +30,14 @@
 #include <EntityComponent/Components/AiAgentComponent.hpp>
 #include <EntityComponent/Components/LifeTimeComponent.hpp>
 
+// Loaders
+#include <Doremi/Core/Include/LevelLoader.hpp>
+
 // Events
 #include <EventHandler/Events/SpecialEntityCreatedEvent.hpp>
 // Handlers
 #include <EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 
 /// Engine
 // Core
@@ -44,6 +48,8 @@
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/Physics/Include/FluidManager.hpp>
+// Graphic
+#include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <DoremiEngine/AI/Include/Interface/PotentialField/PotentialFieldActor.hpp>
@@ -304,7 +310,13 @@ namespace Doremi
                 }
                 else if(iter->first == ComponentType::UpperBodySkeletalAnimation)
                 {
+
                     memcpy(GetComponent<SkeletalAnimationComponent>(p_entityID), iter->second, sizeof(SkeletalAnimationComponent));
+                    SkeletalAnimationComponent* t_skeletalComponent = GetComponent<SkeletalAnimationComponent>(p_entityID);
+                    LoadedCharacter t_loadedCharacter = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(t_skeletalComponent->type);
+                    t_skeletalComponent->skeletalInformation = t_loadedCharacter.upperBody;
+                    t_skeletalComponent->clipName = "Idle";
+                    t_skeletalComponent->timePosition = 0.0f;
                 }
                 else if(iter->first == ComponentType::AIAgent)
                 {
@@ -313,6 +325,12 @@ namespace Doremi
                 else if(iter->first == ComponentType::LowerBodySkeletalAnimation)
                 {
                     memcpy(GetComponent<LowerSkeletalAnimationComponent>(p_entityID), iter->second, sizeof(LowerSkeletalAnimationComponent));
+
+                    LowerSkeletalAnimationComponent* t_skeletalComponent = GetComponent<LowerSkeletalAnimationComponent>(p_entityID);
+                    LoadedCharacter t_loadedCharacter = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(t_skeletalComponent->type);
+                    t_skeletalComponent->skeletalInformation = t_loadedCharacter.lowerBody;
+                    t_skeletalComponent->clipName = "Idle";
+                    t_skeletalComponent->timePosition = 0.0f;
                 }
                 else if(iter->first == ComponentType::LifeTime)
                 {

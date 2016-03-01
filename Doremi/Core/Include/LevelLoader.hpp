@@ -21,6 +21,7 @@ namespace DoremiEngine
     namespace Graphic
     {
         class MeshInfo;
+        class SkeletalInformation;
     }
 }
 
@@ -49,6 +50,12 @@ namespace Doremi
             std::vector<DoremiEngine::Graphic::Vertex> vertices;
         };
 
+        struct LoadedCharacter
+        {
+            DoremiEngine::Graphic::SkeletalInformation* upperBody;
+            DoremiEngine::Graphic::SkeletalInformation* lowerBody;
+            CharacterDataNames characterData;
+        };
         class LevelLoader
         {
         public:
@@ -75,6 +82,8 @@ namespace Doremi
             std::map<std::string, DoremiEditor::Core::CharacterTransformData> m_transformsCharacter; // TODOKO REMOVE@!@!#@$!
 
             std::map<std::string, DoremiEditor::Core::MaterialMessage> m_materials;
+
+            std::map<std::string, LoadedCharacter> m_loadedCharacters;
 
             std::map<std::string, DoremiEditor::Core::MeshData> m_meshes;
             std::vector<DoremiEditor::Core::LightData> m_lights;

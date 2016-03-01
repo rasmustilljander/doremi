@@ -1,5 +1,4 @@
 #pragma once
-#define NOMINMAX
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
 #include <map>

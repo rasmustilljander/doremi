@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <DirectXMath.h>
+#include <Doremi/Core/Include/Helper/AnimationStates.hpp>
 
 namespace DoremiEngine
 {
@@ -23,6 +24,7 @@ namespace Doremi
             std::string clipName;
             double timePosition;
             DirectX::XMFLOAT4 orientation;
+            SkeletalAnimationType type;
             LowerSkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
                 : skeletalInformation(p_skeletalInformation)
             {

@@ -40,6 +40,7 @@
 #include <DoremiEngine/AI/Include/AIModule.hpp>
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
+#include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 
 // Timing
 #include <Timing/TimerManager.hpp>
@@ -160,27 +161,24 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            CharacterDataNames enemyCharData = loader.LoadSkeletalCharacter("Models/SmallRobot14.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::RANGEDENEMY);
+
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
-            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
             renderComp->offsetY = -3;
             renderComp->lockedRotationX = true;
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
             blueprint[ComponentType::Render] = renderComp;
 
             // SkeletalAnimationComponent
-            // SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
-            // blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
-            // t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            // t_upperBodySkeletalAnimationComp->clipName = "Idle";
-            // t_upperBodySkeletalAnimationComp->timePosition = 0;
-            //
-            // LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            // blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
-            // t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            // t_lowerBodySkeletalAnimationComp->clipName = "Idle";
-            // t_lowerBodySkeletalAnimationComp->timePosition = 0;
-            // t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::RANGEDENEMY;
+            blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
+
+            LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
+            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::RANGEDENEMY;
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -714,46 +712,28 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            // CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
-            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            // CharacterDataNames playerSkeletalCharData =
-            //    loader.LoadSkeletalCharacter("Models/SmallRobot12.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
-            // CharacterDataNames playerSkeletalCharData =
-            // loader.LoadSkeletalCharacter("Models/CoolGubbeMedCoolaTjejer.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
-            CharacterDataNames playerSkeletalCharData =
-<<<<<<< HEAD
-                loader.LoadSkeletalCharacter("Models/SmallRobot14.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
-
-=======
-                loader.LoadSkeletalCharacter("Models/BigRobot3.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
->>>>>>> Meckat med blend funkar fortfarande inte
-
+            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
-            t_renderComp->material =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerSkeletalCharData.materialName);
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
+            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
             t_renderComp->lockedRotationX = true;
+                
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
-
-            // SkeletalAnimation
+            // SkeletalAnimationComponent
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
             t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
-            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Run";
-            t_upperBodySkeletalAnimationComp->timePosition = 0;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
-            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Run";
-            t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
+
+
+            // SkeletalAnimation
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();

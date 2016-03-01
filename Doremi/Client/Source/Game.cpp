@@ -38,6 +38,7 @@
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
+#include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -124,7 +125,11 @@ namespace Doremi
         EntityFactory::StartupEntityFactory(sharedContext);
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         SkyBoxHandler::StartupSkyBoxHandler(sharedContext);
+<<<<<<< HEAD
         ServerBrowserHandler::StartupServerBrowserHandler(sharedContext);
+=======
+        SkeletalInformationHandler::StartSkeletalInformationHandler(sharedContext);
+>>>>>>> Added animationblending for AI
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();

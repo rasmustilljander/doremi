@@ -78,14 +78,13 @@ namespace Doremi
         }
 
         CharacterDataNames LevelLoaderClient::LoadSkeletalCharacter(const std::string& p_fileName,
-                                                                    DoremiEngine::Graphic::SkeletalInformation& p_upperBodySkeletalInformation,
-                                                                    DoremiEngine::Graphic::SkeletalInformation& p_lowerBodySkeletalInformation)
+                                                                    DoremiEngine::Graphic::SkeletalInformation* p_upperBodySkeletalInformation,
+                                                                    DoremiEngine::Graphic::SkeletalInformation* p_lowerBodySkeletalInformation)
         {
 
             // TODOLH Fixa så att vi använder tidigare inladdad data om det finns
             // Get the full path
             string fileName = m_sharedContext.GetWorkingDirectory() + p_fileName;
-
             ifstream ifs;
             ifs.open(fileName, ifstream::in | ifstream::binary);
             if(ifs.is_open() == true)
@@ -158,15 +157,15 @@ namespace Doremi
                 meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
                 meshManager.BuildMaterialInfo(m_materials.begin()->second);
                 // Detta är typen vi använder för att sedan loada mesh/material i templatecreator
-                CharacterDataNames o_charData;
-                o_charData.meshName = t_sceneName;
-                o_charData.materialName = m_materials.begin()->second.diffuseTexturePath;
                 ifs.close();
 
                 // Sätt värdena som behövs för skelettanimationens keyframeuppdatering. (Basicly datan som används vid animationen)
-                p_upperBodySkeletalInformation.Set(t_upperBodyJointHeirarchy, t_upperBodyAnimations);
-                p_lowerBodySkeletalInformation.Set(t_lowerBodyJointHeirarchy, t_lowerBodyAnimations);
-                return o_charData;
+                p_upperBodySkeletalInformation->Set(t_upperBodyJointHeirarchy, t_upperBodyAnimations);
+                p_lowerBodySkeletalInformation->Set(t_lowerBodyJointHeirarchy, t_lowerBodyAnimations);
+                LoadedCharacter t_loadedCharacter;
+                t_loadedCharacter.characterData.materialName = m_materials.begin()->second.diffuseTexturePath;
+                t_loadedCharacter.characterData.meshName = t_sceneName;
+                return t_loadedCharacter.characterData;
             }
         }
 

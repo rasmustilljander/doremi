@@ -35,6 +35,7 @@ namespace DoremiEngine
             return t_skeletalInformation;
         }
 
+
         void SkeletalAnimationManagerImpl::InterpolateBlending(std::vector<DirectX::XMFLOAT4X4>& o_finalTransforms,
                                                                std::vector<InterpolatedVectors> p_interpolatedVector) const
         {

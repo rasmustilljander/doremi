@@ -1,5 +1,6 @@
 #pragma once
 #include <Doremi/Core/Include/LevelLoader.hpp>
+
 #include <DirectXMath.h>
 #include <map>
 
@@ -29,8 +30,8 @@ namespace Doremi
 
             CharacterDataNames LoadCharacter(const std::string& p_fileName);
 
-            CharacterDataNames LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation& p_upperBodySkeletalInformation,
-                                                     DoremiEngine::Graphic::SkeletalInformation& p_lowerBodySkeletalInformation);
+            CharacterDataNames LoadSkeletalCharacter(const std::string& p_fileName, DoremiEngine::Graphic::SkeletalInformation* p_upperBodySkeletalInformation,
+                                                     DoremiEngine::Graphic::SkeletalInformation* p_lowerBodySkeletalInformation);
 
         protected:
             bool BuildComponents(int p_entityId, int p_meshCouplingID, std::vector<DoremiEngine::Graphic::Vertex>& p_vertexBuffer) override;

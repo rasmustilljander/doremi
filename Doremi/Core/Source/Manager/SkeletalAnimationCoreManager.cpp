@@ -101,10 +101,6 @@ namespace Doremi
                 {
                     std::string test = p_skeletalAnimationComponent.clipName;
                     p_skeletalAnimationComponent.clipName = t_animationNames[i];
-                    if(p_skeletalAnimationComponent.clipName == "Attack")
-                    {
-                        int hej = 0;
-                    }
                     p_skeletalAnimationComponent.timePosition = p_skeletalAnimationComponent.skeletalInformation->GetAnimationBlend(t_animationNames[i]).timeElapsed;
                     p_skeletalAnimationComponent.skeletalInformation->GetAnimationBlend(t_animationNames[i]).ResetTimer();
                 }
@@ -138,8 +134,11 @@ namespace Doremi
             TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(p_entityID);
             TransformComponentPrevious* t_transformComponentPrevious =
                 EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(p_entityID);
+
+
             // epsilon för ett litet värde
-            float t_epsilon = 0.001f;
+
+            float t_epsilon = 0.1f;
             XMFLOAT3 t_movementVector;
             // Skapa en vector mellan förra positionen och nya positionen
             XMStoreFloat3(&t_movementVector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_transformComponentPrevious->position));
@@ -155,8 +154,6 @@ namespace Doremi
                 // Kolla om vi rört på oss
                 if(t_movementLengthVector.x > t_epsilon && t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").timeElapsed == 0)
                 {
-                    // Start the timer of the current animationclip. This will be used to phase out this clip. It's a bit unintuitive but We need the
-                    // clipname variable to represent the "Goal" animation
                     t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                     // t_lowerSkeletalAnimationComponent->clipName = "Run";
                     // t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
@@ -166,10 +163,11 @@ namespace Doremi
             else if(t_lowerSkeletalAnimationComponent->clipName == "Run")
             {
                 // Kolla om vi stannat
-                if(t_movementLengthVector.x < t_epsilon &&
+                if(t_movementLengthVector.x < t_epsilon && t_upperSkeletalAnimationComponent->clipName != "Run" &&
                    t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend(t_upperSkeletalAnimationComponent->clipName).timeElapsed == 0)
                 {
                     // Gör samma som överkroppen
+                    // printf("3");
                     t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend(t_upperSkeletalAnimationComponent->clipName).StartTimer();
                     // t_lowerSkeletalAnimationComponent->clipName = t_upperSkeletalAnimationComponent->clipName;
                     // t_lowerSkeletalAnimationComponent->timePosition = t_upperSkeletalAnimationComponent->timePosition;
@@ -197,6 +195,7 @@ namespace Doremi
                t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").timeElapsed == 0)
             {
                 t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").StartTimer();
+                // printf("2");
                 // t_upperSkeletalAnimationComponent->clipName = "Idle";
                 // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
             }
@@ -255,7 +254,8 @@ namespace Doremi
                         t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Attack").StartTimer();
                         // t_upperSkeletalAnimationComponent->clipName = "Attack";
                         // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
-                        if(t_lowerSkeletalAnimationComponent->clipName != "Run")
+                        if(t_lowerSkeletalAnimationComponent->clipName != "Run" &&
+                           t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").timeElapsed == 0)
                         {
                             t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Attack").StartTimer();
                             // t_lowerSkeletalAnimationComponent->clipName = "Attack";
@@ -314,6 +314,7 @@ namespace Doremi
             int t_mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
                          (int)ComponentType::LowerBodySkeletalAnimation;
             // Set shaders
+
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
@@ -322,6 +323,19 @@ namespace Doremi
                 // Check if entity has skeletalanimation
                 if(EntityHandler::GetInstance().HasComponents(j, t_mask))
                 {
+
+                    TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(j);
+                    TransformComponentNext* t_playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(1117);
+                    XMFLOAT3 t_playervector;
+                    XMStoreFloat3(&t_playervector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_playerTransform->position));
+                    XMFLOAT3 t_playerLengthVector;
+                    // Calculate the length of this vector
+                    XMStoreFloat3(&t_playerLengthVector, XMVector3Length(XMLoadFloat3(&t_playervector)));
+                    /* if (t_playerLengthVector.x > 60)
+                     {
+                         return;
+                     }*/
+
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(j);
