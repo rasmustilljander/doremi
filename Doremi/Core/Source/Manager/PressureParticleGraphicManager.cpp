@@ -68,7 +68,7 @@ namespace Doremi
                     {
                         DirectX::XMFLOAT4X4 transMat;
                         DirectX::XMMATRIX tempTransMat =
-                            DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(returnPositions[j].x, returnPositions[j].y, returnPositions[j].z));
+                            DirectX::XMMatrixTranspose(DirectX::XMMatrixScaling(0.5, 0.5, 0.5) * DirectX::XMMatrixTranslation(returnPositions[j].x, returnPositions[j].y, returnPositions[j].z));
                         DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
                         m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*particleComp->mesh,
                                                                                                                   *particleComp->material, transMat);

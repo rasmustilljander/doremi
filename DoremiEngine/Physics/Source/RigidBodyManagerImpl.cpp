@@ -533,7 +533,6 @@ namespace DoremiEngine
             // Add to scene
             m_utils.m_worldScene->addActor(*body);
 
-
             m_bodies[p_id] = body;
             m_IDsByBodies[body] = p_id;
         }

@@ -51,7 +51,7 @@ namespace Doremi
                     // Add us a shape to the arbitrary body thingy
                     for(size_t j = 0; j < newPositions.size(); j++)
                     {
-                        m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
+                        //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddShapeToBody(-15, newPositions[j]);
                     }
 
                     /// Time to draw!
