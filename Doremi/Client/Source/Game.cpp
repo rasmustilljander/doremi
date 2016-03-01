@@ -82,7 +82,7 @@
 namespace Doremi
 {
     using namespace Core;
-    GameMain::GameMain() : m_sharedContext(nullptr) {}
+    GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true) {}
 
     GameMain::~GameMain()
     {
@@ -210,15 +210,14 @@ namespace Doremi
         TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
         t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
-        Core::DoremiGameStates gameState = DoremiGameStates::RUNGAME;
 
-        while(gameState != DoremiGameStates::EXIT)
+        while(m_gameRunning)
         {
             // Tick time
             t_timeHandler->Tick();
 
             // Loop as many update-steps we will take this frame
-            while(t_timeHandler->ShouldUpdateFrame())
+            while(m_gameRunning && t_timeHandler->ShouldUpdateFrame())
             {
                 // Update game based on state
                 Update(t_timeHandler->UpdateStepLen);
@@ -243,7 +242,6 @@ namespace Doremi
             CameraHandler::GetInstance()->UpdateDraw();
 
             Draw(t_timeHandler->Frame);
-            gameState = Core::StateHandler::GetInstance()->GetState();
         }
         TIME_FUNCTION_STOP
     }
@@ -314,6 +312,13 @@ namespace Doremi
                 // Update Pause Screen
                 break;
             }
+
+            case Core::DoremiGameStates::EXIT:
+            {
+                Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
+                m_gameRunning = false;
+                break;
+            }
             default:
             {
                 break;
@@ -370,7 +375,6 @@ namespace Doremi
 
     void GameMain::Stop()
     {
-        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
         Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
         menuEvent->state = Core::DoremiGameStates::EXIT;
         Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);

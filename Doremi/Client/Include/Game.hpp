@@ -103,5 +103,7 @@ namespace Doremi
     protected:
         void AddToManagerList(Core::Manager* p_manager);
         void AddToGraphicalManagerList(Core::Manager* p_manager);
+
+        bool m_gameRunning;
     };
 }
