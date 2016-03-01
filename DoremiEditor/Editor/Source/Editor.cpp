@@ -33,8 +33,7 @@ namespace DoremiEditor
     {
         TIME_FUNCTION_START
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
-
-
+        m_mayaLoader = new MayaLoader(1024, 768); // Hard coded resolution just to get things to work. TODOCONFIG
         TIME_FUNCTION_STOP
     }
 
@@ -67,7 +66,8 @@ namespace DoremiEditor
         TIME_FUNCTION_START
 
         cout << "Update" << endl;
-
+        m_mayaLoader->TryReadAMessage();
+        // Render things
         TIME_FUNCTION_STOP
     }
 
