@@ -15,13 +15,15 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 6;
+            m_treeDepth = 3;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(2000, 1000, 2000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske //
+                                                                          // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
             // Set the center for the box of the world
-            treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske
+            treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
+                                                          // DirectX::XMFLOAT3(-485, 158, 2041)
 
             // Start up for the oct tree. Without this function we don't have anything to start with
             // CreateAndDivideTheChildren(treeRoot);
@@ -143,11 +145,17 @@ namespace Doremi
                         m_currentNode->loopInfo = 0;
                         m_currentNode = m_currentNode->parent;
                     }
-                }       
+                }
                 else
                 {
                     // No collision
-                    if (m_currentNode->depth < m_treeDepth - 1)
+                    // Maybe not needed.
+                    // if (m_currentNode->depth == 0)
+                    // {
+                    //     m_currentNode->loopInfo = 0;
+                    //     t_isDone = true;
+                    // }
+                    if(m_currentNode->depth < m_treeDepth - 1)
                     {
                         m_currentNode->empty = true;
                         m_currentNode->loopInfo = 0;

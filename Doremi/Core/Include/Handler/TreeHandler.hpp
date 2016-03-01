@@ -51,6 +51,8 @@ namespace Doremi
             DirectX::XMFLOAT4 m_planes[6];
             bool CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions);
             // SKITKOD TODOEA
+
+            DirectX::XMFLOAT3 m_playerPos; // DEBUG
             uint32_t drawedLastUpdate = 0;
             DoremiEngine::Graphic::PixelShader* m_pixelShader;
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
