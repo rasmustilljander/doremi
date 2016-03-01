@@ -98,6 +98,7 @@ namespace DoremiEngine
             */
             void SetCursorInvisibleAndMiddle(bool p_bool);
 
+            void SetExitFunction(std::function<void()> p_function) override;
 
         private:
             // SDL_Window *m_win;
@@ -127,6 +128,8 @@ namespace DoremiEngine
 
             int m_mousePosX;
             int m_mousePosY;
+
+            std::function<void()> m_exitFunction;
         };
     }
 }

@@ -178,6 +178,12 @@ namespace DoremiEngine
                     case SDL_MOUSEWHEEL:
                         m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                         break;
+                    case SDL_QUIT:
+                        if(m_exitFunction != nullptr)
+                        {
+                            m_exitFunction();
+                        }
+                        break;
 
                     default:
                         break;
@@ -253,6 +259,8 @@ namespace DoremiEngine
                 o_listToUse.push_back(p_eventvariable);
             }
         }
+
+        void InputModuleImplementation::SetExitFunction(std::function<void()> p_function) { m_exitFunction = p_function; }
     }
 }
 

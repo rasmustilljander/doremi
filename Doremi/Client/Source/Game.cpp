@@ -19,6 +19,9 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 
+// Inputmodule
+#include <DoremiEngine/Input/Include/InputModule.hpp>
+
 /// Game
 // handlers
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
@@ -106,6 +109,7 @@ namespace Doremi
         using namespace Core;
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
         m_sharedContext = &sharedContext;
+        m_sharedContext->GetInputModule().SetExitFunction(std::bind(&GameMain::Stop, this));
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
