@@ -6,8 +6,9 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        SpriteInfoImpl::SpriteInfoImpl() : m_bufferHandle(nullptr) {}
+        SpriteInfoImpl::SpriteInfoImpl() {}
         SpriteInfoImpl::~SpriteInfoImpl() {}
-        void SpriteInfoImpl::SetBufferHandle(ID3D11Buffer* p_bufferHandle) { m_bufferHandle = p_bufferHandle; }
+
+        void SpriteInfoImpl::SetData(const SpriteData& p_spriteData) { m_datainfo = SpriteData(p_spriteData); }
     }
 }

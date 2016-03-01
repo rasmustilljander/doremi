@@ -14,6 +14,7 @@
 #include <iostream>
 #include <algorithm> // std::sort
 #include <DoremiEditor/Core/Include/MaterialMessage.hpp>
+#include <Interface/Texture/SpriteInfo.hpp>
 
 namespace DoremiEngine
 {
@@ -352,6 +353,20 @@ namespace DoremiEngine
 
             bd.ByteWidth = sizeof(DoremiEditor::Core::MaterialData);
             m_device->CreateBuffer(&bd, NULL, &m_materialBuffer);
+
+
+            ZeroMemory(&bd, sizeof(bd));
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            bd.MiscFlags = 0;
+            bd.StructureByteStride = 0;
+            bd.ByteWidth = sizeof(SpriteData);
+            HRESULT res = m_device->CreateBuffer(&bd, NULL, &m_spriteDataBuffer);
+            if(!CheckHRESULT(res, "Error when creating sprite buffer"))
+            {
+                return;
+            }
         }
 
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
@@ -394,29 +409,32 @@ namespace DoremiEngine
             m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
             m_deviceContext->RSSetState(p_rasterizerState);
 
-            // Sort the data according after mesh then texture
-            std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
-
-
             // Setup vertex variables
             const uint32_t stride = 0;
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = nullptr;
 
             // Setup material
-            MaterialMessage material = renderData[0].materialMessage;
-            ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
-            ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
-            ID3D11SamplerState* samplerState = renderData[0].samplerState;
+            MaterialMessage material = spriteRenderData[0].materialMessage;
+            ID3D11ShaderResourceView* texture = spriteRenderData[0].diffuseTexture;
+            ID3D11ShaderResourceView* glowtexture = spriteRenderData[0].glowTexture;
+            ID3D11SamplerState* samplerState = spriteRenderData[0].samplerState;
 
             // Iterate all the entries and do the smallest amount of changes to the GPU
             // Render the first entry outside of the loop because it's a specialcase
 
             // Update constant buffer
             D3D11_MAPPED_SUBRESOURCE tMS;
-            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
-            m_deviceContext->Unmap(m_worldMatrix, NULL);
+            m_deviceContext->Map(m_spriteDataBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+
+            // Copy data
+            memcpy(tMS.pData, &spriteRenderData[0].spriteData, sizeof(SpriteData));
+
+            // Unmap
+            m_deviceContext->Unmap(m_spriteDataBuffer, NULL);
+
+            // Set GS buffer
+            m_deviceContext->GSSetConstantBuffers(0, 1, &m_spriteDataBuffer);
 
 
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
@@ -428,34 +446,23 @@ namespace DoremiEngine
 
             // Update constant buffers
             m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &renderData[0].materialMessage.data, sizeof(&renderData[0].materialMessage.data));
+            memcpy(tMS.pData, &spriteRenderData[0].materialMessage.data, sizeof(&spriteRenderData[0].materialMessage.data));
             m_deviceContext->Unmap(m_materialBuffer, NULL);
             m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
 
-            if (renderData[0].indexData != nullptr)
-            {
-                m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
-                m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
-            }
-            else
-            {
-                m_deviceContext->Draw(renderData[0].vertexCount, 0);
-            }
+
+            // Draw first special case
+            m_deviceContext->Draw(1, 0);
+
 
             // TODO Can be upgraded with instanced drawing
-            const size_t vectorSize = renderData.size();
-            for (size_t i = 1; i < vectorSize; ++i)
+            const size_t vectorSize = spriteRenderData.size();
+            for(size_t i = 1; i < vectorSize; ++i)
             {
-                if (renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                if(spriteRenderData[i].samplerState != spriteRenderData[i - 1].samplerState)
                 {
-                    vertexData = renderData[i].vertexData;
-                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
-                }
-
-                if (renderData[i].samplerState != renderData[i - 1].samplerState)
-                {
-                    samplerState = renderData[i].samplerState;
-                    if (samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    samplerState = spriteRenderData[i].samplerState;
+                    if(samplerState != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetSamplers(0, 1, &samplerState);
                     }
@@ -465,61 +472,56 @@ namespace DoremiEngine
                     }
                 }
 
-                if (renderData[i].diffuseTexture != renderData[i - 1].diffuseTexture) // Check if texture has been changed
+                if(spriteRenderData[i].diffuseTexture != spriteRenderData[i - 1].diffuseTexture) // Check if texture has been changed
                 {
-                    texture = renderData[i].diffuseTexture;
-                    if (texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    texture = spriteRenderData[i].diffuseTexture;
+                    if(texture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetShaderResources(0, 1, &texture);
                     }
                 }
-                if (renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
+
+                if(spriteRenderData[i].glowTexture != spriteRenderData[i - 1].glowTexture) // Check if texture has been changed
                 {
-                    glowtexture = renderData[i].glowTexture;
-                    if (glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    glowtexture = spriteRenderData[i].glowTexture;
+                    if(glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
                 }
 
-                if (&renderData[i].materialMessage != &renderData[i - 1].materialMessage) // Check if texture has been changed
+                if(&spriteRenderData[i].materialMessage != &spriteRenderData[i - 1].materialMessage) // Check if texture has been changed
                 {
-                    material = renderData[i].materialMessage;
-                    if (&material != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    material = spriteRenderData[i].materialMessage;
+                    if(&material != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
                         D3D11_MAPPED_SUBRESOURCE tMS;
                         m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-                        memcpy(tMS.pData, &renderData[i].materialMessage.data, sizeof(renderData[i].materialMessage.data));
+                        memcpy(tMS.pData, &spriteRenderData[i].materialMessage.data, sizeof(spriteRenderData[i].materialMessage.data));
                         m_deviceContext->Unmap(m_materialBuffer, NULL);
 
                         m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
                     }
                 }
 
-                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                // Update constant buffer
+                D3D11_MAPPED_SUBRESOURCE tMS;
+                m_deviceContext->Map(m_spriteDataBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 
-                WorldMatrices t_worldMatrices;
+                // Copy data
+                memcpy(tMS.pData, &spriteRenderData[0].spriteData, sizeof(SpriteData));
 
-                DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
-                DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
-                t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
-                DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
-                t_worldMatrices.worldMat = renderData[i].worldMatrix;
-                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
-                m_deviceContext->Unmap(m_worldMatrix, NULL);
+                // Unmap
+                m_deviceContext->Unmap(m_spriteDataBuffer, NULL);
 
-                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-                if (renderData[i].indexData != nullptr)
-                {
-                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
-                    m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
-                }
-                else
-                {
-                    m_deviceContext->Draw(renderData[i].vertexCount, 0);
-                }
+                // Set GS buffer
+                m_deviceContext->GSSetConstantBuffers(0, 1, &m_spriteDataBuffer);
+
+
+                // Draw
+                m_deviceContext->Draw(1, 0);
             }
-            renderData.clear(); // Empty the vector
+            spriteRenderData.clear(); // Empty the vector
         }
 
         void DirectXManagerImpl::Render2D(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState)

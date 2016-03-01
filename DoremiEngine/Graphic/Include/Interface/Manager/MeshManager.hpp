@@ -3,6 +3,7 @@
 #include <vector>
 #include <DoremiEditor/Core/Include/MaterialMessage.hpp>
 #include <DoremiEditor/Core/Include/MaterialData.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Texture/SpriteInfo.hpp>
 
 namespace DirectX
 {
@@ -36,6 +37,7 @@ namespace DoremiEngine
             /**
             Returns a pointer to the mesh info for the given mesh name, if no mesh exists a nullptr will be returned
             */
+            virtual SpriteInfo* BuildSpriteInfo(SpriteData& p_spriteData) = 0;
             virtual MeshInfo* GetMeshInfo(const std::string& p_meshName) = 0;
             // TODOKO change to acctually load material and not just textures
             virtual MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) = 0;

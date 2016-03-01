@@ -13,15 +13,15 @@ namespace DoremiEngine
             virtual ~SpriteInfoImpl();
 
             // Get
-            ID3D11Buffer* GetBufferHandle() const override { return m_bufferHandle; }
+            SpriteData& GetData() override { return m_datainfo; }
             const std::string& GetFileName() const override { return m_fileName; };
 
             // Set
             void SetFileName(std::string p_fileName) { m_fileName = p_fileName; }
-            void SetBufferHandle(ID3D11Buffer* p_bufferHandle);
+            void SetData(const SpriteData& p_spriteData);
 
         private:
-            ID3D11Buffer* m_bufferHandle;
+            SpriteData m_datainfo;
             std::string m_fileName;
         };
     }

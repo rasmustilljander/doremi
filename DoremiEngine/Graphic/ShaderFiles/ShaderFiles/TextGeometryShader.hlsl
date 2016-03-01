@@ -21,11 +21,12 @@
 
 cbuffer TextureDataBuffer
 {
-    float2 position     : POSITION;
-    float2 origo        : ORIGO;
-    float2 halfsize     : EXTENTS;
-    float2 txtPos       : TEXCOORD;
-    float2 txtSize      : TEXSIZE;
+    float2 position;
+    float2 origo;
+    float2 halfsize;
+    float2 txtPos;
+    float2 txtSize;
+    float2 filler;
 };
 
 struct GeometryOutput

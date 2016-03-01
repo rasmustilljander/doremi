@@ -197,6 +197,13 @@ namespace DoremiEngine
             return newMaterial;
         }
 
+        SpriteInfo* MeshManagerImpl::BuildSpriteInfo(SpriteData& p_spriteData)
+        {
+            SpriteInfo* newSpriteInfo = new SpriteInfoImpl();
+            newSpriteInfo->SetData(p_spriteData);
+            return newSpriteInfo;
+        }
+
         void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix)
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
@@ -218,7 +225,7 @@ namespace DoremiEngine
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
             DoremiEditor::Core::MaterialMessage materialData = p_material.GetMaterialData();
 
-            SpriteRenderData spriteRenderData(p_spriteInfo.GetBufferHandle(), p_material.GetTexture(), p_material.GetGlowTexture(), materialData,
+            SpriteRenderData spriteRenderData(p_spriteInfo.GetData(), p_material.GetTexture(), p_material.GetGlowTexture(), materialData,
                                               p_material.GetSamplerState());
 
             m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddSpriteForRendering(spriteRenderData);
