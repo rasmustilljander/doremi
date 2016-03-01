@@ -55,7 +55,6 @@
 #include <Doremi/Core/Include/Manager/GroundEffectManagerServer.hpp>
 #include <Doremi/Core/Include/Manager/LifeTimeManager.hpp>
 
-
 // other
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
 
@@ -70,7 +69,6 @@
 #include <exception>
 #include <chrono>
 #include <iostream>
-
 
 namespace Doremi
 {
