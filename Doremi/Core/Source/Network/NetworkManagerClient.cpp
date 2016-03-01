@@ -484,6 +484,10 @@ namespace Doremi
                 // If we are processing to run game we set us to connecting
                 if(t_changeMenuEvent->state == DoremiGameStates::RUNGAME)
                 {
+                    // Disconnect from master
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_masterConnection.LastResponse = 0;
+
                     // Change connection state
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::CONNECTING;
                     t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
@@ -514,11 +518,36 @@ namespace Doremi
                     cout << (uint32_t)t_serverIP.IP_a << "." << (uint32_t)t_serverIP.IP_b << "." << (uint32_t)t_serverIP.IP_c << "."
                          << (uint32_t)t_serverIP.IP_d << endl;
                 }
-                else
+                else if(t_changeMenuEvent->state == DoremiGameStates::SERVER_BROWSER)
                 {
+                    // Disconnect from master
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::CONNECTING;
+                    t_connections->m_masterConnection.LastResponse = 0;
+
                     // TODOXX if we want multiple states(in game top menu) this wont work
                     // Change connection state
                     t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnection.LastResponse = 0;
+                    t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
+
+                    // Remove sockets
+                    DoremiEngine::Network::NetworkModule& t_NetworkModule = m_sharedContext.GetNetworkModule();
+                    t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectedSocketHandle);
+                    t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectingSocketHandle);
+                }
+                else
+                {
+
+                    // Disconnect from master
+                    t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_masterConnection.LastResponse = 0;
+
+                    // TODOXX if we want multiple states(in game top menu) this wont work
+                    // Change connection state
+                    t_connections->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::DISCONNECTED;
+                    t_connections->m_serverConnection.LastResponse = 0;
+                    t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
+
 
                     // Remove sockets
                     DoremiEngine::Network::NetworkModule& t_NetworkModule = m_sharedContext.GetNetworkModule();

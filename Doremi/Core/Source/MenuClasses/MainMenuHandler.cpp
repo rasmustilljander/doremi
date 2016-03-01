@@ -74,7 +74,7 @@ namespace Doremi
 
 
             DoremiButtonActions statesForButtons[4];
-            statesForButtons[0] = DoremiButtonActions::START_GAME;
+            statesForButtons[0] = DoremiButtonActions::GO_TO_SERVER_BROWSER;
             statesForButtons[1] = DoremiButtonActions::GO_TO_OPTIONS;
             statesForButtons[2] = DoremiButtonActions::EXIT;
             statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
@@ -103,8 +103,7 @@ namespace Doremi
 
                 t_data.position.y = 1.0f / (float)(length + 1) + i / (float)(length + 1);
 
-                DoremiEngine::Graphic::SpriteInfo* t_spriteInfo =
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSpriteInfo(t_data);
+                DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
 
                 m_buttonList.push_back(Button(t_buttonMaterials, t_spriteInfo, statesForButtons[i]));
             }

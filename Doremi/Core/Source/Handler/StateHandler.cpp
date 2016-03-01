@@ -80,6 +80,13 @@ namespace Doremi
 
                     EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
                 }
+                else if(realEvent->state == DoremiGameStates::SERVER_BROWSER)
+                {
+                    // If we go back to main menu we set camera
+                    // Reset cursor to be visible
+                    InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
+                    t_inputHandler->SetCursorInvisibleAndMiddle(false);
+                }
                 else if(realEvent->state == DoremiGameStates::MAINMENU)
                 {
                     // If we go back to main menu we set camera

@@ -5,6 +5,8 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+
 
 namespace Doremi
 {
@@ -52,6 +54,8 @@ namespace Doremi
             UpdateTimeouts(p_dt);
 
             UpdateInputs();
+
+            UpdateVisual();
         }
 
         void ServerBrowserHandler::UpdateTimeouts(double p_dt)
@@ -114,7 +118,7 @@ namespace Doremi
 
 
             // Check if we're pressing
-            if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_highlightedButton != nullptr)
+            if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick) && m_highlightedButton != nullptr)
             {
                 // If our highlighted button and selected button are the same, we essentialy double click
                 if(m_highlightedButton == m_selectedServer)
@@ -151,6 +155,27 @@ namespace Doremi
             }
         }
 
+        void ServerBrowserHandler::UpdateVisual()
+        {
+            // Reset previous buttons
+            m_drawButtons.clear();
+
+            auto& t_server = m_serversList.begin();
+
+            // For each server we got on display
+            size_t counter = 0;
+            while(t_server != m_serversList.end())
+            {
+                DoremiEngine::Graphic::SpriteData& t_data = (*t_server)->m_serverButton.m_spriteInfo->GetData();
+                t_data.position.y = 0.2f + counter / 4.0f;
+
+                m_drawButtons.push_back(&((*t_server)->m_serverButton));
+
+                ++counter;
+                ++t_server;
+            }
+        }
+
 
         void ServerBrowserHandler::UpdateServer(std::string p_name, ServerStates p_serverState, GameMap p_map, uint16_t p_ping, uint8_t p_currentNumPlayers,
                                                 uint8_t p_maxNumPlayers, uint16_t p_port, uint8_t p_IP_a, uint8_t p_IP_b, uint8_t p_IP_c, uint8_t p_IP_d)
@@ -169,8 +194,46 @@ namespace Doremi
                     t_server->CurrentNumPlayers = p_currentNumPlayers;
                     t_server->MaxNumPlayers = p_maxNumPlayers;
                     t_server->LastResponse = 0;
+
+                    return;
                 }
             }
+
+            // If we didn't find a matchin, we create a new
+            ServerData* t_newServer = new ServerData();
+            t_newServer->Name = p_name;
+            t_newServer->ServerState = p_serverState;
+            t_newServer->Map = p_map;
+            t_newServer->CurrentNumPlayers = p_currentNumPlayers;
+            t_newServer->MaxNumPlayers = p_maxNumPlayers;
+            t_newServer->LastResponse = 0;
+            t_newServer->IP = t_incIP;
+            t_newServer->Port = p_port;
+
+
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            // Basic position
+            DoremiEngine::Graphic::SpriteData t_data;
+
+            t_data.halfsize = XMFLOAT2(0.25f, 0.1f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.5f, 0.0f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
+            Doremi::Core::ButtonMaterials t_buttonMaterials;
+
+            // Load materials
+            t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("playbutton2.dds");
+            t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("playbutton2highlight.dds");
+            t_buttonMaterials.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("exitbutton2.dds");
+
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+
+            t_newServer->m_serverButton = Button(t_buttonMaterials, t_spriteInfo, DoremiButtonActions::START_GAME);
+
+            m_serversList.push_back(t_newServer);
         }
 
         IP_Split ServerBrowserHandler::GetSelectedServerIP()

@@ -14,6 +14,8 @@
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
 #include <Doremi/Core/Include/MenuClasses/VictoryScreen.hpp>
 #include <Doremi/Core/Include/MenuClasses/ScreenObject.hpp>
+#include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
+#include <iostream>
 
 
 // DirectX
@@ -134,6 +136,8 @@ namespace Doremi
         void ScreenSpaceDrawer::DrawVictoryScreen()
         {
             Begin2DDraw();
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
 
             std::vector<ScreenObject*> t_screenObjects = m_victoryScreen->GetScreen();
@@ -141,19 +145,13 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
 
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*t_screenObjects[i]->m_meshInfo,
-                                                                                                          *t_screenObjects[i]->m_materialInfo,
-                                                                                                          t_screenObjects[i]->m_transformMatrix);
+                t_meshManager.AddToRenderList(*t_screenObjects[i]->m_meshInfo, *t_screenObjects[i]->m_materialInfo, t_screenObjects[i]->m_transformMatrix);
             }
 
-            DoremiEngine::Graphic::RasterizerState* t_rasterizer =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
-            /*m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(t_rasterizer->GetRasterizerState(),
-                                                                                                               t_depthStencil->GetDepthStencilState());*/
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
-                                                                                                  t_depthStencil->GetDepthStencilState());
+            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
+            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
+
+            t_dierctxManager.Render2D(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
             End2DDraw();
         }
@@ -162,6 +160,9 @@ namespace Doremi
         {
             Begin2DDraw();
 
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
             // Get buttons to draw
             std::vector<Button> t_buttonsToDraw = MainMenuHandler::GetInstance()->GetButtons();
 
@@ -169,21 +170,17 @@ namespace Doremi
             size_t length = t_buttonsToDraw.size();
             for(size_t i = 0; i < length; i++)
             {
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddSpriteToRenderList(*t_buttonsToDraw[i].m_spriteInfo,
-                                                                                                                *t_buttonsToDraw[i].m_materialInfo);
+                t_meshManager.AddSpriteToRenderList(*t_buttonsToDraw[i].m_spriteInfo, *t_buttonsToDraw[i].m_materialInfo);
             }
 
             // Set rasteriser to defau,t
-            DoremiEngine::Graphic::RasterizerState* t_rasterizer =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
+            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
 
             // Set depth stencil to default
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
+            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
 
             // Draw the sprites
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().RenderSprites(t_rasterizer->GetRasterizerState(),
-                                                                                                       t_depthStencil->GetDepthStencilState());
+            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
             End2DDraw();
         }
@@ -192,6 +189,26 @@ namespace Doremi
         {
             Begin2DDraw();
 
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
+            // Get buttons to draw
+            std::list<Button*> t_buttonsToDraw = ServerBrowserHandler::GetInstance()->GetButtons();
+
+            // For each button add to render list
+            for(auto& t_button : t_buttonsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_button->m_spriteInfo), *(t_button->m_materialInfo));
+            }
+
+            // Set rasteriser to defau,t
+            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
+
+            // Set depth stencil to default
+            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
+
+            // Draw the sprites
+            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
             End2DDraw();
         }

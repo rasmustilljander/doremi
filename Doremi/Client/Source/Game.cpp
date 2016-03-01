@@ -135,7 +135,9 @@ namespace Doremi
         AddToGraphicalManagerList(new GraphicManager(sharedContext));
         AddToGraphicalManagerList(new SkeletalAnimationCoreManager(sharedContext));
         AddToManagerList(new AudioManager(sharedContext));
-        AddToManagerList(new NetworkManagerClient(sharedContext));
+        NetworkManagerClient* t_netManager = new NetworkManagerClient(sharedContext);
+        AddToManagerList(t_netManager);
+        AddToServerBrowserList(t_netManager);
         AddToManagerList(new RigidTransformSyncManager(sharedContext));
         AddToManagerList(new PressureParticleManager(sharedContext));
         AddToManagerList(new LightManager(sharedContext));
@@ -161,6 +163,8 @@ namespace Doremi
     }
 
     void GameMain::AddToManagerList(Manager* p_manager) { m_managers.push_back(p_manager); }
+
+    void GameMain::AddToServerBrowserList(Manager* p_manager) { m_serverBrowserManagers.push_back(p_manager); }
 
     void GameMain::AddToGraphicalManagerList(Manager* p_manager) { m_graphicalManagers.push_back(p_manager); }
 
@@ -257,6 +261,25 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
+    void GameMain::UpdateServerBrowser(double p_deltaTime)
+    {
+        TIME_FUNCTION_START
+
+        size_t length = m_serverBrowserManagers.size();
+        PlayerHandler::GetInstance()->Update(p_deltaTime);
+
+        // Have all managers update
+        for(size_t i = 0; i < length; i++)
+        {
+            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
+            m_serverBrowserManagers.at(i)->Update(p_deltaTime);
+            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
+        }
+
+
+        TIME_FUNCTION_STOP
+    }
+
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
@@ -276,6 +299,9 @@ namespace Doremi
             }
             case Core::DoremiGameStates::SERVER_BROWSER:
             {
+                // TODOCM maybe only run network manager
+                UpdateServerBrowser(p_deltaTime);
+
                 ServerBrowserHandler::GetInstance()->Update(p_deltaTime);
 
                 break;

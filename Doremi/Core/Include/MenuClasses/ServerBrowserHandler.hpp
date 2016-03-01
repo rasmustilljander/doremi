@@ -65,6 +65,8 @@ namespace Doremi
 
             uint16_t GetSelectedServerPort();
 
+            auto& GetButtons() { return m_drawButtons; }
+
         private:
             ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
@@ -74,11 +76,16 @@ namespace Doremi
 
             void UpdateInputs();
 
+            void ServerBrowserHandler::UpdateVisual();
+
+
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             static ServerBrowserHandler* m_singleton;
 
             std::list<ServerData*> m_serversList;
+
+            std::list<Button*> m_drawButtons;
 
             double m_timeout;
 

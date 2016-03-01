@@ -75,6 +75,8 @@ namespace Doremi
         */
         void UpdateGame(double p_deltaTime);
 
+        void UpdateServerBrowser(double p_deltaTime);
+
         /**
             TODOCM doc
         */
@@ -84,6 +86,8 @@ namespace Doremi
             TOODCM doc
         */
         std::vector<Core::Manager*> m_managers;
+
+        std::vector<Core::Manager*> m_serverBrowserManagers;
 
         /**
             TODOCM doc
@@ -98,6 +102,7 @@ namespace Doremi
 
     protected:
         void AddToManagerList(Core::Manager* p_manager);
+        void AddToServerBrowserList(Core::Manager* p_manager);
         void AddToGraphicalManagerList(Core::Manager* p_manager);
 
         bool m_gameRunning;
