@@ -68,11 +68,6 @@ namespace Doremi
             // Positionera I mitten av skärmen
             float t_buttonXPosition = m_resolution.x * 0.5f;
 
-            // TODOCM remove hotfix for better solution
-            if(p_buttonTextureNames.size() > 3)
-            {
-                std::runtime_error("Somone changed the number of buttons without adding states...");
-            }
 
             DoremiButtonActions statesForButtons[4];
             statesForButtons[0] = DoremiButtonActions::RUNGAME;
@@ -81,7 +76,7 @@ namespace Doremi
             statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
 
             length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
-            for(size_t i = 0; i < length; i++)
+            for(size_t i = 0; i < 1; i++)
             {
                 // Lägg in materialinfo å meshinfo för varje knapp i dess klass instantiering. Lägg till i listan för knappar
                 // Klassisk klur function i Y led. dirx startar resolution.y längs ner. Vi vill börja högst upp. Sedan subtrahera en hel knapp per i,
@@ -108,7 +103,18 @@ namespace Doremi
                 // Skapa knapp å stoppa in i listan Menustate är riskmodd. Hårdkodat mot vilken ordning som namnen laddas in. Finns kommentarer till
                 // detta androp om ordning
 
-                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, statesForButtons[i]));
+                DoremiEngine::Graphic::SpriteData t_data;
+
+                // Set size of button
+                t_data.halfsize = XMFLOAT2(0.5f, 0.5f);
+                t_data.origo = XMFLOAT2(0.0f, 0.0f);
+                t_data.position = XMFLOAT2(0.5f, 0.5f);
+                t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+                t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+                DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSpriteInfo(t_data);
+
+                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, t_spriteInfo,statesForButtons[i]));
             }
             m_inputHandler = new InputHandlerClient(m_sharedContext);
         }

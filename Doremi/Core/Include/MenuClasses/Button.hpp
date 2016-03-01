@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Texture/SpriteInfo.hpp>
 #include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 namespace Doremi
 {
@@ -40,7 +41,7 @@ namespace Doremi
         {
         public:
             Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
-                   Core::DoremiButtonActions p_menuState);
+                DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState);
             Button();
 
             ~Button();
@@ -61,7 +62,7 @@ namespace Doremi
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
 
             // Add "Mesh" info here, but its buffer
-
+            DoremiEngine::Graphic::SpriteInfo* m_spriteInfo;
 
         private:
             ButtonMaterials m_buttonMaterials;

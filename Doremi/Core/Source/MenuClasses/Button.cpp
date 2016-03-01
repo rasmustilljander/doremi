@@ -16,8 +16,8 @@ namespace Doremi
     {
         using namespace DirectX;
         Button::Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials,
-                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, Core::DoremiButtonActions p_menuState)
-            : m_position(p_position), m_size(p_size), m_buttonMaterials(p_buttonMaterials), m_meshInfo(p_meshInfo), m_buttonAction(p_menuState)
+                       DoremiEngine::Graphic::MeshInfo* p_meshInfo, DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState)
+            : m_position(p_position), m_size(p_size), m_buttonMaterials(p_buttonMaterials), m_meshInfo(p_meshInfo), m_spriteInfo(p_spriteInfo), m_buttonAction(p_menuState)
         {
             // Building a transform matrix. needs no rotation or scaling orientation the variable can be reused. Scaling origin is 0,0,0 for the quad
             m_materialInfo = m_buttonMaterials.m_vanillaMaterial;
