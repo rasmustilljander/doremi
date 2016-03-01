@@ -74,7 +74,7 @@ namespace Doremi
 
 
             DoremiButtonActions statesForButtons[4];
-            statesForButtons[0] = DoremiButtonActions::GO_TO_SERVER_BROWSER;
+            statesForButtons[0] = DoremiButtonActions::START_GAME;
             statesForButtons[1] = DoremiButtonActions::GO_TO_OPTIONS;
             statesForButtons[2] = DoremiButtonActions::EXIT;
             statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
