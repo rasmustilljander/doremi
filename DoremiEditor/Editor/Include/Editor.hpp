@@ -46,10 +46,5 @@ namespace DoremiEditor
         TODOCM doc
         */
         void Update(double p_deltaTime);
-
-        /**
-        TOODCM doc
-        */
-        std::vector<Doremi::Core::Manager*> m_managers;
     };
 }
