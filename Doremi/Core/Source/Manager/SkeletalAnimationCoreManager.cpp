@@ -310,9 +310,15 @@ namespace Doremi
                     // Start draw pipeline Copypasted from graphic manager
                     RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(j);
                     TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(j);
+
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
-
+                    if(renderComp->lockedRotationX)
+                    {
+                        // XMVECTOR right = XMLoadFloat3(&XMFLOAT3(1, 0, 0));
+                        // XMVector3Rotate(right, quaternion);
+                        // xmmatrixro
+                    }
                     DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
                         DirectX::XMMatrixRotationQuaternion(quaternion) *

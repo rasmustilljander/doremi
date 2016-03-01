@@ -165,6 +165,7 @@ namespace Doremi
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
             renderComp->offsetY = -3;
+            renderComp->lockedRotationX = true;
             blueprint[ComponentType::Render] = renderComp;
 
             // SkeletalAnimationComponent
