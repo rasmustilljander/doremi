@@ -48,6 +48,9 @@
 #include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
 #include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
 
+// Configuration
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
+
 namespace Doremi
 {
     namespace Core
@@ -68,6 +71,9 @@ namespace Doremi
 
             // Create player object thing
             m_player = new PlayerClient(0, m_inputHandler, newFrequencyHandler, newNetworkEventReceiver);
+            m_player->m_turnSpeed = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().TurnSpeed;
+            m_maxPitch = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().MaxPitch;
+            m_minPitch = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().MinPitch;
         }
 
         PlayerHandlerClient::~PlayerHandlerClient()
@@ -129,37 +135,25 @@ namespace Doremi
             if(EntityHandler::GetInstance().HasComponents(entityID, (int)ComponentType::CharacterController | (int)ComponentType::Transform))
             {
                 /// Handle mouse input
-                // Get mouse input
-                int t_mouseMovementX = inputHandler->GetMouseMovementX();
-                if(t_mouseMovementX)
+                m_jaw += inputHandler->GetMouseMovementX() * p_player->m_turnSpeed;
+                m_pitch += inputHandler->GetMouseMovementY() * p_player->m_turnSpeed;
+
+                // Check if we are looking outside of bounds
+                if(m_pitch > m_maxPitch)
                 {
-                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
-                    // Get direction
-                    XMFLOAT4 orientation = transComp->rotation;
-
-                    // Create rotation matrix with orientation quaternion
-                    XMVECTOR orientationVec = XMLoadFloat4(&orientation);
-
-                    // Get current angle
-                    float angle;
-                    XMVECTOR oldDir; // This really is only needed for the parameter below...
-                    XMQuaternionToAxisAngle(&oldDir, &angle, orientationVec);
-                    // Change the angle
-                    angle += t_mouseMovementX * p_player->m_turnSpeed;
-                    // Single quaternions don't really like angles over 2*pi, we do this
-                    if(angle > 2.0f * 3.1415f)
-                    {
-                        angle -= 2.0f * 3.1415f;
-                    }
-                    else if(angle < 0)
-                    {
-                        angle += 2.0f * 3.1415f;
-                    }
-                    // Create a new quaternion with the new angle
-                    orientationVec = XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angle);
-                    // Store results
-                    XMStoreFloat4(&transComp->rotation, orientationVec);
+                    m_pitch = m_maxPitch;
                 }
+                else if(m_pitch < m_minPitch)
+                {
+                    m_pitch = m_minPitch;
+                }
+
+                // Create and save rotation
+                XMMATRIX rotationMat = XMMatrixRotationRollPitchYaw(m_pitch, m_jaw, 0);
+                XMFLOAT4 newOrientation;
+                XMStoreFloat4(&newOrientation, XMQuaternionRotationMatrix(rotationMat));
+                TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
+                transComp->rotation = newOrientation;
             }
 
             TIME_FUNCTION_STOP

@@ -85,49 +85,49 @@ namespace Doremi
                 TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                 // Get direction
                 XMFLOAT4 orientation = transComp->rotation;
-                // Start with standard direction
-                XMFLOAT3 dir = XMFLOAT3(0, 0, 1);
-                XMVECTOR dirVec = XMLoadFloat3(&dir);
-                // Create rotation matrix with orientation quaternion
+                // Start with standard right
+                XMVECTOR right = XMLoadFloat3(&XMFLOAT3(1, 0, 0));
+
+                // Rotate right vector with quaternione giving us the characters right vec
                 XMVECTOR orientationVec = XMLoadFloat4(&orientation);
-                XMMATRIX rotMat = XMMatrixRotationQuaternion(orientationVec);
-                // Rotate "start vector" with rotation matrix, giving us the target vector
-                dirVec = XMVector3Transform(dirVec, rotMat);
-                // Create right vector the same way
-                XMFLOAT3 right = XMFLOAT3(1, 0, 0);
-                XMVECTOR rightVec = XMLoadFloat3(&right);
-                rightVec = XMVector3Transform(rightVec, rotMat);
-                // WARNING! Might be necessary to consider up-vector (project into XZ-plane or something?)
+                right = XMVector3Rotate(right, orientationVec);
+
+                // Create forward by crossing right with standard up
+                XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
+                XMVECTOR forward = XMVector3Cross(right, up);
+
+                // Normalize!
+                forward = XMVector3Normalize(forward);
 
                 /// Handle keyboard input
                 // Start by creating a movement vector
                 XMFLOAT3 movement = XMFLOAT3(0, 0, 0);
                 XMVECTOR movementVec = XMLoadFloat3(&movement);
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Forward))
                 {
-                    movementVec += dirVec * p_player->m_moveSpeed;
+                    movementVec += forward * p_player->m_moveSpeed;
                 }
 
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Backward))
                 {
-                    movementVec -= dirVec * p_player->m_moveSpeed;
+                    movementVec -= forward * p_player->m_moveSpeed;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Left))
                 {
-                    movementVec -= rightVec * p_player->m_moveSpeed;
+                    movementVec -= right * p_player->m_moveSpeed;
                 }
-                if (inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
+                if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::Right))
                 {
-                    movementVec += rightVec * p_player->m_moveSpeed;
+                    movementVec += right * p_player->m_moveSpeed;
                 }
 
-                if (inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
+                if(inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                 {
 
-                    if (!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
+                    if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
                     {
                         JumpComponent* t_jumpComponent = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID);
-                        if (!t_jumpComponent->active)
+                        if(!t_jumpComponent->active)
                         {
                             t_jumpComponent->StartJump();
                             // Send jump event.

@@ -17,7 +17,7 @@ namespace Doremi
             /**
             angles are in radians
             */
-            ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer, const float& p_minAngle, const float& p_maxAngle);
+            ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer);
             virtual ~ThirdPersonCamera();
             void Update();
             void UpdateInput(const double& p_dt);

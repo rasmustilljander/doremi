@@ -62,10 +62,6 @@ namespace DoremiEngine
             {
                 o_info.CameraDistanceFromPlayer = std::stof(p_mapToInterpret.at("CameraDistanceFromPlayer"));
             }
-            if(p_mapToInterpret.count("CameraSpeedY"))
-            {
-                o_info.CameraSpeedY = std::stof(p_mapToInterpret.at("CameraSpeedY"));
-            }
             if(p_mapToInterpret.count("CameraViewDistance"))
             {
                 o_info.CameraViewDistance = std::stoi(p_mapToInterpret.at("CameraViewDistance"));
@@ -118,6 +114,18 @@ namespace DoremiEngine
             {
                 o_info.AIAimOffset = std::stof(p_mapToInterpret.at("AIAimOffset"));
             }
+            if(p_mapToInterpret.count("TurnSpeed"))
+            {
+                o_info.TurnSpeed = std::stof(p_mapToInterpret.at("TurnSpeed"));
+            }
+            if(p_mapToInterpret.count("MaxPitch"))
+            {
+                o_info.MaxPitch = std::stof(p_mapToInterpret.at("MaxPitch"));
+            }
+            if(p_mapToInterpret.count("MinPitch"))
+            {
+                o_info.MinPitch = std::stof(p_mapToInterpret.at("MinPitch"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -137,7 +145,6 @@ namespace DoremiEngine
             returnMap["PlayRepeatableAudioRecording"] = std::to_string(p_info.PlayRepeatableAudioRecording);
             returnMap["ExitGame"] = std::to_string(p_info.ExitGame);
             returnMap["CameraDistanceFromPlayer"] = std::to_string(p_info.CameraDistanceFromPlayer);
-            returnMap["CameraSpeedY"] = std::to_string(p_info.CameraSpeedY);
             returnMap["CameraViewDistance"] = std::to_string(p_info.CameraViewDistance);
             returnMap["CameraFieldOfView"] = std::to_string(p_info.CameraFieldOfView);
             returnMap["UseIPMaster"] = std::to_string(p_info.UseIPMaster);
@@ -151,6 +158,9 @@ namespace DoremiEngine
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
             returnMap["AIJumpDistance"] = std::to_string(p_info.AIJumpDistance);
             returnMap["AIAimOffset"] = std::to_string(p_info.AIAimOffset);
+            returnMap["TurnSpeed"] = std::to_string(p_info.TurnSpeed);
+            returnMap["MaxPitch"] = std::to_string(p_info.MaxPitch);
+            returnMap["MinPitch"] = std::to_string(p_info.MinPitch);
             return returnMap;
         }
     }

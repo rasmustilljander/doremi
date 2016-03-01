@@ -13,10 +13,9 @@ namespace Doremi
 {
     namespace Core
     {
-        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer, const float& p_minAngle, const float& p_maxAngle)
-            : m_camera(p_camera), m_distanceFromPlayer(p_distanceFromPlayer), m_maxAngle(p_maxAngle), m_minAngle(p_minAngle)
+        ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer)
+            : m_camera(p_camera), m_distanceFromPlayer(p_distanceFromPlayer)
         {
-            m_angle = (p_minAngle + p_maxAngle) * 0.5f;
         }
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
@@ -39,23 +38,26 @@ namespace Doremi
             XMFLOAT4 orientation = playerTransform->rotation;
             XMVECTOR position = XMLoadFloat3(&playerTransform->position);
             XMVECTOR quater = XMLoadFloat4(&orientation);
-            XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0)); // The upvector of the character should always be this
+
+            // the standar up which will be altered by the quaternion
+            XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
+            XMVECTOR realUp = XMVector3Rotate(up, quater);
+
             XMVECTOR forward = XMLoadFloat3(&XMFLOAT3(0, 0, 1)); // Standard forward vector
             forward = XMVector3Rotate(forward, quater); // Rotate forward vector with player orientation TODOKO Should maybe disregard some rotations?
             forward = XMVector3Normalize(forward);
-            XMVECTOR right = XMVector3Cross(forward, up);
+            // XMVECTOR right = XMVector3Cross(forward, up);
 
-            XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
-            // XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
-            forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
-            forward = XMVector3Normalize(forward);
+            // XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
+            //// XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
+            // forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
+            // forward = XMVector3Normalize(forward);
+
             XMVECTOR cameraPosition = position - forward * m_distanceFromPlayer;
-            // float offsetY = 5 * cosf(m_angle); // Get offset in Y
-            XMVECTOR realUp =
-                XMVector3Cross(right, forward); // Get the real upvector to have the camera focus on a point a bit above the players focus
             realUp = XMVector3Normalize(realUp);
-            cameraPosition += realUp * 3; // Set offset in Y TODOCONFIG
-            XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position + realUp * 3, up)); // TODOCONFIG
+            cameraPosition += realUp * 4; // Set offset in Y TODOCONFIG
+
+            XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position + realUp * 4, up)); // TODOCONFIG
             // XMVECTOR forwardQuater = XMQuaternionRotationNormal(forward,0);
             XMFLOAT4X4 viewMat;
             XMStoreFloat4x4(&viewMat, worldMatrix);
@@ -66,17 +68,6 @@ namespace Doremi
             m_camera->SetCameraPosition(t_camPos);
         }
 
-        void ThirdPersonCamera::UpdateInput(const double& p_dt)
-        {
-            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            InputHandlerClient* t_inputHandler = t_playerHandler->GetInputHandler();
-
-            float wantedAngle = m_angle; // the angle we want to reach
-            wantedAngle -= t_inputHandler->GetMouseMovementY() * 0.001;
-            if(wantedAngle < m_maxAngle && wantedAngle > m_minAngle)
-            {
-                m_angle = wantedAngle;
-            }
-        }
+        void ThirdPersonCamera::UpdateInput(const double& p_dt) {}
     }
 }

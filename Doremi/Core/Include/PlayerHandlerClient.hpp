@@ -94,6 +94,11 @@ namespace Doremi
                 Maximum events to read in range of 0-N
             */
             uint32_t m_maxNumEvents;
+
+            float m_jaw;
+            float m_pitch;
+            float m_maxPitch;
+            float m_minPitch;
         };
     }
 }
