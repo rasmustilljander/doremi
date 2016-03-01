@@ -312,17 +312,28 @@ namespace Doremi
                     TransformComponent* orientationComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(j);
 
                     DirectX::XMFLOAT4X4 transMat;
+                    XMFLOAT3 offsetPosition =
+                        XMFLOAT3(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY, orientationComp->position.z);
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+                    DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&offsetPosition);
+                    DirectX::XMMATRIX tempTransMat;
                     if(renderComp->lockedRotationX)
                     {
-                        // XMVECTOR right = XMLoadFloat3(&XMFLOAT3(1, 0, 0));
-                        // XMVector3Rotate(right, quaternion);
-                        // xmmatrixro
+                        XMVECTOR right = XMLoadFloat3(&XMFLOAT3(1, 0, 0));
+                        right = XMVector3Rotate(right, quaternion);
+                        XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
+                        XMVECTOR forward = XMVector3Cross(right, up);
+                        tempTransMat =
+                            DirectX::XMMatrixTranspose(DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+                                                       XMMatrixInverse(nullptr, XMMatrixLookAtLH(position, position + forward, up)));
                     }
-                    DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
-                        DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
-                        DirectX::XMMatrixRotationQuaternion(quaternion) *
-                        DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY, orientationComp->position.z));
+                    else
+                    {
+                        tempTransMat = DirectX::XMMatrixTranspose(
+                            DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+                            DirectX::XMMatrixRotationQuaternion(quaternion) * DirectX::XMMatrixTranslationFromVector(position));
+                    }
+
                     DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
                     submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                     // Set the Raster and depthstencilstate
