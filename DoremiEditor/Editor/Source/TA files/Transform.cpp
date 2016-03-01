@@ -1,4 +1,4 @@
-#include "Transform.h"
+#include "TA files/Transform.h"
 
 void Transform::UpdateCBuffer()
 {
@@ -28,27 +28,27 @@ void Transform::UpdateCBuffer()
 
     XMStoreFloat4x4(&transformCBufferData.world, XMMatrixTranspose(tempWorld));
     // transformdata ligger på plats 0, material på 1, osv
-    gDeviceContext->UpdateSubresource(transformCBuffer, 0, NULL, &transformCBufferData.world, 0,
-                                      0); // skapa en separat struct för transformdata som ska in i shadern, world osv
-    gDeviceContext->VSSetConstantBuffers(0, 1, &transformCBuffer);
+    //gDeviceContext->UpdateSubresource(transformCBuffer, 0, NULL, &transformCBufferData.world, 0,
+    //                                  0); // skapa en separat struct för transformdata som ska in i shadern, world osv
+    //gDeviceContext->VSSetConstantBuffers(0, 1, &transformCBuffer);
 }
 
 void Transform::CreateTransformCBuffer()
 { // glöm inte parentens skit?
-    D3D11_BUFFER_DESC cbDesc = {0};
-    cbDesc.ByteWidth = sizeof(TransformCBufferData); // kolla så den är 16 byte alligned sen!!
-    cbDesc.Usage = D3D11_USAGE_DEFAULT;
-    cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    // cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbDesc.MiscFlags = 0;
-    cbDesc.StructureByteStride = 0;
+    //D3D11_BUFFER_DESC cbDesc = {0};
+    //cbDesc.ByteWidth = sizeof(TransformCBufferData); // kolla så den är 16 byte alligned sen!!
+    //cbDesc.Usage = D3D11_USAGE_DEFAULT;
+    //cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    //// cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    //cbDesc.MiscFlags = 0;
+    //cbDesc.StructureByteStride = 0;
 
-    //// Fill in the subresource data.
-    // D3D11_SUBRESOURCE_DATA InitData;
-    // InitData.pSysMem = &transformCBufferData; //ger den startvärde, default, använd updatesubresource sen
-    // InitData.SysMemPitch = 0;
-    // InitData.SysMemSlicePitch = 0;
+    ////// Fill in the subresource data.
+    //// D3D11_SUBRESOURCE_DATA InitData;
+    //// InitData.pSysMem = &transformCBufferData; //ger den startvärde, default, använd updatesubresource sen
+    //// InitData.SysMemPitch = 0;
+    //// InitData.SysMemSlicePitch = 0;
 
-    // Create the buffer.
-    gDevice->CreateBuffer(&cbDesc, 0, &transformCBuffer);
+    //// Create the buffer.
+    //gDevice->CreateBuffer(&cbDesc, 0, &transformCBuffer);
 }

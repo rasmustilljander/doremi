@@ -4,11 +4,11 @@
 #define FILEHANDLER_H
 #endif
 
-#include "Mesh.h"
-#include "Light.h"
-#include "Transform.h"
-#include "Material.h"
-#include "ObjectData.h"
+#include "TA files/Mesh.h"
+#include "TA files/Light.h"
+#include "TA files/Transform.h"
+#include "TA files/Material.h"
+#include "TA files/ObjectData.h"
 //behöver tillgång till dessa, vill vi flytta fileloadern så måste dessa oxå finnas där
 
 #include <iostream>

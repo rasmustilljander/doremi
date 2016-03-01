@@ -8,8 +8,6 @@
 #include <DirectXMath.h>
 #include <DirectXMathMatrix.inl>
 #include <DirectXMathVector.inl>
-#include <d3d11.h>
-#include <d3dcompiler.h>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -20,11 +18,8 @@
 using namespace DirectX;
 //using namespace DirectX::SimpleMath;
 
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
-
-#include "Entity.h"
-#include "Material.h"
+#include "TA files/Entity.h"
+#include "TA files/Material.h"
 
 class Mesh : public Entity{
 public:
@@ -43,21 +38,14 @@ public:
 	Vertex *vertices = nullptr; //dessa kan inte ligga i meshData då 
 	IndexV *indecies = nullptr;
 	UINT *indexList = nullptr; //denna som ska skapas en indexbuffer av, man vill ha id för vilken vertis som ska användas och inte vilken pos, nor och uv
-	ID3D11Buffer *vertexBuffer = nullptr;
-	ID3D11Buffer *indexBuffer = nullptr;
 	//std::vector<Vertex> vertices;	
 	
 	Material* material = nullptr;
 	//int materialID = 0;;
 
-	Mesh(ID3D11Device* gd, ID3D11DeviceContext* gdc){
-		this->gDevice = gd; //freea dessa inte här, görs i main duuh
-		this->gDeviceContext = gdc;
-		//materialID = 0; //default material ligger på index 0
+	Mesh(){
 	}
 	~Mesh(){
-		vertexBuffer->Release();
-		indexBuffer->Release();
 
 	/*	delete(name);
 		delete(meshData);*/
@@ -80,8 +68,6 @@ public:
 
 
 private:
-	ID3D11Device* gDevice = nullptr;
-	ID3D11DeviceContext* gDeviceContext = nullptr;
 
 	HRESULT hr;
 };

@@ -1,5 +1,5 @@
-#include "Material.h"
-#include "DDSTextureLoader.h"
+#include "TA files/Material.h"
+#include "TA files/DDSTextureLoader.h"
 
 void Material::UpdateCBuffer()
 {
@@ -21,31 +21,13 @@ void Material::UpdateCBuffer()
     materialCBufferData.specCosine = materialData.specCosine;
     materialCBufferData.specEccentricity = materialData.specEccentricity;
     materialCBufferData.specRollOff = materialData.specRollOff;
-
-    gDeviceContext->UpdateSubresource(materialCbuffer, 0, NULL, &materialCBufferData, 0, 0);
     // gDeviceContext->PSSetConstantBuffers(1, 1, &materialCbuffer); sätts i render
 }
 void Material::CreateCBuffer()
 {
-    D3D11_BUFFER_DESC cbDesc = {0};
-    cbDesc.ByteWidth = sizeof(MaterialCBufferData); // kolla så den är 16 byte alligned sen!!
-    cbDesc.Usage = D3D11_USAGE_DEFAULT;
-    cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    // cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbDesc.MiscFlags = 0;
-    cbDesc.StructureByteStride = 0;
-
-    // Fill in the subresource data.
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = &materialCBufferData; // ger den startvärde, default, använd updatesubresource sen
-    InitData.SysMemPitch = 0;
-    InitData.SysMemSlicePitch = 0;
-
-    // Create the buffer.
-    gDevice->CreateBuffer(&cbDesc, &InitData, &materialCbuffer);
 }
 
-void Material::CreateTexture(char* filePath, ID3D11Resource*& texture, ID3D11ShaderResourceView*& textureView)
+void Material::CreateTexture(char* filePath)
 {
     if(filePath != nullptr && filePath[0] != 0)
     {
@@ -70,7 +52,6 @@ void Material::CreateTexture(char* filePath, ID3D11Resource*& texture, ID3D11Sha
         const wchar_t *filePathWchar;
         filePathWchar = tempWString.c_str();*/
         // HRESULT br = CreateWICTextureFromFile(gDevice, gDeviceContext, filePathWchar, nullptr, &textureView, 0);
-        HRESULT hr = CreateDDSTextureFromFile(gDevice, wcstring, &texture, &textureView, 0, nullptr); // felaktigt filnamn
         std::cout << "Bajs";
     }
 }

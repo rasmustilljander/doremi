@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "TA files/Mesh.h"
 void Mesh::CreateBuffers()
 {
     CreateIndices();
@@ -17,8 +17,6 @@ void Mesh::EmptyVariables()
 
 void Mesh::EmptyBuffers()
 {
-    vertexBuffer->Release();
-    indexBuffer->Release();
 }
 
 void Mesh::CreateIndices()
@@ -122,51 +120,51 @@ void Mesh::CreateVertices()
 
 void Mesh::CreateVertexBuffer() // får skapa vertexarrayen oxå!!!!! hämta all data från meshData
 {
-    // VertexBuffer description
-    D3D11_BUFFER_DESC bufferDesc = {0};
-    memset(&bufferDesc, 0, sizeof(bufferDesc));
-    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    bufferDesc.ByteWidth = sizeof(Vertex) * nrIndecies;
-    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    //// VertexBuffer description
+    //D3D11_BUFFER_DESC bufferDesc = {0};
+    //memset(&bufferDesc, 0, sizeof(bufferDesc));
+    //bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    //bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    //bufferDesc.ByteWidth = sizeof(Vertex) * nrIndecies;
+    //bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-    D3D11_SUBRESOURCE_DATA data;
-    data.pSysMem = vertices;
-    data.SysMemPitch = 0;
-    data.SysMemSlicePitch = 0;
-    hr = gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+    //D3D11_SUBRESOURCE_DATA data;
+    //data.pSysMem = vertices;
+    //data.SysMemPitch = 0;
+    //data.SysMemSlicePitch = 0;
+    //hr = gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 }
 
 void Mesh::CreateIndexBuffer()
 {
-    // Fill in a buffer description.
-    D3D11_BUFFER_DESC bufferDesc;
-    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    bufferDesc.ByteWidth = sizeof(UINT) * nrIndecies;
-    bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bufferDesc.CPUAccessFlags = 0;
-    bufferDesc.MiscFlags = 0;
+    //// Fill in a buffer description.
+    //D3D11_BUFFER_DESC bufferDesc;
+    //bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    //bufferDesc.ByteWidth = sizeof(UINT) * nrIndecies;
+    //bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    //bufferDesc.CPUAccessFlags = 0;
+    //bufferDesc.MiscFlags = 0;
 
-    // Define the resource data.
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = indexList;
-    InitData.SysMemPitch = 0;
-    InitData.SysMemSlicePitch = 0;
+    //// Define the resource data.
+    //D3D11_SUBRESOURCE_DATA InitData;
+    //InitData.pSysMem = indexList;
+    //InitData.SysMemPitch = 0;
+    //InitData.SysMemSlicePitch = 0;
 
-    // Create the buffer with the device.
-    hr = gDevice->CreateBuffer(&bufferDesc, &InitData, &indexBuffer);
+    //// Create the buffer with the device.
+    //hr = gDevice->CreateBuffer(&bufferDesc, &InitData, &indexBuffer);
 }
 
 void Mesh::RemapVertexBuffer()
 {
     CreateIndices(); // antar jag behöver dessa här!!
     CreateVertices();
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    //D3D11_MAPPED_SUBRESOURCE mappedResource;
+    //ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-    gDeviceContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-    //	Update the vertex buffer here.
-    memcpy(mappedResource.pData, vertices, sizeof(Vertex) * nrIndecies);
-    //	Reenable GPU access to the vertex buffer data.
-    gDeviceContext->Unmap(vertexBuffer, 0);
+    //gDeviceContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    ////	Update the vertex buffer here.
+    //memcpy(mappedResource.pData, vertices, sizeof(Vertex) * nrIndecies);
+    ////	Reenable GPU access to the vertex buffer data.
+    //gDeviceContext->Unmap(vertexBuffer, 0);
 }

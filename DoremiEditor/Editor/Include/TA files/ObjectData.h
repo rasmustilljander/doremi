@@ -8,8 +8,6 @@
 #include <DirectXMath.h>
 #include <DirectXMathMatrix.inl>
 #include <DirectXMathVector.inl>
-#include <d3d11.h>
-#include <d3dcompiler.h>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -19,9 +17,6 @@
 
 using namespace DirectX;
 //using namespace DirectX::SimpleMath;
-
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
 
 const int MAX_NAME_SIZE = 100;
 

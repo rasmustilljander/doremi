@@ -1,10 +1,9 @@
-#include "MayaLoader.h"
+#include "TA files/MayaLoader.h"
 
 Mutex mutexInfo("__info_Mutex__");
-MayaLoader::MayaLoader(ID3D11Device* gd, ID3D11DeviceContext* gdc, UINT screenWidth, UINT screenHeight)
+MayaLoader::MayaLoader(UINT screenWidth, UINT screenHeight)
 {
-    this->gDevice = gd;
-    this->gDeviceContext = gdc;
+
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
 
@@ -12,7 +11,7 @@ MayaLoader::MayaLoader(ID3D11Device* gd, ID3D11DeviceContext* gdc, UINT screenWi
     InitVariables();
 
     fileHandler = new FileHandler();
-    Material* defaultMaterial = new Material(gDevice, gDeviceContext);
+    Material* defaultMaterial = new Material();
     materials.push_back(defaultMaterial); // lägg till default material, viktigt den ligger på första platsen
 }
 MayaLoader::~MayaLoader()
@@ -74,39 +73,11 @@ void MayaLoader::CreateFileMaps(unsigned int messageFilemapSize)
 }
 void MayaLoader::InitVariables()
 {
-    D3D11_BUFFER_DESC cameraBufferDesc;
-    memset(&cameraBufferDesc, 0, sizeof(cameraBufferDesc));
-    cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cameraBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    cameraBufferDesc.ByteWidth = sizeof(CameraCBufferData);
-    gDevice->CreateBuffer(&cameraBufferDesc, NULL, &cDefaultCameraConstantBuffer);
 
     XMStoreFloat4x4(&defaultCameraCBufferData.view, XMMatrixTranspose(XMMatrixIdentity()));
     XMStoreFloat4x4(&defaultCameraCBufferData.projection, XMMatrixTranspose(XMMatrixIdentity()));
-    gDeviceContext->UpdateSubresource(cDefaultCameraConstantBuffer, 0, NULL, &defaultCameraCBufferData, 0, 0); // default buffer
-    // fpsCam.SetLens(0.25f*3.14f, screenWidth / screenHeight, 1.0f, 1000.0f);
 
     CreateLightCBufferArray();
-
-    D3D11_SAMPLER_DESC samplerDesc;
-    ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
-    samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.MaxAnisotropy = 16;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    gDevice->CreateSamplerState(&samplerDesc, &wrap_Sampstate);
-
-    D3D11_SAMPLER_DESC samplerDesc2;
-    ZeroMemory(&samplerDesc2, sizeof(D3D11_SAMPLER_DESC));
-    samplerDesc2.Filter = D3D11_FILTER_ANISOTROPIC;
-    samplerDesc2.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerDesc2.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerDesc2.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerDesc2.MaxAnisotropy = 16;
-    gDevice->CreateSamplerState(&samplerDesc2, &clamp_Sampstate);
 }
 
 void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement, size_t nonAccessMemoryPlacement, size_t messageFileMapTotalSize)
@@ -127,40 +98,40 @@ void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement
 
 void MayaLoader::DrawScene()
 {
-    UINT32 vertexSize2 = sizeof(float) * 8;
-    UINT32 offset2 = 0;
-    // set rätt constantbuffers, ljus, kamera och material stuff!
-    UpdateCameraValues(); // updaterar oxå camera cbuffern
+    //UINT32 vertexSize2 = sizeof(float) * 8;
+    //UINT32 offset2 = 0;
+    //// set rätt constantbuffers, ljus, kamera och material stuff!
+    //UpdateCameraValues(); // updaterar oxå camera cbuffern
 
-    for(int i = 0; i < allMeshTransforms.size(); i++)
-    {
-        Mesh* currMesh = allMeshTransforms[i]->mesh;
-        gDeviceContext->IASetVertexBuffers(0, 1, &currMesh->vertexBuffer, &vertexSize2, &offset2);
-        gDeviceContext->IASetIndexBuffer(currMesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    //for(int i = 0; i < allMeshTransforms.size(); i++)
+    //{
+    //    Mesh* currMesh = allMeshTransforms[i]->mesh;
+    //    gDeviceContext->IASetVertexBuffers(0, 1, &currMesh->vertexBuffer, &vertexSize2, &offset2);
+    //    gDeviceContext->IASetIndexBuffer(currMesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        if(currMesh->material != nullptr)
-        {
-            gDeviceContext->PSSetConstantBuffers(1, 1, &currMesh->material->materialCbuffer);
+    //    if(currMesh->material != nullptr)
+    //    {
+    //        gDeviceContext->PSSetConstantBuffers(1, 1, &currMesh->material->materialCbuffer);
 
-            if(currMesh->material->diffuseTextureView != nullptr)
-            {
-                gDeviceContext->PSSetShaderResources(0, 1, &currMesh->material->diffuseTextureView);
-            }
+    //        if(currMesh->material->diffuseTextureView != nullptr)
+    //        {
+    //            gDeviceContext->PSSetShaderResources(0, 1, &currMesh->material->diffuseTextureView);
+    //        }
 
-            gDeviceContext->PSSetSamplers(0, 1, &wrap_Sampstate);
-        }
-        else
-        {
-            gDeviceContext->PSSetConstantBuffers(1, 1, &materials[0]->materialCbuffer);
-        }
-        // transformdata ligger på plats 0, material på 1, osv
-        // set transformcbufferns värden, updatesubresource
-        allMeshTransforms[i]->UpdateCBuffer(); // slå först ihop med parentens värden innan vi updaterar cbuffern
-        UpdateLightCBufferArray();
-        gDeviceContext->Draw(currMesh->nrIndecies, 0);
+    //        gDeviceContext->PSSetSamplers(0, 1, &wrap_Sampstate);
+    //    }
+    //    else
+    //    {
+    //        gDeviceContext->PSSetConstantBuffers(1, 1, &materials[0]->materialCbuffer);
+    //    }
+    //    // transformdata ligger på plats 0, material på 1, osv
+    //    // set transformcbufferns värden, updatesubresource
+    //    allMeshTransforms[i]->UpdateCBuffer(); // slå först ihop med parentens värden innan vi updaterar cbuffern
+    //    UpdateLightCBufferArray();
+    //    gDeviceContext->Draw(currMesh->nrIndecies, 0);
 
-        // gDeviceContext->DrawIndexed(currMesh->nrIndecies, 0, 0);
-    }
+    //    // gDeviceContext->DrawIndexed(currMesh->nrIndecies, 0, 0);
+    //}
 }
 
 void MayaLoader::TryReadAMessage()
@@ -628,7 +599,7 @@ void MayaLoader::ReadName()
 
 void MayaLoader::TransformAdded(MessageHeader mh, TransformMessage* mm)
 {
-    Transform* transform = new Transform(gDevice, gDeviceContext); // hitta den
+    Transform* transform = new Transform(); // hitta den
 
     transform->transformDataP = mm; // referens för att den skall kunna tömma datan här, den är mallocad så
     transform->name = mm->objectName;
@@ -781,7 +752,7 @@ void MayaLoader::MeshAdded(MessageHeader mh, MeshMessage* mm)
                 if(y == 0) // första transformen i meshlistan
                 {
                     firstIndex = i; // får den första transformen som finns med i meshens transforms
-                    meshTransform->mesh = new Mesh(gDevice, gDeviceContext); // skapa meshen
+                    meshTransform->mesh = new Mesh(); // skapa meshen
                     activeMesh = meshTransform->mesh;
                     activeMesh->numberOfTransforms = mm->nrOfTransforms;
                 }
@@ -954,7 +925,7 @@ void MayaLoader::MaterialAdded(MessageHeader mh, MaterialMessage* mm)
     // char* materialName = mm->objectName;
 
     Material* tempMat; // pekar på den mesh som redan finns storad eller så blir det en helt ny
-    tempMat = new Material(gDevice, gDeviceContext);
+    tempMat = new Material();
     tempMat->materialDataP = mm;
 
     tempMat->CreateCBuffer();
@@ -967,8 +938,8 @@ void MayaLoader::MaterialAdded(MessageHeader mh, MaterialMessage* mm)
     tempMat->bumpMapName = mm->bumpMapName;
     tempMat->specularMapName = mm->specularMapName;
 
-    tempMat->CreateTexture(tempMat->textureName, tempMat->diffuseTexture, tempMat->diffuseTextureView);
-    tempMat->CreateTexture(tempMat->glowMapName, tempMat->glowTexture, tempMat->glowTextureView);
+    tempMat->CreateTexture(tempMat->textureName);
+    tempMat->CreateTexture(tempMat->glowMapName);
     /* tempMat->CreateTexture(tempMat->bumpMapName, tempMat->bumpTexture, tempMat->bumpTextureView);
      tempMat->CreateTexture(tempMat->specularMapName, tempMat->specularTexture, tempMat->specularTextureView);*/
 
@@ -1001,8 +972,8 @@ void MayaLoader::MaterialChange(MessageHeader mh, MaterialMessage* mm)
     tempMat->bumpMapName = mm->bumpMapName;
     tempMat->specularMapName = mm->specularMapName;
 
-    tempMat->CreateTexture(tempMat->textureName, tempMat->diffuseTexture, tempMat->diffuseTextureView);
-    tempMat->CreateTexture(tempMat->glowMapName, tempMat->glowTexture, tempMat->glowTextureView);
+    tempMat->CreateTexture(tempMat->textureName);
+    tempMat->CreateTexture(tempMat->glowMapName);
     /* tempMat->CreateTexture(tempMat->bumpMapName, tempMat->bumpTexture, tempMat->bumpTextureView);
      tempMat->CreateTexture(tempMat->specularMapName, tempMat->specularTexture, tempMat->specularTextureView);*/
 
@@ -1066,7 +1037,7 @@ void MayaLoader::LightAdded(MessageHeader mh, LightMessage* mm)
     }
     else
     {
-        lightTransform->light = new Light(gDevice, gDeviceContext);
+        lightTransform->light = new Light();
         tempLight = lightTransform->light;
         tempLight->lightDataP = mm; // för att kunna deallokera messaget (mm) det är mallocat
 
@@ -1151,7 +1122,7 @@ void MayaLoader::CameraAdded(MessageHeader mh, CameraMessage* mm)
     }
     else
     {
-        cameraTransform->camera = new CameraObj(gDevice, gDeviceContext);
+        cameraTransform->camera = new CameraObj();
         tempCamera = cameraTransform->camera;
 
         tempCamera->cameraDataP = mm;
@@ -1241,27 +1212,14 @@ bool MayaLoader::UpdateCameraValues()
         currentCameraTransform->camera->UpdateCBuffer(screenWidth, screenHeight);
 
         // gDeviceContext->UpdateSubresource(cCameraConstantBuffer, 0, NULL, &cameraCBufferData, 0, 0);
-        gDeviceContext->VSSetConstantBuffers(10, 1, &currentCameraTransform->camera->cameraCbuffer);
 
         return true;
     }
-    gDeviceContext->VSSetConstantBuffers(10, 1, &cDefaultCameraConstantBuffer); // kör på default identitesmatriser annars
     return false;
 }
 
 void MayaLoader::CreateLightCBufferArray()
 {
-    D3D11_BUFFER_DESC cbDesc = {0};
-    cbDesc.ByteWidth = sizeof(LightCBufferDataArray); /// ska nog inte vara arrayen utan varje enskillt element, använd sedan shaderresourceview och
-    /// store:a flera av denna buffern
-    cbDesc.Usage = D3D11_USAGE_DEFAULT;
-    cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    // cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbDesc.MiscFlags = 0;
-    cbDesc.StructureByteStride = 0;
-
-    // Create the buffer.
-    gDevice->CreateBuffer(&cbDesc, NULL, &lightCbufferArray);
 }
 void MayaLoader::UpdateLightCBufferArray()
 {
@@ -1274,8 +1232,6 @@ void MayaLoader::UpdateLightCBufferArray()
     lightCBufferDataArray.NumLights = nrLights;
     lightCBufferDataArray.pad[0] = {0};
 
-    gDeviceContext->UpdateSubresource(lightCbufferArray, 0, NULL, &lightCBufferDataArray, 0, 0);
-    gDeviceContext->PSSetConstantBuffers(2, 1, &lightCbufferArray); // kör på default identitesmatriser annars?
 }
 
 void MayaLoader::SaveScene()

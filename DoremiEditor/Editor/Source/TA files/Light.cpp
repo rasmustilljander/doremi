@@ -1,5 +1,5 @@
-#include "Light.h"
-#include "Transform.h"
+#include "TA files/Light.h"
+#include "TA files/Transform.h"
 
 void Light::UpdateCBuffer()
 {
