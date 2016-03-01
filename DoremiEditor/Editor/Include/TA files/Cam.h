@@ -6,8 +6,6 @@
 #include <windows.h>
 #include <DirectXMath.h>
 #include <DirectXMathMatrix.inl>
-#include <d3d11.h>
-#include <d3dcompiler.h>
 #include <string>
 
 

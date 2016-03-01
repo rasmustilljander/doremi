@@ -1,13 +1,10 @@
 #pragma once
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
-#endif
 
 
-#include "Entity.h"
-#include "Mesh.h"
-#include "CameraObj.h"
-#include "Light.h"
+#include "TA files/Entity.h"
+#include "TA files/Mesh.h"
+#include "TA files/CameraObj.h"
+#include "TA files/Light.h"
 
 class Transform : public Entity{
 	struct TransformCBufferData
@@ -22,21 +19,16 @@ public:
 
 	Transform *parent = nullptr; //använd parenten och hämta dess transformation
 	TransformCBufferData transformCBufferData;
-	ID3D11Buffer *transformCBuffer;
 
 	//kommer ha en av dessa, placera dem i olika vektorer!
 	Mesh *mesh = nullptr;
 	Light *light = nullptr;
 	CameraObj *camera = nullptr; //fick döpa om den till obj pga oskeeaaar
 
-	Transform(ID3D11Device* gd, ID3D11DeviceContext* gdc)
+	Transform()
 	{
-		this->gDevice = gd; //freea dessa inte här, görs i main duuh
-		this->gDeviceContext = gdc;
 		CreateTransformCBuffer();
 	}
-	Transform()
-	{}
 	~Transform()
 	{ //kanske deleta saker som mesh, men möjligt vi skickar separata deletes för dem, detsamma gäller children
 		//delete(name);
@@ -48,7 +40,4 @@ public:
 	void EmptyVariables(){
 		free(transformDataP);
 	}
-private:
-	ID3D11Device* gDevice = nullptr;
-	ID3D11DeviceContext* gDeviceContext = nullptr;
 };

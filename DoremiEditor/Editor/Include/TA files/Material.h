@@ -3,7 +3,7 @@
 #define MATERIAL_H
 #endif
 
-#include "Entity.h"
+#include "TA files/Entity.h"
 
 class Material : public Entity{
 public:
@@ -31,9 +31,6 @@ public:
 			padding[0] = padding[1] = 0;
 		}
 	};
-	
-	ID3D11Device * gDevice = nullptr;
-	ID3D11DeviceContext * gDeviceContext = nullptr;
 
 	void *materialDataP = nullptr; //pointer to the current values, för att ta bort messaget som varit mallocat
 	char *name;
@@ -44,24 +41,8 @@ public:
 	char dummyName[100]; //dummy variable som används som default namn, behöver inte deallokeras
 	MaterialData materialData;
 	MaterialCBufferData materialCBufferData;
-	ID3D11Buffer *materialCbuffer = nullptr; //här ligger den storade materialdatan
 
-	//char *textureName;
-	ID3D11Resource *diffuseTexture = nullptr;
-	ID3D11ShaderResourceView *diffuseTextureView = nullptr;
-
-	ID3D11Resource *bumpTexture = nullptr;
-	ID3D11ShaderResourceView *bumpTextureView = nullptr;
-
-	ID3D11Resource *specularTexture = nullptr;
-	ID3D11ShaderResourceView *specularTextureView = nullptr;
-
-	ID3D11Resource *glowTexture = nullptr;
-	ID3D11ShaderResourceView *glowTextureView = nullptr;
-
-	Material(ID3D11Device *gDevice, ID3D11DeviceContext *gDevC){
-		this->gDevice = gDevice;
-		this->gDeviceContext = gDevC;
+	Material(){
 
 		name = dummyName; //sätter den till dummy namnet bara för att ha ett default
 		textureName = dummyName;
@@ -71,22 +52,12 @@ public:
 	}
 	~Material(){
 		//delete(name); den är statiskt allokerad
-		materialCbuffer->Release();
 		free(materialDataP);
-
-		diffuseTexture->Release();
-		diffuseTextureView->Release();
-        bumpTexture->Release();
-        bumpTextureView->Release();
-		specularTexture->Release();
-		specularTextureView->Release();
-        glowTexture->Release();
-        glowTextureView->Release();
 	}
 	//skapa constantbuffer här???
 	void UpdateCBuffer();
 	void CreateCBuffer();
-	void CreateTexture(char* filePath, ID3D11Resource *&texture, ID3D11ShaderResourceView *&textureView);
+	void CreateTexture(char* filePath);
 
 	void EmptyVariables(){
 		free(materialDataP);

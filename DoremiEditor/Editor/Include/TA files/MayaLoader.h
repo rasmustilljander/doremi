@@ -10,11 +10,11 @@
 #include <iostream>
 #include <string>
 
-#include "Transform.h"
-#include "Material.h"
-#include "Mutex.h"
-#include "FileHandler.h"
-#include "Cam.h"
+#include "TA files/Transform.h"
+#include "TA files/Material.h"
+#include "TA files/Mutex.h"
+#include "TA files/FileHandler.h"
+#include "TA files/Cam.h"
 
 using namespace std;
 //const int MAX_NAME_SIZE = 100; la den i ObjectData så att alla kan komma åt den
@@ -22,7 +22,7 @@ const UINT MAX_NR_LIGHTS = 256;
 class MayaLoader{
 	
 public:	
-	MayaLoader(ID3D11Device* gd, ID3D11DeviceContext* gdc, UINT screenWidth, UINT screenHeight);
+	MayaLoader(UINT screenWidth, UINT screenHeight);
 	MayaLoader();
 	~MayaLoader();
 	void DrawScene();
@@ -44,12 +44,7 @@ public:
 
 private:
 	//externa grejer
-	ID3D11Device* gDevice = nullptr;
-	ID3D11DeviceContext* gDeviceContext = nullptr;
 	UINT screenWidth, screenHeight;
-
-	ID3D11SamplerState *wrap_Sampstate;
-	ID3D11SamplerState *clamp_Sampstate;
 	//*camera*********camera*
 	bool UpdateCameraValues(); //returnerar ifall en kamera finns, om den inte finns så vill man nog inte rendera alls
 	struct CameraCBufferData
@@ -59,7 +54,6 @@ private:
 		
 	};
 	CameraCBufferData defaultCameraCBufferData;
-	ID3D11Buffer* cDefaultCameraConstantBuffer = nullptr;
 	//*camera*********camera*
 
 	//*light**********light**
@@ -70,7 +64,6 @@ private:
 		float pad[3];
 	};
 	LightCBufferDataArray lightCBufferDataArray;
-	ID3D11Buffer *lightCbufferArray = nullptr;
 	void CreateLightCBufferArray();
 	void UpdateLightCBufferArray();
 	//*light**********light**
