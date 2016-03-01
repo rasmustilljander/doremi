@@ -322,7 +322,8 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            CharacterDataNames enemyCharData = loader.LoadSkeletalCharacter("Models/BigRobot6.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+            CharacterDataNames enemyCharData =
+                loader.LoadSkeletalCharacter("Models/BigRobot7.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
