@@ -238,14 +238,13 @@ namespace Doremi
 
         Core::PlayerHandler::GetInstance()->Update(p_deltaTime);
 
-        size_t length = m_managers.size();
+        const size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
             Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
             m_managers.at(i)->Update(p_deltaTime);
             Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
-
         TIME_FUNCTION_STOP
     }
 
