@@ -15,19 +15,21 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 3;
+            m_treeDepth = 5;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(2000, 1000, 2000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske //
+            //treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske 
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 15, 100);
+                                                                      //
                                                                           // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
             // Set the center for the box of the world
+            //treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041);
             treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
                                                           // DirectX::XMFLOAT3(-485, 158, 2041)
 
             // Start up for the oct tree. Without this function we don't have anything to start with
             // CreateAndDivideTheChildren(treeRoot);
-            int hej2 = 0;
         };
         TreeCreator::~TreeCreator() {}
 
@@ -35,7 +37,6 @@ namespace Doremi
         {
             // Start building the tree
             BuildTree();
-            int hej10 = 0;
         }
 
         void TreeCreator::BuildTree()
@@ -54,15 +55,15 @@ namespace Doremi
                 ////// DEBUG!
                 if (m_currentNode->depth == m_treeDepth -1)
                 {
-                  //int myID = MAX_NUM_ENTITIES;
-                  //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
-                  //m_currentNode->boxDimensions, materialID);
-                  //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                    //int myID = MAX_NUM_ENTITIES;
-                    //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
-                    //    DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
-                    //
-                    //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                  int myID = MAX_NUM_ENTITIES;
+                  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                  // m_currentNode->boxDimensions, materialID);
+                  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                   // int myID = MAX_NUM_ENTITIES;
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                        DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
+                    
+                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
                 }
                  // DEBUG SLUT
 
