@@ -118,7 +118,14 @@ void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement
 
 void MayaLoader::DrawScene()
 {
+
     //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(<insert parameters>);
+
+
+
+
+
+
     //UINT32 vertexSize2 = sizeof(float) * 8;
     //UINT32 offset2 = 0;
     //// set rätt constantbuffers, ljus, kamera och material stuff!
