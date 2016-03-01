@@ -2,7 +2,6 @@
 // Project specific
 #include <DirectXMath.h>
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Texture/SpriteInfo.hpp>
 #include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 namespace Doremi

@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <Doremi/Core/Include/ServerStateHandler.hpp>
-#include <map>
 #include <Doremi/Core/Include/MenuClasses/Button.hpp>
-#include <vector>
+#include <Doremi/Core/Include/MenuClasses/Text.hpp>
+
 #include <list>
 
 namespace DoremiEngine
@@ -46,6 +46,21 @@ namespace Doremi
             IP_Split IP;
 
             uint16_t Port;
+
+            // Name text
+            Text NameText;
+
+            //// state
+            Text StateText;
+
+            // Map text
+            Text MapText;
+
+            //// Number of player text
+            Text NumPlayerText;
+
+            //// ping text
+            Text PingText;
         };
 
         class ServerBrowserHandler
@@ -67,6 +82,8 @@ namespace Doremi
 
             auto& GetButtons() { return m_drawButtons; }
 
+            auto& GetText() { return m_drawText; }
+
         private:
             ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
@@ -87,11 +104,17 @@ namespace Doremi
 
             std::list<Button*> m_drawButtons;
 
+            std::list<Text*> m_drawText;
+
             double m_timeout;
 
             ServerData* m_selectedServer;
 
             ServerData* m_highlightedButton;
+
+            float m_serverBoxSize;
+
+            Button m_background;
         };
     }
 }

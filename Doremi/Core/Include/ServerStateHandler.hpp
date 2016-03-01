@@ -1,6 +1,14 @@
 #pragma once
 #include <string>
 
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
+
 namespace Doremi
 {
     namespace Core
@@ -25,6 +33,8 @@ namespace Doremi
         public:
             static ServerStateHandler* GetInstance();
 
+            static void StartupServerStateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ServerStates GetState() { return m_state; }
 
             void SetState(const ServerStates& p_serverState) { m_state = p_serverState; }
@@ -38,9 +48,11 @@ namespace Doremi
             std::string GetServerName();
 
         private:
-            ServerStateHandler();
+            ServerStateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~ServerStateHandler();
+
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             static ServerStateHandler* m_singleton;
 

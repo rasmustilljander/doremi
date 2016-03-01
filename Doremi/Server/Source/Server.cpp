@@ -93,6 +93,7 @@ namespace Doremi
         Core::EntityHandlerServer::StartupEntityHandlerServer();
         Core::PlayerHandlerServer::StartPlayerHandlerServer(sharedContext);
         Core::PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
+        Core::ServerStateHandler::StartupServerStateHandler(sharedContext);
 
         ////////////////Example only////////////////
         // Create manager

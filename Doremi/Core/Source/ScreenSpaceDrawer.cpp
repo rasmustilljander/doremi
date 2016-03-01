@@ -47,6 +47,17 @@ namespace Doremi
             m_menuGeometryShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");
 
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
+            // Create DepthStencilState
+            D3D11_DEPTH_STENCIL_DESC t_depthStencilStateDesc;
+            ZeroMemory(&t_depthStencilStateDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+            t_depthStencilStateDesc.DepthEnable = false;
+            t_depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            t_depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_NEVER;
+
+            m_depthStencilStatNone = t_dierctxManager.CreateDepthStencilState(t_depthStencilStateDesc);
+
             CreateVictoryScreen();
         }
         void ScreenSpaceDrawer::CreateVictoryScreen()
@@ -128,6 +139,18 @@ namespace Doremi
         void ScreenSpaceDrawer::End2DDraw()
         {
 
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
+            // Set rasteriser to defau,t
+            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
+
+            // Set depth stencil to default
+            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
+
+            // Draw the sprites
+            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), m_depthStencilStatNone->GetDepthStencilState());
+
             // Disable blend again?
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().RemoveGeometryShader();
@@ -153,7 +176,11 @@ namespace Doremi
 
             t_dierctxManager.Render2D(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
-            End2DDraw();
+            // Disable blend again?
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().RemoveGeometryShader();
+
+            // End2DDraw();
         }
 
         void ScreenSpaceDrawer::DrawMainMenu()
@@ -173,14 +200,6 @@ namespace Doremi
                 t_meshManager.AddSpriteToRenderList(*t_buttonsToDraw[i].m_spriteInfo, *t_buttonsToDraw[i].m_materialInfo);
             }
 
-            // Set rasteriser to defau,t
-            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
-
-            // Set depth stencil to default
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
-
-            // Draw the sprites
-            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
             End2DDraw();
         }
@@ -201,14 +220,17 @@ namespace Doremi
                 t_meshManager.AddSpriteToRenderList(*(t_button->m_spriteInfo), *(t_button->m_materialInfo));
             }
 
-            // Set rasteriser to defau,t
-            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
+            // Get text to draw
+            std::list<Text*> t_TextToDraw = ServerBrowserHandler::GetInstance()->GetText();
 
-            // Set depth stencil to default
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
-
-            // Draw the sprites
-            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
+            // For each text add to render list
+            for(auto& t_text : t_TextToDraw)
+            {
+                for(auto& t_textPart : t_text->m_textInfo)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text->m_textMaterial));
+                }
+            }
 
             End2DDraw();
         }

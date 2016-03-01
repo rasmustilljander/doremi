@@ -383,7 +383,11 @@ namespace DoremiEngine
         {
             DepthStencilState* t_depthStencilState = new DepthStencilStateImpl();
             ID3D11DepthStencilState* t_depthState;
-            m_device->CreateDepthStencilState(&p_depthStencilDesc, &t_depthState);
+            HRESULT hr = m_device->CreateDepthStencilState(&p_depthStencilDesc, &t_depthState);
+            if(FAILED(hr))
+            {
+                return nullptr;
+            }
             t_depthStencilState->SetDepthStencilState(t_depthState);
             return t_depthStencilState;
         }

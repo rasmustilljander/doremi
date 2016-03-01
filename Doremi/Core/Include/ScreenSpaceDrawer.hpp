@@ -46,6 +46,8 @@ namespace Doremi
             DoremiEngine::Graphic::PixelShader* m_menuPixelShader;
             DoremiEngine::Graphic::VertexShader* m_menuVertexShader;
             DoremiEngine::Graphic::GeometryShader* m_menuGeometryShader;
+
+            DoremiEngine::Graphic::DepthStencilState* m_depthStencilStatNone;
             VictoryScreen* m_victoryScreen;
             DirectX::XMFLOAT2 m_resolution;
         };
