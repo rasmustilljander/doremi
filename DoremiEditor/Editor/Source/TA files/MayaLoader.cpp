@@ -3,6 +3,21 @@
 /// Engine
 // Core
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+// Graphics
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/ShaderManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MeshInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/PixelShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Shader/VertexShader.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
+#include <dxgi.h>
+#include <d3d11_1.h>
 
 
 Mutex mutexInfo("__info_Mutex__");
@@ -103,7 +118,7 @@ void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement
 
 void MayaLoader::DrawScene()
 {
-
+    //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(<insert parameters>);
     //UINT32 vertexSize2 = sizeof(float) * 8;
     //UINT32 offset2 = 0;
     //// set rätt constantbuffers, ljus, kamera och material stuff!
@@ -601,6 +616,41 @@ void MayaLoader::ReadName()
             localTail = messageHeader.byteTotal;
         }
     }
+}
+
+void MayaLoader::InitDX()
+{
+    // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
+    // TODOLH Maybe shouldnt be here either. Moved it from shadermodulemanagerImplementation cos this guy needs to be able to switch shader
+    // before drawing
+    D3D11_INPUT_ELEMENT_DESC ied[] = {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+    m_vertexShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl",
+        ied, ARRAYSIZE(ied));
+    m_pixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("BasicPixelShader.hlsl");
+
+    D3D11_RASTERIZER_DESC rastDesc;
+    ZeroMemory(&rastDesc, sizeof(rastDesc));
+    rastDesc.FillMode = D3D11_FILL_SOLID;
+    rastDesc.CullMode = D3D11_CULL_NONE;
+    rastDesc.FrontCounterClockwise = false;
+    rastDesc.DepthBias = 0;
+    rastDesc.DepthBiasClamp = 0.0f;
+    rastDesc.SlopeScaledDepthBias = 0.0f;
+    rastDesc.DepthClipEnable = false;
+    rastDesc.ScissorEnable = false;
+    rastDesc.MultisampleEnable = true;
+    rastDesc.AntialiasedLineEnable = false;
+    m_rasterizerState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateRasterizerState(rastDesc);
+    D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+    ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+    depthStencilDesc.DepthEnable = true;
+    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    m_depthStencilState = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().CreateDepthStencilState(depthStencilDesc);
 }
 
 void MayaLoader::TransformAdded(MessageHeader mh, TransformMessage* mm)
