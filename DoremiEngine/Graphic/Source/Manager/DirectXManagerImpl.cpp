@@ -396,12 +396,14 @@ namespace DoremiEngine
 
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
-            // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
-            // Setup required variables
-            const uint32_t stride = sizeof(Vertex);
+
+            // Setup vertex variables
+            const uint32_t stride = 0;
             const uint32_t offset = 0;
-            ID3D11Buffer* vertexData = renderData[0].vertexData;
+            ID3D11Buffer* vertexData = nullptr;
+
+            // Setup material
             MaterialMessage material = renderData[0].materialMessage;
             ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
             ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
@@ -410,18 +412,21 @@ namespace DoremiEngine
             // Iterate all the entries and do the smallest amount of changes to the GPU
             // Render the first entry outside of the loop because it's a specialcase
 
+            // Update constant buffer
             D3D11_MAPPED_SUBRESOURCE tMS;
             m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
             m_deviceContext->Unmap(m_worldMatrix, NULL);
 
+
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
-            m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
-            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+            m_deviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, 0, 0);
 
+
+            // Update constant buffers
             m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, &renderData[0].materialMessage.data, sizeof(&renderData[0].materialMessage.data));
             m_deviceContext->Unmap(m_materialBuffer, NULL);
@@ -1148,6 +1153,9 @@ namespace DoremiEngine
             // TODORT Could be redesigned so that this class asks MeshManager for it's data instead
             transRenderData.push_back(std::move(p_renderData));
         }
+
+        void DirectXManagerImpl::AddSpriteForRendering(SpriteRenderData& p_spriteRenderData) { spriteRenderData.push_back(p_spriteRenderData); }
+
 
         void DirectXManagerImpl::SetFullscreen(const bool& p_fullscreen)
         {

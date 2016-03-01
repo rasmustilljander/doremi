@@ -15,6 +15,7 @@ namespace DoremiEngine
     {
         struct GraphicModuleContext;
         class ModelLoader;
+
         // struct MaterialMessage;
         class MeshManagerImpl : public MeshManager
         {
@@ -31,6 +32,7 @@ namespace DoremiEngine
             MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) override;
             MaterialInfo* BuildMaterialInfo(DoremiEditor::Core::MaterialMessage p_materialData) override;
             void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) override;
+            void AddSpriteToRenderList(SpriteInfo& p_spriteInfo, MaterialInfo& p_material) override;
             void Draw() override;
 
         private:

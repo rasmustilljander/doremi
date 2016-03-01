@@ -60,6 +60,8 @@ namespace Doremi
 
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
 
+            // Add "Mesh" info here, but its buffer
+
 
         private:
             ButtonMaterials m_buttonMaterials;

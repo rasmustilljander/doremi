@@ -1,6 +1,7 @@
 #pragma once
 #include <Interface/Manager/DirectXManager.hpp>
 #include <Internal/Mesh/MeshRenderData.hpp>
+#include <Internal/Texture/SpriteRenderData.hpp>
 
 #include <vector>
 
@@ -84,6 +85,8 @@ namespace DoremiEngine
             Adds a transparent mesh for rendering after everything else
             */
             void AddTransMeshForRendering(MeshRenderData& p_renderData);
+
+            void AddSpriteForRendering(SpriteRenderData& p_spriteRenderData);
             /**
             Creates depth stencil state
             */
@@ -141,6 +144,8 @@ namespace DoremiEngine
 
             std::vector<MeshRenderData> renderData;
             std::vector<MeshRenderData> transRenderData;
+            std::vector<SpriteRenderData> spriteRenderData;
+
             const GraphicModuleContext& m_graphicContext;
             ID3D11Device* m_device;
             ID3D11DeviceContext* m_deviceContext;

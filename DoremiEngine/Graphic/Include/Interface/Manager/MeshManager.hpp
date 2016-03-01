@@ -16,6 +16,7 @@ namespace DoremiEngine
         struct Vertex;
         struct SkeletalVertex;
         class MeshInfo;
+        class SpriteInfo;
         class MaterialInfo;
 
         class MeshManager
@@ -40,6 +41,7 @@ namespace DoremiEngine
             virtual MaterialInfo* BuildMaterialInfo(const std::string& p_fileName) = 0;
             virtual MaterialInfo* BuildMaterialInfo(DoremiEditor::Core::MaterialMessage p_materialData) = 0;
             virtual void AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix) = 0;
+            virtual void AddSpriteToRenderList(SpriteInfo& p_spriteInfo, MaterialInfo& p_material) = 0;
             virtual void Draw() = 0;
         };
     }

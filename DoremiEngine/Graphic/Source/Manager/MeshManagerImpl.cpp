@@ -1,6 +1,7 @@
 #pragma once
 #include <Internal/Manager/MeshManagerImpl.hpp>
 #include <Internal/Mesh/MeshInfoImpl.hpp>
+#include <Internal/Texture/SpriteInfoImpl.hpp>
 #include <Internal/Mesh/MaterialInfoImpl.hpp>
 #include <GraphicModuleContext.hpp>
 #include <GraphicModuleImplementation.hpp>
@@ -211,6 +212,18 @@ namespace DoremiEngine
             else
                 m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
         }
+
+        void MeshManagerImpl::AddSpriteToRenderList(SpriteInfo& p_spriteInfo, MaterialInfo& p_material)
+        {
+            // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
+            DoremiEditor::Core::MaterialMessage materialData = p_material.GetMaterialData();
+
+            SpriteRenderData spriteRenderData(p_spriteInfo.GetBufferHandle(), p_material.GetTexture(), p_material.GetGlowTexture(), materialData,
+                                              p_material.GetSamplerState());
+
+            m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddSpriteForRendering(spriteRenderData);
+        }
+
         void MeshManagerImpl::Draw() {}
     }
 }
