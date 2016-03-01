@@ -3,7 +3,16 @@
 #define MAYALOADER_H
 #endif
 
+/// Engine stuff
+namespace DoremiEngine
+{
+    namespace Core
+    {
+        class SharedContext;
+    }
+}
 
+/// Old stuff
 #include <vector>
 #include <Windows.h>
 #include <ostream>
@@ -22,7 +31,7 @@ const UINT MAX_NR_LIGHTS = 256;
 class MayaLoader{
 	
 public:	
-	MayaLoader(UINT screenWidth, UINT screenHeight);
+	MayaLoader(UINT screenWidth, UINT screenHeight, const DoremiEngine::Core::SharedContext& p_sharedContext);
 	MayaLoader();
 	~MayaLoader();
 	void DrawScene();
@@ -43,6 +52,13 @@ public:
 	void ReadName(); //mallocen måste deallokeras oxå!!
 
 private:
+    /// NEW STUFF
+    const DoremiEngine::Core::SharedContext& m_sharedContext;
+    /// END NEW STUFF
+
+
+
+
 	//externa grejer
 	UINT screenWidth, screenHeight;
 	//*camera*********camera*

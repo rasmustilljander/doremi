@@ -1,9 +1,14 @@
 #include "TA files/MayaLoader.h"
 
-Mutex mutexInfo("__info_Mutex__");
-MayaLoader::MayaLoader(UINT screenWidth, UINT screenHeight)
-{
+/// Engine
+// Core
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
+
+Mutex mutexInfo("__info_Mutex__");
+MayaLoader::MayaLoader(UINT screenWidth, UINT screenHeight, const DoremiEngine::Core::SharedContext& p_sharedContext)
+    :m_sharedContext(p_sharedContext)
+{
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
 
@@ -98,6 +103,7 @@ void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement
 
 void MayaLoader::DrawScene()
 {
+
     //UINT32 vertexSize2 = sizeof(float) * 8;
     //UINT32 offset2 = 0;
     //// set rätt constantbuffers, ljus, kamera och material stuff!
