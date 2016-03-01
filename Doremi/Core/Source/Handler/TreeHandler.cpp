@@ -111,17 +111,19 @@ namespace Doremi
             for(int i = 0; i < 6; ++i)
             {
                 // for circle
-                // DirectX::XMFLOAT3 t_collideCheckFloats;
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center)))));
-                // if (/*t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x*/ p_center.y < 1000)
+                //DirectX::XMFLOAT3 t_collideCheckFloats;
+                //DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                //m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center)))));
+                // if (t_collideCheckFloats.x - m_planes[i].w >= 0)
                 //{
                 //    return false;
                 //}
-                if(abs(p_center.x - m_playerPos.x) + abs(p_center.y - m_playerPos.y) + abs(p_center.z - m_playerPos.z) > 1000)
-                {
-                    return false;
-                }
+                //Cirkel
+                //if(abs(p_center.x - m_playerPos.x) + abs(p_center.y - m_playerPos.y) + abs(p_center.z - m_playerPos.z) > 10)
+                //{
+                //    return false;
+                //}
+                // cirkelslut
                 // if (/*t_collideCheckFloats.x + m_planes[i].w + p_dimensions.x*/p_center.x > 200)
                 //{
                 //    return false;
@@ -130,7 +132,67 @@ namespace Doremi
                 //{
                 //    return false;
                 //}
-                /// För box
+                 ////För box PLAN
+                 DirectX::XMFLOAT3 t_collideCheckFloats;
+
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y -
+                 p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y -
+                 p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y +
+                 p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y -
+                 p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y +
+                 p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y -
+                 p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y +
+                 p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
+                 m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y +
+                 p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
+                 if (t_collideCheckFloats.x - m_planes[i].w <= 0.0f)
+                {
+                    continue;
+                }
+                 return false;
+                //////OriginalBOXEN
                 // DirectX::XMFLOAT3 t_collideCheckFloats;
                 // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
                 // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y -
@@ -189,64 +251,7 @@ namespace Doremi
                 //    continue;
                 //}
                 // return false;
-                // DirectX::XMFLOAT3 t_collideCheckFloats;
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y -
-                // p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y -
-                // p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y +
-                // p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y -
-                // p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y +
-                // p_dimensions.y), (p_center.z - p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y -
-                // p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x - p_dimensions.x), (p_center.y +
-                // p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // DirectX::XMStoreFloat3(&t_collideCheckFloats, DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_planes[i].x,
-                // m_planes[i].y, m_planes[i].z)), DirectX::XMLoadFloat3(&DirectX::XMFLOAT3((p_center.x + p_dimensions.x), (p_center.y +
-                // p_dimensions.y), (p_center.z + p_dimensions.z)))));// +m_planes[i].w;)
-                // if (t_collideCheckFloats.x + m_planes[i].w >= 0.0f)
-                //{
-                //    continue;
-                //}
-                // return false;
+                 // Originalboxxen slut
             }
             return true;
         }
@@ -279,7 +284,7 @@ namespace Doremi
                 playerentityID = playerHandlerClient->GetPlayerEntityID();
                 TransformComponent* playerPos;
                 playerPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerentityID);
-                //std::cout << "X:" << playerPos->position.x << " Y:" << playerPos->position.y << " Z:" << playerPos->position.z << std::endl;
+                // std::cout << "X:" << playerPos->position.x << " Y:" << playerPos->position.y << " Z:" << playerPos->position.z << std::endl;
                 m_playerPos = playerPos->position;
             }
                 
@@ -373,11 +378,12 @@ namespace Doremi
 
 
             DirectX::XMMATRIX t_viewAndProjectionMatrix;
-            t_zMin = -t_projection4x4._43 / t_projection4x4._33;
-            r = m_viewDist / (m_viewDist - t_zMin);
-            t_projection4x4._33 = r;
-            t_projection4x4._43 = -r * t_zMin;
-            t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr ,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            //t_zMin = -t_projection4x4._43 / t_projection4x4._33;
+            //r = m_viewDist / (m_viewDist - t_zMin);
+            //t_projection4x4._33 = r;
+            //t_projection4x4._43 = -r * t_zMin;
+            t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(XMLoadFloat4x4(&t_projection4x4), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            /////////t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr ,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
             DirectX::XMFLOAT4X4 t_viewAndProjection4x4;
             DirectX::XMStoreFloat4x4(&t_viewAndProjection4x4, t_viewAndProjectionMatrix);
 
@@ -386,47 +392,136 @@ namespace Doremi
             //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
 
 
-            // Calculate near plane of frustum.
-            m_planes[0].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._13;
-            m_planes[0].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._23;
-            m_planes[0].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._33;
-            m_planes[0].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._43;
-            DirectX::XMStoreFloat4(&m_planes[0], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[0])));
+            uint32_t cullingDimensions = 10;
+            // Near plane!
+            DirectX::XMVECTOR planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            DirectX::XMVECTOR planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            DirectX::XMVECTOR planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            DirectX::XMFLOAT3 planeData;
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[0].x = planeData.x;
+            m_planes[0].y = planeData.y;
+            m_planes[0].z = planeData.z;
+            m_planes[0].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            // Calculate far plane of frustum.
-            m_planes[1].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._13;
-            m_planes[1].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._23;
-            m_planes[1].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._33;
-            m_planes[1].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._43;
-            DirectX::XMStoreFloat4(&m_planes[1], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[1])));
+             ////////DEBUGS
+            //////////////std::cout << "X:" << m_planes[0].x << " Y:" << m_planes[0].y << " Z:" << m_planes[0].z << " W:" << m_planes[0].w << std::endl;
+            ////////////Far plane
+            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[1].x = planeData.x;
+            m_planes[1].y = planeData.y;
+            m_planes[1].z = planeData.z;
+            m_planes[1].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z + cullingDimensions);
 
-            // Calculate left plane of frustum.
-            m_planes[2].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._11;
-            m_planes[2].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._21;
-            m_planes[2].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._31;
-            m_planes[2].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._41;
-            DirectX::XMStoreFloat4(&m_planes[2], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[2])));
+            //left plane
+            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[2].x = planeData.x;
+            m_planes[2].y = planeData.y;
+            m_planes[2].z = planeData.z;
+            m_planes[2].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            // Calculate right plane of frustum.
-            m_planes[3].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._11;
-            m_planes[3].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._21;
-            m_planes[3].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._31;
-            m_planes[3].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._41;
-            DirectX::XMStoreFloat4(&m_planes[3], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[3])));
+            //right plane
+            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[3].x = planeData.x;
+            m_planes[3].y = planeData.y;
+            m_planes[3].z = planeData.z;
+            m_planes[3].w = planeData.x * (m_playerPos.x + cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            // Calculate top plane of frustum.
-            m_planes[4].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._12;
-            m_planes[4].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._22;
-            m_planes[4].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._32;
-            m_planes[4].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._42;
-            DirectX::XMStoreFloat4(&m_planes[4], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[4])));
+            //above plane
+            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[4].x = planeData.x;
+            m_planes[4].y = planeData.y;
+            m_planes[4].z = planeData.z;
+            m_planes[4].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y + cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            // Calculate bottom plane of frustum.
-            m_planes[5].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._12;
-            m_planes[5].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._22;
-            m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
-            m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
-            DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
+            //lower plane
+            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[5].x = planeData.x;
+            m_planes[5].y = planeData.y;
+            m_planes[5].z = planeData.z;
+            m_planes[5].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            ////         
+            //////// From tutorial!
+            ////// Calculate near plane of frustum.
+            ////m_planes[0].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._13;
+            ////m_planes[0].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._23;
+            ////m_planes[0].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._33;
+            ////m_planes[0].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._43;
+            ////DirectX::XMStoreFloat4(&m_planes[0], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[0])));
+
+            ////// Calculate far plane of frustum.
+            ////m_planes[1].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._13;
+            ////m_planes[1].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._23;
+            ////m_planes[1].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._33;
+            ////m_planes[1].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._43;
+            ////DirectX::XMStoreFloat4(&m_planes[1], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[1])));
+
+            ////// Calculate left plane of frustum.
+            ////m_planes[2].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._11;
+            ////m_planes[2].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._21;
+            ////m_planes[2].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._31;
+            ////m_planes[2].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._41;
+            ////DirectX::XMStoreFloat4(&m_planes[2], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[2])));
+
+            ////// Calculate right plane of frustum.
+            ////m_planes[3].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._11;
+            ////m_planes[3].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._21;
+            ////m_planes[3].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._31;
+            ////m_planes[3].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._41;
+            ////DirectX::XMStoreFloat4(&m_planes[3], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[3])));
+
+            ////// Calculate top plane of frustum.
+            ////m_planes[4].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._12;
+            ////m_planes[4].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._22;
+            ////m_planes[4].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._32;
+            ////m_planes[4].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._42;
+            ////DirectX::XMStoreFloat4(&m_planes[4], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[4])));
+
+            ////// Calculate bottom plane of frustum.
+            ////m_planes[5].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._12;
+            ////m_planes[5].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._22;
+            ////m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
+            ////m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
+            ////DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
 
 
             while(!t_isDone)
@@ -448,7 +543,7 @@ namespace Doremi
                     /////////////////
 
                     // Collision with the frustum planes.
-                    if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions))
+                    if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions) || t_currentNode->depth == 0)
                     {
                         // If max depth isnt reached , minus one is needed to get the depth wanted
                         if(t_currentNode->depth < m_treeCreator->m_treeDepth - 1)
