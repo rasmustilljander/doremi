@@ -51,7 +51,7 @@ namespace Doremi
 
         void InputHandlerClient::SetCursorInvisibleAndMiddle(bool p_bool) { m_sharedContext.GetInputModule().SetCursorInvisibleAndMiddle(p_bool); }
 
-        void InputHandlerClient::GetMousePos(int& p_positionX, int& p_positionY)
+        void InputHandlerClient::GetMousePos(uint32_t& p_positionX, uint32_t& p_positionY)
         {
             // Recieves the mousepos from input module.
             p_positionX = m_sharedContext.GetInputModule().GetMousePosX();

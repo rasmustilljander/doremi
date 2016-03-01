@@ -7,8 +7,13 @@
 #include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+
 // Event
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
+
+
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 
 // Third party
 
@@ -48,25 +53,24 @@ namespace Doremi
             return m_singleton;
         }
 
-        void MenuHandler::Initialize(std::vector<string> p_buttonTextureNames)
+        typedef std::pair<std::string, std::string> TexturePair;
+
+        void MenuHandler::Initialize()
         {
             using namespace DirectX;
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
             // initialize currentbutton
             m_currentButton = -1;
 
-            size_t length = p_buttonTextureNames.size();
-            int offset = 5;
+            // Initialize menu
+            std::vector<TexturePair> p_buttonTextureNames;
 
-            // Gör höjden på varje knapp bero på upplösningen
-            // Orienterad efter origin. Length används och fungerar även om den listan är för lång eftersom vi går efter extents från origin.
-            float t_buttonHeightExtent = ((m_resolution.y - offset * 2) / static_cast<float>(length));
-
-            // En knapp täcker halva skärmen. Extents åt båda hållen ger halva skärmen. Extentsen blir då en 4dedel
-            float t_buttonWidthExtent = m_resolution.x * 0.25f;
-
-            // Positionera I mitten av skärmen
-            float t_buttonXPosition = m_resolution.x * 0.5f;
+            // textures under in the same way
+            p_buttonTextureNames.push_back(TexturePair("playbutton2.dds", "playbutton2highlight.dds"));
+            p_buttonTextureNames.push_back(TexturePair("optionsbutton2.dds", "optionsbutton2highlight.dds"));
+            p_buttonTextureNames.push_back(TexturePair("exitbutton2.dds", "exitbutton2highlight.dds"));
+            p_buttonTextureNames.push_back(TexturePair("Fullscreen.dds", "FullscreenHighlighted.dds"));
 
 
             DoremiButtonActions statesForButtons[4];
@@ -75,48 +79,34 @@ namespace Doremi
             statesForButtons[2] = DoremiButtonActions::EXIT;
             statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
 
-            length = static_cast<size_t>(floor(static_cast<float>(length) * 0.5f));
-            for(size_t i = 0; i < 1; i++)
+            size_t length = p_buttonTextureNames.size();
+
+            // Basic position
+            DoremiEngine::Graphic::SpriteData t_data;
+
+            t_data.halfsize = XMFLOAT2(0.15f, 0.5f / (float)(length + 1));
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.5f, 0.0f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+
+            for(size_t i = 0; i < length; i++)
             {
-                // Lägg in materialinfo å meshinfo för varje knapp i dess klass instantiering. Lägg till i listan för knappar
-                // Klassisk klur function i Y led. dirx startar resolution.y längs ner. Vi vill börja högst upp. Sedan subtrahera en hel knapp per i,
-                // och en offset för att första ska skjutas ned.
-                XMFLOAT2 t_position = XMFLOAT2(t_buttonXPosition, m_resolution.y - t_buttonHeightExtent * i * 2 - t_buttonHeightExtent + offset);
-
-                // Sätt size på knappen. Detta är extentsen...
-                XMFLOAT2 t_extent = XMFLOAT2(t_buttonWidthExtent, t_buttonHeightExtent - offset);
-
                 // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
                 Doremi::Core::ButtonMaterials t_buttonMaterials;
 
-                // Ladda materialinfo x2 Använder i+length som en ful hårdkodning... Därför måste listan med namn vara i rätt ordning där
-                // highlighttexturerna kommer sist.
-                t_buttonMaterials.m_vanillaMaterial =
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(p_buttonTextureNames[i]);
-                t_buttonMaterials.m_highLightedMaterial =
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(p_buttonTextureNames[i + length]);
+                // Load materials
+                t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].first);
+                t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].second);
 
-                // Ladda in meshen
-                DoremiEngine::Graphic::MeshInfo* t_meshInfo =
-                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
+                t_data.position.y = 1.0f / (float)(length + 1) + i / (float)(length + 1);
 
-                // Skapa knapp å stoppa in i listan Menustate är riskmodd. Hårdkodat mot vilken ordning som namnen laddas in. Finns kommentarer till
-                // detta androp om ordning
+                DoremiEngine::Graphic::SpriteInfo* t_spriteInfo =
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSpriteInfo(t_data);
 
-                DoremiEngine::Graphic::SpriteData t_data;
-
-                // Set size of button
-                t_data.halfsize = XMFLOAT2(0.25f, 0.25f);
-                t_data.origo = XMFLOAT2(0.0f, 0.0f);
-                t_data.position = XMFLOAT2(0.5f, 0.5f);
-                t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
-                t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
-
-                DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSpriteInfo(t_data);
-
-                m_buttonList.push_back(Button(t_position, t_extent, t_buttonMaterials, t_meshInfo, t_spriteInfo,statesForButtons[i]));
+                m_buttonList.push_back(Button(t_buttonMaterials, t_spriteInfo, statesForButtons[i]));
             }
-            m_inputHandler = new InputHandlerClient(m_sharedContext);
         }
 
         int MenuHandler::GetCurrentButton() { return m_currentButton; }
@@ -125,17 +115,28 @@ namespace Doremi
 
         int MenuHandler::Update(double p_dt) // TODOKO Dont need to return int anymore
         {
-            int mouseX;
-            int mouseY;
+            uint32_t t_mousePosX;
+            uint32_t t_mousePosY;
+
             // Get mouse cursor position
-            m_inputHandler->Update();
-            m_inputHandler->GetMousePos(mouseX, mouseY);
-            size_t length = m_buttonList.size();
+            InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
+            t_inputHandler->GetMousePos(t_mousePosX, t_mousePosY);
+
+            // Get screen resolution
+            XMFLOAT2 t_screenResolution = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
+
+            // Make position to screen cordinates
+            float t_mouseScreenPosX = static_cast<float>(t_mousePosX) / t_screenResolution.x;
+            float t_mouseScreenPosY = static_cast<float>(t_mousePosY) / t_screenResolution.y;
+
+            // Set standard not to be selected
             m_currentButton = -1;
+
             // Check if cursor is inside one of the buttons if it is then save that buttons index
+            size_t length = m_buttonList.size();
             for(size_t i = 0; i < length; i++)
             {
-                if(m_buttonList[i].CheckIfInside(mouseX, m_resolution.y - mouseY))
+                if(m_buttonList[i].CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
                 {
                     m_currentButton = i;
                 }
@@ -144,8 +145,9 @@ namespace Doremi
                     // do nothing
                 }
             }
+
             // check if player has clicked the mouse and is hovering over a button
-            if(m_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
+            if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
             {
                 switch(m_buttonList[m_currentButton].m_buttonAction)
                 {

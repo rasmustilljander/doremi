@@ -514,7 +514,7 @@ namespace DoremiEngine
                 m_deviceContext->Map(m_spriteDataBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 
                 // Copy data
-                memcpy(tMS.pData, &spriteRenderData[0].spriteData, sizeof(SpriteData));
+                memcpy(tMS.pData, &spriteRenderData[i].spriteData, sizeof(SpriteData));
 
                 // Unmap
                 m_deviceContext->Unmap(m_spriteDataBuffer, NULL);

@@ -40,26 +40,17 @@ namespace Doremi
         class Button
         {
         public:
-            Button(const XMFLOAT2& p_position, const XMFLOAT2& p_size, ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::MeshInfo* p_meshInfo,
-                DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState);
+            Button(ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState);
             Button();
 
             ~Button();
 
             // Checks if mouse is inside this button
-            bool CheckIfInside(int p_mousePosX, int p_mousePosY);
+            bool CheckIfInside(float p_mousePosX, float p_mousePosY);
 
             Core::DoremiButtonActions m_buttonAction;
 
-            XMFLOAT4X4 m_transformMatrix;
-
-            XMFLOAT2 m_position;
-
-            XMFLOAT2 m_size;
-
             DoremiEngine::Graphic::MaterialInfo* m_materialInfo;
-
-            DoremiEngine::Graphic::MeshInfo* m_meshInfo;
 
             // Add "Mesh" info here, but its buffer
             DoremiEngine::Graphic::SpriteInfo* m_spriteInfo;

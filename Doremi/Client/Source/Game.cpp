@@ -146,21 +146,8 @@ namespace Doremi
         AddToManagerList(new ExtraDrainSyncManager(sharedContext));
         AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
 
-        // Initialize menu
-        std::vector<string> t_textureNamesForMenuButtons;
-
-        // Use this order when adding buttons. The order of the buttons can be view by hovering Menuhandler initialize under. Place highlighted TODOXX
-        // textures under in the same order
-        t_textureNamesForMenuButtons.push_back("playbutton2.dds");
-        t_textureNamesForMenuButtons.push_back("optionsbutton2.dds");
-        t_textureNamesForMenuButtons.push_back("exitbutton2.dds");
-        t_textureNamesForMenuButtons.push_back("Fullscreen.dds");
-        t_textureNamesForMenuButtons.push_back("playbutton2highlight.dds");
-        t_textureNamesForMenuButtons.push_back("optionsbutton2highlight.dds");
-        t_textureNamesForMenuButtons.push_back("exitbutton2highlight.dds");
-        t_textureNamesForMenuButtons.push_back("FullscreenHighlighted.dds");
         MenuHandler::StartMenuHandler(sharedContext, m_screenRes);
-        MenuHandler::GetInstance()->Initialize(t_textureNamesForMenuButtons);
+        MenuHandler::GetInstance()->Initialize();
 
         // initialize menudraw
         MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);

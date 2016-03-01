@@ -41,7 +41,7 @@ namespace Doremi
             /**
                 Recieves the mousepos from input module.
             */
-            void GetMousePos(int& p_positionX, int& p_positionY);
+            void GetMousePos(uint32_t& p_positionX, uint32_t& p_positionY);
 
 
         private:
