@@ -9,11 +9,6 @@
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
 
-
-// Managers
-#include <Doremi/Core/Include/Network/NetworkManagerMaster.hpp>
-
-
 // Timer
 #include <Doremi/Core/Include/Timing/TimerManager.hpp>
 
@@ -24,6 +19,7 @@
 #include <chrono>
 #include <iostream>
 
+using namespace std;
 
 namespace DoremiEditor
 {
@@ -38,16 +34,6 @@ namespace DoremiEditor
         TIME_FUNCTION_START
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
 
-        /* This starts the physics handler. Should not be done here, but since this is the general
-        code dump, it'll work for now TODOJB*/
-
-
-        Manager* t_masterNetworkManager = new NetworkManagerMaster(sharedContext);
-
-        // Add manager to list of managers
-        // Remember to put server last (cause we want on same frame as we update to send data, or at least close togeather)
-
-        m_managers.push_back(t_masterNetworkManager);
 
         TIME_FUNCTION_STOP
     }
@@ -80,12 +66,7 @@ namespace DoremiEditor
     {
         TIME_FUNCTION_START
 
-        // Have all managers update
-        size_t length = m_managers.size();
-        for(size_t i = 0; i < length; i++)
-        {
-            m_managers.at(i)->Update(p_deltaTime);
-        }
+        cout << "Update" << endl;
 
         TIME_FUNCTION_STOP
     }
