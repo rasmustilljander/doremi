@@ -45,20 +45,17 @@ void localMain()
     }
     catch(const std::exception& e)
     {
-        // TODORT log
         std::cout << "Unhandled exception: " << e.what() << std::endl;
         attemptGracefulShutdown();
         exit(1);
     }
     catch(...)
     {
-        // TODORT log
         std::cout << "Unhandled unknown exception" << std::endl;
         attemptGracefulShutdown();
         exit(1);
     }
 }
-
 
 #ifdef _WIN32
 int main(int argc, const char* argv[])
