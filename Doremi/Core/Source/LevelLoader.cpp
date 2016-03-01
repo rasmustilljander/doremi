@@ -462,6 +462,11 @@ namespace Doremi
             const int material = physicsMaterialManager.CreateMaterial(0.5, 0.5, 0.5);
             rigidBodyManager.AddMeshBodyStatic(p_entityID, m_currentPos, m_currentOrientation, p_positionPX, p_indexPX, material);
             rigidBodyManager.SetDrain(p_entityID, true);
+
+            // Add component
+            EntityHandler::GetInstance().AddComponent(p_entityID, static_cast<uint32_t>(ComponentType::RigidBody));
+            GetComponent<RigidBodyComponent>(p_entityID)->geometry = RigidBodyGeometry::mesh;
+
             /*
             TODOJB TODOXX haxy callback filtering. Basically we want the kinematic objects (elevators)
             to ignore the world (every static mesh) and each other. Specifically:
