@@ -37,7 +37,6 @@ namespace Doremi
         */
         void Start();
 
-
         /**
         TODOCM doc
         */

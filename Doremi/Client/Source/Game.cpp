@@ -210,8 +210,9 @@ namespace Doremi
         TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
         t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
+        Core::DoremiGameStates gameState = DoremiGameStates::RUNGAME;
 
-        while(true)
+        while(gameState != DoremiGameStates::EXIT)
         {
             // Tick time
             t_timeHandler->Tick();
@@ -242,17 +243,7 @@ namespace Doremi
             CameraHandler::GetInstance()->UpdateDraw();
 
             Draw(t_timeHandler->Frame);
-
-            // Escape
-            // PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
-            // InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
-            // if(inputHandler != nullptr)
-            //{
-            //    if(inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::ExitGame))
-            //    {
-            //        break;
-            //    }
-            //}
+            gameState = Core::StateHandler::GetInstance()->GetState();
         }
         TIME_FUNCTION_STOP
     }
@@ -323,15 +314,6 @@ namespace Doremi
                 // Update Pause Screen
                 break;
             }
-            case Core::DoremiGameStates::EXIT:
-            {
-                std::cout << "You clicked exit its not ver effective state changed back to mainmenu" << std::endl;
-                // State is changed with events TODOXX should be removed from here once EXIT is implemented
-                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                menuEvent->state = Core::DoremiGameStates::MAINMENU;
-                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-                break;
-            }
             default:
             {
                 break;
@@ -386,5 +368,11 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
-    void GameMain::Stop() { Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext); }
+    void GameMain::Stop()
+    {
+        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
+        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
+        menuEvent->state = Core::DoremiGameStates::EXIT;
+        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+    }
 }

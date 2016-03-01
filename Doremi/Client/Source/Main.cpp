@@ -1,7 +1,5 @@
 // Project specific
 #include <Game.hpp>
-#include <Doremi/Core/Include/Timing/TimerManager.hpp>
-#include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 // Third party
 
@@ -37,7 +35,6 @@ BOOL CtrlHandler(DWORD fdwCtrlType);
 namespace
 {
     Doremi::GameMain* gameMain = nullptr;
-    uint32_t closeFlag = 0;
 }
 
 void localMain()
@@ -75,7 +72,6 @@ int main(int argc, const char* argv[])
     SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
     // Run startup code
-    startup();
 
     // TODORT
     // This row is required later as it disables the standard output terminal, we do now want that.
@@ -84,67 +80,75 @@ int main(int argc, const char* argv[])
 
     __try
     {
+        startup();
         localMain();
+        shutdown();
     }
     __except(EXCEPTION_EXECUTE_HANDLER)
     {
         attemptGracefulShutdown();
         exit(1);
     }
+    printf("Graceful shutdown.");
 
-    // Run shutdown code
-    shutdown();
     return 0;
 }
 
 void g_unexpected() { attemptGracefulShutdown(); }
 void g_terminate() { attemptGracefulShutdown(); }
 
-void startup() { gameMain = new Doremi::GameMain(); }
+void startup()
+{
+    try
+    {
+        gameMain = new Doremi::GameMain();
+    }
+    catch(...)
+    {
+        printf("Failed with shutdown.");
+    }
+}
 
 void shutdown()
 {
-    gameMain->Stop();
-    delete gameMain;
-    gameMain = nullptr;
+    try
+    {
+        delete gameMain;
+        gameMain = nullptr;
+    }
+    catch(...)
+    {
+        printf("Failed with shutdown.");
+    }
 }
 
 void attemptGracefulShutdown()
 {
-    shutdown();
-    closeFlag = 1;
-#ifdef _DEBUG
-    std::cin.get();
-#endif
+    try
+    {
+        gameMain->Stop();
+    }
+    catch(...)
+    {
+        printf("Failed with graceful shutdown.");
+    }
 }
 
 #ifdef _WIN32
-
 BOOL CtrlHandler(DWORD fdwCtrlType)
 {
     switch(fdwCtrlType)
     {
-        // Handle the CTRL-C signal.
-        case CTRL_C_EVENT:
+        case CTRL_LOGOFF_EVENT:
+        case CTRL_SHUTDOWN_EVENT:
+        case CTRL_CLOSE_EVENT: // CTRL-CLOSE: confirm that the user wants to exit
+        case CTRL_C_EVENT: // Handle the CTRL-C signal
+            printf("Shutting down\n");
             attemptGracefulShutdown();
-            while(closeFlag != 1)
-            {
-                Sleep(100);
-            }
-            return (TRUE);
-
-        // CTRL-CLOSE: confirm that the user wants to exit.
-        case CTRL_CLOSE_EVENT:
-            attemptGracefulShutdown();
-            while(closeFlag != 1)
-            {
-                Sleep(100);
-            }
-            return (TRUE);
-
+            Sleep(10000); // Sleep until 10 seconds, if process has been shutof during this time, this will exit correctly
+            return TRUE;
         default:
             return FALSE;
     }
 }
-
 #endif
