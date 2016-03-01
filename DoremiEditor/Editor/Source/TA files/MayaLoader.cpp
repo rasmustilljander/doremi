@@ -29,7 +29,7 @@ MayaLoader::MayaLoader(UINT screenWidth, UINT screenHeight, const DoremiEngine::
 
     CreateFileMaps(1024 * 1024 * 10);
     InitVariables();
-
+    InitDX();
     fileHandler = new FileHandler();
     Material* defaultMaterial = new Material();
     materials.push_back(defaultMaterial); // lägg till default material, viktigt den ligger på första platsen
@@ -134,17 +134,16 @@ void MayaLoader::DrawScene()
         m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(
             *m_renderObjects[i].mesh, *m_renderObjects[i].material, finalMat);
     }
-    // Do fancy DX stuff that i have no idea what they do
-    m_rasterizerState->GetRasterizerState();
-    m_depthStencilState->GetDepthStencilState();
-    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(
-        m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
-    // Done drawing?
-    
-
-
-
-
+    // Somewhat ugly fix to ensure we don't try to draw when there's nothing to draw
+    if (numObjects > 0)
+    {
+        // Do fancy DX stuff that i have no idea what they do
+        m_rasterizerState->GetRasterizerState();
+        m_depthStencilState->GetDepthStencilState();
+        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(
+            m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
+        // Done drawing?
+    }
 
 
     //UINT32 vertexSize2 = sizeof(float) * 8;

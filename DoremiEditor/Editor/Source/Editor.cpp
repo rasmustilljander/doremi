@@ -32,7 +32,7 @@ namespace DoremiEditor
     void EditorMain::Initialize()
     {
         TIME_FUNCTION_START
-        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::NETWORK);
+        const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::GRAPHIC);
         m_mayaLoader = new MayaLoader(1024, 768, sharedContext); // Hard coded resolution just to get things to work. TODOCONFIG
         TIME_FUNCTION_STOP
     }
