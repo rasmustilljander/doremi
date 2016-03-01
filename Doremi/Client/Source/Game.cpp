@@ -37,6 +37,7 @@
 #include <Doremi/Core/Include/Handler/StateHandler.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -255,8 +256,6 @@ namespace Doremi
         TIME_FUNCTION_STOP
     }
 
-    void GameMain::UpdateMenu(double p_deltaTime) {}
-
     void GameMain::Update(double p_deltaTime)
     {
         TIME_FUNCTION_START
@@ -276,6 +275,7 @@ namespace Doremi
             }
             case Core::DoremiGameStates::SERVER_BROWSER:
             {
+                ServerBrowserHandler::GetInstance()->Update();
 
                 break;
             }

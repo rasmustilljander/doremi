@@ -12,7 +12,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
-#include <Doremi/Core/Include/ServerListHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
 
 // Connection
@@ -464,7 +464,7 @@ namespace Doremi
         void NetworkMessagesClient::ReceiveConnectedMaster(NetMessageMasterClientFromMaster& p_message)
         {
             NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
-            ServerListHandler* t_serverListHandler = ServerListHandler::GetInstance();
+            ServerBrowserHandler* t_ServerBrowserHandler = ServerBrowserHandler::GetInstance();
 
             if(t_connections->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
             {
@@ -505,8 +505,8 @@ namespace Doremi
                     //     << " with port: " << t_port << endl;
 
                     // Update the server list
-                    t_serverListHandler->UpdateServer(t_name, t_serverState, t_map, t_ping, t_curNumPlayers, t_maxNumPlayers, t_port, t_IP_a, t_IP_b,
-                                                      t_IP_c, t_IP_d);
+                    t_ServerBrowserHandler->UpdateServer(t_name, t_serverState, t_map, t_ping, t_curNumPlayers, t_maxNumPlayers, t_port, t_IP_a,
+                                                         t_IP_b, t_IP_c, t_IP_d);
                 }
 
                 // Update last reposnse

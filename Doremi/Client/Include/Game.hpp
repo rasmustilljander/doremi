@@ -76,10 +76,6 @@ namespace Doremi
         void UpdateGame(double p_deltaTime);
 
         /**
-        TODOCM doc
-        */
-        void UpdateMenu(double p_deltaTime);
-        /**
             TODOCM doc
         */
         void DrawGame(double p_deltaTime);

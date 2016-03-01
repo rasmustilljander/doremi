@@ -25,12 +25,9 @@ namespace Doremi
         {
             DoremiEngine::Graphic::MaterialInfo* m_vanillaMaterial;
             DoremiEngine::Graphic::MaterialInfo* m_highLightedMaterial;
+            DoremiEngine::Graphic::MaterialInfo* m_selectedLightedMaterial;
         };
-        struct MousePos
-        {
-            int x;
-            int y;
-        };
+
         using namespace DirectX;
 
         /**
@@ -47,6 +44,8 @@ namespace Doremi
 
             // Checks if mouse is inside this button
             bool CheckIfInside(float p_mousePosX, float p_mousePosY);
+
+            void SetSelected();
 
             Core::DoremiButtonActions m_buttonAction;
 

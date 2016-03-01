@@ -99,6 +99,7 @@ namespace Doremi
                 // Load materials
                 t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].first);
                 t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].second);
+                t_buttonMaterials.m_selectedLightedMaterial = nullptr;
 
                 t_data.position.y = 1.0f / (float)(length + 1) + i / (float)(length + 1);
 

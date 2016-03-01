@@ -62,5 +62,7 @@ namespace Doremi
             }
             return false;
         }
+
+        void Button::SetSelected() { m_materialInfo = m_buttonMaterials.m_selectedLightedMaterial; }
     }
 }

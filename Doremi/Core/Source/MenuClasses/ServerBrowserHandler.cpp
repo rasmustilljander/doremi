@@ -1,4 +1,4 @@
-#include <Doremi/Core/Include/ServerListHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 
 namespace Doremi
 {
@@ -30,22 +30,22 @@ namespace Doremi
             }
         }
 
-        ServerListHandler* ServerListHandler::m_singleton = nullptr;
+        ServerBrowserHandler* ServerBrowserHandler::m_singleton = nullptr;
 
-        ServerListHandler* ServerListHandler::GetInstance()
+        ServerBrowserHandler* ServerBrowserHandler::GetInstance()
         {
             if(m_singleton == nullptr)
             {
-                m_singleton = new ServerListHandler();
+                m_singleton = new ServerBrowserHandler();
             }
             return m_singleton;
         }
 
-        ServerListHandler::ServerListHandler() : m_timeout(5.0f) {}
+        ServerBrowserHandler::ServerBrowserHandler() : m_timeout(5.0f) {}
 
-        ServerListHandler::~ServerListHandler() {}
+        ServerBrowserHandler::~ServerBrowserHandler() {}
 
-        void ServerListHandler::Update(double p_dt)
+        void ServerBrowserHandler::UpdateTimeouts(double p_dt)
         {
             auto t_server = m_serversList.begin();
 
@@ -65,8 +65,11 @@ namespace Doremi
             }
         }
 
-        void ServerListHandler::UpdateServer(std::string p_name, ServerStates p_serverState, GameMap p_map, uint16_t p_ping, uint8_t p_currentNumPlayers,
-                                             uint8_t p_maxNumPlayers, uint16_t p_port, uint8_t p_IP_a, uint8_t p_IP_b, uint8_t p_IP_c, uint8_t p_IP_d)
+        void ServerBrowserHandler::Update() {}
+
+
+        void ServerBrowserHandler::UpdateServer(std::string p_name, ServerStates p_serverState, GameMap p_map, uint16_t p_ping, uint8_t p_currentNumPlayers,
+                                                uint8_t p_maxNumPlayers, uint16_t p_port, uint8_t p_IP_a, uint8_t p_IP_b, uint8_t p_IP_c, uint8_t p_IP_d)
         {
             // Create key
             std::pair<IP_Split, Port> t_key;
@@ -82,7 +85,7 @@ namespace Doremi
             m_serversList[t_key].LastResponse = 0;
         }
 
-        IP_Split ServerListHandler::GetSelectedServerIP()
+        IP_Split ServerBrowserHandler::GetSelectedServerIP()
         {
             if(m_serversList.size())
             {
@@ -91,7 +94,7 @@ namespace Doremi
             return IP_Split(127, 0, 0, 1);
         }
 
-        uint16_t ServerListHandler::GetSelectedServerPort()
+        uint16_t ServerBrowserHandler::GetSelectedServerPort()
         {
             if(m_serversList.size())
             {

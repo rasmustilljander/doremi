@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
-#include <ServerStateHandler.hpp>
+#include <Doremi/Core/Include/ServerStateHandler.hpp>
 #include <map>
+#include <Doremi/Core/Include/MenuClasses/Button.hpp>
 
 namespace Doremi
 {
@@ -32,12 +33,12 @@ namespace Doremi
 
         typedef uint16_t Port;
 
-        class ServerListHandler
+        class ServerBrowserHandler
         {
         public:
-            static ServerListHandler* GetInstance();
+            static ServerBrowserHandler* GetInstance();
 
-            void Update(double p_dt);
+            void Update();
 
             void UpdateServer(std::string p_name, ServerStates p_serverState, GameMap p_map, uint16_t p_ping, uint8_t p_currentNumPlayers,
                               uint8_t p_maxNumPlayers, uint16_t p_port, uint8_t p_IP_a, uint8_t p_IP_b, uint8_t p_IP_c, uint8_t p_IP_d);
@@ -47,10 +48,15 @@ namespace Doremi
             uint16_t GetSelectedServerPort();
 
         private:
-            ServerListHandler();
-            ~ServerListHandler();
+            ServerBrowserHandler();
 
-            static ServerListHandler* m_singleton;
+            ~ServerBrowserHandler();
+
+            void UpdateTimeouts(double p_dt);
+
+            std::vector<Button> m_buttons;
+
+            static ServerBrowserHandler* m_singleton;
 
             std::map<std::pair<IP_Split, Port>, ServerData> m_serversList;
 

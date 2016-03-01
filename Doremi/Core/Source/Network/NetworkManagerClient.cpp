@@ -16,7 +16,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
-#include <Doremi/Core/Include/ServerListHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 
 #include <iostream> // TODOCM remove only debug
 
@@ -79,12 +79,6 @@ namespace Doremi
 
             // Check for timed out connections
             UpdateTimeouts(p_dt);
-
-            // Update server list if we're not disconnecetd from master
-            if(NetworkConnectionsClient::GetInstance()->m_masterConnection.ConnectionState > MasterConnectionStateFromClient::DISCONNECTED)
-            {
-                ServerListHandler::GetInstance()->Update(p_dt);
-            }
         }
 
         void NetworkManagerClient::ReceiveMessages()
@@ -495,9 +489,9 @@ namespace Doremi
                     t_connections->m_serverConnection.LastSequenceUpdate = SEQUENCE_TIMER_START;
 
                     // Create adress from selected server
-                    ServerListHandler* t_serverListHandler = ServerListHandler::GetInstance();
-                    IP_Split t_serverIP = t_serverListHandler->GetSelectedServerIP();
-                    uint16_t t_serverPort = t_serverListHandler->GetSelectedServerPort();
+                    ServerBrowserHandler* t_ServerBrowserHandler = ServerBrowserHandler::GetInstance();
+                    IP_Split t_serverIP = t_ServerBrowserHandler->GetSelectedServerIP();
+                    uint16_t t_serverPort = t_ServerBrowserHandler->GetSelectedServerPort();
 
 
                     DoremiEngine::Network::NetworkModule& t_NetworkModule = m_sharedContext.GetNetworkModule();
