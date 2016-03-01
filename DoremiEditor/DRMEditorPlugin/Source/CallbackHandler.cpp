@@ -79,15 +79,11 @@ namespace DoremiEditor
                         MFnDagNode t_transDagNode(t_transDagPath, &result);
                         int childCount = t_transDagNode.childCount();
                         AddTransform(t_transDagPath.node());
-                        for(int i = 0; i < childCount; ++i)
+                        /*for(int i = 0; i < childCount; ++i)
                         {
                             MObject t_child(t_trans.child(i));
                             if(t_child.hasFn(MFn::kMesh))
                             {
-                                MFnMesh t_childMesh(t_child);
-                                if(t_childMesh.isInstanced(true))
-                                {
-                                }
                                 AddMesh(t_child, false);
                             }
                             else if(t_child.hasFn(MFn::kLight))
@@ -98,9 +94,59 @@ namespace DoremiEditor
                             {
                                 AddCamera(t_child);
                             }
-                        }
+                        }*/
                     }
                 }
+                filter = MFn::kMesh;
+                MItDag itMeshes(MItDag::kDepthFirst, filter, &result);
+                if(!result)
+                {
+                    PrintError("Could not create mesh iterator!");
+                }
+                else
+                {
+                    for(; !itMeshes.isDone(); itMeshes.next())
+                    {
+                        MDagPath t_meshDagPath;
+                        result = itMeshes.getPath(t_meshDagPath);
+                        /*MFnMesh t_mesh(t_meshDagPath, &result);
+                        MObject t_meshObject(t_mesh.object());
+                        AddMesh(t_meshObject, true);*/
+                        AddMesh(t_meshDagPath.node(), false);
+                    }
+                }
+                filter = MFn::kCamera;
+                MItDag itCameras(MItDag::kDepthFirst, filter, &result);
+                if(!result)
+                {
+                    PrintError("Could not create mesh iterator!");
+                }
+                else
+                {
+                    for(; !itCameras.isDone(); itCameras.next())
+                    {
+                        MDagPath t_cameraDagPath;
+                        result = itCameras.getPath(t_cameraDagPath);
+                        AddCamera(t_cameraDagPath.node());
+                    }
+                }
+                filter = MFn::kLight;
+                MItDag itLights(MItDag::kDepthFirst, filter, &result);
+                if(!result)
+                {
+                    PrintError("Could not create mesh iterator!");
+                }
+                else
+                {
+                    for(; !itLights.isDone(); itLights.next())
+                    {
+                        MDagPath t_lightDagPath;
+                        result = itLights.getPath(t_lightDagPath);
+                        AddLight(t_lightDagPath.node(), false);
+                    }
+                }
+
+
                 MDagPath t_currentCameraPath;
                 result = m_modelPanel.getCamera(t_currentCameraPath);
                 if(result)
@@ -676,33 +722,37 @@ namespace DoremiEditor
             {
                 PrintInfo("Mesh " + t_mesh.name() + "is instanced");
             }
-            std::string t_nodeName = t_mesh.name().asChar();
-            if(t_nodeName.find("__PrenotatoPerDuplicare") != std::string::npos)
+            // Makes sure the mesh is not an intermediate node
+            if(!t_mesh.isIntermediateObject())
             {
-                m_callbackIDArray.append(MNodeMessage::addNameChangedCallback(p_node, cb_nameChange));
-            }
-            else
-            {
-                // Add Callbacks
-                m_callbackIDArray.append(MNodeMessage::addNameChangedCallback(p_node, cb_nameChange));
-                m_callbackIDArray.append(MPolyMessage::addPolyTopologyChangedCallback(p_node, cb_meshPolyChange));
-                m_callbackIDArray.append(MNodeMessage::addNodePreRemovalCallback(p_node, cb_preRemoveNode));
-                if(p_isNew)
+                std::string t_nodeName = t_mesh.name().asChar();
+                if(t_nodeName.find("__PrenotatoPerDuplicare") != std::string::npos)
                 {
-                    m_callbackIDArray.append(MNodeMessage::addAttributeChangedCallback(p_node, cb_meshEvaluate));
-                }
-                if(result)
-                {
-                    // Set quadsplit to left. Ensures that the internal triangulation works properly.
-                    MString myCommand = "setAttr -e " + t_mesh.name() + ".quadSplit 0";
-                    MGlobal::executeCommandOnIdle(myCommand);
-                    m_callbackIDArray.append(MNodeMessage::addAttributeChangedCallback(p_node, cb_meshAttributeChange));
-                    s_nodeHandler->AddMeshNode(t_mesh);
-                    // TODOJW: Investigate and add duplicate/instancing callbacks.
+                    m_callbackIDArray.append(MNodeMessage::addNameChangedCallback(p_node, cb_nameChange));
                 }
                 else
                 {
-                    PrintError("Could not create MFnMesh from node: " + MString(p_node.apiTypeStr()));
+                    // Add Callbacks
+                    m_callbackIDArray.append(MNodeMessage::addNameChangedCallback(p_node, cb_nameChange));
+                    m_callbackIDArray.append(MPolyMessage::addPolyTopologyChangedCallback(p_node, cb_meshPolyChange));
+                    m_callbackIDArray.append(MNodeMessage::addNodePreRemovalCallback(p_node, cb_preRemoveNode));
+                    if(p_isNew)
+                    {
+                        m_callbackIDArray.append(MNodeMessage::addAttributeChangedCallback(p_node, cb_meshEvaluate));
+                    }
+                    if(result)
+                    {
+                        // Set quadsplit to left. Ensures that the internal triangulation works properly.
+                        MString myCommand = "setAttr -e " + t_mesh.name() + ".quadSplit 0";
+                        MGlobal::executeCommandOnIdle(myCommand);
+                        m_callbackIDArray.append(MNodeMessage::addAttributeChangedCallback(p_node, cb_meshAttributeChange));
+                        s_nodeHandler->AddMeshNode(t_mesh);
+                        // TODOJW: Investigate and add duplicate/instancing callbacks.
+                    }
+                    else
+                    {
+                        PrintError("Could not create MFnMesh from node: " + MString(p_node.apiTypeStr()));
+                    }
                 }
             }
         }

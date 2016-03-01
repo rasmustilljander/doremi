@@ -142,6 +142,8 @@ namespace DoremiEditor
                 MFnTransform t_transform(p_transform.object());
                 std::string transformName = t_transform.name().asChar();
                 std::string parentName;
+                // TODOJW
+                // Determine if this is even necessary at this stage
                 if(t_transform.parent(0).hasFn(MFn::kTransform))
                 {
                     MFnTransform t_transformParent(t_transform.parent(0));
