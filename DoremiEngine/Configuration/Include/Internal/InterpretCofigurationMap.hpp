@@ -98,6 +98,14 @@ namespace DoremiEngine
             {
                 o_info.PortServerConnected = std::stoi(p_mapToInterpret.at("PortServerConnected"));
             }
+            if(p_mapToInterpret.count("ServerName"))
+            {
+                o_info.ServerName = p_mapToInterpret.at("ServerName");
+            }
+            if(p_mapToInterpret.count("MaxPlayers"))
+            {
+                o_info.MaxPlayers = std::stoi(p_mapToInterpret.at("MaxPlayers"));
+            }
             if(p_mapToInterpret.count("IPToServer"))
             {
                 o_info.IPToServer = p_mapToInterpret.at("IPToServer");
@@ -154,6 +162,8 @@ namespace DoremiEngine
             returnMap["PortMasterServer"] = std::to_string(p_info.PortMasterServer);
             returnMap["PortServerConnecting"] = std::to_string(p_info.PortServerConnecting);
             returnMap["PortServerConnected"] = std::to_string(p_info.PortServerConnected);
+            returnMap["ServerName"] = p_info.ServerName;
+            returnMap["MaxPlayers"] = std::to_string(p_info.MaxPlayers);
             returnMap["IPToServer"] = p_info.IPToServer;
             returnMap["LastServerPlayerID"] = std::to_string(p_info.LastServerPlayerID);
             returnMap["AIJumpDistance"] = std::to_string(p_info.AIJumpDistance);

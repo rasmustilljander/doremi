@@ -38,6 +38,9 @@ namespace DoremiEngine
             int PortMasterServer = 3201;
             int PortServerConnecting = 5050;
             int PortServerConnected = 4050;
+            std::string ServerName = "DefaultServer";
+            int MaxPlayers = 16;
+
 
             std::string IPToServer = "127.0.0.1";
             uint32_t LastServerPlayerID = 0;
