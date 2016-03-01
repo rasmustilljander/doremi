@@ -10,6 +10,13 @@ namespace DoremiEngine
     {
         class SharedContext;
     }
+    namespace Graphic
+    {
+        class DepthStencilState;
+        class RasterizerState;
+        class PixelShader;
+        class VertexShader;
+    }
 }
 
 /// Old stuff
@@ -54,6 +61,12 @@ public:
 private:
     /// NEW STUFF
     const DoremiEngine::Core::SharedContext& m_sharedContext;
+    // Dx stuff
+    void InitDX();
+    DoremiEngine::Graphic::PixelShader* m_pixelShader;
+    DoremiEngine::Graphic::VertexShader* m_vertexShader;
+    DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
+    DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
     /// END NEW STUFF
 
 
