@@ -101,7 +101,9 @@ namespace Doremi
         {
             using namespace DoremiEditor::Core;
             // ladda material
-            for(int i = 1; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
+
+            for (int i = 0; i < nrMats; i++) // defualt material, så kör inte hela nrMats TODOXX Why i=1?
+
             {
                 int materialNameSize;
                 ifs.read((char*)&materialNameSize, sizeof(int));
@@ -124,16 +126,30 @@ namespace Doremi
                 // load Diffuse texture
                 int diffuseTextureNameSize;
                 ifs.read((char*)&diffuseTextureNameSize, sizeof(int));
-                char* diffuseTextureName = new char[diffuseTextureNameSize];
-                ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
-                if(diffuseTextureNameSize != 0) materialMessage.diffuseTexturePath = diffuseTextureName;
+                if (diffuseTextureNameSize != 0)
+                {
+                    char* diffuseTextureName = new char[diffuseTextureNameSize];
+                    ifs.read((char*)diffuseTextureName, sizeof(char) * diffuseTextureNameSize);
+                    materialMessage.diffuseTexturePath = diffuseTextureName;
+                }
+
+                // Glow texture
+                int glowTextureNameSize;
+                ifs.read((char*)&glowTextureNameSize, sizeof(int));
+                if (glowTextureNameSize != 0)
+                {
+                    char* glowTextureName = new char[glowTextureNameSize];
+                    ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);
+                    materialMessage.glowTexturePath = glowTextureName;
+                    // delete glowTextureName;
+                }
 
                 materialMessage.nodeName = materialName;
-
+                // TODOKO save the texture name<
                 m_materials[materialName] = materialMessage;
 
-                // delete diffuseTextureName;
-                delete[] materialName;
+
+                // delete materialName;
             }
         }
 

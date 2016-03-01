@@ -138,7 +138,7 @@ namespace Doremi
                     t_lowerBodyAnimations.emplace(t_animationNames[i], t_lowerBodyAnimationVector[i]);
                 }
                 // materialen kommer senare att läsas in här imellan
-
+                LoadMaterialCharacter(ifs, nrMats);
                 /// Läsa transformsen
                 // En map för att kunna använda rätt transformationsmatris till rätt mesh.
                 std::map<std::string, XMFLOAT4X4> t_transformMap;
@@ -154,11 +154,11 @@ namespace Doremi
                 // Vanliga buildcalls för att få en mesh å material
                 DoremiEngine::Graphic::MeshManager& meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
                 meshManager.BuildSkeletalMeshInfoFromBuffer(t_skeletalVertexBuffer, t_sceneName);
-                meshManager.BuildMaterialInfo(m_materials[m_meshCoupling[0].materialName]);
+                meshManager.BuildMaterialInfo(m_materials.begin()->second);
                 // Detta är typen vi använder för att sedan loada mesh/material i templatecreator
                 CharacterDataNames o_charData;
                 o_charData.meshName = t_sceneName;
-                o_charData.materialName = m_materials[m_meshCoupling[0].materialName].diffuseTexturePath;
+                o_charData.materialName = m_materials.begin()->second.diffuseTexturePath;
                 ifs.close();
 
                 // Sätt värdena som behövs för skelettanimationens keyframeuppdatering. (Basicly datan som används vid animationen)
