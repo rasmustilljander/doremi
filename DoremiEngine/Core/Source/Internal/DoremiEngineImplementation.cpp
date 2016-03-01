@@ -120,6 +120,9 @@ namespace DoremiEngine
             LoadConfigurationModule(*m_sharedContext);
             m_sharedContext->GetConfigurationModule().ReadConfigurationValuesFromFile("Configuration.txt");
             m_sharedContext->GetConfigurationModule().ReadConfigurationValuesFromFile("AIConfiguration.txt");
+
+            AssertThatRequiredLibrariesExists();
+
             if((p_flags & EngineModuleEnum::AUDIO) == EngineModuleEnum::AUDIO)
             {
                 LoadAudioModule(*m_sharedContext);
@@ -187,6 +190,44 @@ namespace DoremiEngine
             if(m_configurationModule != nullptr)
             {
                 m_configurationModule->Shutdown();
+            }
+        }
+
+        void DoremiEngineImplementation::AssertThatRequiredLibrariesExists()
+        {
+            AssertThatSpecificLibraryExists("D3D11.dll");
+            AssertThatSpecificLibraryExists("D3DCompiler_47.dll");
+            AssertThatSpecificLibraryExists("VCRUNTIME140.dll");
+            AssertThatSpecificLibraryExists("MSVCP140.dll");
+            AssertThatSpecificLibraryExists("SDL2.dll");
+            AssertThatSpecificLibraryExists("FMODEX.dll");
+            AssertThatSpecificLibraryExists("FMODEX64.dll");
+            AssertThatSpecificLibraryExists("PHYSX3_X64.dll");
+            AssertThatSpecificLibraryExists("PHYSX3COOKING_X64.dll");
+            AssertThatSpecificLibraryExists("PHYSX3COMMON_X64.dll");
+            AssertThatSpecificLibraryExists("PHYSX3CHARACTERKINEMATIC_X64.dll");
+            AssertThatSpecificLibraryExists("PHYSX3_X86.dll");
+            AssertThatSpecificLibraryExists("PHYSX3COOKING_X86.dll");
+            AssertThatSpecificLibraryExists("PHYSX3COMMON_X86.dll");
+            AssertThatSpecificLibraryExists("PHYSX3CHARACTERKINEMATIC_X86.dll");
+            AssertThatSpecificLibraryExists("WSOCK32.dll");
+        }
+
+        void DoremiEngineImplementation::AssertThatSpecificLibraryExists(const std::string& p_libraryName)
+        {
+            using namespace DynamicLoader;
+            using namespace Doremi::Utilities::Logging;
+            HANDLE handle = LoadSharedLibrary(p_libraryName.c_str());
+            m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Attempt to detect %s", p_libraryName.c_str());
+
+            if(handle != NULL)
+            {
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Attempt to detect %s - Successful", p_libraryName.c_str());
+                FreeSharedLibrary(handle);
+            }
+            else
+            {
+                m_logger->DebugLog(LogTag::ENGINE_CORE, LogLevel::INFO, "Attempt to detect %s - Unsuccessful", p_libraryName.c_str());
             }
         }
 

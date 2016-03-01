@@ -42,6 +42,8 @@ namespace DoremiEngine
             const SharedContext& GetSharedContext() const override { return *static_cast<SharedContext*>(m_sharedContext); }
 
         private:
+            void AssertThatRequiredLibrariesExists();
+            void AssertThatSpecificLibraryExists(const std::string& p_libraryName);
             void BuildWorkingDirectory(SharedContextImplementation& o_sharedContext);
 
             // Loading .dll
