@@ -36,8 +36,6 @@ namespace Doremi
 
         bool Button::CheckIfInside(int p_mousePosX, int p_mousePosY)
         {
-            m_mousePos.x = p_mousePosX;
-            m_mousePos.y = p_mousePosY;
             // Check if to the right of the button
             if(p_mousePosX > m_position.x + m_size.x)
             {

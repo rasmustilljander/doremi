@@ -61,6 +61,41 @@ namespace DoremiEngine
             return newShader;
         }
 
+        VertexShader* ShaderManagerImpl::BuildVertexShaderWithoutInput(const std::string& p_fileName)
+        {
+            std::string filePath = m_graphicContext.m_workingDirectory + "ShaderFiles/" + p_fileName;
+            ID3D11VertexShader* shader = nullptr;
+            ID3D11InputLayout* inputLayout = nullptr;
+            DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
+            DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined(DEBUG) || defined(_DEBUG)
+            shaderFlags |= D3DCOMPILE_DEBUG;
+            shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+            ID3DBlob* tShader;
+            std::wstring convertedName = StringToWstring(filePath);
+            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "VS_main", "vs_5_0", shaderFlags, 0, &tShader, 0);
+
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if (!success)
+            {
+                return nullptr;
+            }
+            res = m_directX.GetDevice()->CreateVertexShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
+            success = CheckHRESULT(res, "Error Creating Vertex Shader");
+            if (!success)
+            {
+                return nullptr;
+            }
+
+            VertexShader* newShader = new VertexShaderImpl();
+            newShader->SetShaderHandle(shader);
+            newShader->SetShaderName(p_fileName);
+            newShader->SetInputLayout(inputLayout);
+            return newShader;
+        }
+
+
         GeometryShader* ShaderManagerImpl::BuildGeometryShader(const std::string& p_fileName)
         {
             // TODOKO make shaders save in map just like mesh info
@@ -75,9 +110,14 @@ namespace DoremiEngine
 #endif
             ID3DBlob* tShader;
             std::wstring convertedName = StringToWstring(filePath);
-            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "GS_main", "ps_5_0", shaderFlags, 0, &tShader, 0);
+            HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "GS_main", "gs_5_0", shaderFlags, 0, &tShader, 0);
+
             res = m_directX.GetDevice()->CreateGeometryShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
             bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if (!success)
+            {
+                return nullptr;
+            }
             GeometryShader* newShader = new GeometryShaderImpl();
             newShader->SetShaderHandle(shader);
             newShader->SetShaderName(p_fileName);
@@ -149,7 +189,7 @@ namespace DoremiEngine
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->CSSetShader(p_shader->GetShaderHandle(), 0, 0);
         }
-        void ShaderManagerImpl::RemoveGeometryShader(GeometryShader* p_shader)
+        void ShaderManagerImpl::RemoveGeometryShader()
         {
             DirectXManager& m_directX = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager();
             m_directX.GetDeviceContext()->GSSetShader(nullptr, 0, 0);

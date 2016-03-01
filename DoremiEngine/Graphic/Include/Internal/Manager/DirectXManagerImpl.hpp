@@ -108,6 +108,8 @@ namespace DoremiEngine
             Draws current render list
             */
             void DrawCurrentRenderList(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
+
+            void RenderSprites(ID3D11RasterizerState * p_rasterizerState, ID3D11DepthStencilState * p_depthStencilState) override;
             /**
             Draws current render list with skeletal animation
             */

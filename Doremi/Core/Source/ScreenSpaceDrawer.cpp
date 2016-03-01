@@ -34,16 +34,12 @@ namespace Doremi
                 {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             };
 
-            // D3D11_INPUT_ELEMENT_DESC ied[] = {
-            //    { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "ORIGO", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "EXTENTS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //    { "TEXSIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            //};
 
             m_menuVertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("TextVertexShader.hlsl", ied, ARRAYSIZE(ied));
+
+            //m_menuVertexShader =
+            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShaderWithoutInput("TextVertexShader.hlsl");
 
             /*m_menuGeometryShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");*/
@@ -131,6 +127,7 @@ namespace Doremi
 
             // Disable blend again?
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().RemoveGeometryShader();
         }
 
         void ScreenSpaceDrawer::DrawVictoryScreen()
@@ -175,6 +172,7 @@ namespace Doremi
                                                                                                           *t_buttonsToDraw[i].m_materialInfo,
                                                                                                           t_buttonsToDraw[i].m_transformMatrix);
             }
+
             // Set rasteriser to defau,t
             DoremiEngine::Graphic::RasterizerState* t_rasterizer =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
@@ -187,6 +185,14 @@ namespace Doremi
             // Draw the sprites
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
                                                                                                   t_depthStencil->GetDepthStencilState());
+
+
+            //////////// New draw style for sprites
+
+            // Get buttons to draw
+            //std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
+
+
 
             End2DDraw();
         }

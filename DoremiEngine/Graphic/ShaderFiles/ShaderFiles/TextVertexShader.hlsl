@@ -33,24 +33,20 @@ VOut VS_main( VertexInputType input)
 	return output;
 }
 
-//
-//cbuffer MatrixBuffer : register(b0)
+
+//struct VSIn
 //{
-//    matrix worldMatrix;
+//    uint vertexId : SV_VertexID;
 //};
 //
-//struct VertexInputOutput
+//struct VSOut
 //{
-//    float2 position     : POSITION;
-//    float2 origo        : ORIGO;
-//    float2 halfize     : EXTENTS;
-//    float2 txtPos       : TEXCOORD;
-//    float2 txtSize      : TEXSIZE;
+//    uint vertexId : INDEX;
 //};
 //
-//
-//
-//VertexInputOutput VS_main(VertexInputOutput input)
+//VSOut VS_main(VSIn p_in)
 //{
-//    return input;
+//    VSOut output;
+//    output.vertexId = p_in.vertexId;
+//    return output;
 //}
