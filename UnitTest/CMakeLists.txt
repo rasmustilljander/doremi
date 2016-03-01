@@ -7,7 +7,6 @@ project(${PROJECT_NAME})
 
 # Set up where DoremiEngine is located
 set(DOREMIENGINE_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../DoremiEngine)
-# message(${"DOREMIENGINE_LOCATION"})
 # Set the files used in the target
 file(GLOB_RECURSE HEADERS Headers/ *.h*)
 file(GLOB_RECURSE SOURCES Source/ *.cpp)
