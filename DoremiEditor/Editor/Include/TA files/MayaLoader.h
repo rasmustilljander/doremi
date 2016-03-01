@@ -2,7 +2,7 @@
 #ifndef MAYALOADER_H
 #define MAYALOADER_H
 #endif
-
+/// New stuff
 /// Engine stuff
 namespace DoremiEngine
 {
@@ -18,6 +18,8 @@ namespace DoremiEngine
         class VertexShader;
     }
 }
+
+#include <RenderObject.hpp>
 
 /// Old stuff
 #include <vector>
