@@ -8,7 +8,6 @@
 // Standard libraries
 #ifdef _WIN32
 #include <windows.h>
-#include <DbgHelp.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
@@ -25,9 +24,6 @@ void attemptGracefulShutdown();
 // Methods set as unexpected and terminate functions
 void g_unexpected();
 void g_terminate();
-
-// Prints the current stack
-void printStack();
 
 // Start the important singletons
 void startup();
@@ -115,7 +111,6 @@ void shutdown()
 
 void attemptGracefulShutdown()
 {
-    printStack();
     shutdown();
     closeFlag = 1;
 #ifdef _DEBUG
@@ -124,36 +119,6 @@ void attemptGracefulShutdown()
 }
 
 #ifdef _WIN32
-void printStack()
-{
-    unsigned int i;
-    void* stack[100];
-    unsigned short frames;
-    SYMBOL_INFO* symbol;
-    HANDLE process;
-
-    process = GetCurrentProcess();
-
-    SymInitialize(process, NULL, TRUE);
-
-    frames = CaptureStackBackTrace(0, 100, stack, NULL);
-    symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
-    symbol->MaxNameLen = 255;
-    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-    // TODOLOG
-    // TODORT
-    // using namespace Utility::DebugLog;
-    // VirtualConsole& console = ConsoleManager::GetInstance().CreateNewConsole("stackPrint", false);
-    for(i = 0; i < frames; i++)
-    {
-        SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-        // TODOLOG
-        // TODORT
-        //      console.LogText(LogTag::NOTAG, LogLevel::MASS_DATA_PRINT, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
-    }
-
-    free(symbol);
-}
 
 BOOL CtrlHandler(DWORD fdwCtrlType)
 {
@@ -181,6 +146,5 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
             return FALSE;
     }
 }
-
 
 #endif
