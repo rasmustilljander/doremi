@@ -14,7 +14,7 @@ namespace Doremi
             GO_TO_MAINMENU,
             GO_TO_SERVER_BROWSER,
             GO_TO_OPTIONS,
-            RUNGAME,
+            START_GAME,
             PAUSE,
             VICTORY,
             EXIT,

@@ -124,6 +124,7 @@ namespace Doremi
         EntityFactory::StartupEntityFactory(sharedContext);
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         SkyBoxHandler::StartupSkyBoxHandler(sharedContext);
+        ServerBrowserHandler::StartupServerBrowserHandler(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
@@ -275,7 +276,7 @@ namespace Doremi
             }
             case Core::DoremiGameStates::SERVER_BROWSER:
             {
-                ServerBrowserHandler::GetInstance()->Update();
+                ServerBrowserHandler::GetInstance()->Update(p_deltaTime);
 
                 break;
             }

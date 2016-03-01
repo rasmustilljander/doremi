@@ -74,7 +74,7 @@ namespace Doremi
 
 
             DoremiButtonActions statesForButtons[4];
-            statesForButtons[0] = DoremiButtonActions::RUNGAME;
+            statesForButtons[0] = DoremiButtonActions::START_GAME;
             statesForButtons[1] = DoremiButtonActions::GO_TO_OPTIONS;
             statesForButtons[2] = DoremiButtonActions::EXIT;
             statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
@@ -179,7 +179,7 @@ namespace Doremi
 
                         break;
                     }
-                    case Core::DoremiButtonActions::RUNGAME:
+                    case Core::DoremiButtonActions::START_GAME:
                     {
                         // passing state change event
                         Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
