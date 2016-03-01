@@ -1,7 +1,7 @@
 /// Project
 #include <ScreenSpaceDrawer.hpp>
 #include <Handler/StateHandler.hpp>
-#include <MenuClasses/MenuHandler.hpp>
+#include <MenuClasses/MainMenuHandler.hpp>
 /// Engine
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 // Graphic
@@ -163,35 +163,7 @@ namespace Doremi
             Begin2DDraw();
 
             // Get buttons to draw
-            // std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
-
-            // For each button we add to render list
-            /*size_t length = t_buttonsToDraw.size();
-            for(size_t i = 0; i < length; i++)
-            {
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*t_buttonsToDraw[i].m_meshInfo,
-                                                                                                          *t_buttonsToDraw[i].m_materialInfo,
-                                                                                                          t_buttonsToDraw[i].m_transformMatrix);
-            }*/
-
-            //// Set rasteriser to defau,t
-            // DoremiEngine::Graphic::RasterizerState* t_rasterizer =
-            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
-
-
-            //// Set depth stencil to default
-            // DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
-            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
-
-            //// Draw the sprites
-            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
-            //                                                                                      t_depthStencil->GetDepthStencilState());
-
-
-            //////////// New draw style for sprites
-
-            // Get buttons to draw
-            std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
+            std::vector<Button> t_buttonsToDraw = MainMenuHandler::GetInstance()->GetButtons();
 
             // For each button we add to render list
             size_t length = t_buttonsToDraw.size();
@@ -219,6 +191,8 @@ namespace Doremi
         void ScreenSpaceDrawer::DrawServerBrowser()
         {
             Begin2DDraw();
+
+
             End2DDraw();
         }
     }

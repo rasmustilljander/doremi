@@ -30,8 +30,7 @@
 #include <Doremi/Core/Include/EntityComponent/EntityHandlerClient.hpp>
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
-#include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
-#include <Doremi/Core/Include/MenuClasses/MenuGraphicHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/MainMenuHandler.hpp>
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
@@ -146,11 +145,8 @@ namespace Doremi
         AddToManagerList(new ExtraDrainSyncManager(sharedContext));
         AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
 
-        MenuHandler::StartMenuHandler(sharedContext, m_screenRes);
-        MenuHandler::GetInstance()->Initialize();
-
-        // initialize menudraw
-        MenuGraphicHandler::StartMenuGraphicHandler(sharedContext);
+        MainMenuHandler::StartMainMenuHandler(sharedContext, m_screenRes);
+        MainMenuHandler::GetInstance()->Initialize();
 
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         // BuildWorld(sharedContext);
@@ -275,7 +271,7 @@ namespace Doremi
             case Core::DoremiGameStates::MAINMENU:
             {
                 // Update Menu Logic
-                MenuHandler::GetInstance()->Update(p_deltaTime);
+                MainMenuHandler::GetInstance()->Update(p_deltaTime);
                 break;
             }
             case Core::DoremiGameStates::SERVER_BROWSER:

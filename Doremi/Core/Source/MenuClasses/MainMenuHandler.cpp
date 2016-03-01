@@ -1,5 +1,5 @@
 // Project specific
-#include <Doremi/Core/Include/MenuClasses/MenuHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/MainMenuHandler.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
@@ -26,28 +26,28 @@ namespace Doremi
 {
     namespace Core
     {
-        MenuHandler::MenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
+        MainMenuHandler::MainMenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
             : m_sharedContext(p_sharedContext), m_resolution(p_resolution), m_isFullscreen(false)
         {
         }
 
-        MenuHandler::~MenuHandler() {}
-        MenuHandler* MenuHandler::m_singleton = nullptr;
+        MainMenuHandler::~MainMenuHandler() {}
+        MainMenuHandler* MainMenuHandler::m_singleton = nullptr;
 
-        void MenuHandler::StartMenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
+        void MainMenuHandler::StartMainMenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
         {
             if(m_singleton != nullptr)
             {
-                std::runtime_error("MenuHandler StartMenuHandler called multiple times.");
+                std::runtime_error("MainMenuHandler StartMainMenuHandler called multiple times.");
             }
-            m_singleton = new MenuHandler(p_sharedContext, p_resolution);
+            m_singleton = new MainMenuHandler(p_sharedContext, p_resolution);
         }
 
-        MenuHandler* MenuHandler::GetInstance()
+        MainMenuHandler* MainMenuHandler::GetInstance()
         {
             if(m_singleton == nullptr)
             {
-                std::runtime_error("MenuHandler not initialized, GetInstance called.");
+                std::runtime_error("MainMenuHandler not initialized, GetInstance called.");
             }
 
             return m_singleton;
@@ -55,7 +55,7 @@ namespace Doremi
 
         typedef std::pair<std::string, std::string> TexturePair;
 
-        void MenuHandler::Initialize()
+        void MainMenuHandler::Initialize()
         {
             using namespace DirectX;
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
@@ -109,11 +109,11 @@ namespace Doremi
             }
         }
 
-        int MenuHandler::GetCurrentButton() { return m_currentButton; }
+        int MainMenuHandler::GetCurrentButton() { return m_currentButton; }
 
-        std::vector<Button> MenuHandler::GetButtons() { return m_buttonList; }
+        std::vector<Button> MainMenuHandler::GetButtons() { return m_buttonList; }
 
-        int MenuHandler::Update(double p_dt) // TODOKO Dont need to return int anymore
+        int MainMenuHandler::Update(double p_dt) // TODOKO Dont need to return int anymore
         {
             uint32_t t_mousePosX;
             uint32_t t_mousePosY;
