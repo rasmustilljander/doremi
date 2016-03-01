@@ -19,7 +19,7 @@
 //
 
 
-cbuffer TextureDataBuffer
+cbuffer TextureDataBuffer : register(b0)
 {
     float2 position;
     float2 origo;
@@ -52,10 +52,10 @@ void GS_main(point GeometryInput input[1], inout TriangleStream<GeometryOutput> 
                             // DirectX is -1 left, -1 bot,
                             // If input is 0->1 , we multiply with 2, then -1 in X
                             // If 0 is top, we multiply with 2
-    output1.position = float4((position.x + origo.x + halfsize.x)*2.0f - 1.0f, (position.y + origo.y + halfsize.y)*-2.0f + 1.0f, 0, 1);
-    output2.position = float4((position.x + origo.x - halfsize.x)*2.0f - 1.0f, (position.y + origo.y + halfsize.y)*-2.0f + 1.0f, 0, 1);
-    output3.position = float4((position.x + origo.x + halfsize.x)*2.0f - 1.0f, (position.y + origo.y - halfsize.y)*-2.0f + 1.0f, 0, 1);
-    output4.position = float4((position.x + origo.x - halfsize.x)*2.0f - 1.0f, (position.y + origo.y - halfsize.y)*-2.0f + 1.0f, 0, 1);
+    output1.position = float4((position.x + origo.x - halfsize.x)*2.0f - 1.0f, (position.y + origo.y - halfsize.y)*-2.0f + 1.0f, 0, 1);
+    output2.position = float4((position.x + origo.x + halfsize.x)*2.0f - 1.0f, (position.y + origo.y - halfsize.y)*-2.0f + 1.0f, 0, 1);
+    output3.position = float4((position.x + origo.x - halfsize.x)*2.0f - 1.0f, (position.y + origo.y + halfsize.y)*-2.0f + 1.0f, 0, 1);
+    output4.position = float4((position.x + origo.x + halfsize.x)*2.0f - 1.0f, (position.y + origo.y + halfsize.y)*-2.0f + 1.0f, 0, 1);
 
     output1.texCoord = float2(txtPos.x, txtPos.y);
     output2.texCoord = float2(txtPos.x + txtSize.x, txtPos.y);

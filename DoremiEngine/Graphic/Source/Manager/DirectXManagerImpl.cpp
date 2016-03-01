@@ -412,7 +412,13 @@ namespace DoremiEngine
             // Setup vertex variables
             const uint32_t stride = 0;
             const uint32_t offset = 0;
-            ID3D11Buffer* vertexData = nullptr;
+            ID3D11Buffer* vertexData = {0};
+
+            // If nothing to draw return;
+            if(spriteRenderData.size() == 0)
+            {
+                return;
+            }
 
             // Setup material
             MaterialMessage material = spriteRenderData[0].materialMessage;
@@ -441,7 +447,6 @@ namespace DoremiEngine
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
             m_deviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
-            m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, 0, 0);
 
 
             // Update constant buffers

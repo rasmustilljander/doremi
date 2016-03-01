@@ -29,20 +29,21 @@ namespace Doremi
         {
             // Initialize shader thingies
             m_menuPixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("TextPixelShader.hlsl");
-            D3D11_INPUT_ELEMENT_DESC ied[] = {
-                {"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-                {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            };
+            // D3D11_INPUT_ELEMENT_DESC ied[] = {
+            //    {"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            //    {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            //};
 
+
+            // m_menuVertexShader =
+            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("TextVertexShader.hlsl", ied,
+            //    ARRAYSIZE(ied));
 
             m_menuVertexShader =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("TextVertexShader.hlsl", ied, ARRAYSIZE(ied));
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShaderWithoutInput("TextVertexShader.hlsl");
 
-            //m_menuVertexShader =
-            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShaderWithoutInput("TextVertexShader.hlsl");
-
-            /*m_menuGeometryShader =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");*/
+            m_menuGeometryShader =
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");
 
             CreateVictoryScreen();
         }
@@ -117,7 +118,7 @@ namespace Doremi
         {
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_menuPixelShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);
-            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveGeometryShader(m_menuGeometryShader);
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveGeometryShader(m_menuGeometryShader);
 
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableBlend();
         }
@@ -162,37 +163,55 @@ namespace Doremi
             Begin2DDraw();
 
             // Get buttons to draw
+            // std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
+
+            // For each button we add to render list
+            /*size_t length = t_buttonsToDraw.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*t_buttonsToDraw[i].m_meshInfo,
+                                                                                                          *t_buttonsToDraw[i].m_materialInfo,
+                                                                                                          t_buttonsToDraw[i].m_transformMatrix);
+            }*/
+
+            //// Set rasteriser to defau,t
+            // DoremiEngine::Graphic::RasterizerState* t_rasterizer =
+            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
+
+
+            //// Set depth stencil to default
+            // DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
+            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
+
+            //// Draw the sprites
+            // m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
+            //                                                                                      t_depthStencil->GetDepthStencilState());
+
+
+            //////////// New draw style for sprites
+
+            // Get buttons to draw
             std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
 
             // For each button we add to render list
             size_t length = t_buttonsToDraw.size();
             for(size_t i = 0; i < length; i++)
             {
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*t_buttonsToDraw[i].m_meshInfo,
-                                                                                                          *t_buttonsToDraw[i].m_materialInfo,
-                                                                                                          t_buttonsToDraw[i].m_transformMatrix);
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddSpriteToRenderList(*t_buttonsToDraw[i].m_spriteInfo,
+                                                                                                                *t_buttonsToDraw[i].m_materialInfo);
             }
 
             // Set rasteriser to defau,t
             DoremiEngine::Graphic::RasterizerState* t_rasterizer =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultRasterizerState();
 
-
             // Set depth stencil to default
             DoremiEngine::Graphic::DepthStencilState* t_depthStencil =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetDefaultDepthStencilState();
 
             // Draw the sprites
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(t_rasterizer->GetRasterizerState(),
-                                                                                                  t_depthStencil->GetDepthStencilState());
-
-
-            //////////// New draw style for sprites
-
-            // Get buttons to draw
-            //std::vector<Button> t_buttonsToDraw = MenuHandler::GetInstance()->GetButtons();
-
-
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().RenderSprites(t_rasterizer->GetRasterizerState(),
+                                                                                                       t_depthStencil->GetDepthStencilState());
 
             End2DDraw();
         }

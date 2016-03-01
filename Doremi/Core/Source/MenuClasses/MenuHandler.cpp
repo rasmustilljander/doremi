@@ -106,7 +106,7 @@ namespace Doremi
                 DoremiEngine::Graphic::SpriteData t_data;
 
                 // Set size of button
-                t_data.halfsize = XMFLOAT2(0.5f, 0.5f);
+                t_data.halfsize = XMFLOAT2(0.25f, 0.25f);
                 t_data.origo = XMFLOAT2(0.0f, 0.0f);
                 t_data.position = XMFLOAT2(0.5f, 0.5f);
                 t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
