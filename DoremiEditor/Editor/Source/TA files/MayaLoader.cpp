@@ -118,8 +118,29 @@ void MayaLoader::SetFilemapInfoValues(size_t headPlacement, size_t tailPlacement
 
 void MayaLoader::DrawScene()
 {
-
-    //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(<insert parameters>);
+    // Complete render list
+    size_t numObjects = m_renderObjects.size();
+    for (size_t i = 0; i < numObjects; i++)
+    {
+        XMFLOAT3& p = m_renderObjects[i].position;
+        XMFLOAT4& o = m_renderObjects[i].orientation;
+        XMFLOAT3& s = m_renderObjects[i].scale;
+        // Build world matrix
+        XMFLOAT4X4 finalMat;
+        XMStoreFloat4x4(&finalMat,
+            XMMatrixScaling(s.x, s.y, s.z) *
+            XMMatrixRotationQuaternion(XMLoadFloat4(&o)) *
+            XMMatrixTranslation(p.x, p.y, p.z));
+        m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(
+            *m_renderObjects[i].mesh, *m_renderObjects[i].material, finalMat);
+    }
+    // Do fancy DX stuff that i have no idea what they do
+    m_rasterizerState->GetRasterizerState();
+    m_depthStencilState->GetDepthStencilState();
+    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(
+        m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
+    // Done drawing?
+    
 
 
 

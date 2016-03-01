@@ -72,7 +72,7 @@ private:
     DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
 
     // Draw stuff
-    
+    vector<RenderObject> m_renderObjects;
     /// END NEW STUFF
 
 
