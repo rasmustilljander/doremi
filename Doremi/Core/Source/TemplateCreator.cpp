@@ -341,9 +341,6 @@ namespace Doremi
             blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
 
-
-
-
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
             t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);

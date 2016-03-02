@@ -335,10 +335,10 @@ namespace Doremi
                     XMFLOAT3 t_playerLengthVector;
                     // Calculate the length of this vector
                     XMStoreFloat3(&t_playerLengthVector, XMVector3Length(XMLoadFloat3(&t_playervector)));
-                     if (t_playerLengthVector.x > 1000)
-                     {
-                         return;
-                     }
+                    if(t_playerLengthVector.x > 1000)
+                    {
+                        return;
+                    }
 
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
@@ -450,7 +450,7 @@ namespace Doremi
                     m_depthStencilState->GetDepthStencilState();
                     // Draw the skeletalmesh uses another drawmethod than the common one. Since now we have more information in the vertex
                     submoduleManager.GetDirectXManager().DrawCurrentRenderListSkeletal(m_rasterizerState->GetRasterizerState(),
-                        m_depthStencilState->GetDepthStencilState());
+                                                                                       m_depthStencilState->GetDepthStencilState());
                 }
                 else
                 {
