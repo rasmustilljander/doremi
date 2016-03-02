@@ -51,12 +51,18 @@ namespace DoremiEngine
         LoggerImpl::LoggerImpl()
             : m_localBuffer(nullptr), m_outGoingBuffer(nullptr), m_fileMap(nullptr), m_mutex(nullptr), m_applicationRunning(nullptr), m_threadMetaData(nullptr)
         {
+#ifdef NO_LOGGER
+            return;
+#endif
             m_uniqueId = GetCurrentProcessId();
             Initialize();
         }
 
         LoggerImpl::~LoggerImpl()
         {
+#ifdef NO_LOGGER
+            return;
+#endif
             try
             {
                 if(m_threadMetaData != nullptr)
@@ -103,6 +109,9 @@ namespace DoremiEngine
 
         void LoggerImpl::Initialize()
         {
+#ifdef NO_LOGGER
+            return;
+#endif
             m_localBuffer = new Memory::ArbitrarySizeCirclebuffer();
             m_outGoingBuffer = new Memory::ArbitrarySizeCirclebuffer();
 
@@ -123,16 +132,15 @@ namespace DoremiEngine
             m_threadMetaData = new ThreadMetaData(m_applicationRunning, new bool(true));
             std::thread outGoingLoggingThread(ThreadWork, m_threadMetaData, m_localBuffer, m_outGoingBuffer);
             outGoingLoggingThread.detach();
-
-#ifdef NO_LOGGER
-#else
             StartLoggingProcess();
-#endif
         }
 
         void LoggerImpl::LogTextReal(const std::string& p_function, const uint16_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
                                      const char* p_format, ...)
         {
+#ifdef NO_LOGGER
+            return;
+#endif
             using namespace Doremi::Utilities::Logging;
             using namespace Doremi::Utilities;
             // Build a string from va_list
@@ -169,9 +177,6 @@ namespace DoremiEngine
             header.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
             bool succeed = false;
 
-#ifdef NO_LOGGER
-            m_localBuffer->Produce(header, buffer);
-#else
             while(!succeed)
             {
                 try
@@ -186,7 +191,6 @@ namespace DoremiEngine
                     std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                 }
             }
-#endif
             free(buffer);
         }
 
@@ -262,9 +266,6 @@ namespace DoremiEngine
                     messageExist = p_localBuffer->Consume(header, buffer, sizeofBuffer);
                     if(messageExist)
                     {
-#ifdef NO_LOGGER
-                        m_outGoingBuffer->Produce(*header, buffer);
-#else
                         succeed = false;
                         while(!succeed)
                         {
@@ -279,7 +280,6 @@ namespace DoremiEngine
                                 std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                             }
                         }
-#endif
                     }
                     else
                     {
