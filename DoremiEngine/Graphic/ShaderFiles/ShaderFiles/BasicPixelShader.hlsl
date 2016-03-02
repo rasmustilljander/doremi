@@ -83,7 +83,7 @@ float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
 
     lightDir = -l.direction;
     lightIntensity = saturate(dot(input.normal, lightDir));
-    return saturate(l.color * lightIntensity) * texcolor;
+    return l.color * lightIntensity * texcolor * l.intensity;
 }
 
 float3 CalcSpotLight(PixelInputType input, Light l)
@@ -93,7 +93,7 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
-    float3 lightVec = l.position - input.worldPos;
+    float3 lightVec = l.position - input.worldPos.xyz;
     float radius = l.intensity * 20.f;
 
     float d = length(lightVec);
@@ -103,6 +103,7 @@ float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
     }
 
     lightVec /= d;
+
     float diffuseFactor = dot(lightVec, input.normal);
 
     if (diffuseFactor < 0.0f)
@@ -116,9 +117,9 @@ float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
     float3 v = reflect(-lightVec, input.normal);
 
 
-    float specFactor = /*pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.1*/0;
+    float specFactor = pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.5;
 
-    return (l.color *att * (diffuseFactor + specFactor)) * texcolor;
+    return (l.color * att * (diffuseFactor + specFactor)) * texcolor;
 }
 
 float3 CalcPointLight2(PixelInputType input, Light l, float3 texcolor)
@@ -128,24 +129,24 @@ float3 CalcPointLight2(PixelInputType input, Light l, float3 texcolor)
     float3 scatteredLight, reflectedLight;
     float attenuation;
 
-    float3 lightDirection = l.position - input.worldPos.xyz;
-    float lightDistance = length(lightDirection);
+    float3 lightVec = l.position - input.worldPos.xyz;
+    float radius = l.intensity * 25.f;
+    float d = length(lightVec);
 
-    if (lightDistance < 100.0f)
+    if (d < radius)
     {
-        attenuation = 1.f /
-            (l.attenuation[0] + l.attenuation[1] * lightDistance +
-                l.attenuation[2] * lightDistance * lightDistance);
+        float attenuation = pow(max(0.0f, 1.0 - (d / radius)), 20.0f);
 
-        float3 halfVector = normalize(lightDirection + normalize(-input.worldPos));
+        float3 halfVector = normalize(lightVec + normalize(-input.worldPos));
 
-        float diffuse = max(0.0, dot(normal, lightDirection));
+        float diffuse = max(0.0, dot(normal, lightVec));
         float specular = max(0.0, dot(normal, halfVector));
 
         scatteredLight = l.color * diffuse * attenuation;
         reflectedLight = l.color * specular * attenuation;
-        return min(texcolor.rgb * scatteredLight + reflectedLight, float3(1, 1, 1)) * l.intensity;
+        return min(texcolor.rgb * (scatteredLight + reflectedLight), float3(1, 1, 1));
     }
+
     return float3(0, 0, 0);
 }
 
@@ -193,7 +194,7 @@ PixelOutputType PS_main(PixelInputType input)
         if (l.type == 2)
             rgb += CalcSpotLight(input, l);
         if (l.type == 3)
-            rgb += CalcPointLight(input, l, texcolor.rgb);
+            rgb += CalcPointLight2(input, l, texcolor.rgb);
     }
 
     if (glowcolor.r < 0.5 &&
@@ -202,7 +203,7 @@ PixelOutputType PS_main(PixelInputType input)
     else
         output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
 
-    output.diffuse = float4(rgb, 1) * 1.0f + texcolor * 0.25;
+    output.diffuse = float4(rgb, 1) + texcolor * 0.25;
 
     float depth = (input.position.z / input.position.w) * -1 + 1.3;   //Invert and add .3 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);

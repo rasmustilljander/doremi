@@ -95,7 +95,7 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
     float3 lightVec = l.position - input.worldPos;
-    float radius = l.intensity * 20.f;
+    float radius = l.intensity * 25.f;
 
     float d = length(lightVec);
     if (d > radius)
