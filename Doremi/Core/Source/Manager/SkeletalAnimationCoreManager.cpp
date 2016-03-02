@@ -46,7 +46,7 @@ namespace Doremi
     namespace Core
     {
         SkeletalAnimationCoreManager::SkeletalAnimationCoreManager(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : Manager(p_sharedContext, "SkeletalAnimationManager")
+            : Manager(p_sharedContext, "SkeletalAnimationCoreManager")
         {
             // Skapa Vertex layout
             D3D11_INPUT_ELEMENT_DESC ied[] = {
