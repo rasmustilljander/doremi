@@ -56,7 +56,7 @@ namespace Doremi
     namespace Core
     {
         PlayerHandlerClient::PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : PlayerHandler(p_sharedContext), m_logger(nullptr), m_lastJoinEventRead(0), m_maxNumEvents(0)
+            : PlayerHandler(p_sharedContext), m_logger(nullptr), m_lastJoinEventRead(0), m_maxNumEvents(0), m_jaw(0), m_pitch(0)
         {
             EventHandler::GetInstance()->Subscribe(EventType::GunFireToggle, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerRespawn, this);
