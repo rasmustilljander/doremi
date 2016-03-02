@@ -136,6 +136,10 @@ namespace DoremiEngine
                         o_flag = 0;
                     }
                 }
+                else if(actorAsRigic->isRigidStatic())
+                {
+                    o_flag = 3;
+                }
                 return idsByRigidBody.find(hit.block.actor)->second;
             }
             else
