@@ -1253,7 +1253,7 @@ namespace DoremiEditor
                         tempHead += sizeof(int);
                         for(int i = 0; i < p_data.transformCount; i++)
                         {
-                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i], sizeof(char) * 100);
+                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i].transformNames, sizeof(char) * 100);
                             tempHead += sizeof(char) * 100;
                         }
                         memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.materialName, sizeof(char) * 100);
@@ -1312,7 +1312,7 @@ namespace DoremiEditor
                         tempHead += sizeof(int);
                         for(int i = 0; i < p_data.transformCount; i++)
                         {
-                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i], sizeof(char) * 100);
+                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i].transformNames, sizeof(char) * 100);
                             tempHead += sizeof(char) * 100;
                         }
                         memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.materialName, sizeof(char) * 100);
