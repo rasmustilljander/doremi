@@ -1,3 +1,5 @@
+#define MAX_NUMBER_OF_INSTANCES 200
+
 cbuffer CameraMatrixBuffer : register(b1)
 {
     matrix viewMatrix;
@@ -7,10 +9,14 @@ cbuffer CameraMatrixBuffer : register(b1)
     float pad;
 };
 
-cbuffer ModelMatrixBuffer : register(b0)
+struct WorldMatrixStruct
 {
     matrix worldMatrix;
     matrix invTransWorldMatrix;
+};
+cbuffer ModelMatrixBuffer : register(b0)
+{
+    WorldMatrixStruct worldMatrices[MAX_NUMBER_OF_INSTANCES];
 };
 
 struct VertexInputType
@@ -34,7 +40,7 @@ struct VOut
 VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
 {
     VOut output;
-    output.position = mul(float4(input.position, 1.0f), worldMatrix);
+    output.position = mul(float4(input.position, 1.0f), worldMatrices[instanceID].worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
@@ -42,8 +48,8 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
 
     output.screenPos = output.position.xyw;
 
-    output.worldPos = mul(float4(input.position, 1.0f), worldMatrix);
-    output.normal = mul(float4(input.normal, 0.0f), invTransWorldMatrix).xyz;
+    output.worldPos = mul(float4(input.position, 1.0f), worldMatrices[instanceID].worldMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), worldMatrices[instanceID].invTransWorldMatrix).xyz;
     output.texCoord = input.texCoord;
     output.cameraPos = cameraPosition;
     return output;
