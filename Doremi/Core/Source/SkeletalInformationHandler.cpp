@@ -17,9 +17,6 @@
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SkeletalAnimationManager.hpp>
 
-// Timing
-#include <DoremiEngine/Timing/Include/Measurement/TimeMeasurementManager.hpp>
-
 namespace Doremi
 {
     namespace Core
@@ -55,13 +52,13 @@ namespace Doremi
             switch(p_type)
             {
                 case SkeletalAnimationType::MELEENEMY:
-                    t_fileName = "MeleeEnemy";
+                    t_fileName = "Models/BigRobot7.drm";
                     break;
                 case SkeletalAnimationType::RANGEDENEMY:
-                    t_fileName = "Models/SmallRobot12.drm";
+                    t_fileName = "Models/SmallRobot14.drm";
                     break;
                 case SkeletalAnimationType::PLAYER:
-                    t_fileName = "Models/SmallRobot12.drm";
+                    t_fileName = "Models/SmallRobot14.drm";
                     break;
                 default:
                     t_fileName = "ErrorType in skeletalanimationtype";

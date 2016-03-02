@@ -321,27 +321,28 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            CharacterDataNames enemyCharData =
-                loader.LoadSkeletalCharacter("Models/BigRobot7.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
+            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::MELEENEMY);
+
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(enemyCharData.meshName);
-            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(enemyCharData.materialName);
             renderComp->offsetY = -3;
+            renderComp->lockedRotationX = true;
+            renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
             blueprint[ComponentType::Render] = renderComp;
 
             // SkeletalAnimationComponent
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::MELEENEMY;
             blueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
-            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Idle";
-            t_upperBodySkeletalAnimationComp->timePosition = 0;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
-            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Idle";
-            t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::MELEENEMY;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
+
+
+
+
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
@@ -711,7 +712,6 @@ namespace Doremi
             EntityBlueprint t_avatarBlueprint;
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
-
 
             LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components

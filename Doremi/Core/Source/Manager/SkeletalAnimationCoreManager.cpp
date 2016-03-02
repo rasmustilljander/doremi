@@ -30,6 +30,9 @@
 #include <dxgi.h>
 #include <d3d11_1.h>
 
+// Timer
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
+
 #include <DirectXMath.h>
 // Third party
 
@@ -309,6 +312,7 @@ namespace Doremi
         {
             // p_dt = p_dt / 5;
             // Loop through all entities
+            TIME_FUNCTION_START
             const size_t t_length = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to perform various functions on enteties that have skeletal animation
             int t_mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
@@ -325,16 +329,16 @@ namespace Doremi
                 {
 
                     TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(j);
-                    TransformComponentNext* t_playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(1117);
+                    TransformComponentNext* t_playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(1147);
                     XMFLOAT3 t_playervector;
                     XMStoreFloat3(&t_playervector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_playerTransform->position));
                     XMFLOAT3 t_playerLengthVector;
                     // Calculate the length of this vector
                     XMStoreFloat3(&t_playerLengthVector, XMVector3Length(XMLoadFloat3(&t_playervector)));
-                    /* if (t_playerLengthVector.x > 60)
+                     if (t_playerLengthVector.x > 1000)
                      {
                          return;
-                     }*/
+                     }
 
                     // Get component and update time that the animation has been active
                     SkeletalAnimationComponent* t_skeletalAnimationComponent =
@@ -446,13 +450,15 @@ namespace Doremi
                     m_depthStencilState->GetDepthStencilState();
                     // Draw the skeletalmesh uses another drawmethod than the common one. Since now we have more information in the vertex
                     submoduleManager.GetDirectXManager().DrawCurrentRenderListSkeletal(m_rasterizerState->GetRasterizerState(),
-                                                                                       m_depthStencilState->GetDepthStencilState());
+                        m_depthStencilState->GetDepthStencilState());
                 }
                 else
                 {
                     // do nothing
                 }
             }
+
+            TIME_FUNCTION_STOP
         }
     }
 }
