@@ -56,6 +56,12 @@ namespace Doremi
             // Tick time
             t_timeHandler->Tick();
 
+            //// We don't need excessive runtime, so we sleep until we want to run a frame
+            //if (t_timeHandler->FrameLessThenTimeStep())
+            //{
+            //    t_timeHandler->SleepTillNextUpdate();
+            //}
+
             // Loop as many update-steps we will take this frame
             while(t_timeHandler->ShouldUpdateFrame())
             {

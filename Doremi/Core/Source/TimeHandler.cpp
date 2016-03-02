@@ -1,5 +1,8 @@
+#include "..\Include\TimeHandler.hpp"
+#include "..\Include\TimeHandler.hpp"
 #include <Doremi/Core/Include/TimeHandler.hpp>
 #include <iostream>
+#include <thread>
 
 namespace Doremi
 {
@@ -71,6 +74,16 @@ namespace Doremi
 
             // Update the previous position with frametime so we can catch up if we slow down
             PreviousClock = CurrentClock;
+        }
+
+        bool TimeHandler::FrameLessThenTimeStep()
+        {
+            return Frame < UpdateStepLen;
+        }
+
+        void TimeHandler::SleepTillNextUpdate()
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<uint32_t>((UpdateStepLen - Frame)*1000.0f)));
         }
 
         TimeHandler::TimeHandler() {}

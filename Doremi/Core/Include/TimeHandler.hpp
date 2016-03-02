@@ -32,6 +32,10 @@ namespace Doremi
 
             void ResetTime();
 
+            bool FrameLessThenTimeStep();
+
+            void SleepTillNextUpdate();
+
         private:
             TimeHandler();
             ~TimeHandler();
