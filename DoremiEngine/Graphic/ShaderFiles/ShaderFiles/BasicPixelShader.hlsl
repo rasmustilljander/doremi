@@ -76,16 +76,14 @@ Texture2D GlowTexture : register(t5);
 
 SamplerState ObjSamplerState : register(s0);
 
-float3 CalcDirectionalLight(PixelInputType input, Light l)
+float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
 {
     float3 lightDir;
     float lightIntensity;
-    float4 texcolor = float4(0.0, 0.0, 0.0, 1);
-    float3 normal = normalize(input.normal);
 
     lightDir = -l.direction;
-    lightIntensity = saturate(dot(normal, lightDir));
-    return saturate(l.color * lightIntensity) * 0.1;
+    lightIntensity = saturate(dot(input.normal, lightDir));
+    return saturate(l.color * lightIntensity) * texcolor;
 }
 
 float3 CalcSpotLight(PixelInputType input, Light l)
@@ -94,6 +92,36 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 }
 
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
+{
+    float3 lightVec = l.position - input.worldPos;
+    float radius = l.intensity * 20.f;
+
+    float d = length(lightVec);
+    if (d > radius)
+    {
+        return float3(0, 0, 0);
+    }
+
+    lightVec /= d;
+    float diffuseFactor = dot(lightVec, input.normal);
+
+    if (diffuseFactor < 0.0f)
+    {
+        return float3(0, 0, 0);
+    }
+
+    float att = pow(max(0.0f, 1.0 - (d / radius)), 4.0f);
+
+    float3 toEye = normalize(input.cameraPos - input.worldPos);
+    float3 v = reflect(-lightVec, input.normal);
+
+
+    float specFactor = /*pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.1*/0;
+
+    return (l.color *att * (diffuseFactor + specFactor)) * texcolor;
+}
+
+float3 CalcPointLight2(PixelInputType input, Light l, float3 texcolor)
 {
     float3 normal = normalize(input.normal);
 
@@ -143,7 +171,7 @@ PixelOutputType PS_main(PixelInputType input)
         texcolor = float4(color, 1);
         glowcolor = GlowTexture.Sample(ObjSamplerState, float2(0, 0));
     }
-    else 
+    else
     {
         texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
         glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
@@ -154,29 +182,29 @@ PixelOutputType PS_main(PixelInputType input)
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
-    //for (int i = 0; i < 200; i++)
+        //for (int i = 0; i < 200; i++)
     {
         Light l = light[o_LightIndexList[i]];
         //Light l = light[i];
         if (l.type == 0)
             rgb += float3(0, 0, 0);
         if (l.type == 1)
-            rgb += CalcDirectionalLight(input, l); 
+            rgb += CalcDirectionalLight(input, l, texcolor);
         if (l.type == 2)
             rgb += CalcSpotLight(input, l);
         if (l.type == 3)
             rgb += CalcPointLight(input, l, texcolor.rgb);
     }
 
-    if (glowcolor.r < 0.5 && 
+    if (glowcolor.r < 0.5 &&
         glowcolor.g < 0.5 && glowcolor.b < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
         output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
 
-    output.diffuse = float4(rgb, 1) * texcolor * 2.5f + texcolor * 0.25;
+    output.diffuse = float4(rgb, 1) * 1.0f + texcolor * 0.25;
 
-    float depth = (input.position.z/input.position.w) * -1 + 1.3;   //Add .03 to the depth as a buffer
+    float depth = (input.position.z / input.position.w) * -1 + 1.3;   //Invert and add .3 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);
 
     return output;

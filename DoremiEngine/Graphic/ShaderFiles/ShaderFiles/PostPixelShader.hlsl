@@ -92,34 +92,34 @@ float3 CalcSpotLight(PixelInputType input, Light l)
     return float3(0, 0, 0);
 }
 
-float3 CalcPointLight(PixelInputType input, Light l)
+float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
-    float4 texcolor = float4(0.5, 0.5, 0.5, 1);
-    float3 normal = normalize(input.normal);
+    float3 lightVec = l.position - input.worldPos;
+    float radius = l.intensity * 20.f;
 
-    float3 scatteredLight, reflectedLight;
-    float attenuation;
-
-    float3 lightDirection = l.position - input.worldPos.xyz;
-    float lightDistance = length(lightDirection);
-
-    if (lightDistance < 100.0f)
+    float d = length(lightVec);
+    if (d > radius)
     {
-        attenuation = 1.f /
-            (l.attenuation[0] + l.attenuation[1] * lightDistance +
-                l.attenuation[2] * lightDistance * lightDistance);
-
-        float3 halfVector = normalize(lightDirection + normalize(-input.worldPos));
-
-        float diffuse = max(0.0, dot(normal, lightDirection));
-        float specular = max(0.0, dot(normal, halfVector));
-
-        scatteredLight = l.color * diffuse * attenuation;
-        reflectedLight = l.color * specular * attenuation;
-        return min(texcolor.rgb * scatteredLight + reflectedLight, float3(1, 1, 1)) * l.intensity;
+        return float3(0, 0, 0);
     }
 
-    return float3(0, 0, 0);
+    lightVec /= d;
+    float diffuseFactor = dot(lightVec, input.normal);
+
+    if (diffuseFactor < 0.0f)
+    {
+        return float3(0, 0, 0);
+    }
+
+    float att = pow(max(0.0f, 1.0 - (d / radius)), 4.0f);
+
+    float3 toEye = normalize(input.cameraPos - input.worldPos);
+    float3 v = reflect(-lightVec, input.normal);
+
+
+    float specFactor = /*pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.1*/0;
+
+    return (l.color *att * (diffuseFactor + specFactor)) * texcolor;
 }
 
 PixelOutputType PS_main(PixelInputType input)
@@ -153,7 +153,7 @@ PixelOutputType PS_main(PixelInputType input)
         if (l.type == 2)
             rgb += CalcSpotLight(input, l);
         if (l.type == 3)
-            rgb += CalcPointLight(input, l);
+            rgb += CalcPointLight(input, l, texcolor);
 
     }
     if (mapMasks == 0)
