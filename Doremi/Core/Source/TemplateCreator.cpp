@@ -822,15 +822,10 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
+            // CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm");
 
             /// Fill with components
-            // Render
 
-            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components
             // Render

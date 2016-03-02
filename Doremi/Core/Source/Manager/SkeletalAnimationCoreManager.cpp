@@ -1,7 +1,7 @@
 // Project specific
 #include <Manager/SkeletalAnimationCoreManager.hpp>
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
-#include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 
 // Components
 #include <EntityComponent/EntityHandler.hpp>
@@ -363,22 +363,31 @@ namespace Doremi
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
+            int counter = 0;
             for(size_t j = 0; j < t_length; j++)
             {
                 // Check if entity has skeletalanimation
                 if(EntityHandler::GetInstance().HasComponents(j, t_mask))
                 {
+                    PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+                    if(!t_playerHandler->PlayerExists())
+                    {
+                        continue;
+                    }
+
+                    EntityID t_playerEntityID = t_playerHandler->GetPlayerEntityID();
 
                     TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(j);
-                    TransformComponentNext* t_playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(1147);
+                    TransformComponentNext* t_playerTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(t_playerEntityID);
                     XMFLOAT3 t_playervector;
                     XMStoreFloat3(&t_playervector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_playerTransform->position));
                     XMFLOAT3 t_playerLengthVector;
                     // Calculate the length of this vector
                     XMStoreFloat3(&t_playerLengthVector, XMVector3Length(XMLoadFloat3(&t_playervector)));
-                    if(t_playerLengthVector.x > 1000)
+                    if(t_playerLengthVector.x > 100)
                     {
-                        return;
+                        continue;
                     }
 
                     // Get component and update time that the animation has been active
@@ -493,6 +502,7 @@ namespace Doremi
                     m_rasterizerState->GetRasterizerState();
                     m_depthStencilState->GetDepthStencilState();
                     // Draw the skeletalmesh uses another drawmethod than the common one. Since now we have more information in the vertex
+
                     submoduleManager.GetDirectXManager().DrawCurrentRenderListSkeletal(m_rasterizerState->GetRasterizerState(),
                                                                                        m_depthStencilState->GetDepthStencilState());
                 }
