@@ -8,3 +8,5 @@ logs
 # Ignore format cache
 .formatCache
 
+# Python binaries
+*.pyc
