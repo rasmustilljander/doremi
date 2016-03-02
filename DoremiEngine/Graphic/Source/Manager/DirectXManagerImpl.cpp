@@ -690,9 +690,8 @@ namespace DoremiEngine
         {
             using namespace DoremiEditor::Core;
             using namespace DirectX;
-            // Sort the data according after mesh then texture
+            // Sort the data according after mesh then texture, only mesh though
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
-            // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
             // Nothing to draw
             if(renderData.size() == 0)
@@ -725,7 +724,8 @@ namespace DoremiEngine
             // TODO Can be upgraded with instanced drawing
             // sista saken som ska renderas kanske inte renderas nu...
             const size_t vectorSize = renderData.size();
-            for(size_t i = 0; i < vectorSize - 1;)
+            size_t i = 0;
+            for(; i < vectorSize - 1;)
             {
                 std::vector<WorldMatrixPair> worldMatrices;
                 size_t j = i;
@@ -733,11 +733,12 @@ namespace DoremiEngine
                 {
                     WorldMatrixPair newPair;
                     newPair.worldMat = renderData[j].worldMatrix;
-                    DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
+                    DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[j].worldMatrix);
                     t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, t_mat));
                     DirectX::XMStoreFloat4x4(&newPair.invTransWorldMat, t_mat);
                     worldMatrices.push_back(newPair);
-                    if(renderData[j].vertexData != renderData[j + 1].vertexData) // Check if vertexdata will change
+                    if(renderData[j].vertexData != renderData[j + 1].vertexData ||
+                       worldMatrices.size() > MAX_NUMBER_OF_INSTANCES) // Check if vertexdata will change or if we excedes max instance count
                     {
                         j++;
                         break;
@@ -805,6 +806,30 @@ namespace DoremiEngine
                         m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
                     }
                 }
+            }
+
+            // Draw the last one since it's a special case
+
+            WorldMatrixPair newPair;
+            newPair.worldMat = renderData[i].worldMatrix;
+            DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
+            t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, t_mat));
+            DirectX::XMStoreFloat4x4(&newPair.invTransWorldMat, t_mat);
+
+            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &newPair, sizeof(WorldMatrixPair)); // Copy matrix to buffer
+            m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+            m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+
+            if(renderData[i].indexData != nullptr)
+            {
+                m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->DrawIndexedInstanced(renderData[i].indexCount, 1, 0, 0, 0);
+            }
+            else
+            {
+                m_deviceContext->DrawInstanced(renderData[i].vertexCount, 1, 0, 0);
             }
 
             renderData.clear(); // Empty the vector

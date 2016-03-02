@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#define MAX_NUMBER_OF_INSTANCES 100
 struct SDL_Window;
 namespace DoremiEngine
 {
@@ -24,7 +25,7 @@ namespace DoremiEngine
 
         struct WorldMatrices
         {
-            WorldMatrixPair matricPairs[100];
+            WorldMatrixPair matricPairs[MAX_NUMBER_OF_INSTANCES];
         };
 
         class DirectXManagerImpl : public DirectXManager
