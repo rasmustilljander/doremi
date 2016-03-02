@@ -145,8 +145,8 @@ namespace DoremiEngine
                     // m_drainsHit.push_back(m_utils.m_rayCastManager->CastRay(position, velocity, 5)); // Zero might turn up buggy
                     // Use internal method since we want to know which type of body we hit
                     int flags;
-                    int id = m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100, flags);
-                    m_drainsHit.push_back(i);
+                    int id = m_utils.m_rayCastManager->CastSweep(position, velocity, m_this.m_size, 100);
+                    m_drainsHit.push_back(id);
                     // We don't want to notify the game when particles hit kinematic objects
                     // Outcommented since it doesn't work. TODOJB fix
                     /*if(!(flags == 0 || flags == 1))
