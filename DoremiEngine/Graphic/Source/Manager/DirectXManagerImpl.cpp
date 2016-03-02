@@ -724,6 +724,7 @@ namespace DoremiEngine
             // TODO Can be upgraded with instanced drawing
             // sista saken som ska renderas kanske inte renderas nu...
             const size_t vectorSize = renderData.size();
+
             size_t i = 0;
             for(; i < vectorSize - 1;)
             {
@@ -737,8 +738,11 @@ namespace DoremiEngine
                     t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, t_mat));
                     DirectX::XMStoreFloat4x4(&newPair.invTransWorldMat, t_mat);
                     worldMatrices.push_back(newPair);
-                    if(renderData[j].vertexData != renderData[j + 1].vertexData ||
-                       worldMatrices.size() > MAX_NUMBER_OF_INSTANCES) // Check if vertexdata will change or if we excedes max instance count
+
+                    // Check if anything have changed or if we are above max instances
+                    if(renderData[j].vertexData != renderData[j + 1].vertexData || renderData[i].samplerState != renderData[i + 1].samplerState ||
+                       renderData[i].diffuseTexture != renderData[i + 1].diffuseTexture || renderData[i].glowTexture != renderData[i + 1].glowTexture ||
+                       &renderData[i].materialMessage != &renderData[i + 1].materialMessage || worldMatrices.size() > MAX_NUMBER_OF_INSTANCES)
                     {
                         j++;
                         break;
@@ -749,7 +753,6 @@ namespace DoremiEngine
                 memcpy(tMS.pData, worldMatrices.data(), sizeof(WorldMatrixPair) * worldMatrices.size()); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
-                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
                 if(renderData[i].indexData != nullptr)
                 {
                     m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
