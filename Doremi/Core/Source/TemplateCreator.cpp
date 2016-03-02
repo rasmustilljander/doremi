@@ -831,32 +831,25 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            CharacterDataNames playerSkeletalCharData =
-                loader.LoadSkeletalCharacter("Models/SmallRobot14.drm", *t_upperBodySkeletalInformation, *t_lowerBodySkeletalInformation);
-
-
+            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
-            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(playerSkeletalCharData.meshName);
+            t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
             t_renderComp->material =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(playerSkeletalCharData.materialName);
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
             t_renderComp->lockedRotationX = true;
-            t_avatarBlueprint[ComponentType::Render] = t_renderComp;
 
-            // SkeletalAnimation
+            t_avatarBlueprint[ComponentType::Render] = t_renderComp;
+            // SkeletalAnimationComponent
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
+            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
             t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
-            t_upperBodySkeletalAnimationComp->skeletalInformation = t_upperBodySkeletalInformation;
-            t_upperBodySkeletalAnimationComp->clipName = "Idle";
-            t_upperBodySkeletalAnimationComp->timePosition = 0;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
-            t_lowerBodySkeletalAnimationComp->skeletalInformation = t_lowerBodySkeletalInformation;
-            t_lowerBodySkeletalAnimationComp->clipName = "Attack";
-            t_lowerBodySkeletalAnimationComp->timePosition = 0;
+            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
             // Transform comp
             TransformComponent* t_transformComp = new TransformComponent();

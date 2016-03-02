@@ -125,11 +125,8 @@ namespace Doremi
         EntityFactory::StartupEntityFactory(sharedContext);
         PlayerSpawnerHandler::StartupPlayerSpawnerHandler(sharedContext);
         SkyBoxHandler::StartupSkyBoxHandler(sharedContext);
-<<<<<<< HEAD
         ServerBrowserHandler::StartupServerBrowserHandler(sharedContext);
-=======
         SkeletalInformationHandler::StartSkeletalInformationHandler(sharedContext);
->>>>>>> Added animationblending for AI
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
