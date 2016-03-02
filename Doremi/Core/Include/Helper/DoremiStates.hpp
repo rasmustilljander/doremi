@@ -13,6 +13,7 @@ namespace Doremi
             MAINMENU,
             SERVER_BROWSER,
             OPTIONS,
+            LOADING,
             RUNGAME,
             PAUSE,
             VICTORY,

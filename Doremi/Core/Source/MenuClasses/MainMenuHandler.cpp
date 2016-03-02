@@ -178,33 +178,6 @@ namespace Doremi
 
                         break;
                     }
-                    case Core::DoremiButtonActions::START_GAME:
-                    {
-                        // passing state change event
-                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                        menuEvent->state = DoremiGameStates::RUNGAME;
-                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-
-                        break;
-                    }
-                    case Core::DoremiButtonActions::PAUSE:
-                    {
-                        // passing state change event
-                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                        menuEvent->state = DoremiGameStates::PAUSE;
-                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-
-                        break;
-                    }
-                    case Core::DoremiButtonActions::VICTORY:
-                    {
-                        // passing state change event
-                        Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                        menuEvent->state = DoremiGameStates::VICTORY;
-                        Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
-
-                        break;
-                    }
                     case Core::DoremiButtonActions::EXIT:
                     {
                         // passing state change event

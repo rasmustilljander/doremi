@@ -14,6 +14,8 @@
 #include <Doremi/Core/Include/AudioHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/TimeHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
@@ -233,6 +235,12 @@ namespace Doremi
                     return;
                 }
                 t_networkConnection->m_serverConnection.ConnectionState = ServerConnectionStateFromClient::IN_GAME;
+
+                // Send event to change state to rungame
+                ChangeMenuState* t_changeMenuState = new ChangeMenuState();
+                t_changeMenuState->state = DoremiGameStates::RUNGAME;
+
+                EventHandler::GetInstance()->BroadcastEvent(t_changeMenuState);
             }
 
             // Ready for read

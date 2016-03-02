@@ -11,6 +11,10 @@
 #include <Doremi/Core/Include/TimeHandler.hpp>
 #include <Doremi/Core/Include/InterpolationHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandlerClient.hpp>
+#include <Doremi/Core/Include/ScreenSpaceDrawer.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
 
 #include <iostream>
 
@@ -64,9 +68,6 @@ namespace Doremi
             static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->RemovePlayer();
             InterpolationHandler* t_interpolationHandler = InterpolationHandler::GetInstance();
             t_interpolationHandler->Reset();
-
-            uint32_t t_numEvents = static_cast<EventHandlerClient*>(EventHandler::GetInstance())->GetNumberOfEvents();
-            cout << "Num events on reset:" << t_numEvents << endl;
         }
 
         void EntityHandlerClient::OnEvent(Event* p_event)
@@ -105,6 +106,19 @@ namespace Doremi
             }
             else if(p_event->eventType == EventType::LoadNewWorld)
             {
+                LoadingScreenHandler::GetInstance()->Reset();
+
+                // Start draw a load screen
+                // Mohaha hax
+
+
+                // Restart case we want a loading screen
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
+                ScreenSpaceDrawer::GetInstance()->DrawLoadingScreen();
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
+
                 // Reset world
                 ResetWorld();
 

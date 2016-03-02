@@ -76,14 +76,11 @@ namespace Doremi
             PreviousClock = CurrentClock;
         }
 
-        bool TimeHandler::FrameLessThenTimeStep()
-        {
-            return Frame < UpdateStepLen;
-        }
+        bool TimeHandler::FrameLessThenTimeStep() { return Frame < UpdateStepLen; }
 
         void TimeHandler::SleepTillNextUpdate()
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<uint32_t>((UpdateStepLen - Frame)*1000.0f)));
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<uint32_t>((UpdateStepLen - Frame) * 1000.0f)));
         }
 
         TimeHandler::TimeHandler() {}

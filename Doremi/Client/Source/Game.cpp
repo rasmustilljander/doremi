@@ -40,6 +40,7 @@
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -140,10 +141,12 @@ namespace Doremi
         ServerBrowserHandler::StartupServerBrowserHandler(sharedContext);
         SkeletalInformationHandler::StartSkeletalInformationHandler(sharedContext);
         HUDHandler::StartHUDHandler(sharedContext);
+        LoadingScreenHandler::StartLoadingScreenHandler(sharedContext);
+        ScreenSpaceDrawer::StartupScreenSpaceDrawer(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
-        m_screenSpaceDrawer = new ScreenSpaceDrawer(sharedContext, m_screenRes);
+        m_screenSpaceDrawer = ScreenSpaceDrawer::GetInstance();
 
         // Create manager & add manager to list of managers
         AddToGraphicalManagerList(new PressureParticleGraphicManager(sharedContext));
@@ -320,10 +323,17 @@ namespace Doremi
                 Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
                 break;
             }
+            case Core::DoremiGameStates::LOADING:
+            {
+                UpdateGame(p_deltaTime);
+                LoadingScreenHandler::GetInstance()->Update(p_deltaTime);
+                break;
+            }
             case Core::DoremiGameStates::RUNGAME:
             {
                 // Update Game logic
                 UpdateGame(p_deltaTime);
+                HUDHandler::GetInstance()->Update(p_deltaTime);
                 break;
             }
             case Core::DoremiGameStates::PAUSE:

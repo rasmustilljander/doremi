@@ -73,7 +73,7 @@ namespace Doremi
                 ChangeMenuState* realEvent = static_cast<ChangeMenuState*>(p_event);
 
                 // If the state is rungame, we should fetch what kind of map to load and later server to load
-                if(realEvent->state == DoremiGameStates::RUNGAME)
+                if(realEvent->state == DoremiGameStates::LOADING)
                 {
                     LoadNewWorldEvent* t_loadWorldEvent = new LoadNewWorldEvent();
                     t_loadWorldEvent->map = GameMap::BEST_MAP;

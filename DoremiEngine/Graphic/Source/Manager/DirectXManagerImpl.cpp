@@ -691,6 +691,12 @@ namespace DoremiEngine
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
+            // Nothing to draw
+            if(renderData.size() == 0)
+            {
+                return;
+            }
+
             // Setup required variables
             const uint32_t stride = sizeof(Vertex);
             const uint32_t offset = 0;

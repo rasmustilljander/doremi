@@ -324,7 +324,7 @@ namespace Doremi
                             {
                                 // passing state change event
                                 ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                                menuEvent->state = DoremiGameStates::RUNGAME;
+                                menuEvent->state = DoremiGameStates::LOADING;
                                 EventHandler::GetInstance()->BroadcastEvent(menuEvent);
                             }
                             default:

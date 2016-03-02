@@ -15,12 +15,16 @@ namespace Doremi
         class Bar
         {
         public:
-            Bar(const ScreenObject& p_back, const ScreenObject& p_front);
+            Bar(const ScreenObject& p_bar, const ScreenObject& p_back, const ScreenObject& p_front, float p_positionX, float p_maxSizeX);
             Bar();
             virtual ~Bar();
 
             void UpdateProgress(float percent);
 
+            float m_maxSize;
+            float m_positionX;
+
+            ScreenObject m_barBar;
             ScreenObject m_barBack;
             ScreenObject m_barFront;
         };

@@ -24,16 +24,23 @@ namespace Doremi
         class ScreenSpaceDrawer
         {
         public:
-            ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution);
-            virtual ~ScreenSpaceDrawer();
-            void Draw();
+            static ScreenSpaceDrawer* GetInstance();
+            static void StartupScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+
+            void Draw();
+            void DrawLoadingScreen();
 
         private:
+            ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            virtual ~ScreenSpaceDrawer();
+            static ScreenSpaceDrawer* m_singleton;
+
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             // Help functions
             void DrawMainMenu();
             void DrawServerBrowser();
+
             void DrawHUD();
             void DrawVictoryScreen();
             void CreateVictoryScreen();

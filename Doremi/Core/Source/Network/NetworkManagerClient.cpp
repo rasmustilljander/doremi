@@ -482,7 +482,7 @@ namespace Doremi
                 NetworkConnectionsClient* t_connections = NetworkConnectionsClient::GetInstance();
 
                 // If we are processing to run game we set us to connecting
-                if(t_changeMenuEvent->state == DoremiGameStates::RUNGAME)
+                if(t_changeMenuEvent->state == DoremiGameStates::LOADING)
                 {
                     // Disconnect from master
                     t_connections->m_masterConnection.ConnectionState = MasterConnectionStateFromClient::DISCONNECTED;
@@ -536,7 +536,7 @@ namespace Doremi
                     t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectedSocketHandle);
                     t_NetworkModule.DeleteSocket(t_connections->m_serverConnection.ConnectingSocketHandle);
                 }
-                else
+                else if(t_changeMenuEvent->state != DoremiGameStates::RUNGAME) // If we didn't change to run game, do this
                 {
 
                     // Disconnect from master

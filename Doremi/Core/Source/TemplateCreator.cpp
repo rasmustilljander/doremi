@@ -798,6 +798,12 @@ namespace Doremi
             audioComp->m_enumToSoundID[(int)AudioCompEnum::DamageTaken] = sharedContext.GetAudioModule().LoadSound("Sounds/DeathSound2.wav", 0.5f, 5000.0f);
             t_avatarBlueprint[ComponentType::Audio] = audioComp;
 
+            // HP component
+            HealthComponent* hpComp = new HealthComponent();
+            hpComp->currentHealth = 50;
+            hpComp->maxHealth = 50;
+            t_avatarBlueprint[ComponentType::Health] = hpComp;
+
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
         }
@@ -859,6 +865,12 @@ namespace Doremi
             particleComp->data.m_numParticlesY = 1;
             particleComp->data.m_size = 1.0f;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
+
+            // HP component
+            HealthComponent* hpComp = new HealthComponent();
+            hpComp->currentHealth = 50;
+            hpComp->maxHealth = 50;
+            t_avatarBlueprint[ComponentType::Health] = hpComp;
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::NetworkPlayerEntity, t_avatarBlueprint);

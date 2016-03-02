@@ -23,27 +23,31 @@ namespace Doremi
         /**
         Only an example of what a manager might look like
         Doesn't do anything, and could be removed once examples are no longer necessary*/
-        class HUDHandler
+        class LoadingScreenHandler
         {
         public:
-            static HUDHandler* GetInstance();
-            static void StartHUDHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static LoadingScreenHandler* GetInstance();
+            static void StartLoadingScreenHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             void Update(double p_dt);
 
             auto& GetScreenObjects() { return m_screenObjects; }
             auto& GetBars() { return m_bars; }
+            void Reset();
 
         private:
-            HUDHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            ~HUDHandler();
+            LoadingScreenHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            ~LoadingScreenHandler();
 
-            static HUDHandler* m_singleton;
+
+            static LoadingScreenHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
-            Bar m_healthBar;
+            ScreenObject m_background;
 
-            std::vector<ScreenObject> m_screenObjects;
+            Bar m_loadingBar;
+
+            std::vector<ScreenObject*> m_screenObjects;
             std::vector<Bar*> m_bars;
         };
     }

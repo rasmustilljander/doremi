@@ -63,6 +63,8 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::EntityCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::SetHealth, this);
             EventHandler::GetInstance()->Subscribe(EventType::SetTransform, this);
+            EventHandler::GetInstance()->Subscribe(EventType::DamageTaken, this);
+
             m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
 
             InputHandlerClient* m_inputHandler = new InputHandlerClient(p_sharedContext);
@@ -284,6 +286,13 @@ namespace Doremi
 
                 // Play respawn sound
                 EventHandler::GetInstance()->BroadcastEvent(new PlaySoundEvent(t_playerSpawnerEvent->entityID, static_cast<int32_t>(AudioCompEnum::Death)));
+            }
+            else if(p_event->eventType == EventType::DamageTaken)
+            {
+                DamageTakenEvent* t_dmgTakenEvent = static_cast<DamageTakenEvent*>(p_event);
+
+                HealthComponent* t_healthComp = GetComponent<HealthComponent>(t_dmgTakenEvent->entityId);
+                t_healthComp->currentHealth -= t_dmgTakenEvent->damage;
             }
             else if(p_event->eventType == Doremi::Core::EventType::SetHealth)
             {

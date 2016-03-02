@@ -16,6 +16,7 @@
 #include <Doremi/Core/Include/MenuClasses/ScreenObject.hpp>
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
 #include <iostream>
 
 
@@ -27,8 +28,28 @@ namespace Doremi
     namespace Core
     {
         using namespace DirectX;
-        ScreenSpaceDrawer::ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext, XMFLOAT2 p_resolution)
-            : m_sharedContext(p_sharedContext), m_resolution(p_resolution)
+
+        ScreenSpaceDrawer* ScreenSpaceDrawer::m_singleton = nullptr;
+
+        ScreenSpaceDrawer* ScreenSpaceDrawer::GetInstance()
+        {
+            if(m_singleton == nullptr)
+            {
+                std::runtime_error("GetInstance called before startupScreenSpaceDrawer");
+            }
+            return m_singleton;
+        }
+
+        void ScreenSpaceDrawer::StartupScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            if(m_singleton == nullptr)
+            {
+                std::runtime_error("startupScreenSpaceDrawer called multiple times");
+            }
+            m_singleton = new ScreenSpaceDrawer(p_sharedContext);
+        }
+
+        ScreenSpaceDrawer::ScreenSpaceDrawer(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
             // Initialize shader thingies
             m_menuPixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("TextPixelShader.hlsl");
@@ -66,22 +87,17 @@ namespace Doremi
             DoremiEngine::Graphic::MeshInfo* t_meshInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
             m_victoryScreen = new VictoryScreen(t_meshInfo);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialInfo =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("HappyFace.dds");
-            XMFLOAT2 t_position = XMFLOAT2(0, 0);
-            XMFLOAT2 t_extents = XMFLOAT2(100, 100);
-            t_position = ConvertWithResolution(t_position);
-            // t_extents = ConvertWithResolution(t_extents);
+            // DoremiEngine::Graphic::MaterialInfo* t_materialInfo =
+            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("HappyFace.dds");
+            // XMFLOAT2 t_position = XMFLOAT2(0, 0);
+            // XMFLOAT2 t_extents = XMFLOAT2(100, 100);
+            // t_position = ConvertWithResolution(t_position);
+            //// t_extents = ConvertWithResolution(t_extents);
 
-            m_victoryScreen->AddScreenObject(t_materialInfo, t_position, t_extents);
+            // m_victoryScreen->AddScreenObject(t_materialInfo, t_position, t_extents);
         }
-        XMFLOAT2 ScreenSpaceDrawer::ConvertWithResolution(XMFLOAT2 p_point)
-        {
-            XMFLOAT2 t_newPoint;
-            t_newPoint.x = (p_point.x + 1) * m_resolution.x * 0.5f;
-            t_newPoint.y = (p_point.y + 1) * m_resolution.y * 0.5f;
-            return t_newPoint;
-        }
+
+
         ScreenSpaceDrawer::~ScreenSpaceDrawer() {}
         void ScreenSpaceDrawer::Draw()
         {
@@ -101,6 +117,11 @@ namespace Doremi
                 case Doremi::Core::DoremiGameStates::OPTIONS:
                 {
                     // Draw options screen. TODOKO implement
+                    break;
+                }
+                case Doremi::Core::DoremiGameStates::LOADING:
+                {
+                    DrawLoadingScreen();
                     break;
                 }
                 case Doremi::Core::DoremiGameStates::RUNGAME:
@@ -236,6 +257,46 @@ namespace Doremi
             End2DDraw();
         }
 
+        void ScreenSpaceDrawer::DrawLoadingScreen()
+        {
+            Begin2DDraw();
+
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
+            // Get Screenobjects to draw
+            std::vector<ScreenObject*>& t_objectsToDraw = LoadingScreenHandler::GetInstance()->GetScreenObjects();
+
+            // For each button add to render list
+            for(auto& t_object : t_objectsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
+            }
+
+            // Get bars to draw
+            std::vector<Bar*>& t_barsToDraw = LoadingScreenHandler::GetInstance()->GetBars();
+
+            // For each button add to render list
+            // Remember to draw them Back->Bar->front
+            for(auto& t_bar : t_barsToDraw)
+            {
+                if(t_bar->m_barBack.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBack.m_spriteInfo), *(t_bar->m_barBack.m_materialInfo));
+                }
+
+                t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBar.m_spriteInfo), *(t_bar->m_barBar.m_materialInfo));
+
+                if(t_bar->m_barFront.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barFront.m_spriteInfo), *(t_bar->m_barFront.m_materialInfo));
+                }
+            }
+
+
+            End2DDraw();
+        }
+
         void ScreenSpaceDrawer::DrawHUD()
         {
             Begin2DDraw();
@@ -244,13 +305,23 @@ namespace Doremi
             DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Get bars to draw
-            std::vector<Bar>& t_barsToDraw = HUDHandler::GetInstance()->GetBars();
+            std::vector<Bar*>& t_barsToDraw = HUDHandler::GetInstance()->GetBars();
 
             // For each button add to render list
+            // Remember to draw them Back->Bar->front
             for(auto& t_bar : t_barsToDraw)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_bar.m_barBack.m_spriteInfo), *(t_bar.m_barBack.m_materialInfo));
-                t_meshManager.AddSpriteToRenderList(*(t_bar.m_barFront.m_spriteInfo), *(t_bar.m_barFront.m_materialInfo));
+                if(t_bar->m_barBack.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBack.m_spriteInfo), *(t_bar->m_barBack.m_materialInfo));
+                }
+
+                t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBar.m_spriteInfo), *(t_bar->m_barBar.m_materialInfo));
+
+                if(t_bar->m_barFront.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barFront.m_spriteInfo), *(t_bar->m_barFront.m_materialInfo));
+                }
             }
 
             // Get Screenobjects to draw
