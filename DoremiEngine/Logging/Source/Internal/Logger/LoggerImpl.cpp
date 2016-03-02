@@ -170,7 +170,7 @@ namespace DoremiEngine
             bool succeed = false;
 
 #ifdef NO_LOGGER
-            m_localBuffer->Produce(header, &data);
+            m_localBuffer->Produce(header, buffer);
 #else
             while(!succeed)
             {
@@ -263,7 +263,7 @@ namespace DoremiEngine
                     if(messageExist)
                     {
 #ifdef NO_LOGGER
-                        m_outGoingBuffer->Produce(*header, data);
+                        m_outGoingBuffer->Produce(*header, buffer);
 #else
                         succeed = false;
                         while(!succeed)

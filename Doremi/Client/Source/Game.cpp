@@ -399,7 +399,7 @@ namespace Doremi
             Run();
             TIME_FUNCTION_STOP
         }
-        catch(...)
+        catch(const std::exception& e)
         {
             printf("Gamemain start exception.\n");
         }
