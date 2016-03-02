@@ -31,7 +31,7 @@ namespace Doremi
         void ExtraDrainSyncManager::Update(double p_dt)
         {
             // Update simulation
-            m_sharedContext.GetPhysicsModule().Update(p_dt);
+            // m_sharedContext.GetPhysicsModule().Update(p_dt);
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::ExtraDrain | (int)ComponentType::RigidBody;
             for(size_t i = 0; i < length; i++)
