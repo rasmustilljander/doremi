@@ -19,7 +19,7 @@ namespace DoremiEngine
     }
     namespace Graphic
     {
-        struct SkeletalInformation;
+        class SkeletalInformation;
     }
 }
 
