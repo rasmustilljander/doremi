@@ -331,7 +331,6 @@ namespace Doremi
 
             case Core::DoremiGameStates::EXIT:
             {
-                Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
                 m_gameRunning = false;
                 break;
             }
@@ -383,10 +382,18 @@ namespace Doremi
 
     void GameMain::Start()
     {
-        TIME_FUNCTION_START
-        Initialize();
-        Run();
-        TIME_FUNCTION_STOP
+        try
+        {
+            TIME_FUNCTION_START
+            Initialize();
+            Run();
+            TIME_FUNCTION_STOP
+        }
+        catch(...)
+        {
+            printf("Gamemain start exception.\n");
+        }
+        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
     }
 
     void GameMain::Stop()
