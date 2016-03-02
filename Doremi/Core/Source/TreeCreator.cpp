@@ -15,18 +15,18 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 8;
+            m_treeDepth = 3;
 
             // Set the box for the world
-            //treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske 
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(600, 100, 600);
-                                                                      //
-                                                                          // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            // treeRoot.boxDimensions = DirectX::XMFLOAT3(600, 100, 600);
+            //
+            // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
             // Set the center for the box of the world
-            //treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041);
-            treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
-                                                          // DirectX::XMFLOAT3(-485, 158, 2041)
+            treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041);
+            // treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
+            // DirectX::XMFLOAT3(-485, 158, 2041)
 
             // Start up for the oct tree. Without this function we don't have anything to start with
             // CreateAndDivideTheChildren(treeRoot);
