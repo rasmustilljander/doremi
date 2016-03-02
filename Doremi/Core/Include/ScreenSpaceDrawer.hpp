@@ -34,6 +34,7 @@ namespace Doremi
             // Help functions
             void DrawMainMenu();
             void DrawServerBrowser();
+            void DrawHUD();
             void DrawVictoryScreen();
             void CreateVictoryScreen();
 

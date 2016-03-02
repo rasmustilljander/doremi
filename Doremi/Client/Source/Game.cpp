@@ -39,6 +39,7 @@
 #include <Doremi/Core/Include/TimeHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -136,6 +137,7 @@ namespace Doremi
         SkyBoxHandler::StartupSkyBoxHandler(sharedContext);
         ServerBrowserHandler::StartupServerBrowserHandler(sharedContext);
         SkeletalInformationHandler::StartSkeletalInformationHandler(sharedContext);
+        HUDHandler::StartHUDHandler(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();

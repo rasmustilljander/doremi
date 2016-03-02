@@ -15,6 +15,7 @@
 #include <Doremi/Core/Include/MenuClasses/VictoryScreen.hpp>
 #include <Doremi/Core/Include/MenuClasses/ScreenObject.hpp>
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
 #include <iostream>
 
 
@@ -104,7 +105,7 @@ namespace Doremi
                 }
                 case Doremi::Core::DoremiGameStates::RUNGAME:
                 {
-                    // Nothing to draw, the manager will handle this. Maybe HUD though? TODOKO
+                    DrawHUD();
                     break;
                 }
                 case Doremi::Core::DoremiGameStates::PAUSE:
@@ -230,6 +231,35 @@ namespace Doremi
                 {
                     t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text->m_textMaterial));
                 }
+            }
+
+            End2DDraw();
+        }
+
+        void ScreenSpaceDrawer::DrawHUD()
+        {
+            Begin2DDraw();
+
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
+
+            // Get bars to draw
+            std::vector<Bar>& t_barsToDraw = HUDHandler::GetInstance()->GetBars();
+
+            // For each button add to render list
+            for(auto& t_bar : t_barsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_bar.m_barBack.m_spriteInfo), *(t_bar.m_barBack.m_materialInfo));
+                t_meshManager.AddSpriteToRenderList(*(t_bar.m_barFront.m_spriteInfo), *(t_bar.m_barFront.m_materialInfo));
+            }
+
+            // Get Screenobjects to draw
+            std::vector<ScreenObject>& t_objectsToDraw = HUDHandler::GetInstance()->GetScreenObjects();
+
+            // For each button add to render list
+            for(auto& t_object : t_objectsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_object.m_spriteInfo), *(t_object.m_materialInfo));
             }
 
             End2DDraw();

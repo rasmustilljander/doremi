@@ -1,5 +1,8 @@
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
-#include <DoremiEngine/Core/Include/SharedContext.hpp>  
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
+#include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 
 namespace Doremi
 {
@@ -16,9 +19,9 @@ namespace Doremi
             return m_singleton;
         }
 
-        void HUDHandler::StartHUDHandler(const DoremiEngine::Core::SharedContext & p_sharedContext, DirectX::XMFLOAT2 p_resolution)
+        void HUDHandler::StartHUDHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            if (m_singleton != nullptr)
+            if(m_singleton != nullptr)
             {
                 std::runtime_error("StartHUDHandler called multiple times");
             }
@@ -37,6 +40,17 @@ namespace Doremi
 
         void HUDHandler::Update(double p_dt)
         {
+            PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
+
+            if(t_playerHandler->PlayerExists())
+            {
+                EntityID t_playerEntityID = t_playerHandler->GetPlayerEntityID();
+
+                HealthComponent* t_healthComp = GetComponent<HealthComponent>(t_playerEntityID);
+
+                float percentHealth = t_healthComp->currentHealth / t_healthComp->maxHealth;
+            }
+
             return;
         }
     }
