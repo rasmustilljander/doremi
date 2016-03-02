@@ -388,9 +388,9 @@ namespace Doremi
             Initialize();
             Run();
         }
-        catch(const std::exception& e)
+        catch(const std::exception& exception)
         {
-            printf("Gamemain start exception.\n");
+            printf("Exception: %s\n", exception.what());
         }
         Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
     }
