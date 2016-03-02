@@ -91,6 +91,8 @@ namespace Doremi
 
             void UpdateTimeouts(double p_dt);
 
+            void UpdatePositions();
+
             void UpdateInputs();
 
             void ServerBrowserHandler::UpdateVisual();

@@ -29,7 +29,7 @@ namespace Doremi
               m_nextUpdateTimer(0.0f),
               m_updateInterval(1.0f),
               m_masterNextUpdateTimer(0.0f),
-              m_masterUpdateInterval(1.0f),
+              m_masterUpdateInterval(0.5f),
               m_timeoutIntervalConnecting(5.0f),
               m_timeoutIntervalConnected(1.0f),
               m_timeoutIntervalMaster(5.0f),
@@ -512,9 +512,10 @@ namespace Doremi
                     }
 
                     // Create connecting adress
-                    t_connections->m_serverConnection.ConnectingAdress = t_NetworkModule.CreateAdress(127, 0, 0, 1, 5050);
-                    // t_connections->m_serverConnection.ConnectingAdress = t_NetworkModule.CreateAdress(t_serverIP.IP_a, t_serverIP.IP_b,
-                    // t_serverIP.IP_c, t_serverIP.IP_d, t_serverPort);
+                    // t_connections->m_serverConnection.ConnectingAdress = t_NetworkModule.CreateAdress(127, 0, 0, 1, 5050);
+                    t_connections->m_serverConnection.ConnectingAdress =
+                        t_NetworkModule.CreateAdress(t_serverIP.IP_a, t_serverIP.IP_b, t_serverIP.IP_c, t_serverIP.IP_d, t_serverPort);
+
                     cout << (uint32_t)t_serverIP.IP_a << "." << (uint32_t)t_serverIP.IP_b << "." << (uint32_t)t_serverIP.IP_c << "."
                          << (uint32_t)t_serverIP.IP_d << endl;
                 }

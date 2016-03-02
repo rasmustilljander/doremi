@@ -32,6 +32,8 @@ namespace Doremi
 
             void SetText(const DoremiEngine::Core::SharedContext& p_sharedContext, std::string p_text);
 
+            void UpdateText(const DoremiEngine::Core::SharedContext& p_sharedContext, const std::string& p_text);
+
             void UpdatePosition(XMFLOAT2 p_position);
 
             void DeleteText();

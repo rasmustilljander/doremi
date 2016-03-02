@@ -36,7 +36,7 @@ namespace Doremi
               m_timeoutIntervalConnected(1.0f),
               m_timeoutIntervalMaster(5.0f),
               m_masterNextUpdateTimer(0.0f),
-              m_masterUpdateInterval(1.0f),
+              m_masterUpdateInterval(0.5f),
               m_maxConnectedMessagesPerFrame(20),
               m_maxConnectingMessagesPerFrame(10),
               m_maxAcceptConnectionsPerFrame(5)
