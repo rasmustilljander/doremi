@@ -6,7 +6,7 @@ Texture2D glowmap : register (t0);
 Texture2D scene : register (t1);
 RWTexture2D<float4> output : register (u0);
 
-groupshared float4 gCache[BLOCK_SIZE*BLOCK_SIZE];
+
 cbuffer cbFixed
 {
     static const int BLUR_SIZE = 5;
@@ -16,11 +16,12 @@ cbuffer cbWeights
 {
     static const float gWeights[11] =
     {
-        0.027f, 0.055f, 0.083f, 0.1f, 0.139f, 0.17f, 0.139f, 0.1f, 0.083f, 0.055f, 0.027f,
+        //0.027f, 0.055f, 0.083f, 0.1f, 0.139f, 0.17f, 0.139f, 0.1f, 0.083f, 0.055f, 0.027f,
+        0.08f, 0.08f, 0.15f, 0.15f, 0.25f, 0.3f, 0.25f, 0.15f, 0.15f, 0.08f, 0.08f,
     };
 };
 
-
+groupshared float4 gCache[BLOCK_SIZE + 2 * BLUR_SIZE];
 
 [numthreads(1, BLOCK_SIZE, 1)]
 void CS_main(ComputeShaderInput input)
