@@ -97,6 +97,28 @@ namespace DoremiEditor
                         }*/
                     }
                 }
+                filter = MFn::kCamera;
+                MItDag itCameras(MItDag::kDepthFirst, filter, &result);
+                if(!result)
+                {
+                    PrintError("Could not create mesh iterator!");
+                }
+                else
+                {
+                    for(; !itCameras.isDone(); itCameras.next())
+                    {
+                        MDagPath t_cameraDagPath;
+                        result = itCameras.getPath(t_cameraDagPath);
+                        AddCamera(t_cameraDagPath.node());
+                    }
+                }
+                MDagPath t_currentCameraPath;
+                result = m_modelPanel.getCamera(t_currentCameraPath);
+                if(result)
+                {
+                    MFnCamera t_camera(t_currentCameraPath);
+                    s_messageHandler->AddMessage(t_camera.name().asChar(), NodeType::nCamera, MessageType::msgSwitched, "");
+                }
                 filter = MFn::kMesh;
                 MItDag itMeshes(MItDag::kDepthFirst, filter, &result);
                 if(!result)
@@ -115,21 +137,7 @@ namespace DoremiEditor
                         AddMesh(t_meshDagPath.node(), false);
                     }
                 }
-                filter = MFn::kCamera;
-                MItDag itCameras(MItDag::kDepthFirst, filter, &result);
-                if(!result)
-                {
-                    PrintError("Could not create mesh iterator!");
-                }
-                else
-                {
-                    for(; !itCameras.isDone(); itCameras.next())
-                    {
-                        MDagPath t_cameraDagPath;
-                        result = itCameras.getPath(t_cameraDagPath);
-                        AddCamera(t_cameraDagPath.node());
-                    }
-                }
+
                 filter = MFn::kLight;
                 MItDag itLights(MItDag::kDepthFirst, filter, &result);
                 if(!result)
@@ -144,15 +152,6 @@ namespace DoremiEditor
                         result = itLights.getPath(t_lightDagPath);
                         AddLight(t_lightDagPath.node(), false);
                     }
-                }
-
-
-                MDagPath t_currentCameraPath;
-                result = m_modelPanel.getCamera(t_currentCameraPath);
-                if(result)
-                {
-                    MFnCamera t_camera(t_currentCameraPath);
-                    s_messageHandler->AddMessage(t_camera.name().asChar(), NodeType::nCamera, MessageType::msgSwitched, "");
                 }
             }
             catch(...)

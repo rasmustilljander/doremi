@@ -861,7 +861,7 @@ namespace DoremiEditor
                 for(int o = 0; o < o_messageData.transformCount; o++)
                 {
                     int transformNameLength = t_meshInfo.transformName[o].length();
-                    if(transformNameLength <= 100)
+                    if(transformNameLength < 100)
                     {
                         NameStruct tempName;
                         for(int i = 0; i < transformNameLength; i++)
@@ -875,6 +875,7 @@ namespace DoremiEditor
                     }
                     else
                     {
+                        o_messageData.transformCount--;
                         MGlobal::displayError("Transform name too long!");
                     }
                 }
@@ -1176,7 +1177,8 @@ namespace DoremiEditor
                         tempHead += sizeof(int);
                         for(int i = 0; i < p_data.transformCount; i++)
                         {
-                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i], sizeof(char) * 100);
+                            memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.transformName[i].transformNames, sizeof(char) * 100);
+                            // PrintWarning(MString(p_data.nodeName) + " parent: " + MString(p_data.transformName[i].transformNames));
                             tempHead += sizeof(char) * 100;
                         }
 

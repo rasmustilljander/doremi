@@ -139,21 +139,21 @@ namespace DoremiEditor
         {
             try
             {
-                MFnTransform t_transform(p_transform.object());
-                std::string transformName = t_transform.name().asChar();
+                // MFnTransform t_transform(p_transform.object());
+                std::string transformName = p_transform.name().asChar();
                 std::string parentName;
                 // TODOJW
                 // Determine if this is even necessary at this stage
-                if(t_transform.parent(0).hasFn(MFn::kTransform))
-                {
-                    MFnTransform t_transformParent(t_transform.parent(0));
-                    parentName = t_transformParent.name().asChar();
-                }
-                else
-                {
-                    parentName = "";
-                }
-                TransformInfo transformInfo{transformName, parentName};
+                /*   if(p_transform.parent(0).hasFn(MFn::kTransform))
+                   {
+                       MFnTransform t_transformParent(p_transform.parent(0));
+                       parentName = t_transformParent.name().asChar();
+                   }
+                   else
+                   {
+                       parentName = "";
+                   }*/
+                TransformInfo transformInfo{transformName, ""};
                 // If no entries are added already, no need to loop.
                 if(m_transformVector.size() == 0)
                 {
