@@ -163,18 +163,18 @@ namespace Doremi
             DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
 
-            std::vector<ScreenObject*> t_screenObjects = m_victoryScreen->GetScreen();
-            size_t length = t_screenObjects.size();
-            for(size_t i = 0; i < length; i++)
-            {
+            //std::vector<ScreenObject*> t_screenObjects = m_victoryScreen->GetScreen();
+            //size_t length = t_screenObjects.size();
+            //for(size_t i = 0; i < length; i++)
+            //{
 
-                t_meshManager.AddToRenderList(*t_screenObjects[i]->m_meshInfo, *t_screenObjects[i]->m_materialInfo, t_screenObjects[i]->m_transformMatrix);
-            }
+            //    t_meshManager.AddToRenderList(*t_screenObjects[i]->m_meshInfo, *t_screenObjects[i]->m_materialInfo, t_screenObjects[i]->m_transformMatrix);
+            //}
 
-            DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
+            //DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
+            //DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
 
-            t_dierctxManager.Render2D(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
+            //t_dierctxManager.Render2D(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
 
             // Disable blend again?
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
