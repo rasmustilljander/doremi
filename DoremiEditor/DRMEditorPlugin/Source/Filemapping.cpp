@@ -1303,7 +1303,8 @@ namespace DoremiEditor
 
                     case 3:
                         PrintFilemapInfo(false);
-                        memcpy((unsigned char*)f_messageMapData, &p_header, sizeof(MessageHeader));
+                        m_localHead = 0;
+                        memcpy((unsigned char*)f_messageMapData + m_localHead, &p_header, sizeof(MessageHeader));
                         tempHead = sizeof(MessageHeader);
 
                         memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data, sizeof(char) * 100);
@@ -1331,19 +1332,19 @@ namespace DoremiEditor
                         tempHead += sizeof(int);
                         memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, &p_data.data.triCount, sizeof(int));
                         tempHead += sizeof(int);
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.vertices, sizeof(float) * 3 * p_data.data.vertCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.vertices, sizeof(float) * 3 * p_data.data.vertCount);
                         tempHead += sizeof(float) * 3 * p_data.data.vertCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.normals, sizeof(float) * 3 * p_data.data.normalCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.normals, sizeof(float) * 3 * p_data.data.normalCount);
                         tempHead += sizeof(float) * 3 * p_data.data.normalCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.uv, sizeof(float) * 2 * p_data.data.UVCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.uv, sizeof(float) * 2 * p_data.data.UVCount);
                         tempHead += sizeof(float) * 2 * p_data.data.UVCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.triIndices, sizeof(int) * p_data.data.indCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.triIndices, sizeof(int) * p_data.data.indCount);
                         tempHead += sizeof(int) * p_data.data.indCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.norIndices, sizeof(int) * p_data.data.indCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.norIndices, sizeof(int) * p_data.data.indCount);
                         tempHead += sizeof(int) * p_data.data.indCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.UVIndices, sizeof(int) * p_data.data.indCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.UVIndices, sizeof(int) * p_data.data.indCount);
                         tempHead += sizeof(int) * p_data.data.indCount;
-                        memcpy((unsigned char*)f_messageMapData + tempHead, p_data.data.triPerFace, sizeof(int) * p_data.data.triCount);
+                        memcpy((unsigned char*)f_messageMapData + m_localHead + tempHead, p_data.data.triPerFace, sizeof(int) * p_data.data.triCount);
                         tempHead += sizeof(int) * p_data.data.triCount;
 
                         PrintDebug("***** (CFG " + MString() + cfg + ") " + MString() + (tempHead + p_header.bytePadding) + " " + MString() + p_header.byteTotal);
