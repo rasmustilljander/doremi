@@ -616,10 +616,20 @@ namespace DoremiEditor
                         if(SendMeshMessage(t_header, t_message, t_cfg) == true)
                         {
                             PrintMessage(t_header, p_messageInfo.nodeName, t_message.transformName[0].transformNames, t_message.transformCount);
+                            delete[] t_message.data.uv;
+                            delete[] t_message.data.triPerFace;
+                            delete[] t_message.data.triIndices;
+                            delete[] t_message.data.norIndices;
+                            delete[] t_message.data.UVIndices;
                             return true;
                         }
                         else
                         {
+                            delete[] t_message.data.uv;
+                            delete[] t_message.data.triPerFace;
+                            delete[] t_message.data.triIndices;
+                            delete[] t_message.data.norIndices;
+                            delete[] t_message.data.UVIndices;
                             return false;
                         }
                     }
