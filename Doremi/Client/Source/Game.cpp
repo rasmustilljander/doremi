@@ -143,6 +143,7 @@ namespace Doremi
 
         // Create manager & add manager to list of managers
         AddToGraphicalManagerList(new PressureParticleGraphicManager(sharedContext));
+        AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
         AddToGraphicalManagerList(new GraphicManager(sharedContext));
         AddToGraphicalManagerList(new SkeletalAnimationCoreManager(sharedContext));
         AddToManagerList(new AudioManager(sharedContext));
@@ -158,7 +159,6 @@ namespace Doremi
         AddToManagerList(new CharacterControlSyncManager(sharedContext)); // Must be after movement
         AddToManagerList(new TriggerManager(sharedContext)); // TODOKO should only be needed on server
         AddToManagerList(new ExtraDrainSyncManager(sharedContext));
-        AddToGraphicalManagerList(new GroundEffectManagerClient(sharedContext));
 
         MainMenuHandler::StartMainMenuHandler(sharedContext, m_screenRes);
         MainMenuHandler::GetInstance()->Initialize();
