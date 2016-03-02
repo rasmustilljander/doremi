@@ -67,6 +67,18 @@ namespace DoremiEngine
                     std::cout << "Couldn't fetch window from ID, some options disabled " << std::endl;
                 }
             }
+            UINT t_flags = 0;
+#ifdef _DEBUG
+            t_flags |= D3D11_CREATE_DEVICE_DEBUG;
+
+
+#endif
+            D3D_FEATURE_LEVEL featureLevels[] = {
+                D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0,
+            };
+
+            UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+
             DXGI_SWAP_CHAIN_DESC scd;
 
             // clear out the struct for use
@@ -75,12 +87,15 @@ namespace DoremiEngine
             // fill the swap chain description struct
             scd.BufferCount = 1; // one back buffer
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
+            scd.BufferDesc.RefreshRate.Numerator = 60;
+            scd.BufferDesc.RefreshRate.Denominator = 1;
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
             scd.SampleDesc.Count = 1; // how many multisamples
             scd.Windowed = TRUE; // windowed/full-screen mode
+            scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-            HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL,
+            HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, t_flags, featureLevels, numFeatureLevels,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
             if(!CheckHRESULT(res, "Error when creating device and swapchain, trying withour debug flag"))
             {
