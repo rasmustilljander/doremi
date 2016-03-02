@@ -273,9 +273,9 @@ namespace Doremi
         // Have all managers update
         for(size_t i = 0; i < length; i++)
         {
-            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
+            Doremi::Core::TimerManager::GetInstance().StartTimer(m_serverBrowserManagers.at(i)->GetName());
             m_serverBrowserManagers.at(i)->Update(p_deltaTime);
-            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
+            Doremi::Core::TimerManager::GetInstance().StopTimer(m_serverBrowserManagers.at(i)->GetName());
         }
 
 
