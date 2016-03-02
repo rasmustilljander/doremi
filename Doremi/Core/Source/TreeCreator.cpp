@@ -15,11 +15,11 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 5;
+            m_treeDepth = 8;
 
             // Set the box for the world
             //treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske 
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 15, 100);
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(600, 100, 600);
                                                                       //
                                                                           // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
@@ -53,18 +53,18 @@ namespace Doremi
             while(!t_isDone)
             {
                 ////// DEBUG!
-                if (m_currentNode->depth == m_treeDepth -1)
-                {
-                  int myID = MAX_NUM_ENTITIES;
-                  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
-                  // m_currentNode->boxDimensions, materialID);
-                  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                   // int myID = MAX_NUM_ENTITIES;
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
-                        DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
-                    
-                    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
-                }
+                //if (m_currentNode->depth == m_treeDepth -1)
+                //{
+                //  int myID = MAX_NUM_ENTITIES;
+                //  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                //  // m_currentNode->boxDimensions, materialID);
+                //  // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                //   // int myID = MAX_NUM_ENTITIES;
+                //    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
+                //        DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
+                //    
+                //    m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                //}
                  // DEBUG SLUT
 
                 // Kan optimera med detta senare.

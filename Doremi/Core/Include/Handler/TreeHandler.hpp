@@ -47,7 +47,11 @@ namespace Doremi
             std::vector<uint32_t> m_objectsToDraw;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             TreeCreator* m_treeCreator;
-            uint32_t m_viewDist;
+            float m_viewDist;
+            float m_fov;
+            float m_nearDist;
+            float m_heighWidthNear;
+            float m_heighWidthFar;
             DirectX::XMFLOAT4 m_planes[6];
             bool CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions);
             // SKITKOD TODOEA

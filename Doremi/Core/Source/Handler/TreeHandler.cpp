@@ -51,6 +51,10 @@ namespace Doremi
         {
             m_treeCreator = new TreeCreator(p_sharedContext);
             m_viewDist = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().CameraViewDistance;
+            m_fov = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().CameraFieldOfView;
+            m_nearDist = 0.1f;
+            m_heighWidthNear = 2 * tan(m_fov * 0.5f) * m_nearDist;
+            m_heighWidthFar = 2 * tan(m_fov * 0.5f) * m_viewDist;
 
             //// SKITKOD TODOEA
             // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
@@ -282,13 +286,143 @@ namespace Doremi
             if (playerHandlerClient->PlayerExists())
             {
                 playerentityID = playerHandlerClient->GetPlayerEntityID();
-                TransformComponent* playerPos;
+                //TransformComponent* playerPos;
                 playerPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerentityID);
+                //playerPos = EntityHandler::GetInstance().GetComponentFromStorage<RigidBod>(playerentityID);
                 // std::cout << "X:" << playerPos->position.x << " Y:" << playerPos->position.y << " Z:" << playerPos->position.z << std::endl;
                 m_playerPos = playerPos->position;
             }
                 
+            /// Ett nytt försök!
+
+            DirectX::XMMATRIX directionMatrix = DirectX::XMLoadFloat4x4(&t_camMatrices.ViewMatrix);// *DirectX::XMVECTOR(0, 0, 1);
+            DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0, 1));
+            DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 1, 0));
+            DirectX::XMVECTOR right = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(1, 0, 0));
+            DirectX::XMVECTOR quaternion = DirectX::XMQuaternionRotationMatrix(directionMatrix);
+            forward = DirectX::XMVector3Rotate(forward, quaternion);
+            right = DirectX::XMVector3Rotate(right, quaternion);
+            up = DirectX::XMVector3Rotate(up, quaternion);
             
+
+            DirectX::XMVECTOR upDimensions = (up * m_heighWidthFar * 0.5f);
+            DirectX::XMVECTOR rightDimensions = (right * m_heighWidthFar * 0.5f);
+            DirectX::XMVECTOR forwardFar = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_viewDist;
+            DirectX::XMVECTOR farTopLeft = forwardFar + upDimensions - rightDimensions;
+            DirectX::XMVECTOR farTopRight = forwardFar + upDimensions + rightDimensions;
+            DirectX::XMVECTOR farBottomLeft = forwardFar - upDimensions - rightDimensions;
+            DirectX::XMVECTOR farBottomRight = forwardFar - upDimensions + rightDimensions;
+
+            DirectX::XMVECTOR upDimensionsNear = (up * m_heighWidthNear * 0.5f);
+            DirectX::XMVECTOR rightDimensionsNear = (right * m_heighWidthNear * 0.5f);;
+            DirectX::XMVECTOR forwardNear = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_nearDist;
+            DirectX::XMVECTOR nearTopLeft = forwardNear + upDimensionsNear - rightDimensionsNear;
+            DirectX::XMVECTOR nearTopRight = forwardNear + upDimensionsNear + rightDimensionsNear;
+            DirectX::XMVECTOR nearBottomLeft = forwardNear - upDimensionsNear - rightDimensionsNear;
+            DirectX::XMVECTOR nearBottomRight = forwardNear - upDimensionsNear + rightDimensionsNear;
+
+
+
+
+            // Near PLANE!!
+            DirectX::XMVECTOR planePoint1 = nearBottomLeft;
+            DirectX::XMVECTOR planePoint2 = nearTopLeft;
+            DirectX::XMVECTOR planePoint3 = nearBottomRight;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross( planePoint1, planePoint2);
+            DirectX::XMFLOAT3 planeData;
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[0].x = planeData.x;
+            m_planes[0].y = planeData.y;
+            m_planes[0].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+            DirectX::XMFLOAT3 dotProduct;
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[0].w = dotProduct.x;
+
+            // Far Plane!
+            planePoint1 = farBottomLeft;
+            planePoint2 = farTopLeft;
+            planePoint3 = farBottomRight;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[1].x = planeData.x;
+            m_planes[1].y = planeData.y;
+            m_planes[1].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, farBottomLeft);
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[1].w = dotProduct.x;
+
+            //left plane
+            planePoint1 = nearBottomLeft;
+            planePoint2 = farBottomLeft;
+            planePoint3 = nearTopLeft;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[2].x = planeData.x;
+            m_planes[2].y = planeData.y;
+            m_planes[2].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[2].w = dotProduct.x;
+
+            //right plane
+            planePoint1 = nearTopRight;
+            planePoint2 = farTopRight;
+            planePoint3 = nearBottomRight;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[3].x = planeData.x;
+            m_planes[3].y = planeData.y;
+            m_planes[3].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopRight);
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[3].w = dotProduct.x;
+
+            //ABOVE!
+            planePoint1 = nearTopLeft;
+            planePoint2 = farTopLeft;
+            planePoint3 = farTopRight;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[4].x = planeData.x;
+            m_planes[4].y = planeData.y;
+            m_planes[4].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopLeft);
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[4].w = dotProduct.x;
+
+            //lower plane
+            planePoint1 = nearBottomLeft;
+            planePoint2 = farBottomLeft;
+            planePoint3 = farBottomRight;
+            planePoint1 = planePoint1 - planePoint3;
+            planePoint2 = planePoint2 - planePoint3;
+            // normal vector of the plane
+            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            DirectX::XMStoreFloat3(&planeData, planePoint1);
+            m_planes[5].x = planeData.x;
+            m_planes[5].y = planeData.y;
+            m_planes[5].z = planeData.z;
+            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+            m_planes[5].w = dotProduct.x;
+
+
 
 
 
@@ -377,151 +511,156 @@ namespace Doremi
 
 
 
-            DirectX::XMMATRIX t_viewAndProjectionMatrix;
-            //t_zMin = -t_projection4x4._43 / t_projection4x4._33;
-            //r = m_viewDist / (m_viewDist - t_zMin);
-            //t_projection4x4._33 = r;
-            //t_projection4x4._43 = -r * t_zMin;
-            t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(XMLoadFloat4x4(&t_projection4x4), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
-            /////////t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr ,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
-            DirectX::XMFLOAT4X4 t_viewAndProjection4x4;
-            DirectX::XMStoreFloat4x4(&t_viewAndProjection4x4, t_viewAndProjectionMatrix);
+            //DirectX::XMMATRIX t_viewAndProjectionMatrix;
+            ////t_zMin = -t_projection4x4._43 / t_projection4x4._33;
+            ////r = m_viewDist / (m_viewDist - t_zMin);
+            ////t_projection4x4._33 = r;
+            ////t_projection4x4._43 = -r * t_zMin;
+            //t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(XMLoadFloat4x4(&t_projection4x4), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            ///////////t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr ,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            //DirectX::XMFLOAT4X4 t_viewAndProjection4x4;
+            //DirectX::XMStoreFloat4x4(&t_viewAndProjection4x4, t_viewAndProjectionMatrix);
 
 
 
             //m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
 
 
-            uint32_t cullingDimensions = 10;
-            // Near plane!
-            DirectX::XMVECTOR planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
-            DirectX::XMVECTOR planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
-            DirectX::XMVECTOR planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
-            DirectX::XMFLOAT3 planeData;
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[0].x = planeData.x;
-            m_planes[0].y = planeData.y;
-            m_planes[0].z = planeData.z;
-            m_planes[0].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            //uint32_t cullingDimensions = 10;
+            //// Near plane!
+            //DirectX::XMVECTOR planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            //DirectX::XMVECTOR planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            //DirectX::XMVECTOR planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            //DirectX::XMFLOAT3 planeData;
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[0].x = planeData.x;
+            //m_planes[0].y = planeData.y;
+            //m_planes[0].z = planeData.z;
+            //m_planes[0].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-             ////////DEBUGS
-            //////////////std::cout << "X:" << m_planes[0].x << " Y:" << m_planes[0].y << " Z:" << m_planes[0].z << " W:" << m_planes[0].w << std::endl;
-            ////////////Far plane
-            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[1].x = planeData.x;
-            m_planes[1].y = planeData.y;
-            m_planes[1].z = planeData.z;
-            m_planes[1].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z + cullingDimensions);
+            // ////////DEBUGS
+            ////////////////std::cout << "X:" << m_planes[0].x << " Y:" << m_planes[0].y << " Z:" << m_planes[0].z << " W:" << m_planes[0].w << std::endl;
+            //////////////Far plane
+            //planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[1].x = planeData.x;
+            //m_planes[1].y = planeData.y;
+            //m_planes[1].z = planeData.z;
+            //m_planes[1].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z + cullingDimensions);
 
-            //left plane
-            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[2].x = planeData.x;
-            m_planes[2].y = planeData.y;
-            m_planes[2].z = planeData.z;
-            m_planes[2].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            ////left plane
+            //planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[2].x = planeData.x;
+            //m_planes[2].y = planeData.y;
+            //m_planes[2].z = planeData.z;
+            //m_planes[2].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            //right plane
-            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[3].x = planeData.x;
-            m_planes[3].y = planeData.y;
-            m_planes[3].z = planeData.z;
-            m_planes[3].w = planeData.x * (m_playerPos.x + cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            ////right plane
+            //planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[3].x = planeData.x;
+            //m_planes[3].y = planeData.y;
+            //m_planes[3].z = planeData.z;
+            //m_planes[3].w = planeData.x * (m_playerPos.x + cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            //above plane
-            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[4].x = planeData.x;
-            m_planes[4].y = planeData.y;
-            m_planes[4].z = planeData.z;
-            m_planes[4].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y + cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            ////above plane
+            //planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y + cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[4].x = planeData.x;
+            //m_planes[4].y = planeData.y;
+            //m_planes[4].z = planeData.z;
+            //m_planes[4].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y + cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
 
-            //lower plane
-            planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
-            planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[5].x = planeData.x;
-            m_planes[5].y = planeData.y;
-            m_planes[5].z = planeData.z;
-            m_planes[5].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
+            ////lower plane
+            //planePoint1 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z - cullingDimensions));
+            //planePoint2 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x - cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint3 = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_playerPos.x + cullingDimensions, m_playerPos.y - cullingDimensions, m_playerPos.z + cullingDimensions));
+            //planePoint1 = planePoint1 - planePoint3;
+            //planePoint2 = planePoint2 - planePoint3;
+            //// normal vector of the plane
+            //planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+            //DirectX::XMStoreFloat3(&planeData, planePoint1);
+            //m_planes[5].x = planeData.x;
+            //m_planes[5].y = planeData.y;
+            //m_planes[5].z = planeData.z;
+            //m_planes[5].w = planeData.x * (m_playerPos.x - cullingDimensions) + planeData.y * (m_playerPos.y - cullingDimensions) + planeData.z * (m_playerPos.z - cullingDimensions);
             ////         
             //////// From tutorial!
             ////// Calculate near plane of frustum.
             ////m_planes[0].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._13;
             ////m_planes[0].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._23;
             ////m_planes[0].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._33;
-            ////m_planes[0].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._43;
-            ////DirectX::XMStoreFloat4(&m_planes[0], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[0])));
+            //m_planes[0].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._43;
+            // Trying new near plane!!
+            //m_planes[0].x = t_viewAndProjection4x4._13;
+            //m_planes[0].y = t_viewAndProjection4x4._23;
+            //m_planes[0].z = t_viewAndProjection4x4._33;
+            //m_planes[0].w = t_viewAndProjection4x4._43;
+            //DirectX::XMStoreFloat4(&m_planes[0], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[0])));
 
-            ////// Calculate far plane of frustum.
-            ////m_planes[1].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._13;
-            ////m_planes[1].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._23;
-            ////m_planes[1].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._33;
-            ////m_planes[1].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._43;
-            ////DirectX::XMStoreFloat4(&m_planes[1], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[1])));
+            //////// Calculate far plane of frustum.
+            //m_planes[1].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._13;
+            //m_planes[1].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._23;
+            //m_planes[1].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._33;
+            //m_planes[1].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._43;
+            //DirectX::XMStoreFloat4(&m_planes[1], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[1])));
 
-            ////// Calculate left plane of frustum.
-            ////m_planes[2].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._11;
-            ////m_planes[2].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._21;
-            ////m_planes[2].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._31;
-            ////m_planes[2].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._41;
-            ////DirectX::XMStoreFloat4(&m_planes[2], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[2])));
+            //// Calculate left plane of frustum.
+            //m_planes[2].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._11;
+            //m_planes[2].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._21;
+            //m_planes[2].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._31;
+            //m_planes[2].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._41;
+            //DirectX::XMStoreFloat4(&m_planes[2], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[2])));
 
-            ////// Calculate right plane of frustum.
-            ////m_planes[3].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._11;
-            ////m_planes[3].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._21;
-            ////m_planes[3].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._31;
-            ////m_planes[3].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._41;
-            ////DirectX::XMStoreFloat4(&m_planes[3], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[3])));
+            //// Calculate right plane of frustum.
+            //m_planes[3].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._11;
+            //m_planes[3].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._21;
+            //m_planes[3].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._31;
+            //m_planes[3].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._41;
+            //DirectX::XMStoreFloat4(&m_planes[3], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[3])));
 
-            ////// Calculate top plane of frustum.
-            ////m_planes[4].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._12;
-            ////m_planes[4].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._22;
-            ////m_planes[4].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._32;
-            ////m_planes[4].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._42;
-            ////DirectX::XMStoreFloat4(&m_planes[4], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[4])));
+            //// Calculate top plane of frustum.
+            //m_planes[4].x = t_viewAndProjection4x4._14 - t_viewAndProjection4x4._12;
+            //m_planes[4].y = t_viewAndProjection4x4._24 - t_viewAndProjection4x4._22;
+            //m_planes[4].z = t_viewAndProjection4x4._34 - t_viewAndProjection4x4._32;
+            //m_planes[4].w = t_viewAndProjection4x4._44 - t_viewAndProjection4x4._42;
+            //DirectX::XMStoreFloat4(&m_planes[4], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[4])));
 
-            ////// Calculate bottom plane of frustum.
-            ////m_planes[5].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._12;
-            ////m_planes[5].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._22;
-            ////m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
-            ////m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
-            ////DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
+            //// Calculate bottom plane of frustum.
+            //m_planes[5].x = t_viewAndProjection4x4._14 + t_viewAndProjection4x4._12;
+            //m_planes[5].y = t_viewAndProjection4x4._24 + t_viewAndProjection4x4._22;
+            //m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
+            //m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
+            //DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
 
 
             while(!t_isDone)
