@@ -69,6 +69,7 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             void BuildTree();
             void CreateAndDivideTheChildren(OctNode& o_treeNode);
+            bool m_allreadyBuilt;
             // OctNode GetTree() const { return treeRoot; }
         };
     }

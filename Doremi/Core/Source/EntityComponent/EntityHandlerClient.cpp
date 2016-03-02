@@ -18,6 +18,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/AudioComponent.hpp>
 
 #include <DoremiEngine/Audio/Include/AudioModule.hpp>
+#include <Doremi/Core/Include/Handler/TreeHandler.hpp>
 
 #include <iostream>
 
@@ -139,6 +140,7 @@ namespace Doremi
                 // TODO change load based on map in event
                 LevelLoaderClient t_levelLoader = LevelLoaderClient(m_sharedContext);
                 t_levelLoader.LoadLevel("Levels/IntroScene.drm");
+                Core::TreeHandler::GetInstance()->BuildTheTree();
 
                 TimeHandler* t_timeHandler = TimeHandler::GetInstance();
                 t_timeHandler->ResetTime();

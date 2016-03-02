@@ -175,7 +175,7 @@ namespace Doremi
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         // BuildWorld(sharedContext);
 
-        Core::TreeHandler::GetInstance()->BuildTheTree();
+        
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
