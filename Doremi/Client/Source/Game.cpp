@@ -79,6 +79,8 @@
 
 // Timer
 #include <Doremi/Core/Include/Timing/TimerManager.hpp>
+#include <Doremi/Core/Include/Timing/NamedTimer.hpp>
+#include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
 
 // Third party
@@ -112,7 +114,7 @@ namespace Doremi
 
     void GameMain::Initialize()
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
 
         using namespace Core;
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
@@ -171,8 +173,6 @@ namespace Doremi
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
         AudioHandler::GetInstance()->SetupRepeatableRecording();
-
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::AddToManagerList(Manager* p_manager) { m_managers.push_back(p_manager); }
@@ -183,7 +183,7 @@ namespace Doremi
 
     void GameMain::BuildWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
-        // TIME_FUNCTION_START
+        // FUNCTION_TIME
         // Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
         // Core::LevelLoaderClient t_levelLoader(sharedContext);
 
@@ -210,7 +210,7 @@ namespace Doremi
 
     void GameMain::Run()
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         // TODOCM remove for better timer
         // GameLoop is not currently set
         TimeHandler* t_timeHandler = TimeHandler::GetInstance();
@@ -247,15 +247,13 @@ namespace Doremi
 
             // Update camera after we update positions
             CameraHandler::GetInstance()->UpdateDraw();
-
             Draw(t_timeHandler->Frame);
         }
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::UpdateGame(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
 
         size_t length = m_managers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
@@ -263,21 +261,18 @@ namespace Doremi
         // Have all managers update
         for(size_t i = 0; i < length; i++)
         {
-            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
+            NAMED_TIMER(m_managers.at(i)->GetName());
             m_managers.at(i)->Update(p_deltaTime);
-            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
 
         CameraHandler::GetInstance()->UpdateInput(p_deltaTime);
 
         // PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
-
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::UpdateServerBrowser(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
 
         size_t length = m_serverBrowserManagers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
@@ -285,18 +280,14 @@ namespace Doremi
         // Have all managers update
         for(size_t i = 0; i < length; i++)
         {
-            Doremi::Core::TimerManager::GetInstance().StartTimer(m_serverBrowserManagers.at(i)->GetName());
+            NAMED_TIMER(m_serverBrowserManagers.at(i)->GetName());
             m_serverBrowserManagers.at(i)->Update(p_deltaTime);
-            Doremi::Core::TimerManager::GetInstance().StopTimer(m_serverBrowserManagers.at(i)->GetName());
         }
-
-
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::Update(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         static_cast<PlayerHandlerClient*>(Core::PlayerHandler::GetInstance())->UpdatePlayerInputs();
 
         AudioHandler::GetInstance()->Update(p_deltaTime);
@@ -351,32 +342,30 @@ namespace Doremi
                 break;
             }
         }
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::DrawGame(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         const size_t length = m_graphicalManagers.size();
         for(size_t i = 0; i < length; i++)
         {
-            Doremi::Core::TimerManager::GetInstance().StartTimer(m_graphicalManagers.at(i)->GetName());
+            NAMED_TIMER(m_graphicalManagers.at(i)->GetName());
             m_graphicalManagers.at(i)->Update(p_deltaTime);
-            Doremi::Core::TimerManager::GetInstance().StopTimer(m_graphicalManagers.at(i)->GetName());
         }
 
         SkyBoxHandler::GetInstance()->Draw();
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::Draw(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         /** TODOLH Detta ska flyttas till en function som i updaten*/
         Core::DoremiGameStates t_state = Core::StateHandler::GetInstance()->GetState();
         m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
         switch(t_state)
         {
+
             case Core::DoremiGameStates::RUNGAME:
                 // Draw Game
                 DrawGame(p_deltaTime);
@@ -389,17 +378,15 @@ namespace Doremi
         m_screenSpaceDrawer->Draw();
 
         m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
-        TIME_FUNCTION_STOP
     }
 
     void GameMain::Start()
     {
         try
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             Initialize();
             Run();
-            TIME_FUNCTION_STOP
         }
         catch(const std::exception& e)
         {

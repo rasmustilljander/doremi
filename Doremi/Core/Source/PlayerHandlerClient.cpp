@@ -39,7 +39,7 @@
 #include <Doremi/Core/Include/EventInterpeter.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
+#include <Timing/FunctionTimer.hpp>
 
 #include <iostream>
 
@@ -101,7 +101,7 @@ namespace Doremi
 
         void PlayerHandlerClient::Update(double p_dt)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             // If player is created we can update it
             if(m_player->IsCreated)
@@ -120,13 +120,11 @@ namespace Doremi
 
                 EventHandler::GetInstance()->BroadcastEvent(t_newEvent);
             }
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerClient::UpdatePlayerRotations(Player* p_player)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             InputHandlerClient* inputHandler = (InputHandlerClient*)p_player->m_inputHandler;
 
@@ -155,13 +153,11 @@ namespace Doremi
                 TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                 transComp->rotation = newOrientation;
             }
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerClient::UpdatePlayerInputs()
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             m_sharedContext.GetInputModule().Update();
 
             // Update the inputhandler
@@ -173,10 +169,8 @@ namespace Doremi
             {
                 using namespace Doremi::Utilities::Logging;
                 m_logger->LogText(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
-                    inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
+                                  inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
             }
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerClient::SetNewPlayerEntityID(const EntityID& p_entityID)

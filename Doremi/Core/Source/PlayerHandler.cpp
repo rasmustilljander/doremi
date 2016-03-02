@@ -42,8 +42,7 @@
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
-
+#include <Timing/FunctionTimer.hpp>
 
 #include <iostream>
 
@@ -70,7 +69,7 @@ namespace Doremi
 
         void PlayerHandler::UpdatePlayerPositions(Player* p_player)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             int t_checkIfWeHavePlayer = EntityHandler::GetInstance().GetLastEntityIndex();
 
             XMFLOAT3 t_entityVelocity = XMFLOAT3(0, 0, 0);
@@ -149,12 +148,11 @@ namespace Doremi
                     moveComp->movement.z += movement.z;
                 }
             }
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandler::UpdateFiring(Player* p_player)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             // THOS DOES NOTHING AT THIS MOMENT
             // TODOJB fix gun on server
@@ -184,8 +182,6 @@ namespace Doremi
                     EventHandler::GetInstance()->BroadcastEvent(t_animationTransitionEvent);
                 }
             }
-
-            TIME_FUNCTION_STOP
         }
     }
 }

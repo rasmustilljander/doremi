@@ -6,7 +6,7 @@
 
 #include <iostream>
 // Timing
-#include <Timing/TimerManager.hpp>
+#include <Timing/FunctionTimer.hpp>
 
 namespace Doremi
 {
@@ -57,7 +57,7 @@ namespace Doremi
 
         void EventHandlerServer::DeliverBasicEvents() // TODOJB fix broadcast event when no one is subscribed to them (currently crashes if you do)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             // Iterate through all events
             for(size_t i = 0; i < m_basicEventBox.size(); i++) // need to check size if a new event is cast during delivery
@@ -80,12 +80,11 @@ namespace Doremi
             }
 
             m_basicEventBox.clear();
-            TIME_FUNCTION_STOP
         }
 
         void EventHandlerServer::DeliverRemoveEvents() // TODOJB fix broadcast event when no one is subscribed to them (currently crashes if you do)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             // Iterate through all events
             for(size_t i = 0; i < m_removeEventBox.size(); i++) // need to check size if a new event is cast during delivery
@@ -108,7 +107,6 @@ namespace Doremi
             }
 
             m_removeEventBox.clear();
-            TIME_FUNCTION_STOP
         }
     }
 }

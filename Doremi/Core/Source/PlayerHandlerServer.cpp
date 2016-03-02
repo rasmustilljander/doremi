@@ -27,7 +27,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
+#include <Timing/FunctionTimer.hpp>
 
 // AI
 #include <DoremiEngine/AI/Include/AIModule.hpp>
@@ -134,7 +134,7 @@ namespace Doremi
 
         void PlayerHandlerServer::Update(double p_dt)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             // Update all players
             for(auto& t_player : m_playerMap)
@@ -147,25 +147,19 @@ namespace Doremi
                 t_player.second->m_frequencyBufferHandler->Update();
                 HandleChangeOfSpawnPoint(t_player.second); // TODOJB remove from final release?
             }
-
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerServer::UpdatePlayerInputs(Player* t_player)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
                 ((InputHandlerServer*)t_player->m_inputHandler)
                     ->Update(t_player->m_playerEntityID);
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerServer::UpdatePlayerRotations(Player* t_player)
         {
-            TIME_FUNCTION_START
-
+            FUNCTION_TIMER
             InputHandlerServer* inputHandler = (InputHandlerServer*)t_player->m_inputHandler;
 
             EntityID entityID = t_player->m_playerEntityID;
@@ -175,8 +169,6 @@ namespace Doremi
                 TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(entityID);
                 transComp->rotation = inputHandler->GetOrientationFromInput();
             }
-
-            TIME_FUNCTION_STOP
         }
 
         void PlayerHandlerServer::CreateNewPlayer(uint32_t p_playerID, InputHandler* p_inputHandler)

@@ -2,8 +2,7 @@
 #include <DoremiEngine/Input/Include/InputModule.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
-
+#include <Timing/FunctionTimer.hpp>
 
 #include <iostream>
 
@@ -109,14 +108,13 @@ namespace Doremi
 
         void InputHandlerClient::UpdateInputsFromEngine()
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             // Recieves the following things from the Input Module.
             m_mouseMoveX = m_sharedContext.GetInputModule().GetMouseMovementX();
             m_mouseMoveY = m_sharedContext.GetInputModule().GetMouseMovementY();
             m_musInputFromModule = m_sharedContext.GetInputModule().GetMouseButtonInput();
             m_keyboardInputFromModule = m_sharedContext.GetInputModule().GetKeyBoardInput();
             m_mouseWheelInput = m_sharedContext.GetInputModule().GetMouseWheelSpins();
-            TIME_FUNCTION_STOP
         }
 
         void InputHandlerClient::PrintInputStructsDEBUG()
@@ -168,13 +166,12 @@ namespace Doremi
 
         void InputHandlerClient::Update()
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             UpdateInputsFromEngine();
             m_lastUpdateMaskWithInput = m_maskWithInput;
             BuildMaskFromEngineForGame();
             // PrintInputStructsDEBUG();
             // PrintInputMouseMovement();
-            TIME_FUNCTION_STOP
         }
 
         void InputHandlerClient::ChangeThisKeyToThat(int p_bitMask)

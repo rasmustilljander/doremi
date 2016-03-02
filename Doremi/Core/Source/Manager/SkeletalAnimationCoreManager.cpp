@@ -30,9 +30,6 @@
 #include <dxgi.h>
 #include <d3d11_1.h>
 
-// Timer
-#include <Doremi/Core/Include/Timing/TimerManager.hpp>
-
 #include <DirectXMath.h>
 // Third party
 
@@ -353,7 +350,6 @@ namespace Doremi
         {
             // p_dt = p_dt / 5;
             // Loop through all entities
-            TIME_FUNCTION_START
             const size_t t_length = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to perform various functions on enteties that have skeletal animation
             int t_mask = (int)ComponentType::Render | (int)ComponentType::Transform | (int)ComponentType::UpperBodySkeletalAnimation |
@@ -511,8 +507,6 @@ namespace Doremi
                     // do nothing
                 }
             }
-
-            TIME_FUNCTION_STOP
         }
     }
 }

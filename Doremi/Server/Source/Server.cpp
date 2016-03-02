@@ -60,6 +60,9 @@
 
 // Timer
 #include <Doremi/Core/Include/Timing/TimerManager.hpp>
+#include <Doremi/Core/Include/Timing/NamedTimer.hpp>
+#include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
+#include <Utility/Utilities/Include/Chrono/Timer.hpp>
 
 // Third party
 #include <DirectXMath.h>
@@ -80,7 +83,7 @@ namespace Doremi
 
     void ServerMain::Initialize()
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(
             DoremiEngine::Core::EngineModuleEnum::NETWORK | DoremiEngine::Core::EngineModuleEnum::PHYSICS | DoremiEngine::Core::EngineModuleEnum::AI);
 
@@ -151,12 +154,11 @@ namespace Doremi
         // Remove later, needed to see something when we play solo cause of camera interactions with input
         // Doremi::Core::InputHandlerClient* inputHandler = new Doremi::Core::InputHandlerClient(sharedContext);
         // Core::PlayerHandler::GetInstance()->CreateNewPlayer(300, (Doremi::Core::InputHandler*)inputHandler);
-        TIME_FUNCTION_STOP
     }
 
     void ServerMain::SpawnDebugWorld(const DoremiEngine::Core::SharedContext& sharedContext)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         Core::EntityFactory& t_entityFactory = *Core::EntityFactory::GetInstance();
 
         // for(size_t i = 0; i < 1; i++)
@@ -194,12 +196,11 @@ namespace Doremi
         //{
         //    Core::EntityHandler::GetInstance().GetComponentFromStorage<Core::TransformComponent>(entityID)->position = position;
         //}
-        TIME_FUNCTION_STOP
     }
 
     void ServerMain::Run()
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
 
         TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
@@ -222,12 +223,11 @@ namespace Doremi
             }
             state = Core::ServerStateHandler::GetInstance()->GetState();
         }
-        TIME_FUNCTION_STOP
     }
 
     void ServerMain::UpdateGame(double p_deltaTime)
     {
-        TIME_FUNCTION_START
+        FUNCTION_TIMER
         // Deliver basic events
         static_cast<Core::EventHandlerServer*>(Core::EventHandler::GetInstance())->DeliverBasicEvents();
 
@@ -242,21 +242,18 @@ namespace Doremi
         const size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
-            Doremi::Core::TimerManager::GetInstance().StartTimer(m_managers.at(i)->GetName());
+            NAMED_TIMER(m_managers.at(i)->GetName());
             m_managers.at(i)->Update(p_deltaTime);
-            Doremi::Core::TimerManager::GetInstance().StopTimer(m_managers.at(i)->GetName());
         }
-        TIME_FUNCTION_STOP
     }
 
     void ServerMain::Start()
     {
         try
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             Initialize();
             Run();
-            TIME_FUNCTION_STOP
         }
         catch(...)
         {

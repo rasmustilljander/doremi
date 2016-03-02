@@ -7,12 +7,14 @@
 #include <SequenceMath.hpp>
 #include <iostream>
 #include <algorithm>
-#include <Timing/TimerManager.hpp>
 #include <Doremi/Core/Include/PositionCorrectionHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
+
+// Timer
+#include <Timing/FunctionTimer.hpp>
 
 namespace Doremi
 {
@@ -50,7 +52,7 @@ namespace Doremi
 
         void InterpolationHandler::InterpolateFrame(double p_alpha)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
             DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
@@ -103,12 +105,11 @@ namespace Doremi
                     // cout << DrawTransform->position.y << endl; TODOCM remove
                 }
             }
-            TIME_FUNCTION_STOP
         }
 
         void InterpolationHandler::UpdateInterpolationTransforms()
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             // If the snapshot we're currently interpolating towards is more recent
             // then the one that we should be interpolating towards, we skip
             // cout << (int)m_snapshotSequenceReal << " " << (int)m_snapshotSequenceUsed << " "
@@ -369,7 +370,6 @@ namespace Doremi
             }
             m_snapshotSequenceReal++;
             // std::cout << "NumOfBufferedSnapshots: " << m_DelayedSnapshots.size() << std::endl;
-            TIME_FUNCTION_STOP
         }
 
         void InterpolationHandler::SetSequence(uint8_t p_sequence)

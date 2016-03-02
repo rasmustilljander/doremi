@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
+#include <string>
 
 namespace DoremiEngine
 {
@@ -10,20 +11,46 @@ namespace DoremiEngine
     }
 }
 
-#define FILE_AND_FUNC std::string(__FILE__) + ":" + std::string(__func__)
-
-#ifdef CUSTOM_TIMING_MEASUREMENT
-#define TIME_FUNCTION_START Doremi::Core::TimerManager::GetInstance().StartTimer(FILE_AND_FUNC);
-#define TIME_FUNCTION_STOP Doremi::Core::TimerManager::GetInstance().StopTimer(FILE_AND_FUNC);
-#else
-#define TIME_FUNCTION_START ;
-#define TIME_FUNCTION_STOP ;
-#endif
-
 namespace Doremi
 {
     namespace Core
     {
+        struct TimerData
+        {
+            TimerData(uint32_t p_startLine) : data(0), startLine(p_startLine) {}
+
+            ~TimerData() {}
+
+            Utilities::Chrono::Timer timer;
+            double data;
+            uint32_t startLine;
+        };
+
+        struct TimerKey
+        {
+            TimerKey(const std::string& p_file, const std::string& p_function, const uint32_t& p_line)
+                : file(p_file), function(p_function), line(p_line)
+            {
+            }
+
+            ~TimerKey() {}
+
+            bool operator==(const TimerKey& rhs) const { return (rhs.file == file && rhs.function == function && rhs.line == line); }
+
+            std::string file;
+            std::string function;
+            uint32_t line;
+        };
+
+        struct TimerKeyHasher
+        {
+            std::size_t operator()(const TimerKey& key) const
+            {
+                std::hash<std::string> hasher;
+                return hasher(key.file + key.function + std::to_string(key.line));
+            }
+        };
+
         class TimerManager
         {
         public:
@@ -38,6 +65,16 @@ namespace Doremi
             /**
             TODO docs
             */
+            const TimerData* const StartTimer(const std::string& p_file, const std::string& p_function, const uint32_t& p_lineNumber);
+
+            /**
+            TODO docs
+            */
+            void TimerManager::StopTimer(const TimerData* const p_timer);
+
+            /**
+            TODO docs
+            */
             void StartTimer(const std::string& p_name);
 
             /**
@@ -45,10 +82,6 @@ namespace Doremi
             */
             void StopTimer(const std::string& p_name);
 
-            /**
-            TODO docs
-            */
-            void ResetTimer(const std::string& p_name);
 
             /**
             TODO docs
@@ -59,7 +92,8 @@ namespace Doremi
             TimerManager();
             virtual ~TimerManager();
 
-            std::unordered_map<std::string, std::pair<Utilities::Chrono::Timer, double>> m_timers;
+            std::unordered_map<TimerKey, TimerData, TimerKeyHasher> m_timers;
+            std::unordered_map<std::string, TimerData> m_namedTimers;
         };
     }
 }

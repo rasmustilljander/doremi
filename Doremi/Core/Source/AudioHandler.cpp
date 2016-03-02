@@ -23,7 +23,7 @@
 #include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
+#include <Timing/FunctionTimer.hpp>
 
 
 namespace Doremi
@@ -123,7 +123,7 @@ namespace Doremi
 
         float AudioHandler::GetRepeatableSoundFrequency()
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             // Make sure that the analysis is complete otherwise m_frequencies wont be filled and we can get index out of range
             if(m_repeatableAnalysisComplete)
             {
@@ -141,12 +141,10 @@ namespace Doremi
                 int arrayPosition = static_cast<int>(t_size * t_percentualPosition);
                 // Get the frequency
                 float retValue = m_frequencies[arrayPosition];
-                TIME_FUNCTION_STOP
                 return retValue;
             }
             else
             {
-                TIME_FUNCTION_STOP
                 return 0;
             }
         }
@@ -163,7 +161,7 @@ namespace Doremi
 
         void AudioHandler::Update(double p_deltaTime)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             unsigned int recordPointer;
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
             switch(m_SoundState)
@@ -268,8 +266,6 @@ namespace Doremi
                 using namespace Doremi::Utilities::Logging;
                 m_logger->LogText(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
             }
-
-            TIME_FUNCTION_STOP
         }
 
         void AudioHandler::OnEvent(Event* p_event)

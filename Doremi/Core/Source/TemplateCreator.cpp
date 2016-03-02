@@ -43,7 +43,7 @@
 #include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 
 // Timing
-#include <Timing/TimerManager.hpp>
+#include <Timing/FunctionTimer.hpp>
 
 
 // Material
@@ -149,7 +149,7 @@ namespace Doremi
 
         void CreateRangedEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
             transComp->scale = unitScale;
@@ -231,12 +231,11 @@ namespace Doremi
             blueprint[ComponentType::ExtraDrain];
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateRangedEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
             transComp->scale = unitScale;
@@ -303,12 +302,11 @@ namespace Doremi
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::RangedEnemyEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateMeleeEnemyBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
             transComp->scale = unitScale;
@@ -369,12 +367,11 @@ namespace Doremi
             blueprint[ComponentType::ExtraDrain];
 
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateMeleeEnemyBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityBlueprint blueprint;
             TransformComponent* transComp = new TransformComponent();
             blueprint[ComponentType::Transform] = transComp;
@@ -434,12 +431,11 @@ namespace Doremi
 
             // Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::MeleeEnemyEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateBulletBlueprintServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             /// Create Blueprint
             EntityBlueprint blueprint;
 
@@ -477,12 +473,11 @@ namespace Doremi
             blueprint[ComponentType::LifeTime] = lifeTimeComp;
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateBulletBlueprintClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             /// Create Blueprint
             EntityBlueprint blueprint;
 
@@ -505,12 +500,11 @@ namespace Doremi
 
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateDebugPlatformsServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Create blueprint
@@ -551,12 +545,11 @@ namespace Doremi
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
-            TIME_FUNCTION_STOP
         }
 
         void CreateDebugPlatformsClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Create blueprint
@@ -614,12 +607,11 @@ namespace Doremi
 
             // Register bluepirnt
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlatformEntity, t_platform);
-            TIME_FUNCTION_STOP
         }
 
         void CreatePlayerServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Create blueprint
@@ -698,12 +690,11 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Health] = hpComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreatePlayerClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             EntityBlueprint t_avatarBlueprint;
@@ -809,12 +800,11 @@ namespace Doremi
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateNetworkPlayerClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
 
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
@@ -872,13 +862,11 @@ namespace Doremi
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::NetworkPlayerEntity, t_avatarBlueprint);
-
-            TIME_FUNCTION_STOP
         }
 
         void CreateJawsDebugObjectServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Create blueprint
@@ -894,12 +882,11 @@ namespace Doremi
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateJawsDebugObjectClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             EntityBlueprint t_avatarBlueprint;
@@ -922,11 +909,10 @@ namespace Doremi
 
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::JawsDebugEntity, t_avatarBlueprint);
-            TIME_FUNCTION_STOP
         }
         void CreateTriggerObjectClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             EntityBlueprint t_triggerBlueprint;
             // Transform comp
@@ -940,11 +926,11 @@ namespace Doremi
             t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::TriggerEntity, t_triggerBlueprint);
-            TIME_FUNCTION_STOP
         }
+
         void CreateTriggerObjectServer(const DoremiEngine::Core::SharedContext& sharedContext)
         {
-            TIME_FUNCTION_START
+            FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             EntityBlueprint t_triggerBlueprint;
             // Transform comp
@@ -958,7 +944,6 @@ namespace Doremi
             t_triggerBlueprint[ComponentType::Trigger] = t_triggerComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::TriggerEntity, t_triggerBlueprint);
-            TIME_FUNCTION_STOP
         }
 
         void CreateSpawnerEntityClient()
@@ -969,6 +954,7 @@ namespace Doremi
             t_blueprint[ComponentType::Transform] = t_transformComp;
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::EnemySpawnerEntity, t_blueprint);
         }
+
         void CreateSpawnerEntityServer() // Should be obsolete with the new way with level editor
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
@@ -989,6 +975,7 @@ namespace Doremi
 
             t_entityHandler.RegisterEntityBlueprint(Blueprints::EnemySpawnerEntity, t_blueprint);
         }
+
         void TemplateCreator::CreateTemplatesForClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
             CreateDebugPlatformsClient(sharedContext);
