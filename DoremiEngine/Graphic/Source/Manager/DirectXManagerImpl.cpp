@@ -741,8 +741,8 @@ namespace DoremiEngine
 
                     // Check if anything have changed or if we are above max instances
                     if(renderData[j].vertexData != renderData[j + 1].vertexData || renderData[i].samplerState != renderData[i + 1].samplerState ||
-                       renderData[i].diffuseTexture != renderData[i + 1].diffuseTexture || renderData[i].glowTexture != renderData[i + 1].glowTexture ||
-                       &renderData[i].materialMessage != &renderData[i + 1].materialMessage || worldMatrices.size() > MAX_NUMBER_OF_INSTANCES)
+                       renderData[i].diffuseTexture != renderData[i + 1].diffuseTexture ||
+                       renderData[i].glowTexture != renderData[i + 1].glowTexture || worldMatrices.size() >= MAX_NUMBER_OF_INSTANCES)
                     {
                         j++;
                         break;
@@ -796,7 +796,7 @@ namespace DoremiEngine
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
                 }
-                if(&renderData[i].materialMessage != &renderData[i - 1].materialMessage) // Check if texture has been changed
+                if(&renderData[i].materialMessage != &renderData[i - 1].materialMessage) // Is this a faulty check?
                 {
                     materialData = renderData[i].materialMessage;
                     if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
@@ -810,7 +810,6 @@ namespace DoremiEngine
                     }
                 }
             }
-
             // Draw the last one since it's a special case
 
             WorldMatrixPair newPair;
