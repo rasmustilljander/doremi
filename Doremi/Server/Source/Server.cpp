@@ -251,15 +251,19 @@ namespace Doremi
 
     void ServerMain::Start()
     {
-        TIME_FUNCTION_START
-        Initialize();
-        Run();
-        TIME_FUNCTION_STOP
+        try
+        {
+            TIME_FUNCTION_START
+            Initialize();
+            Run();
+            TIME_FUNCTION_STOP
+        }
+        catch(...)
+        {
+            printf("Gamemain start exception.\n");
+        }
+        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
     }
 
-    void ServerMain::Stop()
-    {
-        Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
-        Core::ServerStateHandler::GetInstance()->SetState(ServerStates::EXIT);
-    }
+    void ServerMain::Stop() { Core::ServerStateHandler::GetInstance()->SetState(ServerStates::EXIT); }
 }
