@@ -97,12 +97,14 @@ namespace DoremiEngine
 
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, t_flags, featureLevels, numFeatureLevels,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
+
             if(!CheckHRESULT(res, "Error when creating device and swapchain, trying withour debug flag"))
             {
                 res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd, &m_swapChain,
                                                     &m_device, NULL, &m_deviceContext);
                 CheckHRESULT(res, "Error when creating device and swapchain");
             }
+
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
 
@@ -653,14 +655,14 @@ namespace DoremiEngine
 
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 
-                WorldMatrices t_worldMatrices;
+                WorldMatrixPair t_worldMatrices;
 
                 DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
                 DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
                 t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
                 DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
                 t_worldMatrices.worldMat = renderData[i].worldMatrix;
-                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
+                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrixPair)); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
                 m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
@@ -687,6 +689,7 @@ namespace DoremiEngine
         void DirectXManagerImpl::RenderAllMeshs()
         {
             using namespace DoremiEditor::Core;
+            using namespace DirectX;
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -706,14 +709,6 @@ namespace DoremiEngine
             ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
             ID3D11SamplerState* samplerState = renderData[0].samplerState;
 
-            // Iterate all the entries and do the smallest amount of changes to the GPU
-            // Render the first entry outside of the loop because it's a specialcase
-
-            D3D11_MAPPED_SUBRESOURCE tMS;
-            m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &renderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
-            m_deviceContext->Unmap(m_worldMatrix, NULL);
-
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
@@ -721,31 +716,52 @@ namespace DoremiEngine
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
 
+            D3D11_MAPPED_SUBRESOURCE tMS;
             m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
             memcpy(tMS.pData, &renderData[0].materialMessage.data, sizeof(&renderData[0].materialMessage.data));
             m_deviceContext->Unmap(m_materialBuffer, NULL);
             m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
 
-
-            if(renderData[0].indexData != nullptr)
-            {
-                m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
-                m_deviceContext->DrawIndexed(renderData[0].indexCount, 0, 0);
-            }
-            else
-            {
-                m_deviceContext->Draw(renderData[0].vertexCount, 0);
-            }
-
             // TODO Can be upgraded with instanced drawing
+            // sista saken som ska renderas kanske inte renderas nu...
             const size_t vectorSize = renderData.size();
-            for(size_t i = 1; i < vectorSize; ++i)
+            for(size_t i = 0; i < vectorSize - 1;)
             {
-                if(renderData[i].vertexData != renderData[i - 1].vertexData) // Check if vertexdata has been changed
+                std::vector<WorldMatrixPair> worldMatrices;
+                size_t j = i;
+                for(; j < vectorSize - 1; j++)
                 {
-                    vertexData = renderData[i].vertexData;
-                    m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
+                    WorldMatrixPair newPair;
+                    newPair.worldMat = renderData[j].worldMatrix;
+                    DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
+                    t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, t_mat));
+                    DirectX::XMStoreFloat4x4(&newPair.invTransWorldMat, t_mat);
+                    worldMatrices.push_back(newPair);
+                    if(renderData[j].vertexData != renderData[j + 1].vertexData) // Check if vertexdata will change
+                    {
+                        j++;
+                        break;
+                    }
                 }
+
+                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                memcpy(tMS.pData, worldMatrices.data(), sizeof(WorldMatrixPair) * worldMatrices.size()); // Copy matrix to buffer
+                m_deviceContext->Unmap(m_worldMatrix, NULL);
+
+                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+                if(renderData[i].indexData != nullptr)
+                {
+                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
+                    m_deviceContext->DrawIndexedInstanced(renderData[i].indexCount, worldMatrices.size(), 0, 0, 0);
+                }
+                else
+                {
+                    m_deviceContext->DrawInstanced(renderData[i].vertexCount, worldMatrices.size(), 0, 0);
+                }
+
+                i = j;
+                vertexData = renderData[j].vertexData;
+                m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
 
                 if(renderData[i].samplerState != renderData[i - 1].samplerState)
                 {
@@ -789,30 +805,8 @@ namespace DoremiEngine
                         m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
                     }
                 }
-
-                m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-
-                WorldMatrices t_worldMatrices;
-
-                DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
-                DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
-                t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
-                DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
-                t_worldMatrices.worldMat = renderData[i].worldMatrix;
-                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
-                m_deviceContext->Unmap(m_worldMatrix, NULL);
-
-                m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-                if(renderData[i].indexData != nullptr)
-                {
-                    m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
-                    m_deviceContext->DrawIndexed(renderData[i].indexCount, 0, 0);
-                }
-                else
-                {
-                    m_deviceContext->Draw(renderData[i].vertexCount, 0);
-                }
             }
+
             renderData.clear(); // Empty the vector
         }
 
@@ -925,14 +919,14 @@ namespace DoremiEngine
 
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
 
-                WorldMatrices t_worldMatrices;
+                WorldMatrixPair t_worldMatrices;
 
                 DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&transRenderData[i].worldMatrix);
                 DirectX::XMVECTOR t_det = DirectX::XMMatrixDeterminant(t_mat);
                 t_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&t_det, t_mat));
                 DirectX::XMStoreFloat4x4(&t_worldMatrices.invTransWorldMat, t_mat);
                 t_worldMatrices.worldMat = transRenderData[i].worldMatrix;
-                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrices)); // Copy matrix to buffer
+                memcpy(tMS.pData, &t_worldMatrices, sizeof(WorldMatrixPair)); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
                 m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);

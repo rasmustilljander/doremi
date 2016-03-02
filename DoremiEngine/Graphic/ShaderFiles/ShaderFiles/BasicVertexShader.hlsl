@@ -1,4 +1,4 @@
-#define MAX_NUMBER_OF_INSTANCES 200
+#define MAX_NUMBER_OF_INSTANCES 100
 
 cbuffer CameraMatrixBuffer : register(b1)
 {

@@ -24,7 +24,7 @@ namespace DoremiEngine
             ZeroMemory(&bd, sizeof(bd));
             bd.Usage = D3D11_USAGE_DYNAMIC;
             bd.ByteWidth =
-                96 * sizeof(DirectX::XMFLOAT4X4); // TODOXX hardcoded value. This is max bones in a rig Matches the skeletalanimation vertexshader
+                40 * sizeof(DirectX::XMFLOAT4X4); // TODOXX hardcoded value. This is max bones in a rig Matches the skeletalanimation vertexshader
             bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDevice()->CreateBuffer(&bd, NULL, &m_matricesBuffer);

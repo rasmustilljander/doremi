@@ -16,10 +16,15 @@ namespace DoremiEngine
         // class DepthStencilState;
         // class RasterizerState;
 
-        struct WorldMatrices
+        struct WorldMatrixPair
         {
             DirectX::XMFLOAT4X4 worldMat;
             DirectX::XMFLOAT4X4 invTransWorldMat;
+        };
+
+        struct WorldMatrices
+        {
+            WorldMatrixPair matricPairs[100];
         };
 
         class DirectXManagerImpl : public DirectXManager
