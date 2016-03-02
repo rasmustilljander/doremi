@@ -35,14 +35,13 @@ namespace DoremiEngine
             return clip->second.animationClip;
         }
         int SkeletalInformationImpl::GetParentIndex(const int& p_childIndex) const { return m_parentIndex[p_childIndex]; }
-        AnimationBlend& SkeletalInformationImpl::GetAnimationBlend(const std::string& p_clipName)
+        /*AnimationBlend& SkeletalInformationImpl::GetAnimationBlend(const std::string& p_clipName)
         {
             auto& clip = m_animations.find(p_clipName);
             return clip->second;
-        }
+        }*/
         std::vector<std::string> SkeletalInformationImpl::GetAnimationNames() const
         {
-            unsigned int animationCount = m_animations.size();
             std::vector<std::string> r_vector;
             for(auto animationblend : m_animations)
             {

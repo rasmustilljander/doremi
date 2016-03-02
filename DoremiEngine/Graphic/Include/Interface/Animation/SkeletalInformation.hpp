@@ -250,7 +250,7 @@ namespace DoremiEngine
             virtual float GetClipStartTime(const std::string& clipName) const = 0;
             virtual float GetClipEndTime(const std::string& clipName) const = 0;
             virtual AnimationClip GetAnimationClip(const std::string& p_clipName) const = 0;
-            virtual AnimationBlend& GetAnimationBlend(const std::string& p_clipName) = 0;
+            // virtual AnimationBlend& GetAnimationBlend(const std::string& p_clipName) = 0;
             virtual int GetParentIndex(const int& p_childIndex) const = 0;
             virtual std::vector<std::string> GetAnimationNames() const = 0;
         };

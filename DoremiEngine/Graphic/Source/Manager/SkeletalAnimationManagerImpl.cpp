@@ -68,7 +68,8 @@ namespace DoremiEngine
         }
 
         void SkeletalAnimationManagerImpl::GetInterpolatedAnimationsMatrices(SkeletalInformation* p_skeletalInformation, std::string t_clipName,
-                                                                             float t_timePos, std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms) const
+                                                                             float t_timePos, std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
+                                                                             std::map<std::string, float> p_animationTransitions) const
         {
             using namespace DirectX;
             // Get number of bones in the skeleton.
@@ -84,16 +85,16 @@ namespace DoremiEngine
             t_currentAnimation.rotation.resize(t_numBones);
             for(size_t i = 0; i < t_animationLenght; i++)
             {
-                if(p_skeletalInformation->GetAnimationBlend(t_animationNames[i]).timeElapsed > 0 && t_animationNames[i] != t_clipName)
+                if(p_animationTransitions[t_animationNames[i]] > 0 && t_animationNames[i] != t_clipName)
                 {
+
                     InterpolatedVectors t_vectors;
                     t_vectors.position.resize(t_numBones);
                     t_vectors.scale.resize(t_numBones);
                     t_vectors.rotation.resize(t_numBones);
                     p_skeletalInformation->GetAnimationClip(t_animationNames[i])
-                        .InterpolateBlend(p_skeletalInformation->GetAnimationBlend(t_animationNames[i]).timeElapsed, t_vectors.position,
-                                          t_vectors.scale, t_vectors.rotation);
-                    t_vectors.timeElapsed = p_skeletalInformation->GetAnimationBlend(t_animationNames[i]).timeElapsed;
+                        .InterpolateBlend(p_animationTransitions[t_animationNames[i]], t_vectors.position, t_vectors.scale, t_vectors.rotation);
+                    t_vectors.timeElapsed = p_animationTransitions[t_animationNames[i]];
                     t_interpolatedVectors.push_back(t_vectors);
                 }
                 else if(t_animationNames[i] == t_clipName)

@@ -317,6 +317,13 @@ namespace Doremi
                     t_skeletalComponent->skeletalInformation = t_loadedCharacter.upperBody;
                     t_skeletalComponent->clipName = "Idle";
                     t_skeletalComponent->timePosition = 0.0f;
+                    std::vector<std::string> t_animationNames = t_skeletalComponent->skeletalInformation->GetAnimationNames();
+                    size_t length = t_animationNames.size();
+                    t_skeletalComponent->animationTransitions = new map<std::string, float>();
+                    for(size_t i = 0; i < length; i++)
+                    {
+                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]] = 0.0f;
+                    }
                 }
                 else if(iter->first == ComponentType::AIAgent)
                 {
@@ -327,16 +334,30 @@ namespace Doremi
                     memcpy(GetComponent<LowerSkeletalAnimationComponent>(p_entityID), iter->second, sizeof(LowerSkeletalAnimationComponent));
 
                     LowerSkeletalAnimationComponent* t_skeletalComponent = GetComponent<LowerSkeletalAnimationComponent>(p_entityID);
-                    LoadedCharacter t_loadedCharacter = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(t_skeletalComponent->type);
+                    LoadedCharacter& t_loadedCharacter = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(t_skeletalComponent->type);
                     t_skeletalComponent->skeletalInformation = t_loadedCharacter.lowerBody;
                     t_skeletalComponent->clipName = "Idle";
                     t_skeletalComponent->timePosition = 0.0f;
+                    std::vector<std::string> t_animationNames = t_skeletalComponent->skeletalInformation->GetAnimationNames();
+                    size_t length = t_animationNames.size();
+                    t_skeletalComponent->animationTransitions = new map<std::string, float>();
+                    // Prova hårdkoda å se vad som händer
+                    for(size_t i = 0; i < length; i++)
+                    {
+                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]] = 0.0f;
+                    }
+                    int hej = 0;
                 }
                 else if(iter->first == ComponentType::LifeTime)
                 {
                     memcpy(GetComponent<LifeTimeComponent>(p_entityID), iter->second, sizeof(LifeTimeComponent));
                 }
                 // Add bitmask. This is now done last due to transform being a dick
+                if(iter->first == ComponentType::LowerBodySkeletalAnimation)
+                {
+                    LowerSkeletalAnimationComponent* t_skeletalComponent = GetComponent<LowerSkeletalAnimationComponent>(p_entityID);
+                    int hej = 0;
+                }
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
             }
         }

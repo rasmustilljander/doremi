@@ -43,7 +43,7 @@ namespace Doremi
             std::string CreateFileNameFromEnum(const SkeletalAnimationType& p_type);
             SkeletalInformationHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             // LoadedCharacter LoadSkeletalCharacter(std::string p_fileName);
-            LoadedCharacter LoadSkeletalCharacter(const SkeletalAnimationType& p_type);
+            LoadedCharacter& LoadSkeletalCharacter(const SkeletalAnimationType& p_type);
             ~SkeletalInformationHandler();
 
 

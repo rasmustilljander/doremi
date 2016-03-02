@@ -25,6 +25,7 @@ namespace Doremi
             double timePosition;
             DirectX::XMFLOAT4 orientation;
             SkeletalAnimationType type;
+            std::map<std::string, float>* animationTransitions;
             LowerSkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
                 : skeletalInformation(p_skeletalInformation)
             {

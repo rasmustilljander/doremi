@@ -161,7 +161,7 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::RANGEDENEMY);
+            LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::RANGEDENEMY);
 
             RenderComponent* renderComp = new RenderComponent();
             renderComp->offsetY = -3;
@@ -710,7 +710,7 @@ namespace Doremi
 
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
+            LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
@@ -831,7 +831,7 @@ namespace Doremi
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
+            LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();

@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
+#include <map>
 namespace DoremiEngine
 {
     namespace Graphic
@@ -23,7 +24,8 @@ namespace DoremiEngine
             */
             virtual void PushMatricesToDevice(std::vector<DirectX::XMFLOAT4X4> p_transformsTopush) = 0;
             virtual void GetInterpolatedAnimationsMatrices(SkeletalInformation* p_skeletalInformation, std::string t_clipName, float t_timePos,
-                                                           std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms) const = 0;
+                                                           std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
+                                                           std::map<std::string, float> p_animationTransitions) const = 0;
         };
     }
 }

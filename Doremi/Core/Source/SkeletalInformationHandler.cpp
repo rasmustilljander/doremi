@@ -71,30 +71,29 @@ namespace Doremi
 
         SkeletalInformationHandler* SkeletalInformationHandler::GetInstance() { return m_singleton; }
 
-        LoadedCharacter SkeletalInformationHandler::LoadSkeletalCharacter(const SkeletalAnimationType& p_type)
+        LoadedCharacter& SkeletalInformationHandler::LoadSkeletalCharacter(const SkeletalAnimationType& p_type)
         {
-            /*if (m_loadedCharacters.count(p_type))
+            if(m_loadedCharacters.count(p_type))
             {
                 return m_loadedCharacters[p_type];
-            }*/
-            // else
-            //{
-            std::string t_fileName = CreateFileNameFromEnum(p_type);
-            LoadedCharacter t_loadedCharacter;
-            DoremiEngine::Graphic::SkeletalInformation* t_upperInformation =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            DoremiEngine::Graphic::SkeletalInformation* t_lowerInformation =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+            }
+            else
+            {
+                std::string t_fileName = CreateFileNameFromEnum(p_type);
+                LoadedCharacter t_loadedCharacter;
+                DoremiEngine::Graphic::SkeletalInformation* t_upperInformation =
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
+                DoremiEngine::Graphic::SkeletalInformation* t_lowerInformation =
+                    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
 
-            LevelLoaderClient loader = LevelLoaderClient(m_sharedContext);
+                LevelLoaderClient loader = LevelLoaderClient(m_sharedContext);
 
-            CharacterDataNames playerCharData = loader.LoadCharacter("Models/EvenCoolerSuperCoolManBot.drm"); // TODOLH remove when material is in
-            t_loadedCharacter.characterData = loader.LoadSkeletalCharacter(t_fileName, t_upperInformation, t_lowerInformation);
-            t_loadedCharacter.lowerBody = t_lowerInformation;
-            t_loadedCharacter.upperBody = t_upperInformation;
-            // m_loadedCharacters[p_type] = t_loadedCharacter;
-            return t_loadedCharacter;
-            // }
+                t_loadedCharacter.characterData = loader.LoadSkeletalCharacter(t_fileName, t_upperInformation, t_lowerInformation);
+                t_loadedCharacter.lowerBody = t_lowerInformation;
+                t_loadedCharacter.upperBody = t_upperInformation;
+                m_loadedCharacters[p_type] = t_loadedCharacter;
+                return m_loadedCharacters[p_type];
+            }
         }
 
         /*LoadedCharacter SkeletalInformationHandler::LoadSkeletalCharacter(std::string p_fileName)

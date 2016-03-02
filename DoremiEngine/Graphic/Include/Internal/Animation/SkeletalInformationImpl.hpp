@@ -32,7 +32,7 @@ namespace DoremiEngine
             float GetClipEndTime(const std::string& clipName) const override;
             AnimationClip GetAnimationClip(const std::string& p_clipName) const override;
             int GetParentIndex(const int& p_childIndex) const override;
-            AnimationBlend& GetAnimationBlend(const std::string& p_clipName) override;
+            // AnimationBlend& GetAnimationBlend(const std::string& p_clipName) override;
             std::vector<std::string> GetAnimationNames() const override;
             // std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets() const;
 
