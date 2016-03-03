@@ -2,7 +2,6 @@
 #include <DoremiEngine/Core/Include/Subsystem/EngineModule.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <vector>
-#include <functional>
 #if defined(_WINDLL)
 #define INPUT_DLL_EXPORT __declspec(dllexport)
 #else
@@ -82,11 +81,6 @@ namespace DoremiEngine
             Returns the mousepos y
             */
             virtual int GetMousePosY() = 0;
-
-            /**
-            Sets the function to call when exit is requested.
-            */
-            virtual void SetExitFunction(std::function<void()> p_function) = 0;
         };
     }
 }

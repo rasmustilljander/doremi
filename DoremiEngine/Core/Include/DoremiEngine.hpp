@@ -1,6 +1,6 @@
 #pragma once
-
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <functional>
 
 #if defined(_WINDLL)
 #define ROOTENGINE_DLL_EXPORT __declspec(dllexport)
@@ -22,6 +22,8 @@ namespace DoremiEngine
                 TODO docs
             */
             virtual const SharedContext& GetSharedContext() const = 0;
+
+            virtual void SetExitFunction(std::function<void()> p_exitFunction) = 0;
         };
     }
 }

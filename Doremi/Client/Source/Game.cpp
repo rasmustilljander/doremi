@@ -118,7 +118,6 @@ namespace Doremi
         using namespace Core;
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
         m_sharedContext = &sharedContext;
-        m_sharedContext->GetInputModule().SetExitFunction(std::bind(&GameMain::Stop, this));
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/

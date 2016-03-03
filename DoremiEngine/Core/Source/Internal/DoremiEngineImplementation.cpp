@@ -240,6 +240,8 @@ namespace DoremiEngine
             o_sharedContext.SetWorkingDirectory(directoryPath->substr(0, directoryPath->length() - 10));
         }
 
+        void DoremiEngineImplementation::SetExitFunction(std::function<void()> p_exitFunction) { m_sharedContext->SetExitFunction(p_exitFunction); }
+
         void DoremiEngineImplementation::LoadLoggingModule(SharedContextImplementation& o_sharedContext)
         {
             std::cout << "Loading Logging.dll" << std::endl;

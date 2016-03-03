@@ -41,6 +41,11 @@ namespace DoremiEngine
             */
             const SharedContext& GetSharedContext() const override { return *static_cast<SharedContext*>(m_sharedContext); }
 
+            /**
+            TODO docs
+            */
+            void SetExitFunction(std::function<void()> p_exitFunction) override;
+
         private:
             void AssertThatRequiredLibrariesExists();
             void AssertThatSpecificLibraryExists(const std::string& p_libraryName);
@@ -81,6 +86,9 @@ namespace DoremiEngine
 
             // Logging variables
             Logging::Logger* m_logger;
+
+            // Shutdown function
+            std::function<void()> m_exitFunction;
         };
     }
 }

@@ -32,13 +32,12 @@ namespace Doremi
         /**
         TODOCM doc
         */
-        void Stop();
-
-        /**
-        TODOCM doc
-        */
         void Run();
 
+        /**
+        TODO doc
+        */
+        void Stop() override;
 
     private:
         /**

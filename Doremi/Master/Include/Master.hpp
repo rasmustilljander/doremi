@@ -48,6 +48,11 @@ namespace Doremi
         void Update(double p_deltaTime);
 
         /**
+        doc
+        */
+        void Stop() override;
+
+        /**
         TOODCM doc
         */
         std::vector<Core::Manager*> m_managers;

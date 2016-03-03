@@ -119,7 +119,11 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext& context = libInitializeEngine(p_engineModulesToStart);
             m_sharedContext = &context;
             m_logger = &m_sharedContext->GetLoggingModule().GetSubModuleManager().GetLogger();
+            m_sharedContext->GetCoreModule().SetExitFunction(std::bind(&GameCore::ContextRequestStop, this));
+
             return context;
         }
+
+        void GameCore::ContextRequestStop() { Stop(); }
     }
 }

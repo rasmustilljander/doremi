@@ -7,7 +7,10 @@ namespace DoremiEngine
 {
     namespace Input
     {
-        InputModuleImplementation::InputModuleImplementation() {}
+        InputModuleImplementation::InputModuleImplementation(const DoremiEngine::Core::SharedContext& p_sharedContext)
+            : m_sharedContext(p_sharedContext)
+        {
+        }
 
         InputModuleImplementation::~InputModuleImplementation() {}
 
@@ -179,10 +182,7 @@ namespace DoremiEngine
                         m_mouseWheelSpins = m_mouseWheelSpins + p_eventVariable.wheel.y;
                         break;
                     case SDL_QUIT:
-                        if(m_exitFunction != nullptr)
-                        {
-                            m_exitFunction();
-                        }
+                        m_sharedContext.RequestApplicationExit();
                         break;
 
                     default:
@@ -259,13 +259,11 @@ namespace DoremiEngine
                 o_listToUse.push_back(p_eventvariable);
             }
         }
-
-        void InputModuleImplementation::SetExitFunction(std::function<void()> p_function) { m_exitFunction = p_function; }
     }
 }
 
 DoremiEngine::Input::InputModule* CreateInputModule(const DoremiEngine::Core::SharedContext& p_sharedContext)
 {
-    DoremiEngine::Input::InputModule* input = new DoremiEngine::Input::InputModuleImplementation();
+    DoremiEngine::Input::InputModule* input = new DoremiEngine::Input::InputModuleImplementation(p_sharedContext);
     return input;
 }

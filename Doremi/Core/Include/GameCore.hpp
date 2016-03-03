@@ -32,6 +32,11 @@ namespace Doremi
             */
             virtual ~GameCore();
 
+            /**
+            TODO DOCS
+            */
+            virtual void Stop() = 0;
+
         protected:
             void LoadEngineLibrary();
             const DoremiEngine::Core::SharedContext& InitializeEngine(const size_t& p_engineModulesToStart);
@@ -41,6 +46,8 @@ namespace Doremi
             std::function<void()> m_stopEngineFunction;
             void* m_engineLibrary;
             DoremiEngine::Logging::Logger* m_logger;
+
+            void ContextRequestStop();
         };
     }
 }

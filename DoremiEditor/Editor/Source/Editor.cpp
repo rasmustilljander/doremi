@@ -83,4 +83,6 @@ namespace DoremiEditor
         Initialize();
         Run();
     }
+
+    void EditorMain::Stop() {}
 }

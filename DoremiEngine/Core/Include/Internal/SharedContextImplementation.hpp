@@ -1,6 +1,8 @@
 #pragma once
-#include <string>
 #include <SharedContext.hpp>
+
+#include <string>
+#include <functional>
 
 namespace DoremiEngine
 {
@@ -36,6 +38,7 @@ namespace DoremiEngine
             void SetAIModule(AI::AIModule* p_AIModule) { m_ai = p_AIModule; }
             void SetLoggingModule(Logging::LoggingModule* p_loggingModule) { m_logging = p_loggingModule; }
             void SetConfigurationModule(Configuration::ConfigurationModule* p_configurationModule) { m_configuration = p_configurationModule; }
+            void SetExitFunction(std::function<void()> p_function) { m_exitFunction = p_function; }
             const std::string GetWorkingDirectory() const { return m_workingDirectory; };
 
             Audio::AudioModule& GetAudioModule() const
@@ -128,6 +131,14 @@ namespace DoremiEngine
                 throw std::runtime_error("Configuration module has not been initialized."); // TODOXX This cannot be used over .dll borders.
             }
 
+            void RequestApplicationExit() const override
+            {
+                if(m_exitFunction != nullptr)
+                {
+                    m_exitFunction();
+                }
+            }
+
         private:
             std::string m_workingDirectory;
             Audio::AudioModule* m_audio;
@@ -140,6 +151,7 @@ namespace DoremiEngine
             AI::AIModule* m_ai;
             Logging::LoggingModule* m_logging;
             Configuration::ConfigurationModule* m_configuration;
+            std::function<void()> m_exitFunction;
         };
     }
 }

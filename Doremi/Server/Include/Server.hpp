@@ -34,7 +34,7 @@ namespace Doremi
         /**
         doc
         */
-        void Stop();
+        void Stop() override;
 
     private:
         /**

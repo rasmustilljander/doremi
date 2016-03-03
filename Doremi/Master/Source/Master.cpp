@@ -89,4 +89,6 @@ namespace Doremi
         Initialize();
         Run();
     }
+
+    void MasterMain::Stop() {}
 }

@@ -70,6 +70,7 @@ namespace DoremiEngine
             virtual AI::AIModule& GetAIModule() const = 0;
             virtual Logging::LoggingModule& GetLoggingModule() const = 0;
             virtual Configuration::ConfigurationModule& GetConfigurationModule() const = 0;
+            virtual void RequestApplicationExit() const = 0;
         };
     }
 }
