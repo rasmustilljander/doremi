@@ -264,7 +264,6 @@ namespace DoremiEngine
 
                     using namespace Doremi::Utilities::Logging;
                     m_logger = &m_loggingModule->GetSubModuleManager().GetLogger();
-                    std::cout << "Logger system is now online, all other logging will be directed to the logfile." << std::endl;
                     m_logger->LogText(LogTag::ENGINE_CORE, LogLevel::INFO, "Logger system is now online.");
                 }
                 else

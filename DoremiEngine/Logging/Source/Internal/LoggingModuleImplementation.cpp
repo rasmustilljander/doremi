@@ -21,6 +21,11 @@ namespace DoremiEngine
 
         void LoggingModuleImplementation::Startup()
         {
+#ifdef NO_LOGGER
+            printf("Logger system is now online, all other logging will be directed to the logfile.\n");
+#else
+            printf("Logger system haas been disabled by preprocessor entry 'NO_LOGGER'\n");
+#endif
             m_submoduleManager = new SubmoduleManagerImpl();
             static_cast<SubmoduleManagerImpl*>(m_submoduleManager)->Initialize(*this);
         }
