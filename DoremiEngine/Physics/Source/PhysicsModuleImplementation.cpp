@@ -1,10 +1,18 @@
 #include <Internal/PhysicsModuleImplementation.hpp>
 
+#include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Logging/Include/LoggingModule.hpp>
+#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
+#include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
+
 namespace DoremiEngine
 {
     namespace Physics
     {
-        PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext) {}
+        PhysicsModuleImplementation::PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
+        {
+            m_logger = &m_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
+        }
 
         PhysicsModuleImplementation::~PhysicsModuleImplementation() {}
 
@@ -46,14 +54,23 @@ namespace DoremiEngine
 
         void PhysicsModuleImplementation::Update(float p_dt)
         {
-            // Start by clearing the list of collision pairs (WARNING potentially bad idea)
-            m_collisionPairs.clear();
-            m_triggerPairs.clear();
-            m_leftCollisionPairs.clear();
-            m_utils.m_fluidManager->Update(p_dt);
-            m_utils.m_worldScene->simulate(p_dt);
-            m_utils.m_rigidBodyManager->ClearRecentlyWakeStatusLists();
-            m_utils.m_worldScene->fetchResults(true);
+            try
+            {
+                // Start by clearing the list of collision pairs (WARNING potentially bad idea)
+                m_collisionPairs.clear();
+                m_triggerPairs.clear();
+                m_leftCollisionPairs.clear();
+                m_utils.m_fluidManager->Update(p_dt);
+                m_utils.m_worldScene->simulate(p_dt);
+                m_utils.m_rigidBodyManager->ClearRecentlyWakeStatusLists();
+                m_utils.m_worldScene->fetchResults(true);
+            }
+            catch(const std::exception& exception)
+            {
+                using namespace Doremi::Utilities::Logging;
+                m_logger->LogText(LogTag::GAME, LogLevel::FATAL_ERROR, "Exception: %s", exception.what());
+                m_sharedContext.RequestApplicationExit();
+            }
         }
 
         RigidBodyManager& PhysicsModuleImplementation::GetRigidBodyManager() { return *m_utils.m_rigidBodyManager; }

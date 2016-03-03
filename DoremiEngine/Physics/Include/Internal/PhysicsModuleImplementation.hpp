@@ -19,6 +19,11 @@ namespace DoremiEngine
         class SharedContext;
     }
 
+    namespace Logging
+    {
+        class Logger;
+    }
+
     namespace Physics
     {
         // Internal struct to be used for submodules to communicate
@@ -116,6 +121,8 @@ namespace DoremiEngine
             vector<CollisionPair> m_collisionPairs;
             vector<CollisionPair> m_triggerPairs;
             vector<CollisionPair> m_leftCollisionPairs;
+
+            Logging::Logger* m_logger;
         };
     }
 }
