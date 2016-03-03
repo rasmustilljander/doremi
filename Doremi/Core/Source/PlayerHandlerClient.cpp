@@ -356,11 +356,14 @@ namespace Doremi
         void PlayerHandlerClient::UpdatePlayerConfigurationValues(Player* p_player)
         {
             InputHandler* inputHandler = p_player->m_inputHandler;
-            if (inputHandler->CheckForOnePress((int)UserCommandPlaying::ReduceMouseSensitivity))
+            if(inputHandler->CheckForOnePress((int)UserCommandPlaying::ReduceMouseSensitivity))
             {
-                p_player->m_turnSpeed -= 0.001f;
+                if(p_player->m_turnSpeed > 0.001f)
+                {
+                    p_player->m_turnSpeed -= 0.001f;
+                }
             }
-            if (inputHandler->CheckForOnePress((int)UserCommandPlaying::IncreaseMouseSensitivity))
+            if(inputHandler->CheckForOnePress((int)UserCommandPlaying::IncreaseMouseSensitivity))
             {
                 p_player->m_turnSpeed += 0.001f;
             }
