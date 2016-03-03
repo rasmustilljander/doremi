@@ -52,13 +52,13 @@ namespace Doremi
             switch(p_type)
             {
                 case SkeletalAnimationType::MELEENEMY:
-                    t_fileName = "Models/BigRobot7.drm";
+                    t_fileName = "Models/BigRobot8.drm";
                     break;
                 case SkeletalAnimationType::RANGEDENEMY:
-                    t_fileName = "Models/SmallRobot14.drm";
+                    t_fileName = "Models/SmallRobot16.drm";
                     break;
                 case SkeletalAnimationType::PLAYER:
-                    t_fileName = "Models/SmallRobot14.drm";
+                    t_fileName = "Models/SmallRobot16.drm";
                     break;
                 default:
                     t_fileName = "ErrorType in skeletalanimationtype";
