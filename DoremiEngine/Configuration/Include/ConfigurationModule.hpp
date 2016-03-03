@@ -59,11 +59,15 @@ namespace DoremiEngine
             // AI stuff
             float AIJumpDistance = 3.0f;
             float AIAimOffset = 0.3f;
+            float MeleeEnemySpeed = 50;
+            float RangedEnemySpeed = 45;
 
             // Player specific
             float TurnSpeed = 0.01f;
             float MaxPitch = 1;
             float MinPitch = -1;
+            float PlayerSpeed = 45;
+            float JumpPower = 1;
         };
         /**
         Reads and saves configuration from file. If another module needs configuration values they can use fucntions in this class to get them.

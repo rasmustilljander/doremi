@@ -134,6 +134,22 @@ namespace DoremiEngine
             {
                 o_info.MinPitch = std::stof(p_mapToInterpret.at("MinPitch"));
             }
+            if(p_mapToInterpret.count("MeleeEnemySpeed"))
+            {
+                o_info.MeleeEnemySpeed = std::stof(p_mapToInterpret.at("MeleeEnemySpeed"));
+            }
+            if(p_mapToInterpret.count("RangedEnemySpeed"))
+            {
+                o_info.RangedEnemySpeed = std::stof(p_mapToInterpret.at("RangedEnemySpeed"));
+            }
+            if(p_mapToInterpret.count("PlayerSpeed"))
+            {
+                o_info.PlayerSpeed = std::stof(p_mapToInterpret.at("PlayerSpeed"));
+            }
+            if(p_mapToInterpret.count("JumpPower"))
+            {
+                o_info.JumpPower = std::stof(p_mapToInterpret.at("JumpPower"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -171,6 +187,10 @@ namespace DoremiEngine
             returnMap["TurnSpeed"] = std::to_string(p_info.TurnSpeed);
             returnMap["MaxPitch"] = std::to_string(p_info.MaxPitch);
             returnMap["MinPitch"] = std::to_string(p_info.MinPitch);
+            returnMap["MeleeEnemySpeed"] = std::to_string(p_info.MeleeEnemySpeed);
+            returnMap["RangedEnemySpeed"] = std::to_string(p_info.RangedEnemySpeed);
+            returnMap["PlayerSpeed"] = std::to_string(p_info.PlayerSpeed);
+            returnMap["JumpPower"] = std::to_string(p_info.JumpPower);
             return returnMap;
         }
     }

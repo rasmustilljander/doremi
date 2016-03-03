@@ -42,7 +42,7 @@
 #include <Doremi/Core/Include/LevelLoaderClient.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Animation/SkeletalInformation.hpp>
 #include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
-
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 // Timing
 #include <Timing/FunctionTimer.hpp>
 
@@ -284,7 +284,7 @@ namespace Doremi
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
-            movementcomp->speed = 45;
+            movementcomp->speed = sharedContext.GetConfigurationModule().GetAllConfigurationValues().RangedEnemySpeed;
             blueprint[ComponentType::Movement] = movementcomp;
 
             // Gravity comp
@@ -414,7 +414,7 @@ namespace Doremi
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
-            movementcomp->speed = 50;
+            movementcomp->speed = sharedContext.GetConfigurationModule().GetAllConfigurationValues().MeleeEnemySpeed;
             blueprint[ComponentType::Movement] = movementcomp;
 
             // Gravity comp
@@ -657,12 +657,12 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->speed = 45;
+            t_movementComp->speed = sharedContext.GetConfigurationModule().GetAllConfigurationValues().PlayerSpeed;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 0.6f;
+            jumpComp->intensity = sharedContext.GetConfigurationModule().GetAllConfigurationValues().JumpPower;
 
             // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;
@@ -762,12 +762,12 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
-            t_movementComp->speed = 45;
+            t_movementComp->speed = sharedContext.GetConfigurationModule().GetAllConfigurationValues().PlayerSpeed;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Jump component
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 0.6f;
+            jumpComp->intensity = sharedContext.GetConfigurationModule().GetAllConfigurationValues().JumpPower;
             // jumpComp->jumpTime = 0.5;
             t_avatarBlueprint[ComponentType::Jump] = jumpComp;
 
