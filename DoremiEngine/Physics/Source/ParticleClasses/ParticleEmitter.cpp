@@ -228,7 +228,7 @@ namespace DoremiEngine
                         }
                     }
 
-                    if(positions.size() > 0 && !(m_nextIndex > PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
+                    if(positions.size() > 0 && !(m_nextIndex >= PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
                     {
                         // Cast into PhysX datatypes
                         PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);
