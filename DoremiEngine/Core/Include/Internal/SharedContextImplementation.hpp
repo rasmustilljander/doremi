@@ -41,7 +41,7 @@ namespace DoremiEngine
             void SetExitFunction(std::function<void()> p_function) { m_exitFunction = p_function; }
             const std::string GetWorkingDirectory() const { return m_workingDirectory; };
 
-            Audio::AudioModule& GetAudioModule() const
+            Audio::AudioModule& GetAudioModule() const override
             {
                 if(m_audio != nullptr)
                 {
@@ -50,7 +50,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Audiomodule has not been initialized."); // TODOXX This cannot be used across .dll borders.
             }
 
-            DoremiEngine& GetCoreModule() const
+            DoremiEngine& GetCoreModule() const override
             {
                 if(m_core != nullptr)
                 {
@@ -59,7 +59,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Coremodule has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            Graphic::GraphicModule& GetGraphicModule() const
+            Graphic::GraphicModule& GetGraphicModule() const override
             {
                 if(m_graphic != nullptr)
                 {
@@ -68,7 +68,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Graphic module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            Network::NetworkModule& GetNetworkModule() const
+            Network::NetworkModule& GetNetworkModule() const override
             {
                 if(m_network != nullptr)
                 {
@@ -77,7 +77,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Network module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            Physics::PhysicsModule& GetPhysicsModule() const
+            Physics::PhysicsModule& GetPhysicsModule() const override
             {
                 if(m_physics != nullptr)
                 {
@@ -86,7 +86,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Physics module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            Script::ScriptModule& GetScriptModule() const
+            Script::ScriptModule& GetScriptModule() const override
             {
                 if(m_script != nullptr)
                 {
@@ -95,7 +95,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Script module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            Input::InputModule& GetInputModule() const
+            Input::InputModule& GetInputModule() const override
             {
                 if(m_input != nullptr)
                 {
@@ -104,7 +104,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Input module has not been initialized."); // TODOXX This cannot be used across .dll borders.
             };
 
-            AI::AIModule& GetAIModule() const
+            AI::AIModule& GetAIModule() const override
             {
                 if(m_ai != nullptr)
                 {
@@ -113,7 +113,7 @@ namespace DoremiEngine
                 throw std::runtime_error("AI module has not been initialized."); // TODOXX This cannot be used over .dll borders.
             }
 
-            Logging::LoggingModule& GetLoggingModule() const
+            Logging::LoggingModule& GetLoggingModule() const override
             {
                 if(m_logging != nullptr)
                 {
@@ -122,7 +122,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Logging module has not been initialized."); // TODOXX This cannot be used over .dll borders.
             }
 
-            Configuration::ConfigurationModule& GetConfigurationModule() const
+            Configuration::ConfigurationModule& GetConfigurationModule() const override
             {
                 if(m_configuration != nullptr)
                 {
