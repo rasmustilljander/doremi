@@ -7,7 +7,6 @@ namespace Doremi
     namespace Core
     {
         class Manager;
-        class EntityInterface;
     }
 }
 
