@@ -9,7 +9,7 @@ namespace Doremi
         {
             struct LogTagInfo
             {
-                LogTagInfo(const std::string& p_name) : name(p_name) {}
+                explicit LogTagInfo(const std::string& p_name) : name(p_name) {}
                 LogTagInfo() {}
                 std::string name;
             };
