@@ -811,7 +811,6 @@ namespace DoremiEngine
 
                     m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
                 }
-                
             }
 
             // Draw the last one since it's a special case
