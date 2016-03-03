@@ -69,6 +69,16 @@ namespace Doremi
             m_menuGeometryShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildGeometryShader("TextGeometryShader.hlsl");
 
+
+            m_postPixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("PostPixelShader.hlsl");
+            D3D11_INPUT_ELEMENT_DESC ied[] = {
+                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+                {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+                {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            };
+            m_basicVertexShader =
+                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl", ied, ARRAYSIZE(ied));
+
             DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Create DepthStencilState
@@ -147,6 +157,8 @@ namespace Doremi
                     break;
                 }
             }
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_postPixelShader);
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_basicVertexShader);
         }
 
         void ScreenSpaceDrawer::Begin2DDraw()
@@ -176,7 +188,10 @@ namespace Doremi
             // Disable blend again?
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().RemoveGeometryShader();
+
+            t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), t_dierctxManager.GetDefaultDepthStencilState()->GetDepthStencilState());
         }
+
 
         void ScreenSpaceDrawer::DrawVictoryScreen()
         {

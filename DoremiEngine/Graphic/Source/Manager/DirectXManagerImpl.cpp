@@ -1179,20 +1179,18 @@ namespace DoremiEngine
             DispatchCompute();
 
         }
-        
+
         void DirectXManagerImpl::EndDraw()
         {
 
-            ComputeGlow();
-
             if(transRenderData.size() > 0)
             {
-
                 SetRenderTargetNormal();
                 EnableBlend();
                 RenderTransMeshs();
                 DisableBlend();
             }
+            ComputeGlow();
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};

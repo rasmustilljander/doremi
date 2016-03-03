@@ -137,7 +137,7 @@ PixelOutputType PS_main(PixelInputType input)
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
     float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
 
-    texcolor = saturate(texcolor);
+    texcolor.w /= 2;
 
     float3 rgb = float3(0, 0, 0);
 

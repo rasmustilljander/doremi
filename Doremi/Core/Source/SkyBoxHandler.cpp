@@ -66,9 +66,6 @@ namespace Doremi
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().AddToRenderList(*m_meshInfo, *m_materialInfo, transMat);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().Render2D(m_rasterizerState->GetRasterizerState(),
                                                                                                   m_depthStencilState->GetDepthStencilState());
-
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_basicVertexShader);
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActivePixelShader(m_basicPixelShader);
         }
 
         void SkyBoxHandler::CreateSkyBox()
@@ -90,19 +87,12 @@ namespace Doremi
 
             m_skyBoxPixelShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("SkyBoxPixelShader.hlsl");
-            m_basicPixelShader = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildPixelShader("PostPixelShader.hlsl");
             D3D11_INPUT_ELEMENT_DESC ied[] = {
                 {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             };
             m_skyBoxVertexShader =
                 m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("SkyBoxVertexShader.hlsl", ied, ARRAYSIZE(ied));
-            D3D11_INPUT_ELEMENT_DESC ied2[] = {
-                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-                {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-                {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            };
-            m_basicVertexShader =
-                m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().BuildVertexShader("BasicVertexShader.hlsl", ied2, ARRAYSIZE(ied2));
+
 
             // Create RasterizerState
             D3D11_RASTERIZER_DESC t_rasterDesc;

@@ -54,6 +54,8 @@ namespace Doremi
             DoremiEngine::Graphic::PixelShader* m_menuPixelShader;
             DoremiEngine::Graphic::VertexShader* m_menuVertexShader;
             DoremiEngine::Graphic::GeometryShader* m_menuGeometryShader;
+            DoremiEngine::Graphic::PixelShader* m_postPixelShader;
+            DoremiEngine::Graphic::VertexShader* m_basicVertexShader;
 
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilStatNone;
             VictoryScreen* m_victoryScreen;
