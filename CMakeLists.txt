@@ -8,7 +8,7 @@ project(${SOLUTION_NAME})
 option(BUILD_UNIT_TEST_BUILD "Unchecked is no testing" OFF)
 option(BUILD_WITH_EXTENDED_WARNINGS "Unchecked is VS default, checked is /W4" OFF)
 option(BUILD_TREAT_WARNINGS_AS_ERROR "Unchecked is off" OFF)
-option(BUILD_CUSTOM_MEASUREMENT_TIMING "Unckeched is off" ON)
+option(BUILD_CUSTOM_TIMING "Unckeched is off" ON)
 option(BUILD_DRM_EDITOR_PLUGIN "Must be runned in 64 bit." OFF)
 option(BUILD_ENABLE_LOGGER "Otherwise throw away logdata." ON)
 
@@ -16,6 +16,13 @@ if(BUILD_ENABLE_LOGGER)
 	set(LOGGER_STATUS USE_LOGGER)
 else()
 	set(LOGGER_STATUS NO_LOGGER)
+endif()
+
+
+if(BUILD_CUSTOM_TIMING)
+	set(CUSTOM_TIMING_STATE USE_CUSTOM_TIMER)
+else()
+	set(CUSTOM_TIMING_STATE NO_CUSTOM_TIMER)
 endif()
 
 if(BUILD_UNIT_TEST_BUILD)
@@ -85,10 +92,6 @@ add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
 add_definitions(-DNOMINMAX)
 #add_definitions(/openmp)
-
-if(BUILD_CUSTOM_MEASUREMENT_TIMING)
-	add_definitions(-DCUSTOM_TIMING_MEASUREMENT)
-endif()
 
 if(BUILD_WITH_EXTENDED_WARNINGS)
 	add_definitions(/W4)
