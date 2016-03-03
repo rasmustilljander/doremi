@@ -6,6 +6,7 @@
 #include <EntityComponent/Components/MovementComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <EntityComponent/Components/GravityComponent.hpp>
+#include <EntityComponent/Components/JumpComponent.hpp>
 #include <PlayerHandlerClient.hpp>
 #include <PositionCorrectionHandler.hpp>
 #include <InterpolationHandler.hpp>
@@ -76,6 +77,10 @@ namespace Doremi
                     if(hitGround)
                     {
                         EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i)->travelSpeed = 0;
+                        if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Jump)) // temporary fix
+                        {
+                            EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active = false;
+                        }
                     }
 
                     /// 4 Fix speed for next iteration

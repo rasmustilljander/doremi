@@ -123,12 +123,13 @@ namespace Doremi
                 if(inputHandler->CheckForOnePress((int)UserCommandPlaying::Jump))
                 {
 
-                    if(!EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed > 0)
+                    if(EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed <= 1)
                     {
                         JumpComponent* t_jumpComponent = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(entityID);
                         if(!t_jumpComponent->active)
                         {
                             t_jumpComponent->StartJump();
+                            EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(entityID)->travelSpeed = 0;
                             // Send jump event.
                             // AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(entityID);
                             PlaySoundEvent* playSoundEvent = new PlaySoundEvent(p_player->m_playerEntityID, (int32_t)AudioCompEnum::Jump);

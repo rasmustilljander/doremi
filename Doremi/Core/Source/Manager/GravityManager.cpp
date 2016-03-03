@@ -38,19 +38,11 @@ namespace Doremi
                 {
                     GravityComponent* gravComp = EntityHandler::GetInstance().GetComponentFromStorage<GravityComponent>(i);
                     // Make sure a jump isn't in progress
-                    if(!(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::Jump) &&
-                         EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i)->active)) // temporary fix
+
+                    gravComp->travelSpeed += m_gravityCoefficient * p_dt;
+                    if(gravComp->travelSpeed >= gravComp->maxFallSpeed)
                     {
-                        gravComp->travelSpeed += m_gravityCoefficient * p_dt;
-                        if(gravComp->travelSpeed >= gravComp->maxFallSpeed)
-                        {
-                            gravComp->travelSpeed = gravComp->maxFallSpeed;
-                        }
-                    }
-                    else
-                    {
-                        // Jump in progress, hence gravity isn't needed
-                        gravComp->travelSpeed = 0;
+                        gravComp->travelSpeed = gravComp->maxFallSpeed;
                     }
 
                     // Add to movement component

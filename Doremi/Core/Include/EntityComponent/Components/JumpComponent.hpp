@@ -11,16 +11,10 @@ namespace Doremi
         {
             // States whether a jump is currently under way
             bool active = false;
-            // Remaining movement upwards of the jump. This is updated during the jump
-            float movementRemaining = 0;
             // Intensity of the jump. This is constant across the jump
             float intensity = 0;
 
-            void StartJump()
-            {
-                active = true;
-                movementRemaining = intensity;
-            }
+            void StartJump() { active = true; }
         };
     }
 }

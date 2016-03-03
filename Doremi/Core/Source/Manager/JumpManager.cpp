@@ -32,13 +32,7 @@ namespace Doremi
                     JumpComponent* jumpComp = EntityHandler::GetInstance().GetComponentFromStorage<JumpComponent>(i);
                     if(jumpComp->active)
                     {
-                        jumpComp->movementRemaining -= p_dt;
-                        if(jumpComp->movementRemaining <= 0)
-                        {
-                            jumpComp->active = false;
-                        }
-                        // Add to movement component
-                        GetComponent<MovementComponent>(i)->movement.y += jumpComp->movementRemaining;
+                        GetComponent<MovementComponent>(i)->movement.y += jumpComp->intensity;
                     }
                 }
             }
