@@ -10,6 +10,7 @@ namespace Doremi
         class EntityInterface;
     }
 }
+
 namespace Doremi
 {
 

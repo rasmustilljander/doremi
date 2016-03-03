@@ -91,7 +91,6 @@ namespace Doremi
             // Load engine DLL
             m_engineLibrary = DynamicLoader::LoadSharedLibrary("EngineCore.dll");
 
-
             if(m_engineLibrary == nullptr)
             {
                 // TODORT proper logging

@@ -99,8 +99,6 @@ namespace Doremi
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/
-
-
         Core::EntityFactory::StartupEntityFactory(sharedContext);
         Core::EventHandlerServer::StartupEventHandlerServer();
         Core::EntityHandlerServer::StartupEntityHandlerServer();

@@ -26,6 +26,7 @@ namespace Doremi
             TODO doc
             */
             GameCore();
+
             /**
             TODO doc
             */
