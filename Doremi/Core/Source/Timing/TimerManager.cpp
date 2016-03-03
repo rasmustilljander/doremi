@@ -116,6 +116,7 @@ namespace Doremi
 
         void TimerManager::DumpData(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
+            printf("Dumping data.\n");
             std::vector<std::pair<TimerKey, TimerData>> vectorEntries;
             vectorEntries.reserve(m_timers.size());
             for(const auto& entry : m_timers)
@@ -129,13 +130,15 @@ namespace Doremi
             auto& logger = p_sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
             for(const auto& i : vectorEntries)
             {
-                logger.LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s:%s:%d, %f ", i.first.file.c_str(), i.first.function.c_str(),
+                logger.LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s:%s:%d, %f", i.first.file.c_str(), i.first.function.c_str(),
                                i.second.startLine, i.second.data);
+                printf("%s:%s:%d, %f\n", i.first.file.c_str(), i.first.function.c_str(), i.second.startLine, i.second.data);
             }
 
             for(const auto& i : m_namedTimers)
             {
-                logger.LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s, %f ", i.first.c_str(), i.second.data);
+                logger.LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s, %f", i.first.c_str(), i.second.data);
+                printf("%s, %f\n", i.first.c_str(), i.second.data);
             }
         }
     }
