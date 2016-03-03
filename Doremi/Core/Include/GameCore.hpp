@@ -9,6 +9,10 @@ namespace DoremiEngine
     {
         class SharedContext;
     }
+    namespace Logging
+    {
+        class Logger;
+    }
 }
 
 namespace Doremi
@@ -35,6 +39,7 @@ namespace Doremi
             const DoremiEngine::Core::SharedContext* m_sharedContext;
             std::function<void()> m_stopEngineFunction;
             void* m_engineLibrary;
+            DoremiEngine::Logging::Logger* m_logger;
         };
     }
 }

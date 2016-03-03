@@ -3,18 +3,6 @@
 #include <vector>
 #include <DirectXMath.h>
 
-namespace DoremiEngine
-{
-    namespace Core
-    {
-        class SharedContext;
-    }
-    namespace Logging
-    {
-        class Logger;
-    }
-}
-
 namespace Doremi
 {
     namespace Core
@@ -109,6 +97,5 @@ namespace Doremi
         void AddToServerBrowserList(Core::Manager* p_manager);
         void AddToGraphicalManagerList(Core::Manager* p_manager);
         bool m_gameRunning;
-        DoremiEngine::Logging::Logger* m_logger;
     };
 }

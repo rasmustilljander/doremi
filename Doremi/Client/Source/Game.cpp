@@ -74,8 +74,6 @@
 #include <Doremi/Core/Include/ScreenSpaceDrawer.hpp>
 
 // Logger
-#include <DoremiEngine/Logging/Include/LoggingModule.hpp>
-#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
 #include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
 
 // Timer
@@ -96,7 +94,7 @@
 namespace Doremi
 {
     using namespace Core;
-    GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true), m_logger(nullptr) {}
+    GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true) {}
 
     GameMain::~GameMain()
     {
@@ -121,9 +119,6 @@ namespace Doremi
         const DoremiEngine::Core::SharedContext& sharedContext = InitializeEngine(DoremiEngine::Core::EngineModuleEnum::ALL);
         m_sharedContext = &sharedContext;
         m_sharedContext->GetInputModule().SetExitFunction(std::bind(&GameMain::Stop, this));
-
-        // Fetch logger
-        m_logger = &sharedContext.GetLoggingModule().GetSubModuleManager().GetLogger();
 
         /* This starts the physics handler. Should not be done here, but since this is the general
         code dump, it'll work for now TODOJB*/

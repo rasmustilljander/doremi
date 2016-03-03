@@ -58,6 +58,9 @@
 // other
 #include <Doremi/Core/Include/LevelLoaderServer.hpp>
 
+// Logger
+#include <DoremiEngine/Logging/Include/Logger/Logger.hpp>
+
 // Timer
 #include <Doremi/Core/Include/Timing/TimerManager.hpp>
 #include <Doremi/Core/Include/Timing/NamedTimer.hpp>

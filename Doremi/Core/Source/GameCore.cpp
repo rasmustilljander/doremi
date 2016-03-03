@@ -51,6 +51,10 @@
 
 #include <string>
 
+// Logger
+#include <DoremiEngine/Logging/Include/LoggingModule.hpp>
+#include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
+
 // TODOCM remove for better timer?
 #include <Windows.h>
 #include <chrono>
@@ -65,7 +69,10 @@ namespace Doremi
 {
     namespace Core
     {
-        GameCore::GameCore() : m_stopEngineFunction(nullptr), m_engineLibrary(nullptr) { LoadEngineLibrary(); }
+        GameCore::GameCore() : m_stopEngineFunction(nullptr), m_engineLibrary(nullptr), m_sharedContext(nullptr), m_logger(nullptr)
+        {
+            LoadEngineLibrary();
+        }
 
         GameCore::~GameCore()
         {
@@ -113,6 +120,7 @@ namespace Doremi
 
             const DoremiEngine::Core::SharedContext& context = libInitializeEngine(p_engineModulesToStart);
             m_sharedContext = &context;
+            m_logger = &m_sharedContext->GetLoggingModule().GetSubModuleManager().GetLogger();
             return context;
         }
     }
