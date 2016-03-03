@@ -31,6 +31,7 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SkeletalAnimationManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
@@ -489,9 +490,18 @@ namespace Doremi
             blueprint[ComponentType::Transform] = transComp;
 
             // Render
+            DoremiEditor::Core::MaterialMessage material;
+            DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
+
+            data.setColor(1, 0.2, 0.0);
+            material.data = data;
+            material.nodeName = "EnemyBulletMaterial";
+            material.diffuseTexturePath = "Test.dds";
+            material.glowTexturePath = "glow2.dds";
+
             RenderComponent* renderComp = new RenderComponent();
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
-            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
+            renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(material);
             blueprint[ComponentType::Render] = renderComp;
 
             // Net object

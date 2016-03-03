@@ -185,7 +185,7 @@ namespace Doremi
             XMFLOAT3 directionFloat;
             XMStoreFloat3(&directionFloat, direction);
 
-            XMVECTOR bulletOrigin = AIPos + direction * 5.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
+            XMVECTOR bulletOrigin = AIPos + direction * 3.0f; // TODOCONFIG x.xf is offset from the units body, might need to increase if
             // the bodies radius is larger than x.x
             XMFLOAT3 bulletOriginFloat;
             XMStoreFloat3(&bulletOriginFloat, bulletOrigin);
