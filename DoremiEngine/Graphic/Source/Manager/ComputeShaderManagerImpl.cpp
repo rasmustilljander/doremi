@@ -209,8 +209,10 @@ namespace DoremiEngine
             shaderManager.SetActiveComputeShader(m_blurHoriShader);
             DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            int numGroupsX = ceil(t_screenRes.x / 256.f); // TODOCONFIG take width from config
-            m_deviceContext->Dispatch(numGroupsX, t_screenRes.y, 1);
+            UINT x = ceil(t_screenRes.x / (FLOAT)(256 * 2));
+            UINT y = t_screenRes.y / 2;
+
+            m_deviceContext->Dispatch(x, y, 1);
         }
 
         void ComputeShaderManagerImpl::DispatchBlurVertical()
@@ -219,8 +221,10 @@ namespace DoremiEngine
             shaderManager.SetActiveComputeShader(m_blurVertShader);
             DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            int numGroupsY = ceil(t_screenRes.y / 256.f); // TODOCONFIG take height from config
-            m_deviceContext->Dispatch(t_screenRes.x, numGroupsY, 1);
+            UINT x = t_screenRes.x / 2;
+            UINT y = ceil(t_screenRes.y / (FLOAT)(256 * 2));
+
+            m_deviceContext->Dispatch(x, y, 1);
         }
 
         void ComputeShaderManagerImpl::CopyCullingData()

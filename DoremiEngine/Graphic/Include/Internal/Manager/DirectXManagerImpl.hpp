@@ -83,6 +83,7 @@ namespace DoremiEngine
             Until later it also contains backbuffer and som other stuff
             */
             void InitializeDirectX();
+
             /**
                 Adds a mesh for later rendering
             */
@@ -148,6 +149,24 @@ namespace DoremiEngine
             */
             void BuildConstantBuffers();
 
+            void CreateBackBufferViews();
+
+            void CreateBlurrBuffers();
+
+            void CreateColorBuffer();
+
+            void CreateDepthViews();
+
+            void CreateRealDepthBuffer();
+
+            void CreateViewport();
+
+            void CreateSamplers();
+
+            void CreateRasterizerStates();
+
+            void CreateBlendStates();
+
             std::vector<MeshRenderData> renderData;
             std::vector<MeshRenderData> transRenderData;
             std::vector<SpriteRenderData> spriteRenderData;
@@ -156,21 +175,37 @@ namespace DoremiEngine
             ID3D11Device* m_device;
             ID3D11DeviceContext* m_deviceContext;
             IDXGISwapChain* m_swapChain;
-            ID3D11RenderTargetView* m_backBufferRTV;
-            ID3D11RenderTargetView* m_sceneRTV;
-            ID3D11RenderTargetView* m_glowRTV;
+
+            // ID3D11RenderTargetView* m_sceneRTV;
+            // ID3D11RenderTargetView* m_glowRTV;
             ID3D11RenderTargetView* m_depthRTV;
-            ID3D11ShaderResourceView* m_srv;
-            ID3D11ShaderResourceView* m_backbufferSRV;
-            ID3D11ShaderResourceView* m_sceneSRV;
+            // ID3D11ShaderResourceView* m_srv;
+
+            // Back buffer views
+            // ID3D11RenderTargetView* m_backBufferRTV;
+            // ID3D11ShaderResourceView* m_backbufferSRV;
+            ID3D11UnorderedAccessView* m_backbufferUAV;
+
+            // Glow views
+            ID3D11RenderTargetView* m_horGlowRTV; // Used as gbuffer
+            ID3D11ShaderResourceView* m_horGlowSRV;
+
+            ID3D11UnorderedAccessView* m_vertGlowUAV; // Used after vertical blurr
+            ID3D11ShaderResourceView* m_vertGlowSRV;
+
+            // Color buffer
+            ID3D11RenderTargetView* m_colorRTV; // Used as gbuffer
+            ID3D11ShaderResourceView* m_colorSRV;
+
+            // ID3D11ShaderResourceView* m_sceneSRV;
             ID3D11ShaderResourceView* m_glowSRV;
             ID3D11ShaderResourceView* m_depthSRV;
-            ID3D11UnorderedAccessView* m_backbufferUAV;
-            ID3D11UnorderedAccessView* m_sceneUAV;
-            ID3D11UnorderedAccessView* m_glowUAV;
+
+            // ID3D11UnorderedAccessView* m_sceneUAV;
+            // ID3D11UnorderedAccessView* m_glowUAV;
             ID3D11Texture2D* m_depthBuffer;
-            ID3D11Texture2D* m_glowmap;
-            ID3D11Texture2D* m_scene;
+            // ID3D11Texture2D* m_glowmap;
+            // ID3D11Texture2D* m_scene;
             ID3D11Texture2D* m_depth;
             ID3D11Texture2D* m_renderTargetTexture[2];
             ID3D11DepthStencilView* m_depthView;
@@ -178,6 +213,8 @@ namespace DoremiEngine
             ID3D11Buffer* m_spriteDataBuffer;
             ID3D11Buffer* m_materialBuffer;
             ID3D11SamplerState* m_defaultSamplerState;
+            ID3D11SamplerState* m_glowSamplerState;
+
             ID3D11BlendState* m_enableBlendState;
             ID3D11BlendState* m_disableBlendState;
             RasterizerState* m_defaultRasterizerState;

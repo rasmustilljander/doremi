@@ -4,8 +4,9 @@
 Texture2D glowmap : register (t0);
 Texture2D scene : register (t1);
 RWTexture2D<float4> output : register (u0);
+SamplerState glowSampler : register (s0);
 
-
+// This goes first
 cbuffer cbFixed
 {
     static const int BLUR_SIZE = 5;
@@ -25,24 +26,43 @@ groupshared float4 gCache[BLOCK_SIZE + 2 * BLUR_SIZE];
 [numthreads(1, BLOCK_SIZE, 1)]
 void CS_main(ComputeShaderInput input)
 {
-    float2 index2d = input.dispatchThreadID.xy;
-    float index = index2d.x + (index2d.y * SCREEN_WIDTH);
+    float2 uvDimensions = float2(2.0f/ SCREEN_WIDTH, 2.0f/ SCREEN_HEIGHT);
+
+    // get the edges
+    if (input.groupThreadID.y < BLUR_SIZE)
+    {
+        // clamp out of bound samples
+        int y = max(input.dispatchThreadID.y - BLUR_SIZE, 0);
+
+        // Warning only works when the threads match the texture
+        gCache[input.groupThreadID.y] = glowmap.SampleLevel(glowSampler, float2(input.dispatchThreadID.x* uvDimensions.x, y*uvDimensions.y), 0);
+    }
+    if (input.groupThreadID.y >= BLOCK_SIZE - BLUR_SIZE)
+    {
+        // clamp out of bound samples
+        int y = min(input.dispatchThreadID.y + BLUR_SIZE, glowmap.Length.y - 1);
+
+        // Warning only works when the threads match the texture
+        gCache[input.groupThreadID.y+ 2 * BLUR_SIZE] = glowmap.SampleLevel(glowSampler, float2(input.dispatchThreadID.x*uvDimensions.x, y*uvDimensions.y), 0);
+    }
+
+    // Get the rest of the samples
+    gCache[input.groupThreadID.y + BLUR_SIZE] = glowmap.SampleLevel(glowSampler, uvDimensions * min(input.dispatchThreadID.xy, glowmap.Length.xy - 1), 0);
 
     // Wait for all threads to finish.
     GroupMemoryBarrierWithGroupSync();
 
     ///// BLUR HORIZONAL
-
     float4 blurColor = float4(0, 0, 0, 0);
 
-    [unroll]
-    for (int i = -BLUR_SIZE; i < BLUR_SIZE; i++)
+    // i = -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, -> 5 = 9
+    //[unroll]
+    for (int i = -BLUR_SIZE; i <= BLUR_SIZE; ++i)
     {
-        int k = index2d.y + i;
-        float2 texcoords = float2(index2d.x, k);
-        blurColor += gWeights[i + BLUR_SIZE] * glowmap[texcoords];
+        int k = input.groupThreadID.y + BLUR_SIZE + i;
+        blurColor += gWeights[i + BLUR_SIZE] * gCache[k];
     }
 
-    output[index2d.xy] = saturate(scene[index2d] + blurColor);
+    output[input.dispatchThreadID.xy] = blurColor;
 
 }

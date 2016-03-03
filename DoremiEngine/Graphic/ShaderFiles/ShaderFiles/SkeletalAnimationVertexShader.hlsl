@@ -1,7 +1,7 @@
 cbuffer SkeletalAnimationTransformBuffer : register(b2)
 {
     // We can have 96 bones at max TODOLH reduce after TA decides how many bones they want
-    matrix boneTransforms[96];
+    matrix boneTransforms[40];
 }
 
 cbuffer CameraMatrixBuffer : register(b1)

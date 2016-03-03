@@ -110,21 +110,48 @@ namespace DoremiEngine
                 CheckHRESULT(res, "Error when creating device and swapchain");
             }
 
+            CreateBackBufferViews();
+
+            CreateBlurrBuffers();
+
+            CreateDepthViews();
+
+            CreateColorBuffer();
+
+            CreateRealDepthBuffer();
+
+
+            m_deviceContext->OMSetRenderTargets(1, &m_colorRTV, m_depthView);
+
+            CreateViewport();
+
+            CreateSamplers();
+
+            BuildConstantBuffers();
+
+            CreateRasterizerStates();
+
+            CreateBlendStates();
+        }
+
+        void DirectXManagerImpl::CreateBackBufferViews()
+        {
+            HRESULT res = S_OK;
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
 
-            res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_backbufferSRV);
-            if(FAILED(res))
-            {
-                // ERROR MESSAGE
-                std::cout << "Failed to create shader resource view" << std::endl;
-            }
-            res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBufferRTV);
-            if(FAILED(res))
-            {
-                // ERROR MESSAGE
-                std::cout << "Failed to create render target view" << std::endl;
-            }
+            // res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_backbufferSRV);
+            // if(FAILED(res))
+            //{
+            //    // ERROR MESSAGE
+            //    std::cout << "Failed to create shader resource view" << std::endl;
+            //}
+            // res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBufferRTV);
+            // if (FAILED(res))
+            //{
+            //    // ERROR MESSAGE
+            //    std::cout << "Failed to create render target view" << std::endl;
+            //}
             res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
             if(FAILED(res))
             {
@@ -132,6 +159,144 @@ namespace DoremiEngine
                 std::cout << "Failed to create unordered access view" << std::endl;
             }
             t_BackBuffer->Release();
+        }
+
+        void DirectXManagerImpl::CreateBlurrBuffers()
+        {
+            HRESULT res = S_OK;
+
+            ID3D11Texture2D* t_glowmap;
+            D3D11_TEXTURE2D_DESC dbdesc;
+            ZeroMemory(&dbdesc, sizeof(dbdesc));
+            dbdesc.Width = m_screenResolution.x;
+            dbdesc.Height = m_screenResolution.y;
+            dbdesc.MipLevels = 1;
+            dbdesc.ArraySize = 1;
+            dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            dbdesc.SampleDesc.Count = 1;
+            dbdesc.SampleDesc.Quality = 0;
+            dbdesc.Usage = D3D11_USAGE_DEFAULT;
+            dbdesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+            dbdesc.CPUAccessFlags = 0;
+            dbdesc.MiscFlags = 0;
+
+            D3D11_SHADER_RESOURCE_VIEW_DESC t_SrvDesc;
+            t_SrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            t_SrvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            t_SrvDesc.Texture2D.MostDetailedMip = 0;
+            t_SrvDesc.Texture2D.MipLevels = 1;
+
+            // Create texture for RTV
+            res = m_device->CreateTexture2D(&dbdesc, NULL, &t_glowmap);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create texture" << std::endl;
+            }
+
+            // Create RTV view
+            res = m_device->CreateRenderTargetView(t_glowmap, nullptr, &m_horGlowRTV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create rtv of glow" << std::endl;
+            }
+
+            // Create SRV view
+            res = m_device->CreateShaderResourceView(t_glowmap, &t_SrvDesc, &m_horGlowSRV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create srv of glow" << std::endl;
+            }
+            t_glowmap->Release();
+            t_glowmap = nullptr;
+
+            // Create the other texture
+            dbdesc.Width = std::ceil(m_screenResolution.x / 2.0f);
+            dbdesc.Height = std::ceil(m_screenResolution.y / 2.0f);
+            dbdesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+
+            // Create texture for RTV
+            res = m_device->CreateTexture2D(&dbdesc, NULL, &t_glowmap);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create texture" << std::endl;
+            }
+
+            // Create UAV view
+            res = m_device->CreateUnorderedAccessView(t_glowmap, nullptr, &m_vertGlowUAV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create rtv of glow" << std::endl;
+            }
+
+            // Create SRV view
+            res = m_device->CreateShaderResourceView(t_glowmap, &t_SrvDesc, &m_vertGlowSRV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create srv of glow" << std::endl;
+            }
+            t_glowmap->Release();
+        }
+
+        void DirectXManagerImpl::CreateColorBuffer()
+        {
+            HRESULT res = S_OK;
+
+            ID3D11Texture2D* t_colorBuffer;
+            D3D11_TEXTURE2D_DESC dbdesc;
+            ZeroMemory(&dbdesc, sizeof(dbdesc));
+            dbdesc.Width = m_screenResolution.x;
+            dbdesc.Height = m_screenResolution.y;
+            dbdesc.MipLevels = 1;
+            dbdesc.ArraySize = 1;
+            dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            dbdesc.SampleDesc.Count = 1;
+            dbdesc.SampleDesc.Quality = 0;
+            dbdesc.Usage = D3D11_USAGE_DEFAULT;
+            dbdesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+            dbdesc.CPUAccessFlags = 0;
+            dbdesc.MiscFlags = 0;
+
+            D3D11_SHADER_RESOURCE_VIEW_DESC t_SrvDesc;
+            t_SrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            t_SrvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            t_SrvDesc.Texture2D.MostDetailedMip = 0;
+            t_SrvDesc.Texture2D.MipLevels = 1;
+
+            // Create texture for RTV
+            res = m_device->CreateTexture2D(&dbdesc, NULL, &t_colorBuffer);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create texture" << std::endl;
+            }
+
+            // Create RTV view
+            res = m_device->CreateRenderTargetView(t_colorBuffer, nullptr, &m_colorRTV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create rtv of glow" << std::endl;
+            }
+
+            // Create SRV view
+            res = m_device->CreateShaderResourceView(t_colorBuffer, &t_SrvDesc, &m_colorSRV);
+            if(FAILED(res))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create srv of glow" << std::endl;
+            }
+            t_colorBuffer->Release();
+        }
+
+        void DirectXManagerImpl::CreateDepthViews()
+        {
+            HRESULT res = S_OK;
 
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
@@ -143,78 +308,35 @@ namespace DoremiEngine
             dbdesc.SampleDesc.Count = 1;
             dbdesc.SampleDesc.Quality = 0;
             dbdesc.Usage = D3D11_USAGE_DEFAULT;
-            dbdesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+            dbdesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
             dbdesc.CPUAccessFlags = 0;
             dbdesc.MiscFlags = 0;
 
-
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &m_scene);
-            if(FAILED(res))
-            {
-                // ERROR MESSAGE
-                std::cout << "Failed to create texture" << std::endl;
-            }
+            // Create texture
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depth);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 std::cout << "Failed to create texture" << std::endl;
             }
 
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &m_glowmap);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create texture" << std::endl;
-            }
-            res = m_device->CreateRenderTargetView(m_glowmap, NULL, &m_sceneRTV);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create render target view" << std::endl;
-            }
             res = m_device->CreateRenderTargetView(m_depth, NULL, &m_depthRTV);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 std::cout << "Failed to create render target view" << std::endl;
             }
-            res = m_device->CreateUnorderedAccessView(m_glowmap, NULL, &m_glowUAV);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create unordered access view" << std::endl;
-            }
-            res = m_device->CreateUnorderedAccessView(m_scene, NULL, &m_sceneUAV);
-            if (FAILED(res))
-            {
-                std::cout << "Failed to create shader resource view" << std::endl;
-            }
-            res = m_device->CreateShaderResourceView(m_glowmap, NULL, &m_glowSRV);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create shader resource view" << std::endl;
-            }
-            res = m_device->CreateShaderResourceView(m_scene, NULL, &m_sceneSRV);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create shader resource view" << std::endl;
-            }
+
             res = m_device->CreateShaderResourceView(m_depth, NULL, &m_depthSRV);
-            if (FAILED(res))
+            if(FAILED(res))
             {
                 std::cout << "Failed to create shader resource view" << std::endl;
             }
-            res = m_device->CreateRenderTargetView(m_scene, NULL, &m_glowRTV);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create render target view" << std::endl;
-            }
+        }
 
-            D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-            shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-            shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-            shaderResourceViewDesc.Texture2D.MipLevels = 1;
+        void DirectXManagerImpl::CreateRealDepthBuffer()
+        {
+            HRESULT res = S_OK;
 
-            // Depth buffer
-            // Might want this in a class for readability and easy changing between states
-
+            D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
             dbdesc.Width = m_screenResolution.x;
             dbdesc.Height = m_screenResolution.y;
@@ -224,9 +346,15 @@ namespace DoremiEngine
             dbdesc.SampleDesc.Count = 1;
             dbdesc.SampleDesc.Quality = 0;
             dbdesc.Usage = D3D11_USAGE_DEFAULT;
-            dbdesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+            dbdesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
             dbdesc.CPUAccessFlags = 0;
             dbdesc.MiscFlags = 0;
+
+            D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+            ZeroMemory(&descDSV, sizeof(descDSV));
+            descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+            descDSV.Texture2D.MipSlice = 0;
 
             res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depthBuffer);
             if(FAILED(res))
@@ -234,36 +362,18 @@ namespace DoremiEngine
                 std::cout << "Failed to create texture" << std::endl;
             }
 
-            D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-            ZeroMemory(&descDSV, sizeof(descDSV));
-
-            descDSV.Format = DXGI_FORMAT_D32_FLOAT;
-            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-            descDSV.Texture2D.MipSlice = 0;
-
             res = m_device->CreateDepthStencilView(m_depthBuffer, &descDSV, &m_depthView);
             if(FAILED(res))
             {
                 std::cout << "Failed to create depth stencil view" << std::endl;
             }
 
-            m_srv = NULL;
+            // Depth buffer
+            // Might want this in a class for readability and easy changing between states
+        }
 
-            D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
-            ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-            srvd.Format = DXGI_FORMAT_R32_FLOAT;
-            srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-            srvd.Texture2D.MipLevels = 1;
-
-
-            res = m_device->CreateShaderResourceView(m_depthBuffer, &srvd, &m_srv);
-            if(FAILED(res))
-            {
-                std::cout << "Failed to create shader resource view" << std::endl;
-            }
-
-            m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthView);
-
+        void DirectXManagerImpl::CreateViewport()
+        {
             // Viewport
             // TODOKO change so width and height is modifiable and taken from some smarter place
             D3D11_VIEWPORT viewport;
@@ -277,17 +387,21 @@ namespace DoremiEngine
             viewport.MaxDepth = 1.0f;
 
             m_deviceContext->RSSetViewports(1, &viewport);
+        }
 
+        void DirectXManagerImpl::CreateSamplers()
+        {
             // TODO add more different things like transparancy
+            HRESULT res = S_OK;
 
             // For default texture sampler
             D3D11_SAMPLER_DESC texSamDesc;
-            texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; // could be D3D11_FILTER_ANISOTROPIC
             texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
             texSamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
             texSamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
             texSamDesc.MipLODBias = 0;
-            texSamDesc.MaxAnisotropy = 1;
+            texSamDesc.MaxAnisotropy = 1; // this should be 16
             texSamDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
             texSamDesc.BorderColor[0] = 0.0f;
             texSamDesc.BorderColor[1] = 0.0f;
@@ -300,20 +414,33 @@ namespace DoremiEngine
             CheckHRESULT(res, "Fault when creating sampler");
             m_deviceContext->PSSetSamplers(0, 1, &m_defaultSamplerState);
 
-            BuildConstantBuffers();
+            // Create glow sapler
 
+            // for compute shader
+            texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+            texSamDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+            texSamDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+            res = m_device->CreateSamplerState(&texSamDesc, &m_glowSamplerState);
+            CheckHRESULT(res, "Fault when creating sampler");
+
+            m_deviceContext->CSSetSamplers(0, 1, &m_glowSamplerState);
+        }
+
+        void DirectXManagerImpl::CreateRasterizerStates()
+        {
             // For default rasterizer state
             D3D11_RASTERIZER_DESC rastDesc;
             ZeroMemory(&rastDesc, sizeof(rastDesc));
             rastDesc.FillMode = D3D11_FILL_SOLID;
-            rastDesc.CullMode = D3D11_CULL_NONE;
+            rastDesc.CullMode = D3D11_CULL_BACK;
             rastDesc.FrontCounterClockwise = false;
             rastDesc.DepthBias = 0;
             rastDesc.DepthBiasClamp = 0.0f;
             rastDesc.SlopeScaledDepthBias = 0.0f;
             rastDesc.DepthClipEnable = false;
             rastDesc.ScissorEnable = false;
-            rastDesc.MultisampleEnable = true;
+            rastDesc.MultisampleEnable = false;
             rastDesc.AntialiasedLineEnable = false;
             m_defaultRasterizerState = CreateRasterizerState(rastDesc);
 
@@ -324,7 +451,11 @@ namespace DoremiEngine
             depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
             depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
             m_defaultDepthStencilState = CreateDepthStencilState(depthStencilDesc);
+        }
 
+        void DirectXManagerImpl::CreateBlendStates()
+        {
+            HRESULT res = S_OK;
             D3D11_BLEND_DESC t_blendDesc;
             // Clear the blend state description.
             ZeroMemory(&t_blendDesc, sizeof(D3D11_BLEND_DESC));
@@ -1103,13 +1234,13 @@ namespace DoremiEngine
 
             ID3D11RenderTargetView* nullRTV[3] = {NULL, NULL, NULL};
             m_deviceContext->OMSetRenderTargets(3, nullRTV, m_depthView);
-            m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthView);
+            m_deviceContext->OMSetRenderTargets(1, &m_horGlowRTV, m_depthView);
         }
 
         void DirectXManagerImpl::SetRenderTargetGlow()
         {
             // Add depth bind to OM
-            ID3D11RenderTargetView* t_RTArray[3] = { m_glowRTV, m_backBufferRTV, m_depthRTV };
+            ID3D11RenderTargetView* t_RTArray[3] = {m_colorRTV, m_horGlowRTV, m_depthRTV};
             m_deviceContext->OMSetRenderTargets(3, t_RTArray, m_depthView);
         }
 
@@ -1143,6 +1274,9 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::ComputeGlow()
         {
+            // Set sampler here because, why not
+            m_deviceContext->CSSetSamplers(0, 1, &m_glowSamplerState);
+
             ID3D11ShaderResourceView* nullSRV = {NULL};
             ID3D11UnorderedAccessView* nullUAV = {NULL};
             ID3D11RenderTargetView* nullRTV[3] = {NULL, NULL, NULL};
@@ -1150,35 +1284,33 @@ namespace DoremiEngine
             m_deviceContext->OMSetRenderTargets(3, nullRTV, nullptr);
 
             //////BLUR HORIZONAL
-            m_deviceContext->CSSetShaderResources(0, 1, &m_backbufferSRV);
-            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_glowUAV, 0);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_horGlowSRV);
+            m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_vertGlowUAV, 0);
 
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurHorizontal();
+            // dispatch
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurVertical();
 
             m_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
 
             /////////BLUR VERTICAL
 
-            m_deviceContext->CSSetShaderResources(0, 1, &m_glowSRV);
-            m_deviceContext->CSSetShaderResources(1, 1, &m_sceneSRV);
+            m_deviceContext->CSSetShaderResources(0, 1, &m_vertGlowSRV);
+            m_deviceContext->CSSetShaderResources(1, 1, &m_colorSRV);
 
             // uav   m_glowUAV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_backbufferUAV, 0);
+
             // dispatch
-            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurVertical();
+            m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchBlurHorizontal();
+
             // clear srv and uav
             m_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
             m_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
-
         }
 
-        void DirectXManagerImpl::BeginDraw()
-        {
-            DispatchCompute();
-
-        }
+        void DirectXManagerImpl::BeginDraw() { DispatchCompute(); }
 
         void DirectXManagerImpl::EndDraw()
         {
@@ -1194,9 +1326,8 @@ namespace DoremiEngine
 
             m_swapChain->Present(0, 0); // TODO Evaluate if vsync should always be active
             float color[] = {0.0f, 0.0f, 0.0f, 1.0f};
-            m_deviceContext->ClearRenderTargetView(m_backBufferRTV, color);
-            m_deviceContext->ClearRenderTargetView(m_sceneRTV, color);
-            m_deviceContext->ClearRenderTargetView(m_glowRTV, color);
+            m_deviceContext->ClearRenderTargetView(m_colorRTV, color);
+            m_deviceContext->ClearRenderTargetView(m_horGlowRTV, color);
             m_deviceContext->ClearUnorderedAccessViewFloat(m_backbufferUAV, color);
             m_deviceContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         }
