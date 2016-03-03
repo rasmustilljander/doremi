@@ -63,6 +63,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::AnimationTransition, this);
             t_EventHandler->Subscribe(EventType::DamageTaken, this);
             t_EventHandler->Subscribe(EventType::Trigger, this);
+            t_EventHandler->Subscribe(EventType::SetTransform, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}

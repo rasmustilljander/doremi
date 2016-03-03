@@ -1,6 +1,6 @@
-#include <Doremi\Core\Include\EntityComponent\Components\GravityComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/GravityComponent.hpp>
 
-#include <Doremi\Core\Include\EntityComponent\Components\MovementComponent.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/MovementComponent.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/TriggerEvent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
@@ -12,6 +12,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 #include <iostream>
 
 namespace Doremi
@@ -83,6 +84,10 @@ namespace Doremi
             // Create event for other purposes
             PlayerRespawnEvent* t_playerRespawn = new PlayerRespawnEvent(p_entityID, t_triggerPosition, t_triggerOrientation);
             EventHandler::GetInstance()->BroadcastEvent(t_playerRespawn);
+
+            // Create event for other purposes
+            SetTransformEvent* t_setTransEvent = new SetTransformEvent(p_entityID, t_transComp->position, t_transComp->rotation);
+            EventHandler::GetInstance()->BroadcastEvent(t_setTransEvent);
         }
 
         void PlayerSpawnerHandler::OnEvent(Event* p_event)

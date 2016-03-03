@@ -302,6 +302,7 @@ namespace Doremi
             }
             else if(p_event->eventType == Doremi::Core::EventType::SetTransform)
             {
+                cout << "Received set transform" << endl;
                 SetTransformEvent* t_setTransformEvent = static_cast<SetTransformEvent*>(p_event);
 
                 EntityHandler& t_entityHandler = EntityHandler::GetInstance();
@@ -315,9 +316,25 @@ namespace Doremi
                 }
                 else if(t_entityHandler.HasComponents(t_setTransformEvent->entityID, static_cast<uint32_t>(ComponentType::CharacterController)))
                 {
+                    cout << "Setting char controller transform" << endl;
                     DoremiEngine::Physics::CharacterControlManager& t_characterControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
 
                     t_characterControlManager.SetPosition(t_setTransformEvent->entityID, t_setTransformEvent->position);
+                }
+
+                // If player
+                if(PlayerExists() && GetPlayerEntityID() == t_setTransformEvent->entityID)
+                {
+                    XMFLOAT3 t_standard = XMFLOAT3(0, 0, 1);
+                    XMVECTOR t_standardVec = XMLoadFloat3(&t_standard);
+                    XMVECTOR t_newOrienVec = XMLoadFloat4(&t_setTransformEvent->orientation);
+                    XMVECTOR t_newVector = XMVector3Rotate(t_standardVec, t_newOrienVec);
+
+                    XMVECTOR t_anglesVec = XMVector3AngleBetweenVectors(t_standardVec, t_newVector);
+                    XMFLOAT3 t_angles;
+                    XMStoreFloat3(&t_angles, t_anglesVec);
+                    m_jaw = t_angles.x;
+                    m_pitch = 0;
                 }
 
                 // Set transform to components
