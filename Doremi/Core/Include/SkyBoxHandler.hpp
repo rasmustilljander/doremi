@@ -13,9 +13,6 @@ namespace Doremi
 {
     namespace Core
     {
-        /**
-        Only an example of what a manager might look like
-        Doesn't do anything, and could be removed once examples are no longer necessary*/
         class SkyBoxHandler
         {
         public:
