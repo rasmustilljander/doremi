@@ -103,11 +103,11 @@ namespace DoremiEngine
 
             HRESULT hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_buffer[p_index]));
 
-            outputDesc.Usage = D3D11_USAGE_STAGING;
-            outputDesc.BindFlags = 0;
-            outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+            // outputDesc.Usage = D3D11_USAGE_STAGING;
+            // outputDesc.BindFlags = 0;
+            // outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
-            hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_bufferResult[p_index]));
+            // hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_bufferResult[p_index]));
 
             D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
             uavDesc.Buffer.FirstElement = 0;
@@ -235,59 +235,59 @@ namespace DoremiEngine
 
         void ComputeShaderManagerImpl::CopyData(BufferType index)
         {
-            ID3D11UnorderedAccessView* nullUAV[] = {NULL};
+            // ID3D11UnorderedAccessView* nullUAV[] = {NULL};
 
-            ID3D11DeviceContext* m_context = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
+            // ID3D11DeviceContext* m_context = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
 
 
-            m_context->CopyResource(m_bufferResult[index], m_buffer[index]);
-            D3D11_MAPPED_SUBRESOURCE mappedResource;
-            HRESULT hr = m_context->Map(m_bufferResult[index], 0, D3D11_MAP_READ, 0, &mappedResource);
+            // m_context->CopyResource(m_bufferResult[index], m_buffer[index]);
+            // D3D11_MAPPED_SUBRESOURCE mappedResource;
+            // HRESULT hr = m_context->Map(m_bufferResult[index], 0, D3D11_MAP_READ, 0, &mappedResource);
 
-            if(SUCCEEDED(hr))
-            {
-                switch(index)
-                {
-                    case 0:
-                        for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
-                        {
-                            m_frustumArray->frustum[i] = reinterpret_cast<FrustumInfo*>(mappedResource.pData)[i];
-                        }
-                        break;
-                    case 1:
-                        m_oLightCounter->counter = reinterpret_cast<unsigned int>(mappedResource.pData);
-                        break;
-                    case 2:
-                        m_tLightCounter->counter = reinterpret_cast<unsigned int>(mappedResource.pData);
-                        break;
-                    case 3:
-                        for(size_t i = 0; i < NUM_THREAD_BLOCKS * 200; i++)
-                        {
-                            m_oLightIndexList->LightIndexList[i] = reinterpret_cast<unsigned int*>(mappedResource.pData)[i];
-                        }
-                        break;
-                    case 4:
-                        for(size_t i = 0; i < NUM_THREAD_BLOCKS * 200; i++)
-                        {
-                            m_tLightIndexList->LightIndexList[i] = reinterpret_cast<unsigned int*>(mappedResource.pData)[i];
-                        }
-                        break;
-                    case 5:
-                        for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
-                        {
-                            m_oLightGrid->lightGridInfo[i] = reinterpret_cast<LightGridInfo*>(mappedResource.pData)[i];
-                        }
-                        break;
-                    case 6:
-                        for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
-                        {
-                            m_tLightGrid->lightGridInfo[i] = reinterpret_cast<LightGridInfo*>(mappedResource.pData)[i];
-                        }
-                        break;
-                }
+            // if(SUCCEEDED(hr))
+            //{
+            //    switch(index)
+            //    {
+            //        case 0:
+            //            for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
+            //            {
+            //                m_frustumArray->frustum[i] = reinterpret_cast<FrustumInfo*>(mappedResource.pData)[i];
+            //            }
+            //            break;
+            //        case 1:
+            //            m_oLightCounter->counter = reinterpret_cast<unsigned int>(mappedResource.pData);
+            //            break;
+            //        case 2:
+            //            m_tLightCounter->counter = reinterpret_cast<unsigned int>(mappedResource.pData);
+            //            break;
+            //        case 3:
+            //            for(size_t i = 0; i < NUM_THREAD_BLOCKS * 200; i++)
+            //            {
+            //                m_oLightIndexList->LightIndexList[i] = reinterpret_cast<unsigned int*>(mappedResource.pData)[i];
+            //            }
+            //            break;
+            //        case 4:
+            //            for(size_t i = 0; i < NUM_THREAD_BLOCKS * 200; i++)
+            //            {
+            //                m_tLightIndexList->LightIndexList[i] = reinterpret_cast<unsigned int*>(mappedResource.pData)[i];
+            //            }
+            //            break;
+            //        case 5:
+            //            for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
+            //            {
+            //                m_oLightGrid->lightGridInfo[i] = reinterpret_cast<LightGridInfo*>(mappedResource.pData)[i];
+            //            }
+            //            break;
+            //        case 6:
+            //            for(size_t i = 0; i < NUM_THREAD_BLOCKS; i++)
+            //            {
+            //                m_tLightGrid->lightGridInfo[i] = reinterpret_cast<LightGridInfo*>(mappedResource.pData)[i];
+            //            }
+            //            break;
+            //    }
 
-                m_context->Unmap(m_bufferResult[index], 0);
-            }
+            //    m_context->Unmap(m_bufferResult[index], 0);
+            //}
         }
     }
 }
