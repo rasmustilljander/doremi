@@ -756,6 +756,18 @@ namespace DoremiEngine
                 memcpy(tMS.pData, worldMatrices.data(), sizeof(WorldMatrixPair) * worldMatrices.size()); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
 
+                // Set the material to j-1
+                materialData = renderData[j - 1].materialMessage;
+                if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                {
+                    D3D11_MAPPED_SUBRESOURCE tMS;
+                    m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                    memcpy(tMS.pData, &renderData[j - 1].materialMessage.data, sizeof(renderData[j - 1].materialMessage.data));
+                    m_deviceContext->Unmap(m_materialBuffer, NULL);
+
+                    m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
+                }
+
                 if(renderData[i].indexData != nullptr)
                 {
                     m_deviceContext->IASetIndexBuffer(renderData[i].indexData, DXGI_FORMAT_R32_UINT, 0);
@@ -799,17 +811,6 @@ namespace DoremiEngine
                     {
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
-                }
-
-                materialData = renderData[i].materialMessage;
-                if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
-                {
-                    D3D11_MAPPED_SUBRESOURCE tMS;
-                    m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-                    memcpy(tMS.pData, &renderData[i].materialMessage.data, sizeof(renderData[i].materialMessage.data));
-                    m_deviceContext->Unmap(m_materialBuffer, NULL);
-
-                    m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
                 }
             }
 
