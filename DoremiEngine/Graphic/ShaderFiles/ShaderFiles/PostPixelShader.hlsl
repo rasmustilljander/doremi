@@ -144,13 +144,13 @@ PixelOutputType PS_main(PixelInputType input)
     for (int i = index; i < index + value; i++)
     {
         Light l = light[t_LightIndexList[i]];
-        if (l.type == 0)
-            rgb += float3(0, 0, 0);
-        if (l.type == 1)
-            rgb += CalcDirectionalLight(input, l); 
-        if (l.type == 2)
-            rgb += CalcSpotLight(input, l);
-        if (l.type == 3)
+        //if (l.type == 0)
+        //    rgb += float3(0, 0, 0);
+        //if (l.type == 1)
+        //    rgb += CalcDirectionalLight(input, l); 
+        //if (l.type == 2)
+        //    rgb += CalcSpotLight(input, l);
+        //if (l.type == 3)
             rgb += CalcPointLight(input, l, texcolor);
 
     }
@@ -160,7 +160,7 @@ PixelOutputType PS_main(PixelInputType input)
     }
     else
     {
-        output.diffuse = float4(rgb * 3, 0) + texcolor;
+        output.diffuse = float4(rgb * 2, 0) + texcolor;
     }
 
     return output;

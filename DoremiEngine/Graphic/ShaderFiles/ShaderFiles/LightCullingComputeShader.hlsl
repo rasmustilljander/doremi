@@ -129,7 +129,7 @@ void CS_main(ComputeShaderInput input)
             switch (light.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(float4(light.position, 1), viewMatrix).xyz, light.intensity * 25.f}; //TODORK change intensity to light range
+                Sphere sphere = { mul(float4(light.position, 1), viewMatrix).xyz, light.intensity * 10.f}; //TODORK change intensity to light range 25
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
@@ -147,31 +147,31 @@ void CS_main(ComputeShaderInput input)
 
 
                 break;
-            case 2: //spot light
+            //case 2: //spot light
 
-                float coneRadius = tan(radians(light.coneAngle)) * light.intensity * 50; //TODORK change intensity to light range
-                Cone cone = { light.position.xyz, light.intensity, light.direction.xyz, coneRadius };
-                if (ConeInsideFrustum(cone, GroupFrustum, nearClipVS, maxDepthVS))
-                {
-                    // Add light to light list for transparent geometry.
-                    t_AppendLight(i);
+            //    float coneRadius = tan(radians(light.coneAngle)) * light.intensity * 50; //TODORK change intensity to light range
+            //    Cone cone = { light.position.xyz, light.intensity, light.direction.xyz, coneRadius };
+            //    if (ConeInsideFrustum(cone, GroupFrustum, nearClipVS, maxDepthVS))
+            //    {
+            //        // Add light to light list for transparent geometry.
+            //        t_AppendLight(i);
 
-                    if (!ConeInsidePlane(cone, minPlane))
-                    {
-                        // Add light to light list for opaque geometry.
-                        o_AppendLight(i);
-                    }
-                }
+            //        if (!ConeInsidePlane(cone, minPlane))
+            //        {
+            //            // Add light to light list for opaque geometry.
+            //            o_AppendLight(i);
+            //        }
+            //    }
 
-                break;
-            case 1: //directional light
+            //    break;
+            //case 1: //directional light
 
-                // Directional lights always get added to our light list.
-                // (Hopefully there are not too many directional lights!)
-                t_AppendLight(i);
-                o_AppendLight(i);
+            //    // Directional lights always get added to our light list.
+            //    // (Hopefully there are not too many directional lights!)
+            //    t_AppendLight(i);
+            //    o_AppendLight(i);
 
-                break;
+            //    break;
             }
         }
     }

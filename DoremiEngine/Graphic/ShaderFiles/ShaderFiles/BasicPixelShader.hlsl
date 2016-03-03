@@ -83,8 +83,11 @@ float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
 
     lightDir = -l.direction;
     lightIntensity = saturate(dot(input.normal, lightDir));
-    return l.color * lightIntensity * texcolor * l.intensity;
+    return l.color * lightIntensity * texcolor*  l.intensity;
 }
+/*
+
+*/
 
 float3 CalcSpotLight(PixelInputType input, Light l)
 {
@@ -181,28 +184,43 @@ PixelOutputType PS_main(PixelInputType input)
 
     float3 rgb = float3(0, 0, 0);
 
+
+    Light directionalLight;
+    directionalLight.intensity = 1.2f;
+    directionalLight.color = float3(0.2f ,0.2f ,0.7f);
+    directionalLight.direction = normalize(float3(0.3, -0.8, 0));
+    rgb += CalcDirectionalLight(input, directionalLight, texcolor);
+
     for (int i = index; i < index + value; i++)
         //for (int i = 0; i < 200; i++)
     {
         Light l = light[o_LightIndexList[i]];
-        //Light l = light[i];
-        if (l.type == 0)
-            rgb += float3(0, 0, 0);
-        if (l.type == 1)
-            rgb += CalcDirectionalLight(input, l, texcolor);
-        if (l.type == 2)
-            rgb += CalcSpotLight(input, l);
-        if (l.type == 3)
+        ////Light l = light[i];
+        //if (l.type == 0)
+        //    rgb += float3(0, 0, 0);
+        //else if (l.type == 1)
+        //    rgb += CalcDirectionalLight(input, l, texcolor);
+        //else if (l.type == 2)
+        //    rgb += CalcSpotLight(input, l);
+        //else if (l.type == 3)
             rgb += CalcPointLight2(input, l, texcolor.rgb);
     }
 
-    if (glowcolor.r < 0.5 &&
-        glowcolor.g < 0.5 && glowcolor.b < 0.5)
+    if (glowcolor.r < 0.5)
         output.glow = float4(0, 0, 0, 0);
     else
-        output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
+        output.glow = texcolor * glowcolor.r;
 
-    output.diffuse = float4(rgb, 1) + texcolor * 0.25;
+    //if (glowcolor.r < 0.5 &&
+    //    glowcolor.g < 0.5 && glowcolor.b < 0.5)
+    //    output.glow = float4(0, 0, 0, 0);
+    //else
+    //    output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
+
+    //output.diffuse = float4(rgb, 1) + texcolor * 0.25*;
+
+
+    output.diffuse = float4(rgb, 1) + texcolor * 0.17f;
 
     float depth = (input.position.z / input.position.w) * -1 + 1.3;   //Invert and add .3 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);
