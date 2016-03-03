@@ -395,7 +395,8 @@ namespace Doremi
         }
         catch(const std::exception& exception)
         {
-            printf("Exception: %s\n", exception.what());
+            using namespace Utilities::Logging;
+            m_logger->LogText(LogTag::GAME, LogLevel::FATAL_ERROR, "Exception: %s", exception.what());
         }
         Doremi::Core::TimerManager::GetInstance().DumpData(*m_sharedContext);
     }
