@@ -175,18 +175,28 @@ namespace Doremi
             // Calculate the length of this vector
             XMStoreFloat3(&t_movementLengthVector, XMVector3Length(XMLoadFloat3(&t_movementVector)));
             float t_movementInYAxis = abs(t_movementVector.y);
+            float t_movementInXAxis = abs(t_movementVector.x);
+            float t_movementInZAxis = abs(t_movementVector.z);
             // Lower animation flow
             // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
 
             if(t_lowerSkeletalAnimationComponent->clipName != "Run")
             {
-                // Kolla om vi rört på oss
-                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementInYAxis < t_epsilon)
+                // Kolla om vi rört på oss och vi inte har börjat runtransition
+                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0)
                 {
-                    // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
-                    STimer("Run", t_lowerSkeletalAnimationComponent);
-                    // t_lowerSkeletalAnimationComponent->clipName = "Run";
-                    // t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
+                    // Kolla ifall vi har rört oss i Yled. Ifall inte bara spring
+                    if(t_movementInYAxis < t_epsilon && t_lowerSkeletalAnimationComponent->clipName != "Jump")
+                    {
+                        STimer("Run", t_lowerSkeletalAnimationComponent);
+                    }
+                    // Har vi rört oss i Yled betyder det att vi faller eller hoppar. DÅ ska vi kolla om vi hoppat klart för efter hela hopanimationen
+                    // så startas Idlemätarn för transition
+                    else if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"] > 0.0f && (t_movementInXAxis > 0 || t_movementInZAxis > 0))
+                    {
+                        STimer("Run", t_lowerSkeletalAnimationComponent);
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"] = 0.0f;
+                    }
                 }
             }
             // Om vi springer ska vi kolla om vi har stannat
@@ -207,11 +217,14 @@ namespace Doremi
             }
             // Överkroppens animationsflow
             // Om du har rört dig och din animation är idle. Så ska du sättas till run annars ska alla andra animationer få köra klart sitt
-            if(t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName == "Idle" &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementInYAxis < t_epsilon)
+
+            if((t_movementInXAxis > t_epsilon || t_movementInZAxis > t_epsilon) &&
+               (t_upperSkeletalAnimationComponent->clipName == "Idle" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"] > 0.0f) &&
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"] == 0)
             {
                 // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                 STimer("Run", t_upperSkeletalAnimationComponent);
+                (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"] = 0.0f;
                 // t_upperSkeletalAnimationComponent->clipName = "Run";
                 if(t_lowerSkeletalAnimationComponent->clipName == "Run")
                 {
@@ -226,15 +239,11 @@ namespace Doremi
             if(t_upperSkeletalAnimationComponent->clipName == "Run" && t_movementLengthVector.x < t_epsilon &&
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"] == 0)
             {
-                // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").StartTimer();
                 STimer("Idle", t_upperSkeletalAnimationComponent);
-                // printf("2");
-                // t_upperSkeletalAnimationComponent->clipName = "Idle";
-                // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
             }
 
             // Orientera underkroppenlogik
-            if(t_lowerSkeletalAnimationComponent->clipName == "Run")
+            if(t_lowerSkeletalAnimationComponent->clipName == "Run" || t_lowerSkeletalAnimationComponent->clipName == "Jump")
             {
                 // Hämta orientationen för meshen
                 XMVECTOR t_orientationQuater = XMLoadFloat4(&t_transformComponentNext->rotation);
@@ -267,7 +276,14 @@ namespace Doremi
                 // Change the sign of the angle and then create an orientation quaternion describing a rotation around yaxis with the angle we
                 // calculated
                 angleVec.x *= t_positive.y;
-                XMStoreFloat4(&t_lowerSkeletalAnimationComponent->orientation, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angleVec.x));
+                if(t_positive.y == 0)
+                {
+                    t_lowerSkeletalAnimationComponent->orientation = XMFLOAT4(0, 0, 0, 1);
+                }
+                else
+                {
+                    XMStoreFloat4(&t_lowerSkeletalAnimationComponent->orientation, XMQuaternionRotationAxis(XMLoadFloat3(&XMFLOAT3(0, 1, 0)), angleVec.x));
+                }
             }
         }
 
@@ -277,6 +293,7 @@ namespace Doremi
             {
                 case Doremi::Core::EventType::AnimationTransition:
                 {
+
                     AnimationTransitionEvent* t_animationTransitionEvent = static_cast<AnimationTransitionEvent*>(p_event);
                     LowerSkeletalAnimationComponent* t_lowerSkeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(t_animationTransitionEvent->entityID);
@@ -289,7 +306,8 @@ namespace Doremi
                         // t_upperSkeletalAnimationComponent->clipName = "Attack";
                         // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
                         if(t_lowerSkeletalAnimationComponent->clipName != "Run" &&
-                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0)
+                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_lowerSkeletalAnimationComponent->clipName != "Jump" &&
+                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"] > 0)
                         {
                             // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Attack").StartTimer();
                             STimer("Attack", t_lowerSkeletalAnimationComponent);
@@ -299,25 +317,22 @@ namespace Doremi
                     }
                     else if(t_animationTransitionEvent->animation == Animation::STOPATTACK)
                     {
-                        if(t_lowerSkeletalAnimationComponent->clipName != "Attack")
+                        if(t_upperSkeletalAnimationComponent->clipName == "Attack" ||
+                           (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"] > 0)
                         {
-                            // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend(t_lowerSkeletalAnimationComponent->clipName).StartTimer();
-                            STimer(t_lowerSkeletalAnimationComponent->clipName, t_upperSkeletalAnimationComponent);
+                            if(t_lowerSkeletalAnimationComponent->clipName != "Attack")
+                            {
+                                STimer(t_lowerSkeletalAnimationComponent->clipName, t_upperSkeletalAnimationComponent);
+                            }
+                            else
+                            {
+                                STimer("Idle", t_upperSkeletalAnimationComponent);
+                            }
                         }
-                        else
+                        if(t_lowerSkeletalAnimationComponent->clipName == "Attack" ||
+                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"] > 0)
                         {
-                            // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").StartTimer();
-                            STimer("Idle", t_upperSkeletalAnimationComponent);
-                        }
-                        // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").StartTimer();
-                        // t_upperSkeletalAnimationComponent->clipName = "Idle";
-                        // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
-                        if(t_lowerSkeletalAnimationComponent->clipName == "Attack")
-                        {
-                            // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Idle").StartTimer();
                             STimer("Idle", t_lowerSkeletalAnimationComponent);
-                            // t_lowerSkeletalAnimationComponent->clipName = "Idle";
-                            // t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
                         }
                     }
                     else if(t_animationTransitionEvent->animation == Animation::JUMP)
@@ -341,15 +356,10 @@ namespace Doremi
                         EntityHandler::GetInstance().GetComponentFromStorage<LowerSkeletalAnimationComponent>(t_event->entityId);
                     SkeletalAnimationComponent* t_upperSkeletalAnimationComponent =
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(t_event->entityId);
-                    // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Hit").StartTimer();
                     STimer("Hit", t_upperSkeletalAnimationComponent);
-                    // t_upperSkeletalAnimationComponent->clipName = "Hit";
-                    // t_upperSkeletalAnimationComponent->timePosition = 0.0f;
                     if(t_lowerSkeletalAnimationComponent->clipName != "Run")
                     {
-                        // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Hit").StartTimer();
                         STimer("Hit", t_lowerSkeletalAnimationComponent);
-                        // t_lowerSkeletalAnimationComponent->clipName = "Hit";
                     }
                     break;
                 }
