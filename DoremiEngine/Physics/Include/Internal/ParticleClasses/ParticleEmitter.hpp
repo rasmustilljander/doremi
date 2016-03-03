@@ -7,7 +7,7 @@
 #include <map>
 #include <random>
 
-#define PARTICLE_MAX_COUNT 200000000 // TODOCONFIG
+#define PARTICLE_MAX_COUNT 200000 // TODOCONFIG
 #define PARTICLE_MAX_MOTION_DISTANCE 100 // TODOCONFIG
 using namespace DirectX;
 using namespace physx;
