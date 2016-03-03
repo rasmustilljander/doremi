@@ -724,7 +724,6 @@ namespace DoremiEngine
             // TODO Can be upgraded with instanced drawing
             // sista saken som ska renderas kanske inte renderas nu...
             const size_t vectorSize = renderData.size();
-
             size_t i = 0;
             for(; i < vectorSize - 1;)
             {
@@ -741,8 +740,11 @@ namespace DoremiEngine
 
                     // Check if anything have changed or if we are above max instances
                     if(renderData[j].vertexData != renderData[j + 1].vertexData || renderData[i].samplerState != renderData[i + 1].samplerState ||
-                       renderData[i].diffuseTexture != renderData[i + 1].diffuseTexture ||
-                       renderData[i].glowTexture != renderData[i + 1].glowTexture || worldMatrices.size() >= MAX_NUMBER_OF_INSTANCES)
+                       renderData[i].diffuseTexture != renderData[i + 1].diffuseTexture || renderData[i].glowTexture != renderData[i + 1].glowTexture ||
+                       renderData[i].materialMessage.data.color[0] !=
+                           renderData[i + 1].materialMessage.data.color[0] || // Really horrible way of checking if mat changed
+                       renderData[i].materialMessage.data.color[1] != renderData[i + 1].materialMessage.data.color[1] ||
+                       renderData[i].materialMessage.data.color[2] != renderData[i + 1].materialMessage.data.color[2] || worldMatrices.size() >= MAX_NUMBER_OF_INSTANCES)
                     {
                         j++;
                         break;
@@ -767,6 +769,7 @@ namespace DoremiEngine
                 vertexData = renderData[j].vertexData;
                 m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
 
+                // Check what needs changing!
                 if(renderData[i].samplerState != renderData[i - 1].samplerState)
                 {
                     samplerState = renderData[i].samplerState;
@@ -796,7 +799,7 @@ namespace DoremiEngine
                         m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
                     }
                 }
-                if(&renderData[i].materialMessage != &renderData[i - 1].materialMessage) // Is this a faulty check?
+                if(&renderData[i].materialMessage != &renderData[i - 1].materialMessage) // Faulty check! We change mat every time!
                 {
                     materialData = renderData[i].materialMessage;
                     if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
@@ -810,8 +813,8 @@ namespace DoremiEngine
                     }
                 }
             }
-            // Draw the last one since it's a special case
 
+            // Draw the last one since it's a special case
             WorldMatrixPair newPair;
             newPair.worldMat = renderData[i].worldMatrix;
             DirectX::XMMATRIX t_mat = DirectX::XMLoadFloat4x4(&renderData[i].worldMatrix);
