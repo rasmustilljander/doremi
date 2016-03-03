@@ -244,19 +244,20 @@ namespace Doremi
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            t_physMatComp->p_materialID =
+                sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f); // TODOJB remove p_
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Character control comp label
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->dims = XMFLOAT2(3.0f, 1.5f);
             charControlComp->flags = CharacterControlFlags::drain;
             blueprint[ComponentType::CharacterController] = charControlComp;
 
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
-            healthComponent->maxHealth = 100;
-            healthComponent->currentHealth = 100;
+            healthComponent->maxHealth = 100.0f;
+            healthComponent->currentHealth = 100.0f;
             blueprint[ComponentType::Health] = healthComponent;
 
 
@@ -267,8 +268,8 @@ namespace Doremi
 
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->charge = -2;
-            potentialComp->range = 4;
+            potentialComp->charge = -2.0f;
+            potentialComp->range = 4.0f;
             potentialComp->type = DoremiEngine::AI::AIActorType::RangedEnemy;
             potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
@@ -324,7 +325,7 @@ namespace Doremi
             LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::MELEENEMY);
 
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->offsetY = -3;
+            renderComp->offsetY = -3.0f;
             renderComp->lockedRotationX = true;
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
@@ -337,25 +338,25 @@ namespace Doremi
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::MELEENEMY;
-            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
-            healthComponent->maxHealth = 200;
+            healthComponent->maxHealth = 200.0f;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
 
             // Extra drain and rigid comp
             RigidBodyComponent* rigidComp = new RigidBodyComponent();
-            rigidComp->radius = 3;
-            rigidComp->height = 1.5;
+            rigidComp->radius = 3.0f;
+            rigidComp->height = 1.5f;
             rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
             rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
             blueprint[ComponentType::RigidBody] = rigidComp;
@@ -446,12 +447,12 @@ namespace Doremi
 
             // Transform
             TransformComponent* transComp = new TransformComponent();
-            transComp->scale = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+            transComp->scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
             blueprint[ComponentType::Transform] = transComp;
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5, 0.5, 0.5);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.5f, 0.5f, 0.5f);
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
@@ -688,18 +689,18 @@ namespace Doremi
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
-            particleComp->data.m_emissionAreaDimensions = XMFLOAT2(3.14 / 4, 3.14 / 5);
-            particleComp->data.m_emissionRate = 0.05;
-            particleComp->data.m_launchPressure = 100;
+            particleComp->data.m_emissionAreaDimensions = XMFLOAT2(XM_PIDIV4, XM_PI / 5.0f);
+            particleComp->data.m_emissionRate = 0.05f;
+            particleComp->data.m_launchPressure = 100.0f;
             particleComp->data.m_numParticlesX = 5;
             particleComp->data.m_numParticlesY = 1;
-            particleComp->data.m_size = 1;
+            particleComp->data.m_size = 1.0f;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // HP component
             HealthComponent* hpComp = new HealthComponent();
-            hpComp->currentHealth = 50;
-            hpComp->maxHealth = 50;
+            hpComp->currentHealth = 50.0f;
+            hpComp->maxHealth = 50.0f;
             t_avatarBlueprint[ComponentType::Health] = hpComp;
             // Register blueprint
             t_entityHandler.RegisterEntityBlueprint(Blueprints::PlayerEntity, t_avatarBlueprint);
@@ -781,7 +782,7 @@ namespace Doremi
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
 
-            data.setColor(0.1, 0.2, 0.9);
+            data.setColor(0.1f, 0.2f, 0.9f);
             material.data = data;
             material.nodeName = "BulletMaterial";
             material.diffuseTexturePath = "Test.dds";
@@ -795,7 +796,7 @@ namespace Doremi
             particleComp->data.m_launchPressure = 100.0f;
             particleComp->data.m_numParticlesX = 5;
             particleComp->data.m_numParticlesY = 1;
-            particleComp->data.m_size = 1;
+            particleComp->data.m_size = 1.0f;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // Net object
@@ -811,8 +812,8 @@ namespace Doremi
 
             // HP component
             HealthComponent* hpComp = new HealthComponent();
-            hpComp->currentHealth = 50;
-            hpComp->maxHealth = 50;
+            hpComp->currentHealth = 50.0f;
+            hpComp->maxHealth = 50.0f;
             t_avatarBlueprint[ComponentType::Health] = hpComp;
 
             // Register blueprint
@@ -850,7 +851,7 @@ namespace Doremi
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
-            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
             // Transform comp
@@ -869,7 +870,7 @@ namespace Doremi
             particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
-            data.setColor(0.1, 0.2, 0.9);
+            data.setColor(0.1f, 0.2f, 0.9f);
 
             material.data = data;
             material.nodeName = "BulletMaterial";
@@ -884,13 +885,13 @@ namespace Doremi
             particleComp->data.m_launchPressure = 100.0f;
             particleComp->data.m_numParticlesX = 5;
             particleComp->data.m_numParticlesY = 1;
-            particleComp->data.m_size = 1;
+            particleComp->data.m_size = 1.0f;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // HP component
             HealthComponent* hpComp = new HealthComponent();
-            hpComp->currentHealth = 50;
-            hpComp->maxHealth = 50;
+            hpComp->currentHealth = 50.0f;
+            hpComp->maxHealth = 50.0f;
             t_avatarBlueprint[ComponentType::Health] = hpComp;
 
             // Register blueprint
@@ -1000,8 +1001,8 @@ namespace Doremi
             // Spawn component
             EntitySpawnComponent* t_entitySpawnComp = new EntitySpawnComponent();
             t_entitySpawnComp->entityBlueprint = Blueprints::RangedEnemyEntity;
-            t_entitySpawnComp->spawnRadius = 2;
-            t_entitySpawnComp->timeBetweenSpawns = 2;
+            t_entitySpawnComp->spawnRadius = 2.0f;
+            t_entitySpawnComp->timeBetweenSpawns = 2.0f;
             t_entitySpawnComp->type = SpawnerType::TimedSpawner;
             t_entitySpawnComp->maxNumSpawnedEntites = 4;
             t_blueprint[ComponentType::EntitySpawner] = t_entitySpawnComp;
