@@ -33,7 +33,7 @@ struct VOut
     float2 depth : DEPTH;
     float3 screenPos : SCREENPOS;
     float2 texCoord : TEXCOORD;
-    float3 normal: NORMAL;
+    float3 normal : NORMAL;
     float3 cameraPos : CAMERAPOS;
 };
 

@@ -94,32 +94,30 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
-    float3 lightVec = l.position - input.worldPos;
+    float3 normal = normalize(input.normal);
+
+    float3 scatteredLight, reflectedLight;
+    float attenuation;
+
+    float3 lightVec = l.position - input.worldPos.xyz;
     float radius = l.intensity * 25.f;
-
     float d = length(lightVec);
-    if (d > radius)
+
+    if (d < radius)
     {
-        return float3(0, 0, 0);
+        float attenuation = pow(max(0.0f, 1.0 - (d / radius)), 20.0f);
+
+        float3 halfVector = normalize(lightVec + normalize(-input.worldPos));
+
+        float diffuse = max(0.0, dot(normal, lightVec));
+        float specular = max(0.0, dot(normal, halfVector));
+
+        scatteredLight = l.color * diffuse * attenuation;
+        reflectedLight = l.color * specular * attenuation;
+        return min(texcolor.rgb * (scatteredLight + reflectedLight), float3(1, 1, 1));
     }
 
-    lightVec /= d;
-    float diffuseFactor = dot(lightVec, input.normal);
-
-    if (diffuseFactor < 0.0f)
-    {
-        return float3(0, 0, 0);
-    }
-
-    float att = pow(max(0.0f, 1.0 - (d / radius)), 4.0f);
-
-    float3 toEye = normalize(input.cameraPos - input.worldPos);
-    float3 v = reflect(-lightVec, input.normal);
-
-
-    float specFactor = /*pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.1*/0;
-
-    return (l.color *att * (diffuseFactor + specFactor)) * texcolor;
+    return float3(0, 0, 0);
 }
 
 PixelOutputType PS_main(PixelInputType input)
