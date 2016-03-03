@@ -82,7 +82,14 @@ namespace Doremi
 
     ServerMain::ServerMain() {}
 
-    ServerMain::~ServerMain() {}
+    ServerMain::~ServerMain()
+    {
+        for(auto& manager : m_managers)
+        {
+            delete manager;
+        }
+        m_managers.clear();
+    }
 
     void ServerMain::Initialize()
     {

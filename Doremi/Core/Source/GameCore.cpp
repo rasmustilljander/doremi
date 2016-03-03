@@ -84,7 +84,6 @@ namespace Doremi
             {
                 DynamicLoader::FreeSharedLibrary(m_engineLibrary);
             }
-            // TODORT Release the Managers... Waiting for refactor.
         }
 
         void GameCore::LoadEngineLibrary()
