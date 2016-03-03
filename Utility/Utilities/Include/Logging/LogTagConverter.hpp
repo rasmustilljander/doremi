@@ -30,7 +30,7 @@ namespace Doremi
                         map[LogTag::COMPONENT] = LogTagInfo("COMPONENT");
                         map[LogTag::GUI] = LogTagInfo("GUI");
                         map[LogTag::INPUT] = LogTagInfo("INPUT");
-                        map[LogTag::RESOURCE] = LogTagInfo("RESOURCE");
+                        map[LogTag::TIMER] = LogTagInfo("TIMER");
                         map[LogTag::ANIMATION] = LogTagInfo("ANIMATION");
                         map[LogTag::PARTICLE] = LogTagInfo("PARTICLE");
                         map[LogTag::MEMORY] = LogTagInfo("MEMORY");
