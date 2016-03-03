@@ -15,7 +15,7 @@ namespace Doremi
         };
     }
 }
-#ifdef CUSTOM_TIMING_MEASUREMENT
+#ifdef USE_CUSTOM_TIMER
 #define NAMED_TIMER(X) Doremi::Core::NamedTimerRAII timer = Doremi::Core::NamedTimerRAII(X);
 #else
 #define NAMED_TIMER(X) ;

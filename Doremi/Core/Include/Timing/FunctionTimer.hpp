@@ -22,7 +22,7 @@ namespace Doremi
     }
 }
 
-#ifdef CUSTOM_TIMING_MEASUREMENT
+#ifdef USE_CUSTOM_TIMER
 #define FUNCTION_TIMER Doremi::Core::FunctionTimerRAII timer = Doremi::Core::FunctionTimerRAII(__FILE__, __func__, __LINE__);
 #else
 #define FUNCTION_TIMER ;
