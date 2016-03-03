@@ -36,7 +36,6 @@
 // Standard
 #include <iostream>
 #include <algorithm>
-using namespace std;
 
 namespace Doremi
 {
@@ -84,7 +83,7 @@ namespace Doremi
             t_eventHandler->Subscribe(EventType::DamageTaken, this);
 
             // Set the time for animationTransitions
-            m_animationTransitionTime = 0.5;
+            m_animationTransitionTime = 0.2f;
         }
 
         SkeletalAnimationCoreManager::~SkeletalAnimationCoreManager() {}
@@ -175,14 +174,14 @@ namespace Doremi
             XMFLOAT3 t_movementLengthVector;
             // Calculate the length of this vector
             XMStoreFloat3(&t_movementLengthVector, XMVector3Length(XMLoadFloat3(&t_movementVector)));
-
+            float t_movementInYAxis = abs(t_movementVector.y);
             // Lower animation flow
             // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
 
             if(t_lowerSkeletalAnimationComponent->clipName != "Run")
             {
                 // Kolla om vi rört på oss
-                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementVector.y == 0)
+                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementInYAxis < t_epsilon)
                 {
                     // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                     STimer("Run", t_lowerSkeletalAnimationComponent);
@@ -209,7 +208,7 @@ namespace Doremi
             // Överkroppens animationsflow
             // Om du har rört dig och din animation är idle. Så ska du sättas till run annars ska alla andra animationer få köra klart sitt
             if(t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName == "Idle" &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementVector.y == 0)
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementInYAxis < t_epsilon)
             {
                 // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                 STimer("Run", t_upperSkeletalAnimationComponent);
@@ -393,7 +392,7 @@ namespace Doremi
                     XMFLOAT3 t_playerLengthVector;
                     // Calculate the length of this vector
                     XMStoreFloat3(&t_playerLengthVector, XMVector3Length(XMLoadFloat3(&t_playervector)));
-                    if(t_playerLengthVector.x > 100)
+                    if(t_playerLengthVector.x > 500)
                     {
                         continue;
                     }
