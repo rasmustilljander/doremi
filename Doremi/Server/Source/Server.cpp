@@ -79,6 +79,7 @@
 namespace Doremi
 {
     using namespace Core;
+    using namespace Utilities::Logging;
 
     ServerMain::ServerMain() {}
 
@@ -246,17 +247,22 @@ namespace Doremi
         static_cast<Core::EventHandlerServer*>(Core::EventHandler::GetInstance())->DeliverBasicEvents();
 
         // Check add removes of events health low etc..
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "HealthChecker.Update()");
         Core::HealthChecker::GetInstance()->Update();
 
         // Deliver remove events
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "EventHandlerServer.DeliverRemoveEvents()");
         static_cast<Core::EventHandlerServer*>(Core::EventHandler::GetInstance())->DeliverRemoveEvents();
 
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "PlayerHandler.Update()");
         Core::PlayerHandler::GetInstance()->Update(p_deltaTime);
 
         const size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
-            NAMED_TIMER(m_managers.at(i)->GetName());
+            const std::string& name = m_managers.at(i)->GetName();
+            NAMED_TIMER(name);
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running manager: %s", name.c_str());
             m_managers.at(i)->Update(p_deltaTime);
         }
     }

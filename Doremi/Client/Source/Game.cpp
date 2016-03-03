@@ -91,8 +91,10 @@
 #include <iostream> //TODOLH remove once all the functionality is implemented in the menusystem
 #include <Windows.h>
 
+
 namespace Doremi
 {
+    using namespace Utilities::Logging;
     using namespace Core;
     GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true) {}
 
@@ -226,9 +228,12 @@ namespace Doremi
                 Update(t_timeHandler->UpdateStepLen);
 
                 // Update interpolation transforms from snapshots
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s",
+                                  "InterpolationHandler.UpdateInterpolationTransforms()");
                 Core::InterpolationHandler::GetInstance()->UpdateInterpolationTransforms();
 
                 // Deliver events
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "EventHandler.DeliverEvents()");
                 static_cast<Core::EventHandlerClient*>(Core::EventHandler::GetInstance())->DeliverEvents();
 
                 // Update accumulator and gametime
@@ -239,10 +244,11 @@ namespace Doremi
             double alpha = t_timeHandler->GetFrameAlpha();
 
             // Interpolate the frames here
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "InterpolationHandler.InterpolateFrame()");
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
-
             // Update camera after we update positions
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "CameraHandler.UpdateDraw()");
             CameraHandler::GetInstance()->UpdateDraw();
             Draw(t_timeHandler->Frame);
         }
@@ -252,32 +258,37 @@ namespace Doremi
     {
         FUNCTION_TIMER
 
-        size_t length = m_managers.size();
         PlayerHandler::GetInstance()->Update(p_deltaTime);
         // AudioHandler::GetInstance()->Update(p_deltaTime);
         // Have all managers update
+        const size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
-            NAMED_TIMER(m_managers.at(i)->GetName());
+            const std::string& name = m_managers.at(i)->GetName();
+            NAMED_TIMER(name);
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running manager: %s", name.c_str());
             m_managers.at(i)->Update(p_deltaTime);
         }
 
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "CameraHandler.UpdateInput()");
         CameraHandler::GetInstance()->UpdateInput(p_deltaTime);
-
-        // PlayerHandler::GetInstance()->UpdateAddRemoveObjects();
     }
 
     void GameMain::UpdateServerBrowser(double p_deltaTime)
     {
         FUNCTION_TIMER
 
-        size_t length = m_serverBrowserManagers.size();
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "PlayerHandler.Update()");
         PlayerHandler::GetInstance()->Update(p_deltaTime);
 
         // Have all managers update
+        const size_t length = m_serverBrowserManagers.size();
+        using namespace Utilities::Logging;
         for(size_t i = 0; i < length; i++)
         {
-            NAMED_TIMER(m_serverBrowserManagers.at(i)->GetName());
+            const std::string& name = m_serverBrowserManagers.at(i)->GetName();
+            NAMED_TIMER(name);
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running manager: %s", name.c_str());
             m_serverBrowserManagers.at(i)->Update(p_deltaTime);
         }
     }
@@ -285,10 +296,13 @@ namespace Doremi
     void GameMain::Update(double p_deltaTime)
     {
         FUNCTION_TIMER
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "PlayerHandlerClient.UpdatePlayerInputs()");
         static_cast<PlayerHandlerClient*>(Core::PlayerHandler::GetInstance())->UpdatePlayerInputs();
 
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "AudioHandler.Update()");
         AudioHandler::GetInstance()->Update(p_deltaTime);
 
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "StateHandler.GetState()");
         Core::DoremiGameStates t_state = Core::StateHandler::GetInstance()->GetState();
 
         switch(t_state)
@@ -296,6 +310,7 @@ namespace Doremi
             case Core::DoremiGameStates::MAINMENU:
             {
                 // Update Menu Logic
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "MainMenuHandler.Update()");
                 MainMenuHandler::GetInstance()->Update(p_deltaTime);
                 break;
             }
@@ -303,9 +318,8 @@ namespace Doremi
             {
                 // TODOCM maybe only run network manager
                 UpdateServerBrowser(p_deltaTime);
-
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "ServerBrowserHandler.Update()");
                 ServerBrowserHandler::GetInstance()->Update(p_deltaTime);
-
                 break;
             }
             case Core::DoremiGameStates::OPTIONS:
@@ -314,12 +328,14 @@ namespace Doremi
                 // State is changed with events TODOXX should be removed from here once options is implemented
                 Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
                 menuEvent->state = Core::DoremiGameStates::MAINMENU;
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "EventHandler.BroadcastEvent()");
                 Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
                 break;
             }
             case Core::DoremiGameStates::LOADING:
             {
                 UpdateGame(p_deltaTime);
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "LoadingScreenHandler.Update()");
                 LoadingScreenHandler::GetInstance()->Update(p_deltaTime);
                 break;
             }
@@ -327,6 +343,7 @@ namespace Doremi
             {
                 // Update Game logic
                 UpdateGame(p_deltaTime);
+                m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "HUDHandler.Update()");
                 HUDHandler::GetInstance()->Update(p_deltaTime);
                 break;
             }
@@ -352,24 +369,33 @@ namespace Doremi
     {
         FUNCTION_TIMER
         const size_t length = m_graphicalManagers.size();
+        using namespace Utilities::Logging;
         for(size_t i = 0; i < length; i++)
         {
-            NAMED_TIMER(m_graphicalManagers.at(i)->GetName());
+            const std::string& name = m_graphicalManagers.at(i)->GetName();
+            NAMED_TIMER(name);
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running manager: %s", name.c_str());
             m_graphicalManagers.at(i)->Update(p_deltaTime);
         }
-
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "SkyBoxHandler.Draw()");
         SkyBoxHandler::GetInstance()->Draw();
     }
 
     void GameMain::Draw(double p_deltaTime)
     {
         FUNCTION_TIMER
+
+        {
+            NAMED_TIMER("BeginRaw")
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "External function: %s", "BeginRaw");
+            m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
+        }
+
         /** TODOLH Detta ska flyttas till en function som i updaten*/
+        m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "Running Handler: %s", "StateHandler.GetState()");
         Core::DoremiGameStates t_state = Core::StateHandler::GetInstance()->GetState();
-        m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().BeginDraw();
         switch(t_state)
         {
-
             case Core::DoremiGameStates::RUNGAME:
                 // Draw Game
                 DrawGame(p_deltaTime);
@@ -378,10 +404,17 @@ namespace Doremi
                 break;
         }
 
-        // WE always draw 2d stuff
-        m_screenSpaceDrawer->Draw();
-
-        m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
+        {
+            // WE always draw 2d stuff
+            NAMED_TIMER("m_screenSpaceDrawer->Draw")
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "External function: %s", "m_screenSpaceDrawer->Draw");
+            m_screenSpaceDrawer->Draw();
+        }
+        {
+            NAMED_TIMER("EndRaw")
+            m_logger->LogText(LogTag::GAME, LogLevel::MASS_DATA_PRINT, "External function: %s", "EndRaw");
+            m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().EndDraw();
+        }
     }
 
     void GameMain::Start()
