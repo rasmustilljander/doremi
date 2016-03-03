@@ -720,9 +720,11 @@ namespace Doremi
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
-            t_renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
+            t_renderComp->material =
+                sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
+
             t_renderComp->lockedRotationX = true;
-                
+
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
             // SkeletalAnimationComponent
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();

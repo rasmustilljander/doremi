@@ -48,7 +48,7 @@ namespace Doremi
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
-            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("LoadingScreenBackground.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("LoadingScreen_v1.dds");
 
             m_background = ScreenObject(t_matInfo, t_spriteInfo);
 

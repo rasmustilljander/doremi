@@ -89,22 +89,6 @@ namespace Doremi
             t_depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_NEVER;
 
             m_depthStencilStatNone = t_dierctxManager.CreateDepthStencilState(t_depthStencilStateDesc);
-
-            CreateVictoryScreen();
-        }
-        void ScreenSpaceDrawer::CreateVictoryScreen()
-        {
-            DoremiEngine::Graphic::MeshInfo* t_meshInfo = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildQuadMeshInfo("Quad");
-            m_victoryScreen = new VictoryScreen(t_meshInfo);
-
-            // DoremiEngine::Graphic::MaterialInfo* t_materialInfo =
-            //    m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("HappyFace.dds");
-            // XMFLOAT2 t_position = XMFLOAT2(0, 0);
-            // XMFLOAT2 t_extents = XMFLOAT2(100, 100);
-            // t_position = ConvertWithResolution(t_position);
-            //// t_extents = ConvertWithResolution(t_extents);
-
-            // m_victoryScreen->AddScreenObject(t_materialInfo, t_position, t_extents);
         }
 
 
@@ -200,24 +184,15 @@ namespace Doremi
             DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
 
-            //std::vector<ScreenObject*> t_screenObjects = m_victoryScreen->GetScreen();
-            //size_t length = t_screenObjects.size();
-            //for(size_t i = 0; i < length; i++)
-            //{
+            // Get Screenobjects to draw
+            std::vector<ScreenObject*>& t_objectsToDraw = LoadingScreenHandler::GetInstance()->GetScreenObjects();
 
-            //    t_meshManager.AddToRenderList(*t_screenObjects[i]->m_meshInfo, *t_screenObjects[i]->m_materialInfo, t_screenObjects[i]->m_transformMatrix);
-            //}
-
-            //DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
-            //DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
-
-            //t_dierctxManager.Render2D(t_rasterizer->GetRasterizerState(), t_depthStencil->GetDepthStencilState());
-
-            // Disable blend again?
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().DisableBlend();
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().RemoveGeometryShader();
-
-            // End2DDraw();
+            // For each button add to render list
+            for(auto& t_object : t_objectsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
+            }
+            End2DDraw();
         }
 
         void ScreenSpaceDrawer::DrawMainMenu()

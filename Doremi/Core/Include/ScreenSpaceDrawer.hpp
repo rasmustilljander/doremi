@@ -43,7 +43,6 @@ namespace Doremi
 
             void DrawHUD();
             void DrawVictoryScreen();
-            void CreateVictoryScreen();
 
             void Begin2DDraw();
 
@@ -58,7 +57,6 @@ namespace Doremi
             DoremiEngine::Graphic::VertexShader* m_basicVertexShader;
 
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilStatNone;
-            VictoryScreen* m_victoryScreen;
             DirectX::XMFLOAT2 m_resolution;
         };
     }

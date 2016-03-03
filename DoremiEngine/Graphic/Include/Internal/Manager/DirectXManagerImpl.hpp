@@ -128,6 +128,7 @@ namespace DoremiEngine
             void SetFullscreen(const bool& p_fullscreen) override;
 
         private:
+            bool t_frustrumComputed;
             /**
             Render all meshes
             */

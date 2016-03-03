@@ -41,6 +41,7 @@
 #include <Doremi/Core/Include/SkeletalInformationHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/VictoryScreen.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -139,6 +140,7 @@ namespace Doremi
         HUDHandler::StartHUDHandler(sharedContext);
         LoadingScreenHandler::StartLoadingScreenHandler(sharedContext);
         ScreenSpaceDrawer::StartupScreenSpaceDrawer(sharedContext);
+        VictoryScreen::StartupVictoryScreen(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
@@ -356,6 +358,11 @@ namespace Doremi
             case Core::DoremiGameStates::EXIT:
             {
                 m_gameRunning = false;
+                break;
+            }
+            case Core::DoremiGameStates::VICTORY:
+            {
+                VictoryScreen::GetInstance()->Update();
                 break;
             }
             default:

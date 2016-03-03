@@ -46,11 +46,19 @@ namespace Doremi
 
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
-
-            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("Healthbar.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Health.dds");
             ScreenObject t_barBar = ScreenObject(t_matInfo, t_spriteInfo);
-            ScreenObject t_frontBackBar = ScreenObject(nullptr, nullptr);
-            m_healthBar = Bar(t_barBar, t_frontBackBar, t_frontBackBar, 0.18f, 0.18f);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Frame.dds");
+            ScreenObject t_frontBar = ScreenObject(t_matInfo, t_spriteInfo);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Background.dds");
+            ScreenObject t_backBar = ScreenObject(t_matInfo, t_spriteInfo);
+
+
+            m_healthBar = Bar(t_barBar, t_backBar, t_frontBar, 0.18f, 0.18f);
 
             m_bars.push_back(&m_healthBar);
         }

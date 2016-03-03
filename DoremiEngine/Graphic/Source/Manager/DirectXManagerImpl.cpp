@@ -132,6 +132,8 @@ namespace DoremiEngine
             CreateRasterizerStates();
 
             CreateBlendStates();
+
+            t_frustrumComputed = false;
         }
 
         void DirectXManagerImpl::CreateBackBufferViews()
@@ -1208,7 +1210,10 @@ namespace DoremiEngine
             m_deviceContext->CSSetShaderResources(1, 1, &m_depthSRV);
 
             // dispatch frustum shader
+
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchFrustum();
+
+
             m_graphicContext.m_graphicModule->GetSubModuleManager().GetComputeShaderManager().DispatchCulling();
 
             // Unbind depth

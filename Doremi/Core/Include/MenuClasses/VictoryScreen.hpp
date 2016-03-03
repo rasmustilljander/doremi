@@ -2,6 +2,7 @@
 // Project specific
 #include <DirectXMath.h>
 #include <Doremi/Core/Include/Helper/DoremiStates.hpp>
+#include <Doremi/Core/Include/MenuClasses/ScreenObject.hpp>
 
 namespace DoremiEngine
 {
@@ -9,6 +10,10 @@ namespace DoremiEngine
     {
         class MeshInfo;
         class MaterialInfo;
+    }
+    namespace Core
+    {
+        class SharedContext;
     }
 }
 
@@ -24,15 +29,23 @@ namespace Doremi
         class VictoryScreen
         {
         public:
-            VictoryScreen(DoremiEngine::Graphic::MeshInfo* p_meshInfo);
-            VictoryScreen();
-            virtual ~VictoryScreen();
-            std::vector<ScreenObject*> GetScreen();
-            void AddScreenObject(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, const XMFLOAT2& p_position, const XMFLOAT2& p_extent);
+            static void StartupVictoryScreen(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            static VictoryScreen* GetInstance();
+
+            auto GetScreenObjects() { return m_screenObjects; }
+
+            void Update();
 
         private:
+            static VictoryScreen* m_singleton;
+            const DoremiEngine::Core::SharedContext& m_sharedContext;
+
             std::vector<ScreenObject*> m_screenObjects;
             DoremiEngine::Graphic::MeshInfo* m_meshInfo;
+            ScreenObject m_background;
+
+            VictoryScreen(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            virtual ~VictoryScreen();
         };
     }
 }
