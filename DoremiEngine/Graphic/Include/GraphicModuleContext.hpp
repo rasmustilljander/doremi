@@ -2,6 +2,10 @@
 #include <string>
 namespace DoremiEngine
 {
+    namespace Configuration
+    {
+        class ConfigurationModule;
+    }
     namespace Graphic
     {
         class GraphicModuleImplementation;
@@ -9,7 +13,8 @@ namespace DoremiEngine
         {
             std::string m_workingDirectory;
             GraphicModuleImplementation* m_graphicModule;
-            GraphicModuleContext() {}
+            Configuration::ConfigurationModule& config;
+            GraphicModuleContext(Configuration::ConfigurationModule& p_config) : config(p_config) {}
         };
     }
 }

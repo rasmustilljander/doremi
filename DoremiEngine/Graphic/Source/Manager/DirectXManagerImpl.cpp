@@ -16,13 +16,18 @@
 #include <DoremiEditor/Core/Include/MaterialMessage.hpp>
 #include <Interface/Texture/SpriteInfo.hpp>
 
+// COnfiguration
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
+
 namespace DoremiEngine
 {
     namespace Graphic
     {
         DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
-            m_screenResolution = DirectX::XMFLOAT2(1280, 720); // TODOCONFIG
+            float x = m_graphicContext.config.GetAllConfigurationValues().ScreenWidth;
+            float y = m_graphicContext.config.GetAllConfigurationValues().ScreenHeight;
+            m_screenResolution = DirectX::XMFLOAT2(x, y);
         }
         DirectXManagerImpl::~DirectXManagerImpl() {}
 

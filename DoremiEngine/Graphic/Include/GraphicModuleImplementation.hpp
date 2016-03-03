@@ -42,7 +42,7 @@ namespace DoremiEngine
         private:
             const Core::SharedContext& m_sharedContext;
             SubModuleManagerImpl* m_subModuleManger;
-            GraphicModuleContext m_graphicContext;
+            GraphicModuleContext* m_graphicContext;
         };
     }
 }

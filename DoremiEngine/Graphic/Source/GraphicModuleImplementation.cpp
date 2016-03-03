@@ -23,11 +23,12 @@ namespace DoremiEngine
 
         void GraphicModuleImplementation::Startup()
         {
-            if(m_subModuleManger == nullptr) // TODO Review if this is a good idea for avoiding multiple instanciations
+            if(m_subModuleManger == nullptr)
             {
-                m_graphicContext.m_graphicModule = this;
-                m_graphicContext.m_workingDirectory = m_sharedContext.GetWorkingDirectory();
-                m_subModuleManger = new SubModuleManagerImpl(m_graphicContext);
+                m_graphicContext = new GraphicModuleContext(m_sharedContext.GetConfigurationModule());
+                m_graphicContext->m_graphicModule = this;
+                m_graphicContext->m_workingDirectory = m_sharedContext.GetWorkingDirectory();
+                m_subModuleManger = new SubModuleManagerImpl(*m_graphicContext);
                 m_subModuleManger->Initialize();
             }
         }
