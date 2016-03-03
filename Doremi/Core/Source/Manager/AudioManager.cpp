@@ -180,7 +180,6 @@ namespace Doremi
                     {
                         EntityHandler::GetInstance().AddComponent(t_entityID, (int)ComponentType::AudioActive);
                     }
-                    int;
                     AudioActiveComponent* audioActiveComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID);
                     AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_entityID);
 
