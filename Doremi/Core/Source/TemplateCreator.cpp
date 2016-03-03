@@ -770,7 +770,7 @@ namespace Doremi
             float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
             float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
-            data.setColor(r, g, b);
+            data.setColor(1, 0, 0);
             material.data = data;
             material.nodeName = "BulletMaterial";
             material.diffuseTexturePath = "Test.dds";
@@ -853,8 +853,19 @@ namespace Doremi
 
             // Pressure particle comp
             ParticlePressureComponent* particleComp = new ParticlePressureComponent();
-            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("hej", 20, 20);
-            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo("debug.dds");
+            particleComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildSphereMeshInfo("Sphere", 20, 20);
+            DoremiEditor::Core::MaterialMessage material;
+            DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
+            float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+            data.setColor(1, 0, 0);
+            material.data = data;
+            material.nodeName = "BulletMaterial";
+            material.diffuseTexturePath = "Test.dds";
+            material.glowTexturePath = "glow2.dds";
+            particleComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(material);
             particleComp->data.m_active = false;
             particleComp->data.m_density = 2.0f;
             particleComp->data.m_dimensions = XMFLOAT2(0.0f, 0.0f);
@@ -863,7 +874,7 @@ namespace Doremi
             particleComp->data.m_launchPressure = 100.0f;
             particleComp->data.m_numParticlesX = 5;
             particleComp->data.m_numParticlesY = 1;
-            particleComp->data.m_size = 1.0f;
+            particleComp->data.m_size = 1;
             t_avatarBlueprint[ComponentType::PressureParticleSystem] = particleComp;
 
             // HP component
