@@ -42,7 +42,17 @@ namespace Doremi
                     // TODOJB Hard-coded since we cannot read beam width properly
                     GetComponent<ParticlePressureComponent>(i)->data.m_emissionAreaDimensions.x = 0.05f;
 
-                    GetComponent<ParticlePressureComponent>(i)->data.m_position = GetComponent<TransformComponent>(i)->position;
+                    // Jaws late night fixes for better placement of particles TODO check this code
+                    XMFLOAT3 pos = GetComponent<TransformComponent>(i)->position;
+                    // pos.y += 0.05;
+                    XMVECTOR posvec = XMLoadFloat3(&pos);
+
+                    XMVECTOR normalDir = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
+                    XMVECTOR rotQuat = XMLoadFloat4(&GetComponent<TransformComponent>(i)->rotation);
+                    XMVECTOR direction = XMVector3Rotate(normalDir, rotQuat);
+                    XMVECTOR endPos = posvec - direction * 0.5f;
+                    XMStoreFloat3(&GetComponent<ParticlePressureComponent>(i)->data.m_position, endPos);
+
                     GetComponent<ParticlePressureComponent>(i)->data.m_direction = GetComponent<TransformComponent>(i)->rotation;
 
                     m_sharedContext.GetPhysicsModule().GetFluidManager().SetParticleEmitterData(i, GetComponent<ParticlePressureComponent>(i)->data);
