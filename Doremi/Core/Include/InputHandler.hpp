@@ -47,6 +47,8 @@ namespace Doremi
             SetFrequency500 = 262144, // 8 56
             SetFrequency1000 = 524288, // 9 57
             RightClick = 1048576,
+            ReduceMouseSensitivity = 2097152,
+            IncreaseMouseSensitivity = 4194304,
 
             All = Jump | Forward | Backward | Left | Right | Fire | ScrollWpnUp | ScrollWpnDown | DebugForward | DebugBackward | DebugLeft | DebugRight | DebugButton |
                   StartRepeatableAudioRecording |
@@ -56,7 +58,7 @@ namespace Doremi
                   SetFrequency0 |
                   SetFrequency500 |
                   SetFrequency1000 |
-                  RightClick,
+                  RightClick | ReduceMouseSensitivity | IncreaseMouseSensitivity,
         };
 
         // TODOEA Lägga in detta i en textfil.

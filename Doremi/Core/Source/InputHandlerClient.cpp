@@ -36,6 +36,8 @@ namespace Doremi
             userCmdsPlaying[56] = UserCommandPlaying::SetFrequency500;
             userCmdsPlaying[57] = UserCommandPlaying::SetFrequency1000;
             userCmdsPlaying[3] = UserCommandPlaying::RightClick;
+            userCmdsPlaying[1073741910] = UserCommandPlaying::ReduceMouseSensitivity;
+            userCmdsPlaying[1073741911] = UserCommandPlaying::IncreaseMouseSensitivity;
 
             // Setup for the menuinput
             // TODOEA Not used yet.

@@ -111,6 +111,7 @@ namespace Doremi
                 UpdatePlayerPositions(m_player);
                 UpdatePlayerRotations(m_player);
                 UpdateFiring(m_player);
+                UpdatePlayerConfigurationValues(m_player);
             }
 
             // Check to exit TODO move place of code
@@ -349,6 +350,19 @@ namespace Doremi
                     TransformComponentSnapshotNext(*GetComponent<TransformComponentNext>(t_setTransformEvent->entityID));
                 *GetComponent<TransformComponentSnapshotPrevious>(t_setTransformEvent->entityID) =
                     TransformComponentSnapshotPrevious(*GetComponent<TransformComponentNext>(t_setTransformEvent->entityID));
+            }
+        }
+
+        void PlayerHandlerClient::UpdatePlayerConfigurationValues(Player* p_player)
+        {
+            InputHandler* inputHandler = p_player->m_inputHandler;
+            if (inputHandler->CheckForOnePress((int)UserCommandPlaying::ReduceMouseSensitivity))
+            {
+                p_player->m_turnSpeed -= 0.001f;
+            }
+            if (inputHandler->CheckForOnePress((int)UserCommandPlaying::IncreaseMouseSensitivity))
+            {
+                p_player->m_turnSpeed += 0.001f;
             }
         }
     }

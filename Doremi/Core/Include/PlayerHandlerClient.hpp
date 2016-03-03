@@ -54,6 +54,8 @@ namespace Doremi
 
             void UpdatePlayerInputs();
 
+            void UpdatePlayerConfigurationValues(Player* p_player);
+
             void SetNewPlayerEntityID(const EntityID& p_entityID);
 
             NetworkEventReceiver* GetNetworkEventReceiver();
