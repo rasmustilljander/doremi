@@ -33,7 +33,12 @@ namespace Doremi
             m_sharedContext.GetPhysicsModule().Update(p_dt);
             const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             int mask = (int)ComponentType::RigidBody | (int)ComponentType::Transform;
-            for(size_t i = 0; i < length; i++)
+            signed int i = 0;
+
+            unsigned int chunk = 100;
+            #pragma omp parallel default(shared) private(i)
+            #pragma omp for schedule(dynamic, chunk)
+            for(i = 0; i < length; ++i)
             {
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
