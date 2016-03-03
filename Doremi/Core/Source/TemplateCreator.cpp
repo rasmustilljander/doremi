@@ -284,6 +284,7 @@ namespace Doremi
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
+            movementcomp->speed = 45;
             blueprint[ComponentType::Movement] = movementcomp;
 
             // Gravity comp
@@ -413,6 +414,7 @@ namespace Doremi
 
             // Movement comp
             MovementComponent* movementcomp = new MovementComponent();
+            movementcomp->speed = 50;
             blueprint[ComponentType::Movement] = movementcomp;
 
             // Gravity comp
@@ -655,6 +657,7 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
+            t_movementComp->speed = 45;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Jump component
@@ -759,6 +762,7 @@ namespace Doremi
 
             // Movement Component
             MovementComponent* t_movementComp = new MovementComponent();
+            t_movementComp->speed = 45;
             t_avatarBlueprint[ComponentType::Movement] = t_movementComp;
 
             // Jump component

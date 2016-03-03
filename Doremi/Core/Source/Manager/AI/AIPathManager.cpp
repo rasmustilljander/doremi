@@ -152,7 +152,7 @@ namespace Doremi
                     dirVec = XMVector3Normalize(dirVec);
 
                     XMFLOAT3 direction;
-                    XMStoreFloat3(&direction, dirVec * 0.5f); // TODOKO remove this hard coded shiat
+                    XMStoreFloat3(&direction, dirVec * 100);
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
 

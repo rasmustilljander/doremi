@@ -11,16 +11,10 @@ namespace Doremi
         struct MovementComponent
         {
             XMFLOAT3 movement = XMFLOAT3(0, 0, 0);
-            // DirectX::XMFLOAT3 direction;
-            // float forwardAcceleration;
-            // float rightAcceleration;
-            // float maxSpeed;
-            // MovementComponent(const DirectX::XMFLOAT3& p_direction, const float& p_forwardAcceleration, const float& p_rightAcceleration, const
-            // float& p_maxSpeed)
-            //    : direction(p_direction), forwardAcceleration(p_forwardAcceleration), rightAcceleration(p_rightAcceleration), maxSpeed(p_maxSpeed)
-            //{
-            //}
-            // MovementComponent() : direction(DirectX::XMFLOAT3(0, 0, 0)), forwardAcceleration(0), rightAcceleration(0), maxSpeed(0) {}
+            /**
+            The amount of units a unit can walk per second
+            */
+            float speed = 10;
         };
     }
 }

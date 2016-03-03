@@ -43,7 +43,8 @@ namespace Doremi
                     /// 2 Clamp speed
                     // Clamp down XZ movement to maximum movement speed (we don't mess with y due to jump/gravity)
                     XMVECTOR movementXZVec = XMLoadFloat2(&XMFLOAT2(movementComp->movement.x, movementComp->movement.z));
-                    movementXZVec = XMVector2ClampLength(movementXZVec, 0, 0.8f);
+                    movementXZVec = XMVector2Normalize(movementXZVec) * movementComp->speed * p_dt;
+                    // movementXZVec = XMVector2ClampLength(movementXZVec, 0, 0.8f);
                     // Store it back
                     XMFLOAT2 movementXZ;
                     XMStoreFloat2(&movementXZ, movementXZVec);
