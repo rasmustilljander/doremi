@@ -41,6 +41,9 @@
 #include <dxgi.h>
 #include <d3d11_1.h>
 
+// TIMER
+//
+//
 namespace Doremi
 {
     namespace Core
@@ -112,6 +115,7 @@ namespace Doremi
         TreeHandler::~TreeHandler() {}
         bool TreeHandler::CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions)
         {
+            // NAMED_TIMER(m_graphicalManagers.at(i)->GetName());
             // std::cout << "X:" << m_playerPos.x << " Y:" << m_playerPos.y << " Z:" << m_playerPos.z << std::endl;
             // Check if any one point of the cube is in the view frustum.
             for(int i = 0; i < 6; ++i)

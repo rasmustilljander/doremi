@@ -15,10 +15,10 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 8;
+            m_treeDepth = 6;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(2900, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100);
             //
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
@@ -142,7 +142,8 @@ namespace Doremi
                         {
                             // Check if entity will be affected by the render.
                             // Placing all the render components into the leaf that collided with the box.
-                            if(EntityHandler::GetInstance().HasComponents(t_sweepHits[i], (int)ComponentType::Render))
+                            if(EntityHandler::GetInstance().HasComponents(t_sweepHits[i], (int)ComponentType::Render) &&
+                               !EntityHandler::GetInstance().HasComponents(t_sweepHits[i], (int)ComponentType::FrequencyAffected))
                             {
                                 m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
                             }

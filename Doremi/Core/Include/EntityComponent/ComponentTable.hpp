@@ -28,12 +28,11 @@ namespace Doremi
 
             /** Clears bitmask for entity (data remains, but is unused)*/
             void RemoveEntity(EntityID pEntityID);
+            int mComponentTable[MAX_NUM_ENTITIES];
 
         private:
             ComponentTable();
             ~ComponentTable();
-
-            int mComponentTable[MAX_NUM_ENTITIES];
         };
     }
 }

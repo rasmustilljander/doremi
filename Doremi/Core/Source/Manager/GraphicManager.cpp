@@ -2,6 +2,7 @@
 #include <Manager/GraphicManager.hpp>
 #include <EntityComponent/EntityHandler.hpp>
 #include <EntityComponent/Components/RenderComponent.hpp>
+#include <EntityComponent/Components/RigidBodyComponent.hpp>
 #include <EntityComponent/Components/TransformComponent.hpp>
 #include <Doremi/Core/Include/Handler/TreeHandler.hpp>
 // Engine
@@ -18,6 +19,15 @@
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
 #include <dxgi.h>
 #include <d3d11_1.h>
+
+// TIMER
+#include <Doremi/Core/Include/Timing/TimerManager.hpp>
+#include <Utility/Utilities/Include/Chrono/Timer.hpp>
+// #include <Doremi/Core/Include/Timing/NamedTimer.hpp>
+// #include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
+
+/// REMOVE THIS
+#include <EntityComponent/ComponentTable.hpp>
 
 #include <iostream>
 namespace Doremi
@@ -63,24 +73,72 @@ namespace Doremi
 
         void GraphicManager::Update(double p_dt)
         {
+            int length = 0;
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
 
             EntityHandler& entityHandler = EntityHandler::GetInstance();
-            // const size_t length = entityHandler.GetLastEntityIndex();
+            const size_t lengthAllEntities = entityHandler.GetLastEntityIndex();
             std::vector<uint32_t> t_theseShouldBeDrawn = TreeHandler::GetInstance()->Update();
             size_t length = t_theseShouldBeDrawn.size();
-            if (drawedLastUpdate != length )//|| drawedLastUpdate != 0)
-            {
-                std::cout << length << std::endl;
-            }
-            drawedLastUpdate = length;
-
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
-            for(size_t i = 0; i < length; i++)
+
+
+            // for (size_t i = 0; i < lengthAllEntities; ++i)
+            //{
+            //    if (entityHandler.HasComponents(i, mask)
+            //        && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation)
+            //        && !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
+            //    {
+
+            //            RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+            //            TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+            //            DirectX::XMFLOAT4X4 transMat;
+            //            DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+
+            //            DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+            //                DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+            //                DirectX::XMMatrixRotationQuaternion(quaternion) *
+            //                DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
+            //                orientationComp->position.z));
+            //            DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+            //            submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+            //    }
+            //}
+            for(size_t i = 0; i < lengthAllEntities; ++i)
             {
-                if(entityHandler.HasComponents(t_theseShouldBeDrawn[i], mask) && !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::LowerBodySkeletalAnimation) &&
+                if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
+                   !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
+                {
+                    if((!entityHandler.HasComponents(i, (int)ComponentType::RigidBody)) ||
+                       (entityHandler.HasComponents(i, (int)ComponentType::RigidBody) && GetComponent<RigidBodyComponent>(i)->geometry == RigidBodyGeometry::dynamicBox))
+                    {
+                        RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+                        TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                        DirectX::XMFLOAT4X4 transMat;
+                        DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+
+                        DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+                            DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+                            DirectX::XMMatrixRotationQuaternion(quaternion) *
+                            DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
+                                                         orientationComp->position.z));
+                        DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+                        submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+                    }
+                }
+            }
+            // if (drawedLastUpdate != length )//|| drawedLastUpdate != 0)
+            //{
+            //    std::cout << length << std::endl;
+            //}
+            // drawedLastUpdate = length;
+
+            for(size_t i = 0; i < length; ++i)
+            {
+                if(entityHandler.HasComponents(t_theseShouldBeDrawn[i], mask) &&
+                   !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::LowerBodySkeletalAnimation) &&
                    !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::UpperBodySkeletalAnimation))
                 {
                     RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(t_theseShouldBeDrawn[i]);
