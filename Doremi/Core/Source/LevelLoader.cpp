@@ -136,7 +136,7 @@ namespace Doremi
                 // Glow texture
                 int glowTextureNameSize;
                 ifs.read((char*)&glowTextureNameSize, sizeof(int));
-                if (glowTextureNameSize != 0)
+                if(glowTextureNameSize != 0)
                 {
                     char* glowTextureName = new char[glowTextureNameSize];
                     ifs.read((char*)glowTextureName, sizeof(char) * glowTextureNameSize);

@@ -182,7 +182,7 @@ namespace Doremi
             if(t_lowerSkeletalAnimationComponent->clipName != "Run")
             {
                 // Kolla om vi rört på oss
-                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0)
+                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementVector.y == 0)
                 {
                     // t_lowerSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                     STimer("Run", t_lowerSkeletalAnimationComponent);
@@ -209,7 +209,7 @@ namespace Doremi
             // Överkroppens animationsflow
             // Om du har rört dig och din animation är idle. Så ska du sättas till run annars ska alla andra animationer få köra klart sitt
             if(t_movementLengthVector.x > t_epsilon && t_upperSkeletalAnimationComponent->clipName == "Idle" &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0)
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"] == 0 && t_movementVector.y == 0)
             {
                 // t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationBlend("Run").StartTimer();
                 STimer("Run", t_upperSkeletalAnimationComponent);
@@ -321,6 +321,18 @@ namespace Doremi
                             // t_lowerSkeletalAnimationComponent->timePosition = 0.0f;
                         }
                     }
+                    else if(t_animationTransitionEvent->animation == Animation::JUMP)
+                    {
+                        if(t_upperSkeletalAnimationComponent->clipName != "Attack" &&
+                           (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"] == 0 && t_upperSkeletalAnimationComponent->clipName != "Jump")
+                        {
+                            STimer("Jump", t_upperSkeletalAnimationComponent);
+                        }
+                        if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"] == 0 && t_upperSkeletalAnimationComponent->clipName != "Jump")
+                        {
+                            STimer("Jump", t_lowerSkeletalAnimationComponent);
+                        }
+                    }
                     break;
                 }
                 case Doremi::Core::EventType::DamageTaken:
@@ -342,13 +354,13 @@ namespace Doremi
                     }
                     break;
                 }
+
                 break;
             }
         }
 
         void SkeletalAnimationCoreManager::Update(double p_dt)
         {
-            // p_dt = p_dt / 5;
             // Loop through all entities
             const size_t t_length = EntityHandler::GetInstance().GetLastEntityIndex();
             // Loop over all entities to perform various functions on enteties that have skeletal animation

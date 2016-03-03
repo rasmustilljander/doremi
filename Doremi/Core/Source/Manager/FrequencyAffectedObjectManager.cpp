@@ -107,21 +107,23 @@ namespace Doremi
             TransformComponent* t_transformComponent = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityID);
             XMFLOAT3 t_desiredPosition;
 
-            // Get the vector between the two points
-            XMVECTOR t_direction = XMLoadFloat3(&t_platformPatrolComp->endPosition) - XMLoadFloat3(&t_platformPatrolComp->startPosition);
 
             // Calculate the desiredposition if frequency is held steady: take the vector between start and end. multiply with frequencyvalue 0 to 1.
             // And add the start position
             // XMStoreFloat3(&t_desiredPosition, p_currentFrequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
 
-
+            float t_directionSpeed = 0.0f;
             if(p_currentFrequency > 0.05)
             {
                 t_desiredPosition = t_platformPatrolComp->endPosition;
+                t_directionSpeed = t_platformPatrolComp->startSpeed;
+                // printf("Endspeed: %i", t_platformPatrolComp->endSpeed);
             }
             else
             {
                 t_desiredPosition = t_platformPatrolComp->startPosition;
+                t_directionSpeed = t_platformPatrolComp->startSpeed;
+                // printf("startSpeed: %i", t_platformPatrolComp->startSpeed);
             }
             // Get the direction again. This is from desired position to actual position. So we know what way to move
             XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
@@ -138,7 +140,7 @@ namespace Doremi
             if(t_distanceBetweenDesiredAndActualPosition.x > 0.4)
             {
                 // XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
-                float t_velo = p_currentFrequency * 1.5;
+                float t_velo = p_currentFrequency * 1.5 * t_directionSpeed;
                 XMStoreFloat3(&t_velocityVector, (XMVector3Normalize(t_newDirection) /** t_distanceBetweenDesiredAndActualPosition.x */ * (0.3 + t_velo)));
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().MoveKinematicActor(p_entityID,
                                                                                             t_velocityVector); // TODOLH This removes the update
