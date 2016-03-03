@@ -84,7 +84,7 @@ set(EXTERNAL_INCLUDE_DIRECTORY
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(/MP)
 add_definitions(-DNOMINMAX)
-add_definitions(/openmp)
+#add_definitions(/openmp)
 
 if(BUILD_CUSTOM_MEASUREMENT_TIMING)
 	add_definitions(-DCUSTOM_TIMING_MEASUREMENT)
