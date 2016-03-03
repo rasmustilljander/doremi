@@ -35,23 +35,25 @@ namespace Doremi
             int mask = (int)ComponentType::RigidBody | (int)ComponentType::Transform;
             signed int i = 0;
 
+            // Prefetch the rigid body manager
+            DoremiEngine::Physics::RigidBodyManager& rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+
+            // Prefetch the entityhandler
+            EntityHandler& entityHandler = EntityHandler::GetInstance();
+
             unsigned int chunk = 100;
-            #pragma omp parallel default(shared) private(i)
-            #pragma omp for schedule(dynamic, chunk)
+#pragma omp parallel default(shared) private(i)
+#pragma omp for schedule(dynamic, chunk)
             for(i = 0; i < length; ++i)
             {
-                if(EntityHandler::GetInstance().HasComponents(i, mask))
+                if(entityHandler.HasComponents(i, mask))
                 {
                     // Get relevant components
-                    RigidBodyComponent* rigidComp = EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
-                    TransformComponent* transComp = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(i);
-
-                    // Get the rigid body manager
-                    DoremiEngine::Physics::RigidBodyManager& rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+                    TransformComponent* const transComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
 
                     // Get position and orientation of rigid body
-                    XMFLOAT3 position = rigidManager.GetBodyPosition(i);
-                    XMFLOAT4 orientation = rigidManager.GetBodyOrientation(i);
+                    const XMFLOAT3 position = rigidManager.GetBodyPosition(i);
+                    const XMFLOAT4 orientation = rigidManager.GetBodyOrientation(i);
 
                     // Write position and orientation to transform component
                     transComp->position = position;
