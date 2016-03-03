@@ -152,7 +152,7 @@ namespace Doremi
                     dirVec = XMVector3Normalize(dirVec);
 
                     XMFLOAT3 direction;
-                    XMStoreFloat3(&direction, dirVec * 100);
+                    XMStoreFloat3(&direction, dirVec);
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
 
