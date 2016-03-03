@@ -274,7 +274,7 @@ namespace DoremiEngine
                                 m_outGoingBuffer->Produce(*header, buffer);
                                 succeed = true;
                             }
-                            catch(std::exception e)
+                            catch(const std::exception& e)
                             {
                                 // TODORT TODOXX NOt very performance nice
                                 std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
