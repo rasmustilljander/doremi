@@ -602,17 +602,17 @@ namespace Doremi
 
         void PlayerHandlerServer::HandleChangeOfSpawnPoint(Player* p_player)
         {
-            static int spawnerIndex = 0; // TODOXX TODOJB static ints? Better change this at some point?
-            if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugForward))
-            {
-                spawnerIndex++;
-                PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
-            }
-            if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugBackward))
-            {
-                spawnerIndex--;
-                PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
-            }
+            // static int spawnerIndex = 0; // TODOXX TODOJB static ints? Better change this at some point?
+            // if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugForward))
+            // {
+            //     spawnerIndex++;
+            //     PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
+            // }
+            // if(p_player->m_inputHandler->CheckForOnePress((int)UserCommandPlaying::DebugBackward))
+            // {
+            //     spawnerIndex--;
+            //     PlayerSpawnerHandler::GetInstance()->SetCurrentSpawnerDebug(spawnerIndex);
+            // }
         }
 
         void PlayerHandlerServer::OnEvent(Event* p_event)

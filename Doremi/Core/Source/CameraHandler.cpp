@@ -74,7 +74,7 @@ namespace Doremi
                             ChangeCamera(CameraType::THIRDPERSON);
                             break;
                         case CameraType::THIRDPERSON:
-                            ChangeCamera(CameraType::FREELOOK);
+                            // ChangeCamera(CameraType::FREELOOK);
                             break;
                         default:
                             break;
