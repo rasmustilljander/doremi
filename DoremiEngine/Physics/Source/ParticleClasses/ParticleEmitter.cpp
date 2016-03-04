@@ -225,10 +225,14 @@ namespace DoremiEngine
                             // we dont have to do this. Seems hard at first glance
                             m_particlesLifeTime[m_nextIndex] = m_lifeTime;
                             m_nextIndex++;
+                            if (m_nextIndex >= PARTICLE_MAX_COUNT)
+                            {
+                                m_nextIndex = 0;
+                            }
                         }
                     }
 
-                    if(positions.size() > 0 && !(m_nextIndex >= PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
+                    if(positions.size() > 0)// && !(m_nextIndex >= PARTICLE_MAX_COUNT)) // no point doing things if there's no new particles
                     {
                         // Cast into PhysX datatypes
                         PxVec3* positionsPX = reinterpret_cast<PxVec3*>(&positions[0]);
