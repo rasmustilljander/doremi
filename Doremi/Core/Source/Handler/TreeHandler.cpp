@@ -42,7 +42,8 @@
 #include <d3d11_1.h>
 
 // TIMER
-//
+#include <Doremi/Core/Include/Timing/NamedTimer.hpp>
+#include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
 //
 namespace Doremi
 {
@@ -115,7 +116,7 @@ namespace Doremi
         TreeHandler::~TreeHandler() {}
         bool TreeHandler::CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions)
         {
-            // NAMED_TIMER(m_graphicalManagers.at(i)->GetName());
+            FUNCTION_TIMER;
             // std::cout << "X:" << m_playerPos.x << " Y:" << m_playerPos.y << " Z:" << m_playerPos.z << std::endl;
             // Check if any one point of the cube is in the view frustum.
             for(int i = 0; i < 6; ++i)
@@ -267,6 +268,7 @@ namespace Doremi
         }
         std::vector<uint32_t> TreeHandler::Update()
         {
+            FUNCTION_TIMER
             bool t_isDone = false;
             int t_whatChild = 0;
             TreeCreator::OctNode* t_currentNode = &m_treeCreator->treeRoot;
@@ -683,8 +685,7 @@ namespace Doremi
             // m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
             // m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
             // DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
-
-
+            NAMED_TIMER("TreeHandlerAfterBuildingTheFrustum")
             while(!t_isDone)
             {
                 if(!t_currentNode->empty)

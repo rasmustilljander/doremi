@@ -21,10 +21,8 @@
 #include <d3d11_1.h>
 
 // TIMER
-#include <Doremi/Core/Include/Timing/TimerManager.hpp>
-#include <Utility/Utilities/Include/Chrono/Timer.hpp>
-// #include <Doremi/Core/Include/Timing/NamedTimer.hpp>
-// #include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
+#include <Doremi/Core/Include/Timing/NamedTimer.hpp>
+#include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
 
 /// REMOVE THIS
 #include <EntityComponent/ComponentTable.hpp>
@@ -73,7 +71,7 @@ namespace Doremi
 
         void GraphicManager::Update(double p_dt)
         {
-            int length = 0;
+            FUNCTION_TIMER
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
@@ -85,27 +83,25 @@ namespace Doremi
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
 
 
-            // for (size_t i = 0; i < lengthAllEntities; ++i)
-            //{
-            //    if (entityHandler.HasComponents(i, mask)
-            //        && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation)
-            //        && !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
-            //    {
-
-            //            RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
-            //            TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
-            //            DirectX::XMFLOAT4X4 transMat;
-            //            DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
-
-            //            DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
-            //                DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
-            //                DirectX::XMMatrixRotationQuaternion(quaternion) *
-            //                DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
-            //                orientationComp->position.z));
-            //            DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-            //            submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
-            //    }
-            //}
+            /* for (size_t i = 0; i < lengthAllEntities; ++i)
+            {
+                if (entityHandler.HasComponents(i, mask)
+                    && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation)
+                    && !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
+                {
+                        RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+                        TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+                        DirectX::XMFLOAT4X4 transMat;
+                        DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+                        DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+                            DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+                            DirectX::XMMatrixRotationQuaternion(quaternion) *
+                            DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
+                            orientationComp->position.z));
+                        DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+                        submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+                }
+            }*/
             for(size_t i = 0; i < lengthAllEntities; ++i)
             {
                 if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
