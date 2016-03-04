@@ -261,10 +261,6 @@ namespace Doremi
                 {
                     m_currentFrequency = 1000;
                 }
-
-
-                using namespace Doremi::Utilities::Logging;
-                m_logger->LogText(LogTag::AUDIO, LogLevel::MASS_DATA_PRINT, "F, %f", m_currentFrequency);
             }
         }
 

@@ -166,14 +166,6 @@ namespace Doremi
             // Update the inputhandler
             InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(m_player->m_inputHandler);
             inputHandler->Update();
-
-            // If player is created, I think we want to logg input
-            if(m_player->IsCreated)
-            {
-                using namespace Doremi::Utilities::Logging;
-                m_logger->LogText(LogTag::INPUT, LogLevel::MASS_DATA_PRINT, "X, %d\nY, %d\nM, %d", inputHandler->GetMouseMovementX(),
-                                  inputHandler->GetMouseMovementY(), inputHandler->GetInputBitMask());
-            }
         }
 
         void PlayerHandlerClient::SetNewPlayerEntityID(const EntityID& p_entityID)
