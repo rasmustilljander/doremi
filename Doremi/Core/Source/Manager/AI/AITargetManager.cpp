@@ -193,7 +193,7 @@ namespace Doremi
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetCallbackFiltering(id, 3, 1, 8, 2);
 
             // Add a force to the body TODOCONFIG should not be hard coded the force amount
-            direction *= 1500.0f;
+            direction *= 2500.0f;
             XMFLOAT3 force;
             XMStoreFloat3(&force, direction);
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
