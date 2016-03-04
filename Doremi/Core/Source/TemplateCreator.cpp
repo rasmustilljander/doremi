@@ -648,7 +648,7 @@ namespace Doremi
 
             // Character Controller
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(0.1, 1.5);
+            charControlComp->dims = XMFLOAT2(3, 1.5);
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
@@ -722,7 +722,7 @@ namespace Doremi
             t_renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
             t_renderComp->material =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
-
+            t_renderComp->offsetY = -1.5f;
             t_renderComp->lockedRotationX = true;
 
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
@@ -755,7 +755,7 @@ namespace Doremi
 
             // Controller component
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(0.1, 1.5);
+            charControlComp->dims = XMFLOAT2(3, 1.5);
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
@@ -844,6 +844,7 @@ namespace Doremi
             t_renderComp->material =
                 sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
             t_renderComp->lockedRotationX = true;
+            t_renderComp->offsetY = -1.5f;
 
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
             // SkeletalAnimationComponent
