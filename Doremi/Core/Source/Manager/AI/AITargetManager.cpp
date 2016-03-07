@@ -38,6 +38,8 @@ namespace Doremi
         AITargetManager::AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "AITargetManager")
         {
             m_playerMovementImpact = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().AIAimOffset;
+            m_maxActorsUpdated = 1; // We may only update one AI per update... TODOCONFIG
+            m_actorToUpdate = 0;
         }
 
         AITargetManager::~AITargetManager() {}
@@ -45,13 +47,24 @@ namespace Doremi
         void AITargetManager::Update(double p_dt)
         {
             using namespace DirectX;
+
+            int updatedActors = 0;
+            int lastUpdatedActor = 0;
             // gets all the players in the world, used to see if we can see anyone of them
             std::map<uint32_t, PlayerServer*> t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
-            for(size_t i = 0; i < length; i++)
+            for(size_t i = m_actorToUpdate + 1; i != m_actorToUpdate; i++)
             {
+                if(i > length)
+                {
+                    i = 0;
+                    if(i == m_actorToUpdate)
+                    {
+                        break;
+                    }
+                }
                 // Check and update the attack timer
                 bool shouldFire = false;
                 if(t_entityHandler.HasComponents(i, (int)ComponentType::AIAgent))
@@ -61,7 +74,6 @@ namespace Doremi
                     // If above attack freq we should attack
                     if(timer->attackTimer > timer->attackFrequency)
                     {
-                        timer->attackTimer -= timer->attackFrequency;
                         shouldFire = true;
                     }
                     else
@@ -74,8 +86,10 @@ namespace Doremi
                 {
                     shouldFire = false; // No timer? TODOKO log error and dont let it fire!
                 }
-                if(t_entityHandler.HasComponents(i, (int)ComponentType::Range | (int)ComponentType::AIAgent | (int)ComponentType::Transform))
+                if(t_entityHandler.HasComponents(i, (int)ComponentType::Range | (int)ComponentType::AIAgent | (int)ComponentType::Transform) &&
+                   updatedActors < m_maxActorsUpdated)
                 {
+
                     // They have a range component and are AI agents, let's see if a player is in range!
                     // I use proximitychecker here because i'm guessing it's faster than raycast
                     TransformComponent* AITransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(i);
@@ -84,7 +98,7 @@ namespace Doremi
 
                     float checkRange = 1000;
                     float closestDistance = checkRange; // Hardcoded range, not intreseted if player is outside this
-
+                    int onlyOnePlayerCounts = 1;
                     // Check waht player is close and visible
                     for(auto pairs : t_players)
                     {
@@ -92,11 +106,16 @@ namespace Doremi
                         float distanceToPlayer = ProximityChecker::GetInstance().GetDistanceBetweenEntities(pairs.second->m_playerEntityID, i);
                         if(distanceToPlayer < closestDistance)
                         {
+                            // It's after this we start whit heavy computation so this is counted as a updated actor
+                            lastUpdatedActor = i;
+                            updatedActors += onlyOnePlayerCounts;
+                            onlyOnePlayerCounts = 0;
+
                             // Potential player found, check if we see him
                             // We are in range!! Let's raycast in a appropirate direction!! so start with finding that direction!
                             if(!EntityHandler::GetInstance().HasComponents(playerID, (int)ComponentType::Transform)) // Just for saftey :D
                             {
-                                // TODOKO Log error!!!!!!!
+                                std::cout << "Player missing transformcomponent?" << std::endl;
                                 return;
                             }
                             // Fetch some components
@@ -158,6 +177,16 @@ namespace Doremi
                             if(closestDistance <= aiRange->range)
                             {
                                 FireAtEntity(closestVisiblePlayer, i, closestDistance);
+                                if(t_entityHandler.HasComponents(i, (int)ComponentType::AIAgent))
+                                {
+                                    AIAgentComponent* timer = t_entityHandler.GetComponentFromStorage<AIAgentComponent>(i);
+                                    timer->attackTimer = 0;
+                                }
+                                else
+                                {
+                                    // WTF??? someone who isnt AI agen got here??
+                                    std::cout << "Non enemy entered the AI fire logic..." << std::endl;
+                                }
                             }
                         }
                         // If we see a player turn off the phermonetrail
@@ -168,8 +197,16 @@ namespace Doremi
                             pfComp->ChargedActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player, true);
                         }
                     }
+                    else if(t_entityHandler.HasComponents(i, (int)ComponentType::PotentialField))
+                    {
+                        // if we dont see a player set phemonetrail and shit
+                        PotentialFieldComponent* pfComp = t_entityHandler.GetComponentFromStorage<PotentialFieldComponent>(i);
+                        pfComp->ChargedActor->SetUsePhermonetrail(true);
+                        pfComp->ChargedActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player, false);
+                    }
                 }
             }
+            m_actorToUpdate = lastUpdatedActor;
         }
 
         void AITargetManager::FireAtEntity(const size_t& p_entityID, const size_t& p_enemyID, const float& p_distance)

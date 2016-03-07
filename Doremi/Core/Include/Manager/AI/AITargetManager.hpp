@@ -19,6 +19,8 @@ namespace Doremi
             void FireAtEntity(const size_t& p_entityID, const size_t& p_enemyID, const float& p_distance);
 
             float m_playerMovementImpact;
+            int m_maxActorsUpdated;
+            int m_actorToUpdate;
         };
     }
 }

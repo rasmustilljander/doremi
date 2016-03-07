@@ -156,9 +156,9 @@ namespace Doremi
                     MovementComponent* moveComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);
                     moveComp->movement = direction;
 
-                    currentActor->SetUsePhermonetrail(true); // set it to active so it's active as standard
-                    currentActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player,
-                                                           false); // We dont know if we see the enemy so dont use this field
+                    // currentActor->SetUsePhermonetrail(true); // set it to active so it's active as standard
+                    // currentActor->SetActivePotentialVsType(DoremiEngine::AI::AIActorType::Player,
+                    //                                       false); // We dont know if we see the enemy so dont use this field
                 }
             }
             m_actorToUpdate = lastUpdatedActor;
