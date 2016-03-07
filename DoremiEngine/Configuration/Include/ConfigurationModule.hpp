@@ -83,13 +83,13 @@ namespace DoremiEngine
             /**
             Reads values from the specified file and saves the values recognized
             */
-            virtual void ReadConfigurationValuesFromFile(const std::string p_fileName) = 0;
+            virtual void ReadConfigurationValuesFromFile(const std::string& p_fileName) = 0;
 
             /**
             Writes the configuration values to file. If the file have the config value it will be overwriten
             Every value the specified filed doesnt have will be writen at the end of the file
             */
-            virtual void WriteConfigurationValuesToFile(const std::string p_fileName) = 0;
+            virtual void WriteConfigurationValuesToFile(const std::string& p_fileName) = 0;
 
             /**
             CAUTION!!! Gives full control of the configuration information. Dont delete outside!!

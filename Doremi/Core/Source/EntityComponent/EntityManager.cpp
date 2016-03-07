@@ -39,7 +39,7 @@ namespace Doremi
 
         void EntityManager::RemoveEntity(int pEntityID)
         {
-            ComponentTable* tCompTable = tCompTable->GetInstance();
+            ComponentTable* tCompTable = ComponentTable::GetInstance();
             // Remove bitmask
             tCompTable->RemoveEntity(pEntityID);
 

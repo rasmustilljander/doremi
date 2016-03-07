@@ -13,7 +13,7 @@ namespace DoremiEngine
             DirectX::XMFLOAT4X4 InverseProjection;
             DirectX::XMFLOAT3 CameraPosition;
             float pad;
-            CameraMatrices() {}
+            CameraMatrices() : pad(0) {}
         };
         /**
         Contains information on view and projection matrix. The user needs one of these classes to change the view and projection matrices in the

@@ -17,6 +17,8 @@ public:
 private:
     StorageShelf() : mItems(nullptr) { mItems = new T[MAX_NUM_ENTITIES](); }
 
+    StorageShelf(const StorageShelf& t_item) = delete;
+
     ~StorageShelf() { FreeHelper(); }
 
     void FreeHelper() { delete[] mItems; }

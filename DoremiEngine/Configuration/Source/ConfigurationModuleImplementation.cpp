@@ -19,7 +19,7 @@ namespace DoremiEngine
 
         void ConfigurationModuleImplementation::Shutdown() {}
 
-        void ConfigurationModuleImplementation::ReadConfigurationValuesFromFile(const std::string p_fileName)
+        void ConfigurationModuleImplementation::ReadConfigurationValuesFromFile(const std::string& p_fileName)
         {
             // Get the true path
             std::string t_truePath = m_sharedContext.GetWorkingDirectory() + "ConfigurationFiles/" + p_fileName;
@@ -56,7 +56,7 @@ namespace DoremiEngine
             InterpretMap(values, m_configInfo);
         }
 
-        void ConfigurationModuleImplementation::WriteConfigurationValuesToFile(const std::string p_fileName)
+        void ConfigurationModuleImplementation::WriteConfigurationValuesToFile(const std::string& p_fileName)
         {
             std::string t_truePath = m_sharedContext.GetWorkingDirectory() + "ConfigurationFiles/" + p_fileName;
             // Take the input file to save the values at the correct location in file

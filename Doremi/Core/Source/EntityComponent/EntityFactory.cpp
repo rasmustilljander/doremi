@@ -85,8 +85,8 @@ namespace Doremi
         void EntityFactory::ScrapEntity(int p_entityID)
         {
             DoremiEngine::Physics::PhysicsModule& physicsModule = m_sharedContext.GetPhysicsModule();
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
-            ComponentTable* tComponentTable = tComponentTable->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
+            ComponentTable* tComponentTable = ComponentTable::GetInstance();
             if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::RigidBody))
             {
                 physicsModule.GetRigidBodyManager().RemoveBody(p_entityID);
@@ -113,8 +113,8 @@ namespace Doremi
         void EntityFactory::CreateComponents(EntityID p_entityID, Blueprints p_blueprintID)
         {
             EntityBlueprint tComponentMap = mEntityBlueprints[p_blueprintID];
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
-            ComponentTable* tComponentTable = tComponentTable->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
+            ComponentTable* tComponentTable = ComponentTable::GetInstance();
 
             for(EntityBlueprint::iterator iter = tComponentMap.begin(); iter != tComponentMap.end(); ++iter)
             {
@@ -371,7 +371,7 @@ namespace Doremi
 
         EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID)
         {
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
 
             // create a new ID
             EntityID tNewEntityID = tEntityManager->AddEntity();
@@ -395,7 +395,7 @@ namespace Doremi
 
         EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position)
         {
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
             EntityID tNewEntityID = tEntityManager->AddEntity();
 
             ComponentTable::GetInstance()->AddComponent(tNewEntityID, (int)ComponentType::Transform);
@@ -425,7 +425,7 @@ namespace Doremi
 
         EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation)
         {
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
             EntityID tNewEntityID = tEntityManager->AddEntity();
 
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);
@@ -452,7 +452,7 @@ namespace Doremi
         }
         EntityID EntityFactory::CreateEntity(Blueprints p_blueprintID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation, DirectX::XMFLOAT3 p_scale)
         {
-            EntityManager* tEntityManager = tEntityManager->GetInstance();
+            EntityManager* tEntityManager = EntityManager::GetInstance();
             EntityID tNewEntityID = tEntityManager->AddEntity();
 
             TransformComponent* transComp = GetComponent<TransformComponent>(tNewEntityID);

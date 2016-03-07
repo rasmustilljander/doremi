@@ -281,8 +281,8 @@ namespace Doremi
                 }
 
                 // Cleanup
-                delete meshName;
-                delete materialName;
+                delete[] meshName;
+                delete[] materialName;
                 for(auto& i : transformNames)
                 {
                     delete i;

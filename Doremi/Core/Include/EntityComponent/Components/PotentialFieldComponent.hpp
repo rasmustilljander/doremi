@@ -36,10 +36,10 @@ namespace Doremi
             */
             bool isField = false;
             PotentialFieldComponent(DoremiEngine::AI::PotentialFieldActor* p_actor, DoremiEngine::AI::PotentialField* p_potentialField)
-                : ChargedActor(p_actor), Field(p_potentialField)
+                : ChargedActor(p_actor), Field(p_potentialField), isStatic(false)
             {
             }
-            PotentialFieldComponent() : ChargedActor(nullptr), Field(nullptr) {}
+            PotentialFieldComponent() : ChargedActor(nullptr), Field(nullptr), isStatic(false) {}
 
             // TODOJB confirm standard values and add docs
             float charge = 0;
