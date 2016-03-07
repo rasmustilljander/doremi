@@ -30,7 +30,7 @@ namespace DoremiEditor
                 color[2] = b;
             }
 
-            float mapMasks;
+            int mapMasks;
             float color[3];
             float diffuse;
             float ambColor[3];
