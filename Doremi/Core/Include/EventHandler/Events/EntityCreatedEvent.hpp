@@ -13,7 +13,14 @@ namespace Doremi
         */
         struct EntityCreatedEvent : public Event
         {
-            EntityCreatedEvent() : Event(EventType::Undefined) {}
+            EntityCreatedEvent()
+                : Event(EventType::Undefined),
+                  entityID(0),
+                  bluepirnt(Blueprints::EmptyEntity),
+                  position(DirectX::XMFLOAT3(0, 0, 0)),
+                  orientation(DirectX::XMFLOAT4(0, 0, 0, 0))
+            {
+            }
 
             EntityCreatedEvent(size_t p_playerEntityID, Blueprints p_blueprint)
                 : Event(EventType::EntityCreated),

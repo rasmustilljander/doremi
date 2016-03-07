@@ -98,18 +98,19 @@ namespace Doremi
                 t_streamer.SetTargetBuffer(t_dataPointer, sizeof(p_message.Data));
 
                 // Get playerID from server
-                uint32_t t_lastPlayerID = t_networkConnection->m_serverConnection.PlayerID;
-                t_networkConnection->m_serverConnection.PlayerID = t_streamer.ReadUnsignedInt32();
+                uint32_t t_lastPlayerID = t_networkConnection->m_serverConnection.MyPlayerID;
+                t_networkConnection->m_serverConnection.MyPlayerID = t_streamer.ReadUnsignedInt32();
 
                 // Get port to join with
                 uint32_t t_portToJoinWith = t_streamer.ReadUnsignedInt32();
 
                 // If it changed, we want to update config file for now
                 // TODO change not to write to config file all times we get new value?
-                if(t_lastPlayerID != t_networkConnection->m_serverConnection.PlayerID)
+                if(t_lastPlayerID != t_networkConnection->m_serverConnection.MyPlayerID)
                 {
                     // Update the value
-                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID = t_networkConnection->m_serverConnection.PlayerID;
+                    m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo().LastServerPlayerID =
+                        t_networkConnection->m_serverConnection.MyPlayerID;
 
                     // TODOXX if we change config file name, this will crash like hell
                     m_sharedContext.GetConfigurationModule().WriteConfigurationValuesToFile("Configuration.txt");
@@ -342,7 +343,7 @@ namespace Doremi
             t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
             // Write playerID
-            t_streamer.WriteUnsignedInt32(t_networkConnection->m_serverConnection.PlayerID);
+            t_streamer.WriteUnsignedInt32(t_networkConnection->m_serverConnection.MyPlayerID);
 
             // Send message
             m_sharedContext.GetNetworkModule().SendUnreliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectingSocketHandle,
@@ -544,7 +545,7 @@ namespace Doremi
             t_newMessage.MessageID = SendMessageIDToMasterFromClient::CONNECTION_REQUEST;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
 
@@ -556,7 +557,7 @@ namespace Doremi
             t_newMessage.MessageID = SendMessageIDToMasterFromClient::CONNECTED;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
 
@@ -568,7 +569,7 @@ namespace Doremi
             t_newMessage.MessageID = SendMessageIDToMasterFromClient::DISCONNECT;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
     }

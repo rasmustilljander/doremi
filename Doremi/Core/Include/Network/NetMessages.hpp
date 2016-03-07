@@ -89,7 +89,7 @@ namespace Doremi
         */
         struct NetMessageBuffer
         {
-            NetMessageBuffer() { ZeroMemory(Data, NET_MESSAGE_BUFFER_DATA_SIZE); }
+            NetMessageBuffer() : MessageID(0) { ZeroMemory(Data, NET_MESSAGE_BUFFER_DATA_SIZE); }
             uint8_t MessageID; // 1 byte
             unsigned char Data[NET_MESSAGE_BUFFER_DATA_SIZE]; // 2047 byte
         };
@@ -100,28 +100,40 @@ namespace Doremi
 
         struct NetMessageServerClientConnectingFromClient
         {
-            NetMessageServerClientConnectingFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE); }
+            NetMessageServerClientConnectingFromClient() : MessageID(SendMessageIDToServerFromClient::CONNECTION_REQUEST)
+            {
+                ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE);
+            }
             SendMessageIDToServerFromClient MessageID; // 1 byte
             unsigned char Data[NET_MESSAGE_CONNECTING_DATA_SIZE]; // 1023 byte
         };
 
         struct NetMessageServerClientConnectedFromClient
         {
-            NetMessageServerClientConnectedFromClient() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageServerClientConnectedFromClient() : MessageID(SendMessageIDToServerFromClient::CONNECTION_REQUEST)
+            {
+                ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE);
+            }
             SendMessageIDToServerFromClient MessageID;
             unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
         };
 
         struct NetMessageServerClientConnectingFromServer
         {
-            NetMessageServerClientConnectingFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE); }
+            NetMessageServerClientConnectingFromServer() : MessageID(SendMessageIDToClientFromServer::VERSION_CHECK)
+            {
+                ZeroMemory(Data, NET_MESSAGE_CONNECTING_DATA_SIZE);
+            }
             SendMessageIDToClientFromServer MessageID; // 1 byte
             unsigned char Data[NET_MESSAGE_CONNECTING_DATA_SIZE]; // 1023 byte
         };
 
         struct NetMessageServerClientConnectedFromServer
         {
-            NetMessageServerClientConnectedFromServer() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageServerClientConnectedFromServer() : MessageID(SendMessageIDToClientFromServer::VERSION_CHECK)
+            {
+                ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE);
+            }
             SendMessageIDToClientFromServer MessageID;
             unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
         };
@@ -132,14 +144,17 @@ namespace Doremi
 
         struct NetMessageMasterClientFromMaster
         {
-            NetMessageMasterClientFromMaster() { ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE); }
+            NetMessageMasterClientFromMaster() : MessageID(SendMessageIDToClientFromMaster::CONNECTED)
+            {
+                ZeroMemory(Data, NET_MESSAGE_CONNECTED_DATA_SIZE);
+            }
             SendMessageIDToClientFromMaster MessageID;
             unsigned char Data[NET_MESSAGE_CONNECTED_DATA_SIZE]; // 2047 byte
         };
 
         struct NetMessageMasterClientFromClient
         {
-            NetMessageMasterClientFromClient() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
+            NetMessageMasterClientFromClient() : MessageID(SendMessageIDToMasterFromClient::CONNECTED) { ZeroMemory(Data, NET_MESSAGE_SMALL); }
             SendMessageIDToMasterFromClient MessageID;
             unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };
@@ -149,14 +164,17 @@ namespace Doremi
         */
         struct NetMessageMasterServerFromMaster
         {
-            NetMessageMasterServerFromMaster() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
+            NetMessageMasterServerFromMaster() : MessageID(SendMessageIDToServerFromMaster::CONNECTED) { ZeroMemory(Data, NET_MESSAGE_SMALL); }
             SendMessageIDToServerFromMaster MessageID;
             unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };
 
         struct NetMessageMasterServerFromServer
         {
-            NetMessageMasterServerFromServer() { ZeroMemory(Data, NET_MESSAGE_SMALL); }
+            NetMessageMasterServerFromServer() : MessageID(SendMessageIDToMasterFromServer::CONNECTION_REQUEST)
+            {
+                ZeroMemory(Data, NET_MESSAGE_SMALL);
+            }
             SendMessageIDToMasterFromServer MessageID;
             unsigned char Data[NET_MESSAGE_SMALL]; // 2047 byte
         };

@@ -41,9 +41,10 @@ namespace Doremi
 
             ServerConnectionFromMaster* CreateNewConnectionServers(const DoremiEngine::Network::Adress& p_adress);
 
-            NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
         private:
+            NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~NetworkConnectionsMaster();
 
             static NetworkConnectionsMaster* m_singleton;

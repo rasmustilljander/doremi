@@ -21,7 +21,7 @@ namespace Doremi
         */
         struct PlayerClient : public Player
         {
-            PlayerClient() : Player(0, nullptr, nullptr) {}
+            PlayerClient() : Player(0, nullptr, nullptr), m_networkEventReceiver(nullptr), IsCreated(false) {}
             PlayerClient(EntityID p_EntityID, InputHandler* p_inputHandler, FrequencyBufferHandler* p_frequencyBufferHandler, NetworkEventReceiver* p_networkEventReceiver)
                 : Player(p_EntityID, p_inputHandler, p_frequencyBufferHandler), m_networkEventReceiver(p_networkEventReceiver), IsCreated(false)
             {

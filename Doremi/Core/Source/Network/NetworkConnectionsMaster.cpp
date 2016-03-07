@@ -33,7 +33,7 @@ namespace Doremi
         }
 
         NetworkConnectionsMaster::NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext)
+            : m_sharedContext(p_sharedContext), m_port(0)
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
             const DoremiEngine::Configuration::ConfiguartionInfo& t_config = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();

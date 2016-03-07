@@ -236,7 +236,7 @@ namespace Doremi
             NetworkMessagesClient* t_netMessages = NetworkMessagesClient::GetInstance();
 
             // Get connecting socket
-            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.SocketHandle;
+            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.ConnectedSocketHandle;
 
             // Create buffer message
             NetMessageMasterClientFromMaster t_newMessage = NetMessageMasterClientFromMaster();

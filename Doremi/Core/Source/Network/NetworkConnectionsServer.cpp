@@ -100,10 +100,10 @@ namespace Doremi
             }
 
             // Create new socket for unreliable
-            m_masterConnection.SocketHandle = t_networkModule.CreateUnreliableSocket();
+            m_masterConnection.ConnectedSocketHandle = t_networkModule.CreateUnreliableSocket();
 
-            delete t_IPCharPointer;
-            delete t_IPArray;
+            delete[] t_IPCharPointer;
+            delete[] t_IPArray;
         }
 
         NetworkConnectionsServer::~NetworkConnectionsServer() {}

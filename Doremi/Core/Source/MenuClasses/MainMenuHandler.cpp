@@ -27,7 +27,7 @@ namespace Doremi
     namespace Core
     {
         MainMenuHandler::MainMenuHandler(const DoremiEngine::Core::SharedContext& p_sharedContext, DirectX::XMFLOAT2 p_resolution)
-            : m_sharedContext(p_sharedContext), m_resolution(p_resolution), m_isFullscreen(false)
+            : m_sharedContext(p_sharedContext), m_resolution(p_resolution), m_isFullscreen(false), m_currentButton(-1)
         {
         }
 

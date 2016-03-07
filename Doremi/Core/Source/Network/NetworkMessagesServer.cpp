@@ -117,7 +117,7 @@ namespace Doremi
                     }
 
                     // Assign playerID to connection
-                    t_connection->PlayerID = t_playerID;
+                    t_connection->MyPlayerID = t_playerID;
 
                     // Send Connected Message
                     SendConnect(t_connection, p_adress);
@@ -179,7 +179,7 @@ namespace Doremi
 
                 // Acc rejoin by acced event
                 bool t_receivedAllEvents =
-                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->UpdateRejoinQueueForPlayer(eventAcc, p_connection->PlayerID);
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->UpdateRejoinQueueForPlayer(eventAcc, p_connection->MyPlayerID);
 
                 // If client is ready
                 if(t_receivedAllEvents)
@@ -189,7 +189,7 @@ namespace Doremi
                     p_connection->ConnectionState = ClientConnectionStateFromServer::IN_GAME;
 
                     // Update all network objects, so that all objects attempt to send their stuff right away
-                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID)->UpdateAllNetworkObject();
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetNetworkPriorityHandlerForplayer(p_connection->MyPlayerID)->UpdateAllNetworkObject();
                 }
             }
         }
@@ -203,9 +203,9 @@ namespace Doremi
 
                 // Get input handler and frequencyhandler
                 PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
-                InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->PlayerID);
-                FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
-                NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
+                InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->MyPlayerID);
+                FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->MyPlayerID);
+                NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->MyPlayerID);
 
                 // Ready for read
                 NetworkStreamer p_streamer = NetworkStreamer();
@@ -227,7 +227,7 @@ namespace Doremi
                 EntityID entityID = 0;
 
                 // Ignore checks, we should have a entityID
-                t_playerHandler->GetEntityIDForPlayer(p_connection->PlayerID, entityID);
+                t_playerHandler->GetEntityIDForPlayer(p_connection->MyPlayerID, entityID);
 
                 // Read orientation to update with
                 DirectX::XMFLOAT4 t_playerOrientation = p_streamer.ReadRotationQuaternion();
@@ -291,7 +291,7 @@ namespace Doremi
             p_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_newMessage.Data));
 
             // Write playerID
-            p_streamer.WriteUnsignedInt32(p_connection->PlayerID);
+            p_streamer.WriteUnsignedInt32(p_connection->MyPlayerID);
 
             // Write port to connect to
             p_streamer.WriteUnsignedInt32(NetworkConnectionsServer::GetInstance()->GetPortConnected());
@@ -367,13 +367,13 @@ namespace Doremi
             uint32_t t_bytesWritten = 0;
 
             // Write max number of events for rejoin
-            uint32_t t_maxNumberOfEvents = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->PlayerID);
+            uint32_t t_maxNumberOfEvents = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetMaxEventForPlayer(p_connection->MyPlayerID);
             t_streamer.WriteUnsignedInt32(t_maxNumberOfEvents);
             t_bytesWritten += sizeof(uint32_t);
 
             // Write join events
             static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())
-                ->WriteQueuedEventsFromLateJoin(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten, p_connection->PlayerID);
+                ->WriteQueuedEventsFromLateJoin(t_streamer, sizeof(t_newMessage.Data), t_bytesWritten, p_connection->MyPlayerID);
 
             // Send the message
             t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
@@ -383,10 +383,10 @@ namespace Doremi
         {
             DoremiEngine::Network::NetworkModule& t_networkModule = m_sharedContext.GetNetworkModule();
             PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
-            InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->PlayerID);
-            FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->PlayerID);
-            NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->PlayerID);
-            NetworkPriorityHandler* t_networkPriorityHandler = t_playerHandler->GetNetworkPriorityHandlerForplayer(p_connection->PlayerID);
+            InputHandlerServer* t_inputHandler = t_playerHandler->GetInputHandlerForPlayer(p_connection->MyPlayerID);
+            FrequencyBufferHandler* t_frequencyHandler = t_playerHandler->GetFrequencyBufferHandlerForPlayer(p_connection->MyPlayerID);
+            NetworkEventSender* t_networkEventSender = t_playerHandler->GetNetworkEventSenderForPlayer(p_connection->MyPlayerID);
+            NetworkPriorityHandler* t_networkPriorityHandler = t_playerHandler->GetNetworkPriorityHandlerForplayer(p_connection->MyPlayerID);
 
 
             // Create message
@@ -504,7 +504,7 @@ namespace Doremi
             t_streamer.WriteUnsignedInt16(t_connections->GetPortConnecting()); // 2 byte
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
 
@@ -532,7 +532,7 @@ namespace Doremi
             t_streamer.WriteUnsignedInt8(t_currentNumClients);
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
 
@@ -544,7 +544,7 @@ namespace Doremi
             t_newMessage.MessageID = SendMessageIDToMasterFromServer::DISCONNECT;
 
             // Send message
-            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.SocketHandle,
+            m_sharedContext.GetNetworkModule().SendUnreliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_masterConnection.ConnectedSocketHandle,
                                                                   t_connections->m_masterConnection.Adress);
         }
     }

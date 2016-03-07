@@ -80,11 +80,6 @@ namespace Doremi
             /**
                 TODOEA doc
             */
-            float m_maxSpeed;
-
-            /**
-                TODOEA doc
-            */
             float m_turnSpeed;
         };
 

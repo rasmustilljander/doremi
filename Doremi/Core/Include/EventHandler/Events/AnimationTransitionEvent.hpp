@@ -19,7 +19,7 @@ namespace Doremi
         };
         struct AnimationTransitionEvent : public Event
         {
-            AnimationTransitionEvent() : Event(EventType::AnimationTransition) {}
+            AnimationTransitionEvent() : Event(EventType::AnimationTransition), entityID(0), animation(Animation::STOPATTACK) {}
             AnimationTransitionEvent(uint32_t p_entityID, Animation p_animation)
                 : Event(EventType::AnimationTransition), entityID(p_entityID), animation(p_animation)
             {

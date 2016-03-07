@@ -75,15 +75,12 @@ namespace Doremi
 
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
             TransformComponentSnapshotNext(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
-                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNextCounter(0)
             {
             }
             TransformComponentSnapshotNext(const TransformComponentNext& p_copy)
+                : position(p_copy.position), rotation(p_copy.rotation), scale(p_copy.scale), framesToNextCounter(0)
             {
-                position = p_copy.position;
-                rotation = p_copy.rotation;
-                scale = p_copy.scale;
-                framesToNextCounter = 0;
             }
             void IncrementFrame() { framesToNextCounter++; }
         };
@@ -99,15 +96,12 @@ namespace Doremi
             {
             } // TODOJB rotation cannot be zero-vector. Is now 0,0,1,0
             TransformComponentSnapshotPrevious(DirectX::XMFLOAT3 p_pos, DirectX::XMFLOAT4 p_rot)
-                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1))
+                : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNext(0)
             {
             }
             TransformComponentSnapshotPrevious(const TransformComponentNext& p_copy)
+                : position(p_copy.position), rotation(p_copy.rotation), scale(p_copy.scale), framesToNext(0)
             {
-                position = p_copy.position;
-                rotation = p_copy.rotation;
-                scale = p_copy.scale;
-                framesToNext = 0;
             }
         };
     }

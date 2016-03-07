@@ -63,10 +63,13 @@ namespace Doremi
         */
         struct InactivePlayerServer
         {
-        public:
-            InactivePlayerServer() {}
+            InactivePlayerServer()
+                : m_savedPlayer(nullptr), m_savedPosition(DirectX::XMFLOAT3(0, 0, 0)), m_savedOrientation(DirectX::XMFLOAT4(0, 0, 0, 0)), m_savedHealth(0)
+            {
+            }
 
             ~InactivePlayerServer() {}
+
             /**
                 TODOCM doc
             */

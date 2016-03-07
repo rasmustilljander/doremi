@@ -57,8 +57,6 @@ namespace Doremi
             // Basic position
             DoremiEngine::Graphic::SpriteData t_data;
 
-            0.2 - m_serverBoxSize;
-
             t_data.halfsize = XMFLOAT2(0.355f, m_serverBoxSize * 8 + 0.01);
             t_data.origo = XMFLOAT2(0.0f, 4 * m_serverBoxSize * 2.0f);
             t_data.position = XMFLOAT2(0.5f, 0.2f - m_serverBoxSize);

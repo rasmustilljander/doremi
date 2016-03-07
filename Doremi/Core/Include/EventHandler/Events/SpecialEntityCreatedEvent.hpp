@@ -13,7 +13,7 @@ namespace Doremi
         */
         struct SpecialEntityCreatedEvent : public Event
         {
-            SpecialEntityCreatedEvent() : Event(EventType::Undefined) {}
+            SpecialEntityCreatedEvent() : Event(EventType::Undefined), entityID(0) {}
             SpecialEntityCreatedEvent(size_t p_playerEntityID, EventType p_eventType) : Event(p_eventType), entityID(p_playerEntityID) {}
 
             /**

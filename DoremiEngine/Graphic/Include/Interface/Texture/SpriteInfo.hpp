@@ -13,12 +13,13 @@ namespace DoremiEngine
         {
             SpriteData() {}
             SpriteData(const SpriteData& p_spriteData)
+                : position(p_spriteData.position),
+                  origo(p_spriteData.origo),
+                  halfsize(p_spriteData.halfsize),
+                  txtPos(p_spriteData.txtPos),
+                  txtSize(p_spriteData.txtSize),
+                  filler(DirectX::XMFLOAT2(0, 0))
             {
-                position = p_spriteData.position;
-                origo = p_spriteData.origo;
-                halfsize = p_spriteData.halfsize;
-                txtPos = p_spriteData.txtPos;
-                txtSize = p_spriteData.txtSize;
             }
 
             DirectX::XMFLOAT2 position;

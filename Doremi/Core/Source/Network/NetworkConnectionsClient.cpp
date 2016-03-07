@@ -83,10 +83,10 @@ namespace Doremi
             }
 
             // Create new socket for unreliable
-            m_masterConnection.SocketHandle = t_networkModule.CreateUnreliableSocket();
+            m_masterConnection.ConnectedSocketHandle = t_networkModule.CreateUnreliableSocket();
 
-            delete t_IPCharPointer;
-            delete t_IPArray;
+            delete[] t_IPCharPointer;
+            delete[] t_IPArray;
         }
 
         void NetworkConnectionsClient::LoadServerFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext)
@@ -95,7 +95,7 @@ namespace Doremi
             DoremiEngine::Configuration::ConfiguartionInfo t_configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
 
             // Get last playerID
-            m_serverConnection.PlayerID = t_configInfo.LastServerPlayerID;
+            m_serverConnection.MyPlayerID = t_configInfo.LastServerPlayerID;
 
             // Get IP from config file
             std::string t_IPString = t_configInfo.IPToServer;
@@ -137,8 +137,8 @@ namespace Doremi
             // Create new socket for unreliable
             m_serverConnection.ConnectingSocketHandle = t_networkModule.CreateUnreliableSocket();
 
-            delete t_IPCharPointer;
-            delete t_IPArray;
+            delete[] t_IPCharPointer;
+            delete[] t_IPArray;
         }
 
         NetworkConnectionsClient::~NetworkConnectionsClient() {}

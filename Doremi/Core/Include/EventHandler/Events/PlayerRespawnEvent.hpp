@@ -9,7 +9,10 @@ namespace Doremi
     {
         struct PlayerRespawnEvent : public Event
         {
-            PlayerRespawnEvent() : Event(EventType::PlayerRespawn) {}
+            PlayerRespawnEvent()
+                : Event(EventType::PlayerRespawn), entityID(0), position(DirectX::XMFLOAT3(0, 0, 0)), orientation(DirectX::XMFLOAT4(0, 0, 0, 0))
+            {
+            }
             PlayerRespawnEvent(EntityID p_entityID, DirectX::XMFLOAT3 p_position, DirectX::XMFLOAT4 p_orientation)
                 : Event(EventType::PlayerRespawn), entityID(p_entityID), position(p_position), orientation(p_orientation)
             {

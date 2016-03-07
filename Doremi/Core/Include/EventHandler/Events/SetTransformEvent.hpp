@@ -11,7 +11,10 @@ namespace Doremi
     {
         struct SetTransformEvent : public Event
         {
-            SetTransformEvent() : Event(EventType::SetTransform) {}
+            SetTransformEvent()
+                : Event(EventType::SetTransform), entityID(0), position(DirectX::XMFLOAT3(0, 0, 0)), orientation(DirectX::XMFLOAT4(0, 0, 0, 0))
+            {
+            }
             SetTransformEvent(const uint32_t& p_entityID, const DirectX::XMFLOAT3& p_position, const DirectX::XMFLOAT4& p_orientation)
                 : Event(EventType::SetTransform), entityID(p_entityID), position(p_position), orientation(p_orientation)
             {

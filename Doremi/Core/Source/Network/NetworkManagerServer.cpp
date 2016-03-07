@@ -234,7 +234,7 @@ namespace Doremi
             NetworkMessagesServer* t_netMessages = NetworkMessagesServer::GetInstance();
 
             // Get connecting socket
-            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.SocketHandle;
+            SocketHandle t_masterConnectingSocketHandle = t_connections->m_masterConnection.ConnectedSocketHandle;
 
             // Create buffer message
             NetMessageMasterServerFromMaster t_newMessage = NetMessageMasterServerFromMaster();
@@ -422,7 +422,7 @@ namespace Doremi
                             InputHandlerServer* t_newInputHandler = new InputHandlerServer(m_sharedContext, DirectX::XMFLOAT3(0, 0, 0));
 
                             // Create player
-                            t_playerHandler->CreateNewPlayer(t_connection.second->PlayerID, t_newInputHandler);
+                            t_playerHandler->CreateNewPlayer(t_connection.second->MyPlayerID, t_newInputHandler);
 
                             // Upgrade connection to connected
                             t_netConnections->SetConnecting(t_connection);
@@ -487,7 +487,7 @@ namespace Doremi
                     m_sharedContext.GetNetworkModule().DeleteSocket(t_connection->second->ConnectedSocketHandle);
 
                     // Remove and save player if it exists, it should
-                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(t_connection->second->PlayerID);
+                    static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->RemoveAndSavePlayer(t_connection->second->MyPlayerID);
 
                     // Delete the memory here
                     delete t_connection->first;

@@ -156,15 +156,10 @@ namespace Doremi
 
         void ScreenSpaceDrawer::End2DDraw()
         {
-
-            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
             DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Set rasteriser to defau,t
             DoremiEngine::Graphic::RasterizerState* t_rasterizer = t_dierctxManager.GetDefaultRasterizerState();
-
-            // Set depth stencil to default
-            DoremiEngine::Graphic::DepthStencilState* t_depthStencil = t_dierctxManager.GetDefaultDepthStencilState();
 
             // Draw the sprites
             t_dierctxManager.RenderSprites(t_rasterizer->GetRasterizerState(), m_depthStencilStatNone->GetDepthStencilState());

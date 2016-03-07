@@ -10,11 +10,12 @@ namespace Doremi
         {
             EntityID entityId;
             float damage;
+
             DamageTakenEvent(const float& p_damage, const EntityID& p_entityId)
                 : damage(p_damage), entityId(p_entityId), Event(EventType::DamageTaken)
             {
             }
-            DamageTakenEvent() : damage(0), Event(EventType::DamageTaken) {}
+            DamageTakenEvent() : entityId(0), damage(0), Event(EventType::DamageTaken) {}
 
             /**
                 Write object to stream

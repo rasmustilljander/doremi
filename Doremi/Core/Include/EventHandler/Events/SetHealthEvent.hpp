@@ -10,7 +10,7 @@ namespace Doremi
     {
         struct SetHealthEvent : public Event
         {
-            SetHealthEvent() : Event(EventType::SetHealth) {}
+            SetHealthEvent() : Event(EventType::SetHealth), entityID(0), health(0) {}
             SetHealthEvent(const uint32_t& p_entityID, const float& p_health) : Event(EventType::SetHealth), entityID(p_entityID), health(p_health) {}
 
             /**

@@ -127,7 +127,7 @@ namespace Doremi
         Core::Manager* t_frequencyAffectedObjectManager = new Core::FrequencyAffectedObjectManager(sharedContext);
         Core::Manager* t_triggerManager = new Core::TriggerManager(sharedContext);
         Core::Manager* t_damageManager = new Core::DamageManager(sharedContext);
-        Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
+        // Core::Manager* t_extraDrainManager = new Core::ExtraDrainSyncManager(sharedContext);
         Core::Manager* t_pressureParticleManager = new Core::PressureParticleManager(sharedContext);
         Core::Manager* t_groundEffectManagerServer = new Core::GroundEffectManagerServer(sharedContext);
         Core::Manager* t_lifeTimeManager = new Core::LifeTimeManager(sharedContext);

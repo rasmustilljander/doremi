@@ -73,7 +73,7 @@ namespace Doremi
                   ConnectedSocketHandle(0),
                   ConnectingAdress(nullptr),
                   ConnectedAdress(nullptr),
-                  PlayerID(0),
+                  MyPlayerID(0),
                   LastSequenceUpdate(SEQUENCE_TIMER_START),
                   LastResponse(0)
             {
@@ -84,7 +84,7 @@ namespace Doremi
             DoremiEngine::Network::Adress* ConnectingAdress;
             DoremiEngine::Network::Adress* ConnectedAdress;
 
-            PlayerID PlayerID;
+            PlayerID MyPlayerID;
 
             double LastSequenceUpdate;
             double LastResponse;
@@ -93,11 +93,11 @@ namespace Doremi
         struct MasterConnectionFromClient
         {
             MasterConnectionFromClient()
-                : ConnectionState(MasterConnectionStateFromClient::CONNECTING), SocketHandle(0), Adress(nullptr), LastResponse(0)
+                : ConnectionState(MasterConnectionStateFromClient::CONNECTING), ConnectedSocketHandle(0), Adress(nullptr), LastResponse(0)
             {
             }
             MasterConnectionStateFromClient ConnectionState;
-            SocketHandle SocketHandle;
+            SocketHandle ConnectedSocketHandle;
             DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;
@@ -108,14 +108,14 @@ namespace Doremi
             ClientConnectionFromServer()
                 : ConnectionState(ClientConnectionStateFromServer::VERSION_CHECK),
                   ConnectedSocketHandle(0),
-                  PlayerID(0),
+                  MyPlayerID(0),
                   LastSequenceUpdate(SEQUENCE_TIMER_START),
                   LastResponse(0)
             {
             }
             ClientConnectionStateFromServer ConnectionState;
             SocketHandle ConnectedSocketHandle;
-            PlayerID PlayerID;
+            PlayerID MyPlayerID;
 
             double LastSequenceUpdate;
             double LastResponse;
@@ -124,11 +124,11 @@ namespace Doremi
         struct MasterConnectionFromServer
         {
             MasterConnectionFromServer()
-                : ConnectionState(MasterConnectionStateFromServer::CONNECTING), SocketHandle(0), Adress(nullptr), LastResponse(0.0f), AckSequence(0)
+                : ConnectionState(MasterConnectionStateFromServer::CONNECTING), ConnectedSocketHandle(0), Adress(nullptr), LastResponse(0.0f), AckSequence(0)
             {
             }
             MasterConnectionStateFromServer ConnectionState;
-            SocketHandle SocketHandle;
+            SocketHandle ConnectedSocketHandle;
             DoremiEngine::Network::Adress* Adress;
 
             double LastResponse;

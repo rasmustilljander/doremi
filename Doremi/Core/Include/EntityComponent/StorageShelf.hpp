@@ -40,7 +40,7 @@ template <class T> StorageShelf<T>* StorageShelf<T>::GetInstance()
 // Find the right shelf for the needed component
 template <class T> static T* GetComponent(EntityID pEntityID)
 {
-    StorageShelf<T>* tNeededShelf = tNeededShelf->GetInstance();
+    StorageShelf<T>* tNeededShelf = StorageShelf<T>::GetInstance();
 
     return &tNeededShelf->mItems[pEntityID];
 }
@@ -56,8 +56,8 @@ template <class T, class U> static void CloneShelf()
     }
 
     // Get Pointers
-    StorageShelf<T>* tFirstShelf = tFirstShelf->GetInstance();
-    StorageShelf<U>* tSecondShelf = tSecondShelf->GetInstance();
+    StorageShelf<T>* tFirstShelf = StorageShelf<T>::GetInstance();
+    StorageShelf<U>* tSecondShelf = StorageShelf<U>::GetInstance();
 
     // Memcpy
     // TODO could take parameter of how many entities we have active

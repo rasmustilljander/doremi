@@ -15,9 +15,8 @@ namespace Doremi
     namespace Core
     {
         NetworkStreamer::NetworkStreamer()
+            : m_buffer(nullptr), m_bufferSize(0), m_writtenBits(0), m_readBits(0), m_currentByte(0), m_IsReading(false), m_IsWriting(false)
         {
-            m_IsReading = true;
-            m_IsWriting = true;
         }
 
         NetworkStreamer::~NetworkStreamer() {}
@@ -78,13 +77,15 @@ namespace Doremi
                 return p_numberOfBitsToWrite;
             }
 
-            uint32_t BitsToWrite = 0;
-            uint32_t LineToWrite = 0;
+
             uint32_t OutBitAmount = p_numberOfBitsToWrite;
 
             // While we still have bits to write
             while(p_numberOfBitsToWrite > 0)
             {
+                uint32_t BitsToWrite = 0;
+                uint32_t LineToWrite = 0;
+
                 if(m_writtenBits == 0)
                 {
                     m_buffer[m_currentByte] = 0;
@@ -167,14 +168,16 @@ namespace Doremi
                 return p_numberOfBitsToRead;
             }
 
-            uint32_t BitsToRead = 0;
-            uint32_t LineToRead = 0;
             uint32_t OutBitAmount = p_numberOfBitsToRead;
             uint32_t OffsetBits = 0;
 
             // While we have bits left to read
             while(p_numberOfBitsToRead > 0)
             {
+                uint32_t BitsToRead = 0;
+                uint32_t LineToRead = 0;
+
+
                 // If we start new we increase byte
                 if(m_readBits == 0)
                 {
@@ -221,8 +224,6 @@ namespace Doremi
 
         bool NetworkStreamer::WriteInt8(int8_t p_Value)
         {
-            int32_t Value = p_Value;
-
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(int8_t) * 8);
 
             return AmountWritten == sizeof(int8_t) * 8;
@@ -232,15 +233,13 @@ namespace Doremi
         {
             int32_t Value = 0;
 
-            int32_t AmountRead = ReadBits(&Value, sizeof(int8_t) * 8);
+            ReadBits(&Value, sizeof(int8_t) * 8);
 
             return Value;
         }
 
         bool NetworkStreamer::WriteInt16(int16_t p_Value)
         {
-            int32_t Value = p_Value;
-
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(int16_t) * 8);
 
             return AmountWritten == sizeof(int16_t) * 8;
@@ -293,8 +292,6 @@ namespace Doremi
 
         bool NetworkStreamer::WriteUnsignedInt8(uint8_t p_Value)
         {
-            uint32_t Value = p_Value;
-
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(uint8_t) * 8);
 
             return AmountWritten == sizeof(uint8_t) * 8;
@@ -304,15 +301,13 @@ namespace Doremi
         {
             uint32_t Value = 0;
 
-            int32_t AmountRead = ReadBits(&Value, sizeof(uint8_t) * 8);
+            ReadBits(&Value, sizeof(uint8_t) * 8);
 
             return Value;
         }
 
         bool NetworkStreamer::WriteUnsignedInt16(uint16_t p_Value)
         {
-            uint32_t Value = p_Value;
-
             uint32_t AmountWritten = WriteBits(&p_Value, sizeof(uint16_t) * 8);
 
             return AmountWritten == sizeof(uint16_t) * 8;
@@ -414,7 +409,7 @@ namespace Doremi
         {
             uint32_t Value = 0;
 
-            uint32_t AmountRead = ReadBits(&Value, 1);
+            ReadBits(&Value, 1);
 
             return (bool)Value;
         }
@@ -528,7 +523,7 @@ namespace Doremi
             std::string OutString = "";
 
             uint32_t StringLength = 0;
-            uint32_t AmountRead = ReadBits(&StringLength, sizeof(int32_t) * 8);
+            ReadBits(&StringLength, sizeof(int32_t) * 8);
 
             char* StringArray = new char[StringLength + 1];
 
@@ -536,7 +531,7 @@ namespace Doremi
             for(size_t i = 0; i < StringLength; i++)
             {
                 uint32_t Value = 0;
-                AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);
+                ReadBits(&Value, sizeof(unsigned char) * 8);
                 StringArray[i] = (char)Value;
             }
             StringArray[StringLength] = '\0';
@@ -553,15 +548,15 @@ namespace Doremi
             std::string OutString = "";
 
             uint32_t StringLength = 0;
-            uint8_t AmountRead = ReadBits(&StringLength, sizeof(int8_t) * 8);
+            ReadBits(&StringLength, sizeof(int8_t) * 8);
 
             char* StringArray = new char[StringLength + 1];
 
 
-            for (size_t i = 0; i < StringLength; i++)
+            for(size_t i = 0; i < StringLength; i++)
             {
                 uint32_t Value = 0;
-                AmountRead = ReadBits(&Value, sizeof(unsigned char) * 8);
+                ReadBits(&Value, sizeof(unsigned char) * 8);
                 StringArray[i] = (char)Value;
             }
             StringArray[StringLength] = '\0';
