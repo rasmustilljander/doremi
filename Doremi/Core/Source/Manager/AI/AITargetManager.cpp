@@ -70,7 +70,7 @@ namespace Doremi
                 if(t_entityHandler.HasComponents(i, (int)ComponentType::AIAgent))
                 {
                     AIAgentComponent* timer = t_entityHandler.GetComponentFromStorage<AIAgentComponent>(i);
-                    timer->attackTimer += p_dt;
+                    timer->attackTimer += static_cast<float>(p_dt);
                     // If above attack freq we should attack
                     if(timer->attackTimer > timer->attackFrequency)
                     {

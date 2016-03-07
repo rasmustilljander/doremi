@@ -12,8 +12,8 @@ namespace DoremiEngine
     namespace Graphic
     {
         struct GraphicModuleContext;
-        struct PixelShader;
-        struct VertexShader;
+        class PixelShader;
+        class VertexShader;
         // class DepthStencilState;
         // class RasterizerState;
 
