@@ -58,7 +58,7 @@ namespace DoremiEngine
 
             m_lightBuffer.lightList[m_lightcount] = newLight;
             m_lightcount++;
-            return &newLight;
+            return &m_lightBuffer.lightList[m_lightcount];
         }
 
         void LightManagerImpl::UpdateLights()

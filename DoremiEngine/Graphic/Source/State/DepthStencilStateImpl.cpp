@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        DepthStencilStateImpl::DepthStencilStateImpl() {}
+        DepthStencilStateImpl::DepthStencilStateImpl() : m_stencilState(nullptr) {}
         DepthStencilStateImpl::~DepthStencilStateImpl() {}
 
         ID3D11DepthStencilState* DepthStencilStateImpl::GetDepthStencilState() { return m_stencilState; }

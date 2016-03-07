@@ -5,7 +5,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        RasterizerStateImpl::RasterizerStateImpl() {}
+        RasterizerStateImpl::RasterizerStateImpl() : m_rasterizerState(nullptr) {}
         RasterizerStateImpl::~RasterizerStateImpl() {}
 
         ID3D11RasterizerState* RasterizerStateImpl::GetRasterizerState() { return m_rasterizerState; }

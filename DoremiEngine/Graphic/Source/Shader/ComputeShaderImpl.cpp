@@ -4,7 +4,7 @@ namespace DoremiEngine
 {
     namespace Graphic
     {
-        ComputeShaderImpl::ComputeShaderImpl() {}
+        ComputeShaderImpl::ComputeShaderImpl() : m_shaderHandle(nullptr) {}
         ComputeShaderImpl::~ComputeShaderImpl() {}
         const std::string& ComputeShaderImpl::GetShaderName() { return m_shaderName; }
         ID3D11ComputeShader* ComputeShaderImpl::GetShaderHandle() { return m_shaderHandle; }

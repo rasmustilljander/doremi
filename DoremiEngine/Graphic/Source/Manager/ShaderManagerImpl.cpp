@@ -111,10 +111,15 @@ namespace DoremiEngine
             ID3DBlob* tShader;
             std::wstring convertedName = StringToWstring(filePath);
             HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "GS_main", "gs_5_0", shaderFlags, 0, &tShader, 0);
+            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
+            {
+                return nullptr;
+            }
 
             res = m_directX.GetDevice()->CreateGeometryShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
-            bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
-            if (!success)
+            success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
             {
                 return nullptr;
             }
@@ -138,8 +143,19 @@ namespace DoremiEngine
             ID3DBlob* tShader;
             std::wstring convertedName = StringToWstring(filePath);
             HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, 0, "PS_main", "ps_5_0", shaderFlags, 0, &tShader, 0);
-            res = m_directX.GetDevice()->CreatePixelShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
             bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
+            {
+                return nullptr;
+            }
+
+            res = m_directX.GetDevice()->CreatePixelShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
+            success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
+            {
+                return nullptr;
+            }
+
             PixelShader* newShader = new PixelShaderImpl();
             newShader->SetShaderHandle(shader);
             newShader->SetShaderName(p_fileName);
@@ -158,8 +174,19 @@ namespace DoremiEngine
             ID3DBlob* tShader;
             std::wstring convertedName = StringToWstring(filePath);
             HRESULT res = D3DCompileFromFile(convertedName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_main", "cs_5_0", shaderFlags, 0, &tShader, 0);
-            res = m_directX.GetDevice()->CreateComputeShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
             bool success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
+            {
+                return nullptr;
+            }
+
+            res = m_directX.GetDevice()->CreateComputeShader(tShader->GetBufferPointer(), tShader->GetBufferSize(), NULL, &shader);
+            success = CheckHRESULT(res, "Error Compiling from file " + filePath);
+            if(!success)
+            {
+                return nullptr;
+            }
+
             m_directX.GetDeviceContext()->CSSetShader(shader, nullptr, 0);
 
             ComputeShader* newShader = new ComputeShaderImpl();

@@ -102,6 +102,11 @@ namespace DoremiEngine
             outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
             HRESULT hr = (m_directX.GetDevice()->CreateBuffer(&outputDesc, 0, &m_buffer[p_index]));
+            if(FAILED(hr))
+            {
+                // ERROR MESSAGE
+                std::cout << "Failed to create buffer" << std::endl;
+            }
 
             // outputDesc.Usage = D3D11_USAGE_STAGING;
             // outputDesc.BindFlags = 0;

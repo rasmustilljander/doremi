@@ -138,23 +138,10 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateBackBufferViews()
         {
-            HRESULT res = S_OK;
             ID3D11Texture2D* t_BackBuffer;
             m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&t_BackBuffer);
 
-            // res = m_device->CreateShaderResourceView(t_BackBuffer, NULL, &m_backbufferSRV);
-            // if(FAILED(res))
-            //{
-            //    // ERROR MESSAGE
-            //    std::cout << "Failed to create shader resource view" << std::endl;
-            //}
-            // res = m_device->CreateRenderTargetView(t_BackBuffer, NULL, &m_backBufferRTV);
-            // if (FAILED(res))
-            //{
-            //    // ERROR MESSAGE
-            //    std::cout << "Failed to create render target view" << std::endl;
-            //}
-            res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
+            HRESULT res = m_device->CreateUnorderedAccessView(t_BackBuffer, NULL, &m_backbufferUAV);
             if(FAILED(res))
             {
                 // ERROR MESSAGE
@@ -165,8 +152,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateBlurrBuffers()
         {
-            HRESULT res = S_OK;
-
             ID3D11Texture2D* t_glowmap;
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
@@ -189,7 +174,7 @@ namespace DoremiEngine
             t_SrvDesc.Texture2D.MipLevels = 1;
 
             // Create texture for RTV
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &t_glowmap);
+            HRESULT res = m_device->CreateTexture2D(&dbdesc, NULL, &t_glowmap);
             if(FAILED(res))
             {
                 // ERROR MESSAGE
@@ -247,8 +232,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateColorBuffer()
         {
-            HRESULT res = S_OK;
-
             ID3D11Texture2D* t_colorBuffer;
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
@@ -271,7 +254,7 @@ namespace DoremiEngine
             t_SrvDesc.Texture2D.MipLevels = 1;
 
             // Create texture for RTV
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &t_colorBuffer);
+            HRESULT res = m_device->CreateTexture2D(&dbdesc, NULL, &t_colorBuffer);
             if(FAILED(res))
             {
                 // ERROR MESSAGE
@@ -298,8 +281,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateDepthViews()
         {
-            HRESULT res = S_OK;
-
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
             dbdesc.Width = m_screenResolution.x;
@@ -315,7 +296,7 @@ namespace DoremiEngine
             dbdesc.MiscFlags = 0;
 
             // Create texture
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depth);
+            HRESULT res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depth);
             if(FAILED(res))
             {
                 std::cout << "Failed to create texture" << std::endl;
@@ -336,8 +317,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateRealDepthBuffer()
         {
-            HRESULT res = S_OK;
-
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
             dbdesc.Width = m_screenResolution.x;
@@ -358,7 +337,7 @@ namespace DoremiEngine
             descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
             descDSV.Texture2D.MipSlice = 0;
 
-            res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depthBuffer);
+            HRESULT res = m_device->CreateTexture2D(&dbdesc, NULL, &m_depthBuffer);
             if(FAILED(res))
             {
                 std::cout << "Failed to create texture" << std::endl;
@@ -393,9 +372,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateSamplers()
         {
-            // TODO add more different things like transparancy
-            HRESULT res = S_OK;
-
             // For default texture sampler
             D3D11_SAMPLER_DESC texSamDesc;
             texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; // could be D3D11_FILTER_ANISOTROPIC
@@ -412,7 +388,8 @@ namespace DoremiEngine
             texSamDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
             texSamDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
             // mParticleTexID = CreateTexture(L"Textures/VitPlupp.dds");
-            res = m_device->CreateSamplerState(&texSamDesc, &m_defaultSamplerState);
+            // TODO add more different things like transparancy
+            HRESULT res = m_device->CreateSamplerState(&texSamDesc, &m_defaultSamplerState);
             CheckHRESULT(res, "Fault when creating sampler");
             m_deviceContext->PSSetSamplers(0, 1, &m_defaultSamplerState);
 
@@ -457,7 +434,6 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::CreateBlendStates()
         {
-            HRESULT res = S_OK;
             D3D11_BLEND_DESC t_blendDesc;
             // Clear the blend state description.
             ZeroMemory(&t_blendDesc, sizeof(D3D11_BLEND_DESC));
@@ -473,8 +449,8 @@ namespace DoremiEngine
             t_blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
             // Create the blend state using the description.
-            res = m_device->CreateBlendState(&t_blendDesc, &m_enableBlendState);
-            if (FAILED(res))
+            HRESULT res = m_device->CreateBlendState(&t_blendDesc, &m_enableBlendState);
+            if(FAILED(res))
             {
                 std::cout << "Failed to create blend state" << std::endl;
             }
