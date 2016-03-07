@@ -260,12 +260,15 @@ namespace Doremi
                 XMFLOAT3 angleVec;
                 // Calculate angle between the vectors
                 XMStoreFloat3(&angleVec, XMVector2AngleBetweenVectors(XMLoadFloat2(&t_frontVec2), XMLoadFloat2(&t_moveVec2)));
+                // Create lengthvector to get rid of values very close to 0 messing up when stopping.
+                XMFLOAT2 t_XZMovementLenght;
+                XMStoreFloat2(&t_XZMovementLenght, XMVector2Length(XMLoadFloat2(&t_moveVec2)));
                 // Sign operation
-                if(t_positive.y < 0)
+                if(t_positive.y < 0 && t_XZMovementLenght.x > t_epsilon)
                 {
                     t_positive.y = 1;
                 }
-                else if(t_positive.y > 0)
+                else if(t_positive.y > 0 && t_XZMovementLenght.x > t_epsilon)
                 {
                     t_positive.y = -1;
                 }
@@ -317,17 +320,21 @@ namespace Doremi
                     }
                     else if(t_animationTransitionEvent->animation == Animation::STOPATTACK)
                     {
+                        // Om jag håller på att transitiona till attack eller är i attack
                         if(t_upperSkeletalAnimationComponent->clipName == "Attack" ||
                            (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"] > 0)
                         {
+                            // Om underkroppen inte är i attackläge börja göra dens animation
                             if(t_lowerSkeletalAnimationComponent->clipName != "Attack")
                             {
                                 STimer(t_lowerSkeletalAnimationComponent->clipName, t_upperSkeletalAnimationComponent);
                             }
+                            // annars gå idle
                             else
                             {
                                 STimer("Idle", t_upperSkeletalAnimationComponent);
                             }
+                            (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"] = 0.0f;
                         }
                         if(t_lowerSkeletalAnimationComponent->clipName == "Attack" ||
                            (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"] > 0)
