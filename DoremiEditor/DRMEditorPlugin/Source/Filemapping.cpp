@@ -800,7 +800,7 @@ namespace DoremiEditor
                 int nodeNameLength = p_messageInfo.nodeName.length();
                 int parentNameLength = t_transformInfo.parentName.length();
 
-                if(nodeNameLength <= 100)
+                if(nodeNameLength <= 99)
                 {
                     for(int i = 0; i < nodeNameLength; i++)
                     {
@@ -812,7 +812,7 @@ namespace DoremiEditor
                 {
                     PrintError("* Node name too long!");
                 }
-                if(parentNameLength <= 100)
+                if(parentNameLength <= 99)
                 {
                     for(int i = 0; i < parentNameLength; i++)
                     {
@@ -841,7 +841,7 @@ namespace DoremiEditor
                 MeshInfo t_meshInfo = m_messageBuilder->GetMeshData(p_messageInfo.nodeName);
                 int t_nodeNameLength = p_messageInfo.nodeName.length();
                 int t_materialNameLength = t_meshInfo.materialName.length();
-                if(t_nodeNameLength <= 100)
+                if(t_nodeNameLength <= 99)
                 {
                     for(int i = 0; i < t_nodeNameLength; i++)
                     {
@@ -854,7 +854,7 @@ namespace DoremiEditor
                 {
                     MGlobal::displayError("Node name too long!");
                 }
-                if(t_materialNameLength <= 100)
+                if(t_materialNameLength <= 99)
                 {
                     for(int i = 0; i < t_materialNameLength; i++)
                     {
@@ -871,7 +871,7 @@ namespace DoremiEditor
                 for(int o = 0; o < o_messageData.transformCount; o++)
                 {
                     int transformNameLength = t_meshInfo.transformName[o].length();
-                    if(transformNameLength < 100)
+                    if(transformNameLength < 99)
                     {
                         NameStruct tempName;
                         for(int i = 0; i < transformNameLength; i++)
@@ -881,7 +881,7 @@ namespace DoremiEditor
                         // msg.nodeName[nodeNameLength] = (char)"\0";
                         tempName.transformNames[transformNameLength] = '\0';
                         o_messageData.transformName.push_back(tempName);
-                        PrintDebug("Parent name " + MString() + o + " :" + o_messageData.transformName[o].transformNames);
+                        PrintWarning("Parent name " + MString() + o + " :" + o_messageData.transformName[o].transformNames);
                     }
                     else
                     {
@@ -910,7 +910,7 @@ namespace DoremiEditor
                 int nodeNameLength = p_messageInfo.nodeName.length();
                 int parentNameLength = t_cameraInfo.transformName.length();
 
-                if(nodeNameLength <= 100)
+                if(nodeNameLength <= 99)
                 {
                     for(int i = 0; i < nodeNameLength; i++)
                     {
@@ -922,7 +922,7 @@ namespace DoremiEditor
                 {
                     PrintError("* Node name too long!");
                 }
-                if(parentNameLength <= 100)
+                if(parentNameLength <= 99)
                 {
                     for(int i = 0; i < parentNameLength; i++)
                     {
@@ -952,7 +952,7 @@ namespace DoremiEditor
                 int nodeNameLength = p_messageInfo.nodeName.length();
                 int parentNameLength = t_lightInfo.transformName.length();
 
-                if(nodeNameLength <= 100)
+                if(nodeNameLength <= 99)
                 {
                     for(int i = 0; i < nodeNameLength; i++)
                     {
@@ -964,7 +964,7 @@ namespace DoremiEditor
                 {
                     PrintError("* Node name too long!");
                 }
-                if(parentNameLength <= 100)
+                if(parentNameLength <= 99)
                 {
                     for(int i = 0; i < parentNameLength; i++)
                     {
@@ -996,7 +996,7 @@ namespace DoremiEditor
                 size_t glowTexLength = t_materialInfo.glowTexturePath.length();
                 size_t specTexLength = t_materialInfo.specTexturePath.length();
                 size_t bumpTexLength = t_materialInfo.bumpTexturePath.length();
-                if(nodeNameLength <= 100)
+                if(nodeNameLength <= 99)
                 {
                     for(int i = 0; i < nodeNameLength; i++)
                     {

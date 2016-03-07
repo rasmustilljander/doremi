@@ -743,7 +743,7 @@ namespace DoremiEditor
                     {
                         // Set quadsplit to left. Ensures that the internal triangulation works properly.
                         MString myCommand = "setAttr -e " + t_mesh.name() + ".quadSplit 0";
-                        MGlobal::executeCommandOnIdle(myCommand);
+                        MGlobal::executeCommand(myCommand);
                         m_callbackIDArray.append(MNodeMessage::addAttributeChangedCallback(p_node, cb_meshAttributeChange));
                         s_nodeHandler->AddMeshNode(t_mesh);
                         // TODOJW: Investigate and add duplicate/instancing callbacks.
