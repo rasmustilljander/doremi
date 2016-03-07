@@ -17,7 +17,7 @@ TEST_F(NetworkEventTest, basicOneWrite)
     m_netEventSender->WriteEvents(*m_streamer, sizeof(m_netMessage->Data), m_bytesWritten, m_finished);
 
     ASSERT_EQ(true, m_finished);
-    ASSERT_EQ(8, m_bytesWritten);
+    ASSERT_EQ(5, m_bytesWritten);
 }
 
 TEST_F(NetworkEventTest, writeNoMemoryHeaderStart)
@@ -62,19 +62,19 @@ TEST_F(NetworkEventTest, writeNoMemoryForInfo)
 }
 
 // Can't have this cause of size of the message
-TEST_F(NetworkEventTest, writeNoMemoryInfoLarge)
-{
-    for(size_t i = 0; i < 257; i++)
-    {
-        m_netEventSender->QueueEventToFrame(new Doremi::Core::ExampleEvent());
-    }
-
-    // no check if we write outside memory on netmessage
-    m_netEventSender->WriteEvents(*m_streamer, 1287, m_bytesWritten, m_finished);
-
-    ASSERT_EQ(true, m_finished);
-    ASSERT_EQ(1065, m_bytesWritten);
-}
+// TEST_F(NetworkEventTest, writeNoMemoryInfoLarge)
+//{
+//    for(size_t i = 0; i < 257; i++)
+//    {
+//        m_netEventSender->QueueEventToFrame(new Doremi::Core::ExampleEvent());
+//    }
+//
+//    // no check if we write outside memory on netmessage
+//    m_netEventSender->WriteEvents(*m_streamer, 1287, m_bytesWritten, m_finished);
+//
+//    ASSERT_EQ(true, m_finished);
+//    ASSERT_EQ(1065, m_bytesWritten);
+//}
 
 TEST_F(NetworkEventTest, updateBufferFromSequenceSame)
 {
@@ -104,7 +104,7 @@ TEST_F(NetworkEventTest, updateBufferFromSequenceBasic)
 
     m_netEventSender->AddFrameQueuedObjectsToBuffer();
 
-    m_netEventSender->UpdateBufferWithRecievedClientSequenceAcc(0);
+    m_netEventSender->UpdateBufferWithRecievedClientSequenceAcc(1);
 
     ASSERT_EQ(1, m_netEventSender->GetNextSequenceUsed());
 }
@@ -161,7 +161,7 @@ TEST_F(NetworkEventTest, basicOneRead)
     std::list<Doremi::Core::Event*> eventlist = m_networkEventReceiver->GetEventsReceivedFromServer();
 
     ASSERT_EQ(1, eventlist.size());
-    ASSERT_EQ(8, m_bytesRead);
+    ASSERT_EQ(5, m_bytesRead);
 }
 
 TEST_F(NetworkEventTest, readNoMemoryHeaderStart)
@@ -207,7 +207,7 @@ TEST_F(NetworkEventTest, readNoMemoryForInfo)
     std::list<Doremi::Core::Event*> eventlist = m_networkEventReceiver->GetEventsReceivedFromServer();
 
     ASSERT_EQ(3, eventlist.size());
-    ASSERT_EQ(2 + 1 + (4 * 3) + 1, m_bytesRead);
+    ASSERT_EQ(1 + 1 + (1 * 3) + 2, m_bytesRead);
 }
 
 // Same as above
@@ -225,8 +225,8 @@ TEST_F(NetworkEventTest, readNoMemoryInfoLarge)
     std::list<Doremi::Core::Event*> eventlist = m_networkEventReceiver->GetEventsReceivedFromServer();
 
     // Not really sure if it's 248, hard to count
-    ASSERT_EQ(248, eventlist.size());
+    ASSERT_EQ(257, eventlist.size());
 
     // Not sure with this either, but should be close to max size
-    ASSERT_EQ(1025, m_bytesRead);
+    ASSERT_EQ(294, m_bytesRead);
 }

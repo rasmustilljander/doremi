@@ -6,7 +6,7 @@
 class BitStreamerTest : public testing::Test
 {
 public:
-    BitStreamerTest() {}
+    BitStreamerTest() : m_streamer(nullptr), m_netMessage(nullptr), m_bytesWritten(0), m_bytesRead(0), m_finished(false) {}
 
     ~BitStreamerTest() {}
 

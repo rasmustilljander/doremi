@@ -179,7 +179,7 @@ namespace DoremiEngine
                 t_soundName.erase(0, hej + 1);
                 if(t_name == t_soundName)
                 {
-                    delete t_name;
+                    delete[] t_name;
                     return i;
                 }
             }
@@ -192,7 +192,7 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodSoundBuffer.push_back(t_fmodSound);
             int returnVal = m_fmodSoundBuffer.size() - 1;
-            delete t_name;
+            delete[] t_name;
             return returnVal;
         }
 

@@ -8,7 +8,17 @@
 class NetworkEventTest : public testing::Test
 {
 public:
-    NetworkEventTest() {}
+    NetworkEventTest()
+        : m_netEventSender(nullptr),
+          m_networkEventReceiver(nullptr),
+          m_streamer(nullptr),
+          m_streamerRead(nullptr),
+          m_netMessage(nullptr),
+          m_bytesWritten(0),
+          m_bytesRead(0),
+          m_finished(false)
+    {
+    }
 
     ~NetworkEventTest() {}
 
