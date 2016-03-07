@@ -254,6 +254,7 @@ namespace DoremiEngine
                 if(distanceY < closestY)
                 {
                     returnField = possibleMatches[i];
+                    closestY = distanceY;
                 }
             }
             if(returnField == nullptr)

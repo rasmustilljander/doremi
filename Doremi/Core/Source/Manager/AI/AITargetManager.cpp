@@ -81,7 +81,9 @@ namespace Doremi
                     TransformComponent* AITransform = t_entityHandler.GetComponentFromStorage<TransformComponent>(i);
                     RangeComponent* aiRange = t_entityHandler.GetComponentFromStorage<RangeComponent>(i);
                     int closestVisiblePlayer = -1;
-                    float closestDistance = aiRange->range;
+
+                    float checkRange = 1000;
+                    float closestDistance = checkRange; // Hardcoded range, not intreseted if player is outside this
 
                     // Check waht player is close and visible
                     for(auto pairs : t_players)
@@ -117,7 +119,7 @@ namespace Doremi
                             XMStoreFloat3(&rayOriginFloat, rayOrigin);
 
                             // Send it to physx for raycast calculation
-                            int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, aiRange->range);
+                            int bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(rayOriginFloat, directionFloat, checkRange);
                             if(bodyHit == -1)
                             {
                                 continue;
@@ -153,7 +155,10 @@ namespace Doremi
                         // We now know what player is closest and visible
                         if(shouldFire)
                         {
-                            FireAtEntity(closestVisiblePlayer, i, closestDistance);
+                            if(closestDistance <= aiRange->range)
+                            {
+                                FireAtEntity(closestVisiblePlayer, i, closestDistance);
+                            }
                         }
                         // If we see a player turn off the phermonetrail
                         if(t_entityHandler.HasComponents(i, (int)ComponentType::PotentialField))
