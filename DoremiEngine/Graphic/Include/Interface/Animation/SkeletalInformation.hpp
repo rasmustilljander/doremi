@@ -175,7 +175,7 @@ namespace DoremiEngine
             float AnimationClip::GetClipStartTime() const
             {
                 // Find smallest starttime over all bones in this clip.
-                float t_smallestTime = 99999999;
+                float t_smallestTime = 99999999.0f;
                 size_t length = BoneAnimations.size();
                 for(size_t i = 0; i < length; i++)
                 {

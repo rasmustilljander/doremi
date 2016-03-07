@@ -27,7 +27,7 @@ namespace Doremi
             /**
                 Update priority, needed for starvation
             */
-            void UpdateLastUpdateTimer(const double& p_dt) { LastUpdateTimer += p_dt; }
+            void UpdateLastUpdateTimer(const double& p_dt) { LastUpdateTimer += static_cast<float>(p_dt); }
 
             /**
                 Update not relevant timer, if higher then a value, will be exluded
@@ -35,7 +35,7 @@ namespace Doremi
             void UpdateToNotRelevant(const double& p_dt)
             {
                 RelevantTimer = 0.0f;
-                NotRelevantTimer += p_dt;
+                NotRelevantTimer += static_cast<float>(p_dt);
             }
 
             /**
@@ -44,7 +44,7 @@ namespace Doremi
             void UpdateToRelevant(const double& p_dt)
             {
                 NotRelevantTimer = 0.0f;
-                RelevantTimer += p_dt;
+                RelevantTimer += static_cast<float>(p_dt);
             }
 
             /**

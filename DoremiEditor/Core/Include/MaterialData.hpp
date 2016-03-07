@@ -16,7 +16,7 @@ namespace DoremiEditor
         {
             MaterialData()
             {
-                mapMasks = 0.0f;
+                mapMasks = 0;
                 diffuse = 0.0f;
                 color[0] = color[1] = color[2] = 0.1f;
                 ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
