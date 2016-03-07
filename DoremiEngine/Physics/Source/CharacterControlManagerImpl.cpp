@@ -76,7 +76,7 @@ namespace DoremiEngine
                 throw std::runtime_error("No controller exists with id: " + to_string(p_id));
             }
             PxExtendedVec3 p = m_controllers[p_id]->getPosition();
-            return XMFLOAT3(p.x, p.y, p.z);
+            return XMFLOAT3(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(p.z));
         }
 
         XMFLOAT4 CharacterControlManagerImpl::GetOrientation(int p_id)
