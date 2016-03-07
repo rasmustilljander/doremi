@@ -9,6 +9,8 @@
 #include <Doremi/Core/Include/EntityComponent/Constants.hpp>
 #include <Doremi/Core/Include/PlayerClasses/GunController.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
+#include <Doremi/Core/Include/InputHandler.hpp>
+#include <Doremi/Core/Include/FrequencyBufferHandler.hpp>
 
 
 namespace DoremiEngine
@@ -23,9 +25,6 @@ namespace Doremi
 {
     namespace Core
     {
-        class InputHandler;
-        class FrequencyBufferHandler;
-
         struct EntityCreatedEvent;
         struct RemoveEntityEvent;
         struct PlayerRespawnEvent;

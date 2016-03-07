@@ -1,12 +1,12 @@
 #pragma once
 #include <Doremi/Core/Include/PlayerHandler.hpp>
+#include <Doremi/Core/Include/NetworkPriorityHandler.hpp>
+#include <Doremi/Core/Include/NetworkEventSender.hpp>
 
 namespace Doremi
 {
     namespace Core
     {
-        class NetworkEventSender;
-        class NetworkPriorityHandler;
         class InputHandlerServer;
         struct GunFireToggleEvent;
         class NetworkStreamer;
