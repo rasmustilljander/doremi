@@ -36,7 +36,8 @@ namespace Doremi
             void Reset();
 
         private:
-            LoadingScreenHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LoadingScreenHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~LoadingScreenHandler();
 
 

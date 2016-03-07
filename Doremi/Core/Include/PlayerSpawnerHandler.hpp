@@ -58,7 +58,8 @@ namespace Doremi
 
 
         private:
-            PlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit PlayerSpawnerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~PlayerSpawnerHandler();
 
             static PlayerSpawnerHandler* m_singleton;

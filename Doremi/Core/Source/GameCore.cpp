@@ -10,7 +10,6 @@
 #include <EntityComponent/Components/PotentialFieldComponent.hpp>
 #include <EntityComponent/Components/AIGroupComponent.hpp>
 #include <Manager/Manager.hpp>
-#include <Manager/ExampleManager.hpp>
 #include <Manager/AudioManager.hpp>
 #include <Manager/GraphicManager.hpp>
 #include <Manager/RigidTransformSyncManager.hpp>

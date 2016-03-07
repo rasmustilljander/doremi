@@ -129,7 +129,7 @@ namespace Doremi
         {
             FUNCTION_TIMER
 
-            InputHandlerClient* inputHandler = (InputHandlerClient*)p_player->m_inputHandler;
+            InputHandlerClient* inputHandler = static_cast<InputHandlerClient*>(p_player->m_inputHandler);
 
             EntityID entityID = p_player->m_playerEntityID;
 

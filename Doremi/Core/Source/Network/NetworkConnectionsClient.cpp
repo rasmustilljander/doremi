@@ -31,8 +31,6 @@ namespace Doremi
         NetworkConnectionsClient::NetworkConnectionsClient(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : m_sharedContext(p_sharedContext)
         {
-            DoremiEngine::Network::NetworkModule& t_networkModule = p_sharedContext.GetNetworkModule();
-
             // Create adress and socket for master
             LoadMasterFromConfigFile(p_sharedContext);
 

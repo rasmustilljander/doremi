@@ -94,15 +94,6 @@ namespace Doremi
             */
             static PlayerHandler* GetInstance();
 
-            /**
-                TODOEA doc
-            */
-            PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
-
-            /**
-                TODOEA doc
-            */
-            ~PlayerHandler();
 
             /**
                 TODOCM doc
@@ -111,6 +102,16 @@ namespace Doremi
 
 
         protected:
+            /**
+                TODOEA doc
+            */
+            explicit PlayerHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            /**
+                TODOEA doc
+            */
+            ~PlayerHandler();
+
             /**
                 TODOEA doc
             */

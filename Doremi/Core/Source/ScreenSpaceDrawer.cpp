@@ -176,7 +176,6 @@ namespace Doremi
         {
             Begin2DDraw();
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
 
             // Get Screenobjects to draw
@@ -195,7 +194,6 @@ namespace Doremi
             Begin2DDraw();
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Get buttons to draw
             std::vector<Button> t_buttonsToDraw = MainMenuHandler::GetInstance()->GetButtons();
@@ -216,7 +214,6 @@ namespace Doremi
             Begin2DDraw();
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Get buttons to draw
             std::list<Button*> t_buttonsToDraw = ServerBrowserHandler::GetInstance()->GetButtons();
@@ -247,7 +244,6 @@ namespace Doremi
             Begin2DDraw();
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Get Screenobjects to draw
             std::vector<ScreenObject*>& t_objectsToDraw = LoadingScreenHandler::GetInstance()->GetScreenObjects();
@@ -287,7 +283,6 @@ namespace Doremi
             Begin2DDraw();
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Get bars to draw
             std::vector<Bar*>& t_barsToDraw = HUDHandler::GetInstance()->GetBars();

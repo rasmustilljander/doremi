@@ -34,7 +34,7 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         protected:
-            EntityHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit EntityHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~EntityHandlerClient();
 
             void ResetWorld();

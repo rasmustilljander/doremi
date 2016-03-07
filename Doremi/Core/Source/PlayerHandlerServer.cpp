@@ -154,14 +154,13 @@ namespace Doremi
         {
             FUNCTION_TIMER
 
-                ((InputHandlerServer*)t_player->m_inputHandler)
-                    ->Update(t_player->m_playerEntityID);
+            static_cast<InputHandlerServer*>(t_player->m_inputHandler)->Update(t_player->m_playerEntityID);
         }
 
         void PlayerHandlerServer::UpdatePlayerRotations(Player* t_player)
         {
             FUNCTION_TIMER
-            InputHandlerServer* inputHandler = (InputHandlerServer*)t_player->m_inputHandler;
+            InputHandlerServer* inputHandler = static_cast<InputHandlerServer*>(t_player->m_inputHandler);
 
             EntityID entityID = t_player->m_playerEntityID;
 
@@ -313,8 +312,6 @@ namespace Doremi
         uint32_t PlayerHandlerServer::GetMaxEventForPlayer(uint32_t p_playerID)
         {
             std::map<uint32_t, PlayerServer*>::iterator iter = m_playerMap.find(p_playerID);
-
-            NetworkEventSender* outPointer = nullptr;
 
             if(iter != m_playerMap.end())
             {

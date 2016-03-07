@@ -79,7 +79,7 @@ namespace Doremi
 
 
         private:
-            PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit PlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~PlayerHandlerClient();
 

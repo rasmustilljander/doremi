@@ -54,7 +54,7 @@ namespace Doremi
             MasterConnectionFromServer m_masterConnection;
 
         private:
-            NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit NetworkConnectionsServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             void LoadMasterFromConfigFile(const DoremiEngine::Core::SharedContext& p_sharedContext);
 

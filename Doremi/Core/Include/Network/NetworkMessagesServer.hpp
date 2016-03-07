@@ -126,7 +126,7 @@ namespace Doremi
             void SendDisconnectMaster();
 
         private:
-            NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit NetworkMessagesServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~NetworkMessagesServer();
 

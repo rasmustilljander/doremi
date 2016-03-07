@@ -10,7 +10,7 @@ namespace Doremi
     {
         struct PlayerCreationEvent : public Event
         {
-            PlayerCreationEvent(int p_playerEntityID) : Event(EventType::PlayerCreation), playerEntityID(p_playerEntityID) {}
+            explicit PlayerCreationEvent(int p_playerEntityID) : Event(EventType::PlayerCreation), playerEntityID(p_playerEntityID) {}
             PlayerCreationEvent() : Event(EventType::PlayerCreation), playerEntityID(0) {}
 
             /**

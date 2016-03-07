@@ -37,15 +37,19 @@ namespace Doremi
             void Update();
 
         private:
+            explicit VictoryScreen(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            virtual ~VictoryScreen();
+
             static VictoryScreen* m_singleton;
+
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             std::vector<ScreenObject*> m_screenObjects;
-            DoremiEngine::Graphic::MeshInfo* m_meshInfo;
-            ScreenObject m_background;
 
-            VictoryScreen(const DoremiEngine::Core::SharedContext& p_sharedContext);
-            virtual ~VictoryScreen();
+            DoremiEngine::Graphic::MeshInfo* m_meshInfo;
+
+            ScreenObject m_background;
         };
     }
 }

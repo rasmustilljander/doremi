@@ -43,7 +43,7 @@ namespace Doremi
 
 
         private:
-            NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit NetworkConnectionsMaster(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~NetworkConnectionsMaster();
 

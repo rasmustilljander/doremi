@@ -23,7 +23,7 @@ namespace Doremi
         class FunctorPriority
         {
         public:
-            FunctorPriority(NetworkObjectComponent* p_netPriorityObjects) : m_netPriorityObjects(p_netPriorityObjects) {}
+            explicit FunctorPriority(NetworkObjectComponent* p_netPriorityObjects) : m_netPriorityObjects(p_netPriorityObjects) {}
 
             /**
                 Compares two entityID and returns the one with the highest priority
@@ -51,7 +51,7 @@ namespace Doremi
         class NetworkPriorityHandler
         {
         public:
-            NetworkPriorityHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit NetworkPriorityHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~NetworkPriorityHandler();
 

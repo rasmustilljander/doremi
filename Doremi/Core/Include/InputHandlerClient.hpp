@@ -11,7 +11,7 @@ namespace Doremi
             /**
                 TODOCM doc
             */
-            InputHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit InputHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 Talks to Inputmodule and sets the settings as the method name.

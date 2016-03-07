@@ -85,7 +85,7 @@ namespace Doremi
             auto& GetText() { return m_drawText; }
 
         private:
-            ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~ServerBrowserHandler();
 

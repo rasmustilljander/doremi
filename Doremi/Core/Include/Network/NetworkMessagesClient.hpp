@@ -110,7 +110,7 @@ namespace Doremi
             void SendDisconnectMaster();
 
         private:
-            NetworkMessagesClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit NetworkMessagesClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~NetworkMessagesClient();
 

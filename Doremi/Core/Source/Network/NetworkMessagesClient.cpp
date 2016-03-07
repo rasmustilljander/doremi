@@ -287,7 +287,6 @@ namespace Doremi
             {
                 // Read how many objects we got in the message
                 t_newSnapshot->NumOfObjects = t_streamer.ReadUnsignedInt8();
-                t_bytesRead += sizeof(uint8_t);
 
                 // Add objects to snapshot
                 for(size_t i = 0; i < t_newSnapshot->NumOfObjects; i++)
@@ -399,15 +398,11 @@ namespace Doremi
             unsigned char* t_bufferPointer = t_message.Data;
             t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
-            // Bytes written counter
-            uint32_t t_bytesWritten = 0;
-
             // Get number of events received
             uint32_t eventAcc = t_playerhandler->GetLastJoinEventRead();
 
             // Write it to the message
             t_streamer.WriteUnsignedInt32(eventAcc);
-            t_bytesWritten += sizeof(uint32_t);
 
             // Send message
             m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectedSocketHandle);
@@ -432,19 +427,14 @@ namespace Doremi
             unsigned char* t_bufferPointer = t_message.Data;
             t_streamer.SetTargetBuffer(t_bufferPointer, sizeof(t_message.Data));
 
-            // Bytes written counter
-            uint32_t t_bytesWritten = 0;
-
             // Get current sequence used for snapshots
             uint8_t t_currentSequence = InterpolationHandler::GetInstance()->GetRealSnapshotSequence();
 
             // Write sequence ack
             t_streamer.WriteUnsignedInt8(t_currentSequence);
-            t_bytesWritten += sizeof(uint8_t);
 
             // Write input bitmask
             t_streamer.WriteUnsignedInt32(t_inputHandler->GetInputBitMask());
-            t_bytesWritten += sizeof(uint32_t);
 
             // Get player transform component
             EntityID t_playerEntityID = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetPlayerEntityID();
@@ -452,19 +442,16 @@ namespace Doremi
 
             // Write orientation
             t_streamer.WriteRotationQuaternion(t_transformComp->rotation);
-            t_bytesWritten += sizeof(float) * 4;
 
             // Get sequence acc for events
             uint8_t t_eventSequenceAck = t_eventReceiver->GetNextSequenceUsed();
 
             // Write event ack
             t_streamer.WriteUnsignedInt8(t_eventSequenceAck);
-            t_bytesWritten += sizeof(uint8_t);
 
             // Write sound frequencies
             float t_frequency = t_audioHandler->GetFrequency();
             t_streamer.WriteFloat(t_frequency);
-            t_bytesWritten += sizeof(float);
 
             // Send message
             m_sharedContext.GetNetworkModule().SendReliableData(&t_message, sizeof(t_message), t_networkConnection->m_serverConnection.ConnectedSocketHandle);

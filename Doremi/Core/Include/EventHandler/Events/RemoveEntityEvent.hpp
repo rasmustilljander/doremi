@@ -9,7 +9,7 @@ namespace Doremi
         struct RemoveEntityEvent : public Event
         {
             RemoveEntityEvent() : Event(EventType::RemoveEntity), entityID(0) {}
-            RemoveEntityEvent(uint32_t p_entityID) : Event(EventType::RemoveEntity), entityID(p_entityID) {}
+            explicit RemoveEntityEvent(uint32_t p_entityID) : Event(EventType::RemoveEntity), entityID(p_entityID) {}
 
             /**
                 Write object to stream

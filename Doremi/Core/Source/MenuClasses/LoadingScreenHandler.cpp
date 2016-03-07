@@ -36,7 +36,6 @@ namespace Doremi
         LoadingScreenHandler::LoadingScreenHandler(const DoremiEngine::Core::SharedContext& p_sharedContext) : m_sharedContext(p_sharedContext)
         {
             DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            DoremiEngine::Graphic::DirectXManager& t_dierctxManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
 
             // Create background
             DoremiEngine::Graphic::SpriteData t_data;

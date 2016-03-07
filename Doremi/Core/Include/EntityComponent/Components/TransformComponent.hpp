@@ -78,7 +78,7 @@ namespace Doremi
                 : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNextCounter(0)
             {
             }
-            TransformComponentSnapshotNext(const TransformComponentNext& p_copy)
+            explicit TransformComponentSnapshotNext(const TransformComponentNext& p_copy)
                 : position(p_copy.position), rotation(p_copy.rotation), scale(p_copy.scale), framesToNextCounter(0)
             {
             }
@@ -99,7 +99,7 @@ namespace Doremi
                 : position(p_pos), rotation(p_rot), scale(DirectX::XMFLOAT3(1, 1, 1)), framesToNext(0)
             {
             }
-            TransformComponentSnapshotPrevious(const TransformComponentNext& p_copy)
+            explicit TransformComponentSnapshotPrevious(const TransformComponentNext& p_copy)
                 : position(p_copy.position), rotation(p_copy.rotation), scale(p_copy.scale), framesToNext(0)
             {
             }

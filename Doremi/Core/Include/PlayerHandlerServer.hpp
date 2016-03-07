@@ -97,10 +97,6 @@ namespace Doremi
         class PlayerHandlerServer : public PlayerHandler, public Subscriber
         {
         public:
-            PlayerHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
-
-            ~PlayerHandlerServer();
-
             static void StartPlayerHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             std::map<uint32_t, PlayerServer*>& GetPlayerMap();
@@ -157,6 +153,10 @@ namespace Doremi
             void OnEvent(Event* p_event) override;
 
         private:
+            explicit PlayerHandlerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            ~PlayerHandlerServer();
+
             /**
                 TODOCM doc
             */
@@ -167,7 +167,6 @@ namespace Doremi
                 TODOCM doc
             */
             void QueueEntityCreatedEventToPlayers(EntityCreatedEvent* p_entityCreatedEvent);
-
 
             /**
                 TODOCM doc

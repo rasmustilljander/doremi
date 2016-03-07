@@ -85,7 +85,7 @@ namespace Doremi
             /**
                 Will make you able to recieve input.
             */
-            InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit InputHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 Empty deconstructor

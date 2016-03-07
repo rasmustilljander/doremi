@@ -27,7 +27,7 @@ namespace DoremiEngine
             /**
                 TODOCM log
             */
-            Socket(SOCKET p_socketHandle);
+            explicit Socket(SOCKET p_socketHandle);
 
             /**
                 TODOCM log

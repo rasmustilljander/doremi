@@ -34,7 +34,6 @@ namespace Doremi
                 DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
                 size_t textLength = p_text.length();
-                size_t prevTextLength = m_textInfo.size();
 
                 // TODO reuse the old ones
                 for(size_t i = 0; i < textLength; i++)
@@ -70,7 +69,7 @@ namespace Doremi
             {
                 DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
-                size_t t_difference = m_text.size() - p_text.size();
+                int32_t t_difference = m_text.size() - p_text.size();
 
                 // If we got too many, we delete the excessive texts
                 if(t_difference > 0)

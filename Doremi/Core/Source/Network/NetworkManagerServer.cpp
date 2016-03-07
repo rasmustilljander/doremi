@@ -165,15 +165,15 @@ namespace Doremi
                 // Create message
                 NetMessageBuffer t_message = NetMessageBuffer();
 
-                // Max message counter
-                uint32_t t_messageCounter = 0;
-
-                // To check how much we received
-                uint32_t t_dataSizeReceived = 0;
-
                 // If we're connected
                 if(t_connection.second->ConnectionState >= ClientConnectionStateFromServer::CONNECTED)
                 {
+                    // Max message counter
+                    uint32_t t_messageCounter = 0;
+
+                    // To check how much we received
+                    uint32_t t_dataSizeReceived = 0;
+
                     // While we have something to receive and still less then max messages per frame
                     while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle, t_dataSizeReceived) &&
                           ++t_messageCounter < m_maxConnectedMessagesPerFrame)
@@ -375,7 +375,6 @@ namespace Doremi
             SocketHandle t_connectedSocketHandle = NetworkConnectionsServer::GetInstance()->GetConnectedSocketHandle();
             SocketHandle t_outSocketHandle = 0;
             DoremiEngine::Network::Adress* t_outAdress = t_networkModule.CreateAdress();
-            DoremiEngine::Network::Adress* t_savedAdress = t_networkModule.CreateAdress();
 
             // Holder for the connection we want to fetch
             std::pair<DoremiEngine::Network::Adress*, ClientConnectionFromServer*> t_connection;

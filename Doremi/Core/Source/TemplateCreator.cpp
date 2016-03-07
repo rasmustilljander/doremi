@@ -158,10 +158,6 @@ namespace Doremi
             // Render
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::RANGEDENEMY);
 
             RenderComponent* renderComp = new RenderComponent();
@@ -318,10 +314,6 @@ namespace Doremi
             // Render
             LevelLoaderClient loader = LevelLoaderClient(sharedContext);
 
-            DoremiEngine::Graphic::SkeletalInformation* t_upperBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
-            DoremiEngine::Graphic::SkeletalInformation* t_lowerBodySkeletalInformation =
-                sharedContext.GetGraphicModule().GetSubModuleManager().GetSkeletalAnimationManager().CreateSkeletalInformation();
             LoadedCharacter t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::MELEENEMY);
 
             RenderComponent* renderComp = new RenderComponent();

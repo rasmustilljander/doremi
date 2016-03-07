@@ -14,7 +14,7 @@ namespace Doremi
         struct NetworkObjectComponent
         {
             NetworkObjectComponent() : Priority(0.0f), FramePriority(0.0f), LastUpdateTimer(0.0f), NotRelevantTimer(0.0f), RelevantTimer(0.0f) {}
-            NetworkObjectComponent(float p_priorityStart)
+            explicit NetworkObjectComponent(float p_priorityStart)
                 : Priority(p_priorityStart), FramePriority(0), LastUpdateTimer(0.0f), NotRelevantTimer(0.0f), RelevantTimer(0.0f)
             {
             }

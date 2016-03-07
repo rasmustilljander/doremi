@@ -167,13 +167,8 @@ namespace Doremi
                 unsigned char* p_bufferPointer = p_message.Data;
                 p_streamer.SetTargetBuffer(p_bufferPointer, sizeof(p_message.Data));
 
-                // Amount read
-                uint32_t bytesRead = 0;
-
                 // Read acced event
                 uint32_t eventAcc = p_streamer.ReadUnsignedInt32();
-                bytesRead += sizeof(uint32_t);
-
 
                 // TODOCM add bool here if player has done loading-loading world
 
@@ -212,16 +207,12 @@ namespace Doremi
                 unsigned char* p_bufferPointer = p_message.Data;
                 p_streamer.SetTargetBuffer(p_bufferPointer, sizeof(p_message.Data));
 
-                // Bytes read counter
-                uint32_t t_bytesRead = 0;
 
                 // Read sequence
                 uint8_t t_newSequence = p_streamer.ReadUnsignedInt8();
-                t_bytesRead += sizeof(uint8_t);
 
                 // Read input bitmask
                 uint32_t t_inputMask = p_streamer.ReadUnsignedInt32();
-                t_bytesRead += sizeof(uint32_t);
 
                 // Get entityID for player
                 EntityID entityID = 0;
@@ -231,7 +222,6 @@ namespace Doremi
 
                 // Read orientation to update with
                 DirectX::XMFLOAT4 t_playerOrientation = p_streamer.ReadRotationQuaternion();
-                t_bytesRead += sizeof(float) * 4;
 
                 // If we're a new connection we save the first sequence
                 if(p_connection->LastSequenceUpdate >= SEQUENCE_UPDATE_TIMER)
@@ -247,14 +237,12 @@ namespace Doremi
 
                 // Read event acc sequence
                 uint8_t t_clientEventSequence = p_streamer.ReadUnsignedInt8();
-                t_bytesRead += sizeof(uint8_t);
 
                 // Update event queue with acc sequence
                 t_networkEventSender->UpdateBufferWithRecievedClientSequenceAcc(t_clientEventSequence);
 
                 // Read frequency
                 float t_frequency = p_streamer.ReadFloat();
-                t_bytesRead += sizeof(float);
                 t_frequencyHandler->QueueFrequency(t_frequency, t_newSequence);
             }
         }
@@ -427,18 +415,10 @@ namespace Doremi
             {
                 // Write 0 objects, if we started to write something bad in the events
                 t_streamer.WriteUnsignedInt8(0);
-                t_bytesWritten += sizeof(uint8_t);
             }
 
             // Send the message
-            bool t_sendFailed = !t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
-
-            // If fail, we disconnect next
-            //if(t_sendFailed)
-            //{
-            //    std::cout << "Send failed, disconnecting" << std::endl;
-            //    p_connection->LastResponse = 100000; // TODOCM hard coded disconnect value =D
-            //}
+            t_networkModule.SendReliableData(&t_newMessage, sizeof(t_newMessage), p_connection->ConnectedSocketHandle);
         }
 
 

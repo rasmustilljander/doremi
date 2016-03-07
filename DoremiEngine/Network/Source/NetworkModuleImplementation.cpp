@@ -127,7 +127,7 @@ namespace DoremiEngine
             bool SendSuccessful = socketToSendTo->SendUDP(*(AdressImplementation*)p_adressToSendTo, p_data, p_dataSize);
 
             // return SendSuccessful;
-            return true;
+            return SendSuccessful;
         }
 
         bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle,

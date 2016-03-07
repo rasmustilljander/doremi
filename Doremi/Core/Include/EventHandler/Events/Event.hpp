@@ -36,7 +36,7 @@ namespace Doremi
         struct Event : public Serializable
         {
         public:
-            Event(EventType p_eventType) : eventType(p_eventType) {}
+            explicit Event(EventType p_eventType) : eventType(p_eventType) {}
             /**
                 Write object to stream
             */

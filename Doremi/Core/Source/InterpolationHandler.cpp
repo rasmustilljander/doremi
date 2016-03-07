@@ -55,7 +55,6 @@ namespace Doremi
             FUNCTION_TIMER
 
             EntityHandler& EntityHandler = EntityHandler::GetInstance();
-            DoremiEngine::Physics::RigidBodyManager& t_rigidBodyManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
 
             // All objects that is sent over network with transform should be inteprolated
             uint32_t Mask = (int)ComponentType::Transform | (int)ComponentType::NetworkObject;
@@ -230,8 +229,6 @@ namespace Doremi
                     // Sort the objects by ID
                     std::sort(&SnapshotToUse->Objects[0], &SnapshotToUse->Objects[SnapshotToUse->NumOfObjects], SnapObjIDMoreRecent);
 
-                    uint32_t objectCounter = 0;
-
                     size_t entityID = 0;
 
                     float extrapolateAlpha = static_cast<float>(m_NumOfSequencesToInterpolate);
@@ -240,6 +237,8 @@ namespace Doremi
                     // TODOCM check if there can be no objects in snapshot, if so remove this check
                     if(SnapshotToUse->NumOfObjects)
                     {
+                        uint32_t objectCounter = 0;
+
                         EntityID nextID = SnapshotToUse->Objects[objectCounter].EntityID;
 
                         // Go through all entities

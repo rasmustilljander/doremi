@@ -35,7 +35,8 @@ namespace Doremi
             auto& GetBars() { return m_bars; }
 
         private:
-            HUDHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit HUDHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             ~HUDHandler();
 
             static HUDHandler* m_singleton;

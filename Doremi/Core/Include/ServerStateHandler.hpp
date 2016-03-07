@@ -48,7 +48,7 @@ namespace Doremi
             std::string GetServerName();
 
         private:
-            ServerStateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit ServerStateHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             ~ServerStateHandler();
 
