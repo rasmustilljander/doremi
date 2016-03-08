@@ -136,7 +136,7 @@ namespace Doremi
                         if(t_drainsHit[o] != -1)
                         {
                             // if the drains hit is an enemy
-                            if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], mask))
+                            if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], mask) && pairs.second->m_playerEntityID != t_drainsHit[o])
                             {
                                 if(damageMap.count(t_drainsHit[o]) == 0)
                                 {
