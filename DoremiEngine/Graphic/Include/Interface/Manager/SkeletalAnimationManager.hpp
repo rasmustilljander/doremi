@@ -3,12 +3,20 @@
 #include <vector>
 #include <string>
 #include <map>
+namespace Doremi
+{
+    namespace Core
+    {
+        struct AnimationTransitionInfo;
+    }
+}
 namespace DoremiEngine
 {
     namespace Graphic
     {
         class SkeletalInformation;
         class SkeletalAnimation;
+        struct AnimationTransitionInfo;
         class SkeletalAnimationManager
         {
         public:
@@ -25,7 +33,7 @@ namespace DoremiEngine
             virtual void PushMatricesToDevice(std::vector<DirectX::XMFLOAT4X4> p_transformsTopush) = 0;
             virtual void GetInterpolatedAnimationsMatrices(SkeletalInformation* p_skeletalInformation, std::string t_clipName, float t_timePos,
                                                            std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
-                                                           std::map<std::string, float> p_animationTransitions) const = 0;
+                                                           std::map<std::string, Doremi::Core::AnimationTransitionInfo> p_animationTransitions) const = 0;
         };
     }
 }

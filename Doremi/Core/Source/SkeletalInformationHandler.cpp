@@ -58,7 +58,8 @@ namespace Doremi
                     t_fileName = "Models/SmallRobot16.drm";
                     break;
                 case SkeletalAnimationType::PLAYER:
-                    t_fileName = "Models/ArgeeAnimated_v12_NoBack.drm";
+                    // t_fileName = "Models/ArgeeAnimated_v12_NoBack.drm";
+                    t_fileName = "Models/ArgeeAnimated_v10.drm";
                     break;
                 default:
                     t_fileName = "ErrorType in skeletalanimationtype";

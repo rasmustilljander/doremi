@@ -46,8 +46,10 @@ namespace Doremi
             */
             void UpdateTransitions(SkeletalAnimationComponent& p_skeltalAnimationComponent,
                                    LowerSkeletalAnimationComponent& p_lowerSkeletalAnimationComponent, double p_dt);
-            void STimer(const std::string& p_animationName, SkeletalAnimationComponent* o_skeletalAnimationComponent);
-            void STimer(const std::string& p_animationName, LowerSkeletalAnimationComponent* o_skeletalAnimationComponent);
+            void STimer(const std::string& p_animationName, SkeletalAnimationComponent* o_skeletalAnimationComponent, float p_startTimer);
+            void STimer(const std::string& p_animationName, LowerSkeletalAnimationComponent* o_skeletalAnimationComponent, float p_startTimer);
+            std::string CheckForTransitions(float& o_lowestTimeElapsed, SkeletalAnimationComponent* o_skeletalAnimationComponent);
+            std::string CheckForTransitions(float& o_lowestTimeElapsed, LowerSkeletalAnimationComponent* o_skeletalAnimationComponent);
             double m_animationTransitionTime;
         };
     }

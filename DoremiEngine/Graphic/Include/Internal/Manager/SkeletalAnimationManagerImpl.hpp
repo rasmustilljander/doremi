@@ -2,6 +2,13 @@
 #include <Interface/Manager/SkeletalAnimationManager.hpp>
 #include <d3d11_1.h>
 
+namespace Doremi
+{
+    namespace Core
+    {
+        struct AnimationTransitionInfo;
+    }
+}
 namespace DoremiEngine
 {
 
@@ -18,7 +25,7 @@ namespace DoremiEngine
             SkeletalInformation* CreateSkeletalInformation() override;
             void GetInterpolatedAnimationsMatrices(SkeletalInformation* p_skeletalInformation, std::string t_clipName, float t_timePos,
                                                    std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
-                                                   std::map<std::string, float> p_animationTransitions) const override;
+                                                   std::map<std::string, Doremi::Core::AnimationTransitionInfo> p_animationTransitions) const override;
             void GetFinalTransforms(const std::string& p_clipName, float t_timePos, std::vector<DirectX::XMFLOAT4X4>& p_finalTransforms,
                                     SkeletalInformation* p_skeletalInformation) const override;
             void PushMatricesToDevice(std::vector<DirectX::XMFLOAT4X4> p_transformsTopush) override;

@@ -319,10 +319,10 @@ namespace Doremi
                     t_skeletalComponent->timePosition = 0.0f;
                     std::vector<std::string> t_animationNames = t_skeletalComponent->skeletalInformation->GetAnimationNames();
                     size_t length = t_animationNames.size();
-                    t_skeletalComponent->animationTransitions = new map<std::string, float>();
+                    t_skeletalComponent->animationTransitions = new map<std::string, AnimationTransitionInfo>();
                     for(size_t i = 0; i < length; i++)
                     {
-                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]] = 0.0f;
+                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]].startTime = 0.0f;
                     }
                 }
                 else if(iter->first == ComponentType::AIAgent)
@@ -340,11 +340,11 @@ namespace Doremi
                     t_skeletalComponent->timePosition = 0.0f;
                     std::vector<std::string> t_animationNames = t_skeletalComponent->skeletalInformation->GetAnimationNames();
                     size_t length = t_animationNames.size();
-                    t_skeletalComponent->animationTransitions = new map<std::string, float>();
+                    t_skeletalComponent->animationTransitions = new map<std::string, AnimationTransitionInfo>();
                     // Prova hårdkoda å se vad som händer
                     for(size_t i = 0; i < length; i++)
                     {
-                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]] = 0.0f;
+                        (*t_skeletalComponent->animationTransitions)[t_animationNames[i]].startTime = 0.0f;
                     }
                     int hej = 0;
                 }

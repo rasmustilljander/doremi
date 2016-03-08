@@ -14,5 +14,10 @@ namespace Doremi
             MELEENEMY,
             PLAYER,
         };
+        struct AnimationTransitionInfo
+        {
+            float startTime;
+            float elapsedSinceStart;
+        };
     }
 }
