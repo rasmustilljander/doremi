@@ -161,7 +161,7 @@ namespace Doremi
             LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::RANGEDENEMY);
 
             RenderComponent* renderComp = new RenderComponent();
-            renderComp->offsetY = -3;
+            renderComp->offsetY = -3.0f;
             renderComp->lockedRotationX = true;
             renderComp->mesh = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMeshInfo(t_loaded.characterData.meshName);
             renderComp->material = sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager().BuildMaterialInfo(t_loaded.characterData.materialName);
@@ -174,12 +174,13 @@ namespace Doremi
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::RANGEDENEMY;
-            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             blueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            t_physMatComp->p_materialID =
+                sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f); // TODOJB remove p_
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
             // Rigid body comp
             // RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
@@ -188,14 +189,14 @@ namespace Doremi
             // blueprint[ComponentType::CharacterController];
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
-            healthComponent->maxHealth = 100;
+            healthComponent->maxHealth = 100.0f;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
 
             // Extra drain and rigid comp
             RigidBodyComponent* rigidComp = new RigidBodyComponent();
-            rigidComp->radius = 1.5;
-            rigidComp->height = 3;
+            rigidComp->radius = 1.5f;
+            rigidComp->height = 3.0f;
             rigidComp->geometry = RigidBodyGeometry::dynamicCapsule;
             rigidComp->flags = RigidBodyFlags((int)RigidBodyFlags::ignoredDEBUG | (int)RigidBodyFlags::drain); // this casting...
             blueprint[ComponentType::RigidBody] = rigidComp;
@@ -259,7 +260,7 @@ namespace Doremi
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 30;
+            rangeComp->range = 30.0f;
             blueprint[ComponentType::Range] = rangeComp;
 
             // PotentialField component
@@ -296,7 +297,7 @@ namespace Doremi
 
             // Jump comp
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 1;
+            jumpComp->intensity = 1.0f;
             blueprint[ComponentType::Jump] = jumpComp;
 
             // Register blueprint
@@ -373,30 +374,31 @@ namespace Doremi
 
             // PhysicsMaterialComp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0); // TODOJB remove p_
+            t_physMatComp->p_materialID =
+                sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f); // TODOJB remove p_
             blueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Character control comp label
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->dims = XMFLOAT2(3.0f, 1.5f);
             charControlComp->flags = CharacterControlFlags::drain;
             blueprint[ComponentType::CharacterController] = charControlComp;
 
             // Health comp
             HealthComponent* healthComponent = new HealthComponent();
-            healthComponent->maxHealth = 200;
+            healthComponent->maxHealth = 200.0f;
             healthComponent->currentHealth = healthComponent->maxHealth;
             blueprint[ComponentType::Health] = healthComponent;
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 5;
+            rangeComp->range = 5.0f;
             blueprint[ComponentType::Range] = rangeComp;
 
             // PotentialField component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->charge = -2;
-            potentialComp->range = 4;
+            potentialComp->charge = -2.0f;
+            potentialComp->range = 4.0f;
             potentialComp->type = DoremiEngine::AI::AIActorType::MeleeEnemy;
             potentialComp->isStatic = false;
             blueprint[ComponentType::PotentialField] = potentialComp;
@@ -422,7 +424,7 @@ namespace Doremi
 
             // Jump comp
             JumpComponent* jumpComp = new JumpComponent();
-            jumpComp->intensity = 1;
+            jumpComp->intensity = 1.0f;
             blueprint[ComponentType::Jump] = jumpComp;
 
             // Register blueprint
@@ -449,7 +451,7 @@ namespace Doremi
 
             // Rigid body comp
             RigidBodyComponent* rigidBodyComp = new RigidBodyComponent();
-            rigidBodyComp->boxDims = XMFLOAT3(0.25, 0.25, 0.25);
+            rigidBodyComp->boxDims = XMFLOAT3(0.25f, 0.25f, 0.25f);
             rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
             rigidBodyComp->flags = RigidBodyFlags::DisableGravity;
             blueprint[ComponentType::RigidBody] = rigidBodyComp;
@@ -465,7 +467,8 @@ namespace Doremi
 
             // Life time component
             LifeTimeComponent* lifeTimeComp = new LifeTimeComponent();
-            lifeTimeComp->LifeTime = 5; // TODOXX should be high enough for it only to occure when the bullet is outside the map or otherwise bugged
+            lifeTimeComp->LifeTime =
+                5.0f; // TODOXX should be high enough for it only to occure when the bullet is outside the map or otherwise bugged
             blueprint[ComponentType::LifeTime] = lifeTimeComp;
             /// Register blueprint
             EntityHandler::GetInstance().RegisterEntityBlueprint(Blueprints::BulletEntity, blueprint);
@@ -481,14 +484,14 @@ namespace Doremi
 
             // Transform
             TransformComponent* transComp = new TransformComponent();
-            transComp->scale = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+            transComp->scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
             blueprint[ComponentType::Transform] = transComp;
 
             // Render
             DoremiEditor::Core::MaterialMessage material;
             DoremiEditor::Core::MaterialData data = DoremiEditor::Core::MaterialData();
 
-            data.setColor(1, 0.2, 0.0);
+            data.setColor(1.0f, 0.2f, 0.0f);
             material.data = data;
             material.nodeName = "EnemyBulletMaterial";
             material.diffuseTexturePath = "Test.dds";
@@ -526,13 +529,13 @@ namespace Doremi
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             t_platform[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
             RigidBodyComponent* t_rigidBodyComp = new RigidBodyComponent();
             float factor = 2.5; // TODOJB fix. I was lazy. It was 20:16
-            t_rigidBodyComp->boxDims = XMFLOAT3(2 * factor, 0.05 * factor, 2 * factor);
+            t_rigidBodyComp->boxDims = XMFLOAT3(2.0f * factor, 0.05f * factor, 2.0f * factor);
             t_rigidBodyComp->flags = RigidBodyFlags::kinematic;
             t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
             t_platform[ComponentType::RigidBody] = t_rigidBodyComp;
@@ -577,7 +580,7 @@ namespace Doremi
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             t_platform[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
@@ -607,7 +610,7 @@ namespace Doremi
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(0.0f);
             t_platform[ComponentType::NetworkObject] = netObjComp;
 
             // Register bluepirnt
@@ -631,7 +634,7 @@ namespace Doremi
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
@@ -640,7 +643,7 @@ namespace Doremi
 
             // Character Controller
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->dims = XMFLOAT2(3.0f, 1.5f);
             charControlComp->flags = CharacterControlFlags::drain;
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
@@ -663,8 +666,8 @@ namespace Doremi
 
             // Potential field component
             PotentialFieldComponent* potentialComp = new PotentialFieldComponent();
-            potentialComp->charge = 20;
-            potentialComp->range = 60;
+            potentialComp->charge = 20.0f;
+            potentialComp->range = 60.0f;
             potentialComp->isStatic = false;
             potentialComp->type = DoremiEngine::AI::AIActorType::Player;
             t_avatarBlueprint[ComponentType::PotentialField] = potentialComp;
@@ -726,7 +729,7 @@ namespace Doremi
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
             t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
-            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0, 0, 0, 1);
+            t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 
 
@@ -739,7 +742,7 @@ namespace Doremi
 
             // Physical material comp
             PhysicsMaterialComponent* t_physMatComp = new PhysicsMaterialComponent();
-            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
+            t_physMatComp->p_materialID = sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0.0f, 0.0f, 0.0f);
             t_avatarBlueprint[ComponentType::PhysicalMaterial] = t_physMatComp;
 
             // Rigid body comp
@@ -748,7 +751,7 @@ namespace Doremi
 
             // Controller component
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
-            charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->dims = XMFLOAT2(3.0f, 1.5f);
             charControlComp->flags = CharacterControlFlags::drain;
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
