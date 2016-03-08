@@ -150,6 +150,10 @@ namespace DoremiEngine
             {
                 o_info.JumpPower = std::stof(p_mapToInterpret.at("JumpPower"));
             }
+            if(p_mapToInterpret.count("FriendlyFire"))
+            {
+                o_info.FriendlyFire = std::stoi(p_mapToInterpret.at("FriendlyFire"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -191,6 +195,7 @@ namespace DoremiEngine
             returnMap["RangedEnemySpeed"] = std::to_string(p_info.RangedEnemySpeed);
             returnMap["PlayerSpeed"] = std::to_string(p_info.PlayerSpeed);
             returnMap["JumpPower"] = std::to_string(p_info.JumpPower);
+            returnMap["FriendlyFire"] = std::to_string(p_info.FriendlyFire);
             return returnMap;
         }
     }

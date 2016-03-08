@@ -68,6 +68,7 @@ namespace DoremiEngine
             float MinPitch = -1;
             float PlayerSpeed = 45;
             float JumpPower = 1;
+            bool FriendlyFire = false;
         };
         /**
         Reads and saves configuration from file. If another module needs configuration values they can use fucntions in this class to get them.

@@ -15,6 +15,9 @@ namespace Doremi
             virtual ~DamageManager();
             void Update(double p_dt) override;
             void OnEvent(Event* p_event) override;
+
+        private:
+            bool m_friendlyFire;
         };
     }
 }

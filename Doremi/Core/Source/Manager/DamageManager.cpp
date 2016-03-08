@@ -22,6 +22,8 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 
+// Configuration
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 // Third Party
 #include <DirectXMath.h>
 #include <iostream>
@@ -33,6 +35,7 @@ namespace Doremi
         DamageManager::DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext) : Manager(p_sharedContext, "DamageManager")
         {
             EventHandler::GetInstance()->Subscribe(EventType::Trigger, this);
+            m_friendlyFire = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().FriendlyFire;
         }
 
         DamageManager::~DamageManager() {}
@@ -67,11 +70,13 @@ namespace Doremi
                     }
                 }
             }
+
+            std::map<int, float> damageMap; // A map to save the total damage a entity have taken
+
             // for each player we check if a bullet did hit us
             length = t_bulletPairs.size();
             for(auto pairs : t_players)
             {
-                float totalDamage = 0; // Used to accumulate the damage
                 for(size_t i = 0; i < length; i++)
                 {
                     if(pairs.second->m_playerEntityID == t_bulletPairs[i].y)
@@ -80,15 +85,13 @@ namespace Doremi
                         std::cout << "Hit vs player detected" << std::endl;
                         if(EntityHandler::GetInstance().HasComponents(pairs.second->m_playerEntityID, (int)ComponentType::Health))
                         {
-                            totalDamage += 10; // TODOCONFIG should probably be gathered from component or something
+                            if(damageMap.count(pairs.second->m_playerEntityID) == 0)
+                            {
+                                damageMap[pairs.second->m_playerEntityID] = 0;
+                            }
+                            damageMap[pairs.second->m_playerEntityID] += 10; // TODOCONFIG Enemy damage
                         }
                     }
-                }
-                if(totalDamage != 0) // If we didnt take any damage dont send event
-                {
-                    DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(totalDamage, pairs.second->m_playerEntityID);
-
-                    EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
                 }
             }
 
@@ -113,7 +116,13 @@ namespace Doremi
             // Check if the player hit any enemies
             // Look through our entities for the enemies
             size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
-            std::map<int, float> damageMap; // A map to save the total damage a entity have taken
+
+            int mask = (int)ComponentType::Health | (int)ComponentType::Transform | (int)ComponentType::CharacterController;
+            if(!m_friendlyFire)
+            {
+                mask |= (int)ComponentType::AIAgent;
+            }
+
             for(auto pairs : t_players)
             {
                 // Getting our particlesystem
@@ -127,8 +136,7 @@ namespace Doremi
                         if(t_drainsHit[o] != -1)
                         {
                             // if the drains hit is an enemy
-                            if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], (int)ComponentType::Health | (int)ComponentType::AIAgent |
-                                                                                              (int)ComponentType::Transform | (int)ComponentType::CharacterController))
+                            if(EntityHandler::GetInstance().HasComponents(t_drainsHit[o], mask))
                             {
                                 if(damageMap.count(t_drainsHit[o]) == 0)
                                 {
