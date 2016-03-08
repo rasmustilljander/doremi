@@ -26,11 +26,13 @@ namespace Doremi
             DirectX::XMFLOAT4 orientation;
             SkeletalAnimationType type;
             std::map<std::string, float>* animationTransitions;
+
             LowerSkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
-                : skeletalInformation(p_skeletalInformation)
+                : skeletalInformation(p_skeletalInformation), timePosition(0.0), animationTransitions(nullptr)
             {
             }
-            LowerSkeletalAnimationComponent() : skeletalInformation(nullptr) {}
+
+            LowerSkeletalAnimationComponent() : skeletalInformation(nullptr), timePosition(0.0), animationTransitions(nullptr) {}
         };
     }
 }
