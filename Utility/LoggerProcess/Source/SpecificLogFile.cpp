@@ -9,6 +9,7 @@
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
 #include <Utility/Utilities/Include/Logging/LogLevelConverter.hpp>
 #include <Utility/Utilities/Include/Logging/LogTagConverter.hpp>
+#include <Utility/Utilities/Include/Console/ConsoleColor.hpp>
 
 #include <iostream>
 #include <exception>
@@ -84,15 +85,15 @@ void SpecificLogFile::Write(void*& p_data)
     {
         if(textMetaData->logLevel == LogLevel::WARNING)
         {
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Console::ConsoleColor(Console::ConsoleColorEnum::DARK_YELLOW).value);
         }
         else if(textMetaData->logLevel == LogLevel::FATAL_ERROR)
         {
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Console::ConsoleColor(Console::ConsoleColorEnum::DARK_RED).value);
         }
         else
         {
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Console::ConsoleColor(Console::ConsoleColorEnum::DARK_WHITE).value);
         }
         std::cout << "[" << logtag << ":" << logLevel << "] " << static_cast<char*>(message) << "\n";
     }
