@@ -72,12 +72,14 @@ namespace DoremiEngine
                     std::cout << "Couldn't fetch window from ID, some options disabled " << std::endl;
                 }
             }
+
+            // Device flags
             UINT t_flags = 0;
 #ifdef _DEBUG
             t_flags |= D3D11_CREATE_DEVICE_DEBUG;
-
-
 #endif
+            t_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
+
             D3D_FEATURE_LEVEL featureLevels[] = {
                 D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0,
             };
@@ -103,11 +105,9 @@ namespace DoremiEngine
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, t_flags, featureLevels, numFeatureLevels,
                                                         D3D11_SDK_VERSION, &scd, &m_swapChain, &m_device, NULL, &m_deviceContext);
 
-            if(!CheckHRESULT(res, "Error when creating device and swapchain, trying withour debug flag"))
+            if(!CheckHRESULT(res, "Error when creating device and swapchain."))
             {
-                res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &scd, &m_swapChain,
-                                                    &m_device, NULL, &m_deviceContext);
-                CheckHRESULT(res, "Error when creating device and swapchain");
+                return;
             }
 
             CreateBackBufferViews();
