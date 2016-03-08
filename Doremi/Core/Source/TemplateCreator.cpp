@@ -58,7 +58,7 @@ namespace Doremi
 {
     namespace Core
     {
-        XMFLOAT3 unitScale = XMFLOAT3(2.2, 2.2, 2.2);
+        XMFLOAT3 unitScale = XMFLOAT3(2.2f, 2.2f, 2.2f);
         TemplateCreator* TemplateCreator::m_singleton = nullptr;
 
         TemplateCreator* TemplateCreator::GetInstance()
@@ -86,8 +86,8 @@ namespace Doremi
             EntityBlueprint blueprint;
             // Transform Component
             TransformComponent* transComp = new TransformComponent();
-            transComp->position = XMFLOAT3(0, 13, -2);
-            transComp->scale = XMFLOAT3(0.1, 0.1, 0.1);
+            transComp->position = XMFLOAT3(0.0f, 13.0f, -2.0f);
+            transComp->scale = XMFLOAT3(0.1f, 0.1f, 0.1f);
             blueprint[ComponentType::Transform] = transComp;
             // Render
             RenderComponent* renderComp = new RenderComponent();
