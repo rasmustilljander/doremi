@@ -2,7 +2,8 @@
 #include <Interface/Manager/DirectXManager.hpp>
 #include <Internal/Mesh/MeshRenderData.hpp>
 #include <Internal/Texture/SpriteRenderData.hpp>
-
+#include <DisplayModes.hpp>
+#include <map>
 #include <vector>
 
 #define MAX_NUMBER_OF_INSTANCES 100
@@ -28,6 +29,7 @@ namespace DoremiEngine
             WorldMatrixPair matricPairs[MAX_NUMBER_OF_INSTANCES];
         };
 
+
         class DirectXManagerImpl : public DirectXManager
         {
         public:
@@ -37,7 +39,12 @@ namespace DoremiEngine
             Get and set methods
             */
             ID3D11Device* GetDevice() override;
+
             DirectX::XMFLOAT2 GetScreenResolution() override;
+            uint32_t GetCurrentMonitor() override { return m_currentMonitor; };
+            uint32_t GetNumberOfMonitors() override { return m_displayModes.size(); }
+            float GetRefreshRate() override { return m_refreshRate; }
+
             ID3D11DeviceContext* GetDeviceContext() override;
             ID3D11SamplerState* GetDefaultSamplerState() override { return m_defaultSamplerState; }
             RasterizerState* GetDefaultRasterizerState() override { return m_defaultRasterizerState; };
@@ -126,6 +133,7 @@ namespace DoremiEngine
             void DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
             void SetFullscreen(const bool& p_fullscreen) override;
+
 
         private:
             bool t_frustrumComputed;
@@ -220,8 +228,16 @@ namespace DoremiEngine
             ID3D11BlendState* m_disableBlendState;
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;
+
+
             DirectX::XMFLOAT2 m_screenResolution;
+            uint32_t m_currentMonitor;
+            float m_refreshRate;
             SDL_Window* m_window = nullptr;
+
+
+            // list with
+            std::map<uint32_t, std::map<DisplayMode, std::vector<uint32_t>>> m_displayModes;
         };
     }
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <map>
 #include <DirectXMath.h>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct IDXGISwapChain;
@@ -14,6 +16,7 @@ struct D3D11_SAMPLER_DESC;
 struct ID3D11SamplerState;
 struct ID3D11RasterizerState;
 struct ID3D11DepthStencilState;
+
 namespace DoremiEngine
 {
     namespace Graphic
@@ -27,7 +30,12 @@ namespace DoremiEngine
             virtual ID3D11Device* GetDevice() = 0;
             virtual ID3D11DeviceContext* GetDeviceContext() = 0;
             virtual void SetScreenResolution(DirectX::XMFLOAT2) = 0;
+
             virtual DirectX::XMFLOAT2 GetScreenResolution() = 0;
+            virtual uint32_t GetCurrentMonitor() = 0;
+            virtual uint32_t GetNumberOfMonitors() = 0;
+            virtual float GetRefreshRate() = 0;
+
             // TODOKO should end draw be here?
             virtual DepthStencilState* CreateDepthStencilState(D3D11_DEPTH_STENCIL_DESC p_depthStencilDesc) = 0; // Fortsätt här imorgon
             virtual ID3D11SamplerState* CreateSamplerState(D3D11_SAMPLER_DESC p_samplerDesc) = 0;

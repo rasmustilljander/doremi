@@ -42,6 +42,7 @@
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/VictoryScreen.hpp>
+#include <Doremi/Core/Include/MenuClasses/OptionsHandler.hpp>
 
 // Managers
 #include <Doremi/Core/Include/Manager/GraphicManager.hpp>
@@ -141,6 +142,7 @@ namespace Doremi
         LoadingScreenHandler::StartLoadingScreenHandler(sharedContext);
         ScreenSpaceDrawer::StartupScreenSpaceDrawer(sharedContext);
         VictoryScreen::StartupVictoryScreen(sharedContext);
+        OptionsHandler::StartOptionsHandler(sharedContext);
 
         // Initialize 2d drawer class
         m_screenRes = m_sharedContext->GetGraphicModule().GetSubModuleManager().GetDirectXManager().GetScreenResolution();
@@ -312,11 +314,8 @@ namespace Doremi
             }
             case Core::DoremiGameStates::OPTIONS:
             {
-                std::cout << "You clicked options button. It has no effect. State changed back to MAINMENU" << std::endl;
-                // State is changed with events TODOXX should be removed from here once options is implemented
-                Core::ChangeMenuState* menuEvent = new Core::ChangeMenuState();
-                menuEvent->state = Core::DoremiGameStates::MAINMENU;
-                Core::EventHandler::GetInstance()->BroadcastEvent(menuEvent);
+                OptionsHandler::GetInstance()->Update(p_deltaTime);
+
                 break;
             }
             case Core::DoremiGameStates::LOADING:

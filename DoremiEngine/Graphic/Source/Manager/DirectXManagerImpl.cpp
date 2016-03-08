@@ -19,10 +19,36 @@
 // COnfiguration
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
+
+bool operator<(const DisplayMode& t_disp1, const DisplayMode& t_disp2)
+{
+    if(t_disp2.width == t_disp1.width)
+    {
+        if(t_disp2.height > t_disp1.height)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else if(t_disp2.width > t_disp1.width)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 namespace DoremiEngine
 {
     namespace Graphic
     {
+
+
         DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
         {
             float x = m_graphicContext.config.GetAllConfigurationValues().ScreenWidth;
@@ -134,6 +160,37 @@ namespace DoremiEngine
             CreateBlendStates();
 
             t_frustrumComputed = false;
+
+            // Get resolutions
+            UINT t_numDispalys = SDL_GetNumVideoDisplays();
+
+            UINT t_numDisplayModes = SDL_GetNumDisplayModes(0);
+
+            // For each display
+            for(size_t dispIndex = 0; dispIndex < t_numDispalys; dispIndex++)
+            {
+                // For each mode
+                for(size_t modeIndex = 0; modeIndex < t_numDisplayModes; modeIndex++)
+                {
+                    SDL_DisplayMode mode = {SDL_PIXELFORMAT_UNKNOWN, 0, 0, 0, 0};
+
+                    SDL_GetDisplayMode(dispIndex, modeIndex, &mode);
+
+                    DisplayMode t_displayMode;
+                    t_displayMode.height = mode.h;
+                    t_displayMode.width = mode.w;
+
+                    // If we don't already have refreshrate saved add, or nothing saved add
+                    if(m_displayModes[dispIndex][t_displayMode].size() && m_displayModes[dispIndex][t_displayMode].back() != mode.refresh_rate)
+                    {
+                        m_displayModes[dispIndex][t_displayMode].push_back(mode.refresh_rate);
+                    }
+                    else
+                    {
+                        m_displayModes[dispIndex][t_displayMode].push_back(mode.refresh_rate);
+                    }
+                }
+            }
         }
 
         void DirectXManagerImpl::CreateBackBufferViews()
