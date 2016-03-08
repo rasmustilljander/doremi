@@ -92,7 +92,7 @@ namespace DoremiEngine
             ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
             // fill the swap chain description struct
-            scd.BufferCount = 1; // one back buffer
+            scd.BufferCount = 2; // one back buffer
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
             scd.BufferDesc.RefreshRate.Numerator = 60;
             scd.BufferDesc.RefreshRate.Denominator = 1;
