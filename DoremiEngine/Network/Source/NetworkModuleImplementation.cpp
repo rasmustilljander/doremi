@@ -9,6 +9,9 @@
 #error Platform not supported
 #endif
 
+//#define USE_TCP 1
+#define USE_UDP 1
+
 
 namespace DoremiEngine
 {
@@ -91,26 +94,34 @@ namespace DoremiEngine
                 return false;
             }
 
+#ifdef USE_TCP
             // Attempt to send data, returns true if all data is sent
             bool SendSuccessful = socketToSendTo->SendTCP(t_data, t_dataSize);
-
+#elif USE_UDP
+            // Attempt to send data, returns true if all data is sent
+            bool SendSuccessful = socketToSendTo->SendUDP(t_data, t_dataSize);
+#endif
             return SendSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket, uint32_t& p_dataSizeReceived)
+        bool NetworkModuleImplementation::ReceiveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_ReceiveFromSocket, uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
-            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocket);
+            Socket* socketToReceiveFrom = GetSocketFromMap(p_ReceiveFromSocket);
 
-            if(socketToRecieveFrom == nullptr)
+            if(socketToReceiveFrom == nullptr)
             {
                 return false;
             }
 
-            // Attempt to recieve data, returns true if all data is sent
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveTCP(t_data, t_dataSize, p_dataSizeReceived);
+#ifdef USE_TCP
+            // Attempt to Receive data, returns true if all data is sent
+            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveTCP(t_data, t_dataSize, p_dataSizeReceived);
+#elif USE_UDP
+            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveUDP(t_data, t_dataSize, p_dataSizeReceived);
+#endif
 
-            return RecieveSuccessful;
+            return ReceiveSuccessful;
         }
 
         bool NetworkModuleImplementation::SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo)
@@ -130,38 +141,38 @@ namespace DoremiEngine
             return SendSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle,
+        bool NetworkModuleImplementation::ReceiveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_ReceiveFromSocketHandle,
                                                                 Adress* p_AdressOut, uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
-            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
+            Socket* socketToReceiveFrom = GetSocketFromMap(p_ReceiveFromSocketHandle);
 
-            if(socketToRecieveFrom == nullptr)
+            if(socketToReceiveFrom == nullptr)
             {
                 return false;
             }
 
-            // Recieve data and fetch adress recieved from
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize, p_dataSizeReceived);
+            // Receive data and fetch adress Received from
+            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveUDP(*(AdressImplementation*)p_AdressOut, p_data, p_dataSize, p_dataSizeReceived);
 
-            return RecieveSuccessful;
+            return ReceiveSuccessful;
         }
 
-        bool NetworkModuleImplementation::RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle,
+        bool NetworkModuleImplementation::ReceiveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_ReceiveFromSocketHandle,
                                                                 uint32_t& p_dataSizeReceived)
         {
             // Get socket from map
-            Socket* socketToRecieveFrom = GetSocketFromMap(p_recieveFromSocketHandle);
+            Socket* socketToReceiveFrom = GetSocketFromMap(p_ReceiveFromSocketHandle);
 
-            if(socketToRecieveFrom == nullptr)
+            if(socketToReceiveFrom == nullptr)
             {
                 return false;
             }
 
-            // Recieve data from a bound socket
-            bool RecieveSuccessful = socketToRecieveFrom->RecieveUDP(p_data, p_dataSize, p_dataSizeReceived);
+            // Receive data from a bound socket
+            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveUDP(p_data, p_dataSize, p_dataSizeReceived);
 
-            return RecieveSuccessful;
+            return ReceiveSuccessful;
         }
 
         bool NetworkModuleImplementation::ConnectToReliable(const Adress* p_adressToConnectTo, size_t& o_socketHandle)
@@ -169,8 +180,12 @@ namespace DoremiEngine
             // TODOCM add try catch here, remove test code
             Socket* newSocket = new Socket();
 
+#ifdef USE_TCP
             // Create a socket and attempt connect it to a socket used for incomming
             bool r_connected = newSocket->CreateAndConnectTCPSocket(*(AdressImplementation*)p_adressToConnectTo);
+#elif USE_UDP
+            bool r_connected = newSocket->CreateAndConnectUDPSocket(*(AdressImplementation*)p_adressToConnectTo);
+#endif
 
             // Save socket to map
             std::hash<Socket*> HashMap;
@@ -188,9 +203,15 @@ namespace DoremiEngine
             // TODOCM add try catch here, remove test code
             Socket* newSocket = new Socket();
 
+#ifdef USE_TCP
             // Create a TCP socket used for incomming connections
             newSocket->CreateWaitingTCPSocket(*(AdressImplementation*)p_adressToConnectTo, p_maxWaitingConnections);
 
+#elif USE_UDP
+            // Create a UDP socket used for incomming connections
+            newSocket->CreateAndBindUDPSocket(*(AdressImplementation*)p_adressToConnectTo);
+
+#endif
             // Save socket to map
             std::hash<Socket*> HashMap;
             size_t key = HashMap(newSocket);
@@ -215,6 +236,9 @@ namespace DoremiEngine
             }
 
             // Out socket (instead of dynamically allocating every frame)
+            Socket* t_newSocket = nullptr;
+
+#ifdef USE_TCP
             SOCKET newSocketHandle;
 
             // Accept an incomming connection
@@ -222,12 +246,21 @@ namespace DoremiEngine
             {
                 return false;
             }
+            t_newSocket = new Socket(newSocketHandle);
+#elif USE_UDP
+            // Accept an incomming connection
+            if(!socketToAcceptFrom->AcceptUDPConnection(t_newSocket, *(AdressImplementation*)p_adressOut))
+            {
+                delete t_newSocket;
+                return false;
+            }
+
+#endif
 
             // Save socket to map
             std::hash<Socket*> HashMap;
-            Socket* newSocket = new Socket(newSocketHandle);
-            size_t key = HashMap(newSocket);
-            m_socketHandleMap[key] = newSocket;
+            size_t key = HashMap(t_newSocket);
+            m_socketHandleMap[key] = t_newSocket;
             p_outSocketID = key;
 
 
@@ -240,7 +273,7 @@ namespace DoremiEngine
             Socket* newSocket = new Socket();
 
             // Create a UDP socket used for incomming connections
-            newSocket->CreateUDPSocketToSendAndRecieve();
+            newSocket->CreateUDPSocketToSendAndReceive();
 
             // Save socket to map
             std::hash<Socket*> HashMap;

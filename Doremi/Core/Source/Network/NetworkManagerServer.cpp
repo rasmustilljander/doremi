@@ -70,10 +70,10 @@ namespace Doremi
 
         void NetworkManagerServer::ReceiveMessages()
         {
-            // For some incomming connecting recieved messages we send one
+            // For some incomming connecting Received messages we send one
             ReceiveConnectingMessages();
 
-            // Recieve connecting messages from connected clients
+            // Receive connecting messages from connected clients
             ReceiveConnectedMessages();
 
             // Receive messages from master
@@ -102,7 +102,7 @@ namespace Doremi
 
             // Check for incomming messages
             size_t t_NumOfMessagesReceived = 0;
-            while(t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_connectingSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
+            while(t_networkModule.ReceiveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_connectingSocketHandle, t_incommingAdress, t_dataSizeReceived) &&
                   ++t_NumOfMessagesReceived < m_maxConnectingMessagesPerFrame)
             {
                 // If we don't have of that size
@@ -113,8 +113,9 @@ namespace Doremi
                     continue;
                 }
 
-                std::cout << "Recieved unreliable messsage: "; // TODOCM logg instead
-                NetMessageServerClientConnectingFromClient& t_netMessageConnecting = *reinterpret_cast<NetMessageServerClientConnectingFromClient*>(&t_networkMessage);
+                std::cout << "Received unreliable messsage: "; // TODOCM logg instead
+                NetMessageServerClientConnectingFromClient& t_netMessageConnecting =
+                    *reinterpret_cast<NetMessageServerClientConnectingFromClient*>(&t_networkMessage);
                 // Switch on what kind of message
                 switch(t_netMessageConnecting.MessageID)
                 {
@@ -175,7 +176,7 @@ namespace Doremi
                     uint32_t t_dataSizeReceived = 0;
 
                     // While we have something to receive and still less then max messages per frame
-                    while(t_networkModule.RecieveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle, t_dataSizeReceived) &&
+                    while(t_networkModule.ReceiveReliableData(&t_message, sizeof(t_message), t_connection.second->ConnectedSocketHandle, t_dataSizeReceived) &&
                           ++t_messageCounter < m_maxConnectedMessagesPerFrame)
                     {
                         // If we received a correct message
@@ -247,7 +248,7 @@ namespace Doremi
 
             // Receive messages
             // TODOCM not sure if need to send in out adress here
-            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
+            while(t_networkModule.ReceiveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
                                                         t_connections->m_masterConnection.Adress, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {

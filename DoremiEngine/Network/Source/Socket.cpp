@@ -64,7 +64,7 @@ namespace DoremiEngine
             CreateTCPSocket();
 
             // Connect to adress
-            return ConnectSocket(p_connectAdress);
+            return ConnectTCPSocket(p_connectAdress);
         }
 
         bool Socket::AcceptTCPConnection(SOCKET& p_socketHandle, AdressImplementation& p_adress)
@@ -128,7 +128,44 @@ namespace DoremiEngine
             m_messageSize = MaxMessageSize;
         }
 
-        void Socket::CreateUDPSocketToSendAndRecieve()
+        bool Socket::CreateAndConnectUDPSocket(const AdressImplementation& p_connectAdress)
+        {
+            // Create Socket
+            CreateUDPSocket();
+
+            // Connect to adress
+            return ConnectUDPSocket(p_connectAdress);
+        }
+
+        bool Socket::AcceptUDPConnection(Socket* p_socket, AdressImplementation& p_adress)
+        {
+            SOCKADDR_IN Adress = {0};
+
+            int SizeOfAdress = sizeof(Adress);
+
+            uint32_t t_message = 0;
+            uint32_t t_dataSizeReceived = 0;
+
+            // Try recieve
+            if(!ReceiveUDP(p_adress, &t_message, sizeof(uint32_t), t_dataSizeReceived))
+            {
+                return false;
+            }
+
+            // Only create the socket if we receive something
+            p_socket = new Socket();
+            p_socket->CreateUDPSocketToSendAndReceive();
+
+            // Send response with new socket
+            t_message = UDP_RELIABLE_CONTROL_ID;
+            p_socket->SendUDP(p_adress, &t_message, sizeof(uint32_t));
+
+
+            // Return a socket used to send to later
+            return true;
+        }
+
+        void Socket::CreateUDPSocketToSendAndReceive()
         {
             // Create Socket
             CreateUDPSocket();
@@ -143,7 +180,7 @@ namespace DoremiEngine
             // Create socket
             CreateUDPSocket();
 
-            // Bind socket to recieve incomming
+            // Bind socket to Receive incomming
             BindSocket(p_myAdress);
 
             // Set socket to non blocking
@@ -175,13 +212,37 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
+        bool Socket::SendUDP(void* p_data, const uint32_t& p_dataSize)
+        {
+            // Check if message larger then max size of the connection
+            if(p_dataSize > m_messageSize)
+            {
+                // TODOCM Fix better message
+                throw std::runtime_error("Attempting to send too large message.");
+            }
+
+            int32_t Return = send(m_socketHandle, (char*)p_data, p_dataSize, 0);
+            if(Return == SOCKET_ERROR)
+            {
+                // Error cause of Socket is buissy in non-blocking mode, non-fatal error
+                int Error = WSAGetLastError();
+                if(Error != WSAEWOULDBLOCK)
+                {
+                    // TODOCM log message
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        bool Socket::ReceiveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
             SOCKADDR_IN Adress = {0};
 
             int AdressSize = sizeof(Adress);
 
-            // Attempt to recieve data from socket
+            // Attempt to Receive data from socket
             int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, (SOCKADDR*)&Adress, &AdressSize);
 
             p_dataSizeReceived = Return;
@@ -203,9 +264,9 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
+        bool Socket::ReceiveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
-            // Attempt to recieve data from socket
+            // Attempt to Receive data from socket
             int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, nullptr, nullptr);
 
             p_dataSizeReceived = Return;
@@ -252,9 +313,9 @@ namespace DoremiEngine
             return true;
         }
 
-        bool Socket::RecieveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
+        bool Socket::ReceiveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
         {
-            // Attempt to recieve data from socket
+            // Attempt to Receive data from socket
             int32_t Return = recv(m_socketHandle, (char*)p_data, p_dataSize, 0);
 
             p_dataSizeReceived = Return;
@@ -298,7 +359,7 @@ namespace DoremiEngine
             }
         }
 
-        bool Socket::ConnectSocket(const AdressImplementation& p_connectAdress)
+        bool Socket::ConnectTCPSocket(const AdressImplementation& p_connectAdress)
         {
             // Attempt to connect to another socket with the IP and port specified
             int32_t Result = connect(m_socketHandle, (SOCKADDR*)&p_connectAdress.GetAdress(), sizeof(SOCKADDR));
@@ -318,6 +379,68 @@ namespace DoremiEngine
                 throw std::runtime_error("Failed setting TCP to non blocking.");
             }
             return true;
+        }
+
+        bool Socket::ConnectUDPSocket(const AdressImplementation& p_connectAdress)
+        {
+            // While we succeed sending a message
+            uint32_t p_Message = UDP_RELIABLE_CONTROL_ID;
+
+            // Do this until send.. may cause deadlock
+            uint32_t t_numTimes = 0;
+            while(!SendUDP(p_connectAdress, &p_Message, sizeof(uint32_t)))
+            {
+                // If we fail sending a few times.. we give up
+                t_numTimes++;
+                if(t_numTimes > 100)
+                {
+                    return false;
+                }
+            }
+
+            // Set our timeout
+            timeval tv;
+            tv.tv_sec = 0;
+            tv.tv_usec = 1000000; // 1000 ms
+
+            uint32_t Result = setsockopt(m_socketHandle, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+            if(Result == SOCKET_ERROR)
+            {
+                throw std::runtime_error("Failed setting TCP to non blocking.");
+            }
+
+            p_Message = 0;
+            uint32_t t_dataSizeReceived = 0;
+
+            AdressImplementation* t_newAdress = new AdressImplementation();
+
+            // Wait for receive
+            if(ReceiveUDP(*t_newAdress, &p_Message, sizeof(uint32_t), t_dataSizeReceived))
+            {
+                if(t_dataSizeReceived == sizeof(uint32_t))
+                {
+                    if(p_Message == UDP_RELIABLE_CONTROL_ID)
+                    {
+                        SetNonBlocking();
+
+                        int32_t Result = connect(m_socketHandle, (SOCKADDR*)&(t_newAdress->GetAdress()), sizeof(SOCKADDR));
+                        if(Result == SOCKET_ERROR)
+                        {
+                            throw std::runtime_error("Failed setting TCP to non blocking.");
+                        }
+
+                        delete t_newAdress;
+
+                        return true;
+                    }
+                }
+            }
+
+            std::cout << "Failed connect UDP" << std::endl;
+
+            delete t_newAdress;
+
+            return false;
         }
     }
 }

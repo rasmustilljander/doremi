@@ -29,9 +29,9 @@ namespace DoremiEngine
 
             Unreliable flow
             Server: CreateUnreliableWaitingSocket
-            Client: CreteUnreliableSocket SendUnreliableData(have to use this befor Recieve because background operation on socket)
+            Client: CreteUnreliableSocket SendUnreliableData(have to use this befor Receive because background operation on socket)
 
-            Then SendUnreliableData/RecieveUnreliableData
+            Then SendUnreliableData/ReceiveUnreliableData
         */
         class NetworkModule : public DoremiEngine::Core::EngineModule
         {
@@ -67,9 +67,9 @@ namespace DoremiEngine
             virtual bool SendReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_sendToSocket) = 0;
 
             /**
-                Recieve data from a specified socket, returns true if successful
+                Receive data from a specified socket, returns true if successful
             */
-            virtual bool RecieveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_recieveFromSocket, uint32_t& p_dataSizeReceived) = 0;
+            virtual bool ReceiveReliableData(void* t_data, const uint32_t& t_dataSize, const size_t& p_ReceiveFromSocket, uint32_t& p_dataSizeReceived) = 0;
 
             /**
                 Send data to a specific socket with adress, returns true if successfull
@@ -77,15 +77,15 @@ namespace DoremiEngine
             virtual bool SendUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_sendToSocketHandle, const Adress* p_adressToSendTo) = 0;
 
             /**
-                Recieve data from a specific socket, Adress is fetched and returns true if successfull
+                Receive data from a specific socket, Adress is fetched and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, Adress* p_AdressOut,
+            virtual bool ReceiveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_ReceiveFromSocketHandle, Adress* p_AdressOut,
                                                uint32_t& p_dataSizeReceived) = 0;
 
             /**
-                Recieve data from a specific socket and returns true if successfull
+                Receive data from a specific socket and returns true if successfull
             */
-            virtual bool RecieveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_recieveFromSocketHandle, uint32_t& p_dataSizeReceived) = 0;
+            virtual bool ReceiveUnreliableData(void* p_data, const uint32_t& p_dataSize, const size_t& p_ReceiveFromSocketHandle, uint32_t& p_dataSizeReceived) = 0;
 
             /**
                 Create a socket and connects to a reliable standby socket
@@ -93,7 +93,7 @@ namespace DoremiEngine
             virtual bool ConnectToReliable(const Adress* p_adressToConnectTo, size_t& o_socketHandle) = 0;
 
             /**
-                Create a socket in standby, which will be able to recieve reliable connections
+                Create a socket in standby, which will be able to Receive reliable connections
             */
             virtual size_t CreateReliableConnection(const Adress* p_adressToConnectTo, uint8_t p_maxWaitingConnections) = 0;
 
@@ -103,13 +103,13 @@ namespace DoremiEngine
             virtual bool AcceptConnection(size_t p_socketID, size_t& p_outSocketID, Adress* p_adressOut) = 0;
 
             /**
-                Creates a socket to use recieve/send, need to use SendUnreliableData first to be able to use RecieveUnreliableData from a specific
+                Creates a socket to use Receive/send, need to use SendUnreliableData first to be able to use ReceiveUnreliableData from a specific
                adress
             */
             virtual size_t CreateUnreliableSocket() = 0;
 
             /**
-                Create a socket in standby, which will be able to recieve unreliable incomming messages
+                Create a socket in standby, which will be able to Receive unreliable incomming messages
             */
             virtual size_t CreateUnreliableWaitingSocket(const Adress* p_adressToConnectTo) = 0;
 

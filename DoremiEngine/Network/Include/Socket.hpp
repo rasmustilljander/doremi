@@ -12,6 +12,9 @@
 #error Platform not supported
 #endif
 
+#define CONNECTION_PROTOCOL_ID 0
+#define UDP_RELIABLE_CONTROL_ID 39085430
+
 namespace DoremiEngine
 {
     namespace Network
@@ -45,6 +48,17 @@ namespace DoremiEngine
             bool CreateAndConnectTCPSocket(const AdressImplementation& p_connectAdress);
 
             /**
+                Create a UDP socket and connect to an adress
+            */
+            bool CreateAndConnectUDPSocket(const AdressImplementation& p_connectAdress);
+
+
+            /**
+                Accept a UDP connection
+            */
+            bool AcceptUDPConnection(Socket* p_socket, AdressImplementation& p_adress);
+
+            /**
                 Accept a TCP connection if CreateWaitingTCPSocket is called
             */
             bool AcceptTCPConnection(SOCKET& p_socketHandle, AdressImplementation& p_adress);
@@ -52,7 +66,7 @@ namespace DoremiEngine
             /**
                 Creates a UDP socket needed to use SendTo function first to function
             */
-            void CreateUDPSocketToSendAndRecieve();
+            void CreateUDPSocketToSendAndReceive();
 
             /**
                 Creates a UDP socket used for incomming incomming messages
@@ -64,15 +78,17 @@ namespace DoremiEngine
             */
             bool SendUDP(const AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize);
 
-            /**
-                Recieve data using UDP and fetch adress
-            */
-            bool RecieveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
+            bool SendUDP(void* p_data, const uint32_t& p_dataSize);
 
             /**
-                Recieve data using UDP to bound socket
+                Receive data using UDP and fetch adress
             */
-            bool RecieveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
+            bool ReceiveUDP(AdressImplementation& p_Adress, void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
+
+            /**
+                Receive data using UDP to bound socket
+            */
+            bool ReceiveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
             /**
                 Send data to socket
@@ -80,9 +96,9 @@ namespace DoremiEngine
             bool SendTCP(void* p_data, const uint32_t& p_dataSize);
 
             /**
-                Recieve data from socket
+                Receive data from socket
             */
-            bool RecieveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
+            bool ReceiveTCP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
         private:
             /**
@@ -95,20 +111,25 @@ namespace DoremiEngine
             */
             void CreateUDPSocket();
 
+
             /**
                 Bind TCP socket to incomming connections
             */
             void BindSocket(const AdressImplementation& p_adress);
 
             /**
-                Set Socket to not Block on Recieve calls
+                Set Socket to not Block on Receive calls
             */
             void SetNonBlocking();
+
 
             /**
                 Connect socket to adress
             */
-            bool ConnectSocket(const AdressImplementation& p_connectAdress);
+            bool ConnectTCPSocket(const AdressImplementation& p_connectAdress);
+
+            bool ConnectUDPSocket(const AdressImplementation& p_connectAdress);
+
 
             /**
                 Socket handle used for API calls

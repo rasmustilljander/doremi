@@ -76,11 +76,11 @@ namespace Doremi
 
             // Check for incomming messages
             size_t t_NumOfMessagesReceived = 0;
-            while (t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_socketHandle, t_incommingAdress, t_dataSizeReceived) &&
-                ++t_NumOfMessagesReceived < m_maxClientMessagesPerFrame)
+            while(t_networkModule.ReceiveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_socketHandle, t_incommingAdress, t_dataSizeReceived) &&
+                  ++t_NumOfMessagesReceived < m_maxClientMessagesPerFrame)
             {
                 // If we don't have of that size
-                if (t_dataSizeReceived != sizeof(NetMessageMasterClientFromClient))
+                if(t_dataSizeReceived != sizeof(NetMessageMasterClientFromClient))
                 {
                     // Null message and conitinue
                     t_networkMessage = NetMessageMasterClientFromClient();
@@ -147,11 +147,11 @@ namespace Doremi
 
             // Check for incomming messages
             size_t t_NumOfMessagesReceived = 0;
-            while (t_networkModule.RecieveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_socketHandle, t_incommingAdress, t_dataSizeReceived) &&
-                ++t_NumOfMessagesReceived < m_maxClientMessagesPerFrame)
+            while(t_networkModule.ReceiveUnreliableData(&t_networkMessage, sizeof(t_networkMessage), t_socketHandle, t_incommingAdress, t_dataSizeReceived) &&
+                  ++t_NumOfMessagesReceived < m_maxClientMessagesPerFrame)
             {
                 // If we don't have of that size
-                if (t_dataSizeReceived != sizeof(NetMessageMasterServerFromServer))
+                if(t_dataSizeReceived != sizeof(NetMessageMasterServerFromServer))
                 {
                     // Null message and conitinue
                     t_networkMessage = NetMessageMasterServerFromServer();

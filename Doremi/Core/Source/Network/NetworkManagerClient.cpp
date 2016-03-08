@@ -115,7 +115,7 @@ namespace Doremi
 
             // Receive messages
             // TODOCM not sure if need to send in out adress here
-            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle,
+            while(t_networkModule.ReceiveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_serverConnectingSocketHandle,
                                                         t_connections->m_serverConnection.ConnectingAdress, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
@@ -183,7 +183,7 @@ namespace Doremi
             uint32_t t_numOfMessages = 0;
 
             // Try receive messages
-            while(t_networkModule.RecieveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnection.ConnectedSocketHandle, t_dataSizeReceived) &&
+            while(t_networkModule.ReceiveReliableData(&t_newMessage, sizeof(t_newMessage), t_connections->m_serverConnection.ConnectedSocketHandle, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectedMessagesPerFrame)
             {
                 // If wrong size of message
@@ -249,7 +249,7 @@ namespace Doremi
 
             // Receive messages
             // TODOCM not sure if need to send in out adress here
-            while(t_networkModule.RecieveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
+            while(t_networkModule.ReceiveUnreliableData(&t_newMessage, sizeof(t_newMessage), t_masterConnectingSocketHandle,
                                                         t_connections->m_masterConnection.Adress, t_dataSizeReceived) &&
                   ++t_numOfMessages < m_maxConnectingMessagesPerFrame)
             {
