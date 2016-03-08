@@ -59,11 +59,6 @@ namespace Doremi
                 void SetupVariables();
                 void ResetMetaData();
 
-                void ComputeBufferLocationForProduce(const uint32_t& p_requestedSize, const uint32_t& currentlyAvailableSpace, bool& o_headerAtEnd, bool& o_dataAtEnd);
-
-                // TODORT can be moved to utility
-                static bool CheckIfBothIsTrueOrBothIsFalse(bool a, bool b) { return (a == b); }
-
                 ArbitraryStaticData* m_data;
                 void* m_rawBufferPointerStart;
                 void* m_rawBufferPointerEnd;

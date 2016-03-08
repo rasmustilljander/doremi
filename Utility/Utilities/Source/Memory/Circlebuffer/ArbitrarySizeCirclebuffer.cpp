@@ -56,68 +56,6 @@ namespace Doremi
                 SetupVariables();
             }
 
-            void ArbitrarySizeCirclebuffer::ComputeBufferLocationForProduce(const uint32_t& p_requestedSize, const uint32_t& currentlyAvailableSpace,
-                                                                            bool& o_headerAtEnd, bool& o_dataAtEnd)
-            {
-                // Fetch the location of the current head
-                void* workingHead = PointerArithmetic::Addition(m_adjustedBufferPointerStart, m_data->currentHeadOffset);
-
-                // Compute the size of the memory between the head and the end.
-                const uint32_t sizeBetweenHeadAndEnd = PointerArithmetic::Difference(workingHead, m_adjustedBufferPointerEnd);
-
-                // Check if everything can be placed easily in the end.
-                if(p_requestedSize <= sizeBetweenHeadAndEnd)
-                {
-                    //// Everything can fit at the end
-                    o_headerAtEnd = true;
-                    o_dataAtEnd = true;
-                }
-                else
-                {
-                    //// Specialcase, find if possible to split package with metaheaderpackage at end and data in front or both in front.
-
-                    // Compute the available data in the front
-                    const uint32_t availableSpaceAtFront = currentlyAvailableSpace - sizeBetweenHeadAndEnd;
-
-                    // Check if at least metaheader can be placed in the end.
-                    if(sizeof(CircleBufferHeader) < sizeBetweenHeadAndEnd)
-                    {
-                        //// Header can be placed in the end
-                        o_headerAtEnd = true;
-
-                        // Check if data can be placed in front
-                        const uint32_t dataSize = p_requestedSize - sizeof(CircleBufferHeader);
-                        if(dataSize < availableSpaceAtFront)
-                        {
-                            //// Data can be placed in the front
-                            o_dataAtEnd = false;
-                        }
-                        else
-                        {
-                            const std::string errorMessage = std::string("Not enough space in the buffer.");
-                            throw std::runtime_error(errorMessage);
-                        }
-                    }
-                    else
-                    {
-                        //// Header could not be placed in the end
-
-                        // Check if everything can be placed in the front
-                        if(p_requestedSize <= availableSpaceAtFront)
-                        {
-                            //// Everything fits in the front
-                            o_headerAtEnd = false;
-                            o_dataAtEnd = false;
-                        }
-                        else
-                        {
-                            const std::string errorMessage = std::string("Not enough space in the buffer.");
-                            throw std::runtime_error(errorMessage);
-                        }
-                    }
-                }
-            }
-
             void ArbitrarySizeCirclebuffer::Produce(const CircleBufferHeader& p_Header, const void* const p_data)
             {
                 // Internal lockage
