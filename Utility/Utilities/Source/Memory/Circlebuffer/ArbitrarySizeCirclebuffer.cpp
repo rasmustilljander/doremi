@@ -98,7 +98,7 @@ namespace Doremi
                 const uint32_t requestedSize = sizeof(CircleBufferHeader) + p_Header.packageSize;
                 if(currentlyAvailableSpace < requestedSize)
                 {
-                    printf("Not enough space in circlebuffer. Size of produce request %d. This buffer only have access to %", requestedSize, currentlyAvailableSpace);
+                    printf("Not enough space in circlebuffer. Size of produce request %d. This buffer only have access to %d", requestedSize, currentlyAvailableSpace);
                     return false;
                 }
 
