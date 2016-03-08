@@ -16,6 +16,9 @@ namespace Doremi
         ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer)
             : m_camera(p_camera), m_distanceFromPlayer(p_distanceFromPlayer)
         {
+            m_acctualPosition = m_camera->GetCameraPosition();
+            m_acctualFocus = m_acctualPosition;
+            m_interpolationSpeed = 0.3; // TODOCONFIG
         }
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
@@ -46,26 +49,33 @@ namespace Doremi
             XMVECTOR forward = XMLoadFloat3(&XMFLOAT3(0, 0, 1)); // Standard forward vector
             forward = XMVector3Rotate(forward, quater); // Rotate forward vector with player orientation TODOKO Should maybe disregard some rotations?
             forward = XMVector3Normalize(forward);
-            // XMVECTOR right = XMVector3Cross(forward, up);
-
-            // XMVECTOR specialRot = XMQuaternionRotationAxis(right, m_angle);
-            //// XMQuaternionMultiply(quater, specialRot) is total rotation in one quternion
-            // forward = XMVector3Rotate(forward, specialRot); // Rotate forward vector with angle around local x vector
-            // forward = XMVector3Normalize(forward);
 
             XMVECTOR cameraPosition = position - forward * m_distanceFromPlayer;
             realUp = XMVector3Normalize(realUp);
+
+
+            XMVECTOR focus = position + realUp * 4;
             cameraPosition += realUp * 4; // Set offset in Y TODOCONFIG
 
-            XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, position + realUp * 4, up)); // TODOCONFIG
-            // XMVECTOR forwardQuater = XMQuaternionRotationNormal(forward,0);
+            cameraPosition = XMVectorLerp(XMLoadFloat3(&m_acctualPosition), cameraPosition, m_interpolationSpeed);
+            focus = XMVectorLerp(XMLoadFloat3(&m_acctualFocus), focus, m_interpolationSpeed);
+
+            XMVECTOR cameraDirection = XMVector3Normalize(cameraPosition - focus);
+            cameraPosition = focus + cameraDirection * m_distanceFromPlayer;
+
+
+            XMMATRIX wantedMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, focus, up));
+            XMVECTOR cameraWantedRotation = XMQuaternionRotationMatrix(wantedMatrix);
+
             XMFLOAT4X4 viewMat;
-            XMStoreFloat4x4(&viewMat, worldMatrix);
+            XMStoreFloat4x4(&viewMat, wantedMatrix);
             m_camera->SetViewMatrix(viewMat);
             XMFLOAT3 t_camPos;
             XMStoreFloat3(&t_camPos, cameraPosition);
 
             m_camera->SetCameraPosition(t_camPos);
+            XMStoreFloat3(&m_acctualPosition, cameraPosition);
+            XMStoreFloat3(&m_acctualFocus, focus);
         }
 
         void ThirdPersonCamera::UpdateInput(const double& p_dt) {}

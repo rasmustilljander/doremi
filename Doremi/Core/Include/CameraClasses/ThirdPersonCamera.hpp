@@ -23,12 +23,16 @@ namespace Doremi
             void UpdateInput(const double& p_dt);
             DoremiEngine::Graphic::Camera& GetCamera() const { return *m_camera; }
         private:
-            // Help functions
             DoremiEngine::Graphic::Camera* m_camera;
             float m_angle;
             float m_distanceFromPlayer;
             float m_maxAngle;
             float m_minAngle;
+
+            // Used to interpolate to wanted view matrix
+            float m_interpolationSpeed;
+            DirectX::XMFLOAT3 m_acctualPosition;
+            DirectX::XMFLOAT3 m_acctualFocus;
         };
     }
 }
