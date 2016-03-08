@@ -76,6 +76,9 @@
 #include <chrono>
 #include <iostream>
 
+#include <Windows.h>
+#include <Psapi.h>
+
 namespace Doremi
 {
     using namespace Core;
@@ -215,6 +218,12 @@ namespace Doremi
 
         t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
 
+        //// startup memory leak tracker
+        // PROCESS_MEMORY_COUNTERS_EX pmc;
+        // GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+        // m_lastMemory = pmc.PrivateUsage;
+
+
         ServerStates state = ServerStates::LOBBY;
         while(state != ServerStates::EXIT)
         {
@@ -240,6 +249,35 @@ namespace Doremi
         }
     }
 
+    void ServerMain::TrackMemoryLeak(std::string p_name, bool shouldStart)
+    {
+        PROCESS_MEMORY_COUNTERS_EX pmc;
+        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+        SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+        static int counter = 0;
+        counter++;
+
+
+        if(!shouldStart)
+        {
+            m_lastMemory = virtualMemUsedByMe;
+            return;
+        }
+
+        // if already exist
+        if(m_memoryLeakFromString.count(p_name))
+        {
+            m_memoryLeakFromString[p_name] += virtualMemUsedByMe - m_lastMemory;
+            m_memoryLeakFromStringDelta[p_name] = virtualMemUsedByMe - m_lastMemory;
+        }
+        else
+        {
+            m_memoryLeakFromString[p_name] = virtualMemUsedByMe - m_lastMemory;
+            m_memoryLeakFromStringDelta[p_name] = virtualMemUsedByMe - m_lastMemory;
+        }
+        m_lastMemory = virtualMemUsedByMe;
+    }
+
     void ServerMain::UpdateGame(double p_deltaTime)
     {
         FUNCTION_TIMER
@@ -254,12 +292,32 @@ namespace Doremi
 
         Core::PlayerHandler::GetInstance()->Update(p_deltaTime);
 
+        //// Track memory leak
+        // PlayerHandlerServer* t_playerHandler = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance());
+        // bool shouldStart = false;
+        // static uint32_t counter = 0;
+        // if(t_playerHandler->GetPlayerMap().size() != 0)
+        //{
+        //    counter++;
+        //    if (counter > 60*5) // 5 seconds
+        //    {
+        //        shouldStart = true;
+        //    }
+        //}
+        //
+
+        //// Track memory leak
+        // TrackMemoryLeak("Basic", shouldStart);
+
         const size_t length = m_managers.size();
         for(size_t i = 0; i < length; i++)
         {
             const std::string& name = m_managers.at(i)->GetName();
             NAMED_TIMER(name);
             m_managers.at(i)->Update(p_deltaTime);
+
+            // Track memory leak
+            // TrackMemoryLeak(m_managers.at(i)->GetName(), shouldStart);
         }
     }
 

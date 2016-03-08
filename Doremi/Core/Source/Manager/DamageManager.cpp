@@ -38,7 +38,7 @@ namespace Doremi
         DamageManager::~DamageManager() {}
         void DamageManager::Update(double p_dt)
         {
-            std::map<uint32_t, PlayerServer*> t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
+            std::map<uint32_t, PlayerServer*>& t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Check if the player was hit by any enemy bullet
@@ -91,6 +91,7 @@ namespace Doremi
                     EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
                 }
             }
+
             // We need this set to ensure that a bullet that hits multiple targets isnt removed twice
             std::set<int> removedBullets;
             for(size_t i = 0; i < length; i++)
@@ -106,7 +107,8 @@ namespace Doremi
                     // The bullet did hit multiple targets but have already been removed, do nothing.
                 }
             }
-
+            t_bulletPairs.clear();
+            removedBullets.clear();
 
             // Check if the player hit any enemies
             // Look through our entities for the enemies
@@ -148,6 +150,7 @@ namespace Doremi
                 DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(pairs.second, pairs.first);
                 EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
             }
+            damageMap.clear();
         }
         void DamageManager::OnEvent(Event* p_event)
         {

@@ -51,7 +51,7 @@ namespace Doremi
             int updatedActors = 0;
             int lastUpdatedActor = 0;
             // gets all the players in the world, used to see if we can see anyone of them
-            std::map<uint32_t, PlayerServer*> t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
+            std::map<uint32_t, PlayerServer*>& t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 

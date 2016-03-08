@@ -1,6 +1,8 @@
 #pragma once
 #include <Doremi/Core/Include/GameCore.hpp>
 #include <vector>
+#include <map>
+#include <Windows.h>
 
 namespace Doremi
 {
@@ -52,6 +54,8 @@ namespace Doremi
         */
         void Run();
 
+        void TrackMemoryLeak(std::string p_name, bool shouldStart);
+
         /**
             TODOCM doc
         */
@@ -61,5 +65,10 @@ namespace Doremi
             TOODCM doc
         */
         std::vector<Core::Manager*> m_managers;
+        // Track memory leak
+        std::map<std::string, SSIZE_T> m_memoryLeakFromStringDelta;
+        std::map<std::string, SSIZE_T> m_memoryLeakFromString;
+
+        SSIZE_T m_lastMemory;
     };
 }
