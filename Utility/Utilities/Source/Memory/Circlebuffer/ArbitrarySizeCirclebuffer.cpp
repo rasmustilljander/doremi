@@ -98,7 +98,9 @@ namespace Doremi
                 const uint32_t requestedSize = sizeof(CircleBufferHeader) + p_Header.packageSize;
                 if(currentlyAvailableSpace < requestedSize)
                 {
+#ifdef _DEBUG
                     printf("Not enough space in circlebuffer. Size of produce request %d. This buffer only have access to %d", requestedSize, currentlyAvailableSpace);
+#endif
                     return false;
                 }
 
@@ -123,7 +125,9 @@ namespace Doremi
                     }
                     else
                     {
+#ifdef _DEBUG
                         printf("Metaheader fits within the first part, but datapackage does not fit anywhere.");
+#endif
                         return false;
                     }
                 }
@@ -140,13 +144,17 @@ namespace Doremi
                     }
                     else
                     {
+#ifdef _DEBUG
                         printf("Metaheader fits within second part, but not packagedata.");
+#endif
                         return false;
                     }
                 }
                 else
                 {
+#ifdef _DEBUG
                     printf("Nothing fits");
+#endif
                     return false;
                 }
 
