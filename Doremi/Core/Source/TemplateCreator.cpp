@@ -641,6 +641,7 @@ namespace Doremi
             // Character Controller
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
             charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->flags = CharacterControlFlags::drain;
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
@@ -748,6 +749,7 @@ namespace Doremi
             // Controller component
             CharacterControlComponent* charControlComp = new CharacterControlComponent();
             charControlComp->dims = XMFLOAT2(3, 1.5);
+            charControlComp->flags = CharacterControlFlags::drain;
             t_avatarBlueprint[ComponentType::CharacterController] = charControlComp;
 
             // Player component
