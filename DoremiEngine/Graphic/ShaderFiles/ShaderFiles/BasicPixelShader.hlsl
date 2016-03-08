@@ -1,4 +1,7 @@
+#define BLOCK_SIZE 32
 #define NUM_LIGHTS 500
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 struct PixelInputType
 {
@@ -157,12 +160,12 @@ PixelOutputType PS_main(PixelInputType input)
 {
     PixelOutputType output;
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
-    screenPos.y = (-screenPos.y + 1) * 360;
-    screenPos.x = (screenPos.x + 1) * 640;
+    screenPos.y = (-screenPos.y + 1) * SCREEN_HEIGHT / 2;
+    screenPos.x = (screenPos.x + 1) * SCREEN_WIDTH / 2;
 
     //calculate which thread group this pixel was in the compute shader stage
-    float2 groupID2 = float2((int)screenPos.x / 16, (int)screenPos.y / 16);
-    float groupID = groupID2.x + (groupID2.y * 80);
+    float2 groupID2 = float2((int)(screenPos.x / BLOCK_SIZE), (int)(screenPos.y / BLOCK_SIZE));
+    float groupID = groupID2.x + groupID2.y * (SCREEN_WIDTH / BLOCK_SIZE);
     //extract data from light grid
     int index = o_LightGrid[groupID].offset;
     int value = o_LightGrid[groupID].value;

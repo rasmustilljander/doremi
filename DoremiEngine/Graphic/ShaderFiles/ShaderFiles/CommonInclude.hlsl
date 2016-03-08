@@ -1,7 +1,7 @@
+#define BLOCK_SIZE 32
 #define NUM_LIGHTS 500
-#define BLOCK_SIZE 16
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 struct Material
 {
@@ -27,6 +27,12 @@ struct Light
     float3 position;
     int enabled;
     float3 pad;
+};
+
+struct LightGridInfo
+{
+    uint offset;
+    uint value;
 };
 
 struct ComputeShaderInput
@@ -70,7 +76,7 @@ cbuffer CameraMatrixBuffer : register(b0)
 
 cbuffer LightInfo : register(b1)
 {
-    Light lights[NUM_LIGHTS];
+    Light light[NUM_LIGHTS];
 };
 
 struct Frustum

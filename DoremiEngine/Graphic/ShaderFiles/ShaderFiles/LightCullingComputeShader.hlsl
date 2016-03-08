@@ -1,12 +1,5 @@
 #include "CommonInclude.hlsl"
 
-// Precomputed frustums for the grid.
-struct LightGridInfo
-{
-    uint offset;
-    uint value;
-};
-
 // Global counter for current index into the light index list.
 // "o_" prefix indicates light lists for opaque geometry while 
 // "t_" prefix indicates light lists for transparent geometry.
@@ -23,8 +16,6 @@ RWStructuredBuffer<uint> t_LightIndexCounter : register(u1);
 
 RWStructuredBuffer<uint> o_LightIndexList : register(u2);
 RWStructuredBuffer<uint> t_LightIndexList : register(u3);
-//RWTexture2D<uint2> o_LightGrid : register(u5);
-//RWTexture2D<uint2> t_LightGrid : register(u6);
 RWStructuredBuffer<LightGridInfo> o_LightGrid : register(u4);
 RWStructuredBuffer<LightGridInfo> t_LightGrid : register(u5);
 RWTexture2D<float4> backbuffer : register(u6);
@@ -73,7 +64,7 @@ void t_AppendLight(uint lightIndex)
 void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
-    uint3 numThreadGroups = uint3(80, 45, 1);
+    uint3 numThreadGroups = uint3(ceil(SCREEN_WIDTH / BLOCK_SIZE), ceil(SCREEN_HEIGHT / BLOCK_SIZE), 1);
     uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 
     // Calculate min & max depth in threadgroup / tile.
@@ -122,14 +113,14 @@ void CS_main(ComputeShaderInput input)
     // Each thread in a group will cull 1 light until all lights have been culled.  
     for (i = input.groupIndex; i < NUM_LIGHTS; i += BLOCK_SIZE * BLOCK_SIZE)
     {
-        if (lights[i].enabled)
+        if (light[i].enabled)
         {
-            Light light = lights[i];
+            Light l = light[i];
 
-            switch (light.type)
+            switch (l.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(float4(light.position, 1), viewMatrix).xyz, light.intensity * 10.f}; //TODORK change intensity to light range 25
+                Sphere sphere = { mul(float4(l.position, 1), viewMatrix).xyz, l.intensity * 10.f}; //TODORK change intensity to light range 25
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.

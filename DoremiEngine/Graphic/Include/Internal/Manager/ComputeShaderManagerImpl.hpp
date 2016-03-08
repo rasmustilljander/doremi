@@ -1,7 +1,6 @@
 #pragma once
 
-#define NUM_THREAD_BLOCKS 3600
-#define NUM_THREADS 921600
+#define NUM_THREAD_BLOCKS 2040
 
 #include <Interface/Manager/ComputeShaderManager.hpp>
 #include <Internal/Light/LightInfoImpl.hpp>
@@ -27,7 +26,7 @@ namespace DoremiEngine
         struct LightIndexListBuffer
         {
             // std::vector<unsigned int> lightIndexList;
-            unsigned int LightIndexList[NUM_THREAD_BLOCKS * 200];
+            unsigned int LightIndexList[NUM_THREAD_BLOCKS * 100];
         };
 
         struct LightGridInfo
@@ -102,6 +101,8 @@ namespace DoremiEngine
             ComputeShader* m_cullingShader;
             ComputeShader* m_blurHoriShader;
             ComputeShader* m_blurVertShader;
+
+            int BLOCK_SIZE = 32;
         };
     }
 }

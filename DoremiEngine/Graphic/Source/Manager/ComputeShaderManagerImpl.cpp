@@ -22,9 +22,6 @@ namespace DoremiEngine
             m_tLightGrid = new LightGridBuffer();
             m_deviceContext = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetDeviceContext();
             DirectX::XMFLOAT2 screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
-            // m_oLightIndexList->lightIndexList.resize(screenRes.x / 16 * screenRes.y / 16 * 200); //Average of 200 lights per tile, TODORK change to
-            // more appropriate value later
-            // m_tLightIndexList->lightIndexList.resize(screenRes.x / 16 * screenRes.y / 16 * 200);
 
             CreateComputeShaders();
             SetUAV(BufferType::FRUSTUM);
@@ -188,7 +185,8 @@ namespace DoremiEngine
             m_deviceContext->CSSetShaderResources(0, 1, &m_srv[BufferType::FRUSTUM]);
 
 
-            m_deviceContext->Dispatch(80, 45, 1);
+            DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
+            m_deviceContext->Dispatch(ceil(t_screenRes.x / BLOCK_SIZE), ceil(t_screenRes.y / BLOCK_SIZE), 1);
 
             // Clear UAV and SRV
             m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
