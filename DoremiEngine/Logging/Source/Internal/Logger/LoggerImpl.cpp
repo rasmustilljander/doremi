@@ -138,14 +138,21 @@ namespace DoremiEngine
         void LoggerImpl::LogTextReal(const std::string& p_function, const uint16_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
                                      const char* p_format, ...)
         {
-#ifdef NO_LOGGER
-            return;
-#endif
             using namespace Doremi::Utilities::Logging;
             using namespace Doremi::Utilities;
             // Build a string from va_list
             va_list args;
             va_start(args, p_format);
+            if(p_logLevel != LogLevel::MASS_DATA_PRINT)
+            {
+                printf("[%s:%s] ", LogTagConverter::convert(p_logTag).name.c_str(), LogLevelConverter::convert(p_logLevel).name.c_str());
+                vprintf(p_format, args);
+                printf("\n");
+            }
+#ifdef NO_LOGGER
+            va_end(args);
+            return;
+#endif
             std::string message;
             String::toString(message, p_format, args);
             va_end(args);
