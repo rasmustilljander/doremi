@@ -18,7 +18,7 @@ namespace Doremi
         class EntitySpawnManager : public Manager, public Subscriber
         {
         public:
-            EntitySpawnManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit EntitySpawnManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~EntitySpawnManager();
             void Update(double p_dt) override;
             void OnEvent(Event* p_event) override;

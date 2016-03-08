@@ -9,7 +9,7 @@ namespace Doremi
         class JumpManager : public Manager, public Subscriber
         {
         public:
-            JumpManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit JumpManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~JumpManager();
 
             /**

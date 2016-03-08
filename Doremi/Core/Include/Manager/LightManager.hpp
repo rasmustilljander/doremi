@@ -9,7 +9,7 @@ namespace Doremi
         class LightManager : public Manager, public Subscriber
         {
         public:
-            LightManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LightManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~LightManager();
 
             /**

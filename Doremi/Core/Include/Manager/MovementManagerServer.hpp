@@ -13,7 +13,7 @@ namespace Doremi
         class MovementManagerServer : public Manager, public Subscriber
         {
         public:
-            MovementManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit MovementManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~MovementManagerServer();
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton

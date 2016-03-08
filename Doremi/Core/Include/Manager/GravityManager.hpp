@@ -9,7 +9,7 @@ namespace Doremi
         class GravityManager : public Manager, public Subscriber
         {
         public:
-            GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit GravityManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GravityManager();
 
             /**

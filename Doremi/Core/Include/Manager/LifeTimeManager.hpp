@@ -8,7 +8,7 @@ namespace Doremi
         class LifeTimeManager : public Manager
         {
         public:
-            LifeTimeManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LifeTimeManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~LifeTimeManager();
             void Update(double p_dt) override;
         };

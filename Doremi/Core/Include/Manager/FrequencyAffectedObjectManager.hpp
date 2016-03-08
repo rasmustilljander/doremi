@@ -16,7 +16,7 @@ namespace Doremi
         class FrequencyAffectedObjectManager : public Manager
         {
         public:
-            FrequencyAffectedObjectManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit FrequencyAffectedObjectManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~FrequencyAffectedObjectManager();
             void Update(double p_dt) override;
             /**

@@ -19,7 +19,7 @@ namespace Doremi
         class GroundEffectManagerClient : public Manager, public Subscriber
         {
         public:
-            GroundEffectManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit GroundEffectManagerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GroundEffectManagerClient();
 
             /**

@@ -11,7 +11,7 @@ namespace Doremi
         class DamageManager : public Manager, public Subscriber
         {
         public:
-            DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit DamageManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~DamageManager();
             void Update(double p_dt) override;
             void OnEvent(Event* p_event) override;

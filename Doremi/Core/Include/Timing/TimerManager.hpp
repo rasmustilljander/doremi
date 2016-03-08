@@ -17,7 +17,7 @@ namespace Doremi
     {
         struct TimerData
         {
-            TimerData(uint32_t p_startLine) : data(0), startLine(p_startLine) {}
+            explicit TimerData(uint32_t p_startLine) : data(0), startLine(p_startLine) {}
 
             ~TimerData() {}
 

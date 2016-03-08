@@ -25,7 +25,7 @@ namespace Doremi
         class AIPathManager : public Manager, public Subscriber
         {
         public:
-            AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit AIPathManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AIPathManager();
             /**
             Gets the new wanted position for every AI agent with move component

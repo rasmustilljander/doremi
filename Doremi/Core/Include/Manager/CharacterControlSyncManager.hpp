@@ -9,7 +9,7 @@ namespace Doremi
         class CharacterControlSyncManager : public Manager, public Subscriber
         {
         public:
-            CharacterControlSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit CharacterControlSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~CharacterControlSyncManager();
 
             /**

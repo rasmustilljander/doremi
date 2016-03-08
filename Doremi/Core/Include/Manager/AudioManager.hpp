@@ -13,7 +13,7 @@ namespace Doremi
         class AudioManager : public Manager, public Subscriber
         {
         public:
-            AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit AudioManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AudioManager();
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton

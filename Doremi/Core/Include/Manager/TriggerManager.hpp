@@ -13,7 +13,7 @@ namespace Doremi
         class TriggerManager : public Manager, public Subscriber
         {
         public:
-            TriggerManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit TriggerManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~TriggerManager();
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton

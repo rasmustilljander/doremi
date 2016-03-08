@@ -37,7 +37,7 @@ namespace Doremi
             static AudioHandler* GetInstance();
             static void StartAudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             static void StopAudioHandler();
-            AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit AudioHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~AudioHandler();
             // Initializes the handler. Mostly sets values to 0 or channelID to -1 (used as a "error" value)
             void Initialize();

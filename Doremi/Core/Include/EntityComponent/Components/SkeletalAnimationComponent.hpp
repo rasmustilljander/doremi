@@ -28,7 +28,7 @@ namespace Doremi
             SkeletalAnimationType type;
             std::map<std::string, float>* animationTransitions;
 
-            SkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
+            explicit SkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
                 : skeletalInformation(p_skeletalInformation), timePosition(0.0), animationTransitions(nullptr)
             {
             }

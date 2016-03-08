@@ -15,7 +15,7 @@ namespace Doremi
         class PressureParticleManager : public Manager, public Subscriber
         {
         public:
-            PressureParticleManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit PressureParticleManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~PressureParticleManager();
             void Update(double p_dt) override;
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton

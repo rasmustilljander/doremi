@@ -11,7 +11,7 @@ namespace Doremi
         class ExtraDrainSyncManager : public Manager, public Subscriber
         {
         public:
-            ExtraDrainSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit ExtraDrainSyncManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~ExtraDrainSyncManager();
             void Update(double p_dt) override;
             void OnEvent(Event* p_event) override;

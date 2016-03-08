@@ -7,7 +7,7 @@ namespace Doremi
         class AITargetManager : public Manager
         {
         public:
-            AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit AITargetManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~AITargetManager();
             /**
             Makes the enemies look at the closest visible player in range and fires if possible

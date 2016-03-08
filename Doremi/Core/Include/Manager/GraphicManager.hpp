@@ -21,7 +21,7 @@ namespace Doremi
         class GraphicManager : public Manager, public Subscriber
         {
         public:
-            GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit GraphicManager(const DoremiEngine::Core::SharedContext& p_sharedContext);
             virtual ~GraphicManager();
 
             /**
