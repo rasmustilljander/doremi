@@ -50,7 +50,7 @@ namespace Doremi
                     XMVECTOR normalDir = XMLoadFloat3(&XMFLOAT3(0, 0, 1));
                     XMVECTOR rotQuat = XMLoadFloat4(&GetComponent<TransformComponent>(i)->rotation);
                     XMVECTOR direction = XMVector3Rotate(normalDir, rotQuat);
-                    XMVECTOR endPos = posvec - direction * 0.5f;
+                    XMVECTOR endPos = posvec - direction * 0.1f;
                     XMStoreFloat3(&GetComponent<ParticlePressureComponent>(i)->data.m_position, endPos);
 
                     GetComponent<ParticlePressureComponent>(i)->data.m_direction = GetComponent<TransformComponent>(i)->rotation;
