@@ -361,10 +361,10 @@ namespace Doremi
                 m_data = static_cast<ArbitraryStaticData*>(m_rawBufferPointerStart);
 
                 if(m_metaDataMutex != nullptr)
-                {                   
+                {
                     if(m_metaDataMutex->try_lock())
                     {
-                        printf("\nowner\n");
+                        printf("This process is the owner of the metadata lock for the circlebuffer.\n");
                         ResetMetaData();
                     }
                 }
