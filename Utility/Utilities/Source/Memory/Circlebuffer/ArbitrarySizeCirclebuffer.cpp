@@ -56,11 +56,11 @@ namespace Doremi
                 SetupVariables();
             }
 
-            void ArbitrarySizeCirclebuffer::Produce(const CircleBufferHeader& p_Header, const void* const p_data)
+            bool ArbitrarySizeCirclebuffer::Produce(const CircleBufferHeader& p_Header, const void* const p_data)
             {
                 // Internal lockage
                 std::lock_guard<std::mutex> lock(m_produceLock);
-                
+
                 // Fetch variables from shared memory
                 // These variables must be read at the same time :s
                 const size_t tailOffset = m_data->currentTailOffset;
@@ -98,9 +98,8 @@ namespace Doremi
                 const uint32_t requestedSize = sizeof(CircleBufferHeader) + p_Header.packageSize;
                 if(currentlyAvailableSpace < requestedSize)
                 {
-                    const std::string errorMessage = std::string("Not enough space in circlebuffer. Size of produce request " + std::to_string(requestedSize) +
-                                                                 ". Only have access to " + std::to_string(currentlyAvailableSpace));
-                    throw std::runtime_error(errorMessage);
+                    printf("Not enough space in circlebuffer. Size of produce request %d. This buffer only have access to %", requestedSize, currentlyAvailableSpace);
+                    return false;
                 }
 
                 bool metaHeaderInPart1, dataPackageInPart1;
@@ -124,7 +123,8 @@ namespace Doremi
                     }
                     else
                     {
-                        throw std::runtime_error("Metaheader fits within the first part, but datapackage does not fit anywhere.");
+                        printf("Metaheader fits within the first part, but datapackage does not fit anywhere.");
+                        return false;
                     }
                 }
                 // Check if metaheader can be fitted within the second part
@@ -140,13 +140,14 @@ namespace Doremi
                     }
                     else
                     {
-                        throw std::runtime_error("Metaheader fits within second part, but not packagedata.");
+                        printf("Metaheader fits within second part, but not packagedata.");
+                        return false;
                     }
                 }
                 else
                 {
-                    throw std::runtime_error("Nothing fits");
-
+                    printf("Nothing fits");
+                    return false;
                 }
 
                 void* locationOfMetaHeader;
@@ -190,6 +191,7 @@ namespace Doremi
 
                 m_data->currentHeadOffset = PointerArithmetic::Difference(m_adjustedBufferPointerStart, head);
                 intmax_t diff2 = PointerArithmetic::Difference(tail, head);
+                return true;
             }
 
             bool ArbitrarySizeCirclebuffer::Consume(CircleBufferHeader*& o_header, void* o_dataBuffer, const uint32_t& p_outbufferSize)
@@ -343,7 +345,6 @@ namespace Doremi
                     m_metaDataMutex->unlock();
                 }
             }
-
             void ArbitrarySizeCirclebuffer::ComputeAdjustments()
             {
                 m_adjustedBufferSize = m_rawBufferSize - sizeof(ArbitraryStaticData);

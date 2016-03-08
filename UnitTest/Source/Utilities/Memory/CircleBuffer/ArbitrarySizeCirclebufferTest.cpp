@@ -23,6 +23,7 @@ TEST_F(ArbitrarySizeCirclebufferTest, singleProduce)
 TEST_F(ArbitrarySizeCirclebufferTest, toManyProduce)
 {
     m_circleBuffer->Initialize(104);
+    bool res;
 
     CircleBufferHeader sendHeader = CircleBufferHeader();
     sendHeader.packageSize = sizeof(TestStruct64);
@@ -30,7 +31,8 @@ TEST_F(ArbitrarySizeCirclebufferTest, toManyProduce)
 
     m_circleBuffer->Produce(sendHeader, &sendData);
 
-    EXPECT_THROW(m_circleBuffer->Produce(sendHeader, &sendData), std::runtime_error);
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
+    ASSERT_FALSE(res);
 }
 
 TEST_F(ArbitrarySizeCirclebufferTest, emptyConsume)
@@ -198,7 +200,10 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingDifferentPartOfSameExternal
 
     sendData.f1 = 78;
 
-    ASSERT_THROW(m_circleBuffer->Produce(sendHeader, &sendData), std::runtime_error);
+    bool res;
+
+    res = m_circleBuffer->Produce(sendHeader, &sendData);
+    ASSERT_FALSE(res);
 
     // Produce second buffer
     sendData.f1 = 62;
@@ -208,9 +213,9 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingDifferentPartOfSameExternal
     otherBuffer->Produce(sendHeader, &sendData);
 
     sendData.f1 = 95;
-    ASSERT_THROW(otherBuffer->Produce(sendHeader, &sendData), std::runtime_error);
+    res = otherBuffer->Produce(sendHeader, &sendData);
+    ASSERT_FALSE(res);
 
-    bool res;
     //// Consume
     CircleBufferHeader* returnHeader = new CircleBufferHeader();
     TestStruct64* returnData = new TestStruct64();
@@ -278,7 +283,8 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersPointingOnSameMemory)
 
     // Produce with first buffer
     sendData.f1 = 4;
-    EXPECT_THROW(m_circleBuffer->Produce(sendHeader, &sendData), std::runtime_error); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
+    ASSERT_FALSE(res);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
@@ -345,7 +351,8 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingOneFileMapToMemory)
 
     // Produce with first buffer
     sendData.f1 = 4;
-    ASSERT_THROW(m_circleBuffer->Produce(sendHeader, &sendData), std::runtime_error); // 2
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // 2
+    ASSERT_FALSE(res);
 
     // Consume with first buffer
     res = m_circleBuffer->Consume(returnHeader, returnData, sizeof(TestStruct64)); // 1
@@ -419,7 +426,8 @@ TEST_F(ArbitrarySizeCirclebufferTest, twoBuffersUsingTwoFileMapsTMemory)
 
     // Produce with first buffer
     sendData.f1 = 4;
-    ASSERT_THROW(m_circleBuffer->Produce(sendHeader, &sendData), std::runtime_error); // should fail
+    res = m_circleBuffer->Produce(sendHeader, &sendData); // should fail
+    ASSERT_FALSE(res);
     // Memory now contains 2 object
 
     // Consume with first buffer

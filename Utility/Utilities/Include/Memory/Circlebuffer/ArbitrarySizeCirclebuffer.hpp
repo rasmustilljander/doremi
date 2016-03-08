@@ -40,7 +40,7 @@ namespace Doremi
                 /**
                 Threadsafe, internal loackage. Throws exception if not possible.
                 */
-                void Produce(const CircleBufferHeader& p_Header, const void* const p_data);
+                bool Produce(const CircleBufferHeader& p_Header, const void* const p_data);
 
                 /**
                 Threadsafe, internal loackage. Returns false if there was nothing to read.
