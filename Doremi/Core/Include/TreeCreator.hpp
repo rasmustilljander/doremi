@@ -30,9 +30,11 @@ namespace Doremi
                     center = p_center;
                     parent = p_parent;
                     loopInfo = 0;
+                    leaf = false;
                 };
                 OctNode()
                 {
+                    leaf = false;
                     empty = true;
                     depth = 0;
                     boxDimensions = DirectX::XMFLOAT3(0, 0, 0);
@@ -40,17 +42,18 @@ namespace Doremi
                     loopInfo = 0;
                 };
                 ~OctNode(){};
-                OctNode* children[8];// 32
-                DirectX::XMFLOAT3 boxDimensions;// 12 
-                DirectX::XMFLOAT3 center;// 12
-                OctNode* parent;// 4
+                OctNode* children[8]; // 32
+                DirectX::XMFLOAT3 boxDimensions; // 12
+                DirectX::XMFLOAT3 center; // 12
+                OctNode* parent; // 4
 
                 // to know where we are.
-                uint8_t loopInfo;// 1
+                uint8_t loopInfo; // 1
                 uint8_t empty;
-                uint8_t depth;// 1
+                uint8_t depth; // 1
+                uint8_t leaf;
                 // Keep them so we can check against them in the kid to this node.
-                std::vector<uint32_t> objectsInTheArea;// 16/24
+                std::vector<uint32_t> objectsInTheArea; // 16/24
             };
 
             TreeCreator::TreeCreator(const DoremiEngine::Core::SharedContext& p_sharedContext);

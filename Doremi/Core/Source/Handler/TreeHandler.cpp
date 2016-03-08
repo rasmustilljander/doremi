@@ -516,7 +516,7 @@ namespace Doremi
             ////t_projection4x4._43 = -r * t_zMin;
             // t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(XMLoadFloat4x4(&t_projection4x4), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
             ///////////t_viewAndProjectionMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixInverse(nullptr
-            ///,DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
+            // DirectX::XMMatrixTranspose(XMLoadFloat4x4(&t_projection4x4))), XMLoadFloat4x4(&t_camMatrices.ViewMatrix));
             // DirectX::XMFLOAT4X4 t_viewAndProjection4x4;
             // DirectX::XMStoreFloat4x4(&t_viewAndProjection4x4, t_viewAndProjectionMatrix);
 
@@ -688,136 +688,154 @@ namespace Doremi
             NAMED_TIMER("TreeHandlerAfterBuildingTheFrustum")
             while(!t_isDone)
             {
-                if(!t_currentNode->empty)
+                // if(!t_currentNode->empty)
+                //{
+
+                //////////////// COLLISION test
+                //////// Loading the float to a vector so we can manipulate it
+                //////DirectX::XMVECTOR t_halfDimensions = DirectX::XMLoadFloat3(&t_currentNode->boxDimensions);
+
+
+                //////// Dividing it by two so we can use it as half extents as needed in the physicsfunction
+                //////DirectX::XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
+                //////t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(t_currentNode->center,
+                /// physicsCollideFloat);
+                //////// For the loop
+                //////numberOfHits = t_sweepHits.size();
+                /////////////////
+
+                // Collision with the frustum planes.
+                if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions) || t_currentNode->depth == 0)
                 {
-
-                    //////////////// COLLISION test
-                    //////// Loading the float to a vector so we can manipulate it
-                    //////DirectX::XMVECTOR t_halfDimensions = DirectX::XMLoadFloat3(&t_currentNode->boxDimensions);
-
-
-                    //////// Dividing it by two so we can use it as half extents as needed in the physicsfunction
-                    //////DirectX::XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
-                    //////t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(t_currentNode->center,
-                    /// physicsCollideFloat);
-                    //////// For the loop
-                    //////numberOfHits = t_sweepHits.size();
-                    /////////////////
-
-                    // Collision with the frustum planes.
-                    if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions) || t_currentNode->depth == 0)
+                    // If max depth isnt reached , minus one is needed to get the depth wanted
+                    if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
                     {
-                        // If max depth isnt reached , minus one is needed to get the depth wanted
-                        if(t_currentNode->depth < m_treeCreator->m_treeDepth - 1)
-                        {
-                            // Max depth wasn't reached
+                        // Max depth wasn't reached
 
-                            // Where to start next, if we reached t_maxdepth last loop we have to
-                            if(t_currentNode->loopInfo <= 7)
+                        // Where to start next, if we reached t_maxdepth last loop we have to
+                        if(t_currentNode->loopInfo <= 7)
+                        {
+                            // Adding the value before and subtracting it in the array because we want to keep track of it before we change
+                            // pointer
+
+
+                            // bool emptyCheck = true;
+                            // while (emptyCheck)
+                            //{
+                            //    ++t_currentNode->loopInfo;
+                            //    if (t_currentNode->loopInfo > 8)
+                            //    {
+                            //        t_currentNode->loopInfo = 0;
+                            //        t_currentNode = t_currentNode->parent;
+                            //        emptyCheck = false;
+                            //    }
+                            //    else if (!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
+                            //    {
+                            //        t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
+                            //        emptyCheck = false;
+                            //    }
+                            //}
+                            ++t_currentNode->loopInfo;
+                            if(!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
                             {
-                                // Adding the value before and subtracting it in the array because we want to keep track of it before we change
-                                // pointer
-                                ++t_currentNode->loopInfo;
-                                if(!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
-                                {
-                                    t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
-                                }
-                                else
-                                {
-                                    // Do nothing, we will do the loop again without going into the child and going to the next since we added
-                                    // loopinfo.
-                                }
+                                t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
                             }
                             else
                             {
-                                if(t_currentNode->depth == 0)
-                                {
-                                    // Is done, we went through all children at the depth of zero which means we are at the root node
-                                    t_currentNode->loopInfo = 0;
-                                    t_isDone = true;
-                                }
-                                else
-                                {
-                                    // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
-                                    t_currentNode->loopInfo = 0;
-                                    t_currentNode = t_currentNode->parent;
-                                }
+                                // Do nothing, we will do the loop again without going into the child and going to the next since we added
+                                // loopinfo.
                             }
                         }
-
                         else
                         {
-                            // Max depth reached, these will be the interesting objects to draw.
-
-                            size_t loopSize = t_currentNode->objectsInTheArea.size();
-                            for(size_t i = 0; i < loopSize; ++i)
+                            if(t_currentNode->depth == 0)
                             {
-                                // TODOEA Have to do a check if the object allready is in the list
-                                if (std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) != m_objectsToDraw.end()) 
-                                {
-                                    // Nothing
-                                }
-                                else 
-                                {
-                                    m_objectsToDraw.push_back(t_currentNode->objectsInTheArea[i]);
-                                }
+                                // Is done, we went through all children at the depth of zero which means we are at the root node
+                                t_currentNode->loopInfo = 0;
+                                t_isDone = true;
                             }
-                            t_currentNode->loopInfo = 0;
-                            t_currentNode = t_currentNode->parent;
+                            else
+                            {
+                                // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
+                                t_currentNode->loopInfo = 0;
+                                t_currentNode = t_currentNode->parent;
+                            }
                         }
                     }
+
                     else
-                    {                        // If max depth isnt reached , minus one is needed to get the depth wanted
-                        if (t_currentNode->depth < m_treeCreator->m_treeDepth - 1)
+                    {
+                        // Max depth reached, these will be the interesting objects to draw.
+
+                        size_t loopSize = t_currentNode->objectsInTheArea.size();
+                        for(size_t i = 0; i < loopSize; ++i)
                         {
-                            // no collision with frustum
-                            // Where to start next, if we reached t_maxdepth last loop we have to
-                            if (t_currentNode->loopInfo <= 7)
+                            // TODOEA Have to do a check if the object allready is in the list
+                            if(std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) != m_objectsToDraw.end())
                             {
-                                // Adding the value before and subtracting it in the array because we want to keep track of it before we change
-                                // pointer
-                                ++t_currentNode->loopInfo;
-                                if (!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
-                                {
-                                    t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
-                                }
-                                else
-                                {
-                                    // Do nothing, we will do the loop again without going into the child and going to the next since we added
-                                    // loopinfo.
-                                }
+                                // Nothing
                             }
                             else
                             {
-                                if (t_currentNode->depth == 0)
-                                {
-                                    // Is done, we went through all children at the depth of zero which means we are at the root node
-                                    t_currentNode->loopInfo = 0;
-                                    t_isDone = true;
-                                }
-                                else
-                                {
-                                    // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
-                                    t_currentNode->loopInfo = 0;
-                                    t_currentNode = t_currentNode->parent;
-                                }
+                                m_objectsToDraw.push_back(t_currentNode->objectsInTheArea[i]);
                             }
                         }
-                        else
-                        {
-                            // Max depth reached, these will be the interesting objects to draw.
-
-                            t_currentNode->loopInfo = 0;
-                            t_currentNode = t_currentNode->parent;
-                        }
+                        t_currentNode->loopInfo = 0;
+                        t_currentNode = t_currentNode->parent;
                     }
                 }
                 else
-                {
-                    // if is empty we back out to the parent
-                    t_currentNode->loopInfo = 0;
-                    t_currentNode = t_currentNode->parent;
+                { // If max depth isnt reached , minus one is needed to get the depth wanted
+                    if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
+                    {
+                        // no collision with frustum
+                        // Where to start next, if we reached t_maxdepth last loop we have to
+                        if(t_currentNode->loopInfo <= 7)
+                        {
+                            // Adding the value before and subtracting it in the array because we want to keep track of it before we change
+                            // pointer
+                            ++t_currentNode->loopInfo;
+                            if(!t_currentNode->children[t_currentNode->loopInfo - 1]->empty)
+                            {
+                                t_currentNode = t_currentNode->children[t_currentNode->loopInfo - 1];
+                            }
+                            else
+                            {
+                                // Do nothing, we will do the loop again without going into the child and going to the next since we added
+                                // loopinfo.
+                            }
+                        }
+                        else
+                        {
+                            if(t_currentNode->depth == 0)
+                            {
+                                // Is done, we went through all children at the depth of zero which means we are at the root node
+                                t_currentNode->loopInfo = 0;
+                                t_isDone = true;
+                            }
+                            else
+                            {
+                                // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
+                                t_currentNode->loopInfo = 0;
+                                t_currentNode = t_currentNode->parent;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Max depth reached, these will be the interesting objects to draw.
+
+                        t_currentNode->loopInfo = 0;
+                        t_currentNode = t_currentNode->parent;
+                    }
                 }
+                //}
+                // else
+                // {
+                //     // if is empty we back out to the parent
+                //     t_currentNode->loopInfo = 0;
+                //     t_currentNode = t_currentNode->parent;
+                // }
             }
             return m_objectsToDraw;
         }

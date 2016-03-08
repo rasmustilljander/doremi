@@ -83,7 +83,7 @@ namespace Doremi
 
 
                     // Dividing it by two so we can use it as half extents as needed in the physicsfunction
-                    XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
+                    DirectX::XMStoreFloat3(&physicsCollideFloat, t_halfDimensions * 0.5f);
                     t_sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(m_currentNode->center, physicsCollideFloat);
                     // For the loop
                     numberOfHits = t_sweepHits.size();
@@ -95,7 +95,7 @@ namespace Doremi
                     m_currentNode->empty = false;
 
                     // If max depth isnt reached , minus one is needed to get the depth wanted
-                    if(m_currentNode->depth < m_treeDepth - 1)
+                    if(numberOfHits != 1 && m_currentNode->depth < m_treeDepth - 1)
                     {
                         // Collision and max depth wasn't reached
 
@@ -149,6 +149,7 @@ namespace Doremi
                             }
                         }
                         m_currentNode->loopInfo = 0;
+                        m_currentNode->leaf = true;
                         m_currentNode = m_currentNode->parent;
                     }
                 }
@@ -236,15 +237,15 @@ namespace Doremi
 
             // to use for getting the new center we need a xmfloat
             XMFLOAT3 t_startPosForThisOctFLOAT;
-            XMStoreFloat3(&t_startPosForThisOctFLOAT, t_startPosForThisOct);
+            DirectX::XMStoreFloat3(&t_startPosForThisOctFLOAT, t_startPosForThisOct);
 
             // Store the vecotr to a xmfloat3 for later use
             XMFLOAT3 t_halfDimensionsXMFLOAT;
-            XMStoreFloat3(&t_halfDimensionsXMFLOAT, t_halfDimensions);
+            DirectX::XMStoreFloat3(&t_halfDimensionsXMFLOAT, t_halfDimensions);
             XMFLOAT3 t_fourthOfDimensionsXMFLOAT;
-            XMStoreFloat3(&t_fourthOfDimensionsXMFLOAT, t_halfDimensions * 0.5f);
+            DirectX::XMStoreFloat3(&t_fourthOfDimensionsXMFLOAT, t_halfDimensions * 0.5f);
 
-            XMStoreFloat3(&t_startPosForThisOctFLOAT, XMLoadFloat3(&t_startPosForThisOctFLOAT) + XMLoadFloat3(&t_fourthOfDimensionsXMFLOAT));
+            DirectX::XMStoreFloat3(&t_startPosForThisOctFLOAT, XMLoadFloat3(&t_startPosForThisOctFLOAT) + XMLoadFloat3(&t_fourthOfDimensionsXMFLOAT));
             // Get the first center for
             for(size_t x = 0; x < 2; ++x)
             {
