@@ -7,6 +7,8 @@
 #include <Utility/Utilities/Include/String/StringHelper.hpp>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
+#include <Utility/Utilities/Include/Logging/LogLevelConverter.hpp>
+#include <Utility/Utilities/Include/Logging/LogTagConverter.hpp>
 
 #include <iostream>
 #include <exception>
@@ -63,6 +65,7 @@ void SpecificLogFile::OpenFileStream(const std::string& p_fileName)
 
 void SpecificLogFile::Write(void*& p_data)
 {
+    using namespace Logging;
     // Rebuilddata
     const Logging::TextMetaData* textMetaData = static_cast<Logging::TextMetaData*>(p_data);
 
@@ -72,11 +75,26 @@ void SpecificLogFile::Write(void*& p_data)
     // Fetch pointer to messagetext
     void* message = PointerArithmetic::Addition(p_data, sizeof(Logging::TextMetaData) + textMetaData->functionLength);
 
+    auto& logtag = LogTagConverter::convert(textMetaData->logTag).name;
+    auto& logLevel = LogLevelConverter::convert(textMetaData->logLevel).name;
+
     // Actually cout the data to a file
-    *m_fileStream << static_cast<char*>(message) << "\n";
+    *m_fileStream << "[" << logtag << ":" << logLevel << "] " << static_cast<char*>(message) << "\n";
     if(textMetaData->logLevel == Logging::LogLevel::INFO)
     {
-        std::cout << static_cast<char*>(message) << "\n";
+        if(textMetaData->logLevel == LogLevel::WARNING)
+        {
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+        }
+        else if(textMetaData->logLevel == LogLevel::FATAL_ERROR)
+        {
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+        }
+        else
+        {
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+        }
+        std::cout << "[" << logtag << ":" << logLevel << "] " << static_cast<char*>(message) << "\n";
     }
 
     // If called often, flush
