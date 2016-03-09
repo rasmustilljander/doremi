@@ -2,7 +2,6 @@
 #include <Interface/Manager/DirectXManager.hpp>
 #include <Internal/Mesh/MeshRenderData.hpp>
 #include <Internal/Texture/SpriteRenderData.hpp>
-#include <DisplayModes.hpp>
 #include <map>
 #include <vector>
 
@@ -43,7 +42,8 @@ namespace DoremiEngine
             DirectX::XMFLOAT2 GetScreenResolution() override;
             uint32_t GetCurrentMonitor() override { return m_currentMonitor; };
             uint32_t GetNumberOfMonitors() override { return m_displayModes.size(); }
-            float GetRefreshRate() override { return m_refreshRate; }
+            uint32_t GetRefreshRate() override { return m_refreshRate; }
+
 
             ID3D11DeviceContext* GetDeviceContext() override;
             ID3D11SamplerState* GetDefaultSamplerState() override { return m_defaultSamplerState; }
@@ -91,6 +91,8 @@ namespace DoremiEngine
             */
             void InitializeDirectX();
 
+            void InitializeDisplayModes();
+
             /**
                 Adds a mesh for later rendering
             */
@@ -133,6 +135,10 @@ namespace DoremiEngine
             void DrawCurrentRenderListSkeletal(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) override;
 
             void SetFullscreen(const bool& p_fullscreen) override;
+
+            std::vector<std::pair<uint32_t, uint32_t>> GetResolutions(const uint32_t& p_monitor) override;
+
+            std::vector<uint32_t> GetRefreshRates(const uint32_t& p_monitor, const std::pair<uint32_t, uint32_t>& p_resolution);
 
 
         private:
@@ -232,12 +238,12 @@ namespace DoremiEngine
 
             DirectX::XMFLOAT2 m_screenResolution;
             uint32_t m_currentMonitor;
-            float m_refreshRate;
+            uint32_t m_refreshRate;
             SDL_Window* m_window = nullptr;
 
 
             // list with
-            std::map<uint32_t, std::map<DisplayMode, std::vector<uint32_t>>> m_displayModes;
+            std::map<uint32_t, std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>>> m_displayModes;
         };
     }
 }

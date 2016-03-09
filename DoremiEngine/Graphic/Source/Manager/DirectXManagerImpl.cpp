@@ -19,42 +19,13 @@
 // COnfiguration
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
-
-bool operator<(const DisplayMode& t_disp1, const DisplayMode& t_disp2)
-{
-    if(t_disp2.width == t_disp1.width)
-    {
-        if(t_disp2.height > t_disp1.height)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else if(t_disp2.width > t_disp1.width)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 namespace DoremiEngine
 {
     namespace Graphic
     {
 
 
-        DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext)
-        {
-            float x = m_graphicContext.config.GetAllConfigurationValues().ScreenWidth;
-            float y = m_graphicContext.config.GetAllConfigurationValues().ScreenHeight;
-            m_screenResolution = DirectX::XMFLOAT2(x, y);
-        }
+        DirectXManagerImpl::DirectXManagerImpl(const GraphicModuleContext& p_graphicContext) : m_graphicContext(p_graphicContext) {}
         DirectXManagerImpl::~DirectXManagerImpl() {}
 
         void InitializeSDL()
@@ -76,6 +47,8 @@ namespace DoremiEngine
         void DirectXManagerImpl::InitializeDirectX()
         {
             InitializeSDL();
+
+            InitializeDisplayModes();
 
             if(GetActiveWindow() == nullptr)
             {
@@ -99,6 +72,7 @@ namespace DoremiEngine
                 }
             }
 
+
             // Device flags
             UINT t_flags = 0;
 #ifdef _DEBUG
@@ -120,7 +94,7 @@ namespace DoremiEngine
             // fill the swap chain description struct
             scd.BufferCount = 2; // one back buffer
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
-            scd.BufferDesc.RefreshRate.Numerator = 60;
+            scd.BufferDesc.RefreshRate.Numerator = m_refreshRate;
             scd.BufferDesc.RefreshRate.Denominator = 1;
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
@@ -160,7 +134,10 @@ namespace DoremiEngine
             CreateBlendStates();
 
             t_frustrumComputed = false;
+        }
 
+        void DirectXManagerImpl::InitializeDisplayModes()
+        {
             // Get resolutions
             UINT t_numDispalys = SDL_GetNumVideoDisplays();
 
@@ -176,21 +153,53 @@ namespace DoremiEngine
 
                     SDL_GetDisplayMode(dispIndex, modeIndex, &mode);
 
-                    DisplayMode t_displayMode;
-                    t_displayMode.height = mode.h;
-                    t_displayMode.width = mode.w;
+                    std::pair<uint32_t, uint32_t> m_resolution;
+                    m_resolution.first = mode.h;
+                    m_resolution.second = mode.w;
 
                     // If we don't already have refreshrate saved add, or nothing saved add
-                    if(m_displayModes[dispIndex][t_displayMode].size() && m_displayModes[dispIndex][t_displayMode].back() != mode.refresh_rate)
+                    if(m_displayModes[dispIndex][m_resolution].size() && m_displayModes[dispIndex][m_resolution].back() != mode.refresh_rate)
                     {
-                        m_displayModes[dispIndex][t_displayMode].push_back(mode.refresh_rate);
+                        m_displayModes[dispIndex][m_resolution].push_back(mode.refresh_rate);
                     }
                     else
                     {
-                        m_displayModes[dispIndex][t_displayMode].push_back(mode.refresh_rate);
+                        m_displayModes[dispIndex][m_resolution].push_back(mode.refresh_rate);
                     }
                 }
             }
+
+
+            float x = m_graphicContext.config.GetAllConfigurationValues().ScreenWidth;
+            float y = m_graphicContext.config.GetAllConfigurationValues().ScreenHeight;
+
+            // TODOCM read config values as refreshrate and monitor here
+
+            if(m_displayModes.count(0))
+            {
+                std::pair<uint32_t, uint32_t> t_resolutionToCheck;
+                t_resolutionToCheck.first = static_cast<uint32_t>(y);
+                t_resolutionToCheck.second = static_cast<uint32_t>(x);
+
+                if(m_displayModes[0].count(t_resolutionToCheck))
+                {
+                    // It's ok, we can keep the resolution
+                }
+                else
+                {
+                    // Change to proper resolution
+                    y = m_displayModes[0].rbegin().base()->first.first;
+                    x = m_displayModes[0].rbegin().base()->first.second;
+                }
+            }
+            else
+            {
+                // Well... no displays..
+            }
+
+            m_screenResolution = DirectX::XMFLOAT2(x, y);
+            m_refreshRate = 60;
+            m_currentMonitor = 0;
         }
 
         void DirectXManagerImpl::CreateBackBufferViews()
@@ -558,6 +567,7 @@ namespace DoremiEngine
         }
 
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
+
         ID3D11DeviceContext* DirectXManagerImpl::GetDeviceContext() { return m_deviceContext; }
 
         ID3D11SamplerState* DirectXManagerImpl::CreateSamplerState(D3D11_SAMPLER_DESC p_samplerDesc)
@@ -1424,6 +1434,48 @@ namespace DoremiEngine
             {
                 SDL_SetWindowFullscreen(m_window, 0);
             }
+        }
+
+
+        std::vector<std::pair<uint32_t, uint32_t>> DirectXManagerImpl::GetResolutions(const uint32_t& p_monitor)
+        {
+            if(m_displayModes.count(p_monitor))
+            {
+                std::vector<std::pair<uint32_t, uint32_t>> t_resolutions;
+
+                for(auto& t_resolution : m_displayModes[p_monitor])
+                {
+                    t_resolutions.push_back(t_resolution.first);
+                }
+
+                return t_resolutions;
+            }
+            else
+            {
+                // something wrong..
+                return std::vector<std::pair<uint32_t, uint32_t>>();
+            }
+        }
+
+        std::vector<uint32_t> DirectXManagerImpl::GetRefreshRates(const uint32_t& p_monitor, const std::pair<uint32_t, uint32_t>& p_resolution)
+        {
+            if(m_displayModes.count(p_monitor))
+            {
+                if(m_displayModes[p_monitor].count(p_resolution))
+                {
+                    std::vector<uint32_t> t_refreshRates;
+
+                    for(auto& t_refreshRate : m_displayModes[p_monitor][p_resolution])
+                    {
+                        t_refreshRates.push_back(t_refreshRate);
+                    }
+
+                    return t_refreshRates;
+                }
+            }
+
+            // something wrong..
+            return std::vector<uint32_t>();
         }
     }
 }

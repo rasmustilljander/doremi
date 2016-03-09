@@ -41,6 +41,8 @@ namespace Doremi
             void DrawMainMenu();
             void DrawServerBrowser();
 
+            void DrawOptions();
+
             void DrawHUD();
             void DrawVictoryScreen();
 

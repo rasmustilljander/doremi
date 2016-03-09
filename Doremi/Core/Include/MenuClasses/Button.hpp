@@ -18,8 +18,6 @@ namespace Doremi
             VICTORY,
             EXIT,
             SET_FULLSCREEN,
-            RESOLUTION_LEFT,
-            RESOLUTION_RIGHT,
             RESOLUTION_PRESS,
             OPTIONS_APPLY,
             OPTIONS_OK,

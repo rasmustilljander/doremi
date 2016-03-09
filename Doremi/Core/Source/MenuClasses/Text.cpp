@@ -50,7 +50,8 @@ namespace Doremi
                     t_data.txtPos = XMFLOAT2(m_tableCharSize.x * static_cast<float>(x), m_tableCharSize.y * static_cast<float>(y));
                     t_data.txtSize = m_tableCharSize;
 
-                    t_data.position = XMFLOAT2(m_position.x + m_origo.x + static_cast<float>(i) * m_textSize.x * 1.0f, m_position.y);
+                    t_data.position =
+                        XMFLOAT2(m_position.x + m_origo.x + static_cast<float>(i) * m_textSize.x - textLength * m_textSize.x / 2.0f, m_position.y);
                     t_data.halfsize = m_textSize;
                     t_data.origo = XMFLOAT2(0.0f, 0.0f);
 

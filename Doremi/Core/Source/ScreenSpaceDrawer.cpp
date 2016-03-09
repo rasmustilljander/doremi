@@ -17,6 +17,7 @@
 #include <Doremi/Core/Include/MenuClasses/ServerBrowserHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/HUDHandler.hpp>
 #include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
+#include <Doremi/Core/Include/MenuClasses/OptionsHandler.hpp>
 #include <iostream>
 
 
@@ -110,7 +111,7 @@ namespace Doremi
                 }
                 case Doremi::Core::DoremiGameStates::OPTIONS:
                 {
-                    // Draw options screen. TODOKO implement
+                    DrawOptions();
                     break;
                 }
                 case Doremi::Core::DoremiGameStates::LOADING:
@@ -235,6 +236,74 @@ namespace Doremi
                     t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text->m_textMaterial));
                 }
             }
+
+            End2DDraw();
+        }
+
+        void ScreenSpaceDrawer::DrawOptions()
+        {
+            Begin2DDraw();
+
+            DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+
+            // Get screenspace objects
+            // Get Screenobjects to draw
+            std::vector<ScreenObject*>& t_objectsToDraw = OptionsHandler::GetInstance()->GetScreenObjects();
+
+            // For each button add to render list
+            for(auto& t_object : t_objectsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
+            }
+
+            // Get buttons to draw
+            std::vector<Button*> t_buttonsToDraw = OptionsHandler::GetInstance()->GetButtons();
+
+            // For each button add to render list
+            for(auto& t_button : t_buttonsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_button->m_spriteInfo), *(t_button->m_materialInfo));
+            }
+
+
+            // Get text to draw
+            std::vector<Text*> t_TextToDraw = OptionsHandler::GetInstance()->GetText();
+
+            // For each text add to render list
+            for(auto& t_text : t_TextToDraw)
+            {
+                for(auto& t_textPart : t_text->m_textInfo)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text->m_textMaterial));
+                }
+            }
+
+            // Draw sliders last
+
+
+            // Draw drop downs LAAAST
+            // Get buttons to draw
+            std::vector<Button> t_dropDownButtons = OptionsHandler::GetInstance()->GetDropDownButtons();
+
+            // For each button add to render list
+            for(auto& t_button : t_dropDownButtons)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_button.m_spriteInfo), *(t_button.m_materialInfo));
+            }
+
+
+            // Get text to draw
+            std::vector<Text> t_dropDownText = OptionsHandler::GetInstance()->GetDropDownText();
+
+            // For each text add to render list
+            for(auto& t_text : t_dropDownText)
+            {
+                for(auto& t_textPart : t_text.m_textInfo)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text.m_textMaterial));
+                }
+            }
+
 
             End2DDraw();
         }
