@@ -77,7 +77,7 @@ namespace Doremi
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
             t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
-            t_matInfo = t_meshManager.BuildMaterialInfo("HitScreen.dds");
+            t_matInfo = t_meshManager.BuildMaterialInfo("HitScreen3.dds");
             m_bloodScreen.Object = ScreenObject(t_matInfo, t_spriteInfo);
             m_bloodScreen.MaxLifeTime = 1;
 

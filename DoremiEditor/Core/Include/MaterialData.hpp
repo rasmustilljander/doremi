@@ -22,8 +22,8 @@ namespace DoremiEditor
                 ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
                 specColor[0] = specColor[1] = specColor[2] = 0.0f;
                 specCosine = specEccentricity = specRollOff = 0.0f;
-                alpha = 0.f;
-                fadeSpeed = 0.01;
+                alpha = 1.f;
+                fadeSpeed = -0.01;
             }
             void setColor(float r, float g, float b)
             {
