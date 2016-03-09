@@ -651,6 +651,13 @@ namespace Doremi
                 t_rigidBodyComp->flags =
                     static_cast<RigidBodyFlags>(static_cast<uint32_t>(RigidBodyFlags::kinematic) | static_cast<uint32_t>(RigidBodyFlags::drain));
                 t_rigidBodyComp->geometry = RigidBodyGeometry::dynamicBox;
+                if (!transformationData.attributes.isCollider)
+                {
+                    cout << "stuff" << endl;
+                    int flags = (int)t_rigidBodyComp->flags;
+                    flags |= (int)RigidBodyFlags::ignoredDEBUG;
+                    t_rigidBodyComp->flags = (RigidBodyFlags)flags;
+                }
             }
 
             // If non physic object
