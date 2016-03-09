@@ -3,13 +3,16 @@
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
-#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
-#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 
 // Events
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
+
+/// Engine
+#include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <DoremiEngine/Graphic/Include/Interface/Mesh/MaterialInfo.hpp>
+#include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 
 #include <iostream>
 namespace Doremi
@@ -76,7 +79,7 @@ namespace Doremi
             t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
             t_matInfo = t_meshManager.BuildMaterialInfo("HitScreen.dds");
             m_bloodScreen.Object = ScreenObject(t_matInfo, t_spriteInfo);
-            m_bloodScreen.MaxLifeTime = 0.3;
+            m_bloodScreen.MaxLifeTime = 1;
 
             m_bars.push_back(&m_healthBar);
         }
@@ -102,6 +105,7 @@ namespace Doremi
 
                 if(m_bloodScreen.LifeTime > 0)
                 {
+                    m_bloodScreen.Object.m_materialInfo->SetAlpha(m_bloodScreen.LifeTime / m_bloodScreen.MaxLifeTime);
                     m_screenObjects.push_back(&m_bloodScreen.Object);
                 }
             }

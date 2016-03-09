@@ -643,7 +643,7 @@ namespace DoremiEngine
 
             // Update constant buffers
             m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &spriteRenderData[0].materialMessage.data, sizeof(&spriteRenderData[0].materialMessage.data));
+            memcpy(tMS.pData, &spriteRenderData[0].materialMessage.data, sizeof(spriteRenderData[0].materialMessage.data));
             m_deviceContext->Unmap(m_materialBuffer, NULL);
             m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
 
