@@ -9,7 +9,7 @@ namespace DoremiEditor
         struct MaterialMessage
         {
             void SetColor(float r, float g, float b) { data.setColor(r, g, b); }
-
+            void SetAlpha(float a) { data.SetAlpha(a); }
             MaterialMessage()
                 : nodeName(nullptr), diffuseTexturePath(nullptr), glowTexturePath(nullptr), specTexturePath(nullptr), bumpTexturePath(nullptr)
             {

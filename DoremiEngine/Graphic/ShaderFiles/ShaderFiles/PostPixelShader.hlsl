@@ -71,7 +71,8 @@ cbuffer MaterialData : register(b1)
     float3 specColor;
     float specEccentricity;
     float specRollOff;
-    float2 pad;
+    float alpha;
+    float pad;
 };
 
 Texture2D ObjTexture : register(t0);
@@ -141,23 +142,16 @@ PixelOutputType PS_main(PixelInputType input)
     float4 texcolor = ObjTexture.Sample(ObjSamplerState, input.texCoord);
     float4 glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
 
-    texcolor.w /= 2;
+    texcolor.w *= alpha;
 
     float3 rgb = float3(0, 0, 0);
 
     for (int i = index; i < index + value; i++)
     {
         Light l = light[t_LightIndexList[i]];
-        //if (l.type == 0)
-        //    rgb += float3(0, 0, 0);
-        //if (l.type == 1)
-        //    rgb += CalcDirectionalLight(input, l); 
-        //if (l.type == 2)
-        //    rgb += CalcSpotLight(input, l);
-        //if (l.type == 3)
-            rgb += CalcPointLight(input, l, texcolor);
-
+        rgb += CalcPointLight(input, l, texcolor);
     }
+
     if (mapMasks == 0)
     {
         output.diffuse = float4(color, 1);

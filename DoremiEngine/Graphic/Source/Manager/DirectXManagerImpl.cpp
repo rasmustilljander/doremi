@@ -1102,13 +1102,6 @@ namespace DoremiEngine
                     materialData = transRenderData[i].materialMessage;
                     if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                     {
-                        // Just for the luls
-                        // float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-                        // float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-                        // float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-                        //
-                        // transRenderData[i].materialMessage.SetColor(r, g, b);
-
                         D3D11_MAPPED_SUBRESOURCE tMS;
                         m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
                         memcpy(tMS.pData, &transRenderData[i].materialMessage.data, sizeof(transRenderData[i].materialMessage.data));

@@ -63,6 +63,8 @@ namespace Doremi
                 ifs.read((char*)&materialMessage.data.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialMessage.data.specRollOff, sizeof(float));
 
+                materialMessage.data.alpha = 1;
+
                 materialMessage.diffuseTexturePath = "debug.dds";
                 materialMessage.glowTexturePath = "glow.dds";
 
@@ -119,6 +121,8 @@ namespace Doremi
                 ifs.read((char*)&materialMessage.data.specCosine, sizeof(float));
                 ifs.read((char*)&materialMessage.data.specEccentricity, sizeof(float));
                 ifs.read((char*)&materialMessage.data.specRollOff, sizeof(float));
+
+                materialMessage.data.alpha = 1;
 
                 materialMessage.diffuseTexturePath = "debug.dds";
                 materialMessage.glowTexturePath = "glow.dds";

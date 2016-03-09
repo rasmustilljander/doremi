@@ -209,6 +209,12 @@ namespace DoremiEngine
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
             DoremiEditor::Core::MaterialMessage materialData = p_material.GetMaterialData();
 
+            if(p_material.GetMaterialData().data.alpha < 1)
+                p_material.SetAlpha(p_material.GetMaterialData().data.alpha + 0.01);
+            else
+                p_material.SetAlpha(0);
+
+
             MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(),
                                           p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount(), materialData);
 

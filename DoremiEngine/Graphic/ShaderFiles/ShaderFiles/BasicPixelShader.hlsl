@@ -71,7 +71,8 @@ cbuffer MaterialData : register(b1)
     float3 specColor;
     float specEccentricity;
     float specRollOff;
-    float2 pad;
+    float alpha;
+    float pad;
 };
 
 Texture2D ObjTexture : register(t0);

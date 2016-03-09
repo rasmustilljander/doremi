@@ -22,6 +22,7 @@ namespace DoremiEditor
                 ambColor[0] = ambColor[1] = ambColor[2] = 0.0f;
                 specColor[0] = specColor[1] = specColor[2] = 0.0f;
                 specCosine = specEccentricity = specRollOff = 0.0f;
+                alpha = 1.f;
             }
             void setColor(float r, float g, float b)
             {
@@ -29,6 +30,8 @@ namespace DoremiEditor
                 color[1] = g;
                 color[2] = b;
             }
+
+            void SetAlpha(float a) { alpha = a; }
 
             int mapMasks;
             float color[3];
@@ -38,7 +41,8 @@ namespace DoremiEditor
             float specColor[3];
             float specEccentricity;
             float specRollOff;
-            float pad[2];
+            float alpha;
+            float pad;
         };
     }
 }
