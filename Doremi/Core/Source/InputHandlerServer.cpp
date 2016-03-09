@@ -40,7 +40,8 @@ namespace Doremi
             // TODOCM remove debugg
             if(m_queuedInputs.size() > 30)
             {
-                cout << "Got more then 30 inputs buffered, real num: " << m_queuedInputs.size() << endl;
+                cout << "Got more then 30 inputs buffered will clear..., real num: " << m_queuedInputs.size() << endl;
+                m_queuedInputs.clear();
             }
         }
 

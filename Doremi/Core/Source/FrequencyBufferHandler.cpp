@@ -79,7 +79,8 @@ namespace Doremi
             // TODOCM remove debugg
             if(m_bufferedFrequencies.size() > 30)
             {
-                std::cout << "Got more then 30 frequences buffered, real num: " << m_bufferedFrequencies.size() << std::endl;
+                std::cout << "Got more then 30 frequences buffered will clear, real num: " << m_bufferedFrequencies.size() << std::endl;
+                m_bufferedFrequencies.clear();
             }
         }
 
