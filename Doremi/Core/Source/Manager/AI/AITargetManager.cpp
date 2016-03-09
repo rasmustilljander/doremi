@@ -16,6 +16,7 @@
 // Events
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
 
 // Helper
 #include <Helper/ProximityChecker.hpp>
@@ -54,6 +55,9 @@ namespace Doremi
             std::map<uint32_t, PlayerServer*>& t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
             size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
+
+            // TODOXX this have very bad coupling and if possible should be done in the damage manager
+            std::map<int, float> damageToPlayer;
 
             for(size_t i = m_actorToUpdate + 1; i != m_actorToUpdate; i++)
             {
@@ -176,17 +180,23 @@ namespace Doremi
                         {
                             if(closestDistance <= aiRange->range)
                             {
-                                FireAtEntity(closestVisiblePlayer, i, closestDistance);
-                                if(t_entityHandler.HasComponents(i, (int)ComponentType::AIAgent))
+                                AIAgentComponent* agent = t_entityHandler.GetComponentFromStorage<AIAgentComponent>(i);
+                                agent->attackTimer = 0;
+                                if(agent->type == AIType::Melee)
                                 {
-                                    AIAgentComponent* timer = t_entityHandler.GetComponentFromStorage<AIAgentComponent>(i);
-                                    timer->attackTimer = 0;
+                                    // melee attack logic, just deal the damage :P
+                                    if(damageToPlayer.count(closestVisiblePlayer) == 0)
+                                    {
+                                        damageToPlayer[closestVisiblePlayer] = 0;
+                                    }
+                                    damageToPlayer[closestVisiblePlayer] += 10; // TODOCONFIG Melee enemy damage
                                 }
-                                else
+                                else if(agent->type == AIType::SmallRanged)
                                 {
-                                    // WTF??? someone who isnt AI agen got here??
-                                    std::cout << "Non enemy entered the AI fire logic..." << std::endl;
+                                    FireAtEntity(closestVisiblePlayer, i, closestDistance);
                                 }
+                                AnimationTransitionEvent* t_animationTransition = new AnimationTransitionEvent(i, Animation::ATTACK);
+                                EventHandler::GetInstance()->BroadcastEvent(t_animationTransition);
                             }
                         }
                         // If we see a player turn off the phermonetrail
@@ -207,6 +217,14 @@ namespace Doremi
                 }
             }
             m_actorToUpdate = lastUpdatedActor;
+
+            // Send events for all the players that were immediatly damage by enemies
+            for(auto pairs : damageToPlayer)
+            {
+                DamageTakenEvent* t_damageTakenEvent = new DamageTakenEvent(pairs.second, pairs.first);
+                EventHandler::GetInstance()->BroadcastEvent(t_damageTakenEvent);
+            }
+            damageToPlayer.clear();
         }
 
         void AITargetManager::FireAtEntity(const size_t& p_entityID, const size_t& p_enemyID, const float& p_distance)
@@ -239,8 +257,6 @@ namespace Doremi
             XMFLOAT3 force;
             XMStoreFloat3(&force, direction);
             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddForceToBody(id, force);
-            AnimationTransitionEvent* t_animationTransition = new AnimationTransitionEvent(p_enemyID, Animation::ATTACK);
-            EventHandler::GetInstance()->BroadcastEvent(t_animationTransition);
         }
     }
 }

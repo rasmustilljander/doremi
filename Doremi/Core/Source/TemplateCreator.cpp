@@ -278,6 +278,7 @@ namespace Doremi
 
             // AI timers as ai agent
             AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
+            aiTimers->type = AIType::SmallRanged;
             blueprint[ComponentType::AIAgent] = aiTimers;
 
             // Movement comp
@@ -392,7 +393,7 @@ namespace Doremi
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 5.0f;
+            rangeComp->range = 8.0f;
             blueprint[ComponentType::Range] = rangeComp;
 
             // PotentialField component
@@ -404,7 +405,8 @@ namespace Doremi
             blueprint[ComponentType::PotentialField] = potentialComp;
 
             // Enemy ai agent comp
-            AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
+            AIAgentComponent* aiTimers = new AIAgentComponent(0.2f, 0.025f);
+            aiTimers->type = AIType::Melee;
             blueprint[ComponentType::AIAgent] = aiTimers;
 
             // Movement comp
