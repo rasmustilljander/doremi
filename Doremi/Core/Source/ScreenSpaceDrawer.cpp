@@ -267,7 +267,7 @@ namespace Doremi
 
 
             // Get text to draw
-            std::vector<Text*> t_TextToDraw = OptionsHandler::GetInstance()->GetText();
+            std::vector<Text*>& t_TextToDraw = OptionsHandler::GetInstance()->GetText();
 
             // For each text add to render list
             for(auto& t_text : t_TextToDraw)
@@ -283,24 +283,44 @@ namespace Doremi
 
             // Draw drop downs LAAAST
             // Get buttons to draw
-            std::vector<Button> t_dropDownButtons = OptionsHandler::GetInstance()->GetDropDownButtons();
+            std::vector<DropDownResolution>& t_dropDownResolution = OptionsHandler::GetInstance()->GetDropDownResolutions();
 
             // For each button add to render list
-            for(auto& t_button : t_dropDownButtons)
+            for(auto& t_item : t_dropDownResolution)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_button.m_spriteInfo), *(t_button.m_materialInfo));
+                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                for(auto& t_textPart : t_item.text.m_textInfo)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                }
             }
 
+            // Get buttons to draw
+            std::vector<DropDownRefreshRate>& t_dropDownRefresh = OptionsHandler::GetInstance()->GetDropDownRefresh();
 
-            // Get text to draw
-            std::vector<Text> t_dropDownText = OptionsHandler::GetInstance()->GetDropDownText();
-
-            // For each text add to render list
-            for(auto& t_text : t_dropDownText)
+            // For each button add to render list
+            for(auto& t_item : t_dropDownRefresh)
             {
-                for(auto& t_textPart : t_text.m_textInfo)
+                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                for(auto& t_textPart : t_item.text.m_textInfo)
                 {
-                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_text.m_textMaterial));
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                }
+            }
+
+            // Get buttons to draw
+            std::vector<DropDownMonitor>& t_dropdownMonitor = OptionsHandler::GetInstance()->GetDropDownMonitors();
+
+            // For each button add to render list
+            for(auto& t_item : t_dropdownMonitor)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                for(auto& t_textPart : t_item.text.m_textInfo)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
                 }
             }
 

@@ -23,6 +23,28 @@ namespace Doremi
     namespace Core
     {
 
+        struct DropDownResolution
+        {
+            Button button;
+            Text text;
+            uint32_t width;
+            uint32_t height;
+        };
+
+        struct DropDownRefreshRate
+        {
+            Button button;
+            Text text;
+            uint32_t refreshRate;
+        };
+
+        struct DropDownMonitor
+        {
+            Button button;
+            Text text;
+            uint32_t monitorIndex;
+        };
+
         /**
         Only an example of what a manager might look like
         Doesn't do anything, and could be removed once examples are no longer necessary*/
@@ -39,8 +61,9 @@ namespace Doremi
             auto& GetBars() { return m_bars; }
             auto& GetText() { return m_text; }
             auto& GetButtons() { return m_optionsButtons; }
-            auto& GetDropDownButtons() { return m_dropdownButtons; }
-            auto& GetDropDownText() { return m_dropdownText; }
+            auto& GetDropDownResolutions() { return m_dropdownResolution; }
+            auto& GetDropDownRefresh() { return m_dropdownRefresh; }
+            auto& GetDropDownMonitors() { return m_dropdownMonitors; }
 
         private:
             explicit OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -49,19 +72,49 @@ namespace Doremi
 
             void CreateScreenResolutionOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            void CreateRefreshOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
+            void CreateMonitorOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             void CreateResolutionDropDown();
 
+            void CreateRefreshRateDropDown();
+
             void ClearResolutionDropDown();
+
+            void UpdateResolution();
+
+            void UpdateRefreshRate();
+
+            void ClearRefreshDropDown();
+
+            void CreateMonitorDropDown();
+
+            void ClearMonitorDropDown();
 
             static OptionsHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
             Bar m_soundBar;
 
-            Button m_middleResolutionButton;
-            Text m_middleResolutionText;
+            Button m_resolutionButton;
+            Text m_resolutionText;
+
+            Button m_refreshButton;
+            Text m_refreshText;
+
+            Button m_monitorButton;
+            Text m_monitorText;
 
             Button* m_highlightedButton;
+
+            // only for drop downs to get info
+            uint32_t m_highlightedWidth;
+            uint32_t m_highlightedHegiht;
+
+            uint32_t m_highlightedRefreshrate;
+
+            uint32_t m_highlightedMonitorindex;
 
             std::vector<ScreenObject*> m_screenObjects;
             std::vector<Bar*> m_bars;
@@ -70,11 +123,14 @@ namespace Doremi
 
             std::vector<Slider*> m_sliders;
 
-            std::vector<Button> m_dropdownButtons;
-            std::vector<Text> m_dropdownText;
+            std::vector<DropDownResolution> m_dropdownResolution;
+            std::vector<DropDownRefreshRate> m_dropdownRefresh;
+            std::vector<DropDownMonitor> m_dropdownMonitors;
 
 
             bool t_resolutionDropdownIsActive;
+            bool t_refreshDropdownIsActive;
+            bool t_monitorDropdownIsActive;
 
             // std::map<uint32_t, std::map<DisplayMode, std::vector<uint32_t>>> m_displayModeMap;
             uint32_t m_currentResolutionWidth;

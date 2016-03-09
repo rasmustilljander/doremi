@@ -19,6 +19,11 @@ namespace Doremi
             EXIT,
             SET_FULLSCREEN,
             RESOLUTION_PRESS,
+            RESOLUTION_SELECT,
+            REFRESH_PRESS,
+            REFRESH_SELECT,
+            MONITOR_PRESS,
+            MONITOR_SELECT,
             OPTIONS_APPLY,
             OPTIONS_OK,
         };

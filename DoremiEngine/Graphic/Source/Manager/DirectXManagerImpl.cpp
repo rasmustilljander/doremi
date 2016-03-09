@@ -154,8 +154,8 @@ namespace DoremiEngine
                     SDL_GetDisplayMode(dispIndex, modeIndex, &mode);
 
                     std::pair<uint32_t, uint32_t> m_resolution;
-                    m_resolution.first = mode.h;
-                    m_resolution.second = mode.w;
+                    m_resolution.first = mode.w;
+                    m_resolution.second = mode.h;
 
                     // If we don't already have refreshrate saved add, or nothing saved add
                     if(m_displayModes[dispIndex][m_resolution].size() && m_displayModes[dispIndex][m_resolution].back() != mode.refresh_rate)
@@ -178,8 +178,8 @@ namespace DoremiEngine
             if(m_displayModes.count(0))
             {
                 std::pair<uint32_t, uint32_t> t_resolutionToCheck;
-                t_resolutionToCheck.first = static_cast<uint32_t>(y);
-                t_resolutionToCheck.second = static_cast<uint32_t>(x);
+                t_resolutionToCheck.first = static_cast<uint32_t>(x);
+                t_resolutionToCheck.second = static_cast<uint32_t>(y);
 
                 if(m_displayModes[0].count(t_resolutionToCheck))
                 {
@@ -188,8 +188,8 @@ namespace DoremiEngine
                 else
                 {
                     // Change to proper resolution
-                    y = m_displayModes[0].rbegin().base()->first.first;
-                    x = m_displayModes[0].rbegin().base()->first.second;
+                    x = (m_displayModes[0].rbegin())->first.first;
+                    y = (m_displayModes[0].rbegin())->first.second;
                 }
             }
             else
