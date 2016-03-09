@@ -3,6 +3,7 @@
 #include <Doremi/Core/Include/EntityComponent/Components/TransformComponent.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <DoremiEngine/Physics/Include/CharacterControlManager.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <algorithm>
 #include <iostream>
@@ -25,6 +26,7 @@ namespace Doremi
         {
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
             DoremiEngine::Physics::RigidBodyManager& t_rigidManager = m_sharedContext.GetPhysicsModule().GetRigidBodyManager();
+            DoremiEngine::Physics::CharacterControlManager& t_charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
 
             size_t lastEntityID = t_entityHandler.GetLastEntityIndex();
             DirectX::XMVECTOR t_playerPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(p_playerID)->position));
@@ -50,6 +52,16 @@ namespace Doremi
                             continue;
                         }
                     }
+                    else if(t_entityHandler.HasComponents(i, (int)ComponentType::CharacterController))
+                    {
+                        if(t_charControlManager.IsSleeping(i))
+                        {
+                            // Update not relevant timer
+                            netObject->UpdateToNotRelevant(p_dt);
+                            continue;
+                        }
+                    }
+
 
                     // Get position of object
                     DirectX::XMVECTOR t_objectPosVec = DirectX::XMLoadFloat3(&(GetComponent<TransformComponent>(i)->position));

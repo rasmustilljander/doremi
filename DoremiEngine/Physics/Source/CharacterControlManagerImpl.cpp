@@ -14,6 +14,19 @@ namespace DoremiEngine
         }
         CharacterControlManagerImpl::~CharacterControlManagerImpl() { m_manager->release(); }
 
+        bool CharacterControlManagerImpl::IsSleeping(int p_id)
+        {
+            if(m_controllers.find(p_id) == m_controllers.end())
+            {
+                cout << "Char controller IsSleeping went wrong" << endl;
+                return false;
+            }
+            else
+            {
+                return m_controllers[p_id]->getActor()->isSleeping();
+            }
+        }
+
         int CharacterControlManagerImpl::AddController(int p_id, int p_matID, XMFLOAT3 p_position, XMFLOAT2 p_dimensions)
         {
             // Set start attributes of the controller

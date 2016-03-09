@@ -9,6 +9,12 @@ namespace DoremiEngine
         {
         public:
             /**
+                Checks if a character controller is sleeping, other words not changed since set
+                timeinterval
+            */
+            virtual bool IsSleeping(int p_id) = 0;
+
+            /**
             Adds a character controller and maps it to the specified ID.
             Controller starts at the specified position. It has the shape
             of a capsure, where p_dimensions defines its size (x is height

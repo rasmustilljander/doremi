@@ -464,7 +464,7 @@ namespace Doremi
             blueprint[ComponentType::EntityType] = typeComp;
 
             // Network object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1.0f);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1.8f);
             blueprint[ComponentType::NetworkObject] = netObjComp;
 
             // Life time component
@@ -550,7 +550,7 @@ namespace Doremi
             t_platform[ComponentType::PlatFormPatrolComponent] = t_platformPatrolComponent;
 
             // Net object
-            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1);
+            NetworkObjectComponent* netObjComp = new NetworkObjectComponent(1.5f);
             t_platform[ComponentType::NetworkObject] = netObjComp;
 
             // Register bluepirnt

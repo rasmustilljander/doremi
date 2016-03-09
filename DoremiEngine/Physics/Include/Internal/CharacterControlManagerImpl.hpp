@@ -16,6 +16,8 @@ namespace DoremiEngine
             CharacterControlManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~CharacterControlManagerImpl();
 
+            bool IsSleeping(int p_id) override;
+
             int AddController(int p_id, int p_matID, XMFLOAT3 p_position, XMFLOAT2 p_dimensions) override;
             bool MoveController(int p_id, XMFLOAT3 p_discplacement, float p_dt) override;
             void SetCallbackFiltering(int p_body, int p_thisIdMask, int p_notifyTouchOthersMask, int p_notifyLeaveOthersMask, int p_ignoreOthersMask) override;
