@@ -143,16 +143,16 @@ namespace DoremiEngine
 
             int SizeOfAdress = sizeof(Adress);
 
-            uint32_t t_message;
+            UDP_RELIABLE_CONNECT_MESSAGE t_message;
             uint32_t t_dataSizeReceived = 0;
 
             // Try recieve
-            if(!ReceiveUDP(p_adress, &t_message, sizeof(uint32_t), t_dataSizeReceived))
+            if(!ReceiveUDP(p_adress, &t_message, sizeof(UDP_RELIABLE_CONNECT_MESSAGE), t_dataSizeReceived))
             {
                 return false;
             }
 
-            if(t_dataSizeReceived != sizeof(uint32_t))
+            if(t_dataSizeReceived != sizeof(UDP_RELIABLE_CONNECT_MESSAGE))
             {
                 return false;
             }
@@ -160,6 +160,9 @@ namespace DoremiEngine
             // Only create the socket if we receive something
             p_socket = new Socket();
             p_socket->CreateUDPSocketToSendAndReceive();
+
+            // Set port
+            p_adress.SetNetPort(t_message.Port);
 
             int32_t Result = connect(p_socket->m_socketHandle, (SOCKADDR*)&(p_adress.GetAdress()), sizeof(SOCKADDR));
             if(Result == SOCKET_ERROR)
@@ -169,7 +172,7 @@ namespace DoremiEngine
             }
 
             // Send response with new socket
-            p_socket->SendUDP(&t_message, sizeof(uint32_t));
+            p_socket->SendUDP(&t_message, sizeof(UDP_RELIABLE_CONNECT_MESSAGE));
 
 
             // Return a socket used to send to later
@@ -417,12 +420,28 @@ namespace DoremiEngine
 
         bool Socket::ConnectUDPSocket(const AdressImplementation& p_connectAdress)
         {
+            // Bind socket here... need to bind because we want to receive from other adress
+            uint32_t t_portToUse = UDP_RELIABLE_PORT;
+            AdressImplementation* t_adressToUseOnSocket = new AdressImplementation(p_connectAdress.GetIP_A(), p_connectAdress.GetIP_B(),
+                                                                                   p_connectAdress.GetIP_C(), p_connectAdress.GetIP_D(), t_portToUse);
+
+
+            // Bind socket to incomming connection to a specific port and "allowed" IP
+            while(bind(m_socketHandle, (SOCKADDR*)&t_adressToUseOnSocket->GetAdress(), sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+            {
+                t_portToUse++;
+                t_adressToUseOnSocket->SetNetPort(t_portToUse);
+            };
+
+
             // While we succeed sending a message
-            uint32_t p_Message = UDP_RELIABLE_CONTROL_ID;
+            UDP_RELIABLE_CONNECT_MESSAGE p_Message;
+            p_Message.ControlID = UDP_RELIABLE_CONTROL_ID;
+            p_Message.Port = t_portToUse;
 
             // Do this until send.. may cause deadlock
             uint32_t t_numTimes = 0;
-            while(!SendUDP(p_connectAdress, &p_Message, sizeof(uint32_t)))
+            while(!SendUDP(p_connectAdress, &p_Message, sizeof(UDP_RELIABLE_CONNECT_MESSAGE)))
             {
                 // If we fail sending a few times.. we give up
                 t_numTimes++;
@@ -447,12 +466,13 @@ namespace DoremiEngine
             uint32_t t_dataSizeReceived = 0;
             AdressImplementation* t_newAdress = new AdressImplementation();
 
+
             // Wait for receive
-            if(ReceiveUDP(*t_newAdress, &p_Message, sizeof(uint32_t), t_dataSizeReceived))
+            if(ReceiveUDP(*t_newAdress, &p_Message, sizeof(UDP_RELIABLE_CONNECT_MESSAGE), t_dataSizeReceived))
             {
-                if(t_dataSizeReceived == sizeof(uint32_t))
+                if(t_dataSizeReceived == sizeof(UDP_RELIABLE_CONNECT_MESSAGE))
                 {
-                    if(p_Message == UDP_RELIABLE_CONTROL_ID)
+                    if(p_Message.ControlID == UDP_RELIABLE_CONTROL_ID)
                     {
                         int32_t Result = connect(m_socketHandle, (SOCKADDR*)&(t_newAdress->GetAdress()), sizeof(SOCKADDR));
                         if(Result == SOCKET_ERROR)

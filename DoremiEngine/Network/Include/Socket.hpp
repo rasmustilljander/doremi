@@ -14,10 +14,18 @@
 
 #define CONNECTION_PROTOCOL_ID 0
 #define UDP_RELIABLE_CONTROL_ID 39085430
+#define UDP_RELIABLE_PORT 6030
+
 namespace DoremiEngine
 {
     namespace Network
     {
+        struct UDP_RELIABLE_CONNECT_MESSAGE
+        {
+            uint32_t ControlID;
+            uint32_t Port;
+        };
+
         class Socket
         {
         public:
