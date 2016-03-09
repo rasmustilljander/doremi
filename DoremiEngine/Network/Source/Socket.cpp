@@ -143,7 +143,7 @@ namespace DoremiEngine
 
             int SizeOfAdress = sizeof(Adress);
 
-            uint32_t t_message = 0;
+            uint32_t t_message;
             uint32_t t_dataSizeReceived = 0;
 
             // Try recieve
@@ -152,13 +152,24 @@ namespace DoremiEngine
                 return false;
             }
 
+            if(t_dataSizeReceived != sizeof(uint32_t))
+            {
+                return false;
+            }
+
             // Only create the socket if we receive something
             p_socket = new Socket();
             p_socket->CreateUDPSocketToSendAndReceive();
 
+            int32_t Result = connect(p_socket->m_socketHandle, (SOCKADDR*)&(p_adress.GetAdress()), sizeof(SOCKADDR));
+            if(Result == SOCKET_ERROR)
+            {
+                throw std::runtime_error("Failed setting TCP to non blocking.");
+                return false;
+            }
+
             // Send response with new socket
-            t_message = UDP_RELIABLE_CONTROL_ID;
-            p_socket->SendUDP(p_adress, &t_message, sizeof(uint32_t));
+            p_socket->SendUDP(&t_message, sizeof(uint32_t));
 
 
             // Return a socket used to send to later
@@ -286,6 +297,28 @@ namespace DoremiEngine
             return true;
         }
 
+        bool Socket::ReceiveUDPConnected(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived)
+        {
+            // Attempt to Receive data from socket
+            int32_t Return = recv(m_socketHandle, (char*)p_data, p_dataSize, 0);
+
+            p_dataSizeReceived = Return;
+
+            // If some error or
+            if(Return == SOCKET_ERROR)
+            {
+                // Error cause of Socket is buissy in non-blocking mode, non-fatal error
+                int Error = WSAGetLastError();
+                if(Error != WSAEWOULDBLOCK && Error != WSAECONNRESET)
+                {
+                    // TODOCM Log message
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         bool Socket::SendTCP(void* p_data, const uint32_t& p_dataSize)
         {
             // Check if message larger then max size of the connection(TCP doesnt care)
@@ -344,6 +377,7 @@ namespace DoremiEngine
             // If failed, throw exception
             if(Result == SOCKET_ERROR)
             {
+                int Error = WSAGetLastError();
                 std::string Out = "Failed to bind socket with IP: " + p_myAdress.GetIPToString() + " To port: " + std::to_string(p_myAdress.GetPort());
                 throw std::runtime_error(Out.c_str());
             }
@@ -397,11 +431,12 @@ namespace DoremiEngine
                     return false;
                 }
             }
+            std::cout << t_numTimes << std::endl;
 
             // Set our timeout
             timeval tv;
             tv.tv_sec = 0;
-            tv.tv_usec = 1000000; // 1000 ms
+            tv.tv_usec = 100; // 1000 ms
 
             uint32_t Result = setsockopt(m_socketHandle, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
             if(Result == SOCKET_ERROR)
@@ -409,9 +444,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Failed setting TCP to non blocking.");
             }
 
-            p_Message = 0;
             uint32_t t_dataSizeReceived = 0;
-
             AdressImplementation* t_newAdress = new AdressImplementation();
 
             // Wait for receive
@@ -421,8 +454,6 @@ namespace DoremiEngine
                 {
                     if(p_Message == UDP_RELIABLE_CONTROL_ID)
                     {
-                        SetNonBlocking();
-
                         int32_t Result = connect(m_socketHandle, (SOCKADDR*)&(t_newAdress->GetAdress()), sizeof(SOCKADDR));
                         if(Result == SOCKET_ERROR)
                         {
@@ -430,6 +461,8 @@ namespace DoremiEngine
                         }
 
                         delete t_newAdress;
+
+                        SetNonBlocking();
 
                         return true;
                     }

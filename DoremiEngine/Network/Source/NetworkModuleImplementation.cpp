@@ -12,6 +12,7 @@
 //#define USE_TCP 1
 #define USE_UDP 1
 
+#include <iostream>
 
 namespace DoremiEngine
 {
@@ -101,6 +102,7 @@ namespace DoremiEngine
             // Attempt to send data, returns true if all data is sent
             bool SendSuccessful = socketToSendTo->SendUDP(t_data, t_dataSize);
 #endif
+
             return SendSuccessful;
         }
 
@@ -118,7 +120,7 @@ namespace DoremiEngine
             // Attempt to Receive data, returns true if all data is sent
             bool ReceiveSuccessful = socketToReceiveFrom->ReceiveTCP(t_data, t_dataSize, p_dataSizeReceived);
 #elif USE_UDP
-            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveUDP(t_data, t_dataSize, p_dataSizeReceived);
+            bool ReceiveSuccessful = socketToReceiveFrom->ReceiveUDPConnected(t_data, t_dataSize, p_dataSizeReceived);
 #endif
 
             return ReceiveSuccessful;

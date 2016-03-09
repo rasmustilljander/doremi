@@ -14,7 +14,6 @@
 
 #define CONNECTION_PROTOCOL_ID 0
 #define UDP_RELIABLE_CONTROL_ID 39085430
-
 namespace DoremiEngine
 {
     namespace Network
@@ -56,7 +55,7 @@ namespace DoremiEngine
             /**
                 Accept a UDP connection
             */
-            bool AcceptUDPConnection(Socket* p_socket, AdressImplementation& p_adress);
+            bool AcceptUDPConnection(Socket*& p_socket, AdressImplementation& p_adress);
 
             /**
                 Accept a TCP connection if CreateWaitingTCPSocket is called
@@ -89,6 +88,11 @@ namespace DoremiEngine
                 Receive data using UDP to bound socket
             */
             bool ReceiveUDP(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
+
+            /**
+                On connected
+            */
+            bool ReceiveUDPConnected(void* p_data, const uint32_t& p_dataSize, uint32_t& p_dataSizeReceived);
 
             /**
                 Send data to socket

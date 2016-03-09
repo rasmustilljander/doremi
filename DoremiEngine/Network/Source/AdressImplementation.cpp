@@ -57,7 +57,11 @@ namespace DoremiEngine
             m_IP_d = p_d;
         }
 
-        void AdressImplementation::SetNetPort(uint16_t p_port) { m_port = p_port; }
+        void AdressImplementation::SetNetPort(uint16_t p_port)
+        {
+            m_port = p_port;
+            m_Adress.sin_port = htons(m_port);
+        }
 
         void AdressImplementation::SetAdress(SOCKADDR_IN p_adress)
         {

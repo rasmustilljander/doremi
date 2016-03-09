@@ -33,7 +33,7 @@ namespace Doremi
         NetworkManagerServer::NetworkManagerServer(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : Manager(p_sharedContext, "NetworkManagerServer"),
               m_timeoutIntervalConnecting(5.0f),
-              m_timeoutIntervalConnected(1.0f),
+              m_timeoutIntervalConnected(5.0f),
               m_timeoutIntervalMaster(5.0f),
               m_masterNextUpdateTimer(0.0f),
               m_masterUpdateInterval(0.5f),
