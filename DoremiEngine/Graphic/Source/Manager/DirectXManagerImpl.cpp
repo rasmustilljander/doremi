@@ -101,7 +101,7 @@ namespace DoremiEngine
             // Device flags
             UINT t_flags = 0;
 #ifdef _DEBUG
-            t_flags |= D3D11_CREATE_DEVICE_DEBUG;
+// t_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
             t_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
 

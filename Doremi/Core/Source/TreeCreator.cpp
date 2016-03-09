@@ -18,7 +18,7 @@ namespace Doremi
             m_treeDepth = 3;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(2900, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100); 2900
             //
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);

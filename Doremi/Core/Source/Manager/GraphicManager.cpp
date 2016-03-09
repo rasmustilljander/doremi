@@ -72,73 +72,28 @@ namespace Doremi
         void GraphicManager::Update(double p_dt)
         {
             FUNCTION_TIMER
+            NAMED_TIMER("_TreeGraphicHela")
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
 
             EntityHandler& entityHandler = EntityHandler::GetInstance();
             const size_t lengthAllEntities = entityHandler.GetLastEntityIndex();
-            std::vector<uint32_t> t_theseShouldBeDrawn = TreeHandler::GetInstance()->Update();
-            size_t length = t_theseShouldBeDrawn.size();
+            // std::vector<uint32_t> t_theseShouldBeDrawn = TreeHandler::GetInstance()->Update();
+            // size_t length = t_theseShouldBeDrawn.size();
             int mask = (int)ComponentType::Render | (int)ComponentType::Transform;
 
 
             // NAMED_TIMER("DrawGrejerna")
-            // for (size_t i = 0; i < lengthAllEntities; ++i)
-            //{
-            //    if (entityHandler.HasComponents(i, mask)
-            //        && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation)
-            //        && !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
-            //    {
-            //            RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
-            //            TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
-            //            DirectX::XMFLOAT4X4 transMat;
-            //            DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
-            //            DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
-            //                DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
-            //                DirectX::XMMatrixRotationQuaternion(quaternion) *
-            //                DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
-            //                orientationComp->position.z));
-            //            DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-            //            submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
-            //    }
-            //}
             for(size_t i = 0; i < lengthAllEntities; ++i)
             {
                 if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
                    !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
                 {
-                    if((!entityHandler.HasComponents(i, (int)ComponentType::RigidBody)) ||
-                       (entityHandler.HasComponents(i, (int)ComponentType::RigidBody) && GetComponent<RigidBodyComponent>(i)->geometry == RigidBodyGeometry::dynamicBox))
-                    {
-                        RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
-                        TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
-                        DirectX::XMFLOAT4X4 transMat;
-                        DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
-
-                        DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
-                            DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
-                            DirectX::XMMatrixRotationQuaternion(quaternion) *
-                            DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
-                                                         orientationComp->position.z));
-                        DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
-                        submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
-                    }
-                }
-            }
-
-
-            for(size_t i = 0; i < length; ++i)
-            {
-                if(entityHandler.HasComponents(t_theseShouldBeDrawn[i], mask) &&
-                   !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::LowerBodySkeletalAnimation) &&
-                   !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::UpperBodySkeletalAnimation))
-                {
-                    RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(t_theseShouldBeDrawn[i]);
-                    TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(t_theseShouldBeDrawn[i]);
+                    RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+                    TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
                     DirectX::XMFLOAT4X4 transMat;
                     DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
-
                     DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
                         DirectX::XMMatrixRotationQuaternion(quaternion) *
@@ -147,15 +102,63 @@ namespace Doremi
                     submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
                 }
             }
+            // for(size_t i = 0; i < lengthAllEntities; ++i)
+            //{
+            //    NAMED_TIMER("_TreeGraphicCosmetics")
+            //    if(entityHandler.HasComponents(i, mask) && !entityHandler.HasComponents(i, (int)ComponentType::LowerBodySkeletalAnimation) &&
+            //       !entityHandler.HasComponents(i, (int)ComponentType::UpperBodySkeletalAnimation))
+            //    {
+            //        if((!entityHandler.HasComponents(i, (int)ComponentType::RigidBody)) ||
+            //           (entityHandler.HasComponents(i, (int)ComponentType::RigidBody) && GetComponent<RigidBodyComponent>(i)->geometry ==
+            //           RigidBodyGeometry::dynamicBox))
+            //        {
+            //            RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(i);
+            //            TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(i);
+            //            DirectX::XMFLOAT4X4 transMat;
+            //            DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+            //
+            //            DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+            //                DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+            //                DirectX::XMMatrixRotationQuaternion(quaternion) *
+            //                DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
+            //                                             orientationComp->position.z));
+            //            DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+            //            submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+            //        }
+            //    }
+            //}
+            //
+            //
+            // for(size_t i = 0; i < length; ++i)
+            //{
+            //    NAMED_TIMER("_TreeGraphicDeSomInteCullatsBort")
+            //    if(entityHandler.HasComponents(t_theseShouldBeDrawn[i], mask) &&
+            //       !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::LowerBodySkeletalAnimation) &&
+            //       !entityHandler.HasComponents(t_theseShouldBeDrawn[i], (int)ComponentType::UpperBodySkeletalAnimation))
+            //    {
+            //        RenderComponent* renderComp = entityHandler.GetComponentFromStorage<RenderComponent>(t_theseShouldBeDrawn[i]);
+            //        TransformComponent* orientationComp = entityHandler.GetComponentFromStorage<TransformComponent>(t_theseShouldBeDrawn[i]);
+            //        DirectX::XMFLOAT4X4 transMat;
+            //        DirectX::XMVECTOR quaternion = DirectX::XMLoadFloat4(&orientationComp->rotation);
+            //
+            //        DirectX::XMMATRIX tempTransMat = DirectX::XMMatrixTranspose(
+            //            DirectX::XMMatrixScaling(orientationComp->scale.x, orientationComp->scale.y, orientationComp->scale.z) *
+            //            DirectX::XMMatrixRotationQuaternion(quaternion) *
+            //            DirectX::XMMatrixTranslation(orientationComp->position.x, orientationComp->position.y + renderComp->offsetY,
+            //            orientationComp->position.z));
+            //        DirectX::XMStoreFloat4x4(&transMat, tempTransMat);
+            //        submoduleManager.GetMeshManager().AddToRenderList(*renderComp->mesh, *renderComp->material, transMat);
+            //    }
+            //}
             m_rasterizerState->GetRasterizerState();
             m_depthStencilState->GetDepthStencilState();
             submoduleManager.GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
             TreeHandler::GetInstance()->ResetObjectsToDraw();
-            if(drawedLastUpdate != length) //|| drawedLastUpdate != 0)
-            {
-                std::cout << length << std::endl;
-            }
-            drawedLastUpdate = length;
+            // if(drawedLastUpdate != length) //|| drawedLastUpdate != 0)
+            // {
+            //     std::cout << length << std::endl;
+            //  }
+            // drawedLastUpdate = length;
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}

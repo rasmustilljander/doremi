@@ -116,7 +116,7 @@ namespace Doremi
         TreeHandler::~TreeHandler() {}
         bool TreeHandler::CollisionCheckForBox(DirectX::XMFLOAT3 p_center, DirectX::XMFLOAT3 p_dimensions)
         {
-            FUNCTION_TIMER;
+            NAMED_TIMER("_TreeCollisionchecken")
             // std::cout << "X:" << m_playerPos.x << " Y:" << m_playerPos.y << " Z:" << m_playerPos.z << std::endl;
             // Check if any one point of the cube is in the view frustum.
             for(int i = 0; i < 6; ++i)
@@ -269,168 +269,164 @@ namespace Doremi
         std::vector<uint32_t> TreeHandler::Update()
         {
             FUNCTION_TIMER
-            bool t_isDone = false;
-            int t_whatChild = 0;
-            TreeCreator::OctNode* t_currentNode = &m_treeCreator->treeRoot;
+            // int t_whatChild = 0;
 
             ////////// COLLISION test
             // std::vector<int> t_sweepHits;
             // size_t numberOfHits = 0;
             // DirectX::XMFLOAT3 physicsCollideFloat;
             //////////
+            {
+                // Getting the camera
+                const DoremiEngine::Graphic::Camera& t_playerCamera = CameraHandler::GetInstance()->GetThirdPersonCamera();
+                // Getting the matrices so we can build our frustum
+                const DoremiEngine::Graphic::CameraMatrices t_camMatrices = t_playerCamera.GetCameraMatrices();
+                // Needed variables
+                // DirectX::XMFLOAT4X4 t_projection4x4 = t_camMatrices.ProjectionMatrix;
+                //// DirectX::XMFLOAT4X4 t_view4x4 = t_camMatrices.ViewMatrix;
+                // float t_zMin;
+                // float r;
+                // int32_t playerentityID = -13;
+                // PlayerHandlerClient* playerHandlerClient = (PlayerHandlerClient*)PlayerHandlerClient::GetInstance();
+                // TransformComponent* playerPos;
+                // if (playerHandlerClient->PlayerExists())
+                //{
+                //    playerentityID = playerHandlerClient->GetPlayerEntityID();
+                //    //TransformComponent* playerPos;
+                //    playerPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerentityID);
+                //    //playerPos = EntityHandler::GetInstance().GetComponentFromStorage<RigidBod>(playerentityID);
+                //    // std::cout << "X:" << playerPos->position.x << " Y:" << playerPos->position.y << " Z:" << playerPos->position.z << std::endl;
+                //    m_playerPos = playerPos->position;
+                //}
 
-            // Getting the camera
-            const DoremiEngine::Graphic::Camera& t_playerCamera = CameraHandler::GetInstance()->GetThirdPersonCamera();
-            // Getting the matrices so we can build our frustum
-            const DoremiEngine::Graphic::CameraMatrices t_camMatrices = t_playerCamera.GetCameraMatrices();
-            // Needed variables
-            // DirectX::XMFLOAT4X4 t_projection4x4 = t_camMatrices.ProjectionMatrix;
-            //// DirectX::XMFLOAT4X4 t_view4x4 = t_camMatrices.ViewMatrix;
-            // float t_zMin;
-            // float r;
-            // int32_t playerentityID = -13;
-            // PlayerHandlerClient* playerHandlerClient = (PlayerHandlerClient*)PlayerHandlerClient::GetInstance();
-            // TransformComponent* playerPos;
-            // if (playerHandlerClient->PlayerExists())
-            //{
-            //    playerentityID = playerHandlerClient->GetPlayerEntityID();
-            //    //TransformComponent* playerPos;
-            //    playerPos = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(playerentityID);
-            //    //playerPos = EntityHandler::GetInstance().GetComponentFromStorage<RigidBod>(playerentityID);
-            //    // std::cout << "X:" << playerPos->position.x << " Y:" << playerPos->position.y << " Z:" << playerPos->position.z << std::endl;
-            //    m_playerPos = playerPos->position;
-            //}
+                /// Ett nytt försök!
 
-            /// Ett nytt försök!
-
-            DirectX::XMMATRIX directionMatrix = DirectX::XMLoadFloat4x4(&t_camMatrices.ViewMatrix); // *DirectX::XMVECTOR(0, 0, 1);
-            DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0, 1));
-            DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 1, 0));
-            DirectX::XMVECTOR right = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(1, 0, 0));
-            DirectX::XMVECTOR quaternion = DirectX::XMQuaternionRotationMatrix(directionMatrix);
-            forward = DirectX::XMVector3Rotate(forward, quaternion);
-            right = DirectX::XMVector3Rotate(right, quaternion);
-            up = DirectX::XMVector3Rotate(up, quaternion);
-            
-
-            DirectX::XMVECTOR upDimensions = (up * m_heighWidthFar * 0.5f);
-            DirectX::XMVECTOR rightDimensions = (right * m_heighWidthFar * 0.5f);
-            DirectX::XMVECTOR forwardFar = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_viewDist;
-            DirectX::XMVECTOR farTopLeft = forwardFar + upDimensions - rightDimensions;
-            DirectX::XMVECTOR farTopRight = forwardFar + upDimensions + rightDimensions;
-            DirectX::XMVECTOR farBottomLeft = forwardFar - upDimensions - rightDimensions;
-            DirectX::XMVECTOR farBottomRight = forwardFar - upDimensions + rightDimensions;
-
-            DirectX::XMVECTOR upDimensionsNear = (up * m_heighWidthNear * 0.5f);
-            DirectX::XMVECTOR rightDimensionsNear = (right * m_heighWidthNear * 0.5f);;
-            DirectX::XMVECTOR forwardNear = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_nearDist;
-            DirectX::XMVECTOR nearTopLeft = forwardNear + upDimensionsNear - rightDimensionsNear;
-            DirectX::XMVECTOR nearTopRight = forwardNear + upDimensionsNear + rightDimensionsNear;
-            DirectX::XMVECTOR nearBottomLeft = forwardNear - upDimensionsNear - rightDimensionsNear;
-            DirectX::XMVECTOR nearBottomRight = forwardNear - upDimensionsNear + rightDimensionsNear;
+                DirectX::XMMATRIX directionMatrix = DirectX::XMLoadFloat4x4(&t_camMatrices.ViewMatrix); // *DirectX::XMVECTOR(0, 0, 1);
+                DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 0, 1));
+                DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(0, 1, 0));
+                DirectX::XMVECTOR right = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(1, 0, 0));
+                DirectX::XMVECTOR quaternion = DirectX::XMQuaternionRotationMatrix(directionMatrix);
+                forward = DirectX::XMVector3Rotate(forward, quaternion);
+                right = DirectX::XMVector3Rotate(right, quaternion);
+                up = DirectX::XMVector3Rotate(up, quaternion);
 
 
+                DirectX::XMVECTOR upDimensions = (up * m_heighWidthFar * 0.5f);
+                DirectX::XMVECTOR rightDimensions = (right * m_heighWidthFar * 0.5f);
+                DirectX::XMVECTOR forwardFar = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_viewDist;
+                DirectX::XMVECTOR farTopLeft = forwardFar + upDimensions - rightDimensions;
+                DirectX::XMVECTOR farTopRight = forwardFar + upDimensions + rightDimensions;
+                DirectX::XMVECTOR farBottomLeft = forwardFar - upDimensions - rightDimensions;
+                DirectX::XMVECTOR farBottomRight = forwardFar - upDimensions + rightDimensions;
+
+                DirectX::XMVECTOR upDimensionsNear = (up * m_heighWidthNear * 0.5f);
+                DirectX::XMVECTOR rightDimensionsNear = (right * m_heighWidthNear * 0.5f);
+                ;
+                DirectX::XMVECTOR forwardNear = DirectX::XMLoadFloat3(&t_camMatrices.CameraPosition) + forward * m_nearDist;
+                DirectX::XMVECTOR nearTopLeft = forwardNear + upDimensionsNear - rightDimensionsNear;
+                DirectX::XMVECTOR nearTopRight = forwardNear + upDimensionsNear + rightDimensionsNear;
+                DirectX::XMVECTOR nearBottomLeft = forwardNear - upDimensionsNear - rightDimensionsNear;
+                DirectX::XMVECTOR nearBottomRight = forwardNear - upDimensionsNear + rightDimensionsNear;
 
 
-            // Near PLANE!!
-            DirectX::XMVECTOR planePoint1 = nearBottomLeft;
-            DirectX::XMVECTOR planePoint2 = nearTopLeft;
-            DirectX::XMVECTOR planePoint3 = nearBottomRight;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross( planePoint1, planePoint2);
-            DirectX::XMFLOAT3 planeData;
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[0].x = planeData.x;
-            m_planes[0].y = planeData.y;
-            m_planes[0].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
-            DirectX::XMFLOAT3 dotProduct;
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[0].w = dotProduct.x;
+                // Near PLANE!!
+                DirectX::XMVECTOR planePoint1 = nearBottomLeft;
+                DirectX::XMVECTOR planePoint2 = nearTopLeft;
+                DirectX::XMVECTOR planePoint3 = nearBottomRight;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+                DirectX::XMFLOAT3 planeData;
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[0].x = planeData.x;
+                m_planes[0].y = planeData.y;
+                m_planes[0].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+                DirectX::XMFLOAT3 dotProduct;
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[0].w = dotProduct.x;
 
-            // Far Plane!
-            planePoint1 = farBottomLeft;
-            planePoint2 = farTopLeft;
-            planePoint3 = farBottomRight;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[1].x = planeData.x;
-            m_planes[1].y = planeData.y;
-            m_planes[1].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, farBottomLeft);
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[1].w = dotProduct.x;
+                // Far Plane!
+                planePoint1 = farBottomLeft;
+                planePoint2 = farTopLeft;
+                planePoint3 = farBottomRight;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[1].x = planeData.x;
+                m_planes[1].y = planeData.y;
+                m_planes[1].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, farBottomLeft);
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[1].w = dotProduct.x;
 
-            //left plane
-            planePoint1 = nearBottomLeft;
-            planePoint2 = farBottomLeft;
-            planePoint3 = nearTopLeft;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[2].x = planeData.x;
-            m_planes[2].y = planeData.y;
-            m_planes[2].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[2].w = dotProduct.x;
+                // left plane
+                planePoint1 = nearBottomLeft;
+                planePoint2 = farBottomLeft;
+                planePoint3 = nearTopLeft;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[2].x = planeData.x;
+                m_planes[2].y = planeData.y;
+                m_planes[2].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[2].w = dotProduct.x;
 
-            //right plane
-            planePoint1 = nearTopRight;
-            planePoint2 = farTopRight;
-            planePoint3 = nearBottomRight;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[3].x = planeData.x;
-            m_planes[3].y = planeData.y;
-            m_planes[3].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopRight);
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[3].w = dotProduct.x;
+                // right plane
+                planePoint1 = nearTopRight;
+                planePoint2 = farTopRight;
+                planePoint3 = nearBottomRight;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[3].x = planeData.x;
+                m_planes[3].y = planeData.y;
+                m_planes[3].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopRight);
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[3].w = dotProduct.x;
 
-            //ABOVE!
-            planePoint1 = nearTopLeft;
-            planePoint2 = farTopLeft;
-            planePoint3 = farTopRight;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[4].x = planeData.x;
-            m_planes[4].y = planeData.y;
-            m_planes[4].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopLeft);
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[4].w = dotProduct.x;
+                // ABOVE!
+                planePoint1 = nearTopLeft;
+                planePoint2 = farTopLeft;
+                planePoint3 = farTopRight;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint1, planePoint2);
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[4].x = planeData.x;
+                m_planes[4].y = planeData.y;
+                m_planes[4].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, nearTopLeft);
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[4].w = dotProduct.x;
 
-            //lower plane
-            planePoint1 = nearBottomLeft;
-            planePoint2 = farBottomLeft;
-            planePoint3 = farBottomRight;
-            planePoint1 = planePoint1 - planePoint3;
-            planePoint2 = planePoint2 - planePoint3;
-            // normal vector of the plane
-            planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
-            DirectX::XMStoreFloat3(&planeData, planePoint1);
-            m_planes[5].x = planeData.x;
-            m_planes[5].y = planeData.y;
-            m_planes[5].z = planeData.z;
-            planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
-            DirectX::XMStoreFloat3(&dotProduct, planePoint1);
-            m_planes[5].w = dotProduct.x;
-
-
+                // lower plane
+                planePoint1 = nearBottomLeft;
+                planePoint2 = farBottomLeft;
+                planePoint3 = farBottomRight;
+                planePoint1 = planePoint1 - planePoint3;
+                planePoint2 = planePoint2 - planePoint3;
+                // normal vector of the plane
+                planePoint1 = DirectX::XMVector3Cross(planePoint2, planePoint1);
+                DirectX::XMStoreFloat3(&planeData, planePoint1);
+                m_planes[5].x = planeData.x;
+                m_planes[5].y = planeData.y;
+                m_planes[5].z = planeData.z;
+                planePoint1 = DirectX::XMVector3Dot(planePoint1, nearBottomLeft);
+                DirectX::XMStoreFloat3(&dotProduct, planePoint1);
+                m_planes[5].w = dotProduct.x;
+            }
             // DoremiEngine::Graphic::VertexBasic tQuad[] = {
             //    { -1.0f, 1.0f, -0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f }, // 1 //Lilla boxen
             //    { -1.0f, -1.0f, -0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f }, // 2//Framsidan
@@ -688,9 +684,13 @@ namespace Doremi
             int hejsan = 0;
             int elseSatsen = 0;
             int ifSatsen = 0;
-            NAMED_TIMER("TreeHandlerAfterBuildingTheFrustum")
+            bool t_isDone = false;
+            TreeCreator::OctNode* t_currentNode = &m_treeCreator->treeRoot;
+            NAMED_TIMER("_TreeHandlerAfterBuildingTheFrustum")
             while(!t_isDone)
             {
+                //++hejsan;
+                NAMED_TIMER("_TreeWhile")
                 // if(!t_currentNode->empty)
                 //{
 
@@ -710,10 +710,12 @@ namespace Doremi
                 // Collision with the frustum planes.
                 if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions) || t_currentNode->depth == 0)
                 {
-                    NAMED_TIMER("IfSatsen")
+                    // ifSatsen++;
+                    NAMED_TIMER("_TreeIfSatsen")
                     // If max depth isnt reached , minus one is needed to get the depth wanted
                     if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
                     {
+                        NAMED_TIMER("_TreeIfSatsen2")
                         // Max depth wasn't reached
 
                         // Where to start next, if we reached t_maxdepth last loop we have to
@@ -771,6 +773,7 @@ namespace Doremi
                     {
                         // Max depth reached, these will be the interesting objects to draw.
 
+                        NAMED_TIMER("_TreeHandlerPushingTHingsIntoListForLoop")
                         size_t loopSize = t_currentNode->objectsInTheArea.size();
                         // for (auto i: t_currentNode->objectsInTheArea)
                         //{
@@ -786,12 +789,10 @@ namespace Doremi
                         //}
                         for(size_t i = 0; i < loopSize; ++i)
                         {
-                            NAMED_TIMER("TreeHandlerPushingTHingsIntoListForLoop")
                             // TODOEA Have to do a check if the object allready is in the list
                             if(std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) != m_objectsToDraw.end())
                             {
                                 // Nothing
-                                ++hejsan;
                             }
                             else
                             {
@@ -804,7 +805,8 @@ namespace Doremi
                 }
                 else
                 { // If max depth isnt reached , minus one is needed to get the depth wanted
-                    NAMED_TIMER("ElseSatsen")
+                    NAMED_TIMER("_TreeElseSatsen")
+                    // elseSatsen++;
                     if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
                     {
                         // no collision with frustum
@@ -826,17 +828,17 @@ namespace Doremi
                         }
                         else
                         {
-                            if(t_currentNode->depth == 0)
-                            {
-                                // Is done, we went through all children at the depth of zero which means we are at the root node
-                                t_currentNode->loopInfo = 0;
-                                t_isDone = true;
-                            }
-                            else
+                            if(t_currentNode->depth > 0)
                             {
                                 // Loop info is above 7 which means we have looped through all children and need to take a step back in the tree
                                 t_currentNode->loopInfo = 0;
                                 t_currentNode = t_currentNode->parent;
+                            }
+                            else
+                            {
+                                // Is done, we went through all children at the depth of zero which means we are at the root node
+                                t_currentNode->loopInfo = 0;
+                                t_isDone = true;
                             }
                         }
                     }
@@ -850,12 +852,13 @@ namespace Doremi
                 }
                 //}
                 // else
-                // {
-                //     // if is empty we back out to the parent
+                //{
+                //    // if is empty we back out to the parent
                 //     t_currentNode->loopInfo = 0;
                 //     t_currentNode = t_currentNode->parent;
                 // }
             }
+            // std::cout << hejsan << "=VanligaWhile. " << std::endl;
             // std::cout << elseSatsen << "=ElseSatsen. " << std::endl;
             // std::cout << ifSatsen << "=IfSatsen. " << std::endl;
             return m_objectsToDraw;
