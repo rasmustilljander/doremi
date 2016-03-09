@@ -23,17 +23,10 @@ namespace DoremiEngine
             virtual void SetSamplerState(ID3D11SamplerState* p_samplerState) = 0;
             virtual void SetColor(float r, float g, float b) = 0;
             virtual void SetAlpha(float a) = 0;
+            virtual void AlphaFade() = 0;
 
         protected:
             std::string materialName;
-            // int mapMasks;
-            // float diffuse;
-            // float color[3];
-            // float ambColor[3];
-            // float specColor[3];
-            // float specCosine;
-            // float specEccentricity;
-            // float specRollOff;
             char* diffuseTextureName;
             char* glowTextureName;
             DoremiEditor::Core::MaterialMessage materialData;

@@ -21,6 +21,7 @@ namespace DoremiEngine
             void SetSamplerState(ID3D11SamplerState* p_samplerState) override { m_samplerState = p_samplerState; }
             void SetColor(float r, float g, float b) override { materialData.SetColor(r, g, b); }
             void SetAlpha(float a) override { materialData.SetAlpha(a); }
+            void AlphaFade() override { materialData.AlphaFade(); }
 
         private:
             std::string m_name;

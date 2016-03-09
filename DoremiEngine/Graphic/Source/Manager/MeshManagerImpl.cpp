@@ -207,23 +207,21 @@ namespace DoremiEngine
         void MeshManagerImpl::AddToRenderList(MeshInfo& p_mesh, MaterialInfo& p_material, const DirectX::XMFLOAT4X4& p_orientationMatrix)
         {
             // TODORT Could be redesigned so the DirectXManager asks this class for this information instead.
-            DoremiEditor::Core::MaterialMessage materialData = p_material.GetMaterialData();
-
-            if(p_material.GetMaterialData().data.alpha < 1)
-                p_material.SetAlpha(p_material.GetMaterialData().data.alpha + 0.01);
-            else
-                p_material.SetAlpha(0);
-
-
+            p_material.AlphaFade();
             MeshRenderData meshRenderData(p_orientationMatrix, p_material.GetTexture(), p_material.GetGlowTexture(), p_material.GetSamplerState(),
-                                          p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount(), materialData);
+                                          p_mesh.GetBufferHandle(), p_mesh.GetVerticeCount(), p_mesh.GetIndexBufferHandle(), p_mesh.GetIndexCount(), p_material.GetMaterialData());
 
             std::string materialName = p_material.GetMaterialName();
-            if(materialName[0] == 'T' && materialName[1] == 'T') // TODOXX Extrem fullösning för att få in transparenta meshar!!
+            if (materialName[0] == 'T' && materialName[1] == 'T')
+            {// TODOXX Extrem fullösning för att få in transparenta meshar!!
+                
                 // Add transparent mesh in different list
                 m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddTransMeshForRendering(meshRenderData);
+            }
             else
+            {
                 m_graphicContext.m_graphicModule->GetSubModuleManagerImpl().GetDirectXManagerImpl().AddMeshForRendering(meshRenderData);
+            }
         }
 
         void MeshManagerImpl::AddSpriteToRenderList(SpriteInfo& p_spriteInfo, MaterialInfo& p_material)

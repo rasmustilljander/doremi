@@ -1035,18 +1035,17 @@ namespace DoremiEngine
             memcpy(tMS.pData, &transRenderData[0].worldMatrix, sizeof(DirectX::XMFLOAT4X4));
             m_deviceContext->Unmap(m_worldMatrix, NULL);
 
+            m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &materialData.data, sizeof(&materialData.data));
+            m_deviceContext->Unmap(m_materialBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
+
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
             m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
-
-            m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &transRenderData[0].materialMessage.data, sizeof(&transRenderData[0].materialMessage.data));
-            m_deviceContext->Unmap(m_materialBuffer, NULL);
-            m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
-
 
             if(transRenderData[0].indexData != nullptr)
             {

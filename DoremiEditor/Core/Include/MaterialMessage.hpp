@@ -10,6 +10,8 @@ namespace DoremiEditor
         {
             void SetColor(float r, float g, float b) { data.setColor(r, g, b); }
             void SetAlpha(float a) { data.SetAlpha(a); }
+            void AlphaFade() { data.AlphaFade(); }
+
             MaterialMessage()
                 : nodeName(nullptr), diffuseTexturePath(nullptr), glowTexturePath(nullptr), specTexturePath(nullptr), bumpTexturePath(nullptr)
             {
