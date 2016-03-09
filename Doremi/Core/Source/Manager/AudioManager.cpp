@@ -16,6 +16,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/StopSoundEvent.hpp>
 
 #include <DirectXMath.h>
 // Third party
@@ -34,6 +35,7 @@ namespace Doremi
         {
             EventHandler::GetInstance()->Subscribe(EventType::Example, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlaySound, this);
+            EventHandler::GetInstance()->Subscribe(EventType::StopSound, this);
             EventHandler::GetInstance()->Subscribe(EventType::DamageTaken, this);
             m_gunReloadButtonDown = false;
             m_timeThatGunButtonIsDown = 0;
@@ -183,13 +185,27 @@ namespace Doremi
                     AudioActiveComponent* audioActiveComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID);
                     AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_entityID);
 
-                    m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[t_soundType], false,
+                    m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[t_soundType], t_event->loop,
                                                                 audioActiveComp->m_soundEnumToChannelID[t_soundType]);
                     m_sharedContext.GetAudioModule().SetVolumeOnChannel(audioActiveComp->m_soundEnumToChannelID[t_soundType], 1.0f);
 
 
                     // EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID)->m_soundEnumToChannelID =
                     // m_sharedContext.GetAudioModule().PlayASound(t_soundType);
+                    break;
+                }
+                case EventType::StopSound:
+                {
+                    // Cast the event to the correct format
+                    StopSoundEvent* t_event = (StopSoundEvent*)p_event;
+                    uint32_t t_entityID = t_event->entityID;
+                    uint32_t t_soundType = t_event->soundType;
+                    if(EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::AudioActive))
+                    {
+                        // We have active audio!
+                        AudioActiveComponent* audioActiveComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID);
+                        m_sharedContext.GetAudioModule().StopSound(audioActiveComp->m_soundEnumToChannelID[t_soundType]);
+                    }
                     break;
                 }
                 case EventType::DamageTaken:

@@ -8,10 +8,13 @@ namespace Doremi
 {
     namespace Core
     {
-        struct PlaySoundEvent : public Event
+        /**
+        Stops a entitys sound if it's playing
+        */
+        struct StopSoundEvent : public Event
         {
-            PlaySoundEvent() : Event(EventType::Example), entityID(0), soundType(0) {}
-            PlaySoundEvent(uint32_t p_entityID, int32_t p_soundType) : Event(EventType::PlaySound), entityID(p_entityID), soundType(p_soundType) {}
+            StopSoundEvent() : Event(EventType::Example), entityID(0), soundType(0) {}
+            StopSoundEvent(uint32_t p_entityID, int32_t p_soundType) : Event(EventType::StopSound), entityID(p_entityID), soundType(p_soundType) {}
 
             /**
             Write object to stream
@@ -20,8 +23,7 @@ namespace Doremi
             {
                 p_streamer->WriteUnsignedInt32(entityID);
                 p_streamer->WriteInt32(soundType);
-                p_streamer->WriteBool(loop);
-                op_bitsWritten += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8 + 1;
+                op_bitsWritten += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8;
             }
 
             /**
@@ -31,13 +33,11 @@ namespace Doremi
             {
                 entityID = p_streamer->ReadUnsignedInt32();
                 soundType = p_streamer->ReadInt32();
-                loop = p_streamer->ReadBool();
-                op_bitsRead += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8 + 1;
+                op_bitsRead += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8;
             }
 
             EntityID entityID;
             int32_t soundType;
-            bool loop = false;
         };
     }
 }

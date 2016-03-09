@@ -79,6 +79,8 @@ namespace DoremiEngine
 
             void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID) override;
 
+            void StopSound(const int& p_channelID) override;
+
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 

@@ -115,6 +115,11 @@ namespace DoremiEngine
             Returns true if Initialization was OK
             */
             virtual bool GetInitializationStatus() = 0;
+
+            /**
+            Stops the sound playing in the channel
+            */
+            virtual void StopSound(const int& p_channelID) = 0;
         };
     }
 }

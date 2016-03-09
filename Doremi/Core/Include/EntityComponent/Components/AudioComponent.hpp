@@ -13,6 +13,7 @@ namespace Doremi
             Jump,
             Death,
             DamageTaken,
+            Fire,
             DebugSound,
 
             Num_Sounds,

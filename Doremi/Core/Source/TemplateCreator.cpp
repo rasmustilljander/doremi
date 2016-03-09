@@ -809,6 +809,7 @@ namespace Doremi
             audioComp->m_enumToSoundID[(int)AudioCompEnum::Jump] = sharedContext.GetAudioModule().LoadSound("Sounds/JumpSound.wav", 0.5f, 5000.0f);
             audioComp->m_enumToSoundID[(int)AudioCompEnum::Death] = sharedContext.GetAudioModule().LoadSound("Sounds/DeathSound2.wav", 0.5f, 5000.0f);
             audioComp->m_enumToSoundID[(int)AudioCompEnum::DamageTaken] = sharedContext.GetAudioModule().LoadSound("Sounds/DeathSound2.wav", 0.5f, 5000.0f);
+            audioComp->m_enumToSoundID[(int)AudioCompEnum::Fire] = sharedContext.GetAudioModule().LoadSound("Sounds/FireGun.wav", 0.5f, 5000.0f);
             t_avatarBlueprint[ComponentType::Audio] = audioComp;
 
             // HP component

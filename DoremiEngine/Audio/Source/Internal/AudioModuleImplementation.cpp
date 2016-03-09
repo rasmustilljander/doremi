@@ -379,6 +379,18 @@ namespace DoremiEngine
             }
             return dominantHz;
         }
+
+        void AudioModuleImplementation::StopSound(const int& p_channelID)
+        {
+            if(p_channelID >= 0 && p_channelID < m_fmodChannel.size())
+            {
+                m_fmodChannel[p_channelID]->stop();
+            }
+            else
+            {
+                std::cout << "Error when stopping sound, no such channel" << std::endl;
+            }
+        }
     }
 }
 

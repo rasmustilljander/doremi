@@ -26,6 +26,7 @@ namespace Doremi
             PlayerRespawn, // TODO maybe fix name to more specific?
             GunFireToggle,
             PlaySound,
+            StopSound,
             SetHealth,
             SetTransform,
             AnimationTransition,
