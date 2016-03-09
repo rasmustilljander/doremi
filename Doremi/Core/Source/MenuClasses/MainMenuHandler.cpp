@@ -53,7 +53,16 @@ namespace Doremi
             return m_singleton;
         }
 
-        typedef std::pair<std::string, std::string> TexturePair;
+        struct TextureBoundly
+        {
+            TextureBoundly(const std::string& p_normal, const std::string& p_highlight, const std::string& p_pressed)
+                : Normal(p_normal), Highlighted(p_highlight), Pressed(p_pressed)
+            {
+            }
+            std::string Normal;
+            std::string Highlighted;
+            std::string Pressed;
+        };
 
         void MainMenuHandler::Initialize()
         {
@@ -63,30 +72,55 @@ namespace Doremi
             // initialize currentbutton
             m_currentButton = -1;
 
+            // Create background
+            DoremiEngine::Graphic::SpriteData t_data;
+
+            t_data.halfsize = XMFLOAT2(0.5f, 0.5f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.5f, 0.5f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_Background.dds");
+
+            m_background = ScreenObject(t_matInfo, t_spriteInfo);
+            m_screenObjects.push_back(&m_background);
+
+
+            // Create menu box
+            t_data.halfsize = XMFLOAT2(0.15f, 0.4f);
+            t_data.position = XMFLOAT2(0.70f, 0.5f);
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_MenubarBackground.dds");
+
+            m_menuBar = ScreenObject(t_matInfo, t_spriteInfo);
+            m_screenObjects.push_back(&m_menuBar);
+
+
             // Initialize menu
-            std::vector<TexturePair> p_buttonTextureNames;
+            std::vector<TextureBoundly> p_buttonTextureNames;
 
             // textures under in the same way
-            p_buttonTextureNames.push_back(TexturePair("playbutton2.dds", "playbutton2highlight.dds"));
-            p_buttonTextureNames.push_back(TexturePair("optionsbutton2.dds", "optionsbutton2highlight.dds"));
-            p_buttonTextureNames.push_back(TexturePair("exitbutton2.dds", "exitbutton2highlight.dds"));
-            p_buttonTextureNames.push_back(TexturePair("Fullscreen.dds", "FullscreenHighlighted.dds"));
+            p_buttonTextureNames.push_back(TextureBoundly("ANB_Menu_BTN_PLAY.dds", "ANB_Menu_BTN_PLAY_Highlight.dds", "ANB_Menu_BTN_PLAY_Clicked"));
+            p_buttonTextureNames.push_back(
+                TextureBoundly("ANB_Menu_BTN_OPTIONS.dds", "ANB_Menu_BTN_OPTIONS_Highlight.dds", "ANB_Menu_BTN_OPTIONS_Clicked"));
+            p_buttonTextureNames.push_back(TextureBoundly("ANB_Menu_BTN_EXIT.dds", "ANB_Menu_BTN_EXIT_Highlight.dds", "ANB_Menu_BTN_EXIT_Clicked"));
+            // p_buttonTextureNames.push_back(TextureBoundly("Fullscreen.dds", "FullscreenHighlighted.dds", ""));
 
 
-            DoremiButtonActions statesForButtons[4];
+            DoremiButtonActions statesForButtons[3];
             statesForButtons[0] = DoremiButtonActions::GO_TO_SERVER_BROWSER;
             statesForButtons[1] = DoremiButtonActions::GO_TO_OPTIONS;
             statesForButtons[2] = DoremiButtonActions::EXIT;
-            statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
+            // statesForButtons[3] = DoremiButtonActions::SET_FULLSCREEN;
 
             size_t length = p_buttonTextureNames.size();
 
             // Basic position
-            DoremiEngine::Graphic::SpriteData t_data;
-
-            t_data.halfsize = XMFLOAT2(0.15f, 0.5f / (float)(length + 1));
+            t_data.halfsize = XMFLOAT2(0.12f, 0.08f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.0f);
+            t_data.position = XMFLOAT2(0.7f, 0.0f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -97,9 +131,10 @@ namespace Doremi
                 Doremi::Core::ButtonMaterials t_buttonMaterials;
 
                 // Load materials
-                t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].first);
-                t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].second);
+                t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].Normal);
+                t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo(p_buttonTextureNames[i].Highlighted);
                 t_buttonMaterials.m_selectedLightedMaterial = nullptr;
+                ;
 
                 t_data.position.y = 1.0f / (float)(length + 1) + i / (float)(length + 1);
 
@@ -110,8 +145,6 @@ namespace Doremi
         }
 
         int MainMenuHandler::GetCurrentButton() { return m_currentButton; }
-
-        std::vector<Button> MainMenuHandler::GetButtons() { return m_buttonList; }
 
         int MainMenuHandler::Update(double p_dt) // TODOKO Dont need to return int anymore
         {

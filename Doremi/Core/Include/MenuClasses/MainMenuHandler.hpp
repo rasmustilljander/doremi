@@ -6,6 +6,7 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/Helper/DoremiStates.hpp>
 #include <Doremi/Core/Include/EventHandler/Subscriber.hpp>
+#include <Doremi/Core/Include/MenuClasses/ScreenObject.hpp>
 namespace Doremi
 {
     namespace Core
@@ -24,13 +25,17 @@ namespace Doremi
             int Update(double p_dt);
             // Use this order: 0 = Play, 1 = Options, 2 = Exit, (3 = Reserved, 4 = Reserved)
             void Initialize();
-            std::vector<Button> GetButtons();
+            auto& GetButtons() { return m_buttonList; }
+            auto& GetScreenObjects() { return m_screenObjects; }
             int GetCurrentButton();
 
         private:
             static MainMenuHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
             std::vector<Button> m_buttonList;
+            std::vector<ScreenObject*> m_screenObjects;
+            ScreenObject m_background;
+            ScreenObject m_menuBar;
             DirectX::XMFLOAT2 m_resolution;
             int m_currentButton;
             bool m_isFullscreen;

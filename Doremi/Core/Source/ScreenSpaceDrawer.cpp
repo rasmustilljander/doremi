@@ -196,6 +196,14 @@ namespace Doremi
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
+            std::vector<ScreenObject*>& t_objectsToDraw = MainMenuHandler::GetInstance()->GetScreenObjects();
+
+            // For each button add to render list
+            for(auto& t_object : t_objectsToDraw)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
+            }
+
             // Get buttons to draw
             std::vector<Button> t_buttonsToDraw = MainMenuHandler::GetInstance()->GetButtons();
 

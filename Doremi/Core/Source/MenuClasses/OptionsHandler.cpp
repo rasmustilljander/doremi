@@ -51,15 +51,26 @@ namespace Doremi
             // Get current refresh rate
             m_currentRefreshRate = t_directxManager.GetRefreshRate();
 
-            // Need later
-            // Get number of monitors
-            uint32_t t_numberOfMonitors = t_directxManager.GetNumberOfMonitors();
+            // Create background
+            DoremiEngine::Graphic::SpriteData t_data;
 
-            // Get resolutions
-            std::vector<std::pair<uint32_t, uint32_t>> t_resolutions1 = t_directxManager.GetResolutions(0);
+            t_data.halfsize = XMFLOAT2(0.5f, 0.5f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.5f, 0.5f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            // Get refresh rates for monitor and resolution
-            // std::vector<uint32_t> m_refreshRAtes = t_directxManager.GetRefreshRates(0, *(t_resolutions1.rend()));
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            DoremiEngine::Graphic::MaterialInfo* t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_Background.dds");
+            m_screenObjects.push_back(new ScreenObject(t_matInfo, t_spriteInfo));
+
+
+            // Create menu box
+            t_data.halfsize = XMFLOAT2(0.15f, 0.4f);
+            t_data.position = XMFLOAT2(0.70f, 0.5f);
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_OPTIONS_MenubarBackground.dds");
+            m_screenObjects.push_back(new ScreenObject(t_matInfo, t_spriteInfo));
 
 
             CreateScreenResolutionOption(p_sharedContext);
@@ -80,7 +91,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.2f);
+            t_data.position = XMFLOAT2(0.75f, 0.284f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -88,8 +99,8 @@ namespace Doremi
             Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
             // Load materials for the actual square to show resoluton
-            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -103,7 +114,8 @@ namespace Doremi
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(0.5f, 0.2f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_resolutionText =
+                Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.284f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_resolutionText.SetText(p_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
 
             m_text.push_back(&m_resolutionText);
@@ -120,7 +132,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.3f);
+            t_data.position = XMFLOAT2(0.75f, 0.33f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -128,8 +140,8 @@ namespace Doremi
             Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
             // Load materials for the actual square to show resoluton
-            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -143,7 +155,7 @@ namespace Doremi
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_refreshText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(0.5f, 0.3f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_refreshText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.33f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_refreshText.SetText(p_sharedContext, std::to_string(m_currentRefreshRate));
 
             m_text.push_back(&m_refreshText);
@@ -160,7 +172,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.4f);
+            t_data.position = XMFLOAT2(0.75f, 0.376f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -168,8 +180,8 @@ namespace Doremi
             Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
             // Load materials for the actual square to show resoluton
-            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -183,7 +195,7 @@ namespace Doremi
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_monitorText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(0.5f, 0.4f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_monitorText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.376f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_monitorText.SetText(p_sharedContext, std::to_string(m_currentMonitor));
 
             m_text.push_back(&m_monitorText);
@@ -412,7 +424,7 @@ namespace Doremi
                 ClearResolutionDropDown();
                 t_monitorDropdownIsActive = false;
                 t_refreshDropdownIsActive = false;
-                t_refreshDropdownIsActive = false;
+                t_resolutionDropdownIsActive = false;
             }
         }
 
@@ -429,15 +441,15 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.2f);
+            t_data.position = XMFLOAT2(0.75f, 0.284f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.5f, 0.2f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.284f);
             float t_offset = 0.0f;
             auto t_reverseRes = t_resolutions.rbegin();
             for(; t_reverseRes != t_resolutions.rend(); ++t_reverseRes)
@@ -459,7 +471,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(t_reverseRes->first) + "x" + std::to_string(t_reverseRes->second));
@@ -492,15 +504,15 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.3f);
+            t_data.position = XMFLOAT2(0.75f, 0.33f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.5f, 0.3f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.33f);
 
             float t_offset = 0.0f;
             auto t_reverseRefresh = t_refreshRates.begin();
@@ -523,7 +535,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(*t_reverseRefresh));
@@ -621,15 +633,15 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.5f, 0.4f);
+            t_data.position = XMFLOAT2(0.75f, 0.376f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("HoverServer.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.5f, 0.4f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.376f);
 
             float t_offset = 0.0f;
 
@@ -652,7 +664,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(i));
