@@ -248,7 +248,7 @@ namespace Doremi
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
 
             // Update camera after we update positions
-            CameraHandler::GetInstance()->UpdateDraw();
+            CameraHandler::GetInstance()->UpdateDraw(alpha);
             Draw(t_timeHandler->Frame);
         }
     }

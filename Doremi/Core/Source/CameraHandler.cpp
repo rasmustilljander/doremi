@@ -89,7 +89,7 @@ namespace Doremi
                         break;
                     case CameraType::THIRDPERSON:
                         inputHandler->SetCursorInvisibleAndMiddle(true);
-                        m_thirdPersonCamera->UpdateInput(p_dt);
+                        m_thirdPersonCamera->UpdatePositions();
                         break;
                     default:
                         break;
@@ -97,7 +97,7 @@ namespace Doremi
             }
         }
 
-        void CameraHandler::UpdateDraw()
+        void CameraHandler::UpdateDraw(const double& p_alpha)
         {
             DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
@@ -111,7 +111,7 @@ namespace Doremi
                         t_graphicModuleCameraManager.PushCameraToDevice(m_freeLookCamera->GetCamera());
                         break;
                     case CameraType::THIRDPERSON:
-                        m_thirdPersonCamera->Update();
+                        m_thirdPersonCamera->UpdateInterpolation(p_alpha);
                         t_graphicModuleCameraManager.PushCameraToDevice(m_thirdPersonCamera->GetCamera());
                         break;
                     default:

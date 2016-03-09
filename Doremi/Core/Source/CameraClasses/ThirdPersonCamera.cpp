@@ -16,16 +16,23 @@ namespace Doremi
         ThirdPersonCamera::ThirdPersonCamera(DoremiEngine::Graphic::Camera* p_camera, const float& p_distanceFromPlayer)
             : m_camera(p_camera), m_distanceFromPlayer(p_distanceFromPlayer)
         {
-            m_acctualPosition = m_camera->GetCameraPosition();
-            m_acctualFocus = m_acctualPosition;
+            m_previousPosition = m_camera->GetCameraPosition();
+            m_previousFocus = m_previousPosition;
+            m_nextPosition = m_previousPosition;
+            m_nextFocus = m_previousPosition;
             m_interpolationSpeed = 0.3; // TODOCONFIG
         }
 
         ThirdPersonCamera::~ThirdPersonCamera() {}
 
-        void ThirdPersonCamera::Update()
+        void ThirdPersonCamera::UpdatePositions()
         {
             using namespace DirectX;
+            // Update previous positions
+            m_previousPosition = m_nextPosition;
+            m_previousFocus = m_nextFocus;
+
+            // Update next positions
 
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
 
@@ -57,27 +64,35 @@ namespace Doremi
             XMVECTOR focus = position + realUp * 4;
             cameraPosition += realUp * 4; // Set offset in Y TODOCONFIG
 
-            cameraPosition = XMVectorLerp(XMLoadFloat3(&m_acctualPosition), cameraPosition, m_interpolationSpeed);
-            focus = XMVectorLerp(XMLoadFloat3(&m_acctualFocus), focus, m_interpolationSpeed);
+            XMVECTOR nextPosition = XMLoadFloat3(&m_nextPosition);
+            XMVECTOR nextFocus = XMLoadFloat3(&m_nextFocus);
 
-            XMVECTOR cameraDirection = XMVector3Normalize(cameraPosition - focus);
-            cameraPosition = focus + cameraDirection * m_distanceFromPlayer;
+            nextPosition = XMVectorLerp(nextPosition, cameraPosition, m_interpolationSpeed);
+            nextFocus = XMVectorLerp(nextFocus, focus, m_interpolationSpeed);
 
+            XMStoreFloat3(&m_nextFocus, nextFocus);
+            XMStoreFloat3(&m_nextPosition, nextPosition);
+        }
 
-            XMMATRIX wantedMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraPosition, focus, up));
-            XMVECTOR cameraWantedRotation = XMQuaternionRotationMatrix(wantedMatrix);
+        void ThirdPersonCamera::UpdateInterpolation(const double& p_alpha)
+        {
+            using namespace DirectX;
+            XMVECTOR cameraAcctualPosition = XMVectorLerp(XMLoadFloat3(&m_previousPosition), XMLoadFloat3(&m_nextPosition), p_alpha);
+            XMVECTOR cameraAcctualfocus = XMVectorLerp(XMLoadFloat3(&m_previousFocus), XMLoadFloat3(&m_nextFocus), p_alpha);
+
+            XMVECTOR cameraDirection = XMVector3Normalize(cameraAcctualPosition - cameraAcctualfocus);
+            cameraAcctualPosition = cameraAcctualfocus + cameraDirection * m_distanceFromPlayer;
+
+            XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0, 1, 0));
+            XMMATRIX wantedMatrix = XMMatrixTranspose(XMMatrixLookAtLH(cameraAcctualPosition, cameraAcctualfocus, up));
 
             XMFLOAT4X4 viewMat;
             XMStoreFloat4x4(&viewMat, wantedMatrix);
             m_camera->SetViewMatrix(viewMat);
+
             XMFLOAT3 t_camPos;
-            XMStoreFloat3(&t_camPos, cameraPosition);
-
+            XMStoreFloat3(&t_camPos, cameraAcctualPosition);
             m_camera->SetCameraPosition(t_camPos);
-            XMStoreFloat3(&m_acctualPosition, cameraPosition);
-            XMStoreFloat3(&m_acctualFocus, focus);
         }
-
-        void ThirdPersonCamera::UpdateInput(const double& p_dt) {}
     }
 }

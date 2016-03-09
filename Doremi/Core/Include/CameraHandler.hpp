@@ -42,7 +42,7 @@ namespace Doremi
             /**
                 TODO
             */
-            void UpdateDraw();
+            void UpdateDraw(const double& p_alpha);
 
             void ChangeCamera(CameraType p_type);
 
