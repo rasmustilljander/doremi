@@ -137,7 +137,7 @@ namespace DoremiEngine
             return ConnectUDPSocket(p_connectAdress);
         }
 
-        bool Socket::AcceptUDPConnection(Socket* p_socket, AdressImplementation& p_adress)
+        bool Socket::AcceptUDPConnection(Socket*& p_socket, AdressImplementation& p_adress)
         {
             SOCKADDR_IN Adress = {0};
 
