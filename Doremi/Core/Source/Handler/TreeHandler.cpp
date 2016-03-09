@@ -685,6 +685,9 @@ namespace Doremi
             // m_planes[5].z = t_viewAndProjection4x4._34 + t_viewAndProjection4x4._32;
             // m_planes[5].w = t_viewAndProjection4x4._44 + t_viewAndProjection4x4._42;
             // DirectX::XMStoreFloat4(&m_planes[5], DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&m_planes[5])));
+            int hejsan = 0;
+            int elseSatsen = 0;
+            int ifSatsen = 0;
             NAMED_TIMER("TreeHandlerAfterBuildingTheFrustum")
             while(!t_isDone)
             {
@@ -707,6 +710,7 @@ namespace Doremi
                 // Collision with the frustum planes.
                 if(CollisionCheckForBox(t_currentNode->center, t_currentNode->boxDimensions) || t_currentNode->depth == 0)
                 {
+                    NAMED_TIMER("IfSatsen")
                     // If max depth isnt reached , minus one is needed to get the depth wanted
                     if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
                     {
@@ -768,12 +772,26 @@ namespace Doremi
                         // Max depth reached, these will be the interesting objects to draw.
 
                         size_t loopSize = t_currentNode->objectsInTheArea.size();
+                        // for (auto i: t_currentNode->objectsInTheArea)
+                        //{
+                        //    if(std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) !=
+                        //    m_objectsToDraw.end())
+                        //    {
+                        //           // Nothing
+                        //    }
+                        //    else
+                        //    {
+                        //        m_objectsToDraw.push_back(t_currentNode->objectsInTheArea[i]);
+                        //    }
+                        //}
                         for(size_t i = 0; i < loopSize; ++i)
                         {
+                            NAMED_TIMER("TreeHandlerPushingTHingsIntoListForLoop")
                             // TODOEA Have to do a check if the object allready is in the list
                             if(std::find(m_objectsToDraw.begin(), m_objectsToDraw.end(), t_currentNode->objectsInTheArea[i]) != m_objectsToDraw.end())
                             {
                                 // Nothing
+                                ++hejsan;
                             }
                             else
                             {
@@ -786,6 +804,7 @@ namespace Doremi
                 }
                 else
                 { // If max depth isnt reached , minus one is needed to get the depth wanted
+                    NAMED_TIMER("ElseSatsen")
                     if(/*t_currentNode->depth < m_treeCreator->m_treeDepth - 1 &&*/ t_currentNode->leaf == false)
                     {
                         // no collision with frustum
@@ -837,12 +856,11 @@ namespace Doremi
                 //     t_currentNode = t_currentNode->parent;
                 // }
             }
+            // std::cout << elseSatsen << "=ElseSatsen. " << std::endl;
+            // std::cout << ifSatsen << "=IfSatsen. " << std::endl;
             return m_objectsToDraw;
         }
         void TreeHandler::OnEvent(Event* p_event) {}
-        void TreeHandler::ResetObjectsToDraw()
-        {
-            m_objectsToDraw.clear();
-        }
+        void TreeHandler::ResetObjectsToDraw() { m_objectsToDraw.clear(); }
     }
 }

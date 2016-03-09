@@ -15,11 +15,11 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 5;
+            m_treeDepth = 3;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(2900, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
-            // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100);
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100); 2900
             //
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
@@ -41,7 +41,8 @@ namespace Doremi
 
         void TreeCreator::BuildTree()
         {
-            if (m_allreadyBuilt)
+            int hejsan = 0;
+            if(m_allreadyBuilt)
             {
                 return;
             }
@@ -148,6 +149,7 @@ namespace Doremi
                                 m_currentNode->objectsInTheArea.push_back(t_sweepHits[i]);
                             }
                         }
+                        ++hejsan;
                         m_currentNode->loopInfo = 0;
                         m_currentNode->leaf = true;
                         m_currentNode = m_currentNode->parent;
@@ -165,18 +167,19 @@ namespace Doremi
                     if(m_currentNode->depth < m_treeDepth - 1)
                     {
                         m_currentNode->empty = true;
+                        m_currentNode->leaf = true;
                         m_currentNode->loopInfo = 0;
                         m_currentNode = m_currentNode->parent;
-
                     }
                     else
                     {
+                        ++hejsan;
+                        m_currentNode->leaf = true;
+                        m_currentNode->empty = true;
                         m_currentNode->loopInfo = 0;
                         m_currentNode = m_currentNode->parent;
                     }
                 }
-
-
             }
             m_allreadyBuilt = true;
 

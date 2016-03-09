@@ -151,11 +151,11 @@ namespace Doremi
             m_depthStencilState->GetDepthStencilState();
             submoduleManager.GetDirectXManager().DrawCurrentRenderList(m_rasterizerState->GetRasterizerState(), m_depthStencilState->GetDepthStencilState());
             TreeHandler::GetInstance()->ResetObjectsToDraw();
-            // if (drawedLastUpdate != length )//|| drawedLastUpdate != 0)
-            //{
-            //    std::cout << length << std::endl;
-            //}
-            // drawedLastUpdate = length;
+            if(drawedLastUpdate != length) //|| drawedLastUpdate != 0)
+            {
+                std::cout << length << std::endl;
+            }
+            drawedLastUpdate = length;
         }
 
         void GraphicManager::OnEvent(Event* p_event) {}
