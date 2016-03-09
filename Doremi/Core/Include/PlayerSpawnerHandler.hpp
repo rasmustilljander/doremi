@@ -49,7 +49,7 @@ namespace Doremi
 
             /**
             Adds an entity to the list of spawners*/
-            void AddSpawner(EntityID p_entityID);
+            void AddSpawner(EntityID p_entityID, int p_spawnerID);
 
             /**
             Debug method to set the current spawner based on its position

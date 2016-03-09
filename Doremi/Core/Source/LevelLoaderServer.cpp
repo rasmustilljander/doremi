@@ -210,7 +210,7 @@ namespace Doremi
                 RigidBodyComponent* t_rigidBody = GetComponent<RigidBodyComponent>(p_entityId);
                 t_rigidBody->flags = RigidBodyFlags::trigger;
                 t_rigidBody->geometry = RigidBodyGeometry::staticBox;
-                PlayerSpawnerHandler::GetInstance()->AddSpawner(p_entityId);
+                PlayerSpawnerHandler::GetInstance()->AddSpawner(p_entityId, transformationData.attributes.spawnPointID);
             }
             // If endpoint
             if(transformationData.attributes.startOrEndPoint == 2)

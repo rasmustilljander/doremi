@@ -107,6 +107,15 @@ namespace Doremi
                 }
             }
         }
-        void PlayerSpawnerHandler::AddSpawner(EntityID p_entityID) { m_spawners.push_back(p_entityID); }
+        void PlayerSpawnerHandler::AddSpawner(EntityID p_entityID, int p_spawnerID)
+        {
+            // Expand list of spawners if necessary
+            if(m_spawners.size() < p_spawnerID - 1)
+            {
+                m_spawners.resize(p_spawnerID + 1);
+            }
+            // Add new spawner to appropriate slot
+            m_spawners[p_spawnerID] = p_entityID;
+        }
     }
 }
