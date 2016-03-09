@@ -16,11 +16,21 @@ namespace Doremi
     {
         using namespace DirectX;
 
-        Slider::Slider(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::SpriteInfo* p_spriteInfo)
-            : m_materialInfo(p_materialInfo), m_spriteInfo(p_spriteInfo)
+
+        Slider::Slider(DoremiEngine::Graphic::MaterialInfo* p_materialInfoBack, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoBack,
+                       DoremiEngine::Graphic::MaterialInfo* p_materialInfoCircle, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoCircle)
+            : m_materialInfoBack(p_materialInfoBack), m_spriteInfoBack(p_spriteInfoBack), m_materialInfoCircle(p_materialInfoCircle), m_spriteInfoCircle(p_spriteInfoCircle)
         {
         }
-        Slider::Slider() {}
         Slider::~Slider() {}
+
+        bool Slider::CheckIfInside(float p_mousePosX, float p_mousePosY) { return false; }
+
+        void Slider::UpdateSlider(float percent)
+        {
+            DoremiEngine::Graphic::SpriteData& t_dataCircle = m_spriteInfoCircle->GetData();
+            DoremiEngine::Graphic::SpriteData& t_dataBack = m_spriteInfoCircle->GetData();
+            t_dataCircle.position.x = t_dataBack.position.x - t_dataBack.halfsize.x + percent * t_dataBack.halfsize.x * 2;
+        }
     }
 }

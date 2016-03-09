@@ -76,6 +76,8 @@ namespace Doremi
 
             void CreateMonitorOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            void CreateSliders(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             void CreateResolutionDropDown();
 
             void CreateRefreshRateDropDown();

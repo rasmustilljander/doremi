@@ -14,15 +14,25 @@ namespace Doremi
         class Slider
         {
         public:
-            Slider(DoremiEngine::Graphic::MaterialInfo* p_materialInfo, DoremiEngine::Graphic::SpriteInfo* m_spriteInfo);
-            Slider();
+            Slider(DoremiEngine::Graphic::MaterialInfo* p_materialInfoBack, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoBack,
+                   DoremiEngine::Graphic::MaterialInfo* p_materialInfoCircle, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoCircle);
+
             virtual ~Slider();
 
-            DoremiEngine::Graphic::MaterialInfo* m_materialInfo;
+            bool CheckIfInside(float p_mousePosX, float p_mousePosY);
 
+            void UpdateSlider(float percent);
+
+        private:
+            DoremiEngine::Graphic::MaterialInfo* m_materialInfoBack;
+
+            DoremiEngine::Graphic::MaterialInfo* m_materialInfoCircle;
 
             //// Add "Mesh" info here, but its buffer
-            DoremiEngine::Graphic::SpriteInfo* m_spriteInfo;
+            DoremiEngine::Graphic::SpriteInfo* m_spriteInfoBack;
+
+            //// Add "Mesh" info here, but its buffer
+            DoremiEngine::Graphic::SpriteInfo* m_spriteInfoCircle;
         };
     }
 }

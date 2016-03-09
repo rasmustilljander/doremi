@@ -76,6 +76,7 @@ namespace Doremi
             CreateScreenResolutionOption(p_sharedContext);
             CreateRefreshOption(p_sharedContext);
             CreateMonitorOption(p_sharedContext);
+            CreateSliders(p_sharedContext);
         }
 
         OptionsHandler::~OptionsHandler() {}
@@ -100,7 +101,7 @@ namespace Doremi
 
             // Load materials for the actual square to show resoluton
             t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -141,7 +142,7 @@ namespace Doremi
 
             // Load materials for the actual square to show resoluton
             t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -181,7 +182,7 @@ namespace Doremi
 
             // Load materials for the actual square to show resoluton
             t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
             t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -199,6 +200,32 @@ namespace Doremi
             m_monitorText.SetText(p_sharedContext, std::to_string(m_currentMonitor));
 
             m_text.push_back(&m_monitorText);
+        }
+
+        void OptionsHandler::CreateSliders(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+
+            // Basic position
+            DoremiEngine::Graphic::SpriteData t_data;
+
+            t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.75f, 0.376f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderBack = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderCircle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_data);
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_data);
+
+
+            // TODO get Fov here
+            float t_fov = 0;
+            Slider* t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_fov);
+            m_sliders.push_back(t_newSlider);
         }
 
         void OptionsHandler::Update(double p_dt)
@@ -445,8 +472,18 @@ namespace Doremi
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom_Highlight.dds");
+
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.284f);
@@ -461,8 +498,8 @@ namespace Doremi
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
                 // Load materials for the actual square to show resoluton
-                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormal;
-                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHover;
+                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormalMiddle;
+                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHoverMiddle;
                 t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -483,6 +520,23 @@ namespace Doremi
                 t_newDropDownItem.height = t_reverseRes->second;
 
                 m_dropdownResolution.push_back(t_newDropDownItem);
+            }
+
+            if(m_dropdownResolution.size())
+            {
+                if(m_dropdownResolution.size() == 1)
+                {
+                    m_dropdownResolution[0].button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalSpecial;
+                    m_dropdownResolution[0].button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverSpecial;
+                }
+                else
+                {
+                    m_dropdownResolution.begin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalTop;
+                    m_dropdownResolution.begin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverTop;
+
+                    m_dropdownResolution.rbegin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalBot;
+                    m_dropdownResolution.rbegin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverBot;
+                }
             }
         }
 
@@ -508,8 +562,19 @@ namespace Doremi
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom_Highlight.dds");
+
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.33f);
@@ -525,8 +590,8 @@ namespace Doremi
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
                 // Load materials for the actual square to show resoluton
-                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormal;
-                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHover;
+                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormalMiddle;
+                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHoverMiddle;
                 t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -547,6 +612,23 @@ namespace Doremi
 
 
                 m_dropdownRefresh.push_back(t_newDropDownItem);
+            }
+
+            if(m_dropdownRefresh.size())
+            {
+                if(m_dropdownRefresh.size() == 1)
+                {
+                    m_dropdownRefresh[0].button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalSpecial;
+                    m_dropdownRefresh[0].button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverSpecial;
+                }
+                else
+                {
+                    m_dropdownRefresh.begin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalTop;
+                    m_dropdownRefresh.begin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverTop;
+
+                    m_dropdownRefresh.rbegin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalBot;
+                    m_dropdownRefresh.rbegin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverBot;
+                }
             }
         }
 
@@ -637,8 +719,19 @@ namespace Doremi
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_materialNormal = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_materialHover = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverSpecial = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverTop = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Top_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverMiddle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Middle_Highlight.dds");
+
+            DoremiEngine::Graphic::MaterialInfo* t_materialNormalBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_materialHoverBot = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Bottom_Highlight.dds");
+
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.376f);
@@ -654,8 +747,8 @@ namespace Doremi
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
                 // Load materials for the actual square to show resoluton
-                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormal;
-                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHover;
+                t_buttonMaterialsMiddle.m_vanillaMaterial = t_materialNormalMiddle;
+                t_buttonMaterialsMiddle.m_highLightedMaterial = t_materialHoverMiddle;
                 t_buttonMaterialsMiddle.m_selectedLightedMaterial = nullptr;
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
@@ -676,6 +769,23 @@ namespace Doremi
 
 
                 m_dropdownMonitors.push_back(t_newDropDownItem);
+            }
+
+            if(m_dropdownMonitors.size())
+            {
+                if(m_dropdownMonitors.size() == 1)
+                {
+                    m_dropdownMonitors[0].button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalSpecial;
+                    m_dropdownMonitors[0].button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverSpecial;
+                }
+                else
+                {
+                    m_dropdownMonitors.begin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalTop;
+                    m_dropdownMonitors.begin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverTop;
+
+                    m_dropdownMonitors.rbegin()->button.m_buttonMaterials.m_vanillaMaterial = t_materialNormalBot;
+                    m_dropdownMonitors.rbegin()->button.m_buttonMaterials.m_highLightedMaterial = t_materialHoverBot;
+                }
             }
         }
 
