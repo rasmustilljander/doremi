@@ -24,6 +24,7 @@
 #include <Doremi/Core/Include/ServerStateHandler.hpp>
 
 #include <Doremi/Core/Include/NetworkEventSender.hpp>
+#include <SequenceMath.hpp>
 
 #include <iostream> // TODOCM remove this debug
 
@@ -230,6 +231,13 @@ namespace Doremi
                     p_connection->LastSequenceUpdate = 0.0f;
                     t_inputHandler->SetSequence(t_newSequence);
                     t_frequencyHandler->SetSequence(t_newSequence);
+                }
+
+                // Check if we're out of sync
+                if(sequence_difference(t_newSequence, m_messageSequence, 255) > 60)
+                {
+                    // disconnect
+                    p_connection->LastResponse = DISCONNECT_TIME_VALUE;
                 }
 
                 // Queue input with sequence

@@ -17,6 +17,8 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 
+#include <SequenceMath.hpp>
+
 // Connection
 #include <Doremi/Core/Include/Network/NetworkConnectionsClient.hpp>
 
@@ -225,6 +227,7 @@ namespace Doremi
             NetworkConnectionsClient* t_networkConnection = NetworkConnectionsClient::GetInstance();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
             NetworkEventReceiver* t_eventReceiver = t_playerHandler->GetNetworkEventReceiver();
+            InterpolationHandler* t_interpolationHandler = InterpolationHandler::GetInstance();
 
             // If we were at loading world, we assume server knows best and we're done loading!
             if(t_networkConnection->m_serverConnection.ConnectionState == ServerConnectionStateFromClient::LOAD_WORLD)
@@ -282,6 +285,14 @@ namespace Doremi
                 t_networkConnection->m_serverConnection.LastSequenceUpdate = 0.0f;
             }
 
+            // Check if we're out of sync
+            if(sequence_difference(t_newSnapshot->SnapshotSequence, t_interpolationHandler->GetRealSnapshotSequence(), 255) > 60)
+            {
+                // disconnect
+                t_networkConnection->m_serverConnection.LastResponse = DISCONNECT_TIME_VALUE;
+            }
+
+
             // Check if we can read even more!
             if(sizeof(p_message.Data) - t_bytesRead > sizeof(uint8_t))
             {
@@ -300,7 +311,7 @@ namespace Doremi
             }
 
             // Queue snapshot
-            InterpolationHandler::GetInstance()->QueueSnapshot(t_newSnapshot);
+            t_interpolationHandler->QueueSnapshot(t_newSnapshot);
 
 
             // Update timeout

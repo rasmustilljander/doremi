@@ -13,6 +13,7 @@ namespace Doremi
 // But it wasn't, I only forgot to change the delayed sequence value..
 #define SEQUENCE_UPDATE_TIMER 360.0f
 #define SEQUENCE_TIMER_START 1000.0f
+#define DISCONNECT_TIME_VALUE 100000.0f
         /*
             Connectionstate for clients and servers
             TODOCM not sure if master servers will have the same connectionstate

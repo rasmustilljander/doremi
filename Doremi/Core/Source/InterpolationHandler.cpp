@@ -290,6 +290,13 @@ namespace Doremi
 
                                 // We extrapolate with distance between the values as how many frames they were,
                                 *next = ExtrapolateTransform(snapPrev, snapNext, extrapolateAlpha);
+
+                                // TODOXX if we add free rigid bodys this might break
+                                // Set position for elevators
+                                if(entityHandler.HasComponents(entityID, static_cast<uint32_t>(ComponentType::RigidBody)))
+                                {
+                                    t_rigidBodyManager.SetBodyPosition(entityID, next->position, next->rotation);
+                                }
                             }
                         }
                     }
@@ -307,6 +314,13 @@ namespace Doremi
 
                             // We extrapolate with distance between the values as how many frames they were,
                             *next = ExtrapolateTransform(snapPrev, snapNext, extrapolateAlpha);
+
+                            // TODOXX if we add free rigid bodys this might break
+                            // Set position for elevators
+                            if(entityHandler.HasComponents(entityID, static_cast<uint32_t>(ComponentType::RigidBody)))
+                            {
+                                t_rigidBodyManager.SetBodyPosition(entityID, next->position, next->rotation);
+                            }
                         }
                     }
 
@@ -346,6 +360,13 @@ namespace Doremi
 
                             // We extrapolate with distance between the values as how many frames they were,
                             *next = ExtrapolateTransform(snapPrev, snapNext, m_NumOfSequencesToInterpolate);
+
+                            // TODOXX if we add free rigid bodys this might break
+                            // Set position for elevators
+                            if(entityHandler.HasComponents(entityID, static_cast<uint32_t>(ComponentType::RigidBody)))
+                            {
+                                t_rigidBodyManager.SetBodyPosition(entityID, next->position, next->rotation);
+                            }
                         }
                     }
 
