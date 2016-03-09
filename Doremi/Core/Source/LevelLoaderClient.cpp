@@ -139,7 +139,9 @@ namespace Doremi
                     t_lowerBodyAnimations.emplace(t_animationNames[i], t_lowerBodyAnimationVector[i]);
                 }
                 // materialen kommer senare att läsas in här imellan
+
                 LoadMaterialCharacter(ifs, nrMats);
+
                 /// Läsa transformsen
                 // En map för att kunna använda rätt transformationsmatris till rätt mesh.
                 std::map<std::string, XMFLOAT4X4> t_transformMap;

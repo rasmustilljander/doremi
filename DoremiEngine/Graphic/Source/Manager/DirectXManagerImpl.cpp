@@ -1146,6 +1146,7 @@ namespace DoremiEngine
 
         void DirectXManagerImpl::RenderSkeletalMesh()
         {
+            using namespace DoremiEditor::Core;
             // Sort the data according after mesh then texture
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
@@ -1154,7 +1155,9 @@ namespace DoremiEngine
             const uint32_t stride = sizeof(SkeletalVertex);
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
+            MaterialMessage materialData = transRenderData[0].materialMessage;
             ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
+            ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
             ID3D11SamplerState* samplerState = renderData[0].samplerState;
 
             // Iterate all the entries and do the smallest amount of changes to the GPU
@@ -1168,9 +1171,16 @@ namespace DoremiEngine
             m_deviceContext->PSSetSamplers(0, 1, &samplerState);
             m_deviceContext->CSSetSamplers(0, 1, &samplerState);
             m_deviceContext->PSSetShaderResources(0, 1, &texture);
+            m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
             m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             m_deviceContext->IASetVertexBuffers(0, 1, &vertexData, &stride, &offset);
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
+
+            m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &transRenderData[0].materialMessage.data, sizeof(&transRenderData[0].materialMessage.data));
+            m_deviceContext->Unmap(m_materialBuffer, NULL);
+            m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
+
             if(renderData[0].indexData != nullptr)
             {
                 m_deviceContext->IASetIndexBuffer(renderData[0].indexData, DXGI_FORMAT_R32_UINT, 0);
@@ -1212,6 +1222,27 @@ namespace DoremiEngine
                         m_deviceContext->PSSetShaderResources(0, 1, &texture);
                     }
                 }
+
+                if (renderData[i].glowTexture != renderData[i - 1].glowTexture) // Check if texture has been changed
+                {
+                    glowtexture = renderData[i].glowTexture;
+                    if (glowtexture != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                    {
+                        m_deviceContext->PSSetShaderResources(5, 1, &glowtexture);
+                    }
+                }
+
+                materialData = transRenderData[i].materialMessage;
+                if (&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                {
+                    D3D11_MAPPED_SUBRESOURCE tMS;
+                    m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                    memcpy(tMS.pData, &transRenderData[i].materialMessage.data, sizeof(transRenderData[i].materialMessage.data));
+                    m_deviceContext->Unmap(m_materialBuffer, NULL);
+
+                    m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
+                }
+
                 m_deviceContext->Map(m_worldMatrix, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
                 memcpy(tMS.pData, &renderData[i].worldMatrix, sizeof(DirectX::XMFLOAT4X4)); // Copy matrix to buffer
                 m_deviceContext->Unmap(m_worldMatrix, NULL);
