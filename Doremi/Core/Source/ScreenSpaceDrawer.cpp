@@ -305,12 +305,12 @@ namespace Doremi
             }
 
             // Get Screenobjects to draw
-            std::vector<ScreenObject>& t_objectsToDraw = HUDHandler::GetInstance()->GetScreenObjects();
+            std::vector<ScreenObject*>& t_objectsToDraw = HUDHandler::GetInstance()->GetScreenObjects();
 
             // For each button add to render list
             for(auto& t_object : t_objectsToDraw)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_object.m_spriteInfo), *(t_object.m_materialInfo));
+                t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
             }
 
             End2DDraw();
