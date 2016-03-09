@@ -405,7 +405,7 @@ namespace Doremi
             blueprint[ComponentType::PotentialField] = potentialComp;
 
             // Enemy ai agent comp
-            AIAgentComponent* aiTimers = new AIAgentComponent(0.2f, 0.025f);
+            AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
             aiTimers->type = AIType::Melee;
             blueprint[ComponentType::AIAgent] = aiTimers;
 
