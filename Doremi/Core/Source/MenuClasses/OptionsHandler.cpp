@@ -207,24 +207,74 @@ namespace Doremi
             DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
             // Basic position
-            DoremiEngine::Graphic::SpriteData t_data;
+            DoremiEngine::Graphic::SpriteData t_dataBack;
+            DoremiEngine::Graphic::SpriteData t_dataCircle;
 
-            t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
-            t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.376f);
-            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
-            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+            // 0.046 is good number
+            t_dataBack.halfsize = XMFLOAT2(0.08f, 0.0025f);
+            t_dataBack.origo = XMFLOAT2(0.0f, 0.0f);
+            t_dataBack.position = XMFLOAT2(0.75f, 0.435f);
+            t_dataBack.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_dataBack.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderBack = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderCircle = t_meshManager.BuildMaterialInfo("ANB_Menu_DROPDOWN_Inactive.dds");
-            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_data);
-            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_data);
+            t_dataCircle.halfsize = XMFLOAT2(0.004f, 0.007f);
+            t_dataCircle.origo = XMFLOAT2(0.0f, 0.0f);
+            t_dataCircle.position = XMFLOAT2(0.75f, 0.435f);
+            t_dataCircle.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_dataCircle.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderBack = t_meshManager.BuildMaterialInfo("ANB_Menu_SliderBar.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_matInfoSliderCircle = t_meshManager.BuildMaterialInfo("ANB_Menu_SliderCircle.dds");
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
 
 
             // TODO get Fov here
-            float t_fov = 0;
+            float t_fov = 0.5f;
             Slider* t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_fov);
+            m_sliders.push_back(t_newSlider);
+
+            // Audio
+            t_dataBack.position.y = 0.535f;
+            t_dataCircle.position.y = 0.535f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_audioMaster = 0.25f;
+            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioMaster);
+            m_sliders.push_back(t_newSlider);
+
+            // Audio
+            t_dataBack.position.y = 0.580f;
+            t_dataCircle.position.y = 0.580f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_audioMusic = 0.77f;
+            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioMusic);
+            m_sliders.push_back(t_newSlider);
+
+
+            // Audio
+            t_dataBack.position.y = 0.625f;
+            t_dataCircle.position.y = 0.625f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_audioEffect = 0.11f;
+            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioEffect);
+            m_sliders.push_back(t_newSlider);
+
+
+            // Mouse sence
+            t_dataBack.position.y = 0.725f;
+            t_dataCircle.position.y = 0.725f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_sense = 0.67f;
+            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_sense);
             m_sliders.push_back(t_newSlider);
         }
 

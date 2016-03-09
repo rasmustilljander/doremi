@@ -29,7 +29,7 @@ namespace Doremi
         void Slider::UpdateSlider(float percent)
         {
             DoremiEngine::Graphic::SpriteData& t_dataCircle = m_spriteInfoCircle->GetData();
-            DoremiEngine::Graphic::SpriteData& t_dataBack = m_spriteInfoCircle->GetData();
+            DoremiEngine::Graphic::SpriteData& t_dataBack = m_spriteInfoBack->GetData();
             t_dataCircle.position.x = t_dataBack.position.x - t_dataBack.halfsize.x + percent * t_dataBack.halfsize.x * 2;
         }
     }

@@ -23,7 +23,6 @@ namespace Doremi
 
             void UpdateSlider(float percent);
 
-        private:
             DoremiEngine::Graphic::MaterialInfo* m_materialInfoBack;
 
             DoremiEngine::Graphic::MaterialInfo* m_materialInfoCircle;

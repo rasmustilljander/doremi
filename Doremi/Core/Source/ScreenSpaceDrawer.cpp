@@ -286,7 +286,15 @@ namespace Doremi
                 }
             }
 
-            // Draw sliders last
+            // Draw sliders
+            std::vector<Slider*>& t_sliders = OptionsHandler::GetInstance()->GetSliders();
+
+            // For each text add to render list
+            for(auto& t_slide : t_sliders)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_slide->m_spriteInfoBack), *(t_slide->m_materialInfoBack));
+                t_meshManager.AddSpriteToRenderList(*(t_slide->m_spriteInfoCircle), *(t_slide->m_materialInfoCircle));
+            }
 
 
             // Draw drop downs LAAAST

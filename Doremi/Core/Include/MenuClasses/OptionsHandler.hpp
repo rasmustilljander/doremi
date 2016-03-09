@@ -64,6 +64,7 @@ namespace Doremi
             auto& GetDropDownResolutions() { return m_dropdownResolution; }
             auto& GetDropDownRefresh() { return m_dropdownRefresh; }
             auto& GetDropDownMonitors() { return m_dropdownMonitors; }
+            auto& GetSliders() { return m_sliders; }
 
         private:
             explicit OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
