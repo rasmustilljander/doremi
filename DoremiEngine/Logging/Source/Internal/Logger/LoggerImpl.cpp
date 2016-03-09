@@ -30,13 +30,7 @@ namespace DoremiEngine
             {
             }
 
-            ~ThreadMetaData()
-            {
-                if(isThreadStillRunning != nullptr)
-                {
-                    delete isThreadStillRunning;
-                }
-            }
+            ~ThreadMetaData() { delete isThreadStillRunning; }
             ThreadMetaData(const ThreadMetaData& threadMetaData) = delete;
 
             const bool* isApplicationOnline;
@@ -80,31 +74,12 @@ namespace DoremiEngine
                 std::cout << "Failed to shutdown threads properly" << std::endl;
             }
 
-            if(m_fileMap != nullptr)
-            {
-                delete m_fileMap;
-            }
-
-            if(m_localBuffer != nullptr)
-            {
-                delete m_localBuffer;
-            }
-            if(m_outGoingBuffer != nullptr)
-            {
-                delete m_outGoingBuffer;
-            }
-            if(m_mutex != nullptr)
-            {
-                delete m_mutex;
-            }
-            if(m_threadMetaData != nullptr)
-            {
-                delete m_threadMetaData;
-            }
-            if(m_applicationRunning != nullptr)
-            {
-                delete m_applicationRunning;
-            }
+            delete m_fileMap;
+            delete m_localBuffer;
+            delete m_outGoingBuffer;
+            delete m_mutex;
+            delete m_threadMetaData;
+            delete m_applicationRunning;
         }
 
         void LoggerImpl::Initialize()
