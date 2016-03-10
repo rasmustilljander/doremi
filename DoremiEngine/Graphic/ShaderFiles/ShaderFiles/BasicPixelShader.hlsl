@@ -81,6 +81,7 @@ cbuffer ResolutionData : register(b2)
 
 Texture2D ObjTexture : register(t0);
 Texture2D GlowTexture : register(t5);
+TextureCube Skymap : register(t6);
 
 SamplerState ObjSamplerState : register(s0);
 
@@ -189,9 +190,14 @@ PixelOutputType PS_main(PixelInputType input)
         glowcolor = GlowTexture.Sample(ObjSamplerState, input.texCoord);
     }
 
+    //skymap shizzle
+    //float3 toObj = input.worldPos - input.cameraPos;
+    //float3 reflector = reflect(toObj, input.normal);
+
+    //float4 skymapReflection = Skymap.Sample(ObjSamplerState, -reflector);
 
     float3 rgb = float3(0, 0, 0);
-
+    //rgb += skymapReflection * specEccentricity;
 
     Light directionalLight;
     directionalLight.intensity = 1.2f;

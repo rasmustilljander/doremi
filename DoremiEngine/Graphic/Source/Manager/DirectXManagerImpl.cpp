@@ -15,6 +15,9 @@
 #include <algorithm> // std::sort
 #include <DoremiEditor/Core/Include/MaterialMessage.hpp>
 #include <Interface/Texture/SpriteInfo.hpp>
+#include <DoremiEngine/Graphic/Include/Internal/Manager/MeshManagerImpl.hpp>
+#include <DoremiEngine/Graphic/Include/Internal/Mesh/MaterialInfoImpl.hpp>
+#include <DoremiEngine/Graphic/Include/Loaders/ModelLoader.hpp>
 
 // COnfiguration
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
@@ -147,6 +150,14 @@ namespace DoremiEngine
             CreateBlendStates();
 
             t_frustrumComputed = false;
+
+            std::string fileLocation = m_graphicContext.m_workingDirectory + "Textures/" + "Skybox.dds";
+            ID3D11ShaderResourceView* t_resouceView = ModelLoader::GetInstance()->LoadTexture(fileLocation, m_device);
+            if(t_resouceView != nullptr)
+            {
+
+                m_deviceContext->PSSetShaderResources(6, 1, &t_resouceView);
+            }
         }
 
         void DirectXManagerImpl::InitializeDisplayModes()
