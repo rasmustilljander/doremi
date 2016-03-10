@@ -102,7 +102,10 @@ namespace Doremi
                     if(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->IsPlayer(t_triggEvent->objectEntityID))
                     {
                         // Could get who got the spawner here as well? If we want player specific spawners
-                        m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
+                        if(m_currentPlayerSpawner == t_triggEvent->triggerEntityID)
+                        {
+                            m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
+                        }
                     }
                 }
             }
