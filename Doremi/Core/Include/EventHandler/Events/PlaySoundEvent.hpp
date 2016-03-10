@@ -20,8 +20,7 @@ namespace Doremi
             {
                 p_streamer->WriteUnsignedInt32(entityID);
                 p_streamer->WriteInt32(soundType);
-                p_streamer->WriteBool(loop);
-                op_bitsWritten += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8 + 1;
+                op_bitsWritten += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8;
             }
 
             /**
@@ -31,13 +30,11 @@ namespace Doremi
             {
                 entityID = p_streamer->ReadUnsignedInt32();
                 soundType = p_streamer->ReadInt32();
-                loop = p_streamer->ReadBool();
-                op_bitsRead += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8 + 1;
+                op_bitsRead += sizeof(uint32_t) * 8 + sizeof(int32_t) * 8;
             }
 
             EntityID entityID;
             int32_t soundType;
-            bool loop = false;
         };
     }
 }

@@ -176,9 +176,6 @@ namespace Doremi
                     EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
                     AnimationTransitionEvent* t_animationTransitionEvent = new AnimationTransitionEvent(p_player->m_playerEntityID, Animation::ATTACK);
                     EventHandler::GetInstance()->BroadcastEvent(t_animationTransitionEvent);
-                    PlaySoundEvent* t_playSoundEvent = new PlaySoundEvent(p_player->m_playerEntityID, (int32_t)AudioCompEnum::Fire);
-                    t_playSoundEvent->loop = true;
-                    EventHandler::GetInstance()->BroadcastEvent(t_playSoundEvent);
                 }
                 else if(inputHandler->CheckForRelease((int)UserCommandPlaying::LeftClick))
                 {
@@ -187,8 +184,6 @@ namespace Doremi
                     EventHandler::GetInstance()->BroadcastEvent(gunFireEvent);
                     AnimationTransitionEvent* t_animationTransitionEvent = new AnimationTransitionEvent(p_player->m_playerEntityID, Animation::STOPATTACK);
                     EventHandler::GetInstance()->BroadcastEvent(t_animationTransitionEvent);
-                    StopSoundEvent* t_stopSoundEvent = new StopSoundEvent(p_player->m_playerEntityID, (int32_t)AudioCompEnum::Fire);
-                    EventHandler::GetInstance()->BroadcastEvent(t_stopSoundEvent);
                 }
             }
         }

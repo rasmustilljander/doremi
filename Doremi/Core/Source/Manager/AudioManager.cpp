@@ -17,6 +17,7 @@
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlaySoundEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/StopSoundEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 #include <DirectXMath.h>
 // Third party
@@ -186,7 +187,7 @@ namespace Doremi
                     AudioActiveComponent* audioActiveComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioActiveComponent>(t_entityID);
                     AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_entityID);
 
-                    m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[t_soundType], t_event->loop,
+                    m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[t_soundType], audioComp->m_enumToLoop[t_soundType],
                                                                 audioActiveComp->m_soundEnumToChannelID[t_soundType]);
                     m_sharedContext.GetAudioModule().SetVolumeOnChannel(audioActiveComp->m_soundEnumToChannelID[t_soundType], 1.0f);
 
@@ -216,6 +217,40 @@ namespace Doremi
                     PlaySoundEvent* t_soundEvent = new PlaySoundEvent(t_event->entityId, (int32_t)AudioCompEnum::DamageTaken);
                     EventHandler::GetInstance()->BroadcastEvent(t_soundEvent);
                     break;
+                }
+                // This is more of a "what the unit is doing" kind of event :P
+                case EventType::AnimationTransition:
+                {
+                    AnimationTransitionEvent* t_event = static_cast<AnimationTransitionEvent*>(p_event);
+                    switch(t_event->animation)
+                    {
+                        case Animation::STOPATTACK:
+                        {
+                            StopSoundEvent* t_stopSoundEvent = new StopSoundEvent(t_event->entityID, (int32_t)AudioCompEnum::Fire);
+                            EventHandler::GetInstance()->BroadcastEvent(t_stopSoundEvent);
+                            break;
+                        }
+                        case Animation::ATTACK:
+                        {
+                            PlaySoundEvent* t_soundEvent = new PlaySoundEvent(t_event->entityID, (int32_t)AudioCompEnum::Fire);
+                            EventHandler::GetInstance()->BroadcastEvent(t_soundEvent);
+                            break;
+                        }
+                        case Animation::HIT:
+                        {
+                            break;
+                        }
+                        case Animation::DEATH:
+                        {
+                            break;
+                        }
+                        case Animation::JUMP:
+                        {
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                 }
             }
         }
