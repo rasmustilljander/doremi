@@ -422,13 +422,13 @@ namespace DoremiEngine
         {
             // Bind socket here... need to bind because we want to receive from other adress
             uint32_t t_portToUse = UDP_RELIABLE_PORT;
-            AdressImplementation* t_adressToUseOnSocket = new AdressImplementation(p_connectAdress.GetIP_A(), p_connectAdress.GetIP_B(),
-                                                                                   p_connectAdress.GetIP_C(), p_connectAdress.GetIP_D(), t_portToUse);
+            AdressImplementation* t_adressToUseOnSocket = new AdressImplementation(t_portToUse);
 
 
             // Bind socket to incomming connection to a specific port and "allowed" IP
             while(bind(m_socketHandle, (SOCKADDR*)&t_adressToUseOnSocket->GetAdress(), sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
             {
+                int Error = WSAGetLastError();
                 t_portToUse++;
                 t_adressToUseOnSocket->SetNetPort(t_portToUse);
             };
