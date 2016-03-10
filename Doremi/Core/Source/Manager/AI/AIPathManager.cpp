@@ -47,7 +47,7 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::RangedEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::MeleeEnemyCreated, this);
             EventHandler::GetInstance()->Subscribe(EventType::PlayerCreation, this);
-            m_maxActorsUpdated = 1; // We may only update one AI per update... TODOCONFIG
+            m_maxActorsUpdated = 1000; // We may only update one AI per update... TODOCONFIG
             m_actorToUpdate = 0;
         }
 

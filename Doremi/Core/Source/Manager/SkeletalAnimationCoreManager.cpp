@@ -180,6 +180,16 @@ namespace Doremi
                     p_skeletalAnimationComponent.timePosition = clip->second.elapsedSinceStart;
                     clip->second.startTime = 0.0f;
                     clip->second.elapsedSinceStart = 0.0f;
+                    if(t_animationNames[i] == "Attack")
+                    {
+                        for(size_t j = 0; j < numberOfAnimations; j++)
+                        {
+                            auto& lclip = (*p_skeletalAnimationComponent.animationTransitions).find(t_animationNames[j]);
+                            lclip->second.elapsedSinceStart = 0.0f;
+                            lclip->second.startTime = 0.0f;
+                        }
+                        // cout << "Du mördade alla animationer som transitionade" << endl;
+                    }
                 }
                 else
                 {
@@ -692,7 +702,8 @@ namespace Doremi
             }
             // Om överkroppen är i runmode men du har stannat ska du köra idle istället
             if(t_upperSkeletalAnimationComponent->clipName == "Run" && t_movementLengthVector.x < t_epsilon &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0)
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0 &&
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0)
             {
                 STimer("Idle", t_upperSkeletalAnimationComponent, 0.001f);
             }

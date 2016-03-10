@@ -398,7 +398,7 @@ namespace Doremi
 
             // Range comp
             RangeComponent* rangeComp = new RangeComponent();
-            rangeComp->range = 8.0f;
+            rangeComp->range = 15.0f;
             blueprint[ComponentType::Range] = rangeComp;
 
             // PotentialField component
@@ -410,7 +410,7 @@ namespace Doremi
             blueprint[ComponentType::PotentialField] = potentialComp;
 
             // Enemy ai agent comp
-            AIAgentComponent* aiTimers = new AIAgentComponent(0.5f, 0.025f);
+            AIAgentComponent* aiTimers = new AIAgentComponent(1.2f, 0.025f);
             aiTimers->type = AIType::Melee;
             blueprint[ComponentType::AIAgent] = aiTimers;
 
