@@ -50,16 +50,21 @@ namespace Doremi
             m_timeGunReloadButtonWasPressed = 0.0f;
 
             // Load the background sounds
-            m_backgroundSounds[BackgroundSound::InGameMainTheme] = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
-            EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
-            m_backgroundChannelId = -1;
+            m_backgroundSounds[BackgroundSound::InGameMainTheme].soundID = m_sharedContext.GetAudioModule().LoadSound("Sounds/BackgroundGame.wav", 0.5, 5000);
+
+            // Load effect sounds
+            m_backgroundSounds[BackgroundSound::CheckpointReached].soundID = m_sharedContext.GetAudioModule().LoadSound("Sounds/Checkpoint.wav", 0.5, 5000);
 
             // Start background
             if(m_backgroundSounds.count(BackgroundSound::InGameMainTheme) != 0)
             {
                 DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
-                t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
+                t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme].soundID, true,
+                                         m_backgroundSounds[BackgroundSound::InGameMainTheme].channelID);
             }
+
+            EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
+            EventHandler::GetInstance()->Subscribe(EventType::ChangedCheckpoint, this);
         }
 
         AudioHandler::~AudioHandler()
@@ -277,6 +282,16 @@ namespace Doremi
                         DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
                         // t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme], true, m_backgroundChannelId);
                     }
+                }
+            }
+            if(p_event->eventType == EventType::ChangedCheckpoint)
+            {
+                // Play checkpoint sound
+                if(m_backgroundSounds.count(BackgroundSound::CheckpointReached) != 0)
+                {
+                    DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+                    t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::CheckpointReached].soundID, false,
+                                             m_backgroundSounds[BackgroundSound::CheckpointReached].channelID);
                 }
             }
         }

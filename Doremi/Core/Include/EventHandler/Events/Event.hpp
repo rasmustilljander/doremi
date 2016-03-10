@@ -31,6 +31,7 @@ namespace Doremi
             SetTransform,
             AnimationTransition,
             LoadNewWorld,
+            ChangedCheckpoint,
         };
 
         /**All events needs to inherit this struct*/

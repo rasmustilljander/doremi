@@ -9,6 +9,7 @@
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
 #include <Doremi/Core/Include/EntityComponent/EntityHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/PlayerRespawnEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EmptyEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EntityComponent/Components/HealthComponent.hpp>
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
@@ -102,9 +103,11 @@ namespace Doremi
                     if(static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->IsPlayer(t_triggEvent->objectEntityID))
                     {
                         // Could get who got the spawner here as well? If we want player specific spawners
-                        if(m_currentPlayerSpawner == t_triggEvent->triggerEntityID)
+                        if(m_currentPlayerSpawner != t_triggEvent->triggerEntityID)
                         {
                             m_currentPlayerSpawner = t_triggEvent->triggerEntityID;
+                            EmptyEvent* t_checkpointReachedEvent = new EmptyEvent(EventType::ChangedCheckpoint);
+                            EventHandler::GetInstance()->BroadcastEvent(t_checkpointReachedEvent);
                         }
                     }
                 }

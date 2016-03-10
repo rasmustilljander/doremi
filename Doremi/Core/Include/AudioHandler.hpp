@@ -91,9 +91,15 @@ namespace Doremi
             {
                 InGameMainTheme,
                 MenuMainTheme,
+                CheckpointReached,
             };
-            std::map<BackgroundSound, int> m_backgroundSounds;
-            int m_backgroundChannelId;
+            struct ChannleSoundPair
+            {
+                int channelID = -1;
+                int soundID = -1;
+            };
+            std::map<BackgroundSound, ChannleSoundPair> m_backgroundSounds;
+
             // Used to control the flow of the update function
             enum SoundState
             {
