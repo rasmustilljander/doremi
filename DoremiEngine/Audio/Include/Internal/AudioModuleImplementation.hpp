@@ -81,6 +81,8 @@ namespace DoremiEngine
 
             void StopSound(const int& p_channelID) override;
 
+            void SetMasterVolume(const float& p_volume) override;
+
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
 

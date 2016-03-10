@@ -77,6 +77,13 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
         }
 
+        void AudioModuleImplementation::SetMasterVolume(const float& p_volume)
+        {
+            FMOD::ChannelGroup* t_masterChannelGroup;
+            m_fmodSystem->getMasterChannelGroup(&t_masterChannelGroup);
+            t_masterChannelGroup->setVolume(p_volume);
+        }
+
         double AudioModuleImplementation::GetSoundTimePointer(const int& p_channelID)
         {
             unsigned int t_elapsedTime;

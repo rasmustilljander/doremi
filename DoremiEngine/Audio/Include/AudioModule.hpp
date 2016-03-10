@@ -120,6 +120,11 @@ namespace DoremiEngine
             Stops the sound playing in the channel
             */
             virtual void StopSound(const int& p_channelID) = 0;
+
+            /**
+            Sets master volume 1 is full volume, 0 is no volume
+            */
+            virtual void SetMasterVolume(const float& p_volume) = 0;
         };
     }
 }

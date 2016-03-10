@@ -154,6 +154,12 @@ namespace Doremi
             }
         }
 
+        void AudioHandler::SetMasterVolume(const float& p_volume)
+        {
+            DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+            t_audioModule.SetMasterVolume(p_volume);
+        }
+
         void AudioHandler::PlayRepeatableRecordedSound()
         {
             // This is a dangerous function since soundID starts at 0. If there is no sound on 0 we will crash
