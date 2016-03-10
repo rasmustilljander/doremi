@@ -842,7 +842,7 @@ namespace Doremi
 
             /// Fill with components
 
-            LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER);
+            LoadedCharacter& t_loaded = SkeletalInformationHandler::GetInstance()->LoadSkeletalCharacter(SkeletalAnimationType::PLAYER2);
             /// Fill with components
             // Render
             RenderComponent* t_renderComp = new RenderComponent();
@@ -855,11 +855,11 @@ namespace Doremi
             t_avatarBlueprint[ComponentType::Render] = t_renderComp;
             // SkeletalAnimationComponent
             SkeletalAnimationComponent* t_upperBodySkeletalAnimationComp = new SkeletalAnimationComponent();
-            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
+            t_upperBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER2;
             t_avatarBlueprint[ComponentType::UpperBodySkeletalAnimation] = t_upperBodySkeletalAnimationComp;
 
             LowerSkeletalAnimationComponent* t_lowerBodySkeletalAnimationComp = new LowerSkeletalAnimationComponent();
-            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER;
+            t_lowerBodySkeletalAnimationComp->type = SkeletalAnimationType::PLAYER2;
             t_lowerBodySkeletalAnimationComp->orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             t_avatarBlueprint[ComponentType::LowerBodySkeletalAnimation] = t_lowerBodySkeletalAnimationComp;
 

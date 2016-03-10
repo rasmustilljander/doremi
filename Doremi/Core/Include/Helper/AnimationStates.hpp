@@ -13,6 +13,7 @@ namespace Doremi
             RANGEDENEMY,
             MELEENEMY,
             PLAYER,
+            PLAYER2,
         };
         struct AnimationTransitionInfo
         {
