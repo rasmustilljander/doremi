@@ -1,7 +1,5 @@
 #define BLOCK_SIZE 32
 #define NUM_LIGHTS 500
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
 
 
 struct PixelInputType
@@ -75,6 +73,12 @@ cbuffer MaterialData : register(b1)
     float pad;
 };
 
+cbuffer ResolutionData : register(b2)
+{
+    float2 Resolution;
+    float2 PaddingResol;
+}
+
 Texture2D ObjTexture : register(t0);
 Texture2D GlowTexture : register(t5);
 
@@ -129,12 +133,12 @@ PixelOutputType PS_main(PixelInputType input)
 {
     PixelOutputType output;
     float2 screenPos = input.screenPos.xy / input.screenPos.z;
-    screenPos.y = (-screenPos.y + 1) * SCREEN_HEIGHT / 2;
-    screenPos.x = (screenPos.x + 1) * SCREEN_WIDTH / 2;
+    screenPos.y = (-screenPos.y + 1) * Resolution.y / 2;
+    screenPos.x = (screenPos.x + 1) * Resolution.x / 2;
 
     //calculate which thread group this pixel was in the compute shader stage
     float2 groupID2 = float2((int)screenPos.x / BLOCK_SIZE, (int)screenPos.y / BLOCK_SIZE);
-    float groupID = groupID2.x + (groupID2.y * ceil(SCREEN_WIDTH / BLOCK_SIZE));
+    float groupID = groupID2.x + (groupID2.y * ceil(Resolution.x / BLOCK_SIZE));
     //extract data from light grid
     int index = t_LightGrid[groupID].offset;
     int value = t_LightGrid[groupID].value;

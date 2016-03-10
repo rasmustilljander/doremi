@@ -26,7 +26,7 @@ groupshared float4 gCache[BLOCK_SIZE + 2 * BLUR_SIZE];
 [numthreads(1, BLOCK_SIZE, 1)]
 void CS_main(ComputeShaderInput input)
 {
-    float2 uvDimensions = float2(2.0f/ SCREEN_WIDTH, 2.0f/ SCREEN_HEIGHT);
+    float2 uvDimensions = float2(2.0f/ Resolution.x, 2.0f/ Resolution.y);
 
     // get the edges
     if (input.groupThreadID.y < BLUR_SIZE)

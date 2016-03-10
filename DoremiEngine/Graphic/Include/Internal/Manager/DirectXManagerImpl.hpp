@@ -28,6 +28,11 @@ namespace DoremiEngine
             WorldMatrixPair matricPairs[MAX_NUMBER_OF_INSTANCES];
         };
 
+        struct ResolutionStruct
+        {
+            DirectX::XMFLOAT2 resolution;
+            DirectX::XMFLOAT2 padding;
+        };
 
         class DirectXManagerImpl : public DirectXManager
         {
@@ -140,6 +145,8 @@ namespace DoremiEngine
 
             std::vector<uint32_t> GetRefreshRates(const uint32_t& p_monitor, const std::pair<uint32_t, uint32_t>& p_resolution);
 
+            void SetResolution(const std::pair<uint32_t, uint32_t>& p_resolution) override;
+
 
         private:
             bool t_frustrumComputed;
@@ -181,6 +188,8 @@ namespace DoremiEngine
             void CreateRasterizerStates();
 
             void CreateBlendStates();
+
+            void ClearBuffersForResize();
 
             std::vector<MeshRenderData> renderData;
             std::vector<MeshRenderData> transRenderData;
@@ -227,6 +236,7 @@ namespace DoremiEngine
             ID3D11Buffer* m_worldMatrix;
             ID3D11Buffer* m_spriteDataBuffer;
             ID3D11Buffer* m_materialBuffer;
+            ID3D11Buffer* m_resolutionBuffer;
             ID3D11SamplerState* m_defaultSamplerState;
             ID3D11SamplerState* m_glowSamplerState;
 

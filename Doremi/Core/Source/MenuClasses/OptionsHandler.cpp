@@ -451,6 +451,13 @@ namespace Doremi
                             m_currentResolutionWidth = m_highlightedWidth;
                             m_resolutionText.UpdateText(m_sharedContext, std::to_string(m_highlightedWidth) + "x" + std::to_string(m_highlightedHegiht));
 
+                            std::pair<uint32_t, uint32_t> t_resolution;
+                            t_resolution.first = m_currentResolutionWidth;
+                            t_resolution.second = m_currentResolutionHeight;
+
+                            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetResolution(t_resolution);
+
+
                             t_resolutionDropdownIsActive = false;
                             ClearResolutionDropDown();
                             UpdateRefreshRate();

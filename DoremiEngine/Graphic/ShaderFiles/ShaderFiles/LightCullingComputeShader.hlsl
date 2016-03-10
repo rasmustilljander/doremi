@@ -64,8 +64,8 @@ void t_AppendLight(uint lightIndex)
 void CS_main(ComputeShaderInput input)
 {
     //TODORK send as parameter
-    uint3 numThreadGroups = uint3(ceil(SCREEN_WIDTH / BLOCK_SIZE), ceil(SCREEN_HEIGHT / BLOCK_SIZE), 1);
-    uint3 numThreads = uint3(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
+    uint3 numThreadGroups = uint3(ceil(Resolution.x / BLOCK_SIZE), ceil(Resolution.y / BLOCK_SIZE), 1);
+    uint3 numThreads = uint3(Resolution.x, Resolution.y, 1);
 
     // Calculate min & max depth in threadgroup / tile.
     int2 texCoord = input.dispatchThreadID.xy;

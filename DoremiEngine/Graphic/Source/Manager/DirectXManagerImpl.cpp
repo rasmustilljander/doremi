@@ -19,6 +19,8 @@
 // COnfiguration
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 
+#define NUM_BACK_BUFFERS 2
+
 namespace DoremiEngine
 {
     namespace Graphic
@@ -103,7 +105,7 @@ namespace DoremiEngine
             ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
             // fill the swap chain description struct
-            scd.BufferCount = 2; // one back buffer
+            scd.BufferCount = NUM_BACK_BUFFERS; // one back buffer
             scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
             scd.BufferDesc.RefreshRate.Numerator = m_refreshRate;
             scd.BufferDesc.RefreshRate.Denominator = 1;
@@ -557,11 +559,18 @@ namespace DoremiEngine
             bd.MiscFlags = 0;
             bd.StructureByteStride = 0;
             bd.ByteWidth = sizeof(WorldMatrices);
-            m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
+            HRESULT res = m_device->CreateBuffer(&bd, NULL, &m_worldMatrix);
+            if(!CheckHRESULT(res, "Error when creating sprite buffer"))
+            {
+                return;
+            }
 
             bd.ByteWidth = sizeof(DoremiEditor::Core::MaterialData);
-            m_device->CreateBuffer(&bd, NULL, &m_materialBuffer);
-
+            res = m_device->CreateBuffer(&bd, NULL, &m_materialBuffer);
+            if(!CheckHRESULT(res, "Error when creating sprite buffer"))
+            {
+                return;
+            }
 
             ZeroMemory(&bd, sizeof(bd));
             bd.Usage = D3D11_USAGE_DYNAMIC;
@@ -570,11 +579,29 @@ namespace DoremiEngine
             bd.MiscFlags = 0;
             bd.StructureByteStride = 0;
             bd.ByteWidth = sizeof(SpriteData);
-            HRESULT res = m_device->CreateBuffer(&bd, NULL, &m_spriteDataBuffer);
+            res = m_device->CreateBuffer(&bd, NULL, &m_spriteDataBuffer);
             if(!CheckHRESULT(res, "Error when creating sprite buffer"))
             {
                 return;
             }
+
+            bd.ByteWidth = sizeof(ResolutionStruct);
+            res = m_device->CreateBuffer(&bd, NULL, &m_resolutionBuffer);
+            if(!CheckHRESULT(res, "Error when creating sprite buffer"))
+            {
+                return;
+            }
+            ResolutionStruct t_resoltution;
+            t_resoltution.resolution = m_screenResolution;
+            t_resoltution.padding = DirectX::XMFLOAT2(0, 0);
+
+            D3D11_MAPPED_SUBRESOURCE tMS;
+            m_deviceContext->Map(m_resolutionBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+            memcpy(tMS.pData, &t_resoltution, sizeof(ResolutionStruct));
+            m_deviceContext->Unmap(m_resolutionBuffer, NULL);
+
+            m_deviceContext->PSSetConstantBuffers(2, 1, &m_resolutionBuffer);
+            m_deviceContext->CSSetConstantBuffers(2, 1, &m_resolutionBuffer);
         }
 
         ID3D11Device* DirectXManagerImpl::GetDevice() { return m_device; }
@@ -1487,6 +1514,78 @@ namespace DoremiEngine
 
             // something wrong..
             return std::vector<uint32_t>();
+        }
+
+        void DirectXManagerImpl::ClearBuffersForResize()
+        {
+            // Release backbuffer
+            m_backbufferUAV->Release();
+
+            // Release glow
+            m_horGlowRTV->Release();
+            m_horGlowSRV->Release();
+            m_vertGlowUAV->Release();
+            m_vertGlowSRV->Release();
+
+            // Release depth
+            m_depth->Release();
+            m_depthRTV->Release();
+            m_depthSRV->Release();
+
+            // Release color
+            m_colorRTV->Release();
+            m_colorSRV->Release();
+
+            // Release depth;
+            m_depthBuffer->Release();
+            m_depthView->Release();
+        }
+
+        void DirectXManagerImpl::SetResolution(const std::pair<uint32_t, uint32_t>& p_resolution)
+        {
+            // If there is a change
+            if(m_screenResolution.x != static_cast<float>(p_resolution.first) || m_screenResolution.y != static_cast<float>(p_resolution.second))
+            {
+                m_screenResolution.x = static_cast<float>(p_resolution.first);
+                m_screenResolution.y = static_cast<float>(p_resolution.second);
+
+                SDL_SetWindowSize(m_window, p_resolution.first, p_resolution.second);
+
+                // Clear buffers and views
+                ClearBuffersForResize();
+
+                // Update swap chain
+                HRESULT hr = m_swapChain->ResizeBuffers(NUM_BACK_BUFFERS, p_resolution.first, p_resolution.second, DXGI_FORMAT_R8G8B8A8_UNORM,
+                                                        DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+                if(FAILED(hr))
+                {
+                    std::cout << "failed setting resolution" << std::endl;
+                }
+
+                CreateBackBufferViews();
+
+                CreateBlurrBuffers();
+
+                CreateDepthViews();
+
+                CreateColorBuffer();
+
+                CreateRealDepthBuffer();
+
+                m_deviceContext->OMSetRenderTargets(1, &m_colorRTV, m_depthView);
+
+                CreateViewport();
+
+                // Update resolution constant buffer
+                ResolutionStruct t_resoltution;
+                t_resoltution.resolution = m_screenResolution;
+                t_resoltution.padding = DirectX::XMFLOAT2(0, 0);
+
+                D3D11_MAPPED_SUBRESOURCE tMS;
+                m_deviceContext->Map(m_resolutionBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
+                memcpy(tMS.pData, &t_resoltution, sizeof(ResolutionStruct));
+                m_deviceContext->Unmap(m_resolutionBuffer, NULL);
+            }
         }
     }
 }

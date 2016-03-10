@@ -65,6 +65,8 @@ namespace DoremiEngine
             virtual std::vector<std::pair<uint32_t, uint32_t>> GetResolutions(const uint32_t& p_monitor) = 0;
 
             virtual std::vector<uint32_t> GetRefreshRates(const uint32_t& p_monitor, const std::pair<uint32_t, uint32_t>& p_resolution) = 0;
+
+            virtual void SetResolution(const std::pair<uint32_t, uint32_t>& p_resolution) = 0;
         };
     }
 }

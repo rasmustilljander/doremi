@@ -1,7 +1,7 @@
 #define BLOCK_SIZE 32
 #define NUM_LIGHTS 500
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
+//#define SCREEN_WIDTH 1920
+//#define SCREEN_HEIGHT 1080
 
 struct Material
 {
@@ -79,6 +79,12 @@ cbuffer LightInfo : register(b1)
     Light light[NUM_LIGHTS];
 };
 
+cbuffer ResolutionData : register(b2)
+{
+    float2 Resolution;
+    float2 PaddingResol;
+}
+
 struct Frustum
 {
     Plane plane[4];   // left, right, top, bottom frustum planes.
@@ -97,7 +103,7 @@ float4 ClipToView(float4 clip)
 
 float4 ScreenToView(float4 screen)
 {
-    float2 ScreenDimensions = float2(SCREEN_WIDTH, SCREEN_HEIGHT);
+    float2 ScreenDimensions = Resolution;
     // Convert to normalized texture coordinates
     float2 texCoord = screen.xy / ScreenDimensions;
 
