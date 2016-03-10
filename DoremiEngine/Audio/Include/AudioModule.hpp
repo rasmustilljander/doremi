@@ -134,6 +134,11 @@ namespace DoremiEngine
             Sets master volume 1 is full volume, 0 is no volume
             */
             virtual void SetMasterVolume(const float& p_volume) = 0;
+
+            /**
+            Sets the volume of the specified sound group
+            */
+            virtual void SetSoundGroupVolume(const float& p_volume, const SoundGroup& p_group) = 0;
         };
     }
 }

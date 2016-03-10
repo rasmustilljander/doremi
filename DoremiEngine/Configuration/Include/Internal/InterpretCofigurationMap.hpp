@@ -24,11 +24,11 @@ namespace DoremiEngine
             }
             if(p_mapToInterpret.count("EffectVolume"))
             {
-                o_info.MasterVolume = std::stof(p_mapToInterpret.at("EffectVolume"));
+                o_info.EffectVolume = std::stof(p_mapToInterpret.at("EffectVolume"));
             }
             if(p_mapToInterpret.count("MusicVolume"))
             {
-                o_info.MasterVolume = std::stof(p_mapToInterpret.at("MusicVolume"));
+                o_info.MusicVolume = std::stof(p_mapToInterpret.at("MusicVolume"));
             }
             if(p_mapToInterpret.count("Forward"))
             {

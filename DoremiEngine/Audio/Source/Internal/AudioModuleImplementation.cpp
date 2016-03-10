@@ -1,5 +1,6 @@
 #include <Internal/AudioModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <iostream>
 #include <windows.h>
 
@@ -63,6 +64,23 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodResult = m_fmodSystem->createChannelGroup(NULL, &m_effectGroup);
             ERRCHECK(m_fmodResult);
+
+            // Add the custom channel groups to the master channel group
+            FMOD::ChannelGroup* t_masterChannelGroup;
+            m_fmodSystem->getMasterChannelGroup(&t_masterChannelGroup);
+            t_masterChannelGroup->addGroup(m_musicGroup);
+            t_masterChannelGroup->addGroup(m_effectGroup);
+
+
+            // Get and set start volumes
+            float musicVolume = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().MusicVolume;
+            float masterVolume = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().MasterVolume;
+            float effectVolume = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().EffectVolume;
+
+            m_musicGroup->setVolume(musicVolume);
+            m_effectGroup->setVolume(effectVolume);
+            t_masterChannelGroup->setVolume(masterVolume);
+
             // Create channel groups
         }
 
@@ -418,6 +436,23 @@ namespace DoremiEngine
             else
             {
                 std::cout << "Error when stopping sound, no such channel" << std::endl;
+            }
+        }
+
+        void AudioModuleImplementation::SetSoundGroupVolume(const float& p_volume, const SoundGroup& p_group)
+        {
+            switch(p_group)
+            {
+                case DoremiEngine::Audio::SoundGroup::Music:
+                    m_musicGroup->setVolume(p_volume);
+                    break;
+                case DoremiEngine::Audio::SoundGroup::Effect:
+                    m_effectGroup->setVolume(p_volume);
+                    break;
+                case DoremiEngine::Audio::SoundGroup::RecordAndAnalyse:
+                    break;
+                default:
+                    break;
             }
         }
     }

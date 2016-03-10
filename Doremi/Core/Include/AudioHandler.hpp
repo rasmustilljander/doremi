@@ -61,6 +61,10 @@ namespace Doremi
             float GetRepeatableSoundFrequency();
             // Sets mastervolume 0 is no audio 1 is max audio
             void SetMasterVolume(const float& p_volume);
+            // Sets the effect volume 0 is no audio 1 is max audio
+            void SetEffectVolume(const float& p_volume);
+            // Sets the music volume 0 is no audio 1 is max audio
+            void SetMusicVolume(const float& p_volume);
 
             void OnEvent(Event* p_event) override;
 

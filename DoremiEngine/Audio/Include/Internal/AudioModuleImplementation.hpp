@@ -83,6 +83,8 @@ namespace DoremiEngine
 
             void SetMasterVolume(const float& p_volume) override;
 
+            void SetSoundGroupVolume(const float& p_volume, const SoundGroup& p_group) override;
+
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
             void SetChannelGroup(FMOD::Channel* o_channel, SoundGroup p_group);

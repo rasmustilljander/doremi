@@ -995,10 +995,14 @@ namespace Doremi
                 }
                 case Doremi::Core::SliderEffect::SOUND_EFFECTS:
                 {
+                    configInfo.EffectVolume = percent;
+                    AudioHandler::GetInstance()->SetEffectVolume(percent);
                     break;
                 }
                 case Doremi::Core::SliderEffect::SOUND_MUSIC:
                 {
+                    configInfo.MusicVolume = percent;
+                    AudioHandler::GetInstance()->SetMusicVolume(percent);
                     break;
                 }
                 case Doremi::Core::SliderEffect::MOUSE_SENSE:
