@@ -80,7 +80,7 @@ namespace Doremi
             t_matInfo = t_meshManager.BuildMaterialInfo("HitScreen3.dds");
             m_bloodScreen.Object = ScreenObject(t_matInfo, t_spriteInfo);
             m_bloodScreen.MaxLifeTime = 1;
-
+            m_bloodScreen.LifeTime = 0;
             m_bars.push_back(&m_healthBar);
         }
 
