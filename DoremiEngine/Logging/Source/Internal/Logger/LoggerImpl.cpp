@@ -1,4 +1,5 @@
 #include <Internal/Logger/LoggerImpl.hpp>
+
 #include <Utility/Utilities/Include/Logging/LogLevel.hpp>
 #include <Utility/Utilities/Include/Logging/LogTag.hpp>
 #include <Utility/Utilities/Include/Logging/LogTextData.hpp>
@@ -6,15 +7,54 @@
 #include <Utility/Utilities/Include/Logging/LogTagConverter.hpp>
 #include <Utility/Utilities/Include/Logging/HelpFunctions.hpp>
 #include <Utility/Utilities/Include/IO/FileMap/FileMap.hpp>
-
 #include <Utility/Utilities/Include/String/VA_ListToString.hpp>
 #include <Utility/Utilities/Include/String/StringHelper.hpp>
 #include <Utility/Utilities/Include/PointerArithmetic/PointerArithmetic.hpp>
+#include <Utility/Utilities/Include/Chrono/Timer.hpp>
 
 #include <iostream>
 #include <algorithm>
 #include <chrono>
 #include <Windows.h>
+#include <fstream>
+
+
+struct DoremiEngine::Logging::ThreadMetaData;
+namespace
+{
+    bool meinLogg = true;
+}
+
+struct TimerResults
+{
+    TimerResults(std::string& p_name) : name(std::move(p_name)), total(0.0) {}
+
+    std::string name;
+    Doremi::Utilities::Chrono::Timer timer;
+    double total;
+    void Measure()
+    {
+        if(meinLogg)
+        {
+            total += timer.Tick().GetElapsedTimeInSeconds();
+        }
+    }
+
+    void Save(DoremiEngine::Logging::LoggerImpl& logger)
+    {
+        using namespace Doremi::Utilities::Logging;
+        logger.LogTextReal("", 0, LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "Logger %s: %f", name.c_str(), total);
+    }
+};
+
+namespace
+{
+    TimerResults& a = TimerResults(std::string("a"));
+    TimerResults& b = TimerResults(std::string("b"));
+    TimerResults& c = TimerResults(std::string("c"));
+    TimerResults& d = TimerResults(std::string("d"));
+    TimerResults& e = TimerResults(std::string("e"));
+}
 
 namespace DoremiEngine
 {
@@ -54,6 +94,15 @@ namespace DoremiEngine
 
         LoggerImpl::~LoggerImpl()
         {
+            meinLogg = false;
+            a.Save(*this);
+            b.Save(*this);
+            c.Save(*this);
+            d.Save(*this);
+            e.Save(*this);
+            using namespace std::literals;
+            std::this_thread::sleep_for(1s);
+
 #ifdef NO_LOGGER
             return;
 #endif
@@ -113,6 +162,8 @@ namespace DoremiEngine
         void LoggerImpl::LogTextReal(const std::string& p_function, const uint16_t& p_line, const LogTag& p_logTag, const LogLevel& p_logLevel,
                                      const char* p_format, ...)
         {
+            a.timer.Tick();
+            e.timer.Tick();
             using namespace Doremi::Utilities::Logging;
             using namespace Doremi::Utilities;
             // Build a string from va_list
@@ -124,13 +175,27 @@ namespace DoremiEngine
                 vprintf(p_format, args);
                 printf("\n");
             }
-#ifdef NO_LOGGER
+            a.Measure();
+            b.timer.Tick();
+
+            auto& logtag = LogTagConverter::convert(p_logTag).name;
+            auto& logLevel = LogLevelConverter::convert(p_logLevel).name;
+
+            char charBuffer1[1024];
+            vsprintf(charBuffer1, p_format, args);
+            std::string message(charBuffer1);
             va_end(args);
+            b.Measure();
+            c.timer.Tick();
+
+#ifdef NO_LOGGER
+            static std::ofstream& file = std::ofstream("test.txt", std::ofstream::out | std::ofstream::app);
+            file << "[" << logtag << ":" << logLevel << "] " << message << "\n";
+            c.Measure();
+            e.Measure();
             return;
 #endif
-            std::string message;
-            String::toString(message, p_format, args);
-            va_end(args);
+            c.Measure();
 
             // Allocate buffer
             const uint16_t functionSize = p_function.size() + 1; // The plus one comes as the null terminator
@@ -158,6 +223,7 @@ namespace DoremiEngine
             header.packageSize = bufferSize;
             header.packageType = CircleBufferType(CircleBufferTypeEnum::TEXT);
             bool succeed = false;
+            d.timer.Tick();
 
             while(!succeed)
             {
@@ -168,6 +234,8 @@ namespace DoremiEngine
                 }
             }
             free(buffer);
+            d.Measure();
+            e.Measure();
         }
 
         void* LoggerImpl::InitializeFileMap(const std::size_t& p_size)

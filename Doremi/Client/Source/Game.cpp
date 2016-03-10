@@ -363,6 +363,9 @@ namespace Doremi
 
     void GameMain::DrawGame(double p_deltaTime)
     {
+        using namespace Utilities::Logging;
+        m_logger->LogText(LogTag::GENERAL, LogLevel::MASS_DATA_PRINT, "A %d %f %s", 178, 9.3, "durp");
+        //   m_logger->LogText(LogTag::GENERAL, LogLevel::MASS_DATA_PRINT, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         FUNCTION_TIMER
         const size_t length = m_graphicalManagers.size();
         using namespace Utilities::Logging;
