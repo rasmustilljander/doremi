@@ -10,6 +10,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
+#include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <algorithm>
 #include <iostream>
 
@@ -280,7 +281,7 @@ namespace Doremi
             t_dataCircle.position.y = 0.725f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_sense = 0.67f;
+            float t_sense = (configInfo.TurnSpeed - 0.001f) / (0.019f);
             t_newSlider = new Slider(SliderEffect::MOUSE_SENSE, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_sense);
             m_sliders.push_back(t_newSlider);
@@ -898,7 +899,6 @@ namespace Doremi
                 {
                     configInfo.CameraFieldOfView = static_cast<uint32_t>(60.0f + percent * (90.0f - 60.0f));
                     CameraHandler::GetInstance()->UpdateCameraProjection();
-                    std::cout << "Updated camera and fov" << configInfo.CameraFieldOfView << std::endl;
                     break;
                 }
                 case Doremi::Core::SliderEffect::SOUND_MASTER:
@@ -915,6 +915,8 @@ namespace Doremi
                 }
                 case Doremi::Core::SliderEffect::MOUSE_SENSE:
                 {
+                    configInfo.TurnSpeed = 0.001f + percent * 0.019f;
+                    static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->UpdateTurnSpeed();
                     break;
                 }
                 default:

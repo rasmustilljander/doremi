@@ -42,6 +42,8 @@ namespace Doremi
         public:
             static void StartPlayerHandlerClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
+            void UpdateTurnSpeed();
+
             EntityID GetPlayerEntityID();
 
             InputHandlerClient* GetInputHandler();
