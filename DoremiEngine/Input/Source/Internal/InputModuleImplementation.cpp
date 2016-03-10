@@ -54,7 +54,7 @@ namespace DoremiEngine
         {
             // 1200,200 är plats för window
             // TODOCONFIG change the place for the window.
-            SDL_Window* t_win = SDL_CreateWindow("Doremi the movie", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
+            SDL_Window* t_win = SDL_CreateWindow("ArgeeNBeats", 1200, 200, p_width, p_height, SDL_WINDOW_SHOWN);
             if(!t_win)
             {
                 std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;

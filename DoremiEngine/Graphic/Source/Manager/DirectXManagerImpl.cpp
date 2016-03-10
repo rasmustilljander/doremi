@@ -52,7 +52,7 @@ namespace DoremiEngine
 
             if(GetActiveWindow() == nullptr)
             {
-                m_window = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
+                m_window = SDL_CreateWindow("ArgeeNBeats", 100, 100, m_screenResolution.x, m_screenResolution.y,
                                             SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
 
                 if(!m_window)
