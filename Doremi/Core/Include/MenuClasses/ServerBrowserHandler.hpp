@@ -104,6 +104,8 @@ namespace Doremi
 
             std::list<ServerData*> m_serversList;
 
+            std::list<ServerData*> m_frameActiveServerList;
+
             std::list<Button*> m_drawButtons;
 
             std::list<Text*> m_drawText;
@@ -117,6 +119,8 @@ namespace Doremi
             float m_serverBoxSize;
 
             Button m_background;
+
+            int32_t m_curIndexTop;
         };
     }
 }

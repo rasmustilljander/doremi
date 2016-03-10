@@ -6,6 +6,7 @@
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/MeshManager.hpp>
+#include <algorithm>
 
 
 namespace Doremi
@@ -42,7 +43,7 @@ namespace Doremi
         }
 
         ServerBrowserHandler::ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), m_timeout(1.0f), m_selectedServer(nullptr)
+            : m_sharedContext(p_sharedContext), m_timeout(1.0f), m_selectedServer(nullptr), m_curIndexTop(0)
         {
             m_serverBoxSize = 0.04;
 
@@ -50,7 +51,7 @@ namespace Doremi
 
             // Create server browser background TEMPORARY WILL BECOME SCREEN OBJECT
             ButtonMaterials t_butMat;
-            t_butMat.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ServerBrowserBackground.dds");
+            t_butMat.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0002_SERVER_Frame2.dds");
             t_butMat.m_selectedLightedMaterial = nullptr;
             t_butMat.m_highLightedMaterial = nullptr;
 
@@ -147,9 +148,9 @@ namespace Doremi
             Doremi::Core::ButtonMaterials t_buttonMaterials;
 
             // Load materials
-            t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("NormalServer.dds");
-            t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("HoverServer.dds");
-            t_buttonMaterials.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("SelectedServer.dds");
+            t_buttonMaterials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0001_SERVER_Bar_Highlight.dds");
+            t_buttonMaterials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0000_SERVER_Bar_Highlight.dds");
+            t_buttonMaterials.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0000_SERVER_Bar_Highlight.dds");
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
 
@@ -255,20 +256,53 @@ namespace Doremi
 
         void ServerBrowserHandler::UpdatePositions()
         {
+            // max visisble is 6
+            m_frameActiveServerList.clear();
+
+
+            uint32_t t_numServers = m_serversList.size();
+            if(t_numServers <= 6)
+            {
+                m_curIndexTop = 0;
+            }
+            else if(m_curIndexTop + 6 > t_numServers) // if we have 7 servers, and index is 0 this should ignore
+            {
+                m_curIndexTop = t_numServers - 6;
+            }
+
+            // Step over
             auto& t_server = m_serversList.begin();
+            size_t activeServerCounter = 0;
+            while(t_server != m_serversList.end() && activeServerCounter < m_curIndexTop)
+            {
+                ++activeServerCounter;
+                ++t_server;
+            }
+
+            // Add max 6 to list
+            activeServerCounter = 0;
+            while(t_server != m_serversList.end() && activeServerCounter < 6)
+            {
+                m_frameActiveServerList.push_back(*t_server);
+                ++activeServerCounter;
+                ++t_server;
+            }
+
 
             // For each server we got on display
+
+            t_server = m_frameActiveServerList.begin();
             size_t counter = 0;
-            while(t_server != m_serversList.end())
+            while(t_server != m_frameActiveServerList.end())
             {
                 DoremiEngine::Graphic::SpriteData& t_data = (*t_server)->m_serverButton.m_spriteInfo->GetData();
-                t_data.position.y = 0.2f + counter * m_serverBoxSize * 2.0f;
+                t_data.position.y = 0.3f + counter * m_serverBoxSize * 2.0f;
 
-                (*t_server)->NameText.UpdatePosition(XMFLOAT2(0.17f, 0.2f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->StateText.UpdatePosition(XMFLOAT2(0.37f, 0.2f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->MapText.UpdatePosition(XMFLOAT2(0.50f, 0.2f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->NumPlayerText.UpdatePosition(XMFLOAT2(0.72f, 0.2f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->PingText.UpdatePosition(XMFLOAT2(0.82f, 0.2f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->NameText.UpdatePosition(XMFLOAT2(0.17f, 0.3f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->StateText.UpdatePosition(XMFLOAT2(0.37f, 0.3f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->MapText.UpdatePosition(XMFLOAT2(0.50f, 0.3f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->NumPlayerText.UpdatePosition(XMFLOAT2(0.72f, 0.3f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->PingText.UpdatePosition(XMFLOAT2(0.82f, 0.3f + counter * m_serverBoxSize * 2.0f));
 
                 ++counter;
                 ++t_server;
@@ -295,7 +329,7 @@ namespace Doremi
             m_highlightedButton = nullptr;
 
             // Check if cursor is inside one of the buttons if it is then save that buttons index
-            for(auto& t_server : m_serversList)
+            for(auto& t_server : m_frameActiveServerList)
             {
                 if(t_server->m_serverButton.CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
                 {
@@ -351,6 +385,16 @@ namespace Doremi
             {
                 m_selectedServer->m_serverButton.SetSelected();
             }
+
+            if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnDown))
+            {
+                m_curIndexTop++;
+            }
+            else if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::ScrollWpnUp))
+            {
+                m_curIndexTop--;
+                m_curIndexTop = static_cast<int32_t>(std::max(static_cast<float>(m_curIndexTop), 0.0f));
+            }
         }
 
         void ServerBrowserHandler::UpdateVisual()
@@ -361,11 +405,11 @@ namespace Doremi
 
             m_drawButtons.push_back(&m_background);
 
-            auto& t_server = m_serversList.begin();
+            auto& t_server = m_frameActiveServerList.begin();
 
             // For each server we got on display
             size_t counter = 0;
-            while(t_server != m_serversList.end())
+            while(t_server != m_frameActiveServerList.end())
             {
 
                 m_drawButtons.push_back(&((*t_server)->m_serverButton));
