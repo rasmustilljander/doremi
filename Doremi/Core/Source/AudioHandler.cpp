@@ -60,7 +60,7 @@ namespace Doremi
             {
                 DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
                 t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::InGameMainTheme].soundID, true,
-                                         m_backgroundSounds[BackgroundSound::InGameMainTheme].channelID);
+                                         m_backgroundSounds[BackgroundSound::InGameMainTheme].channelID, DoremiEngine::Audio::SoundGroup::Music);
             }
 
             EventHandler::GetInstance()->Subscribe(EventType::ChangeMenuState, this);
@@ -166,7 +166,7 @@ namespace Doremi
             if(m_SoundState != HOLDREPEATABLEANALYSIS && m_SoundState != ANALYSEREPEATABLE)
             {
                 DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
-                t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
+                t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID, DoremiEngine::Audio::SoundGroup::RecordAndAnalyse);
             }
         }
 
@@ -193,12 +193,12 @@ namespace Doremi
                             /**
                             TODOLH Behövs nog uppdatera ljudposition till listener position.
                             */
-                            t_audioModule.PlaySoundOnSpecificChannel(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID);
+                            t_audioModule.PlaySoundOnSpecificChannel(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID, DoremiEngine::Audio::SoundGroup::RecordAndAnalyse);
                             t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 0.0f);
                         }
                         else
                         {
-                            t_audioModule.PlayASound(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID);
+                            t_audioModule.PlayASound(m_continuousFrequencyAnalyserSoundID, true, m_continuousFrequencyAnalyserChannelID, DoremiEngine::Audio::SoundGroup::RecordAndAnalyse);
                             t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 0.0f);
                         }
                         t_audioModule.SetPriority(m_continuousFrequencyAnalyserChannelID, 0);
@@ -219,7 +219,7 @@ namespace Doremi
                         t_audioModule.SetVolumeOnChannel(m_continuousFrequencyAnalyserChannelID, 1.0f);
                         m_outputRepeatableSoundID =
                             t_audioModule.CopySound(m_repeatableFrequencyAnalyserSoundID, m_outputRepeatableSoundID, m_timeGunReloadButtonWasPressed);
-                        t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID);
+                        t_audioModule.PlayASound(m_outputRepeatableSoundID, false, m_outputRepeatableSoundChannelID, DoremiEngine::Audio::SoundGroup::RecordAndAnalyse);
                         t_audioModule.SetVolumeOnChannel(m_outputRepeatableSoundChannelID, 0);
                     }
                     else
@@ -245,7 +245,7 @@ namespace Doremi
                     {
                         m_SoundState = ANALYSEREPEATABLE;
                         m_frequencies.clear();
-                        t_audioModule.PlayASound(m_repeatableFrequencyAnalyserSoundID, false, m_repeatableFrequencyAnalyserChannelID);
+                        t_audioModule.PlayASound(m_repeatableFrequencyAnalyserSoundID, false, m_repeatableFrequencyAnalyserChannelID, DoremiEngine::Audio::SoundGroup::RecordAndAnalyse);
                         t_audioModule.SetVolumeOnChannel(m_repeatableFrequencyAnalyserChannelID, 0.0f);
                         t_audioModule.SetPriority(m_repeatableFrequencyAnalyserChannelID, 1);
                     }
@@ -298,7 +298,7 @@ namespace Doremi
                 {
                     DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
                     t_audioModule.PlayASound(m_backgroundSounds[BackgroundSound::CheckpointReached].soundID, false,
-                                             m_backgroundSounds[BackgroundSound::CheckpointReached].channelID);
+                                             m_backgroundSounds[BackgroundSound::CheckpointReached].channelID, DoremiEngine::Audio::SoundGroup::Effect);
                 }
             }
         }

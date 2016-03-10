@@ -55,7 +55,7 @@ namespace Doremi
                 int channel = -1; // Will be thrown away later...
                 AudioComponent* audioComp = GetComponentFromStorage<AudioComponent>(p_entityID);
                 m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Death],
-                                                            audioComp->m_enumToLoop[(int32_t)AudioCompEnum::Death], channel);
+                                                            audioComp->m_enumToLoop[(int32_t)AudioCompEnum::Death], channel, DoremiEngine::Audio::SoundGroup::Effect);
                 m_sharedContext.GetAudioModule().SetVolumeOnChannel(channel, 1.0f);
             }
 

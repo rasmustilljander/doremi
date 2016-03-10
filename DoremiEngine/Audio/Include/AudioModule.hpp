@@ -14,6 +14,15 @@ namespace DoremiEngine
     namespace Audio
     {
         /**
+        A enum containing the different groups of sounds
+        */
+        enum class SoundGroup
+        {
+            Music,
+            Effect,
+            RecordAndAnalyse,
+        };
+        /**
         TODO docs
         */
         class AudioModule : public DoremiEngine::Core::EngineModule
@@ -47,11 +56,11 @@ namespace DoremiEngine
             /**
             Plays a sound that is already in the system. chennelID should be < 0 the first time
             */
-            virtual void PlayASound(int p_soundID, bool p_loop, int& p_channelID) = 0;
+            virtual void PlayASound(int p_soundID, bool p_loop, int& p_channelID, const SoundGroup& p_soundGroup) = 0;
             /**
             Plays a sound on a specific channel
             */
-            virtual void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID) = 0;
+            virtual void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID, const SoundGroup& p_soundGroup) = 0;
             /**
             Checks if the channel is playing
             */

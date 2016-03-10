@@ -188,7 +188,7 @@ namespace Doremi
                     AudioComponent* audioComp = EntityHandler::GetInstance().GetComponentFromStorage<AudioComponent>(t_entityID);
 
                     m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[t_soundType], audioComp->m_enumToLoop[t_soundType],
-                                                                audioActiveComp->m_soundEnumToChannelID[t_soundType]);
+                                                                audioActiveComp->m_soundEnumToChannelID[t_soundType], DoremiEngine::Audio::SoundGroup::Effect);
                     m_sharedContext.GetAudioModule().SetVolumeOnChannel(audioActiveComp->m_soundEnumToChannelID[t_soundType], 1.0f);
 
 

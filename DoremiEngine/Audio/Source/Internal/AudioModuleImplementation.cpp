@@ -59,6 +59,11 @@ namespace DoremiEngine
                 m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
                 ERRCHECK(m_fmodResult);
             }
+            m_fmodResult = m_fmodSystem->createChannelGroup(NULL, &m_musicGroup);
+            ERRCHECK(m_fmodResult);
+            m_fmodResult = m_fmodSystem->createChannelGroup(NULL, &m_effectGroup);
+            ERRCHECK(m_fmodResult);
+            // Create channel groups
         }
 
         bool AudioModuleImplementation::GetInitializationStatus() { return m_initOK; }
@@ -223,7 +228,7 @@ namespace DoremiEngine
             return 0;
         }
 
-        void AudioModuleImplementation::PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID)
+        void AudioModuleImplementation::PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID, const SoundGroup& p_soundGroup)
         {
             if(p_loop)
             {
@@ -234,10 +239,10 @@ namespace DoremiEngine
                 m_fmodResult = m_fmodSoundBuffer[p_soundID]->setMode(FMOD_LOOP_OFF);
             }
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            m_fmodChannel[p_channelID]->setVolume(0.5f);
+            SetChannelGroup(m_fmodChannel[p_channelID], p_soundGroup);
         }
 
-        void AudioModuleImplementation::PlayASound(int p_soundID, bool p_loop, int& p_channelID)
+        void AudioModuleImplementation::PlayASound(int p_soundID, bool p_loop, int& p_channelID, const SoundGroup& p_soundGroup)
         {
             if(p_soundID < 0 || p_soundID >= m_fmodSoundBuffer.size())
             {
@@ -278,7 +283,24 @@ namespace DoremiEngine
                 // Do nothing
             }
             m_fmodResult = m_fmodSystem->playSound(FMOD_CHANNEL_REUSE, m_fmodSoundBuffer[p_soundID], false, &m_fmodChannel[p_channelID]);
-            m_fmodChannel[p_channelID]->setVolume(0.5f);
+            SetChannelGroup(m_fmodChannel[p_channelID], p_soundGroup);
+        }
+
+        void AudioModuleImplementation::SetChannelGroup(FMOD::Channel* o_channel, SoundGroup p_group)
+        {
+            switch (p_group)
+            {
+            case DoremiEngine::Audio::SoundGroup::Music:
+                o_channel->setChannelGroup(m_musicGroup);
+                break;
+            case DoremiEngine::Audio::SoundGroup::Effect:
+                o_channel->setChannelGroup(m_effectGroup);
+                break;
+            case DoremiEngine::Audio::SoundGroup::RecordAndAnalyse:
+                break;
+            default:
+                break;
+            }
         }
 
         void AudioModuleImplementation::SetPriority(const int& p_channelID, const int& p_priority)

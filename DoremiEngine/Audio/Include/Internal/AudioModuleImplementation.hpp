@@ -53,7 +53,7 @@ namespace DoremiEngine
 
             int LoadSound(const std::string& p_soundName, float p_minDistance, float p_maxDistance) override;
 
-            void PlayASound(int p_soundID, bool p_loop, int& p_channelID) override;
+            void PlayASound(int p_soundID, bool p_loop, int& p_channelID, const SoundGroup& p_soundGroup) override;
 
             bool GetChannelPlaying(const int& p_channelID) override;
 
@@ -77,7 +77,7 @@ namespace DoremiEngine
 
             void SetPriority(const int& p_chanelID, const int& p_priority) override;
 
-            void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID) override;
+            void PlaySoundOnSpecificChannel(const int& p_soundID, bool p_loop, const int& p_channelID, const SoundGroup& p_soundGroup) override;
 
             void StopSound(const int& p_channelID) override;
 
@@ -85,7 +85,7 @@ namespace DoremiEngine
 
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
-
+            void SetChannelGroup(FMOD::Channel* o_channel, SoundGroup p_group);
 
             FMOD::System* m_fmodSystem;
             std::vector<FMOD::Sound*> m_fmodSoundBuffer;
@@ -93,6 +93,8 @@ namespace DoremiEngine
             FMOD::Channel* m_background = 0;
             FMOD::Channel* m_record = 0;
             FMOD::Channel* m_enemy = 0;
+            FMOD::ChannelGroup* m_musicGroup = 0;
+            FMOD::ChannelGroup* m_effectGroup = 0;
 
             FMOD_RESULT m_fmodResult;
             int m_fmodKey;
