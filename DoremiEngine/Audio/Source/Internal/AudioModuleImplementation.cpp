@@ -455,6 +455,23 @@ namespace DoremiEngine
                     break;
             }
         }
+
+        void AudioModuleImplementation::StopSoundGroup(const SoundGroup& p_group)
+        {
+            switch(p_group)
+            {
+                case DoremiEngine::Audio::SoundGroup::Music:
+                    m_musicGroup->stop();
+                    break;
+                case DoremiEngine::Audio::SoundGroup::Effect:
+                    m_effectGroup->stop();
+                    break;
+                case DoremiEngine::Audio::SoundGroup::RecordAndAnalyse:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 

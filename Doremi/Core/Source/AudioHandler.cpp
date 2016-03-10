@@ -171,6 +171,12 @@ namespace Doremi
             t_audioModule.SetSoundGroupVolume(p_volume, DoremiEngine::Audio::SoundGroup::Music);
         }
 
+        void AudioHandler::StopEffectSounds()
+        {
+            DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+            t_audioModule.StopSoundGroup(DoremiEngine::Audio::SoundGroup::Effect);
+        }
+
         void AudioHandler::PlayRepeatableRecordedSound()
         {
             // This is a dangerous function since soundID starts at 0. If there is no sound on 0 we will crash

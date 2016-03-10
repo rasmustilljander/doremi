@@ -139,6 +139,11 @@ namespace DoremiEngine
             Sets the volume of the specified sound group
             */
             virtual void SetSoundGroupVolume(const float& p_volume, const SoundGroup& p_group) = 0;
+
+            /**
+            Stops all sounds in the given sound group
+            */
+            virtual void StopSoundGroup(const SoundGroup& p_group) = 0;
         };
     }
 }

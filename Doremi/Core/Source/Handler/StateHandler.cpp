@@ -4,6 +4,7 @@
 #include <EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
+#include <Doremi/Core/Include/AudioHandler.hpp>
 
 
 // Events
@@ -18,6 +19,8 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/SubModuleManager.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+// Configuration
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 /// Standard Libraries
 #include <unordered_map>
 #include <vector>
@@ -77,8 +80,10 @@ namespace Doremi
                 {
                     LoadNewWorldEvent* t_loadWorldEvent = new LoadNewWorldEvent();
                     t_loadWorldEvent->map = GameMap::BEST_MAP;
-
                     EventHandler::GetInstance()->BroadcastEvent(t_loadWorldEvent);
+
+                    // Make sure the sounds received during load dont sound
+                    AudioHandler::GetInstance()->SetEffectVolume(0);
                 }
                 else if(realEvent->state == DoremiGameStates::SERVER_BROWSER)
                 {
@@ -94,7 +99,11 @@ namespace Doremi
                     InputHandlerClient* t_inputHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance())->GetInputHandler();
                     t_inputHandler->SetCursorInvisibleAndMiddle(false);
                 }
-
+                else if(realEvent->state == DoremiGameStates::RUNGAME)
+                {
+                    AudioHandler::GetInstance()->SetEffectVolume(m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().EffectVolume);
+                }
+                AudioHandler::GetInstance()->StopEffectSounds(); // TODOXX should not be here if the effects should continue through states
                 m_state = realEvent->state;
             }
             else if(p_event->eventType == EventType::Trigger)
