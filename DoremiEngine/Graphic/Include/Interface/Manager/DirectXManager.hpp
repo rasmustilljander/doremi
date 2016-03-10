@@ -47,9 +47,10 @@ namespace DoremiEngine
             virtual void SetRenderTargetGlow() = 0;
             virtual void SetRenderTargetNormal() = 0;
             virtual void EnableBlend() = 0;
+            virtual void EnableTextBlend() = 0;
             virtual void DisableBlend() = 0;
             virtual void Render2D(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) = 0;
-            virtual void RenderSprites(ID3D11RasterizerState * p_rasterizerState, ID3D11DepthStencilState * p_depthStencilState) = 0;
+            virtual void RenderSprites(ID3D11RasterizerState* p_rasterizerState, ID3D11DepthStencilState* p_depthStencilState) = 0;
             virtual void BeginDraw() = 0;
             virtual void EndDraw() = 0;
             virtual ID3D11SamplerState* GetDefaultSamplerState() = 0;

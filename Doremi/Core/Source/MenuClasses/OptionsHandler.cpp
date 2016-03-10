@@ -40,7 +40,11 @@ namespace Doremi
         }
 
         OptionsHandler::OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
-            : m_sharedContext(p_sharedContext), t_resolutionDropdownIsActive(false), t_refreshDropdownIsActive(false), t_monitorDropdownIsActive(false)
+            : m_sharedContext(p_sharedContext),
+              t_resolutionDropdownIsActive(false),
+              t_refreshDropdownIsActive(false),
+              t_monitorDropdownIsActive(false),
+              m_highlightedButton(nullptr)
         {
             DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
             DoremiEngine::Graphic::DirectXManager& t_directxManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager();
@@ -155,20 +159,18 @@ namespace Doremi
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-            m_resolutionButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::RESOLUTION_PRESS);
-
-            m_optionsButtons.push_back(&m_resolutionButton);
+            m_resolutionItem.button = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::RESOLUTION_PRESS, XMFLOAT2(0, 0.0065f));
 
 
             // Create the overlaying text
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_resolutionText =
-                Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.289f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
-            m_resolutionText.SetText(p_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
+            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+            m_resolutionItem.text =
+                Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(0.75f, 0.289f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_resolutionItem.text.SetText(p_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
 
-            m_text.push_back(&m_resolutionText);
+            m_basicItems.push_back(&m_resolutionItem);
         }
 
         void OptionsHandler::CreateRefreshOption(const DoremiEngine::Core::SharedContext& p_sharedContext)
@@ -196,19 +198,18 @@ namespace Doremi
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-            m_refreshButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::REFRESH_PRESS);
-
-            m_optionsButtons.push_back(&m_refreshButton);
+            m_refreshItem.button = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::REFRESH_PRESS, XMFLOAT2(0, 0.0065f));
 
 
             // Create the overlaying text
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_refreshText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.335f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
-            m_refreshText.SetText(p_sharedContext, std::to_string(m_currentRefreshRate));
+            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+            m_refreshItem.text =
+                Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(0.75f, 0.335f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_refreshItem.text.SetText(p_sharedContext, std::to_string(m_currentRefreshRate));
 
-            m_text.push_back(&m_refreshText);
+            m_basicItems.push_back(&m_refreshItem);
         }
 
         void OptionsHandler::CreateMonitorOption(const DoremiEngine::Core::SharedContext& p_sharedContext)
@@ -236,19 +237,18 @@ namespace Doremi
 
             DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-            m_monitorButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::MONITOR_PRESS);
-
-            m_optionsButtons.push_back(&m_monitorButton);
+            m_monitorItem.button = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::MONITOR_PRESS, XMFLOAT2(0, 0.0065f));
 
 
             // Create the overlaying text
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_monitorText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.384f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
-            m_monitorText.SetText(p_sharedContext, std::to_string(m_currentMonitor));
+            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+            m_monitorItem.text =
+                Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(0.75f, 0.384f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_monitorItem.text.SetText(p_sharedContext, std::to_string(m_currentMonitor));
 
-            m_text.push_back(&m_monitorText);
+            m_basicItems.push_back(&m_monitorItem);
         }
 
         void OptionsHandler::CreateSliders(const DoremiEngine::Core::SharedContext& p_sharedContext)
@@ -411,6 +411,19 @@ namespace Doremi
                 }
             }
 
+            length = m_basicItems.size();
+            for(size_t i = 0; i < length; i++)
+            {
+                if(m_basicItems[i]->button.CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
+                {
+                    // Since stupied design of check inside also update texture we check if nothing is highlighted here
+                    if(m_highlightedButton == nullptr)
+                    {
+                        m_highlightedButton = &m_basicItems[i]->button;
+                    }
+                }
+            }
+
 
             // Check if we're pressing
             if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick))
@@ -450,12 +463,12 @@ namespace Doremi
                         {
                             m_currentResolutionHeight = m_highlightedHegiht;
                             m_currentResolutionWidth = m_highlightedWidth;
-                            m_resolutionText.UpdateText(m_sharedContext, std::to_string(m_highlightedWidth) + "x" + std::to_string(m_highlightedHegiht));
+                            m_resolutionItem.text.UpdateText(m_sharedContext, std::to_string(m_highlightedWidth) + "x" + std::to_string(m_highlightedHegiht));
 
                             t_resolutionDropdownIsActive = false;
                             ClearResolutionDropDown();
                             UpdateRefreshRate();
-
+                            m_highlightedButton = nullptr;
                             break;
                         }
                         case DoremiButtonActions::REFRESH_PRESS:
@@ -484,11 +497,11 @@ namespace Doremi
                         case DoremiButtonActions::REFRESH_SELECT:
                         {
                             m_currentRefreshRate = m_highlightedRefreshrate;
-                            m_refreshText.UpdateText(m_sharedContext, std::to_string(m_highlightedRefreshrate));
+                            m_refreshItem.text.UpdateText(m_sharedContext, std::to_string(m_highlightedRefreshrate));
 
                             t_refreshDropdownIsActive = false;
                             ClearRefreshDropDown();
-
+                            m_highlightedButton = nullptr;
                             break;
                         }
                         case DoremiButtonActions::MONITOR_PRESS:
@@ -515,13 +528,13 @@ namespace Doremi
                         case DoremiButtonActions::MONITOR_SELECT:
                         {
                             m_currentMonitor = m_highlightedMonitorindex;
-                            m_monitorText.UpdateText(m_sharedContext, std::to_string(m_currentMonitor));
+                            m_monitorItem.text.UpdateText(m_sharedContext, std::to_string(m_currentMonitor));
 
                             t_monitorDropdownIsActive = false;
                             ClearMonitorDropDown();
                             UpdateResolution();
                             UpdateRefreshRate();
-
+                            m_highlightedButton = nullptr;
                             break;
                         }
                         case DoremiButtonActions::OPTIONS_APPLY:
@@ -584,6 +597,14 @@ namespace Doremi
                             UpdateSliderEffect(m_sliders[i]->m_slideEffect, m_sliders[i]->m_percent);
                         }
                     }
+
+                    // Deselect stuff
+                    ClearMonitorDropDown();
+                    ClearRefreshDropDown();
+                    ClearResolutionDropDown();
+                    t_monitorDropdownIsActive = false;
+                    t_refreshDropdownIsActive = false;
+                    t_resolutionDropdownIsActive = false;
                 }
             }
             else
@@ -679,11 +700,12 @@ namespace Doremi
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-                Button m_resolutionButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::RESOLUTION_SELECT);
+                Button m_resolutionButton =
+                    Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::RESOLUTION_SELECT, XMFLOAT2(0, 0.0065f));
 
 
-                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
+                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(t_reverseRes->first) + "x" + std::to_string(t_reverseRes->second));
@@ -771,11 +793,12 @@ namespace Doremi
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-                Button m_resolutionButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::REFRESH_SELECT);
+                Button m_resolutionButton =
+                    Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::REFRESH_SELECT, XMFLOAT2(0, 0.0065f));
 
 
-                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
+                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(*t_reverseRefresh));
@@ -835,7 +858,7 @@ namespace Doremi
                 {
                     m_currentResolutionWidth = (*t_resolutions.rbegin()).first;
                     m_currentResolutionHeight = (*t_resolutions.rbegin()).second;
-                    m_resolutionText.UpdateText(m_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
+                    m_resolutionItem.text.UpdateText(m_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
                 }
             }
         }
@@ -856,7 +879,7 @@ namespace Doremi
                 if(t_refreshRates.size())
                 {
                     m_currentRefreshRate = *(t_refreshRates.begin());
-                    m_refreshText.UpdateText(m_sharedContext, std::to_string(m_currentRefreshRate));
+                    m_refreshItem.text.UpdateText(m_sharedContext, std::to_string(m_currentRefreshRate));
                 }
             }
         }
@@ -928,11 +951,12 @@ namespace Doremi
 
                 DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
 
-                Button m_resolutionButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::MONITOR_SELECT);
+                Button m_resolutionButton =
+                    Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::MONITOR_SELECT, XMFLOAT2(0, 0.0065f));
 
 
-                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
+                XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.006f, 0.009f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(i));

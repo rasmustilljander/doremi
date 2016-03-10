@@ -68,6 +68,12 @@ namespace DoremiEngine
             Enables alpha blending. Call before rendering transparent textures/meshes
             */
             void EnableBlend() override;
+
+            /**
+            Enables alpha blending for text. Call before rendering transparent textures/meshes
+            */
+            void EnableTextBlend() override;
+
             /**
             Disables alpha blending. Call after rendering transparent textures/meshes
             */
@@ -243,6 +249,8 @@ namespace DoremiEngine
             ID3D11SamplerState* m_glowSamplerState;
 
             ID3D11BlendState* m_enableBlendState;
+            ID3D11BlendState* m_enableBlendStateText;
+
             ID3D11BlendState* m_disableBlendState;
             RasterizerState* m_defaultRasterizerState;
             DepthStencilState* m_defaultDepthStencilState;

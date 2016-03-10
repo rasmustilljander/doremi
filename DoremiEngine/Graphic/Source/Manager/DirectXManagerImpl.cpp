@@ -545,6 +545,14 @@ namespace DoremiEngine
                 std::cout << "Failed to create blend state" << std::endl;
             }
 
+            t_blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+            t_blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+            res = m_device->CreateBlendState(&t_blendDesc, &m_enableBlendStateText);
+            if(FAILED(res))
+            {
+                std::cout << "Failed to create blend state" << std::endl;
+            }
+
             // Modify the description to create an alpha disabled blend state description.
             t_blendDesc.RenderTarget[0].BlendEnable = FALSE;
 
@@ -1382,6 +1390,20 @@ namespace DoremiEngine
 
             // Turn on the alpha blending.
             m_deviceContext->OMSetBlendState(m_enableBlendState, blendFactor, 0xffffffff);
+        }
+
+        void DirectXManagerImpl::EnableTextBlend()
+        {
+            float blendFactor[4];
+
+            // Setup the blend factor.
+            blendFactor[0] = 0.0f;
+            blendFactor[1] = 0.0f;
+            blendFactor[2] = 0.0f;
+            blendFactor[3] = 0.0f;
+
+            // Turn on the alpha blending.
+            m_deviceContext->OMSetBlendState(m_enableBlendStateText, blendFactor, 0xffffffff);
         }
 
         void DirectXManagerImpl::DisableBlend()

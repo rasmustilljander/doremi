@@ -152,7 +152,7 @@ namespace Doremi
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveVertexShader(m_menuVertexShader);
             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetShaderManager().SetActiveGeometryShader(m_menuGeometryShader);
 
-            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableBlend();
+            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().EnableTextBlend();
         }
 
         void ScreenSpaceDrawer::End2DDraw()
@@ -264,13 +264,40 @@ namespace Doremi
                 t_meshManager.AddSpriteToRenderList(*(t_object->m_spriteInfo), *(t_object->m_materialInfo));
             }
 
+            Button* m_highlightedButton = OptionsHandler::GetInstance()->GetHighlightButton();
+            Text* m_highlightedText = nullptr;
+
             // Get buttons to draw
             std::vector<Button*> t_buttonsToDraw = OptionsHandler::GetInstance()->GetButtons();
 
             // For each button add to render list
             for(auto& t_button : t_buttonsToDraw)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_button->m_spriteInfo), *(t_button->m_materialInfo));
+                if(m_highlightedButton != t_button)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_button->m_spriteInfo), *(t_button->m_materialInfo));
+                }
+            }
+
+            // Get buttons to draw
+            std::vector<MenuItemBasic*> t_itemsToDraw = OptionsHandler::GetInstance()->GetBasicMenuItems();
+
+            // For each button add to render list
+            for(auto& t_item : t_itemsToDraw)
+            {
+                if(m_highlightedButton != &t_item->button)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_item->button.m_spriteInfo), *(t_item->button.m_materialInfo));
+
+                    for(auto& t_textPart : t_item->text.m_textInfo)
+                    {
+                        t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item->text.m_textMaterial));
+                    }
+                }
+                else
+                {
+                    m_highlightedText = &t_item->text;
+                }
             }
 
 
@@ -304,11 +331,18 @@ namespace Doremi
             // For each button add to render list
             for(auto& t_item : t_dropDownResolution)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
-
-                for(auto& t_textPart : t_item.text.m_textInfo)
+                if(m_highlightedButton != &t_item.button)
                 {
-                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                    for(auto& t_textPart : t_item.text.m_textInfo)
+                    {
+                        t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    }
+                }
+                else
+                {
+                    m_highlightedText = &t_item.text;
                 }
             }
 
@@ -318,11 +352,18 @@ namespace Doremi
             // For each button add to render list
             for(auto& t_item : t_dropDownRefresh)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
-
-                for(auto& t_textPart : t_item.text.m_textInfo)
+                if(m_highlightedButton != &t_item.button)
                 {
-                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                    for(auto& t_textPart : t_item.text.m_textInfo)
+                    {
+                        t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    }
+                }
+                else
+                {
+                    m_highlightedText = &t_item.text;
                 }
             }
 
@@ -332,11 +373,31 @@ namespace Doremi
             // For each button add to render list
             for(auto& t_item : t_dropdownMonitor)
             {
-                t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
-
-                for(auto& t_textPart : t_item.text.m_textInfo)
+                if(m_highlightedButton != &t_item.button)
                 {
-                    t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    t_meshManager.AddSpriteToRenderList(*(t_item.button.m_spriteInfo), *(t_item.button.m_materialInfo));
+
+                    for(auto& t_textPart : t_item.text.m_textInfo)
+                    {
+                        t_meshManager.AddSpriteToRenderList(*(t_textPart), *(t_item.text.m_textMaterial));
+                    }
+                }
+                else
+                {
+                    m_highlightedText = &t_item.text;
+                }
+            }
+
+            if(m_highlightedButton != nullptr)
+            {
+                t_meshManager.AddSpriteToRenderList(*(m_highlightedButton->m_spriteInfo), *(m_highlightedButton->m_materialInfo));
+
+                if(m_highlightedText != nullptr)
+                {
+                    for(auto& t_textPart : m_highlightedText->m_textInfo)
+                    {
+                        t_meshManager.AddSpriteToRenderList(*(t_textPart), *(m_highlightedText->m_textMaterial));
+                    }
                 }
             }
 

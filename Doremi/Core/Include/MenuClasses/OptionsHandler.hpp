@@ -45,6 +45,12 @@ namespace Doremi
             uint32_t monitorIndex;
         };
 
+        struct MenuItemBasic
+        {
+            Button button;
+            Text text;
+        };
+
         /**
         Only an example of what a manager might look like
         Doesn't do anything, and could be removed once examples are no longer necessary*/
@@ -65,6 +71,8 @@ namespace Doremi
             auto& GetDropDownRefresh() { return m_dropdownRefresh; }
             auto& GetDropDownMonitors() { return m_dropdownMonitors; }
             auto& GetSliders() { return m_sliders; }
+            auto GetHighlightButton() { return m_highlightedButton; }
+            auto& GetBasicMenuItems() { return m_basicItems; }
 
         private:
             explicit OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -104,14 +112,11 @@ namespace Doremi
 
             Bar m_soundBar;
 
-            Button m_resolutionButton;
-            Text m_resolutionText;
+            MenuItemBasic m_resolutionItem;
 
-            Button m_refreshButton;
-            Text m_refreshText;
+            MenuItemBasic m_refreshItem;
 
-            Button m_monitorButton;
-            Text m_monitorText;
+            MenuItemBasic m_monitorItem;
 
             Button m_applyButton;
             Button m_cancelButton;
@@ -130,6 +135,7 @@ namespace Doremi
             std::vector<Bar*> m_bars;
             std::vector<Button*> m_optionsButtons;
             std::vector<Text*> m_text;
+            std::vector<MenuItemBasic*> m_basicItems;
 
             std::vector<Slider*> m_sliders;
 

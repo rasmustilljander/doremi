@@ -163,7 +163,7 @@ namespace Doremi
             is 592x592 so 37, 29 divided by that
             */
             // TODOCM use aspect ratio to determine sizes
-            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
+            XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.0714285714285714f);
             t_newServer->NameText = Text(t_matInfo, XMFLOAT2(0.01f, 0.02f), XMFLOAT2(0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             t_newServer->NameText.SetText(m_sharedContext, p_name);
 

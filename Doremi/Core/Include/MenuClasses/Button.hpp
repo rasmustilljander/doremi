@@ -45,6 +45,7 @@ namespace Doremi
         {
         public:
             Button(ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState);
+            Button(ButtonMaterials p_buttonMaterials, DoremiEngine::Graphic::SpriteInfo* p_spriteInfo, Core::DoremiButtonActions p_menuState, XMFLOAT2 p_incrementLogic);
             Button();
 
             ~Button();
@@ -62,6 +63,8 @@ namespace Doremi
             DoremiEngine::Graphic::SpriteInfo* m_spriteInfo;
 
             ButtonMaterials m_buttonMaterials;
+
+            XMFLOAT2 m_incrementLogic;
 
         private:
         };
