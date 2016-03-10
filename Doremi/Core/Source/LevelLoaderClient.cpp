@@ -627,7 +627,7 @@ namespace Doremi
             DoremiEditor::Core::TransformData transformationData = m_transforms[meshCoupling.transformName];
 
             // Check if we should cook meshes
-            if(transformationData.attributes.isCollider)
+            if(true) // transformationData.attributes.isCollider)
             {
                 r_shouldBuildPhysics = true;
             }

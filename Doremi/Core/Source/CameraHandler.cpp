@@ -103,6 +103,7 @@ namespace Doremi
 
             if(t_playerHandler->PlayerExists())
             {
+                m_thirdPersonCamera->Update();
                 switch(m_currentCamera)
                 {
                     case CameraType::FREELOOK:

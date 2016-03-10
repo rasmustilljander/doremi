@@ -2,6 +2,7 @@
 #include <EntityComponent/EntityHandler.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 #include <DoremiEngine/Physics/Include/RigidBodyManager.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/RigidBodyComponent.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
 #include <DoremiEngine/Physics/Include/PhysicsMaterialManager.hpp>
 #include <DoremiEngine/Physics/Include/RayCastManager.hpp>
@@ -15,17 +16,17 @@ namespace Doremi
             // m_sharedContext = p_sharedContext;
 
             // Set the depth of the oct tree
-            m_treeDepth = 3;
+            m_treeDepth = 5;
 
             // Set the box for the world
-            treeRoot.boxDimensions = DirectX::XMFLOAT3(2900, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
-            // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100); 2900
+            treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000); // TODOEA Borde läsas in från någonting TODOCONFIG kanske
+            // treeRoot.boxDimensions = DirectX::XMFLOAT3(100, 50, 100); //2900
             //
             // treeRoot.boxDimensions = DirectX::XMFLOAT3(7000, 2150, 7000);
 
             // Set the center for the box of the world
             treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041);
-            // treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
+            treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
             // DirectX::XMFLOAT3(-485, 158, 2041)
             m_allreadyBuilt = false;
             // Start up for the oct tree. Without this function we don't have anything to start with
@@ -116,15 +117,34 @@ namespace Doremi
                         }
                         else
                         {
-                            if (m_currentNode->depth == 0)
+                            if(m_currentNode->depth == 0)
                             {
                                 // Is done
-                                m_currentNode->loopInfo = 0;                                
-                                //int myID = MAX_NUM_ENTITIES;
-                                //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center, DirectX::XMFLOAT4(0, 0, 0, 1),
-                                //    DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f, m_currentNode->boxDimensions.z * 0.5f), materialID);
+                                m_currentNode->loopInfo = 0;
+                                // int myID = MAX_NUM_ENTITIES;
+                                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(myID, m_currentNode->center,
+                                // DirectX::XMFLOAT4(0, 0, 0, 1),
+                                //    DirectX::XMFLOAT3(m_currentNode->boxDimensions.x * 0.5f, m_currentNode->boxDimensions.y * 0.5f,
+                                //    m_currentNode->boxDimensions.z * 0.5f), materialID);
 
-                                //m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+                                // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().SetTrigger(myID, true);
+
+
+                                // const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+                                // int mask = (int)ComponentType::RigidBody;
+                                // for (size_t i = 0; i < length; i++)
+                                // {
+                                //     if (EntityHandler::GetInstance().HasComponents(i, mask))
+                                //     {
+                                //         RigidBodyComponent* rigidComp =
+                                //         EntityHandler::GetInstance().GetComponentFromStorage<RigidBodyComponent>(i);
+                                //         if (!rigidComp->collider)
+                                //         {
+                                //             m_sharedContext.GetPhysicsModule().GetRigidBodyManager().RemoveBody(i);
+                                //             EntityHandler::GetInstance().RemoveComponent(i, (int)ComponentType::RigidBody);
+                                //         }
+                                //     }
+                                // }
                                 t_isDone = true;
                             }
                             else
