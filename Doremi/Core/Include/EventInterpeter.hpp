@@ -100,11 +100,9 @@ namespace Doremi
                 case Doremi::Core::EventType::AnimationTransition:
                     p_newEvent = new AnimationTransitionEvent();
                     break;
-
                 case Doremi::Core::EventType::ChangedCheckpoint:
                     p_newEvent = new EmptyEvent(EventType::ChangedCheckpoint);
                     break;
-
                 default:
                     std::cout << "Warning...warning.. something is wrong.. event not interpeteted right.." << std::endl;
                     p_newEvent = new ExampleEvent();

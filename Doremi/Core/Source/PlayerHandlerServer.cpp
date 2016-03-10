@@ -690,11 +690,13 @@ namespace Doremi
                     DamageTakenEvent* t_damageTakenEvent = static_cast<DamageTakenEvent*>(p_event);
 
                     QueueDamageEventToPlayers(t_damageTakenEvent);
+                    break;
                 }
                 case Doremi::Core::EventType::ChangedCheckpoint:
                 {
                     EmptyEvent* t_changedCheckpoint = static_cast<EmptyEvent*>(p_event);
                     QueueChangedCheckpointEventToPlayers(t_changedCheckpoint);
+                    break;
                 }
                 case Doremi::Core::EventType::Trigger:
                 {
