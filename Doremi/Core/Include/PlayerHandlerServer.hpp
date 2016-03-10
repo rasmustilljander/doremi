@@ -14,6 +14,7 @@ namespace Doremi
         struct SetTransformEvent;
         struct AnimationTransitionEvent;
         struct DamageTakenEvent;
+        struct EmptyEvent;
 
         /**
             TODOCM doc
@@ -199,6 +200,11 @@ namespace Doremi
             TODOKO doc
             */
             void QueueDamageEventToPlayers(DamageTakenEvent* t_takeDamageEvent);
+
+            /**
+            TODOKO doc
+            */
+            void QueueChangedCheckpointEventToPlayers(EmptyEvent* t_changeCheckpointEvent);
 
             /**
             Debug method to change spawn point*/

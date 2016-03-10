@@ -286,6 +286,7 @@ namespace Doremi
             }
             if(p_event->eventType == EventType::ChangedCheckpoint)
             {
+                // TODOKO cant be recieved since it only happens on server now...
                 // Play checkpoint sound
                 if(m_backgroundSounds.count(BackgroundSound::CheckpointReached) != 0)
                 {

@@ -25,6 +25,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EmptyEvent.hpp>
 
 // Timing
 #include <Timing/FunctionTimer.hpp>
@@ -64,6 +65,7 @@ namespace Doremi
             t_EventHandler->Subscribe(EventType::DamageTaken, this);
             t_EventHandler->Subscribe(EventType::Trigger, this);
             t_EventHandler->Subscribe(EventType::SetTransform, this);
+            t_EventHandler->Subscribe(EventType::ChangedCheckpoint, this);
         }
 
         PlayerHandlerServer::~PlayerHandlerServer() {}
@@ -597,6 +599,15 @@ namespace Doremi
             }
         }
 
+        void PlayerHandlerServer::QueueChangedCheckpointEventToPlayers(EmptyEvent* t_changeCheckpointEvent)
+        {
+            // Go through all players
+            for(auto& t_player : m_playerMap)
+            {
+                t_player.second->m_networkEventSender->QueueEventToFrame(new EmptyEvent(*t_changeCheckpointEvent));
+            }
+        }
+
         void PlayerHandlerServer::HandleChangeOfSpawnPoint(Player* p_player)
         {
             static int spawnerIndex = 0; // TODOXX TODOJB static ints? Better change this at some point?
@@ -679,6 +690,11 @@ namespace Doremi
                     DamageTakenEvent* t_damageTakenEvent = static_cast<DamageTakenEvent*>(p_event);
 
                     QueueDamageEventToPlayers(t_damageTakenEvent);
+                }
+                case Doremi::Core::EventType::ChangedCheckpoint:
+                {
+                    EmptyEvent* t_changedCheckpoint = static_cast<EmptyEvent*>(p_event);
+                    QueueChangedCheckpointEventToPlayers(t_changedCheckpoint);
                 }
                 case Doremi::Core::EventType::Trigger:
                 {

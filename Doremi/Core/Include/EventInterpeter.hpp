@@ -14,6 +14,7 @@
 #include <Doremi/Core/Include/EventHandler/Events/SetHealthEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/SetTransformEvent.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/EmptyEvent.hpp>
 
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 #include <iostream>
@@ -98,6 +99,10 @@ namespace Doremi
 
                 case Doremi::Core::EventType::AnimationTransition:
                     p_newEvent = new AnimationTransitionEvent();
+                    break;
+
+                case Doremi::Core::EventType::ChangedCheckpoint:
+                    p_newEvent = new EmptyEvent(EventType::ChangedCheckpoint);
                     break;
 
                 default:
