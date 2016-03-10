@@ -23,6 +23,10 @@
 #include <DoremiEngine/Graphic/Include/Interface/State/DepthStencilState.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/State/RasterizerState.hpp>
 
+// Physics
+#include <DoremiEngine/Physics/Include/PhysicsModule.hpp>
+#include <DoremiEngine/Physics/Include/RayCastManager.hpp>
+
 // EventStuff
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
@@ -93,6 +97,8 @@ namespace Doremi
         {
             std::vector<std::string> t_animationNames = p_skeletalAnimationComponent.skeletalInformation->GetAnimationNames();
             size_t numberOfAnimations = t_animationNames.size();
+            // Great fulfix. Annars kan run skriva över attack. För att eventet attack kommer efter update. Det gör så att jag inte kan koda för att run och attack kommer på samma frame.
+            // Iochmed att attack anländer i slutet av framen. Om det gör det så kommer det bli run i slutändan. eftersom båda kommer in här och attack är först i listan.
             for(size_t i = 0; i < numberOfAnimations; i++)
             {
                 auto& clip = (*p_skeletalAnimationComponent.animationTransitions).find(t_animationNames[i]);
@@ -100,7 +106,7 @@ namespace Doremi
                 {
                     printf("Iteratorn fakkar i updateTransition \n");
                 }
-                if(clip->second.startTime != 0)
+                if(clip->second.startTime != 0.0f)
                 {
                     clip->second.elapsedSinceStart += (float)p_dt;
                 }
@@ -110,16 +116,23 @@ namespace Doremi
                     p_skeletalAnimationComponent.timePosition = clip->second.elapsedSinceStart;
                     clip->second.elapsedSinceStart = 0.0f;
                     clip->second.startTime = 0.0f;
-                    // p_skeletalAnimationComponent.timePosition =
-                    // p_skeletalAnimationComponent.skeletalInformation->GetAnimationBlend(t_animationNames[i]).timeElapsed;
-                    // p_skeletalAnimationComponent.skeletalInformation->GetAnimationBlend(t_animationNames[i]).ResetTimer();
+                    if (t_animationNames[i] == "Attack")
+                    {
+                        for (size_t j = 0; j < numberOfAnimations; j++)
+                        {
+                            auto& lclip = (*p_skeletalAnimationComponent.animationTransitions).find(t_animationNames[j]);
+                            lclip->second.elapsedSinceStart = 0.0f;
+                            lclip->second.startTime = 0.0f;
+                        }
+                        // cout << "Du mördade alla animationer som transitionade" << endl;
+                    }
                 }
                 else
                 {
                     // Do nothing
                 }
                 auto& lowerClip = (*p_lowerSkeletalAnimationComponent.animationTransitions).find(t_animationNames[i]);
-                if(lowerClip->second.startTime != 0)
+                if(lowerClip->second.startTime != 0.0f)
                 {
                     lowerClip->second.elapsedSinceStart += (float)p_dt;
                 }
@@ -128,7 +141,7 @@ namespace Doremi
                     p_lowerSkeletalAnimationComponent.clipName = t_animationNames[i];
                     p_lowerSkeletalAnimationComponent.timePosition = lowerClip->second.elapsedSinceStart;
                     lowerClip->second.elapsedSinceStart = 0.0f;
-                    lowerClip->second.startTime = 0.0f;
+                    lowerClip->second.startTime = 0.0f; 
                 }
                 else
                 {
@@ -160,10 +173,9 @@ namespace Doremi
             for(size_t i = 0; i < numberOfAnimations; i++)
             {
                 auto& clip = (*p_lowerSkeletalAnimationComponent->animationTransitions).find(t_animationNames[i]);
-                if(clip->second.startTime == 0)
+                if(clip->second.startTime == 0.0f)
                 {
                     continue;
-                    // Försök lösa stopfire buggen
                 }
                 else
                 {
@@ -175,10 +187,8 @@ namespace Doremi
                     }
                 }
             }
-            if(t_index > 0)
+            if(t_index > -1)
             {
-                cout << t_animationNames[t_index] << o_lowestTimeElapsed << endl;
-                ;
                 return t_animationNames[t_index];
             }
             else
@@ -195,7 +205,7 @@ namespace Doremi
             for(size_t i = 0; i < numberOfAnimations; i++)
             {
                 auto& clip = (*p_upperSkeletalAnimationComponent->animationTransitions).find(t_animationNames[i]);
-                if(clip->second.startTime == 0)
+                if(clip->second.startTime == 0.0f)
                 {
                     continue;
                 }
@@ -209,7 +219,7 @@ namespace Doremi
                     }
                 }
             }
-            if(t_index > 0)
+            if(t_index > -1)
             {
                 return t_animationNames[t_index];
             }
@@ -217,6 +227,39 @@ namespace Doremi
             {
                 return "";
             }
+        }
+
+        /**
+        Returns 0 if we are not on an elevator. Returns 1 if we are on elevator but are not moving. returns 2 if we are on an elevator and are moving.
+        */
+        int SkeletalAnimationCoreManager::CheckPlatformMovementAndRun(XMFLOAT3 p_origin, float p_epsilon, float p_movementLenghtVector, int p_bodyHit)
+        {
+            // Raycasta för att se om du är på en hiss.
+
+            if (EntityHandler::GetInstance().HasComponents(p_bodyHit, (int)ComponentType::FrequencyAffected))
+            {
+                TransformComponentNext* t_platformTransformNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(p_bodyHit);
+                TransformComponentPrevious* t_platformTransformPrevious =
+                    EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(p_bodyHit);
+                XMFLOAT3 t_platformMovementVector;
+                // Skapa en vector mellan förra positionen och nya positionen
+                XMStoreFloat3(&t_platformMovementVector, XMLoadFloat3(&t_platformTransformNext->position) - XMLoadFloat3(&t_platformTransformPrevious->position));
+                XMFLOAT3 t_platformMovementLengthVector;
+                // Calculate the length of this vector
+                XMStoreFloat3(&t_platformMovementLengthVector, XMVector3Length(XMLoadFloat3(&t_platformMovementVector)));
+                // See if the vector is very close to 0. That means we only move by following the platform and we should not "Run" animation
+                if(t_platformMovementLengthVector.x - p_movementLenghtVector < p_epsilon && t_platformMovementLengthVector.x - p_movementLenghtVector > -p_epsilon)
+                {
+                    //cout << "False Du är på en platform. Din movement vectorLength: " << p_movementLenghtVector << "PlatformensMovementvectorLegth " << t_platformMovementLengthVector.x << endl;
+                    return 1;
+                }
+                else
+                {
+                    cout << "True Du är på en platform. Din movement vectorLength: " << p_movementLenghtVector << "PlatformensMovementvectorLegth " << t_platformMovementLengthVector.x << endl;
+                    return 2;
+                }
+            }
+            return 0;
         }
         void SkeletalAnimationCoreManager::CheckANDPerformAnimationTransition(const size_t& p_entityID)
         {
@@ -229,11 +272,15 @@ namespace Doremi
             TransformComponentNext* t_transformComponentNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(p_entityID);
             TransformComponentPrevious* t_transformComponentPrevious =
                 EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(p_entityID);
+            TransformComponent* t_currentTransform = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponent>(p_entityID);
+
+
+            // Fixa den här jävla buggen. Ska itne vara så svårt!!!!
 
 
             // epsilon för ett litet värde
 
-            float t_epsilon = 0.1f;
+            float t_epsilon = 0.05f;
             XMFLOAT3 t_movementVector;
             // Skapa en vector mellan förra positionen och nya positionen
             XMStoreFloat3(&t_movementVector, XMLoadFloat3(&t_transformComponentNext->position) - XMLoadFloat3(&t_transformComponentPrevious->position));
@@ -246,21 +293,77 @@ namespace Doremi
             // Lower animation flow
             // Om vi inte redan springer så ska vi in å kolla ifall vi har rört på oss
 
-            if(t_lowerSkeletalAnimationComponent->clipName != "Run")
+            // Raycasta för att se om iv är på en platform
+            int t_platformCheck = -1;
+            int bodyHit = -1;
+            if (t_movementLengthVector.x > t_epsilon)
+            {
+                XMFLOAT3 t_originOffsetted = t_currentTransform->position;
+                t_originOffsetted.y -= 4;
+                bodyHit = m_sharedContext.GetPhysicsModule().GetRayCastManager().CastRay(t_originOffsetted, XMFLOAT3(0, -1, 0), 100);
+                if (bodyHit == -1)
+                {
+                    // cout << "RayCast returned -1 in animation" << endl;
+                }
+                else
+                {
+                    // cout << "Bodyhit : " << bodyHit << endl;
+                }
+
+                if (bodyHit > -1)
+                {
+                    t_platformCheck = CheckPlatformMovementAndRun(t_transformComponentNext->position, t_epsilon, t_movementLengthVector.x, bodyHit);
+                }
+            }
+
+            if(t_lowerSkeletalAnimationComponent->clipName != "Run" || (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime > 0.0f)
             {
                 // Kolla om vi rört på oss och vi inte har börjat runtransition
-                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0)
+                if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0.0f)
                 {
-                    // Kolla ifall vi har rört oss i Yled. Ifall inte bara spring
-                    if(t_movementInYAxis < t_epsilon && t_lowerSkeletalAnimationComponent->clipName != "Jump")
+                    cout << "Du är i vi har rört på oss och inte börjat runtransition på lower" << endl;
+                    // Kolla ifall vi har rört oss i Yled. Ifall inte bara spring och ifall jag inte står still poå en rörande platform
+                    if(t_movementInYAxis < t_epsilon && t_lowerSkeletalAnimationComponent->clipName != "Jump" && t_platformCheck != 1 &&
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f)
                     {
-                        STimer("Run", t_lowerSkeletalAnimationComponent, 0.0001f);
+                        if (t_upperSkeletalAnimationComponent->clipName == "Run")
+                        {
+                            cout << "Satte lower till runtime uppertimePos" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, t_upperSkeletalAnimationComponent->timePosition);
+                        }
+                        else if ((*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].startTime > 0)
+                        {
+                            cout << "Satte lower till runtime Upperelasped" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].elapsedSinceStart);
+                        }
+                        else
+                        {
+                            cout << "Satte lower till runtime 0.0001" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, 0.0001f);
+
+                        }
                     }
                     // Har vi rört oss i Yled betyder det att vi faller eller hoppar. DÅ ska vi kolla om vi hoppat klart för efter hela hopanimationen
                     // så startas Idlemätarn för transition
-                    else if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime > 0.0f && (t_movementInXAxis > 0 || t_movementInZAxis > 0))
+                    else if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime > 0.0f && (t_movementInXAxis > 0 || t_movementInZAxis > 0) &&
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0 && t_platformCheck < 1 &&
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f)
                     {
-                        STimer("Run", t_lowerSkeletalAnimationComponent, 0.0001f);
+                        if (t_upperSkeletalAnimationComponent->clipName == "Run")
+                        {
+                            cout << "Satte lower till runtime uppertimePos" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, t_upperSkeletalAnimationComponent->timePosition);
+                        }
+                        else if ((*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].startTime > 0)
+                        {
+                            cout << "Satte lower till runtime Upperelasped" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].elapsedSinceStart);
+                        }
+                        else
+                        {
+                            cout << "Satte lower till runtime 0.0001" << endl;
+                            STimer("Run", t_lowerSkeletalAnimationComponent, 0.0001f);
+                        }
                         (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime = 0.0f;
                     }
                 }
@@ -269,34 +372,23 @@ namespace Doremi
             else if(t_lowerSkeletalAnimationComponent->clipName == "Run")
             {
                 // Kolla om vi stannat
-                if(t_movementLengthVector.x < t_epsilon && t_upperSkeletalAnimationComponent->clipName != "Run" &&
-                   (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_upperSkeletalAnimationComponent->clipName].startTime == 0)
+                cout << "Du är i vi springer och ska kolla om vi stannar Lower" << endl;
+                if((t_movementLengthVector.x < t_epsilon || t_platformCheck == 1) && t_upperSkeletalAnimationComponent->clipName != "Run" &&
+                   (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0 
+                   && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0
+                   && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0
+                   && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Hit"].startTime == 0)
                 {
                     // Gör samma som överkroppen
                     std::vector<std::string> t_animationNames = t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationNames();
                     size_t numberOfAnimations = t_animationNames.size();
                     float t_lowestElapsedTime = 9999;
                     int32_t t_index = -1;
-                    for(size_t i = 0; i < numberOfAnimations; i++)
+                    std::string t_newestClip;
+                    t_newestClip = CheckForTransitions(t_lowestElapsedTime, t_upperSkeletalAnimationComponent);
+                    if (t_newestClip != "")
                     {
-                        auto& clip = (*t_upperSkeletalAnimationComponent->animationTransitions).find(t_animationNames[i]);
-                        if(clip->second.startTime == 0)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            float t_clipElapsedTime = clip->second.elapsedSinceStart - clip->second.startTime;
-                            if(t_lowestElapsedTime > t_clipElapsedTime)
-                            {
-                                t_lowestElapsedTime = t_clipElapsedTime;
-                                t_index = i;
-                            }
-                        }
-                    }
-                    if(t_index > -1)
-                    {
-                        STimer(t_animationNames[t_index], t_lowerSkeletalAnimationComponent, t_lowestElapsedTime);
+                        STimer(t_newestClip, t_lowerSkeletalAnimationComponent, t_lowestElapsedTime);
                     }
                     else
                     {
@@ -307,40 +399,74 @@ namespace Doremi
             // Överkroppens animationsflow
             // Om du har rört dig och din animation är idle. Så ska du sättas till run annars ska alla andra animationer få köra klart sitt
 
-            if((t_movementInXAxis > t_epsilon || t_movementInZAxis > t_epsilon) &&
+            /*if((t_movementInXAxis > t_epsilon || t_movementInZAxis > t_epsilon) && t_platformCheck != 1 &&
                (t_upperSkeletalAnimationComponent->clipName == "Idle" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime > 0.0f) &&
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0 &&
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0 &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0)
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0)*/
+            if((t_movementInXAxis > t_epsilon || t_movementInZAxis > t_epsilon) && t_platformCheck != 1 && 
+                t_upperSkeletalAnimationComponent->clipName != "Run" && (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0.0f
+                && t_upperSkeletalAnimationComponent->clipName != "RunAttack" && (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].startTime == 0.0f
+                 && t_upperSkeletalAnimationComponent->clipName != "Jump" && (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f)
             {
-                (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime = 0.0f;
+                cout << "Du är i Starta run i upper" << endl;
                 // Kolla om vi transitionar run
                 std::string t_newestTransition;
                 float t_lowestElapsedTime;
                 t_newestTransition = CheckForTransitions(t_lowestElapsedTime, t_lowerSkeletalAnimationComponent);
+                cout << t_lowerSkeletalAnimationComponent->clipName << endl;
                 if(t_lowerSkeletalAnimationComponent->clipName == "Run")
                 {
-                    STimer("Run", t_upperSkeletalAnimationComponent, t_lowerSkeletalAnimationComponent->timePosition);
+                    // AttackANdRun
+                    if (t_upperSkeletalAnimationComponent->clipName == "Attack" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0)
+                    {
+                        STimer("RunAttack", t_upperSkeletalAnimationComponent, t_lowerSkeletalAnimationComponent->timePosition);
+                    }
+                    else
+                    {
+                        STimer("Run", t_upperSkeletalAnimationComponent, t_lowerSkeletalAnimationComponent->timePosition);
+                    }
                 }
                 else if(t_newestTransition != "")
                 {
-                    STimer(t_newestTransition, t_upperSkeletalAnimationComponent,
-                           (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestTransition].elapsedSinceStart);
+                    // cout << "Nyaste Transitionen: " << t_newestTransition << endl;
+                    if (t_newestTransition == "Run")
+                    {
+                        //RUN AND ATTACK
+                        if (t_upperSkeletalAnimationComponent->clipName == "Attack" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0)
+                        {
+                            STimer("RunAttack", t_upperSkeletalAnimationComponent,
+                                (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestTransition].elapsedSinceStart);
+                        }
+                        else
+                        {
+                            STimer("Run", t_upperSkeletalAnimationComponent, 
+                                (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestTransition].elapsedSinceStart);
+                        }
+                    }
+                    else
+                    {
+                        STimer(t_newestTransition, t_upperSkeletalAnimationComponent,
+                            (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestTransition].elapsedSinceStart);
+                    }
                 }
                 else
                 {
+                    cout << "Här bördu inte vara (?)" << endl;
                     STimer("Run", t_upperSkeletalAnimationComponent, 0.0001f);
                 }
             }
             // Om överkroppen är i runmode men du har stannat ska du köra idle istället
-            if(t_upperSkeletalAnimationComponent->clipName == "Run" && t_movementLengthVector.x < t_epsilon &&
-               (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0)
+            if((t_upperSkeletalAnimationComponent->clipName == "Run" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Run"].startTime > 0 ||
+                (t_upperSkeletalAnimationComponent->clipName == "RunAttack" || (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].startTime > 0))
+                && (t_movementLengthVector.x < t_epsilon || t_platformCheck == 1) &&
+               (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0 && (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0)
             {
                 STimer("Idle", t_upperSkeletalAnimationComponent, 0.001f);
             }
 
             // Orientera underkroppenlogik
-            if(t_lowerSkeletalAnimationComponent->clipName == "Run" || t_lowerSkeletalAnimationComponent->clipName == "Jump")
+            if((t_lowerSkeletalAnimationComponent->clipName == "Run" || t_lowerSkeletalAnimationComponent->clipName == "Jump") && t_platformCheck !=1)
             {
                 // Hämta orientationen för meshen
                 XMVECTOR t_orientationQuater = XMLoadFloat4(&t_transformComponentNext->rotation);
@@ -350,6 +476,14 @@ namespace Doremi
 
                 // Skapa två vectorer i 2dplanet för att undvika att hopp ska influera
                 XMFLOAT2 t_frontVec2 = XMFLOAT2(t_frontVector.x, t_frontVector.z);
+                if (t_platformCheck == 2)
+                {
+                    TransformComponentNext* t_platformTransformNext = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentNext>(bodyHit);
+                    TransformComponentPrevious* t_platformTransformPrevious = EntityHandler::GetInstance().GetComponentFromStorage<TransformComponentPrevious>(bodyHit);
+                    XMFLOAT3 t_platformMovement;
+                    XMStoreFloat3(&t_platformMovement, XMLoadFloat3(&t_platformTransformNext->position) - (XMLoadFloat3(&t_platformTransformPrevious->position)));
+                    XMStoreFloat3(&t_movementVector ,XMLoadFloat3(&t_movementVector) - XMLoadFloat3(&t_platformMovement));
+                }
                 XMFLOAT2 t_moveVec2 = XMFLOAT2(t_movementVector.x, t_movementVector.z);
                 XMFLOAT2 t_positive;
                 // Ta reda på åt vilket håll spelaren springer åt. För att kunna sätta vinkeln positiv eller negativ
@@ -401,22 +535,62 @@ namespace Doremi
                         EntityHandler::GetInstance().GetComponentFromStorage<SkeletalAnimationComponent>(t_animationTransitionEvent->entityID);
                     if(t_animationTransitionEvent->animation == Animation::ATTACK)
                     {
-                        STimer("Attack", t_upperSkeletalAnimationComponent, 0.001f);
-                        if(t_lowerSkeletalAnimationComponent->clipName != "Run" &&
-                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0 && t_lowerSkeletalAnimationComponent->clipName != "Jump" &&
-                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime > 0)
+                        if (t_lowerSkeletalAnimationComponent->clipName == "Run")
+                        {
+                            STimer("RunAttack", t_upperSkeletalAnimationComponent, t_lowerSkeletalAnimationComponent->timePosition);
+                        }
+                        else if ((*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime > 0.0f)
+                        {
+                            float t_lowestTime = 9999;
+                            std::string t_newestClip = CheckForTransitions(t_lowestTime, t_lowerSkeletalAnimationComponent);
+                            if (t_newestClip == "Run")
+                            {
+                                STimer("RunAttack", t_upperSkeletalAnimationComponent, (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].elapsedSinceStart);
+                            }
+                        }
+                        else
+                        {
+                            STimer("Attack", t_upperSkeletalAnimationComponent, 0.001f);
+                        }
+                        /*if(t_lowerSkeletalAnimationComponent->clipName != "Run" &&
+                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0.0f && t_lowerSkeletalAnimationComponent->clipName != "Jump" &&
+                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime > 0.0f)*/
+                        if (t_lowerSkeletalAnimationComponent->clipName == "Idle" && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0.0f &&
+                            (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0.0f)
                         {
                             STimer("Attack", t_lowerSkeletalAnimationComponent, 0.001f);
                         }
                     }
                     else if(t_animationTransitionEvent->animation == Animation::STOPATTACK)
                     {
+                        // Gör lower först eftersom upper gärna tar av den
+
+                        if (t_lowerSkeletalAnimationComponent->clipName == "Attack" ||
+                            (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0.0f)
+                        {
+                            std::string t_newestClip = "";
+                            float t_lowestTimeElapsed = 0;
+                            t_newestClip = CheckForTransitions(t_lowestTimeElapsed, t_lowerSkeletalAnimationComponent);
+                            if (t_newestClip != "" && t_newestClip != "Attack")
+                            {
+                                // DO nothing
+                            }
+                            else
+                            {
+                                STimer("Idle", t_lowerSkeletalAnimationComponent, 0.001f);
+                            }
+                            (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime = 0.0f;
+                            (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].elapsedSinceStart = 0.0f;
+                        }
+
                         // Om jag håller på att transitiona till attack eller är i attack
                         if(t_upperSkeletalAnimationComponent->clipName == "Attack" ||
-                           (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0)
+                           (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0.0f || 
+                            t_upperSkeletalAnimationComponent->clipName == "RunAttack" || 
+                            (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].startTime > 0.0f)
                         {
                             // Om underkroppen inte är i attackläge börja göra dens animation
-                            if(t_lowerSkeletalAnimationComponent->clipName != "Attack")
+                            if(true || t_lowerSkeletalAnimationComponent->clipName != "Attack" && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0.0f)
                             {
                                 std::string t_newestClip = "";
                                 float t_lowestTimeElapsed = 0;
@@ -426,6 +600,11 @@ namespace Doremi
                                     float t_elapsedTime = (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestClip].elapsedSinceStart -
                                                           (*t_lowerSkeletalAnimationComponent->animationTransitions)[t_newestClip].startTime;
                                     STimer(t_newestClip, t_upperSkeletalAnimationComponent, t_elapsedTime);
+                                    //cout << t_newestClip << " Var det nyaste!" << endl;
+                                }
+                                if(t_lowerSkeletalAnimationComponent->clipName == "Attack")
+                                {
+                                    STimer("Idle", t_upperSkeletalAnimationComponent, 0.001f);
                                 }
                                 else
                                 {
@@ -433,27 +612,43 @@ namespace Doremi
                                            t_lowerSkeletalAnimationComponent->timePosition);
                                 }
                             }
-                            // annars gå idle
-                            else
-                            {
-                                STimer("Idle", t_upperSkeletalAnimationComponent, 0.001f);
-                            }
                             (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime = 0.0f;
+                            (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].elapsedSinceStart = 0.0f;
                         }
-                        if(t_lowerSkeletalAnimationComponent->clipName == "Attack" ||
-                           (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0)
-                        {
-                            STimer("Idle", t_lowerSkeletalAnimationComponent, 0.001f);
-                        }
+                        
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime = 0.0f;
+                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].elapsedSinceStart = 0.0f;
+                        (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime = 0.0f;
+                        (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].elapsedSinceStart = 0.0f;
+                        (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].startTime = 0.0f;
+                        (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].elapsedSinceStart = 0.0f;
                     }
                     else if(t_animationTransitionEvent->animation == Animation::JUMP)
                     {
-                        if(t_upperSkeletalAnimationComponent->clipName != "Attack" &&
-                           (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0 && t_upperSkeletalAnimationComponent->clipName != "Jump")
+                        if((*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0 && t_upperSkeletalAnimationComponent->clipName != "Jump")
                         {
-                            STimer("Jump", t_upperSkeletalAnimationComponent, 0.001f);
+                            if ((*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0 || t_upperSkeletalAnimationComponent->clipName == "Attack"
+                                || (*t_upperSkeletalAnimationComponent->animationTransitions)["RunAttack"].startTime > 0 || t_upperSkeletalAnimationComponent->clipName == "RunAttack")
+                            {
+                                // JUMPATTACK
+                            }
+                            else 
+                            {
+                                STimer("Jump", t_upperSkeletalAnimationComponent, 0.001f);
+                            }
                         }
-                        if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0 && t_upperSkeletalAnimationComponent->clipName != "Jump")
+                        // Om jag är attack eller har startat attack men håller på att transitiona ifrån attack ska jag hoppa istället!
+                        if (t_upperSkeletalAnimationComponent->clipName == "Attack" || (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0)
+                        {
+                            std::string t_newestClip = "";
+                            float t_lowestTimeElapsed = 0;
+                            t_newestClip = CheckForTransitions(t_lowestTimeElapsed, t_upperSkeletalAnimationComponent);
+                            if (t_newestClip != "" && t_newestClip != "Attack")
+                            {
+                                STimer("Jump", t_upperSkeletalAnimationComponent, 0.001f);
+                            }
+                        }
+                        if((*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0 && t_lowerSkeletalAnimationComponent->clipName != "Jump")
                         {
                             STimer("Jump", t_lowerSkeletalAnimationComponent, 0.001f);
                         }

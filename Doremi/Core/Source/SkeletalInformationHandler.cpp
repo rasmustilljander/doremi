@@ -59,7 +59,8 @@ namespace Doremi
                     break;
                 case SkeletalAnimationType::PLAYER:
                     // t_fileName = "Models/ArgeeAnimated_v12_NoBack.drm";
-                    t_fileName = "Models/ArgeeAnimated_v10.drm";
+                    // t_fileName = "Models/ArgeeAnimated_v10.drm";
+                    t_fileName = "Models/ArgeeAnimatedExtended_01.drm";
                     break;
                 default:
                     t_fileName = "ErrorType in skeletalanimationtype";

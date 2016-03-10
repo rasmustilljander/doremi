@@ -113,6 +113,16 @@ namespace Doremi
             // XMStoreFloat3(&t_desiredPosition, p_currentFrequency * t_direction + XMLoadFloat3(&t_platformPatrolComp->startPosition));
 
             float t_directionSpeed = 0.0f;
+            // cout << p_currentFrequency << endl;
+            //static int test = 0;
+            //if (p_currentFrequency > 0.0f)
+            //{
+            //    test = 1;
+            //}
+            //if (p_currentFrequency == 0.0f && test == 1)
+            //{
+            //    printf("CurrentFrequency: %f \n", p_currentFrequency);
+            //}
             if(p_currentFrequency > 0.05)
             {
                 t_desiredPosition = t_platformPatrolComp->endPosition;
@@ -136,11 +146,11 @@ namespace Doremi
             // position Removed desired to actual. Now steady Movespeed
             XMFLOAT3 t_normalizedDirection;
             XMFLOAT3 t_velocityVector;
+            float t_velo = p_currentFrequency * 1.5 * t_directionSpeed;
             // If statement so that it doesnt "miss" the start position and wobbles around it. Same with end position
-            if(t_distanceBetweenDesiredAndActualPosition.x > 0.4)
+            if(t_distanceBetweenDesiredAndActualPosition.x > 0.4 + t_velo)
             {
                 // XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
-                float t_velo = p_currentFrequency * 1.5 * t_directionSpeed;
                 XMStoreFloat3(&t_velocityVector, (XMVector3Normalize(t_newDirection) /** t_distanceBetweenDesiredAndActualPosition.x */ * (0.3 + t_velo)));
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().MoveKinematicActor(p_entityID,
                                                                                             t_velocityVector); // TODOLH This removes the update

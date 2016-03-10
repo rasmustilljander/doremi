@@ -14,6 +14,11 @@ namespace DoremiEngine
     }
 }
 
+namespace DirectX
+{
+    struct XMFLOAT3;
+}
+
 namespace Doremi
 {
     namespace Core
@@ -40,6 +45,7 @@ namespace Doremi
             DoremiEngine::Graphic::VertexShader* m_vertexShader;
             DoremiEngine::Graphic::DepthStencilState* m_depthStencilState;
             DoremiEngine::Graphic::RasterizerState* m_rasterizerState;
+            int CheckPlatformMovementAndRun(DirectX::XMFLOAT3 p_position, float p_epsilon, float p_movementLenghtVector, int p_bodyHit);
             void CheckANDPerformAnimationTransition(const size_t& p_entityID);
             /**
                 Updates the transitiontimers and switches animaitonclip
