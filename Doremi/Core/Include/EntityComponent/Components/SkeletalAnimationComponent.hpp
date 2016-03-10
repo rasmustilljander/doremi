@@ -26,7 +26,6 @@ namespace Doremi
             std::string clipName;
             double timePosition;
             SkeletalAnimationType type;
-            std::map<std::string, float>* animationTransitions;
             std::map<std::string, AnimationTransitionInfo>* animationTransitions;
 
             explicit SkeletalAnimationComponent(DoremiEngine::Graphic::SkeletalInformation* p_skeletalInformation)
