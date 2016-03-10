@@ -1,3 +1,5 @@
+#define IDI_MAIN_ICON 101
+
 // Project specific
 #include <Game.hpp>
 

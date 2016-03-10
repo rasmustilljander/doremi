@@ -72,6 +72,17 @@ namespace DoremiEngine
                 }
             }
 
+            const std::string pathToIcon = m_graphicContext.m_workingDirectory + std::string("\Icons\\ArgeeNBeats.bmp");
+            SDL_Surface* surface = SDL_LoadBMP(pathToIcon.c_str());
+            if(surface == nullptr)
+            {
+                std::cout << "Could not find icon at path: " << pathToIcon << std::endl;
+            }
+            else
+            {
+                SDL_SetWindowIcon(m_window, surface);
+            }
+
 
             // Device flags
             UINT t_flags = 0;

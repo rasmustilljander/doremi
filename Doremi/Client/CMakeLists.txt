@@ -7,7 +7,7 @@ project(${PROJECT_NAME})
 
 # Set the files used in the target
 file(GLOB_RECURSE HEADERS Headers/ *.h*)
-file(GLOB_RECURSE SOURCES Source/ *.cpp)
+file(GLOB_RECURSE SOURCES Source/ *.cpp *.rc)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 create_source_group("Header Files" "${CMAKE_CURRENT_SOURCE_DIR}/Include" ${HEADERS})
@@ -26,3 +26,5 @@ target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 
 # Set SUBSYSTEM
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${RESOURCE_REPOSITORY_ROOT}/Resources/Icons)

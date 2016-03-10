@@ -134,3 +134,8 @@ add_custom_target(_dependencies ALL
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS}/Release ${OUTPUT_FOLDER}/Release
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_DLLS}/Release ${OUTPUT_FOLDER}/RelWithDebInfo
 )
+
+# Move external dlls to executing folder
+add_custom_target(_installer ALL 
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CODE_REPOSITORY_ROOT}/Installer ${OUTPUT_FOLDER}/Release/Installer
+)
