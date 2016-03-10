@@ -11,13 +11,13 @@
   OutFile "InstallArgeeNBeats.exe"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\ArgeeNBeats"
+  InstallDir "$PROGRAMFILES64\ArgeeNBeats"
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\ArgeeNBeats" ""
 
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel admin
+;  RequestExecutionLevel admin
 
 ;--------------------------------
 ;Variables
@@ -31,7 +31,7 @@
   !define MUI_WELCOMEFINISHPAGE_BITMAP "InstallerImageLarge.bmp" 
   !define MUI_HEADERIMAGE 
   !define MUI_HEADERIMAGE_BITMAP "InstallerImageSmall.bmp"
-  !define MUI_ICON "ArgeeNBeats.ico" 
+  !define MUI_ICON "../Icons/ArgeeNBeats.ico" 
 
 ;--------------------------------
 ;Pages
@@ -47,7 +47,7 @@
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
   !insertmacro MUI_PAGE_INSTFILES
-      ;;;;;;;!define MUI_FINISHPAGE_RUN "calc.exe" ;THIS WILL ADD A "RUN ROOT FORCE" CHECKBOX WHICH RUNS calc.exe
+  !define MUI_FINISHPAGE_RUN "Client.exe"
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
   !insertmacro MUI_PAGE_FINISH
   
@@ -71,36 +71,38 @@ Section "ArgeeNBeats" SecArgeeNBeats
 
   ;Add the files to be extracted (and specify where)
   SetOutPath "$INSTDIR"
-  File "Release\Client.exe"
-  File "Release\*.dll"
-  File "Release\Server.exe"
-  File "Release\Master.exe"
-  File "Release\LoggerProcess.exe"
-  File "Release\README.txt"
+  File "..\Client.exe"
+  File "..\*.dll"
+  File "..\Server.exe"
+  File "..\Master.exe"
+  File "..\LoggerProcess.exe"
+  File "README.txt"
+  File "..\External\x64\*.dll"
   
   SetOutPath "$INSTDIR\External\"
-  File "External\vc_redist.x86.exe"
+  File "..\External\x64\vc_redist.x64.exe"
   
   SetOutPath "$INSTDIR\ConfigurationFiles\"
-  File /r "Release\ConfigurationFiles\*.*"
+  File /r "..\ConfigurationFiles\*.*"
   
   SetOutPath "$INSTDIR\Levels\"
-  File /r "Release\Levels\*.*"
+  File /r "..\Levels\*.*"
   
   SetOutPath "$INSTDIR\Models\"
-  File /r "Release\Models\*.*"
+  File /r "..\Models\*.*"
 
   SetOutPath "$INSTDIR\PotentialFields\"
-  File /r "Release\PotentialFields\*.*"
+  File /r "..\PotentialFields\*.*"
   
   SetOutPath "$INSTDIR\ShaderFiles\"
-  File /r "Release\ShaderFiles\*.*"
+  File /r "..\ShaderFiles\*.*"
   
   SetOutPath "$INSTDIR\Sounds\"
-  File /r "Release\Sounds\*.*"
+  File /r "..\Sounds\*.*"
 
   SetOutPath "$INSTDIR\Textures\"
-  File /r "Release\Textures\*.*"
+  File /r "..\Textures\*.*"
+  
 
   ;Create uninstaller
   SetOutPath "$INSTDIR"
@@ -110,16 +112,16 @@ Section "ArgeeNBeats" SecArgeeNBeats
 	
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortcut "$SMPROGRAMS\$StartMenuFolder\ArgeeNBeats.lnk" "$INSTDIR\ArgeeNBeats.exe"
+    CreateShortcut "$SMPROGRAMS\$StartMenuFolder\ArgeeNBeats.lnk" "$INSTDIR\Client.exe"
     CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall ArgeeNBeats.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
   
-  ; Install the Visual Studio 11 redistributable.
-  ReadRegDWORD $1 HKCU Software\Microsoft\VisualStudio\14.0_Config\VC\Runtimes\x64 Installed
-  IntCmp $1 1 redist_already_installed
-  ExecWait "$INSTDIR/vcredist_x86.exe"
-  redist_already_installed:
+  ; Install the Visual Studio 14 redistributable.
+;  ReadRegDWORD $1 HKCU Software\Microsoft\VisualStudio\14.0_Config\VC\Runtimes\x64 Installed
+;  IntCmp $1 1 redist_already_installed
+;  ExecWait "$INSTDIR/vcredist_x86.exe"
+;  redist_already_installed:
   
   ;Store installation folder
   WriteRegStr HKCU "Software\ArgeeNBeats" "" $INSTDIR
