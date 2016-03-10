@@ -629,7 +629,8 @@ namespace Doremi
             DoremiEditor::Core::TransformData transformationData = m_transforms[meshCoupling.transformName];
 
             // Check if we should cook meshes
-            if(transformationData.attributes.isCollider)
+            // We only want to cook stuff that's renderd. Screw those invisible walls!
+            if(transformationData.attributes.isRendered) // transformationData.attributes.isCollider)
             {
                 r_shouldBuildPhysics = true;
             }
