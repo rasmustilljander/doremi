@@ -180,7 +180,7 @@ namespace Doremi
             }
 
             // check if player has clicked the mouse and is hovering over a button
-            if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
+            if(t_inputHandler->CheckForOnePress((int)UserCommandPlaying::LeftClick) && m_currentButton != -1)
             {
                 switch(m_buttonList[m_currentButton].m_buttonAction)
                 {
