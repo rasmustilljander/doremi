@@ -1587,5 +1587,23 @@ namespace DoremiEngine
                 m_deviceContext->Unmap(m_resolutionBuffer, NULL);
             }
         }
+
+        void DirectXManagerImpl::SetRefreshRate(uint32_t p_refreshRate)
+        {
+            if(m_refreshRate != p_refreshRate)
+            {
+                DXGI_MODE_DESC scd;
+                ZeroMemory(&scd, sizeof(DXGI_MODE_DESC));
+                scd.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
+                scd.RefreshRate.Numerator = m_refreshRate;
+                scd.RefreshRate.Denominator = 1;
+
+                HRESULT hr = m_swapChain->ResizeTarget(&scd);
+                if(FAILED(hr))
+                {
+                    std::cout << "failed setting refreshrate" << std::endl;
+                }
+            }
+        }
     }
 }

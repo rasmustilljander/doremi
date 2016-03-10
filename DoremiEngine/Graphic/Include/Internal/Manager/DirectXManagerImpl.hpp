@@ -147,6 +147,8 @@ namespace DoremiEngine
 
             void SetResolution(const std::pair<uint32_t, uint32_t>& p_resolution) override;
 
+            void SetRefreshRate(uint32_t p_refreshRate) override;
+
 
         private:
             bool t_frustrumComputed;

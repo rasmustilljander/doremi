@@ -143,6 +143,11 @@ namespace Doremi
             bool t_monitorDropdownIsActive;
 
             // std::map<uint32_t, std::map<DisplayMode, std::vector<uint32_t>>> m_displayModeMap;
+            uint32_t m_savedResolutionWidth;
+            uint32_t m_savedResolutionHeight;
+            uint32_t m_savedMonitor;
+            uint32_t m_savedRefreshRate;
+
             uint32_t m_currentResolutionWidth;
             uint32_t m_currentResolutionHeight;
 
