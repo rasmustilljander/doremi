@@ -25,7 +25,7 @@ namespace Doremi
             MONITOR_PRESS,
             MONITOR_SELECT,
             OPTIONS_APPLY,
-            OPTIONS_OK,
+            OPTIONS_CANCEL,
         };
 
         struct ButtonMaterials

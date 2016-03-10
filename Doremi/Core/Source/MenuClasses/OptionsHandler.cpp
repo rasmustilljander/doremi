@@ -88,29 +88,45 @@ namespace Doremi
 
         void OptionsHandler::CreateButtons(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
-            //DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
-            //// Basic position
-            //DoremiEngine::Graphic::SpriteData t_data;
+            DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            // Basic position
+            DoremiEngine::Graphic::SpriteData t_data;
 
-            //t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
-            //t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            //t_data.position = XMFLOAT2(0.75f, 0.284f);
-            //t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
-            //t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+            t_data.halfsize = XMFLOAT2(0.05f, 0.04f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.64f, 0.84f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            //// Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
-            //Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
+            // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
+            Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
 
-            //// Load materials for the actual square to show resoluton
-            //t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY.dds");
-            //t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_APPLY_Hightlight.dds");
-            //t_buttonMaterialsMiddle.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY_Clicked.dds");
+            // Load materials for the actual square to show resoluton
+            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_APPLY_Hightlight.dds");
+            t_buttonMaterialsMiddle.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY_Clicked.dds");
 
-            //DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
+            DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
+
+            m_applyButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::OPTIONS_APPLY);
+
+            m_optionsButtons.push_back(&m_applyButton);
 
 
-            //m_applyButton;
-            //m_cancelButton;
+
+            // cancel
+            t_data.position = XMFLOAT2(0.77f, 0.84f);
+
+            t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_CANCEL.dds");
+            t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_CANCELl_Highlight.dds");
+            t_buttonMaterialsMiddle.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_CANCEL_Clicked.dds");
+
+            t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
+
+
+            m_cancelButton = Button(t_buttonMaterialsMiddle, t_spriteInfoMiddleButton, DoremiButtonActions::OPTIONS_CANCEL);
+
+            m_optionsButtons.push_back(&m_cancelButton);
         }
 
         void OptionsHandler::CreateScreenResolutionOption(const DoremiEngine::Core::SharedContext& p_sharedContext)
@@ -504,6 +520,40 @@ namespace Doremi
                             ClearMonitorDropDown();
                             UpdateResolution();
                             UpdateRefreshRate();
+
+                            break;
+                        }
+                        case DoremiButtonActions::OPTIONS_APPLY:
+                        {
+                            ChangeMenuState* t_newEvent = new ChangeMenuState();
+                            t_newEvent->state = DoremiGameStates::MAINMENU;
+
+
+                            EventHandler::GetInstance()->BroadcastEvent(t_newEvent);
+
+                            ClearMonitorDropDown();
+                            ClearRefreshDropDown();
+                            ClearResolutionDropDown();
+                            t_monitorDropdownIsActive = false;
+                            t_refreshDropdownIsActive = false;
+                            t_resolutionDropdownIsActive = false;
+
+                            break;
+                        }
+                        case DoremiButtonActions::OPTIONS_CANCEL:
+                        {
+                            ChangeMenuState* t_newEvent = new ChangeMenuState();
+                            t_newEvent->state = DoremiGameStates::MAINMENU;
+
+
+                            EventHandler::GetInstance()->BroadcastEvent(t_newEvent);
+
+                            ClearMonitorDropDown();
+                            ClearRefreshDropDown();
+                            ClearResolutionDropDown();
+                            t_monitorDropdownIsActive = false;
+                            t_refreshDropdownIsActive = false;
+                            t_resolutionDropdownIsActive = false;
 
                             break;
                         }

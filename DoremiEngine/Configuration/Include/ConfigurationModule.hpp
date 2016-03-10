@@ -3,7 +3,6 @@
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 
 // standard
-#include <DirectXMath.h>
 #include <string>
 #if defined(_WINDLL)
 #define CONFIGURATION_DLL_EXPORT __declspec(dllexport)
