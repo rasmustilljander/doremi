@@ -11,6 +11,7 @@
 #include <Doremi/Core/Include/CameraHandler.hpp>
 #include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
 #include <Doremi/Core/Include/PlayerHandlerClient.hpp>
+#include <Doremi/Core/Include/AudioHandler.hpp>
 #include <algorithm>
 #include <iostream>
 
@@ -140,7 +141,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.284f);
+            t_data.position = XMFLOAT2(0.75f, 0.289f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -164,7 +165,7 @@ namespace Doremi
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
             m_resolutionText =
-                Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.284f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+                Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.289f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_resolutionText.SetText(p_sharedContext, std::to_string(m_currentResolutionWidth) + "x" + std::to_string(m_currentResolutionHeight));
 
             m_text.push_back(&m_resolutionText);
@@ -181,7 +182,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.33f);
+            t_data.position = XMFLOAT2(0.75f, 0.335f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -204,7 +205,7 @@ namespace Doremi
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_refreshText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.33f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_refreshText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.335f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_refreshText.SetText(p_sharedContext, std::to_string(m_currentRefreshRate));
 
             m_text.push_back(&m_refreshText);
@@ -221,7 +222,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.376f);
+            t_data.position = XMFLOAT2(0.75f, 0.384f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -244,7 +245,7 @@ namespace Doremi
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
             XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-            m_monitorText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.376f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
+            m_monitorText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(0.75f, 0.384f), XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
             m_monitorText.SetText(p_sharedContext, std::to_string(m_currentMonitor));
 
             m_text.push_back(&m_monitorText);
@@ -260,15 +261,15 @@ namespace Doremi
             DoremiEngine::Graphic::SpriteData t_dataCircle;
 
             // 0.046 is good number
-            t_dataBack.halfsize = XMFLOAT2(0.08f, 0.0025f);
+            t_dataBack.halfsize = XMFLOAT2(0.08f, 0.02f);
             t_dataBack.origo = XMFLOAT2(0.0f, 0.0f);
-            t_dataBack.position = XMFLOAT2(0.75f, 0.435f);
+            t_dataBack.position = XMFLOAT2(0.75f, 0.43f);
             t_dataBack.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_dataBack.txtSize = XMFLOAT2(1.0f, 1.0f);
 
-            t_dataCircle.halfsize = XMFLOAT2(0.004f, 0.007f);
+            t_dataCircle.halfsize = XMFLOAT2(0.006f, 0.0105f);
             t_dataCircle.origo = XMFLOAT2(0.0f, 0.0f);
-            t_dataCircle.position = XMFLOAT2(0.75f, 0.435f);
+            t_dataCircle.position = XMFLOAT2(0.75f, 0.43f);
             t_dataCircle.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_dataCircle.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -288,40 +289,40 @@ namespace Doremi
             m_sliders.push_back(t_newSlider);
 
             // Audio
-            t_dataBack.position.y = 0.535f;
-            t_dataCircle.position.y = 0.535f;
+            t_dataBack.position.y = 0.575f;
+            t_dataCircle.position.y = 0.575f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_audioMaster = 0.25f;
+            float t_audioMaster = configInfo.MasterVolume;
             t_newSlider = new Slider(SliderEffect::SOUND_MASTER, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_audioMaster);
             m_sliders.push_back(t_newSlider);
-
-            // Audio
-            t_dataBack.position.y = 0.580f;
-            t_dataCircle.position.y = 0.580f;
-            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
-            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_audioEffect = 0.77f;
-            t_newSlider = new Slider(SliderEffect::SOUND_EFFECTS, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
-            t_newSlider->UpdateSlider(t_audioEffect);
-            m_sliders.push_back(t_newSlider);
-
 
             // Audio
             t_dataBack.position.y = 0.625f;
             t_dataCircle.position.y = 0.625f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_audioMusic = 0.11f;
+            float t_audioEffect = configInfo.EffectVolume;
+            t_newSlider = new Slider(SliderEffect::SOUND_EFFECTS, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioEffect);
+            m_sliders.push_back(t_newSlider);
+
+
+            // Audio
+            t_dataBack.position.y = 0.674f;
+            t_dataCircle.position.y = 0.674f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_audioMusic = configInfo.MusicVolume;
             t_newSlider = new Slider(SliderEffect::SOUND_MUSIC, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_audioMusic);
             m_sliders.push_back(t_newSlider);
 
 
             // Mouse sence
-            t_dataBack.position.y = 0.725f;
-            t_dataCircle.position.y = 0.725f;
+            t_dataBack.position.y = 0.770f;
+            t_dataCircle.position.y = 0.770f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
             float t_sense = (configInfo.TurnSpeed - 0.001f) / (0.019f);
@@ -642,7 +643,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.284f);
+            t_data.position = XMFLOAT2(0.75f, 0.289f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -660,13 +661,13 @@ namespace Doremi
 
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.284f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.289f);
             float t_offset = 0.0f;
             auto t_reverseRes = t_resolutions.rbegin();
             for(; t_reverseRes != t_resolutions.rend(); ++t_reverseRes)
             {
                 t_offset += 1.0f;
-                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset);
+                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset);
 
                 // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
@@ -682,7 +683,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(t_reverseRes->first) + "x" + std::to_string(t_reverseRes->second));
@@ -732,7 +733,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.33f);
+            t_data.position = XMFLOAT2(0.75f, 0.335f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -751,14 +752,14 @@ namespace Doremi
 
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.33f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.335f);
 
             float t_offset = 0.0f;
             auto t_reverseRefresh = t_refreshRates.begin();
             for(; t_reverseRefresh != t_refreshRates.end(); ++t_reverseRefresh)
             {
                 t_offset += 1.0f;
-                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset);
+                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset);
 
                 // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
@@ -774,7 +775,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(*t_reverseRefresh));
@@ -889,7 +890,7 @@ namespace Doremi
 
             t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
             t_data.origo = XMFLOAT2(0.0f, 0.0f);
-            t_data.position = XMFLOAT2(0.75f, 0.376f);
+            t_data.position = XMFLOAT2(0.75f, 0.384f);
             t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
             t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
 
@@ -908,14 +909,14 @@ namespace Doremi
 
             DoremiEngine::Graphic::MaterialInfo* t_matinfoText = t_meshManager.BuildMaterialInfo("FontNormal.dds");
 
-            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.376f);
+            XMFLOAT2 t_startOffset = XMFLOAT2(0.75f, 0.384f);
 
             float t_offset = 0.0f;
 
             for(int i = 0; i < t_numOfMonitors; ++i)
             {
                 t_offset += 1.0f;
-                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset);
+                t_data.position = XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset);
 
                 // Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
                 Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
@@ -931,7 +932,7 @@ namespace Doremi
 
 
                 XMFLOAT2 t_tableCharSize = XMFLOAT2(0.0625f, 0.049f);
-                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.015f * 2.0f * t_offset),
+                Text m_resolutionText = Text(t_matinfoText, XMFLOAT2(0.008f, 0.012f), XMFLOAT2(t_startOffset.x, t_startOffset.y + 0.009f * 2.0f * t_offset),
                                              XMFLOAT2(0.0f, 0.0f), t_tableCharSize, XMFLOAT2(0.0f, 0.0f));
 
                 m_resolutionText.SetText(m_sharedContext, std::to_string(i));
@@ -988,6 +989,8 @@ namespace Doremi
                 }
                 case Doremi::Core::SliderEffect::SOUND_MASTER:
                 {
+                    configInfo.MasterVolume = percent;
+                    AudioHandler::GetInstance()->SetMasterVolume(percent);
                     break;
                 }
                 case Doremi::Core::SliderEffect::SOUND_EFFECTS:

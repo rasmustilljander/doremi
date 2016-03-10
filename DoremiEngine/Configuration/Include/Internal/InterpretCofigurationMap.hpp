@@ -18,9 +18,17 @@ namespace DoremiEngine
             {
                 o_info.ScreenWidth = std::stof(p_mapToInterpret.at("ScreenWidth"));
             }
-            if(p_mapToInterpret.count("Volume"))
+            if(p_mapToInterpret.count("MasterVolume"))
             {
-                o_info.Volume = std::stof(p_mapToInterpret.at("Volume"));
+                o_info.MasterVolume = std::stof(p_mapToInterpret.at("MasterVolume"));
+            }
+            if(p_mapToInterpret.count("EffectVolume"))
+            {
+                o_info.MasterVolume = std::stof(p_mapToInterpret.at("EffectVolume"));
+            }
+            if(p_mapToInterpret.count("MusicVolume"))
+            {
+                o_info.MasterVolume = std::stof(p_mapToInterpret.at("MusicVolume"));
             }
             if(p_mapToInterpret.count("Forward"))
             {
@@ -162,7 +170,9 @@ namespace DoremiEngine
             std::map<std::string, std::string> returnMap;
             returnMap["ScreenHeight"] = std::to_string(p_info.ScreenHeight);
             returnMap["ScreenWidth"] = std::to_string(p_info.ScreenWidth);
-            returnMap["Volume"] = std::to_string(p_info.Volume);
+            returnMap["MasterVolume"] = std::to_string(p_info.MasterVolume);
+            returnMap["EffectVolume"] = std::to_string(p_info.EffectVolume);
+            returnMap["MusicVolume"] = std::to_string(p_info.MusicVolume);
             returnMap["Forward"] = std::to_string(p_info.Forward);
             returnMap["Backward"] = std::to_string(p_info.Backward);
             returnMap["Left"] = std::to_string(p_info.Left);

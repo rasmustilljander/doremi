@@ -54,7 +54,7 @@ namespace DoremiEngine
 
             if(GetActiveWindow() == nullptr)
             {
-                m_window = SDL_CreateWindow("ArgeeNBeats", 100, 100, m_screenResolution.x, m_screenResolution.y,
+                m_window = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
                                             SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
 
                 if(!m_window)
@@ -74,7 +74,7 @@ namespace DoremiEngine
                 }
             }
 
-            const std::string pathToIcon = m_graphicContext.m_workingDirectory + std::string("\Icons\\AnBIcon_128.bmp");
+            const std::string pathToIcon = m_graphicContext.m_workingDirectory + std::string("\Icons\\ArgeeNBeats.bmp");
             SDL_Surface* surface = SDL_LoadBMP(pathToIcon.c_str());
             if(surface == nullptr)
             {

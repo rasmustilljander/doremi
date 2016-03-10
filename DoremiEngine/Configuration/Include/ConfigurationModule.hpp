@@ -27,7 +27,9 @@ namespace DoremiEngine
             int CameraFieldOfView = 60;
 
             // Audio stuff
-            float Volume = 0.5f;
+            float MasterVolume = 0.5f;
+            float EffectVolume = 1.0f;
+            float MusicVolume = 1.0f;
 
             // Network stuff
             int UseIPMaster = 1;
