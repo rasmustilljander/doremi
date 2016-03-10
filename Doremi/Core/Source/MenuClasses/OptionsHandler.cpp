@@ -8,6 +8,10 @@
 #include <Doremi/Core/Include/InputHandlerClient.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/ChangeMenuState.hpp>
 #include <Doremi/Core/Include/EventHandler/EventHandler.hpp>
+#include <Doremi/Core/Include/CameraHandler.hpp>
+#include <DoremiEngine/Configuration/Include/ConfigurationModule.hpp>
+#include <algorithm>
+#include <iostream>
 
 namespace Doremi
 {
@@ -205,6 +209,7 @@ namespace Doremi
         void OptionsHandler::CreateSliders(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
             DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            DoremiEngine::Configuration::ConfiguartionInfo configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
 
             // Basic position
             DoremiEngine::Graphic::SpriteData t_dataBack;
@@ -230,8 +235,11 @@ namespace Doremi
 
 
             // TODO get Fov here
-            float t_fov = 0.5f;
-            Slider* t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            float t_fov = static_cast<float>(configInfo.CameraFieldOfView - 60) / (90.0f - 60.0f);
+            t_fov = std::max(t_fov, 0.0f);
+            t_fov = std::min(t_fov, 1.0f);
+            Slider* t_newSlider =
+                new Slider(SliderEffect::FIELD_OF_VIEW, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_fov);
             m_sliders.push_back(t_newSlider);
 
@@ -241,7 +249,7 @@ namespace Doremi
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
             float t_audioMaster = 0.25f;
-            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider = new Slider(SliderEffect::SOUND_MASTER, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_audioMaster);
             m_sliders.push_back(t_newSlider);
 
@@ -250,9 +258,9 @@ namespace Doremi
             t_dataCircle.position.y = 0.580f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_audioMusic = 0.77f;
-            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
-            t_newSlider->UpdateSlider(t_audioMusic);
+            float t_audioEffect = 0.77f;
+            t_newSlider = new Slider(SliderEffect::SOUND_EFFECTS, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioEffect);
             m_sliders.push_back(t_newSlider);
 
 
@@ -261,9 +269,9 @@ namespace Doremi
             t_dataCircle.position.y = 0.625f;
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
-            float t_audioEffect = 0.11f;
-            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
-            t_newSlider->UpdateSlider(t_audioEffect);
+            float t_audioMusic = 0.11f;
+            t_newSlider = new Slider(SliderEffect::SOUND_MUSIC, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_audioMusic);
             m_sliders.push_back(t_newSlider);
 
 
@@ -273,7 +281,7 @@ namespace Doremi
             t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
             t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
             float t_sense = 0.67f;
-            t_newSlider = new Slider(t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
+            t_newSlider = new Slider(SliderEffect::MOUSE_SENSE, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle, t_spriteInfoSliderCircle);
             t_newSlider->UpdateSlider(t_sense);
             m_sliders.push_back(t_newSlider);
         }
@@ -479,12 +487,42 @@ namespace Doremi
                 }
                 else
                 {
-                    // Deselect dropdowns
+                    // check sliders
+                    length = m_sliders.size();
+                    for(size_t i = 0; i < length; i++)
+                    {
+                        if(m_sliders[i]->CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
+                        {
+                            m_sliders[i]->UpdateSliderByMousePos(t_mouseScreenPosX);
+                            UpdateSliderEffect(m_sliders[i]->m_slideEffect, m_sliders[i]->m_percent);
+                        }
+                    }
                 }
             }
             else
             {
                 // Nothing
+            }
+
+
+            if(t_inputHandler->CheckBitMaskInputFromGame((int)UserCommandPlaying::LeftClick))
+            {
+                if(m_highlightedButton == nullptr)
+                {
+                    // check sliders
+                    length = m_sliders.size();
+                    for(size_t i = 0; i < length; i++)
+                    {
+                        if(m_sliders[i]->m_isActive)
+                        {
+                            if(m_sliders[i]->CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
+                            {
+                                m_sliders[i]->UpdateSliderByMousePos(t_mouseScreenPosX);
+                                UpdateSliderEffect(m_sliders[i]->m_slideEffect, m_sliders[i]->m_percent);
+                            }
+                        }
+                    }
+                }
             }
 
             // Check to exit TODO move place of code
@@ -848,6 +886,42 @@ namespace Doremi
             }
 
             m_dropdownMonitors.clear();
+        }
+
+        void OptionsHandler::UpdateSliderEffect(const SliderEffect& p_sliderEffect, const float& percent)
+        {
+            DoremiEngine::Configuration::ConfiguartionInfo& configInfo = m_sharedContext.GetConfigurationModule().GetModifiableConfigurationInfo();
+
+            switch(p_sliderEffect)
+            {
+                case Doremi::Core::SliderEffect::FIELD_OF_VIEW:
+                {
+                    configInfo.CameraFieldOfView = static_cast<uint32_t>(60.0f + percent * (90.0f - 60.0f));
+                    CameraHandler::GetInstance()->UpdateCameraProjection();
+                    std::cout << "Updated camera and fov" << configInfo.CameraFieldOfView << std::endl;
+                    break;
+                }
+                case Doremi::Core::SliderEffect::SOUND_MASTER:
+                {
+                    break;
+                }
+                case Doremi::Core::SliderEffect::SOUND_EFFECTS:
+                {
+                    break;
+                }
+                case Doremi::Core::SliderEffect::SOUND_MUSIC:
+                {
+                    break;
+                }
+                case Doremi::Core::SliderEffect::MOUSE_SENSE:
+                {
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
         }
     }
 }

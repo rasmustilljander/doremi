@@ -48,6 +48,8 @@ namespace Doremi
 
             DirectX::XMFLOAT3 GetActiveCameraPosition();
 
+            void UpdateCameraProjection();
+
         private:
             /**
             Dependent on the graphic module

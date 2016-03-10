@@ -11,10 +11,20 @@ namespace Doremi
     {
         using namespace DirectX;
 
+
+        enum class SliderEffect
+        {
+            FIELD_OF_VIEW,
+            SOUND_MASTER,
+            SOUND_EFFECTS,
+            SOUND_MUSIC,
+            MOUSE_SENSE,
+        };
+
         class Slider
         {
         public:
-            Slider(DoremiEngine::Graphic::MaterialInfo* p_materialInfoBack, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoBack,
+            Slider(SliderEffect p_effect, DoremiEngine::Graphic::MaterialInfo* p_materialInfoBack, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoBack,
                    DoremiEngine::Graphic::MaterialInfo* p_materialInfoCircle, DoremiEngine::Graphic::SpriteInfo* p_spriteInfoCircle);
 
             virtual ~Slider();
@@ -22,6 +32,8 @@ namespace Doremi
             bool CheckIfInside(float p_mousePosX, float p_mousePosY);
 
             void UpdateSlider(float percent);
+
+            void UpdateSliderByMousePos(float p_mousePosX);
 
             DoremiEngine::Graphic::MaterialInfo* m_materialInfoBack;
 
@@ -32,6 +44,12 @@ namespace Doremi
 
             //// Add "Mesh" info here, but its buffer
             DoremiEngine::Graphic::SpriteInfo* m_spriteInfoCircle;
+
+            SliderEffect m_slideEffect;
+
+            bool m_isActive;
+
+            float m_percent;
         };
     }
 }

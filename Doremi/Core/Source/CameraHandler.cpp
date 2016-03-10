@@ -136,5 +136,21 @@ namespace Doremi
             }
             // TODO Returnpath
         }
+
+        void CameraHandler::UpdateCameraProjection()
+        {
+            using namespace DirectX;
+            XMFLOAT4X4 projection;
+
+            DoremiEngine::Configuration::ConfiguartionInfo configInfo = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+            XMMATRIX mat = XMMatrixTranspose(XMMatrixPerspectiveFovLH(configInfo.CameraFieldOfView * XM_PI / 180.0f,
+                                                                      configInfo.ScreenWidth / configInfo.ScreenHeight, 0.1f, configInfo.CameraViewDistance));
+
+
+            XMStoreFloat4x4(&projection, mat);
+
+            m_freeLookCamera->GetCamera().SetProjectionMatrix(projection);
+            m_thirdPersonCamera->GetCamera().SetProjectionMatrix(projection);
+        }
     }
 }

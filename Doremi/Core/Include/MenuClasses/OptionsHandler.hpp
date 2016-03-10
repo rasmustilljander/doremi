@@ -95,6 +95,8 @@ namespace Doremi
 
             void ClearMonitorDropDown();
 
+            void UpdateSliderEffect(const SliderEffect& p_sliderEffect, const float& percent);
+
             static OptionsHandler* m_singleton;
             const DoremiEngine::Core::SharedContext& m_sharedContext;
 
