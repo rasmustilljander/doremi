@@ -151,6 +151,16 @@ namespace Doremi
             if(t_distanceBetweenDesiredAndActualPosition.x > 0.4 + t_velo)
             {
                 // XMVECTOR t_newDirection = XMLoadFloat3(&t_desiredPosition) - XMLoadFloat3(&t_transformComponent->position);
+                float t_velo;
+                if(p_currentFrequency > 0.05)
+                {
+                    t_velo = p_currentFrequency * 1.5 * t_directionSpeed;
+                }
+                // har ingen frekvens så kör på ett hårdkodat basvärde
+                else
+                {
+                    t_velo = 0.5f * 1.5 * t_directionSpeed;
+                }
                 XMStoreFloat3(&t_velocityVector, (XMVector3Normalize(t_newDirection) /** t_distanceBetweenDesiredAndActualPosition.x */ * (0.3 + t_velo)));
                 m_sharedContext.GetPhysicsModule().GetRigidBodyManager().MoveKinematicActor(p_entityID,
                                                                                             t_velocityVector); // TODOLH This removes the update
