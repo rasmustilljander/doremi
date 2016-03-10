@@ -1191,11 +1191,17 @@ namespace DoremiEngine
             std::sort(renderData.begin(), renderData.end(), SortOnVertexThenTexture);
             // std::sort(renderData.begin(), renderData.end(), SortRenderData); //TODORT remove
 
+            // Nothing to draw
+            if(renderData.size() == 0)
+            {
+                return;
+            }
+
             // Setup required variables
             const uint32_t stride = sizeof(SkeletalVertex);
             const uint32_t offset = 0;
             ID3D11Buffer* vertexData = renderData[0].vertexData;
-            MaterialMessage materialData = transRenderData[0].materialMessage;
+            MaterialMessage materialData = renderData[0].materialMessage;
             ID3D11ShaderResourceView* texture = renderData[0].diffuseTexture;
             ID3D11ShaderResourceView* glowtexture = renderData[0].glowTexture;
             ID3D11SamplerState* samplerState = renderData[0].samplerState;
@@ -1217,7 +1223,7 @@ namespace DoremiEngine
             m_deviceContext->VSSetConstantBuffers(0, 1, &m_worldMatrix);
 
             m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-            memcpy(tMS.pData, &transRenderData[0].materialMessage.data, sizeof(&transRenderData[0].materialMessage.data));
+            memcpy(tMS.pData, &renderData[0].materialMessage.data, sizeof(&renderData[0].materialMessage.data));
             m_deviceContext->Unmap(m_materialBuffer, NULL);
             m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
 
@@ -1272,12 +1278,12 @@ namespace DoremiEngine
                     }
                 }
 
-                materialData = transRenderData[i].materialMessage;
-                if (&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
+                materialData = renderData[i].materialMessage;
+                if(&materialData != nullptr) // TODORT is it even required to check for null? Can this happen? Remove
                 {
                     D3D11_MAPPED_SUBRESOURCE tMS;
                     m_deviceContext->Map(m_materialBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
-                    memcpy(tMS.pData, &transRenderData[i].materialMessage.data, sizeof(transRenderData[i].materialMessage.data));
+                    memcpy(tMS.pData, &renderData[i].materialMessage.data, sizeof(renderData[i].materialMessage.data));
                     m_deviceContext->Unmap(m_materialBuffer, NULL);
 
                     m_deviceContext->PSSetConstantBuffers(1, 1, &m_materialBuffer);
