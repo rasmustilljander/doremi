@@ -131,7 +131,7 @@ namespace Doremi
                             lclip->second.elapsedSinceStart = 0.0f;
                             lclip->second.startTime = 0.0f;
                         }
-                        cout << "Du mördade alla animationer som transitionade" << endl;
+                        // cout << "Du mördade alla animationer som transitionade" << endl;
                     }
                 }
                 else
@@ -264,8 +264,8 @@ namespace Doremi
                 }
                 else
                 {
-                    cout << "True Du är på en platform. Din movement vectorLength: " << p_movementLenghtVector << "PlatformensMovementvectorLegth "
-                         << t_platformMovementLengthVector.x << endl;
+                    // cout << "True Du är på en platform. Din movement vectorLength: " << p_movementLenghtVector << "PlatformensMovementvectorLegth "
+                    // << t_platformMovementLengthVector.x << endl;
                     return 2;
                 }
             }
@@ -394,6 +394,10 @@ namespace Doremi
                     t_newestClip = CheckForTransitions(t_lowestElapsedTime, t_upperSkeletalAnimationComponent);
                     if(t_newestClip != "")
                     {
+                        if(t_newestClip == "RunAttack")
+                        {
+                            // cout << "Opps underkroppen fick RunAttack" << endl;
+                        }
                         STimer(t_newestClip, t_lowerSkeletalAnimationComponent, t_lowestElapsedTime);
                     }
                     else
@@ -461,7 +465,7 @@ namespace Doremi
                 }
                 else
                 {
-                    cout << "Här bördu inte vara (?)" << endl;
+                    // cout << "Här bördu inte vara (?)" << endl;
                     STimer("Run", t_upperSkeletalAnimationComponent, 0.0001f);
                 }
             }
@@ -649,7 +653,7 @@ namespace Doremi
                                         t_elapsedTime = 0.001f;
                                     }
                                     STimer(t_newestClip, t_upperSkeletalAnimationComponent, t_elapsedTime);
-                                    cout << t_newestClip << " Var det nyaste!" << endl;
+                                    // cout << t_newestClip << " Var det nyaste!" << endl;
                                 }
                                 else
                                 {
@@ -828,7 +832,7 @@ namespace Doremi
                                 }
                                 else
                                 {
-                                    cout << "WTF" << endl;
+                                    // cout << "WTF" << endl;
                                     STimer("Attack", t_skeletalAnimationComponent, 0.001f);
                                 }
                             }
