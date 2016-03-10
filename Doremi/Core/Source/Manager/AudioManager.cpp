@@ -37,6 +37,7 @@ namespace Doremi
             EventHandler::GetInstance()->Subscribe(EventType::PlaySound, this);
             EventHandler::GetInstance()->Subscribe(EventType::StopSound, this);
             EventHandler::GetInstance()->Subscribe(EventType::DamageTaken, this);
+            EventHandler::GetInstance()->Subscribe(EventType::AnimationTransition, this);
             m_gunReloadButtonDown = false;
             m_timeThatGunButtonIsDown = 0;
         }
