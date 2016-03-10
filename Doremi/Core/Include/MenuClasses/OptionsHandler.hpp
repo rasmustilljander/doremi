@@ -71,6 +71,8 @@ namespace Doremi
 
             ~OptionsHandler();
 
+            void CreateButtons(const DoremiEngine::Core::SharedContext& p_sharedContext);
+
             void CreateScreenResolutionOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             void CreateRefreshOption(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -110,6 +112,9 @@ namespace Doremi
 
             Button m_monitorButton;
             Text m_monitorText;
+
+            Button m_applyButton;
+            Button m_cancelButton;
 
             Button* m_highlightedButton;
 

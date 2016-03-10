@@ -82,7 +82,7 @@ namespace Doremi
         {
             // Do not delete m_logger, internally handled by loggingmodule
         }
-        
+
         void PlayerHandlerClient::UpdateTurnSpeed()
         {
             m_player->m_turnSpeed = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().TurnSpeed;

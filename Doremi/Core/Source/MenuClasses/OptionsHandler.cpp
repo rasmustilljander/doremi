@@ -77,7 +77,7 @@ namespace Doremi
             t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_OPTIONS_MenubarBackground.dds");
             m_screenObjects.push_back(new ScreenObject(t_matInfo, t_spriteInfo));
 
-
+            CreateButtons(p_sharedContext);
             CreateScreenResolutionOption(p_sharedContext);
             CreateRefreshOption(p_sharedContext);
             CreateMonitorOption(p_sharedContext);
@@ -85,6 +85,33 @@ namespace Doremi
         }
 
         OptionsHandler::~OptionsHandler() {}
+
+        void OptionsHandler::CreateButtons(const DoremiEngine::Core::SharedContext& p_sharedContext)
+        {
+            //DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
+            //// Basic position
+            //DoremiEngine::Graphic::SpriteData t_data;
+
+            //t_data.halfsize = XMFLOAT2(0.05f, 0.015f);
+            //t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            //t_data.position = XMFLOAT2(0.75f, 0.284f);
+            //t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            //t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            //// Skapa en buttonmaterial struct. Denna håller 2 buildmaterialinfos för att göra kortare parameterlistor
+            //Doremi::Core::ButtonMaterials t_buttonMaterialsMiddle;
+
+            //// Load materials for the actual square to show resoluton
+            //t_buttonMaterialsMiddle.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY.dds");
+            //t_buttonMaterialsMiddle.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_BTN_APPLY_Hightlight.dds");
+            //t_buttonMaterialsMiddle.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__BTN_APPLY_Clicked.dds");
+
+            //DoremiEngine::Graphic::SpriteInfo* t_spriteInfoMiddleButton = t_meshManager.BuildSpriteInfo(t_data);
+
+
+            //m_applyButton;
+            //m_cancelButton;
+        }
 
         void OptionsHandler::CreateScreenResolutionOption(const DoremiEngine::Core::SharedContext& p_sharedContext)
         {
