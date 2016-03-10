@@ -111,7 +111,7 @@ namespace Doremi
                 if(clip->second.startTime != 0.0f)
                 {
                     clip->second.elapsedSinceStart += (float)p_dt;
-                    cout << "Uppdaterade: " << t_animationNames[i] << " Tid: " << clip->second.elapsedSinceStart - clip->second.startTime << endl;
+                    // cout << "Uppdaterade: " << t_animationNames[i] << " Tid: " << clip->second.elapsedSinceStart - clip->second.startTime << endl;
                 }
                 if(clip->second.elapsedSinceStart > clip->second.startTime + m_animationTransitionTime)
                 {
@@ -121,7 +121,7 @@ namespace Doremi
                     clip->second.startTime = 0.0f;
                     if(t_animationNames[i] == "Idle")
                     {
-                        cout << "Du transitionade till Idle" << endl;
+                        // cout << "Du transitionade till Idle" << endl;
                     }
                     if(t_animationNames[i] == "Attack")
                     {
@@ -162,7 +162,7 @@ namespace Doremi
             auto& clip = (*o_skeletalAnimationComponent->animationTransitions).find(p_animationName);
             clip->second.startTime = p_startTime;
             clip->second.elapsedSinceStart = p_startTime;
-            cout << "Started timer: " << p_animationName << "StartTime : " << p_startTime << endl;
+            // cout << "Started timer: " << p_animationName << "StartTime : " << p_startTime << endl;
         }
 
         void SkeletalAnimationCoreManager::STimer(const std::string& p_animationName, LowerSkeletalAnimationComponent* o_skeletalAnimationComponent, float p_startTime)
@@ -328,7 +328,7 @@ namespace Doremi
                 // Kolla om vi rört på oss och vi inte har börjat runtransition
                 if(t_movementLengthVector.x > t_epsilon && (*t_lowerSkeletalAnimationComponent->animationTransitions)["Run"].startTime == 0.0f)
                 {
-                    cout << "Du är i vi har rört på oss och inte börjat runtransition på lower" << endl;
+                    // cout << "Du är i vi har rört på oss och inte börjat runtransition på lower" << endl;
                     // Kolla ifall vi har rört oss i Yled. Ifall inte bara spring och ifall jag inte står still poå en rörande platform
                     if(t_movementInYAxis < t_epsilon && t_lowerSkeletalAnimationComponent->clipName != "Jump" && t_platformCheck != 1 &&
                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f)
@@ -378,7 +378,7 @@ namespace Doremi
             else if(t_lowerSkeletalAnimationComponent->clipName == "Run")
             {
                 // Kolla om vi stannat
-                cout << "Du är i vi springer och ska kolla om vi stannar Lower" << endl;
+                // cout << "Du är i vi springer och ska kolla om vi stannar Lower" << endl;
                 if((t_movementLengthVector.x < t_epsilon || t_platformCheck == 1) && t_upperSkeletalAnimationComponent->clipName != "Run" &&
                    (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0 &&
                    (*t_lowerSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0 &&
@@ -417,12 +417,12 @@ namespace Doremi
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Jump"].startTime == 0.0f && t_upperSkeletalAnimationComponent->clipName != "JumpAttack" &&
                (*t_upperSkeletalAnimationComponent->animationTransitions)["JumpAttack"].startTime == 0.0f)
             {
-                cout << "Du är i Starta run i upper" << endl;
+                // cout << "Du är i Starta run i upper" << endl;
                 // Kolla om vi transitionar run
                 std::string t_newestTransition;
                 float t_lowestElapsedTime;
                 t_newestTransition = CheckForTransitions(t_lowestElapsedTime, t_lowerSkeletalAnimationComponent);
-                cout << t_lowerSkeletalAnimationComponent->clipName << endl;
+                // cout << t_lowerSkeletalAnimationComponent->clipName << endl;
                 if(t_lowerSkeletalAnimationComponent->clipName == "Run")
                 {
                     // AttackANdRun
@@ -472,7 +472,7 @@ namespace Doremi
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Idle"].startTime == 0.0f &&
                (*t_upperSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0.0f)
             {
-                cout << "Överkroppen är i runmode men du har stannat" << endl;
+                // cout << "Överkroppen är i runmode men du har stannat" << endl;
                 if(t_upperSkeletalAnimationComponent->clipName == "RunAttack")
                 {
                     STimer("Attack", t_upperSkeletalAnimationComponent, t_upperSkeletalAnimationComponent->timePosition);
