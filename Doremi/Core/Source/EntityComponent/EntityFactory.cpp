@@ -99,9 +99,10 @@ namespace Doremi
             {
                 // physicsModule.GetFluidManager() //Remove particle system here TODOJB actually do this
             }
-            if (tComponentTable->HasComponent(p_entityID, (int)ComponentType::PotentialField))
+            if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::PotentialField))
             {
                 PotentialFieldComponent* potentialField = GetComponent<PotentialFieldComponent>(p_entityID);
+                std::cout << "Enemy with ID will be removed " << p_entityID << std::endl;
                 m_sharedContext.GetAIModule().GetPotentialFieldSubModule().EraseActor(potentialField->ChargedActor);
             }
         }

@@ -204,8 +204,7 @@ namespace Doremi
 
             // Audio comp
             AudioComponent* audioComp = new AudioComponent();
-            audioComp->m_enumToSoundID[(int)AudioCompEnum::Death] = sharedContext.GetAudioModule().LoadSound("Sounds/DeathSound2.wav", 0.5f, 5000.0f);
-            audioComp->m_enumToSoundID[(int)AudioCompEnum::DamageTaken] = sharedContext.GetAudioModule().LoadSound("Sounds/DeathSound2.wav", 0.5f, 5000.0f);
+            audioComp->m_enumToSoundID[(int)AudioCompEnum::Death] = sharedContext.GetAudioModule().LoadSound("Sounds/EnemyDeath.wav", 0.5f, 5000.0f);
             audioComp->m_enumToSoundID[(int)AudioCompEnum::Fire] = sharedContext.GetAudioModule().LoadSound("Sounds/EnemyFire.wav", 0.5f, 5000.0f);
             blueprint[ComponentType::Audio] = audioComp;
 

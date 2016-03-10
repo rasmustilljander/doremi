@@ -15,6 +15,9 @@
 #include <DoremiEngine/Graphic/Include/GraphicModule.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 #include <Doremi/Core/Include/MenuClasses/LoadingScreenHandler.hpp>
+#include <Doremi/Core/Include/EntityComponent/Components/AudioComponent.hpp>
+
+#include <DoremiEngine/Audio/Include/AudioModule.hpp>
 
 #include <iostream>
 
@@ -46,6 +49,16 @@ namespace Doremi
 
         void EntityHandlerClient::RemoveEntity(int p_entityID)
         {
+            // Play death sound i there is any, This should be done at a better place TODOKO
+            if(HasComponents(p_entityID, (int)ComponentType::Audio))
+            {
+                int channel = -1; // Will be thrown away later...
+                AudioComponent* audioComp = GetComponentFromStorage<AudioComponent>(p_entityID);
+                m_sharedContext.GetAudioModule().PlayASound(audioComp->m_enumToSoundID[(int32_t)AudioCompEnum::Death],
+                                                            audioComp->m_enumToLoop[(int32_t)AudioCompEnum::Death], channel);
+                m_sharedContext.GetAudioModule().SetVolumeOnChannel(channel, 1.0f);
+            }
+
             EntityFactory::GetInstance()->ScrapEntity(p_entityID);
             EntityManager::GetInstance()->RemoveEntity(p_entityID);
         }

@@ -245,7 +245,7 @@ namespace Doremi
                 else
                 {
                     // TODOKO log that a enemy started outside a field
-                    std::cout << "A enemy spawn outside the field..." << std::endl;
+                    std::cout << "A enemy spawn outside the field...ID " << p_entityID << std::endl;
                 }
             }
             else

@@ -6,6 +6,7 @@
 #include <Doremi/Core/Include/PlayerHandlerServer.hpp>
 #include <Doremi/Core/Include/PlayerSpawnerHandler.hpp>
 #include <Doremi/Core/Include/EventHandler/Events/DamageTakenEvent.hpp>
+#include <Doremi/Core/Include/EventHandler/Events/AnimationTransitionEvent.hpp>
 
 namespace Doremi
 {
