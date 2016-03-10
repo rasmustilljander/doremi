@@ -122,7 +122,7 @@ namespace Doremi
             else
             {
                 t_desiredPosition = t_platformPatrolComp->startPosition;
-                t_directionSpeed = t_platformPatrolComp->startSpeed;
+                t_directionSpeed = t_platformPatrolComp->endSpeed;
                 // printf("startSpeed: %i", t_platformPatrolComp->startSpeed);
             }
             // Get the direction again. This is from desired position to actual position. So we know what way to move

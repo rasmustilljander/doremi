@@ -250,6 +250,8 @@ namespace Doremi
                 platComp->endPosition = transformationData.attributes.interactableEndPos;
                 platComp->startPosition.z *= -1.0f;
                 platComp->endPosition.z *= -1.0f;
+                platComp->startSpeed = transformationData.attributes.interactableStartSpeed;
+                platComp->endSpeed = transformationData.attributes.interactableEndSpeed;
                 // Fix to ensure platforms spawn where they start
                 transComp->position = platComp->startPosition;
 
