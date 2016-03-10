@@ -114,12 +114,12 @@ namespace Doremi
 
             float t_directionSpeed = 0.0f;
             // cout << p_currentFrequency << endl;
-            //static int test = 0;
-            //if (p_currentFrequency > 0.0f)
+            // static int test = 0;
+            // if (p_currentFrequency > 0.0f)
             //{
             //    test = 1;
             //}
-            //if (p_currentFrequency == 0.0f && test == 1)
+            // if (p_currentFrequency == 0.0f && test == 1)
             //{
             //    printf("CurrentFrequency: %f \n", p_currentFrequency);
             //}

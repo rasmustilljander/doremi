@@ -640,7 +640,7 @@ namespace Doremi
                 r_shouldBuildPhysics = false;
                 EntityHandler::GetInstance().AddComponent(p_entityId, static_cast<uint32_t>(ComponentType::NetworkObject) |
                                                                           static_cast<uint32_t>(ComponentType::RigidBody) |
-                                                                          static_cast<uint32_t>(ComponentType::PhysicalMaterial)|
+                                                                          static_cast<uint32_t>(ComponentType::PhysicalMaterial) |
                                                                           static_cast<uint32_t>(ComponentType::FrequencyAffected));
                 // Fix to ensure platforms spawn where they start
                 transComp->position = transformationData.attributes.interactableStartPos;
