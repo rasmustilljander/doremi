@@ -1,17 +1,26 @@
 // Project specific
 #include <Master.hpp>
 
+#define PLATFORM_WINDOWS 1
+#define PLATFORM_UNIX 2
+
+#define PLATFORM PLATFORM_UNIX
+//#ifdef _WIN32
+//#define PLATFORM PLATFORM_WINDOWS
+//#else // Add mac as well
+//
+//#endif
+
 
 // Third party
 
 // Standard libraries
-#ifdef _WIN32
+#if PLATFORM == PLATFORM_WINDOWS
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
-#else
-#error Platform not supported
+
 #endif
 #include <exception>
 #include <iostream>
@@ -30,8 +39,10 @@ void startup();
 // Shutdown the important singletons
 void shutdown();
 
+#if PLATFORM == PLATFORM_WINDOWS
 // Controlhandler
 BOOL CtrlHandler(DWORD fdwCtrlType);
+#endif
 
 void localMain()
 {
@@ -57,34 +68,45 @@ void localMain()
 }
 
 
-#ifdef _WIN32
 int main(int argc, const char* argv[])
-#else
-#error Platform not supported
-#endif
 {
     std::set_terminate(g_terminate);
     std::set_unexpected(g_unexpected);
+
+#if PLATFORM == PLATFORM_WINDOWS
     SetErrorMode(SEM_FAILCRITICALERRORS);
     SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
+#endif
 
     // Run startup code
     startup();
 
-    // TODORT
-    // This row is required later as it disables the standard output terminal, we do now want that.
-    // However, as people are currently using cout for debugging we'll need this for the moment.
-    // FreeConsole();
-
+// TODORT
+// This row is required later as it disables the standard output terminal, we do now want that.
+// However, as people are currently using cout for debugging we'll need this for the moment.
+// FreeConsole();
+#if PLATFORM == PLATFORM_WINDOWS
     __try
     {
         localMain();
     }
-    __except (EXCEPTION_EXECUTE_HANDLER)
+    __except(EXCEPTION_EXECUTE_HANDLER)
     {
         attemptGracefulShutdown();
         exit(1);
     }
+#elif PLATFORM == PLATFORM_UNIX
+    try
+    {
+        localMain();
+    }
+    catch(...)
+    {
+        attemptGracefulShutdown();
+        exit(1);
+    }
+#endif
+
 
     // Run shutdown code
     shutdown();
@@ -123,23 +145,23 @@ void attemptGracefulShutdown()
 #endif
 }
 
-#ifdef _WIN32
+#if PLATFORM == PLATFORM_WINDOWS
 BOOL CtrlHandler(DWORD fdwCtrlType)
 {
-    switch (fdwCtrlType)
+    switch(fdwCtrlType)
     {
         // Handle the CTRL-C signal.
-    case CTRL_C_EVENT:
-        attemptGracefulShutdown();
-        return (TRUE);
+        case CTRL_C_EVENT:
+            attemptGracefulShutdown();
+            return (TRUE);
 
         // CTRL-CLOSE: confirm that the user wants to exit.
-    case CTRL_CLOSE_EVENT:
-        attemptGracefulShutdown();
-        return (TRUE);
+        case CTRL_CLOSE_EVENT:
+            attemptGracefulShutdown();
+            return (TRUE);
 
-    default:
-        return FALSE;
+        default:
+            return FALSE;
     }
 }
 

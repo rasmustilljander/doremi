@@ -55,7 +55,6 @@
 #include <DoremiEngine/Logging/Include/SubmoduleManager.hpp>
 
 // TODOCM remove for better timer?
-#include <Windows.h>
 #include <chrono>
 
 // Third party

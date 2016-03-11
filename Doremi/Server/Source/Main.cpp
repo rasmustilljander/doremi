@@ -1,6 +1,15 @@
 // Project specific
 #include <Server.hpp>
 
+#define PLATFORM_WINDOWS 1
+#define PLATFORM_UNIX 2
+
+#ifdef WIN32
+#define PLATFORM PLATFORM_WINDOWS
+#else // Add mac as well
+#define PLATFORM PLATFORM_UNIX
+#endif
+
 // Third party
 
 // Standard libraries

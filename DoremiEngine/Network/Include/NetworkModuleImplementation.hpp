@@ -1,5 +1,15 @@
 #pragma once
 
+#define PLATFORM_WINDOWS 1
+#define PLATFORM_UNIX 2
+
+
+#ifdef WIN32
+#define PLATFORM 1
+#else // Add mac as well
+#define PLATFORM 2
+#endif
+
 // Project specific
 #include <NetworkModule.hpp>
 

@@ -18,7 +18,14 @@ namespace DoremiEngine
             m_messageSize = INT_MAX;
         }
 
-        Socket::~Socket() { closesocket(m_socketHandle); }
+        Socket::~Socket()
+        {
+#if PLATFORM == PLATFORM_WINDOWS
+            closesocket(m_socketHandle);
+#elif PLATFORM == PLATFORM_UNIX
+            close(m_socketHandle);
+#endif
+        }
 
         void Socket::CreateTCPSocket()
         {
@@ -71,10 +78,13 @@ namespace DoremiEngine
         {
             SOCKADDR_IN Adress = {0};
 
-            int SizeOfAdress = sizeof(Adress);
+#if PLATFORM == PLATFORM_WINDOWS
+            typedef int socklen_t;
+#endif
+            socklen_t fromLength = sizeof(Adress);
 
             // Accept a incomming connection, returns a socket used to send to later
-            SOCKET OutSocketHandle = accept(m_socketHandle, (SOCKADDR*)&Adress, &SizeOfAdress);
+            SOCKET OutSocketHandle = accept(m_socketHandle, (SOCKADDR*)&Adress, &fromLength);
 
             // If failed, throw exception
             if(OutSocketHandle == INVALID_SOCKET)
@@ -252,10 +262,13 @@ namespace DoremiEngine
         {
             SOCKADDR_IN Adress = {0};
 
-            int AdressSize = sizeof(Adress);
+#if PLATFORM == PLATFORM_WINDOWS
+            typedef int socklen_t;
+#endif
+            socklen_t fromLength = sizeof(Adress);
 
             // Attempt to Receive data from socket
-            int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, (SOCKADDR*)&Adress, &AdressSize);
+            int32_t Return = recvfrom(m_socketHandle, (char*)p_data, p_dataSize, 0, (SOCKADDR*)&Adress, &fromLength);
 
             p_dataSizeReceived = Return;
 
@@ -385,12 +398,20 @@ namespace DoremiEngine
 
         void Socket::SetNonBlocking()
         {
+#if PLATFORM == PLATFORM_WINDOWS
             u_long Mode = 1;
             int Result = ioctlsocket(m_socketHandle, FIONBIO, &Mode);
             if(Result == SOCKET_ERROR)
             {
                 throw std::runtime_error("Failed setting TCP/UDP to non blocking.");
             }
+#elif PLATFORM == PLATFORM_UNIX
+            int nonBlocking = 1;
+            if(fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
+            {
+                printf("failed to set non-blocking\n");
+            }
+#endif
         }
 
         bool Socket::ConnectTCPSocket(const AdressImplementation& p_connectAdress)

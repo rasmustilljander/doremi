@@ -2,11 +2,13 @@
 #include <NetworkModuleImplementation.hpp>
 #include <DoremiEngine/Core/Include/SharedContext.hpp>
 
-// Standard libraries
-#ifdef WIN32
+
+#if PLATFORM == PLATFORM_WINDOWS
 #include <WinSock2.h>
-#elif
-#error Platform not supported
+#elif PLATFORM == PLATFORM_UNIX
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <fcntl.h>
 #endif
 
 //#define USE_TCP 1
@@ -29,7 +31,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Failed to Startup Network Module, function already called.");
             }
 
-#ifdef WIN32
+#if PLATFORM == PLATFORM_WINDOWS
             WSADATA wsaData;
 
             // Initialize Winsock
@@ -39,6 +41,7 @@ namespace DoremiEngine
                 throw std::runtime_error("Failed to load Winsock, WSAStartup failed.");
             }
 #elif
+// nothing on unix
 #endif
             m_isInitialized = true;
         }
@@ -315,12 +318,14 @@ namespace DoremiEngine
         void NetworkModuleImplementation::Shutdown()
         {
 // TODO move shutdown to other place
-#ifdef WIN32
+#ifdef PLATFORM == PLATFORM_WINDOWS
             int Result = WSACleanup();
             if(Result == SOCKET_ERROR)
             {
                 throw std::runtime_error("Failed to shutdown winsock, WSACleanup failed.");
             }
+#elif PLATFORM == PLATFORM_UNIX
+// nothing on unix
 #endif
         }
     }

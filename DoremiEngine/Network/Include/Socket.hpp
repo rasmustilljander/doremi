@@ -6,10 +6,12 @@
 // Standard libraries
 #include <string>
 
-#ifdef WIN32
+#if PLATFORM == PLATFORM_WINDOWS
 #include <WinSock2.h>
-#elif
-#error Platform not supported
+#elif PLATFORM == PLATFORM_UNIX
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <fcntl.h>
 #endif
 
 #define CONNECTION_PROTOCOL_ID 0
