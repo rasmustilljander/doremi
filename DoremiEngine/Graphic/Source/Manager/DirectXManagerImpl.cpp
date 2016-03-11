@@ -124,7 +124,7 @@ namespace DoremiEngine
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
             scd.SampleDesc.Count = 1; // how many multisamples
-            scd.Windowed = m_isFullscreen; // windowed/full-screen mode
+            scd.Windowed = static_cast<int>(!m_isFullscreen); // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, t_flags, featureLevels, numFeatureLevels,
