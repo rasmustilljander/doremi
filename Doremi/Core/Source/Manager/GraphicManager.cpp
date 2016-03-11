@@ -39,7 +39,7 @@ namespace Doremi
             D3D11_RASTERIZER_DESC rastDesc;
             ZeroMemory(&rastDesc, sizeof(rastDesc));
             rastDesc.FillMode = D3D11_FILL_SOLID;
-            rastDesc.CullMode = D3D11_CULL_NONE;
+            rastDesc.CullMode = D3D11_CULL_BACK;
             rastDesc.FrontCounterClockwise = false;
             rastDesc.DepthBias = 0;
             rastDesc.DepthBiasClamp = 0.0f;
