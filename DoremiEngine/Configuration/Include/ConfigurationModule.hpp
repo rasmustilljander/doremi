@@ -25,6 +25,7 @@ namespace DoremiEngine
             float CameraDistanceFromPlayer = 5.0f;
             int CameraViewDistance = 1000;
             int CameraFieldOfView = 60;
+            int Fullscreen = 0;
 
             // Audio stuff
             float MasterVolume = 0.5f;

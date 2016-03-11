@@ -162,6 +162,10 @@ namespace DoremiEngine
             {
                 o_info.FriendlyFire = std::stoi(p_mapToInterpret.at("FriendlyFire"));
             }
+            if(p_mapToInterpret.count("Fullscreen"))
+            {
+                o_info.Fullscreen = std::stoi(p_mapToInterpret.at("Fullscreen"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -206,6 +210,7 @@ namespace DoremiEngine
             returnMap["PlayerSpeed"] = std::to_string(p_info.PlayerSpeed);
             returnMap["JumpPower"] = std::to_string(p_info.JumpPower);
             returnMap["FriendlyFire"] = std::to_string(p_info.FriendlyFire);
+            returnMap["Fullscreen"] = std::to_string(p_info.Fullscreen);
             return returnMap;
         }
     }

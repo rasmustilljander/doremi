@@ -155,6 +155,8 @@ namespace DoremiEngine
 
             void SetRefreshRate(uint32_t p_refreshRate) override;
 
+            void SetMonitor(uint32_t p_monitor) override;
+
 
         private:
             bool t_frustrumComputed;
@@ -260,6 +262,8 @@ namespace DoremiEngine
             uint32_t m_currentMonitor;
             uint32_t m_refreshRate;
             SDL_Window* m_window = nullptr;
+            bool m_isFullscreen;
+            DirectX::XMFLOAT2 m_maxResolution;
 
 
             // list with

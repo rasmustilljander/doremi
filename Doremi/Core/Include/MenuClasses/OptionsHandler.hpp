@@ -9,6 +9,7 @@
 #include <Doremi/Core/Include/MenuClasses/Slider.hpp>
 #include <Doremi/Core/Include/MenuClasses/Text.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
+#include <Doremi/Core/Include/MenuClasses/CheckBox.hpp>
 
 namespace DoremiEngine
 {
@@ -73,6 +74,7 @@ namespace Doremi
             auto& GetSliders() { return m_sliders; }
             auto GetHighlightButton() { return m_highlightedButton; }
             auto& GetBasicMenuItems() { return m_basicItems; }
+            auto& GetCheckBoxes() { return m_checkBoxes; }
 
         private:
             explicit OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
@@ -118,6 +120,8 @@ namespace Doremi
 
             MenuItemBasic m_monitorItem;
 
+            CheckBox m_fullscreenCheckbox;
+
             Button m_applyButton;
             Button m_cancelButton;
 
@@ -136,6 +140,7 @@ namespace Doremi
             std::vector<Button*> m_optionsButtons;
             std::vector<Text*> m_text;
             std::vector<MenuItemBasic*> m_basicItems;
+            std::vector<CheckBox*> m_checkBoxes;
 
             std::vector<Slider*> m_sliders;
 

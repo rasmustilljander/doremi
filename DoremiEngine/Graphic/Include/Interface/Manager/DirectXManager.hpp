@@ -70,6 +70,8 @@ namespace DoremiEngine
             virtual void SetResolution(const std::pair<uint32_t, uint32_t>& p_resolution) = 0;
 
             virtual void SetRefreshRate(uint32_t p_refreshRate) = 0;
+
+            virtual void SetMonitor(uint32_t p_monitor) = 0;
         };
     }
 }

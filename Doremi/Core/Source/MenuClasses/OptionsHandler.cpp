@@ -82,6 +82,25 @@ namespace Doremi
             t_matInfo = t_meshManager.BuildMaterialInfo("ANB_Menu_OPTIONS_MenubarBackground.dds");
             m_screenObjects.push_back(new ScreenObject(t_matInfo, t_spriteInfo));
 
+            // Create fullscreen checkbox
+            DoremiEngine::Configuration::ConfiguartionInfo configInfo = p_sharedContext.GetConfigurationModule().GetAllConfigurationValues();
+            ButtonMaterials t_materials;
+            t_materials.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_CHECKBOX_Inactive.dds");
+            t_materials.m_highLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_CHECKBOX_Highlight.dds");
+            t_materials.m_selectedLightedMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu_CHECKBOX_Checked.dds");
+
+            t_data.halfsize = XMFLOAT2(0.006f, 0.0105f);
+            t_data.position = XMFLOAT2(0.747f, 0.478f);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+
+            Button t_button = Button(t_materials, t_spriteInfo, DoremiButtonActions::SET_FULLSCREEN);
+
+            m_fullscreenCheckbox = CheckBox(t_button, CheckBoxActions::FULLSCREEN);
+            m_fullscreenCheckbox.SetPressedByBool(static_cast<bool>(configInfo.Fullscreen));
+
+            m_checkBoxes.push_back(&m_fullscreenCheckbox);
+
             CreateButtons(p_sharedContext);
             CreateScreenResolutionOption(p_sharedContext);
             CreateRefreshOption(p_sharedContext);
@@ -350,6 +369,7 @@ namespace Doremi
             // Set standard not to be selected
             m_highlightedButton = nullptr;
 
+
             // Check dropdowns first
             size_t length = m_dropdownResolution.size();
             for(size_t i = 0; i < length; i++)
@@ -411,6 +431,12 @@ namespace Doremi
                 }
             }
 
+            // Check checkboxes
+
+            // Since stupied design of check inside also update texture we check if nothing is highlighted here
+            m_fullscreenCheckbox.CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY);
+
+
             length = m_basicItems.size();
             for(size_t i = 0; i < length; i++)
             {
@@ -434,6 +460,7 @@ namespace Doremi
                     {
                         case DoremiButtonActions::SET_FULLSCREEN:
                         {
+
                             break;
                         }
                         case DoremiButtonActions::RESOLUTION_PRESS:
@@ -556,8 +583,10 @@ namespace Doremi
                             t_resolution.first = m_currentResolutionWidth;
                             t_resolution.second = m_currentResolutionHeight;
 
+                            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetMonitor(m_currentMonitor);
                             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetResolution(t_resolution);
                             m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetRefreshRate(m_currentRefreshRate);
+                            m_sharedContext.GetGraphicModule().GetSubModuleManager().GetDirectXManager().SetFullscreen(m_fullscreenCheckbox.m_isPressed);
 
 
                             break;
@@ -597,6 +626,13 @@ namespace Doremi
                             UpdateSliderEffect(m_sliders[i]->m_slideEffect, m_sliders[i]->m_percent);
                         }
                     }
+
+                    // Check checkboxes
+                    if(m_fullscreenCheckbox.CheckIfInside(t_mouseScreenPosX, t_mouseScreenPosY))
+                    {
+                        m_fullscreenCheckbox.TogglePress();
+                    }
+
 
                     // Deselect stuff
                     ClearMonitorDropDown();

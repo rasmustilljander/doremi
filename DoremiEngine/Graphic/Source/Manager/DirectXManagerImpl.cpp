@@ -55,10 +55,19 @@ namespace DoremiEngine
 
             InitializeDisplayModes();
 
+            DoremiEngine::Configuration::ConfiguartionInfo configInfo = m_graphicContext.config.GetAllConfigurationValues();
+            m_isFullscreen = static_cast<bool>(configInfo.Fullscreen);
+
             if(GetActiveWindow() == nullptr)
             {
-                m_window = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 100, 100, m_screenResolution.x, m_screenResolution.y,
-                                            SDL_WINDOW_SHOWN); // TODOKO Get height and width form reliable source
+                Uint32 t_flags = SDL_WINDOW_SHOWN;
+                if(m_isFullscreen)
+                {
+                    t_flags |= SDL_WINDOW_FULLSCREEN;
+                }
+                // m_maxResolution.x - m_screenResolution.x/2.0f , m_maxResolution.y - m_screenResolution.y / 2.0f,
+                m_window = SDL_CreateWindow("Do-Re-Mi by Let Him Be: Interactive", 10, 10, m_screenResolution.x, m_screenResolution.y,
+                                            t_flags); // TODOKO Get height and width form reliable source
 
                 if(!m_window)
                 {
@@ -115,7 +124,7 @@ namespace DoremiEngine
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS; // how swap chain is to be used
             scd.OutputWindow = GetActiveWindow(); // the window to be used
             scd.SampleDesc.Count = 1; // how many multisamples
-            scd.Windowed = TRUE; // windowed/full-screen mode
+            scd.Windowed = m_isFullscreen; // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
             HRESULT res = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, t_flags, featureLevels, numFeatureLevels,
@@ -166,6 +175,8 @@ namespace DoremiEngine
             UINT t_numDispalys = SDL_GetNumVideoDisplays();
 
             UINT t_numDisplayModes = SDL_GetNumDisplayModes(0);
+            m_maxResolution.x = 0;
+            m_maxResolution.y = 0;
 
             // For each display
             for(size_t dispIndex = 0; dispIndex < t_numDispalys; dispIndex++)
@@ -180,6 +191,13 @@ namespace DoremiEngine
                     std::pair<uint32_t, uint32_t> m_resolution;
                     m_resolution.first = mode.w;
                     m_resolution.second = mode.h;
+
+                    // Hard coded only disp 1, should check config if we can put on another screen
+                    if(m_maxResolution.x < m_resolution.first && dispIndex == 0)
+                    {
+                        m_maxResolution.x = m_resolution.first;
+                        m_maxResolution.y = m_resolution.second;
+                    }
 
                     // If we don't already have refreshrate saved add, or nothing saved add
                     if(m_displayModes[dispIndex][m_resolution].size() && m_displayModes[dispIndex][m_resolution].back() != mode.refresh_rate)
@@ -1502,14 +1520,20 @@ namespace DoremiEngine
                 std::cout << "No active sdl window when changing to fullscreen" << std::endl;
                 return;
             }
-            if(p_fullscreen)
-            {
 
-                SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
-            }
-            else
+            if(m_isFullscreen != p_fullscreen)
             {
-                SDL_SetWindowFullscreen(m_window, 0);
+                m_isFullscreen = p_fullscreen;
+
+                if(m_isFullscreen)
+                {
+
+                    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+                }
+                else
+                {
+                    SDL_SetWindowFullscreen(m_window, 0);
+                }
             }
         }
 
@@ -1624,6 +1648,11 @@ namespace DoremiEngine
                 m_deviceContext->Map(m_resolutionBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &tMS);
                 memcpy(tMS.pData, &t_resoltution, sizeof(ResolutionStruct));
                 m_deviceContext->Unmap(m_resolutionBuffer, NULL);
+
+                // if (m_isFullscreen)
+                //{
+                //    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+                //}
             }
         }
 
@@ -1641,6 +1670,18 @@ namespace DoremiEngine
                 if(FAILED(hr))
                 {
                     std::cout << "failed setting refreshrate" << std::endl;
+                }
+            }
+        }
+
+        void DirectXManagerImpl::SetMonitor(uint32_t p_monitor)
+        {
+            if(m_currentMonitor != p_monitor)
+            {
+                m_currentMonitor = p_monitor;
+
+                if(m_isFullscreen)
+                {
                 }
             }
         }

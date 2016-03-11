@@ -323,6 +323,12 @@ namespace Doremi
                 t_meshManager.AddSpriteToRenderList(*(t_slide->m_spriteInfoCircle), *(t_slide->m_materialInfoCircle));
             }
 
+            std::vector<CheckBox*> t_checkboxes = OptionsHandler::GetInstance()->GetCheckBoxes();
+            for(auto& t_box : t_checkboxes)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_box->m_button.m_spriteInfo), *(t_box->m_button.m_materialInfo));
+            }
+
 
             // Draw drop downs LAAAST
             // Get buttons to draw
