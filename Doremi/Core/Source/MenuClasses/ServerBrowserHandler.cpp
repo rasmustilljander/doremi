@@ -45,13 +45,13 @@ namespace Doremi
         ServerBrowserHandler::ServerBrowserHandler(const DoremiEngine::Core::SharedContext& p_sharedContext)
             : m_sharedContext(p_sharedContext), m_timeout(1.0f), m_selectedServer(nullptr), m_curIndexTop(0)
         {
-            m_serverBoxSize = 0.04;
+            m_serverBoxSize = 0.035;
 
             DoremiEngine::Graphic::MeshManager& t_meshManager = p_sharedContext.GetGraphicModule().GetSubModuleManager().GetMeshManager();
 
             // Create server browser background TEMPORARY WILL BECOME SCREEN OBJECT
             ButtonMaterials t_butMat;
-            t_butMat.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0002_SERVER_Frame2.dds");
+            t_butMat.m_vanillaMaterial = t_meshManager.BuildMaterialInfo("ANB_Menu__0002_ServerBrowser.dds");
             t_butMat.m_selectedLightedMaterial = nullptr;
             t_butMat.m_highLightedMaterial = nullptr;
 
@@ -296,13 +296,13 @@ namespace Doremi
             while(t_server != m_frameActiveServerList.end())
             {
                 DoremiEngine::Graphic::SpriteData& t_data = (*t_server)->m_serverButton.m_spriteInfo->GetData();
-                t_data.position.y = 0.3f + counter * m_serverBoxSize * 2.0f;
+                t_data.position.y = 0.33f + counter * m_serverBoxSize * 2.0f;
 
-                (*t_server)->NameText.UpdatePosition(XMFLOAT2(0.17f, 0.3f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->StateText.UpdatePosition(XMFLOAT2(0.37f, 0.3f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->MapText.UpdatePosition(XMFLOAT2(0.50f, 0.3f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->NumPlayerText.UpdatePosition(XMFLOAT2(0.72f, 0.3f + counter * m_serverBoxSize * 2.0f));
-                (*t_server)->PingText.UpdatePosition(XMFLOAT2(0.82f, 0.3f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->NameText.UpdatePosition(XMFLOAT2(0.17f, 0.33f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->StateText.UpdatePosition(XMFLOAT2(0.37f, 0.33f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->MapText.UpdatePosition(XMFLOAT2(0.50f, 0.33f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->NumPlayerText.UpdatePosition(XMFLOAT2(0.72f, 0.33f + counter * m_serverBoxSize * 2.0f));
+                (*t_server)->PingText.UpdatePosition(XMFLOAT2(0.82f, 0.33f + counter * m_serverBoxSize * 2.0f));
 
                 ++counter;
                 ++t_server;
