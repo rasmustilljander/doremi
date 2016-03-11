@@ -85,7 +85,6 @@ namespace DoremiEngine
             PxQuat orientation = PxQuat(p_orientation.x, p_orientation.y, p_orientation.z, p_orientation.w);
             PxVec3 dims = PxVec3(p_dims.x, p_dims.y, p_dims.z);
             // Creates the physics object shape thingy, which collides with stuff. Shapes are just objects. I
-            PxMaterial* material = m_utils.m_physicsMaterialManager->GetMaterial(p_materialID);
             // PxShape* shape = m_utils.m_physics->createShape(PxBoxGeometry(dims), *m_utils.m_physicsMaterialManager->GetMaterial(p_materialID));
             PxTransform transform = PxTransform(position, orientation);
             // This body is static
@@ -167,7 +166,6 @@ namespace DoremiEngine
             // Get it into a geometry
             PxTriangleMeshGeometry meshGeometry;
             meshGeometry.triangleMesh = mesh;
-            bool valid = meshGeometry.isValid();
 
             // Create the transform
             PxVec3 position = PxVec3(p_position.x, p_position.y, p_position.z);
@@ -542,12 +540,10 @@ namespace DoremiEngine
 
             PxVec3 particlePos(p_position.x, p_position.y, p_position.z);
             // Check if there's another trigger close by. Shouldn't be done in engine...
-            PxRigidActor* actor = m_bodies[p_id];
 
             /// Get closest shape
             float closestDistance = maxWidth;
             int closestShapeIndex = -1; // Debug flag thingy
-            float newWidth = 0;
             for(size_t i = 0; i < m_maxTriggers; i++)
             {
                 // Get shape

@@ -63,7 +63,7 @@ namespace DoremiEngine
         class PhysicsModuleImplementation : public PhysicsModule, public PxSimulationEventCallback, public PxUserControllerHitReport
         {
         public:
-            PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
+            explicit PhysicsModuleImplementation(const Core::SharedContext& p_sharedContext);
             virtual ~PhysicsModuleImplementation();
 
             /**

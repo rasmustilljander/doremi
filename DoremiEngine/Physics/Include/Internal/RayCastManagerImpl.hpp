@@ -8,7 +8,7 @@ namespace DoremiEngine
         class RayCastManagerImpl : public RayCastManager
         {
         public:
-            RayCastManagerImpl(InternalPhysicsUtils& p_utils);
+            explicit RayCastManagerImpl(InternalPhysicsUtils& p_utils);
             virtual ~RayCastManagerImpl();
             int CastRay(const DirectX::XMFLOAT3& p_origin, const DirectX::XMFLOAT3& p_direction, const float& p_range) override;
             int CastRayAgainstCharacterController(const DirectX::XMFLOAT3& p_origin, const DirectX::XMFLOAT3& p_direction, const float& p_range) override;

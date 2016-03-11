@@ -447,10 +447,7 @@ namespace Doremi
                    (*t_lowerSkeletalAnimationComponent->animationTransitions)["Hit"].startTime == 0)
                 {
                     // Gör samma som överkroppen
-                    std::vector<std::string> t_animationNames = t_upperSkeletalAnimationComponent->skeletalInformation->GetAnimationNames();
-                    size_t numberOfAnimations = t_animationNames.size();
                     float t_lowestElapsedTime = 9999;
-                    int32_t t_index = -1;
                     std::string t_newestClip;
                     t_newestClip = CheckForTransitions(t_lowestElapsedTime, t_upperSkeletalAnimationComponent);
                     if(t_newestClip != "")
@@ -874,7 +871,7 @@ namespace Doremi
                             if(t_lowerSkeletalAnimationComponent->clipName == "Attack" ||
                                (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime > 0.0f)
                             {
-                                std::string t_newestClip = "";
+                                std::string t_newestClip;
                                 float t_lowestTimeElapsed = 9999;
                                 t_newestClip = CheckForTransitions(t_lowestTimeElapsed, t_lowerSkeletalAnimationComponent);
                                 if(t_newestClip != "" && t_newestClip != "Attack")
@@ -902,7 +899,7 @@ namespace Doremi
                                    t_lowerSkeletalAnimationComponent->clipName != "Attack" &&
                                        (*t_lowerSkeletalAnimationComponent->animationTransitions)["Attack"].startTime == 0.0f)
                                 {
-                                    std::string t_newestClip = "";
+                                    std::string t_newestClip;
                                     float t_lowestTimeElapsed = 9999;
                                     t_newestClip = CheckForTransitions(t_lowestTimeElapsed, t_lowerSkeletalAnimationComponent);
                                     if(t_newestClip != "")
@@ -1295,7 +1292,6 @@ namespace Doremi
             DoremiEngine::Graphic::SubModuleManager& submoduleManager = m_sharedContext.GetGraphicModule().GetSubModuleManager();
             submoduleManager.GetShaderManager().SetActiveVertexShader(m_vertexShader);
             submoduleManager.GetShaderManager().SetActivePixelShader(m_pixelShader);
-            int counter = 0;
             for(size_t j = 0; j < t_length; j++)
             {
                 // Check if entity has skeletalanimation

@@ -32,14 +32,10 @@ namespace Doremi
         void PotentialFieldGridCreator::BuildGridUsingPhysicXAndGrid(DoremiEngine::AI::PotentialField* op_field)
         {
             using namespace DirectX;
-            int materialID = m_sharedContext.GetPhysicsModule().GetPhysicsMaterialManager().CreateMaterial(0, 0, 0);
-            Core::EntityHandler& t_entityHandler = Core::EntityHandler::GetInstance();
 
             XMFLOAT2 quadSize = op_field->GetQuadSize();
-            const DoremiEngine::AI::PotentialFieldGridPoint* grid = op_field->GetGrid();
             size_t gridSizeX = op_field->GetNumberOfQuadsWidth();
             size_t gridSizeZ = op_field->GetNumberOfQuadsHeight();
-            float centerGridY = op_field->GetCenter().y;
             for(size_t x = 0; x < gridSizeX; ++x)
             // thread this place TODOKO
             {
@@ -47,7 +43,6 @@ namespace Doremi
                 {
                     XMFLOAT3 sweepOrigin = op_field->GetGridQuadPosition(x, z);
                     XMFLOAT3 boxHalfExtents = XMFLOAT3(quadSize.x * 0.5f, 2, quadSize.y * 0.5);
-                    int myID = MAX_NUM_ENTITIES + (z + x * gridSizeZ);
                     // m_sharedContext.GetPhysicsModule().GetRigidBodyManager().AddBoxBodyStatic(MAX_NUM_ENTITIES + 1, sweepOrigin, XMFLOAT4(0, 0, 0,
                     // 1), boxHalfExtents, materialID);
                     std::vector<int> sweepHits = m_sharedContext.GetPhysicsModule().GetRayCastManager().OverlapBoxMultipleHits(sweepOrigin, boxHalfExtents);

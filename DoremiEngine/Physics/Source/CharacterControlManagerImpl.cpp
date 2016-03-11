@@ -62,7 +62,6 @@ namespace DoremiEngine
             /*
             Some variable that apperas to define when the controller stops moving
             Tweak as necessary. Possibly could be moved to some other place.*/
-            float m_minDistTraveled = 0;
             // EMPTY FILTERS!
             PxControllerFilters filters;
             // Check if controller exists

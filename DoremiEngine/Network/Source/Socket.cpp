@@ -141,8 +141,6 @@ namespace DoremiEngine
         {
             SOCKADDR_IN Adress = {0};
 
-            int SizeOfAdress = sizeof(Adress);
-
             UDP_RELIABLE_CONNECT_MESSAGE t_message;
             uint32_t t_dataSizeReceived = 0;
 
@@ -380,7 +378,6 @@ namespace DoremiEngine
             // If failed, throw exception
             if(Result == SOCKET_ERROR)
             {
-                int Error = WSAGetLastError();
                 std::string Out = "Failed to bind socket with IP: " + p_myAdress.GetIPToString() + " To port: " + std::to_string(p_myAdress.GetPort());
                 throw std::runtime_error(Out.c_str());
             }
@@ -428,7 +425,6 @@ namespace DoremiEngine
             // Bind socket to incomming connection to a specific port and "allowed" IP
             while(bind(m_socketHandle, (SOCKADDR*)&t_adressToUseOnSocket->GetAdress(), sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
             {
-                int Error = WSAGetLastError();
                 t_portToUse++;
                 t_adressToUseOnSocket->SetNetPort(t_portToUse);
             };

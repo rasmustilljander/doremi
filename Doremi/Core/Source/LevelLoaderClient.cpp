@@ -460,7 +460,6 @@ namespace Doremi
                 p_ifs.read((char*)&meshNameSize, sizeof(int));
                 char* meshName = new char[meshNameSize];
                 p_ifs.read((char*)meshName, sizeof(char) * meshNameSize);
-                std::string t_meshName(meshName);
 
                 p_ifs.read((char*)&transformNameSize, sizeof(int));
                 char* transformName = new char[transformNameSize]; // denna meshens transforms, denna mesh ska använda dess transform värden!
@@ -491,7 +490,6 @@ namespace Doremi
                 meshData.indexNormals = new int[meshData.indCount];
                 meshData.indexUVs = new int[meshData.indCount];
                 meshData.trianglesPerFace = new int[meshData.triCount];
-                vector<XMFLOAT3> poss;
                 // Läs meshdata och spara ner
                 p_ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.vertCount);
                 p_ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.normalCount);

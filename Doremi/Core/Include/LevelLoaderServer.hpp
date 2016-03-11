@@ -9,7 +9,7 @@ namespace Doremi
         class LevelLoaderServer : public LevelLoader
         {
         public:
-            LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LevelLoaderServer(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             virtual ~LevelLoaderServer();
 

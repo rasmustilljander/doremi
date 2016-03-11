@@ -18,7 +18,7 @@ namespace Doremi
         {
             DoremiEngine::AI::PotentialGroup* Group;
 
-            AIGroupComponent(DoremiEngine::AI::PotentialGroup* p_group) : Group(p_group) {}
+            explicit AIGroupComponent(DoremiEngine::AI::PotentialGroup* p_group) : Group(p_group) {}
             AIGroupComponent() : Group(nullptr) {}
         };
     }

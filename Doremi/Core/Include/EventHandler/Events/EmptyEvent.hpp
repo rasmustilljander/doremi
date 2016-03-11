@@ -11,7 +11,7 @@ namespace Doremi
         struct EmptyEvent : public Event
         {
             EmptyEvent() : Event(EventType::Undefined) {}
-            EmptyEvent(const EventType& p_eventType) : Event(p_eventType) {}
+            explicit EmptyEvent(const EventType& p_eventType) : Event(p_eventType) {}
             /**
                 Write object to stream
             */

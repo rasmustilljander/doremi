@@ -209,10 +209,10 @@ namespace DoremiEngine
             {
                 int x = quadsToCheck[i].x;
                 int y = quadsToCheck[i].y;
-                float quadCharge;
 
                 if(x >= 0 && x < m_numberOfQuadsWidth && y >= 0 && y < m_numberOfQuadsHeight)
                 {
+                    float quadCharge;
                     if(m_grid[x + y * m_numberOfQuadsWidth].occupied)
                     {
                         continue;

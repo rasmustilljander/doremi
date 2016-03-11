@@ -686,11 +686,6 @@ namespace DoremiEngine
             m_deviceContext->OMSetDepthStencilState(p_depthStencilState, 0);
             m_deviceContext->RSSetState(p_rasterizerState);
 
-            // Setup vertex variables
-            const uint32_t stride = 0;
-            const uint32_t offset = 0;
-            ID3D11Buffer* vertexData = {0};
-
             // If nothing to draw return;
             if(spriteRenderData.size() == 0)
             {

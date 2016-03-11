@@ -87,7 +87,7 @@ namespace Doremi
         {
             if(p_event->eventType == EventType::EntityCreated)
             {
-                EntityCreatedEvent* p_entityCreated = (EntityCreatedEvent*)p_event;
+                EntityCreatedEvent* p_entityCreated = static_cast<EntityCreatedEvent*>(p_event);
 
                 if(p_entityCreated->bluepirnt == Blueprints::NetworkPlayerEntity)
                 {
@@ -113,7 +113,7 @@ namespace Doremi
             }
             else if(p_event->eventType == EventType::RemoveEntity)
             {
-                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
+                RemoveEntityEvent* p_removeEvent = static_cast<RemoveEntityEvent*>(p_event);
 
                 RemoveEntity(p_removeEvent->entityID);
             }

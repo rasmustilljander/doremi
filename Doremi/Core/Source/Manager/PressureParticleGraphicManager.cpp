@@ -63,7 +63,6 @@ namespace Doremi
                     ParticlePressureComponent* particleComp = EntityHandler::GetInstance().GetComponentFromStorage<ParticlePressureComponent>(i);
 
                     // Render thingies
-                    RenderComponent* renderComp = EntityHandler::GetInstance().GetComponentFromStorage<RenderComponent>(i);
                     for(size_t j = 0; j < returnPositions.size(); j++)
                     {
                         DirectX::XMFLOAT4X4 transMat;

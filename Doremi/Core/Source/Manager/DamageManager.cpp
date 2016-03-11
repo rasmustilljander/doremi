@@ -42,7 +42,6 @@ namespace Doremi
         void DamageManager::Update(double p_dt)
         {
             std::map<uint32_t, PlayerServer*>& t_players = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap();
-            EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 
             // Check if the player was hit by any enemy bullet
             std::vector<DoremiEngine::Physics::CollisionPair> t_collisionPairs = m_sharedContext.GetPhysicsModule().GetCollisionPairs();
@@ -115,7 +114,6 @@ namespace Doremi
 
             // Check if the player hit any enemies
             // Look through our entities for the enemies
-            size_t entitiesLength = EntityHandler::GetInstance().GetLastEntityIndex();
 
             int mask = (int)ComponentType::Health | (int)ComponentType::Transform | (int)ComponentType::CharacterController;
             if(!m_friendlyFire)

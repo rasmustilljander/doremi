@@ -42,11 +42,11 @@ namespace Doremi
             for(size_t i = 0; i < length; i++)
             {
                 // Some debug bools just to test various effects. We'll have these read some other way later
-                bool iceEffect = false;
-                bool fireEffect = false;
 
                 if(EntityHandler::GetInstance().HasComponents(i, mask))
                 {
+                    bool iceEffect = false;
+                    bool fireEffect = false;
                     DoremiEngine::Physics::CharacterControlManager& charControlManager = m_sharedContext.GetPhysicsModule().GetCharacterControlManager();
                     /// 1 Get comp
                     MovementComponent* movementComp = EntityHandler::GetInstance().GetComponentFromStorage<MovementComponent>(i);

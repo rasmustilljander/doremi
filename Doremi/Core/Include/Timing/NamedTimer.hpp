@@ -8,7 +8,7 @@ namespace Doremi
     {
         struct NamedTimerRAII
         {
-            NamedTimerRAII(const std::string& p_name) : name(p_name) { TimerManager::GetInstance().StartTimer(name); }
+            explicit NamedTimerRAII(const std::string& p_name) : name(p_name) { TimerManager::GetInstance().StartTimer(name); }
 
             ~NamedTimerRAII() { TimerManager::GetInstance().StopTimer(name); }
             std::string name;

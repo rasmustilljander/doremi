@@ -169,7 +169,8 @@ namespace Doremi
                 case EventType::PlaySound:
                 {
                     // Cast the event to the correct format
-                    PlaySoundEvent* t_event = (PlaySoundEvent*)p_event;
+                    // PlaySoundEvent* t_event = (PlaySoundEvent*)p_event;
+                    PlaySoundEvent* t_event = static_cast<PlaySoundEvent*>(p_event);
                     uint32_t t_entityID = t_event->entityID;
                     if(!EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::Audio))
                     {
@@ -199,7 +200,8 @@ namespace Doremi
                 case EventType::StopSound:
                 {
                     // Cast the event to the correct format
-                    StopSoundEvent* t_event = (StopSoundEvent*)p_event;
+                    // StopSoundEvent* t_event = (StopSoundEvent*)p_event;
+                    StopSoundEvent* t_event = static_cast<StopSoundEvent*>(p_event);
                     uint32_t t_entityID = t_event->entityID;
                     uint32_t t_soundType = t_event->soundType;
                     if(EntityHandler::GetInstance().HasComponents(t_entityID, (int)ComponentType::AudioActive))

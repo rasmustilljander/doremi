@@ -46,7 +46,6 @@ namespace DoremiEngine
             if(m_fmodResult != 0)
             {
                 // return false;
-                int derp = 0;
             }
 
             // No sound cards (disable sound)
@@ -55,7 +54,6 @@ namespace DoremiEngine
                 m_fmodResult = m_fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
                 if(m_fmodResult != 0)
                 {
-                    int derp = 0;
                 }
                 m_fmodResult = m_fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
                 ERRCHECK(m_fmodResult);
@@ -143,10 +141,6 @@ namespace DoremiEngine
             ERRCHECK(m_fmodResult);
             m_fmodResult = m_fmodSoundBuffer[p_soundIDToCopy]->lock(0, 44100 * p_length * chans * sizeof(short), &testStart, &testest, &testLength, 0);
             ERRCHECK(m_fmodResult);
-            if(testest == nullptr)
-            {
-                int hejd = 0;
-            }
             FMOD::Sound* t_fmodSound;
             FMOD_CREATESOUNDEXINFO exinfo;
             memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
@@ -204,7 +198,6 @@ namespace DoremiEngine
                 m_fmodSoundBuffer[i]->getName(t_name, maxNameLength);
                 std::string t_string;
                 t_string = std::string(t_name);
-                size_t derp = t_string.size();
                 size_t hej = t_soundName.find_last_of("/", t_string.size());
                 t_soundName.erase(0, hej + 1);
                 if(t_name == t_soundName)

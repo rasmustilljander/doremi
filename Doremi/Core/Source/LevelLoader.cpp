@@ -264,7 +264,6 @@ namespace Doremi
                 meshData.indexNormals = new int[meshData.indCount];
                 meshData.indexUVs = new int[meshData.indCount];
                 meshData.trianglesPerFace = new int[meshData.triCount];
-                vector<XMFLOAT3> poss;
                 ifs.read((char*)meshData.positions, sizeof(XMFLOAT3) * meshData.vertCount);
                 ifs.read((char*)meshData.normals, sizeof(XMFLOAT3) * meshData.normalCount);
                 ifs.read((char*)meshData.uvs, sizeof(XMFLOAT2) * meshData.UVCount);
@@ -393,7 +392,6 @@ namespace Doremi
             XMVECTOR posVec;
             XMFLOAT3 scaledPos;
 
-            const int nrVertices = p_data.normalCount;
             for(int i = 0; i < p_data.indCount; i += 3)
 
             {

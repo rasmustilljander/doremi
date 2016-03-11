@@ -85,7 +85,6 @@ namespace Doremi
         void EntityFactory::ScrapEntity(int p_entityID)
         {
             DoremiEngine::Physics::PhysicsModule& physicsModule = m_sharedContext.GetPhysicsModule();
-            EntityManager* tEntityManager = EntityManager::GetInstance();
             ComponentTable* tComponentTable = ComponentTable::GetInstance();
             if(tComponentTable->HasComponent(p_entityID, (int)ComponentType::RigidBody))
             {
@@ -114,7 +113,6 @@ namespace Doremi
         void EntityFactory::CreateComponents(EntityID p_entityID, Blueprints p_blueprintID)
         {
             EntityBlueprint tComponentMap = mEntityBlueprints[p_blueprintID];
-            EntityManager* tEntityManager = EntityManager::GetInstance();
             ComponentTable* tComponentTable = ComponentTable::GetInstance();
 
             for(EntityBlueprint::iterator iter = tComponentMap.begin(); iter != tComponentMap.end(); ++iter)
@@ -347,18 +345,12 @@ namespace Doremi
                     {
                         (*t_skeletalComponent->animationTransitions)[t_animationNames[i]].startTime = 0.0f;
                     }
-                    int hej = 0;
                 }
                 else if(iter->first == ComponentType::LifeTime)
                 {
                     memcpy(GetComponent<LifeTimeComponent>(p_entityID), iter->second, sizeof(LifeTimeComponent));
                 }
                 // Add bitmask. This is now done last due to transform being a dick
-                if(iter->first == ComponentType::LowerBodySkeletalAnimation)
-                {
-                    LowerSkeletalAnimationComponent* t_skeletalComponent = GetComponent<LowerSkeletalAnimationComponent>(p_entityID);
-                    int hej = 0;
-                }
                 tComponentTable->AddComponent(p_entityID, (int)iter->first);
             }
         }

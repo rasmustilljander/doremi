@@ -22,7 +22,7 @@ namespace Doremi
         class LevelLoaderClient : public LevelLoader
         {
         public:
-            LevelLoaderClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LevelLoaderClient(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             virtual ~LevelLoaderClient();
 

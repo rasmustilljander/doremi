@@ -50,21 +50,20 @@ namespace Doremi
 
         void EntitySpawnManager::Update(double p_dt)
         {
-            static int DEBUGcount = 0;
             EntityHandler& entityHandler = EntityHandler::GetInstance();
 
             // if there are any players
             bool t_playersExist = static_cast<PlayerHandlerServer*>(PlayerHandler::GetInstance())->GetPlayerMap().size() > 0;
 
             // Loop through all entities
-            const size_t length = EntityHandler::GetInstance().GetLastEntityIndex();
+            const size_t length = entityHandler.GetLastEntityIndex();
             for(size_t i = 0; i < length; i++)
             {
                 // Check that the current entity has the relevant components
-                if(EntityHandler::GetInstance().HasComponents(i, (int)ComponentType::EntitySpawner) | (int)ComponentType::Transform)
+                if(entityHandler.HasComponents(i, (int)ComponentType::EntitySpawner) | (int)ComponentType::Transform)
                 {
                     // We've found an entity spawner
-                    EntitySpawnComponent* spawnComp = EntityHandler::GetInstance().GetComponentFromStorage<EntitySpawnComponent>(i);
+                    EntitySpawnComponent* spawnComp = entityHandler.GetComponentFromStorage<EntitySpawnComponent>(i);
                     // Check if its a timed spawned
                     if(spawnComp->type == SpawnerType::TimedSpawner)
                     {
@@ -108,7 +107,7 @@ namespace Doremi
                     TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
                     // Spawn inside the spawner. This might be changed in the future
                     XMFLOAT3 spawnPosition = transComp->position;
-                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::RangedEnemyEntity, spawnPosition);
+                    int newID = entityHandler.CreateEntity(Blueprints::RangedEnemyEntity, spawnPosition);
 
                     SpecialEntityCreatedEvent* RangedEnemyCreatedEvent = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::RangedEnemyCreated);
 
@@ -120,7 +119,7 @@ namespace Doremi
                     TransformComponent* transComp = entityHandler.GetComponentFromStorage<TransformComponent>(p_spawnerID);
                     // Spawn inside the spawner. This might be changed in the future
                     XMFLOAT3 spawnPosition = transComp->position;
-                    int newID = EntityHandlerServer::GetInstance().CreateEntity(Blueprints::MeleeEnemyEntity, spawnPosition);
+                    int newID = entityHandler.CreateEntity(Blueprints::MeleeEnemyEntity, spawnPosition);
 
                     SpecialEntityCreatedEvent* MeleeEnemyCreatedEvent = new Core::SpecialEntityCreatedEvent(newID, Core::EventType::MeleeEnemyCreated);
 

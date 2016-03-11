@@ -69,7 +69,7 @@ namespace Doremi
         {
             if(p_event->eventType == EventType::RemoveEntity)
             {
-                RemoveEntityEvent* p_removeEvent = (RemoveEntityEvent*)p_event;
+                RemoveEntityEvent* p_removeEvent = static_cast<RemoveEntityEvent*>(p_event);
                 EntityFactory::GetInstance()->ScrapEntity(p_removeEvent->entityID);
                 EntityManager::GetInstance()->RemoveEntity(p_removeEvent->entityID);
             }

@@ -35,10 +35,6 @@ namespace DoremiEngine
             m_skeletalInformationManager = new SkeletalAnimationManagerImpl(m_graphicContext);
             m_skeletalInformationManager->Initialize();
             m_cameraManager->Initialize();
-
-            // TODOKO Should not be here!! or should it? For standard shaders? Maybee in shadermanager
-
-            ComputeShader* cshader = m_shaderManager->BuildComputeShader("FrustumComputeShader.hlsl");
         }
 
         MeshManager& SubModuleManagerImpl::GetMeshManager() { return *m_meshManager; }

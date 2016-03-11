@@ -62,7 +62,7 @@ namespace Doremi
             /**
                 TODO comment
             */
-            LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit LevelLoader(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
             /**
                 TODO comment

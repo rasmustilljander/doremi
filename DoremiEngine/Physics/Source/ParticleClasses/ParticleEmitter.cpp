@@ -73,7 +73,6 @@ namespace DoremiEngine
             // Kolla om vi har några particlar som är valid annars onödigt att ens börja uppdatera
             if(m_readData->validParticleRange > 0)
             {
-                int length = m_readData->validParticleRange;
 
                 for(PxU32 i = 0; i <= (m_readData->validParticleRange - 1) >> 5; i++)
                 {
@@ -121,7 +120,6 @@ namespace DoremiEngine
             PxStrideIterator<const PxVec3> positions = m_readData->positionBuffer;
             PxStrideIterator<const PxVec3> velocities = m_readData->velocityBuffer;
             PxStrideIterator<const PxParticleFlags> flags = m_readData->flagsBuffer;
-            vector<XMFLOAT3> velocitiesVector;
 
             vector<int> indicesOfParticlesToBeReleased;
 
@@ -166,9 +164,9 @@ namespace DoremiEngine
         void ParticleEmitter::UpdateParticleEmission(float p_dt)
         {
             // Factor to cause some more spray
-            float sprayFactor = 0.1; // TODOCONFIG
             if(m_this.m_active)
             {
+                float sprayFactor = 0.1; // TODOCONFIG
                 // Update time since last particle wave was spawned
                 m_timeSinceLast += p_dt;
                 if(m_timeSinceLast > m_this.m_emissionRate)

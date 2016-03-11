@@ -21,7 +21,7 @@ namespace DoremiEngine
         {
         public:
             // TODOKO add documents
-            MeshManagerImpl(const GraphicModuleContext& p_graphicContext);
+            explicit MeshManagerImpl(const GraphicModuleContext& p_graphicContext);
             virtual ~MeshManagerImpl();
             MeshInfo* BuildMeshInfo(const std::string& p_fileName) override;
             MeshInfo* BuildQuadMeshInfo(const std::string& p_fileName) override;

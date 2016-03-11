@@ -19,7 +19,7 @@ namespace Doremi
         class PotentialFieldGridCreator
         {
         public:
-            PotentialFieldGridCreator(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit PotentialFieldGridCreator(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~PotentialFieldGridCreator();
             void BuildGridUsingPhysicXAndGrid(DoremiEngine::AI::PotentialField* op_field);
 

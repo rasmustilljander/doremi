@@ -22,7 +22,7 @@ namespace Doremi
             void CreateSkyBox();
             // If the manager is a Subscriber, inherits the subscriber class, it will have to override OnEvent funciton
         private:
-            SkyBoxHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
+            explicit SkyBoxHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
             ~SkyBoxHandler();
 
             static SkyBoxHandler* m_sigleton;

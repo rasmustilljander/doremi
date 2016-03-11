@@ -10,7 +10,7 @@ namespace Doremi
         {
             bool isControllable;
             PlayerComponent() {}
-            PlayerComponent(bool p_isControllable) : isControllable(p_isControllable) {}
+            explicit PlayerComponent(bool p_isControllable) : isControllable(p_isControllable) {}
         };
     }
 }

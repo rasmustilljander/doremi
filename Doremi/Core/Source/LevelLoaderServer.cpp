@@ -113,7 +113,6 @@ namespace Doremi
         {
             bool r_shouldCookStaticPhysics = false;
 
-            bool t_builtPhysics = false;
 
             const ObjectCouplingInfo& meshCoupling = m_meshCoupling[p_meshCouplingID];
             DoremiEditor::Core::TransformData transformationData = m_transforms[meshCoupling.transformName];

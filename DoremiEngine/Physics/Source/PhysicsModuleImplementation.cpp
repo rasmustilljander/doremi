@@ -35,10 +35,6 @@ namespace DoremiEngine
             // Make some other important thingies
             m_utils.m_characterControlManager->SetCallbackClass(this);
 
-            if(m_utils.m_physics->getPvdConnectionManager() == NULL)
-            {
-                int failed = 1;
-            }
             PxVisualDebuggerConnection* theConnection =
                 PxVisualDebuggerExt::createConnection(m_utils.m_physics->getPvdConnectionManager(), "127.0.0.1", 5425, 100,
                                                       PxVisualDebuggerExt::getAllConnectionFlags());
@@ -88,11 +84,6 @@ namespace DoremiEngine
                                   PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
         {
 
-
-            if(filterData0.word2 == 8 || filterData1.word2 == 8)
-            {
-                int derp = 5;
-            }
 
             // generate contacts for all that were not filtered above
             pairFlags = PxPairFlag::eCONTACT_DEFAULT;
@@ -372,10 +363,6 @@ namespace DoremiEngine
         {
             CollisionPair collisionPair;
             unordered_map<PxController*, int> idsByControllers = m_utils.m_characterControlManager->GetIdsByControllers();
-            PxController* firstActor = hit.controller;
-            PxController* secondActor = hit.other;
-            int first = idsByControllers[firstActor];
-            int second = idsByControllers[secondActor];
 
             collisionPair.firstID = m_utils.m_characterControlManager->GetIdsByControllers().find(hit.controller)->second;
             collisionPair.secondID = m_utils.m_characterControlManager->GetIdsByControllers().find(hit.other)->second;

@@ -60,7 +60,6 @@ namespace Doremi
 
         void CameraHandler::UpdateInput(double p_dt)
         {
-            DoremiEngine::Graphic::CameraManager& t_graphicModuleCameraManager = m_sharedContext.GetGraphicModule().GetSubModuleManager().GetCameraManager();
             PlayerHandlerClient* t_playerHandler = static_cast<PlayerHandlerClient*>(PlayerHandler::GetInstance());
             InputHandlerClient* inputHandler = t_playerHandler->GetInputHandler();
 
