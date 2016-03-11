@@ -28,7 +28,7 @@ namespace Doremi
             treeRoot.center = DirectX::XMFLOAT3(-485, 158, 2041);
             treeRoot.center = DirectX::XMFLOAT3(0, 0, 0); // TODOEA Borde läsas in från någonting. TODOCONFIG kanske // treeRoot.center =
             // DirectX::XMFLOAT3(-485, 158, 2041)
-            m_allreadyBuilt = false;
+            m_allreadyBuilt = true;
             // Start up for the oct tree. Without this function we don't have anything to start with
             // CreateAndDivideTheChildren(treeRoot);
         };
