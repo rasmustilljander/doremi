@@ -31,7 +31,7 @@
   !define MUI_WELCOMEFINISHPAGE_BITMAP "InstallerImageLarge.bmp" 
   !define MUI_HEADERIMAGE 
   !define MUI_HEADERIMAGE_BITMAP "InstallerImageSmall.bmp"
-  !define MUI_ICON "../Icons/ArgeeNBeats.ico" 
+  !define MUI_ICON "../Icons/AnBIcon_128.ico" 
 
 ;--------------------------------
 ;Pages
