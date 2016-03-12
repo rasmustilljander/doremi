@@ -3,8 +3,13 @@
 #include <Adress.hpp>
 
 // Standard libraries
-
+#if PLATFORM == PLATFORM_WINDOWS
 #include <WinSock2.h>
+#elif PLATFORM == PLATFORM_UNIX
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <fcntl.h>
+#endif
 
 namespace DoremiEngine
 {

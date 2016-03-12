@@ -3,9 +3,6 @@
 // Project specific
 #include <Doremi/Core/Include/Manager/Manager.hpp>
 
-// Standard libraries
-#include <map>
-#include <list>
 
 namespace DoremiEngine
 {

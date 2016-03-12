@@ -125,7 +125,7 @@ namespace Doremi
                 Read bool (one bit)
             */
             virtual bool ReadBool() = 0;
-
+#if PLATFORM == PLATFORM_WINDOWS
             /**
                 Write DirectX float2
             */
@@ -167,7 +167,7 @@ namespace Doremi
                 TODOCM fix rotation quaternion packing reading
             */
             virtual DirectX::XMFLOAT4 ReadRotationQuaternion() = 0;
-
+#endif
             /**
                 Write string
             */

@@ -16,8 +16,6 @@
 // Streamer
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
-// Handler
-#include <Doremi/Core/Include/NetworkEventSender.hpp>
 
 #include <Doremi/Core/Include/SequenceMath.hpp>
 

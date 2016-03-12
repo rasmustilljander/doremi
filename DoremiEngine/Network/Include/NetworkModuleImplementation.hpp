@@ -5,9 +5,9 @@
 
 
 #ifdef WIN32
-#define PLATFORM 1
+#define PLATFORM PLATFORM_WINDOWS
 #else // Add mac as well
-#define PLATFORM 2
+#define PLATFORM PLATFORM_UNIX
 #endif
 
 // Project specific

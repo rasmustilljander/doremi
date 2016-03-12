@@ -7,10 +7,6 @@
 // Streamer
 #include <Doremi/Core/Include/Streamers/NetworkStreamer.hpp>
 
-// Handlers
-#include <Doremi/Core/Include/PlayerHandlerServer.hpp>
-#include <Doremi/Core/Include/InputHandlerServer.hpp>
-
 // Net messages
 #include <Doremi/Core/Include/Network/NetMessages.hpp>
 #include <Doremi/Core/Include/Network/NetworkMessagesMaster.hpp>
@@ -20,9 +16,6 @@
 
 // Standard
 #include <iostream> // TODOCM remove after test
-#include <vector>
-#include <algorithm>
-#include <time.h>
 
 namespace Doremi
 {

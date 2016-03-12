@@ -138,6 +138,7 @@ namespace Doremi
             */
             bool ReadBool() override;
 
+#if PLATFORM == PLATFORM_WINDOWS
             /**
                 Write DirectX float2
             */
@@ -168,6 +169,7 @@ namespace Doremi
             */
             DirectX::XMFLOAT4 ReadFloat4() override;
 
+
             /**
                 Write DirectX quaternion, packed into 3 values and 2 bit
                 TODOCM fix rotation quaternion packing writing
@@ -179,7 +181,7 @@ namespace Doremi
                 TODOCM fix rotation quaternion packing reading
             */
             DirectX::XMFLOAT4 ReadRotationQuaternion() override;
-
+#endif
             /**
                 Write string
             */

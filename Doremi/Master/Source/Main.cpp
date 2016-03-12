@@ -4,12 +4,12 @@
 #define PLATFORM_WINDOWS 1
 #define PLATFORM_UNIX 2
 
+
+#ifdef _WIN32
+#define PLATFORM PLATFORM_WINDOWS
+#else // Add mac as well
 #define PLATFORM PLATFORM_UNIX
-//#ifdef _WIN32
-//#define PLATFORM PLATFORM_WINDOWS
-//#else // Add mac as well
-//
-//#endif
+#endif
 
 
 // Third party

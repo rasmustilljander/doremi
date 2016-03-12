@@ -413,7 +413,7 @@ namespace Doremi
 
             return (bool)Value;
         }
-
+#if PLATFORM == PLATFORM_WINDOWS
         bool NetworkStreamer::WriteFloat2(DirectX::XMFLOAT2 p_Value)
         {
             WriteFloat(p_Value.x);
@@ -473,6 +473,7 @@ namespace Doremi
         bool NetworkStreamer::WriteRotationQuaternion(DirectX::XMFLOAT4 p_Value) { return WriteFloat4(p_Value); }
 
         DirectX::XMFLOAT4 NetworkStreamer::ReadRotationQuaternion() { return ReadFloat4(); }
+#endif
 
         bool NetworkStreamer::WriteString(std::string p_Value)
         {

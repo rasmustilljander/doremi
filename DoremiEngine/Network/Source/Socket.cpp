@@ -409,7 +409,7 @@ namespace DoremiEngine
             int nonBlocking = 1;
             if(fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
             {
-                printf("failed to set non-blocking\n");
+                std::cout << "failed to set non-blocking" << std::endl;
             }
 #endif
         }
