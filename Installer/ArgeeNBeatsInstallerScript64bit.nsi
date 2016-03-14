@@ -47,7 +47,7 @@
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
   !insertmacro MUI_PAGE_INSTFILES
-  !define MUI_FINISHPAGE_RUN "Client.exe"
+  !define MUI_FINISHPAGE_RUN "Run.bat"
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
   !insertmacro MUI_PAGE_FINISH
   
@@ -76,6 +76,7 @@ Section "ArgeeNBeats" SecArgeeNBeats
   File "..\Server.exe"
   File "..\Master.exe"
   File "..\LoggerProcess.exe"
+  File "Run.bat"
   File "README.txt"
   File "..\External\x64\*.dll"
   
