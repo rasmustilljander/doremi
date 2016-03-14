@@ -24,7 +24,7 @@ License
 The MIT License (MIT)
 
 Copyright (c) 2015 Eric Ahlström, John Bergsten, Lucas Holmqvist, Simon Hyltegård, Christian Markowicz, Rebecca Künkel, Rasmus Tilljander, Joakim Westgren, Konrad Öhman
-When there are too many copyright holders for the same file the copyright holder will be set to "Do-Re-Mi Group".
+When there are too many copyright holders for the same file the copyright holder will be set to "ArgeeNBeats Group".
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
