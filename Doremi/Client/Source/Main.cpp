@@ -84,7 +84,7 @@ int main(int argc, const char* argv[])
     // TODORT
     // This row is required later as it disables the standard output terminal, we do now want that.
     // However, as people are currently using cout for debugging we'll need this for the moment.
-    // FreeConsole();
+    FreeConsole();
 
     __try
     {
