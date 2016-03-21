@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <String>
 
 namespace Doremi
 {
@@ -8,10 +9,12 @@ namespace Doremi
     {
         namespace Chrono
         {
+            class TimerManager;
 
             class Timer
             {
             public:
+                Timer(TimerManager* p_timerManager, const std::string& p_name);
                 Timer();
                 virtual ~Timer();
 
@@ -32,6 +35,8 @@ namespace Doremi
 
             private:
                 std::chrono::time_point<std::chrono::high_resolution_clock> m_current, m_previous;
+                TimerManager* m_timerManager;
+                std::string m_name;
             };
         }
     }

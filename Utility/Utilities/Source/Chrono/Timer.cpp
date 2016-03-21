@@ -1,4 +1,5 @@
 #include <Chrono/Timer.hpp>
+#include <Chrono/TimerManager.hpp>
 
 namespace Doremi
 {
@@ -6,9 +7,18 @@ namespace Doremi
     {
         namespace Chrono
         {
-            Timer::Timer() { Reset(); }
+            Timer::Timer() : m_timerManager(nullptr) { Reset(); }
+            Timer::Timer(TimerManager* p_timerManager, const std::string& p_name) : m_timerManager(p_timerManager), m_name(p_name) { Reset(); }
 
-            Timer::~Timer() {}
+            Timer::~Timer()
+            {
+                if(m_timerManager != nullptr)
+                {
+                    Tick();
+                    m_timerManager->SaveTime(m_name, GetElapsedTimeInSeconds());
+                    m_timerManager = nullptr;
+                }
+            }
 
             void Timer::Reset() { Tick(); }
 

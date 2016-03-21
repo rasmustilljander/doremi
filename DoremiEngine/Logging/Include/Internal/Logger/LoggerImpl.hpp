@@ -18,6 +18,11 @@ namespace Doremi
             enum class LogTag : uint8_t;
             enum class LogLevel : uint8_t;
         }
+
+        namespace Chrono
+        {
+            class TimerManager;
+        }
     }
 }
 
@@ -61,6 +66,7 @@ namespace DoremiEngine
             Doremi::Utilities::Memory::ArbitrarySizeCirclebuffer* m_outGoingBuffer;
             Doremi::Utilities::IO::FileMap* m_fileMap;
             Doremi::Utilities::IO::Mutex* m_mutex;
+            Doremi::Utilities::Chrono::TimerManager* m_timerManager;
             bool* m_applicationRunning;
             ThreadMetaData* m_threadMetaData;
             int m_uniqueId;
