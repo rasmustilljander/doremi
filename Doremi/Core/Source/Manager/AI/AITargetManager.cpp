@@ -159,7 +159,14 @@ namespace Doremi
                                     wasBullet = true;
                                 }
                             }
-                            if(bodyHit == playerID || wasBullet)
+                            bool wasNonRenderObject = false;
+                            // object which was hit doesn't have render component - don't collide with it
+                            if(!EntityHandler::GetInstance().HasComponents(bodyHit, (int)ComponentType::Render))
+                            {
+                                wasNonRenderObject = true;
+                            }
+
+                            if(bodyHit == playerID || wasBullet || wasNonRenderObject)
                             {
                                 closestDistance = distanceToPlayer;
                                 closestVisiblePlayer = pairs.second->m_playerEntityID;

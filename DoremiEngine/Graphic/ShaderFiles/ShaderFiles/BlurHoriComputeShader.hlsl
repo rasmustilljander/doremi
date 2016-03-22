@@ -1,9 +1,11 @@
 //#include "CommonInclude.hlsl"
-//#define BLOCK_SIZE 256//
+//#define BLOCK_SIZE 256
+//
 //
 //Texture2D glowmap : register (t0);
 //RWTexture2D<float4> output : register (u0);
-////
+//
+//
 //cbuffer cbFixed
 //{
 //    static const int BLUR_SIZE = 5;
@@ -48,12 +50,14 @@
 
 
 #include "CommonInclude.hlsl"
-#define BLOCK_SIZE 256
+#define BLOCK_SIZE 256
+
 
 Texture2D glowmap : register (t0);
 Texture2D color : register(t1);
 RWTexture2D<float4> output : register (u0);
-
+
+
 cbuffer cbFixed
 {
     static const int BLUR_SIZE = 5;
@@ -110,12 +114,12 @@ void CS_main(ComputeShaderInput input)
         int k = input.groupThreadID.x + BLUR_SIZE + i;
         blurColor += gWeights[i + BLUR_SIZE] * gCache[k];
     }
-
-    output[topLeftBoxID.xy] = blurColor + color[topLeftBoxID.xy];
+    output[input.dispatchThreadID.xy] = blurColor + color[input.dispatchThreadID.xy];
+    /*output[topLeftBoxID.xy] = blurColor + color[topLeftBoxID.xy];
     output[int2(topLeftBoxID.x + 1, topLeftBoxID.y)] = blurColor + color[int2(topLeftBoxID.x + 1, topLeftBoxID.y)];
     output[int2(topLeftBoxID.x,     topLeftBoxID.y + 1)] = blurColor + color[int2(topLeftBoxID.x, topLeftBoxID.y + 1)];
     output[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)] = blurColor + color[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)];
-
+*/
     // I did for 4 .. for some reason
 
 }

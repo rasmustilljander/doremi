@@ -10,6 +10,8 @@ struct PixelInputType
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
     float3 cameraPos : CAMERAPOS;
+    float3 viewDir : VIEWDIR;
+    float fogFactor : FOG;
 };
 
 struct PixelOutputType
@@ -89,14 +91,27 @@ float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
 {
     float3 lightDir;
     float lightIntensity;
+    float4 specular;
+    float4 reflection;
+    float specularPower = 2; //denna bör material påverka sen
+    
+    // Initialize the specular color.
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     lightDir = -l.direction;
     lightIntensity = saturate(dot(input.normal, lightDir));
-    return l.color * lightIntensity * texcolor*  l.intensity;
-}
-/*
+    if (lightIntensity > 0.0)
+    {
+        // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
+        reflection = float4(normalize(2 * lightIntensity * input.normal - lightDir).xyz, 0);
 
-*/
+        // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+        specular = pow(saturate(dot(reflection, input.viewDir)), specularPower);
+        return float3(((l.color * l.intensity * texcolor) + specular).xyz);
+    }
+
+    return float3(0, 0, 0);
+}
 
 float3 CalcSpotLight(PixelInputType input, Light l)
 {
@@ -200,9 +215,14 @@ PixelOutputType PS_main(PixelInputType input)
     //rgb += skymapReflection * specEccentricity;
 
     Light directionalLight;
-    directionalLight.intensity = 1.2f;
+    directionalLight.intensity = 0.7f;
     directionalLight.color = float3(0.2f ,0.2f ,0.7f);
     directionalLight.direction = normalize(float3(0.3, -0.8, 0));
+    rgb += CalcDirectionalLight(input, directionalLight, texcolor);
+
+    directionalLight.intensity = 0.3f;
+    directionalLight.color = float3(0.7f, 0.2f, 0.2f);
+    directionalLight.direction = normalize(float3(-0.4, -0.8, 0.1));
     rgb += CalcDirectionalLight(input, directionalLight, texcolor);
 
     for (int i = index; i < index + value; i++)
@@ -220,11 +240,29 @@ PixelOutputType PS_main(PixelInputType input)
             rgb += CalcPointLight2(input, l, texcolor.rgb);
     }
 
-    if (glowcolor.r < 0.5)
-        output.glow = float4(0, 0, 0, 0);
-    else
-        output.glow = texcolor * glowcolor.r;
+    float4 fogColor = float4(0.5f, 0.5f, 0.6f, 1.0f);
 
+    output.diffuse = float4(rgb, 1) + texcolor * 0.17f;
+    output.diffuse = input.fogFactor * output.diffuse + (1.0 - input.fogFactor) * fogColor; //lägg på fog
+    
+    if (glowcolor.r < 0.5) //vill inte ha bloom och glow samtidigt
+    {
+        if (output.diffuse.r > 0.9 && output.diffuse.g > 0.9 && output.diffuse.b > 0.9) { //bloom
+            output.diffuse = float4(1, 1, 1, 0);
+
+            //float maxColorValue = max(output.diffuse.r, output.diffuse.g);
+            //maxColorValue = max(maxColorValue, output.diffuse.b) - 0.6f; //dra bort lite så den inte skiner som faan
+            output.glow = float4(0.3, 0.3, 0.3, 0);
+        }
+        else
+            output.glow = float4(0, 0, 0, 0);
+    }
+    else {
+        if(glowcolor.r > 0.8)
+            output.glow = texcolor * glowcolor.r;
+        else
+            output.glow = texcolor * (glowcolor.r - 0.2);
+    }
     //if (glowcolor.r < 0.5 &&
     //    glowcolor.g < 0.5 && glowcolor.b < 0.5)
     //    output.glow = float4(0, 0, 0, 0);
@@ -232,9 +270,7 @@ PixelOutputType PS_main(PixelInputType input)
     //    output.glow = saturate(normalize(texcolor) * glowcolor.r) * 2;
 
     //output.diffuse = float4(rgb, 1) + texcolor * 0.25*;
-
-
-    output.diffuse = float4(rgb, 1) + texcolor * 0.17f;
+        
 
     float depth = (input.position.z / input.position.w) * -1 + 1.3;   //Invert and add .3 to the depth as a buffer
     output.depth = float4(depth, depth, depth, 1);

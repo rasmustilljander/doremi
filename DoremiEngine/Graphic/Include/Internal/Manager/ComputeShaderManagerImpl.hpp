@@ -1,6 +1,7 @@
 #pragma once
 
 #define NUM_THREAD_BLOCKS 2040
+#define BLUR_DIVISION_RESOLUTION 1
 
 #include <Interface/Manager/ComputeShaderManager.hpp>
 #include <Internal/Light/LightInfoImpl.hpp>
