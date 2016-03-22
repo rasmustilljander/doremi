@@ -161,15 +161,9 @@ namespace DoremiEngine
 
             while(!succeed)
             {
-                try
+                succeed = m_localBuffer->Produce(header, buffer);
+                if(!succeed)
                 {
-                    m_localBuffer->Produce(header, buffer);
-                    succeed = true;
-                }
-                catch(...)
-                {
-                    // Do nothing
-                    // TODOXX TODORT NOt very performance nice
                     std::this_thread::sleep_for(Logging::Constants::LOGGING_PRODUCE_TIME_WAIT);
                 }
             }
