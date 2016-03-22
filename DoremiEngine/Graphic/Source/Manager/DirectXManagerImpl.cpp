@@ -24,7 +24,7 @@
 
 #define NUM_BACK_BUFFERS 2
 
-#define RESOLUTION_MULTIPLIER 1;
+#define RESOLUTION_MULTIPLIER 2;
 
 namespace DoremiEngine
 {
@@ -265,8 +265,8 @@ namespace DoremiEngine
             ID3D11Texture2D* t_glowmap;
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = m_screenResolution.x;
-            dbdesc.Height = m_screenResolution.y;
+            dbdesc.Width = m_screenResolution.x * RESOLUTION_MULTIPLIER;
+            dbdesc.Height = m_screenResolution.y * RESOLUTION_MULTIPLIER;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -393,8 +393,8 @@ namespace DoremiEngine
         {
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = m_screenResolution.x;
-            dbdesc.Height = m_screenResolution.y;
+            dbdesc.Width = m_screenResolution.x * RESOLUTION_MULTIPLIER;
+            dbdesc.Height = m_screenResolution.y * RESOLUTION_MULTIPLIER;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -429,8 +429,8 @@ namespace DoremiEngine
         {
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = m_screenResolution.x;
-            dbdesc.Height = m_screenResolution.y;
+            dbdesc.Width = m_screenResolution.x * RESOLUTION_MULTIPLIER;
+            dbdesc.Height = m_screenResolution.y * RESOLUTION_MULTIPLIER;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_R32_TYPELESS;
@@ -472,8 +472,8 @@ namespace DoremiEngine
 
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
-            viewport.Width = m_screenResolution.x;
-            viewport.Height = m_screenResolution.y;
+            viewport.Width = m_screenResolution.x * 2.0f;
+            viewport.Height = m_screenResolution.y * 2.0f;
             viewport.MinDepth = 0.0f;
             viewport.MaxDepth = 1.0f;
 
