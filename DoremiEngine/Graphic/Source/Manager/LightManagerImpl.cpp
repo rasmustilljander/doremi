@@ -23,7 +23,6 @@ namespace DoremiEngine
 
         void LightManagerImpl::InitLightManager()
         {
-
             D3D11_BUFFER_DESC lightBufferDesc;
             ZeroMemory(&lightBufferDesc, sizeof(lightBufferDesc));
             lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
