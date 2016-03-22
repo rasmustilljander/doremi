@@ -34,7 +34,7 @@ struct VOut
     float3 screenPos : SCREENPOS;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
-    float3 cameraPos : CAMERAPOS;
+    float3 cameraSpacePos : cameraSpacePos;
     float3 viewDir : VIEWDIR;
     float fogFactor : FOG;
 };
@@ -43,8 +43,8 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
 {
     VOut output;
     output.position = mul(float4(input.position, 1.0f), worldMatrices[instanceID].worldMatrix);
-    float4 cameraPos = output.position;
-    cameraPos = mul(cameraPos, viewMatrix); //flika in där här coz den behöver skiten ovanför, vill inte göra den beräkningen twice
+    float4 cameraSpacePos = output.position;
+    cameraSpacePos = mul(cameraSpacePos, viewMatrix); //flika in där här coz den behöver skiten ovanför, vill inte göra den beräkningen twice
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
@@ -55,13 +55,13 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
     output.worldPos = mul(float4(input.position, 1.0f), worldMatrices[instanceID].worldMatrix);
     output.normal = mul(float4(input.normal, 0.0f), worldMatrices[instanceID].invTransWorldMatrix).xyz;
     output.texCoord = input.texCoord;
-    output.cameraPos = cameraPos;
-    output.viewDir = cameraPos.xyz - output.worldPos.xyz;
+    output.cameraSpacePos = cameraSpacePos;
+    output.viewDir = cameraPosition.xyz - output.worldPos.xyz; //cameraPosition är kamerans position medans den andra variabeln är förhållande till kameran
     output.viewDir = normalize(output.viewDir);
 
     float fogStart = 40.0f;
     float fogEnd = 750.0f;
     // Calculate linear fog.    
-    output.fogFactor = saturate((fogEnd - cameraPos.z) / (fogEnd - fogStart));
+    output.fogFactor = saturate((fogEnd - cameraSpacePos.z) / (fogEnd - fogStart));
     return output;
 }
