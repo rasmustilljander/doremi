@@ -1,12 +1,14 @@
 #include "CommonInclude.hlsl"
-#define BLOCK_SIZE 256
+#define BLOCK_SIZE 256
+
 
 Texture2D glowmap : register (t0);
 Texture2D scene : register (t1);
 RWTexture2D<float4> output : register (u0);
 SamplerState glowSampler : register (s0);
 
-// This goes first
+// This goes first
+
 cbuffer cbFixed
 {
     static const int BLUR_SIZE = 5;
@@ -26,7 +28,7 @@ groupshared float4 gCache[BLOCK_SIZE + 2 * BLUR_SIZE];
 [numthreads(1, BLOCK_SIZE, 1)]
 void CS_main(ComputeShaderInput input)
 {
-    float2 uvDimensions = float2(2.0f/ Resolution.x, 2.0f/ Resolution.y);
+    float2 uvDimensions = float2(1.0f/ Resolution.x, 1.0f/ Resolution.y);
 
     // get the edges
     if (input.groupThreadID.y < BLUR_SIZE)

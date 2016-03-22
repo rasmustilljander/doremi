@@ -24,6 +24,8 @@
 
 #define NUM_BACK_BUFFERS 2
 
+#define RESOLUTION_MULTIPLIER 1;
+
 namespace DoremiEngine
 {
     namespace Graphic
@@ -308,8 +310,8 @@ namespace DoremiEngine
             t_glowmap = nullptr;
 
             // Create the other texture
-            dbdesc.Width = std::ceil(m_screenResolution.x / 2.0f);
-            dbdesc.Height = std::ceil(m_screenResolution.y / 2.0f);
+            dbdesc.Width = std::ceil(m_screenResolution.x / BLUR_DIVISION_RESOLUTION);
+            dbdesc.Height = std::ceil(m_screenResolution.y / BLUR_DIVISION_RESOLUTION);
             dbdesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 
             // Create texture for RTV
@@ -343,8 +345,8 @@ namespace DoremiEngine
             ID3D11Texture2D* t_colorBuffer;
             D3D11_TEXTURE2D_DESC dbdesc;
             ZeroMemory(&dbdesc, sizeof(dbdesc));
-            dbdesc.Width = m_screenResolution.x;
-            dbdesc.Height = m_screenResolution.y;
+            dbdesc.Width = m_screenResolution.x * RESOLUTION_MULTIPLIER;
+            dbdesc.Height = m_screenResolution.y * RESOLUTION_MULTIPLIER;
             dbdesc.MipLevels = 1;
             dbdesc.ArraySize = 1;
             dbdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -504,7 +506,14 @@ namespace DoremiEngine
             // Create glow sapler
 
             // for compute shader
-            texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            if(BLUR_DIVISION_RESOLUTION == 1)
+            {
+                texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+            }
+            else
+            {
+                texSamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            }
             texSamDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
             texSamDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
             texSamDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;

@@ -212,8 +212,8 @@ namespace DoremiEngine
             shaderManager.SetActiveComputeShader(m_blurHoriShader);
             DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            UINT x = static_cast<UINT>(ceil(t_screenRes.x / (FLOAT)(256 * 2)));
-            UINT y = static_cast<UINT>(t_screenRes.y / 2);
+            UINT x = static_cast<UINT>(ceil(t_screenRes.x / (FLOAT)(256 * BLUR_DIVISION_RESOLUTION)));
+            UINT y = static_cast<UINT>(t_screenRes.y / BLUR_DIVISION_RESOLUTION);
 
             m_deviceContext->Dispatch(x, y, 1);
         }
@@ -224,8 +224,8 @@ namespace DoremiEngine
             shaderManager.SetActiveComputeShader(m_blurVertShader);
             DirectX::XMFLOAT2 t_screenRes = m_graphicContext.m_graphicModule->GetSubModuleManager().GetDirectXManager().GetScreenResolution();
 
-            UINT x = static_cast<UINT>(t_screenRes.x / 2);
-            UINT y = static_cast<UINT>(ceil(t_screenRes.y / (FLOAT)(256 * 2)));
+            UINT x = static_cast<UINT>(t_screenRes.x / BLUR_DIVISION_RESOLUTION);
+            UINT y = static_cast<UINT>(ceil(t_screenRes.y / (FLOAT)(256 * BLUR_DIVISION_RESOLUTION)));
 
             m_deviceContext->Dispatch(x, y, 1);
         }

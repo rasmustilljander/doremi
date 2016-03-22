@@ -74,7 +74,7 @@ namespace Doremi
             // t_characterBodyManager.MoveController(p_entityID, XMFLOAT3(0, 0, 0), 0.017);
             // Since we don't know if this will be called befor sync or not, we set it to the transform as well
             TransformComponent* t_transComp = GetComponent<TransformComponent>(p_entityID);
-            t_transComp->position = t_triggerPosition;
+            t_transComp->position = t_triggerPosition; // gör dessa nånting?
             t_transComp->rotation = t_triggerOrientation;
 
             // Reset health
