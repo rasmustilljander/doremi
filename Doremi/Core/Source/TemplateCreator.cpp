@@ -564,6 +564,7 @@ namespace Doremi
 
         void CreateDebugPlatformsClient(const DoremiEngine::Core::SharedContext& sharedContext)
         {
+            return;
             FUNCTION_TIMER
             EntityHandler& t_entityHandler = EntityHandler::GetInstance();
 

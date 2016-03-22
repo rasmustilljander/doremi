@@ -73,6 +73,7 @@ namespace DoremiEngine
             {
                 LogTextReal("", 0, LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "Logger %s: %f", i.first.c_str(), i.second);
             }
+            std::this_thread::sleep_for(2s);
 
 #ifdef NO_LOGGER
             return;
@@ -112,7 +113,7 @@ namespace DoremiEngine
 
             // TODOXX TODORT our hardcode better value from empirical tests
             // Create localbuffer
-            m_localBuffer->Initialize(10000);
+            m_localBuffer->Initialize(Constants::IPC_FILEMAP_SIZE);
 
             // Create mutex
             m_mutex = CreateFileMapMutex();

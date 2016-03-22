@@ -96,5 +96,10 @@ namespace Doremi
         void AddToServerBrowserList(Core::Manager* p_manager);
         void AddToGraphicalManagerList(Core::Manager* p_manager);
         bool m_gameRunning;
+
+        int m_messagesPerUpdate = 0;
+        float m_testLength = 0.0;
+        bool m_stopAfterInitialize = false;
+        std::string m_message;
     };
 }

@@ -26,6 +26,8 @@
 #include <exception>
 #include <iostream>
 #include <exception> // std::set_unexpected
+#include <Utility/Utilities/Include/Test/VariableManager.hpp>
+#include <Utility/Utilities/Include/String/StringHelper.hpp>
 
 // The method called when shutting down
 void attemptGracefulShutdown();
@@ -68,6 +70,54 @@ void localMain()
     }
 }
 
+void DefaultArguments()
+{
+    VariableManager& variableManager = VariableManager::GetVariablesManager();
+    variableManager.SetValue<int>("messagesPerUpdate", 0);
+    variableManager.SetValue<float>("testLength", 0.0f);
+    variableManager.SetValue<bool>("stopAfterInitialize", false);
+    variableManager.SetValue<std::string>("message", "");
+}
+
+void ParseArguments()
+{
+
+    VariableManager& variableManager = VariableManager::GetVariablesManager();
+
+    LPWSTR* szArglist;
+    int nArgs = 0;
+    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+
+    if(nArgs == 1)
+    {
+        DefaultArguments();
+        return;
+    }
+    std::vector<std::string> subArgs;
+    for(size_t i = 1; i < nArgs; ++i)
+    {
+        using namespace Doremi::Utilities::String;
+        StringSplit(WideStringToString(szArglist[i]), ':', subArgs);
+        if(subArgs[0].compare("s") == 0)
+        {
+            variableManager.SetValue<std::string>(subArgs[1], subArgs[2]);
+        }
+        else if(subArgs[0].compare("b") == 0)
+        {
+            variableManager.SetValue<bool>(subArgs[1], std::stoi(subArgs[2]));
+        }
+        else if(subArgs[0].compare("i") == 0)
+        {
+            variableManager.SetValue<int>(subArgs[1], std::stoi(subArgs[2]));
+        }
+        else if(subArgs[0].compare("f") == 0)
+        {
+            variableManager.SetValue<float>(subArgs[1], std::stof(subArgs[2]));
+        }
+        subArgs.clear();
+    }
+}
+
 #ifdef _WIN32
 int main(int argc, const char* argv[])
 #else
@@ -85,9 +135,9 @@ int main(int argc, const char* argv[])
     // This row is required later as it disables the standard output terminal, we do now want that.
     // However, as people are currently using cout for debugging we'll need this for the moment.
     FreeConsole();
-
     __try
     {
+        ParseArguments();
         startup();
         localMain();
         shutdown();
@@ -111,7 +161,7 @@ void startup()
     {
         gameMain = new Doremi::GameMain();
     }
-    catch(...)
+    catch(std::exception e)
     {
         printf("Failed with shutdown.");
     }

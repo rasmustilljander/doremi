@@ -85,6 +85,8 @@
 #include <Doremi/Core/Include/Timing/FunctionTimer.hpp>
 #include <Utility/Utilities/Include/Chrono/Timer.hpp>
 
+#include <Utility/Utilities/Include/Test/VariableManager.hpp>
+
 // Third party
 
 // Standard libraries
@@ -94,12 +96,19 @@
 #include <iostream> //TODOLH remove once all the functionality is implemented in the menusystem
 #include <Windows.h>
 
-
 namespace Doremi
 {
     using namespace Utilities::Logging;
     using namespace Core;
-    GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true) {}
+    GameMain::GameMain() : m_sharedContext(nullptr), m_gameRunning(true)
+    {
+        VariableManager& v = VariableManager::GetVariablesManager();
+        m_messagesPerUpdate = v.GetValue<int>("messagesPerUpdate");
+        m_testLength = v.GetValue<float>("testLength");
+        m_stopAfterInitialize = v.GetValue<bool>("stopAfterInitialize");
+        m_message = v.GetValue<std::string>("message");
+        std::cout << m_testLength << std::endl;
+    }
 
     GameMain::~GameMain()
     {
@@ -175,7 +184,6 @@ namespace Doremi
         TemplateCreator::GetInstance()->CreateTemplatesForClient(sharedContext);
         // BuildWorld(sharedContext);
 
-        
 
         AudioHandler::GetInstance()->SetupContinuousRecording();
         AudioHandler::GetInstance()->StartContinuousRecording();
@@ -226,7 +234,6 @@ namespace Doremi
         TimeHandler* t_timeHandler = TimeHandler::GetInstance();
 
         t_timeHandler->PreviousClock = std::chrono::high_resolution_clock::now();
-
         while(m_gameRunning)
         {
             // Tick time
@@ -246,10 +253,20 @@ namespace Doremi
 
                 // Update accumulator and gametime
                 t_timeHandler->UpdateAccumulatorAndGameTime();
+
+                for(int i = 0; i < m_messagesPerUpdate; ++i)
+                {
+                    m_logger->LogText(LogTag::GENERAL, LogLevel::MASS_DATA_PRINT, "%s", m_message.c_str());
+                }
             }
 
             // Update alpha usd for inteprolation
             double alpha = t_timeHandler->GetFrameAlpha();
+
+            if(t_timeHandler->GameTime > m_testLength && m_testLength != 0.0)
+            {
+                m_gameRunning = false;
+            }
 
             // Interpolate the frames here
             Core::InterpolationHandler::GetInstance()->InterpolateFrame(alpha);
@@ -364,8 +381,7 @@ namespace Doremi
     void GameMain::DrawGame(double p_deltaTime)
     {
         using namespace Utilities::Logging;
-        m_logger->LogText(LogTag::GENERAL, LogLevel::MASS_DATA_PRINT, "A %d %f %s", 178, 9.3, "durp");
-        //   m_logger->LogText(LogTag::GENERAL, LogLevel::MASS_DATA_PRINT, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
         FUNCTION_TIMER
         const size_t length = m_graphicalManagers.size();
         using namespace Utilities::Logging;
@@ -416,7 +432,36 @@ namespace Doremi
         {
             FUNCTION_TIMER
             Initialize();
-            Run();
+            if(!m_stopAfterInitialize)
+            {
+                m_logger->LogText(LogTag::GAME, LogLevel::INFO, "Starting");
+                Run();
+            }
+
+            auto& map = VariableManager::GetVariablesManager().GetAllValues();
+            m_logger->LogText(LogTag::GAME, LogLevel::INFO, "Simulation parameters");
+
+            for(auto& i : map)
+            {
+                WrappedType type = ((WrapperContainer<void*>*)i.second)->type;
+                if(type == WrappedType::INT)
+                {
+                    m_logger->LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s: %d", i.first.c_str(), *((WrapperContainer<int>*)i.second)->data);
+                }
+                else if(type == WrappedType::STRING)
+                {
+                    m_logger->LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s: %s", i.first.c_str(),
+                                      (*((WrapperContainer<std::string>*)i.second)->data).c_str());
+                }
+                else if(type == WrappedType::FLOAT)
+                {
+                    m_logger->LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s: %f", i.first.c_str(), *((WrapperContainer<float>*)i.second)->data);
+                }
+                else if(type == WrappedType::BOOL)
+                {
+                    m_logger->LogText(LogTag::TIMER, LogLevel::MASS_DATA_PRINT, "%s: %d", i.first.c_str(), *((WrapperContainer<bool>*)i.second)->data);
+                }
+            }
         }
         catch(const std::exception& exception)
         {

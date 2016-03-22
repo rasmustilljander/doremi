@@ -19,11 +19,11 @@ namespace Doremi
                 auto& time = m_times.find(p_name);
                 if(time != m_times.end())
                 {
-                    m_times.emplace(p_name, p_time);
+                    m_times[p_name] += p_time;
                 }
                 else
                 {
-                    m_times[p_name] += p_time;
+                    m_times.emplace(p_name, p_time);
                 }
             }
         }

@@ -86,7 +86,7 @@ namespace DoremiEngine
                 }
             }
 
-            const std::string pathToIcon = m_graphicContext.m_workingDirectory + std::string("\Icons\\ArgeeNBeats.bmp");
+            const std::string pathToIcon = m_graphicContext.m_workingDirectory + std::string("\Icons\\AnBIcon_128.bmp");
             SDL_Surface* surface = SDL_LoadBMP(pathToIcon.c_str());
             if(surface == nullptr)
             {

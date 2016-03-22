@@ -3,6 +3,8 @@
 #include <string>
 #include <codecvt>
 #include <cstdint>
+#include <vector>
+#include <sstream>
 
 namespace Doremi
 {
@@ -33,6 +35,14 @@ namespace Doremi
                 return converterX.from_bytes(str);
             }
 
+            inline std::string WideStringToString(const std::wstring& wstr)
+            {
+                typedef std::codecvt_utf8<wchar_t> convert_typeX;
+                std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+                return converterX.to_bytes(wstr);
+            }
+
             /**
             Builds a string from a integer value and returns at least two digits.
             Ex. Input 0 Output 00
@@ -49,6 +59,17 @@ namespace Doremi
                 }
 
                 return to_string(value);
+            }
+
+            inline void StringSplit(const std::string& s, char delim, std::vector<std::string>& elems)
+            {
+                using namespace std;
+                stringstream ss(s);
+                string item;
+                while(getline(ss, item, delim))
+                {
+                    elems.push_back(item);
+                }
             }
         }
     }
