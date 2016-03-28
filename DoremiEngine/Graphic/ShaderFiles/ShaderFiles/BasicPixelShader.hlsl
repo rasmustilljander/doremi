@@ -93,10 +93,10 @@ float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
     float lightIntensity;
     float4 specular;
     float4 reflection;
-    float specularPower = 2; //denna bör material påverka sen
+    float specularPower = 2.5f; //denna bör material påverka sen
     
     // Initialize the specular color.
-    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specular = float4(specColor.xyz, 0.0f);
 
     lightDir = -l.direction;
     lightIntensity = saturate(dot(input.normal, lightDir));
@@ -106,7 +106,7 @@ float3 CalcDirectionalLight(PixelInputType input, Light l, float3 texcolor)
         reflection = float4(normalize(2 * lightIntensity * input.normal - lightDir).xyz, 0);
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-        specular = pow(saturate(dot(reflection, input.viewDir)), specularPower);
+        specular *= pow(saturate(dot(reflection, input.viewDir)), specularPower);
         return float3(((l.color * l.intensity * texcolor) + specular).xyz);
     }
 
@@ -121,7 +121,7 @@ float3 CalcSpotLight(PixelInputType input, Light l)
 float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
 {
     float3 lightVec = l.position - input.worldPos.xyz;
-    float radius = l.intensity * 20.f;
+    float radius = l.intensity * 25.f;
 
     float d = length(lightVec);
     if (d > radius)
@@ -138,13 +138,13 @@ float3 CalcPointLight(PixelInputType input, Light l, float3 texcolor)
         return float3(0, 0, 0);
     }
 
-    float att = pow(max(0.0f, 1.0 - (d / radius)), 4.0f);
+    float att = pow(max(0.0f, 1.0 - (d / radius)), 2.0f);
 
     float3 toEye = normalize(input.cameraPos - input.worldPos);
     float3 v = reflect(-lightVec, input.normal);
 
 
-    float specFactor = pow(max(dot(v, toEye), 0.0f), 1.0f) * 0.5;
+    float specFactor = pow(max(dot(v, toEye), 0.0f), 1.0f) * specColor.x; //borde nog inte vara specColor utan nått annat specular värde mellan 0-1
 
     return (l.color * att * (diffuseFactor + specFactor)) * texcolor;
 }
@@ -157,7 +157,7 @@ float3 CalcPointLight2(PixelInputType input, Light l, float3 texcolor)
     float attenuation;
 
     float3 lightVec = l.position - input.worldPos.xyz;
-    float radius = l.intensity * 25.f;
+    float radius = l.intensity * 30.f;
     float d = length(lightVec);
 
     if (d < radius)
@@ -215,15 +215,15 @@ PixelOutputType PS_main(PixelInputType input)
     //rgb += skymapReflection * specEccentricity;
 
     Light directionalLight;
-    directionalLight.intensity = 0.7f;
+    directionalLight.intensity = 1.1f;
     directionalLight.color = float3(0.2f ,0.2f ,0.7f);
     directionalLight.direction = normalize(float3(0.3, -0.8, 0));
     rgb += CalcDirectionalLight(input, directionalLight, texcolor);
 
-    directionalLight.intensity = 0.3f;
+    /*directionalLight.intensity = 0.3f;
     directionalLight.color = float3(0.7f, 0.2f, 0.2f);
     directionalLight.direction = normalize(float3(-0.4, -0.8, 0.1));
-    rgb += CalcDirectionalLight(input, directionalLight, texcolor);
+    rgb += CalcDirectionalLight(input, directionalLight, texcolor);*/
 
     for (int i = index; i < index + value; i++)
         //for (int i = 0; i < 200; i++)

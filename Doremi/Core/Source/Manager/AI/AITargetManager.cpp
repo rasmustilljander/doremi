@@ -100,7 +100,7 @@ namespace Doremi
                     RangeComponent* aiRange = t_entityHandler.GetComponentFromStorage<RangeComponent>(i);
                     int closestVisiblePlayer = -1;
 
-                    float checkRange = 1000;
+                    float checkRange = 1400;
                     float closestDistance = checkRange; // Hardcoded range, not intreseted if player is outside this
                     int onlyOnePlayerCounts = 1;
                     // Check waht player is close and visible

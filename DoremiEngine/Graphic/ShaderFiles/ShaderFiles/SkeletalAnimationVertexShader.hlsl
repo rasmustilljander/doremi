@@ -61,8 +61,8 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
     output.viewDir = cameraPos.xyz - output.worldPos.xyz;
     output.viewDir = normalize(output.viewDir);
 
-    float fogStart = 100.0f;
-    float fogEnd = 750.0f;
+    float fogStart = 10.0f;
+    float fogEnd = 1250.0f;
     // Calculate linear fog.    
     output.fogFactor = saturate((fogEnd - cameraPos.z) / (fogEnd - fogStart));
     return output;
