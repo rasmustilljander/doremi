@@ -59,8 +59,8 @@ VOut VS_main(VertexInputType input, uint instanceID : SV_InstanceID)
     output.viewDir = cameraPosition.xyz - output.worldPos.xyz; //cameraPosition är kamerans position medans den andra variabeln är förhållande till kameran
     output.viewDir = normalize(output.viewDir);
 
-    float fogStart = 40.0f;
-    float fogEnd = 750.0f;
+    float fogStart = 10.0f;
+    float fogEnd = 1250.0f;
     // Calculate linear fog.    
     output.fogFactor = saturate((fogEnd - cameraSpacePos.z) / (fogEnd - fogStart));
     return output;

@@ -120,7 +120,7 @@ void CS_main(ComputeShaderInput input)
             switch (l.type)
             {
             case 3: //pointlight
-                Sphere sphere = { mul(float4(l.position, 1), viewMatrix).xyz, l.intensity * 10.f}; //TODORK change intensity to light range 25
+                Sphere sphere = { mul(float4(l.position, 1), viewMatrix).xyz, l.intensity * 15.0f}; //TODORK change intensity to light range 25, 10 från början
                 if (SphereInsideFrustum(sphere, GroupFrustum, nearClipVS, maxDepthVS))
                 {
                     // Add light to light list for transparent geometry.
