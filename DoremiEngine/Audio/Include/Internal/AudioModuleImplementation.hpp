@@ -87,6 +87,9 @@ namespace DoremiEngine
 
             void StopSoundGroup(const SoundGroup& p_group) override;
 
+            void SetCutOffAmplitude(const float& p_cutOff) override { m_cutOffAmplitude = p_cutOff; };
+
+            const float& GetCutOffAmplitude() const override { return m_cutOffAmplitude; };
         private:
             void ERRCHECK(const FMOD_RESULT& p_Result);
             void SetChannelGroup(FMOD::Channel* o_channel, SoundGroup p_group);
@@ -114,6 +117,8 @@ namespace DoremiEngine
             static const int m_spectrumSize = 8192;
             const float m_spectrumRange = ((float)m_outputRate / 2.0f);
             const float m_binSize = m_spectrumRange / ((float)m_spectrumSize);
+
+            float m_cutOffAmplitude = 0.5;
         };
     }
 }

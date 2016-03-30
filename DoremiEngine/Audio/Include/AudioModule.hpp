@@ -144,6 +144,16 @@ namespace DoremiEngine
             Stops all sounds in the given sound group
             */
             virtual void StopSoundGroup(const SoundGroup& p_group) = 0;
+
+            /**
+            Sets the recorders cut off amplitude
+            */
+            virtual void SetCutOffAmplitude(const float& p_cutOff) = 0;
+
+            /**
+            Gets the recorders cut off amplitude
+            */
+            virtual const float& GetCutOffAmplitude() const = 0;
         };
     }
 }

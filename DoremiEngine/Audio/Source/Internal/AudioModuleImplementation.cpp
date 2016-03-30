@@ -397,12 +397,15 @@ namespace DoremiEngine
             float spectrum[m_spectrumSize];
             t_result = m_fmodChannel[p_channelID]->getSpectrum(spectrum, m_spectrumSize, 0, FMOD_DSP_FFT_WINDOW_TRIANGLE);
             ERRCHECK(t_result);
+            float amplitudes[m_spectrumSize];
+            t_result = m_fmodChannel[p_channelID]->getWaveData(amplitudes, m_spectrumSize, 0);
+            ERRCHECK(t_result);
 
             float max = 0;
             size_t highestFrequencyBand = 0;
-            for(size_t i = 0; i < 8192; i++)
+            for(size_t i = 0; i < m_spectrumSize; i++)
             {
-                if(spectrum[i] > 0.0001f && spectrum[i] > max)
+                if(spectrum[i] > 0.0001f && spectrum[i] > max && abs(amplitudes[i]) > m_cutOffAmplitude)
                 {
                     max = spectrum[i];
                     highestFrequencyBand = i;
@@ -413,6 +416,7 @@ namespace DoremiEngine
                 }
             }
             float dominantHz = (float)highestFrequencyBand * m_binSize;
+
             if(dominantHz < 20)
             {
                 dominantHz = 0;
