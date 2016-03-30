@@ -79,6 +79,9 @@ namespace DoremiEngine
             m_effectGroup->setVolume(effectVolume);
             t_masterChannelGroup->setVolume(masterVolume);
 
+            // set cut off amplitude value
+            m_cutOffAmplitude = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().AmplitudeCutOff;
+
             // Create channel groups
         }
 

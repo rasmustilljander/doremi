@@ -101,6 +101,21 @@ namespace Doremi
 
             m_checkBoxes.push_back(&m_fullscreenCheckbox);
 
+            // Add recording hearing on off textures
+            t_data.position = XMFLOAT2(0.9f, 0.725f);
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            DoremiEngine::Graphic::MaterialInfo* t_hearing = t_meshManager.BuildMaterialInfo("RecordingHeard.dds");
+            DoremiEngine::Graphic::MaterialInfo* t_notHearing = t_meshManager.BuildMaterialInfo("RecordingNotHeard.dds");
+
+            ScreenObject t_objectHearing = ScreenObject(t_hearing, t_spriteInfo);
+            ScreenObject t_objectNotHearing = ScreenObject(t_notHearing, t_spriteInfo);
+            std::vector<ScreenObject> t_objectToHold;
+            t_objectToHold.push_back(t_objectHearing);
+            t_objectToHold.push_back(t_objectNotHearing);
+            m_recordingHearing = ObjectHolder(t_objectToHold);
+            m_objectHolders.push_back(&m_recordingHearing);
+
+            // Some extra stuff!
             CreateButtons(p_sharedContext);
             CreateScreenResolutionOption(p_sharedContext);
             CreateRefreshOption(p_sharedContext);
@@ -338,6 +353,16 @@ namespace Doremi
             t_newSlider->UpdateSlider(t_audioMusic);
             m_sliders.push_back(t_newSlider);
 
+            // Audio, cut off amp
+            t_dataBack.position.y = 0.725f;
+            t_dataCircle.position.y = 0.725f;
+            t_spriteInfoSliderBack = t_meshManager.BuildSpriteInfo(t_dataBack);
+            t_spriteInfoSliderCircle = t_meshManager.BuildSpriteInfo(t_dataCircle);
+            float t_cutOff = configInfo.AmplitudeCutOff;
+            t_newSlider = new Slider(SliderEffect::RECORDING_CUTOFFAMPLITUDE, t_matInfoSliderBack, t_spriteInfoSliderBack, t_matInfoSliderCircle,
+                                     t_spriteInfoSliderCircle);
+            t_newSlider->UpdateSlider(t_cutOff);
+            m_sliders.push_back(t_newSlider);
 
             // Mouse sence
             t_dataBack.position.y = 0.770f;
@@ -667,6 +692,16 @@ namespace Doremi
                         }
                     }
                 }
+            }
+
+            // Check if we currently have a frequency to determine if the player is effecting
+            if(AudioHandler::GetInstance()->GetFrequency() > 0)
+            {
+                m_recordingHearing.SetCurrentObject(0);
+            }
+            else
+            {
+                m_recordingHearing.SetCurrentObject(1);
             }
 
             // Check to exit TODO move place of code
@@ -1063,6 +1098,12 @@ namespace Doremi
                 {
                     configInfo.MusicVolume = percent;
                     AudioHandler::GetInstance()->SetMusicVolume(percent);
+                    break;
+                }
+                case Doremi::Core::SliderEffect::RECORDING_CUTOFFAMPLITUDE:
+                {
+                    configInfo.AmplitudeCutOff = percent;
+                    AudioHandler::GetInstance()->SetAmplitudeCutOff(percent);
                     break;
                 }
                 case Doremi::Core::SliderEffect::MOUSE_SENSE:

@@ -18,6 +18,7 @@ namespace Doremi
             SOUND_MASTER,
             SOUND_EFFECTS,
             SOUND_MUSIC,
+            RECORDING_CUTOFFAMPLITUDE,
             MOUSE_SENSE,
         };
 

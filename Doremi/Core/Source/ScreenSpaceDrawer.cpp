@@ -329,6 +329,12 @@ namespace Doremi
                 t_meshManager.AddSpriteToRenderList(*(t_box->m_button.m_spriteInfo), *(t_box->m_button.m_materialInfo));
             }
 
+            // Draw the object holders
+            std::vector<ObjectHolder*> t_objectHolders = OptionsHandler::GetInstance()->GetObjectHolders();
+            for(auto& t_holder : t_objectHolders)
+            {
+                t_meshManager.AddSpriteToRenderList(*(t_holder->GetCurrentObject().m_spriteInfo), *(t_holder->GetCurrentObject().m_materialInfo));
+            }
 
             // Draw drop downs LAAAST
             // Get buttons to draw
