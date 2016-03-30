@@ -65,6 +65,8 @@ namespace Doremi
             void SetEffectVolume(const float& p_volume);
             // Sets the music volume 0 is no audio 1 is max audio
             void SetMusicVolume(const float& p_volume);
+            // Sets the amplitude cut off, between 0 and 1
+            void SetAmplitudeCutOff(const float& p_cutOff);
             // Stops all effect sounds
             void StopEffectSounds();
 

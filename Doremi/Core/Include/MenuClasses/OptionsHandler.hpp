@@ -10,6 +10,7 @@
 #include <Doremi/Core/Include/MenuClasses/Text.hpp>
 #include <DoremiEngine/Graphic/Include/Interface/Manager/DirectXManager.hpp>
 #include <Doremi/Core/Include/MenuClasses/CheckBox.hpp>
+#include <Doremi/Core/Include/MenuClasses/ObjectHolder.hpp>
 
 namespace DoremiEngine
 {
@@ -75,7 +76,7 @@ namespace Doremi
             auto GetHighlightButton() { return m_highlightedButton; }
             auto& GetBasicMenuItems() { return m_basicItems; }
             auto& GetCheckBoxes() { return m_checkBoxes; }
-
+            auto& GetObjectHolders() { return m_objectHolders; }
         private:
             explicit OptionsHandler(const DoremiEngine::Core::SharedContext& p_sharedContext);
 
@@ -127,6 +128,9 @@ namespace Doremi
 
             Button* m_highlightedButton;
 
+            // Object holder for hearing recording
+            ObjectHolder m_recordingHearing;
+
             // only for drop downs to get info
             uint32_t m_highlightedWidth;
             uint32_t m_highlightedHegiht;
@@ -141,6 +145,7 @@ namespace Doremi
             std::vector<Text*> m_text;
             std::vector<MenuItemBasic*> m_basicItems;
             std::vector<CheckBox*> m_checkBoxes;
+            std::vector<ObjectHolder*> m_objectHolders;
 
             std::vector<Slider*> m_sliders;
 

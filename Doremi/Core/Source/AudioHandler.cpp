@@ -171,6 +171,12 @@ namespace Doremi
             t_audioModule.SetSoundGroupVolume(p_volume, DoremiEngine::Audio::SoundGroup::Music);
         }
 
+        void AudioHandler::SetAmplitudeCutOff(const float& p_cutOff)
+        {
+            DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();
+            t_audioModule.SetCutOffAmplitude(p_cutOff);
+        }
+
         void AudioHandler::StopEffectSounds()
         {
             DoremiEngine::Audio::AudioModule& t_audioModule = m_sharedContext.GetAudioModule();

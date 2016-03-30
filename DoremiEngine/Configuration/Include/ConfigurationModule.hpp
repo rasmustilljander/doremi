@@ -31,6 +31,7 @@ namespace DoremiEngine
             float MasterVolume = 0.5f;
             float EffectVolume = 1.0f;
             float MusicVolume = 1.0f;
+            float AmplitudeCutOff = 0.0f;
 
             // Network stuff
             int UseIPMaster = 1;

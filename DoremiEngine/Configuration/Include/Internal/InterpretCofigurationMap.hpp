@@ -166,6 +166,10 @@ namespace DoremiEngine
             {
                 o_info.Fullscreen = std::stoi(p_mapToInterpret.at("Fullscreen"));
             }
+            if(p_mapToInterpret.count("AmplitudeCutOff"))
+            {
+                o_info.AmplitudeCutOff = std::stof(p_mapToInterpret.at("AmplitudeCutOff"));
+            }
         }
 
         static std::map<std::string, std::string> SaveConfigToMap(const ConfiguartionInfo& p_info)
@@ -211,6 +215,7 @@ namespace DoremiEngine
             returnMap["JumpPower"] = std::to_string(p_info.JumpPower);
             returnMap["FriendlyFire"] = std::to_string(p_info.FriendlyFire);
             returnMap["Fullscreen"] = std::to_string(p_info.Fullscreen);
+            returnMap["AmplitudeCutOff"] = std::to_string(p_info.AmplitudeCutOff);
             return returnMap;
         }
     }
