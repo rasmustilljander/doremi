@@ -154,10 +154,9 @@ namespace DoremiEngine
         {
             using namespace DirectX;
             // If there is no positive actor/goal to go to simply dont move!
-            bool goalInRange = AnyPositiveGoalInRange(p_unitPosition);
-            if(!goalInRange)
+            p_goalInRange = AnyPositiveGoalInRange(p_unitPosition);
+            if(!p_goalInRange)
             {
-                p_goalInRange = false;
                 return p_unitPosition;
             }
 
