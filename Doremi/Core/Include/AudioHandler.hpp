@@ -56,6 +56,7 @@ namespace Doremi
             // Update to analyse sound. Contains switch case to control what sound is supposed to be analysed and when.
             void Update(double p_deltaTime);
             float GetFrequency() const { return m_currentFrequency; };
+            float GetAmplitudeOfRecording() const { return m_currentAmplitude; };
             // Returns the current frequency from the repeatable sound. It is fetched from an array with the help of the recordpointer from the
             // playing sound.
             float GetRepeatableSoundFrequency();
@@ -90,8 +91,9 @@ namespace Doremi
             int m_repeatableFrequencyAnalyserSoundID;
             int m_outputRepeatableSoundChannelID;
             int m_outputRepeatableSoundID;
-            // The current frequency that just got analysed
+            // The current frequency that just got analysed, and the amplitude
             float m_currentFrequency;
+            float m_currentAmplitude;
             // Used to control the flow of pdate function. Cant use the function until the array is filled with values
             bool m_repeatableAnalysisComplete;
             // Keeps the time that the gunreloadbutton was pressed down

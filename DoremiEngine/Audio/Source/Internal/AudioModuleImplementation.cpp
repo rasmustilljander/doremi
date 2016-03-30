@@ -394,8 +394,9 @@ namespace DoremiEngine
             m_fmodResult = m_fmodSystem->recordStop(0);
             ERRCHECK(m_fmodResult);
         }
-        float AudioModuleImplementation::AnalyseSoundSpectrum(const int& p_channelID)
+        float AudioModuleImplementation::AnalyseSoundSpectrum(const int& p_channelID, float& o_amplitude)
         {
+            o_amplitude = 0;
             FMOD_RESULT t_result;
             float spectrum[m_spectrumSize];
             t_result = m_fmodChannel[p_channelID]->getSpectrum(spectrum, m_spectrumSize, 0, FMOD_DSP_FFT_WINDOW_TRIANGLE);
@@ -408,10 +409,14 @@ namespace DoremiEngine
             size_t highestFrequencyBand = 0;
             for(size_t i = 0; i < m_spectrumSize; i++)
             {
-                if(spectrum[i] > 0.0001f && spectrum[i] > max && abs(amplitudes[i]) > m_cutOffAmplitude)
+                if(spectrum[i] > 0.0001f && spectrum[i] > max)
                 {
-                    max = spectrum[i];
-                    highestFrequencyBand = i;
+                    o_amplitude = abs(amplitudes[i]);
+                    if(o_amplitude > m_cutOffAmplitude)
+                    {
+                        max = spectrum[i];
+                        highestFrequencyBand = i;
+                    }
                 }
                 else
                 {

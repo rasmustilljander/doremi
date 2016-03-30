@@ -201,7 +201,7 @@ namespace Doremi
             switch(m_SoundState)
             {
                 case Doremi::Core::AudioHandler::ANALYSECONTINUOUS:
-                    m_currentFrequency = t_audioModule.AnalyseSoundSpectrum(m_continuousFrequencyAnalyserChannelID);
+                    m_currentFrequency = t_audioModule.AnalyseSoundSpectrum(m_continuousFrequencyAnalyserChannelID, m_currentAmplitude);
                     break;
 
                 case Doremi::Core::AudioHandler::HOLDCONTINUOUSANALYSIS:
@@ -252,7 +252,8 @@ namespace Doremi
                         if(m_accumulatedDeltaTime > m_frequencyVectorPrecision)
                         {
                             m_accumulatedDeltaTime = 0; /// Ta tidsintervallet multiplicera med m_frequencyVectorPrecision å ta det arrayvärdet!!
-                            m_frequencies.push_back(t_audioModule.AnalyseSoundSpectrum(m_repeatableFrequencyAnalyserChannelID));
+                            float t_dummy;
+                            m_frequencies.push_back(t_audioModule.AnalyseSoundSpectrum(m_repeatableFrequencyAnalyserChannelID, t_dummy));
                         }
                         else
                         {

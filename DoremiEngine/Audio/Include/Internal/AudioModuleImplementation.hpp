@@ -61,7 +61,7 @@ namespace DoremiEngine
 
             int StartRecording(int p_soundID, bool p_loopRec) override;
 
-            float AnalyseSoundSpectrum(const int& p_channelID) override;
+            float AnalyseSoundSpectrum(const int& p_channelID, float& o_amplitude) override;
 
             int Setup3DSound(float p_dopplerScale, float p_distanceFactor, float p_rollOffScale) override;
 

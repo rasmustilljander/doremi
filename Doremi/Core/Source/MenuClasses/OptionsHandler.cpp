@@ -115,6 +115,27 @@ namespace Doremi
             m_recordingHearing = ObjectHolder(t_objectToHold);
             m_objectHolders.push_back(&m_recordingHearing);
 
+            // recording volume bar
+            t_data.halfsize = XMFLOAT2(0.08f, 0.02f);
+            t_data.origo = XMFLOAT2(0.0f, 0.0f);
+            t_data.position = XMFLOAT2(0.75f, 0.7f);
+            t_data.txtPos = XMFLOAT2(0.0f, 0.0f);
+            t_data.txtSize = XMFLOAT2(1.0f, 1.0f);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Health.dds");
+            ScreenObject t_barBar = ScreenObject(t_matInfo, t_spriteInfo);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Frame.dds");
+            ScreenObject t_frontBar = ScreenObject(t_matInfo, t_spriteInfo);
+
+            t_spriteInfo = t_meshManager.BuildSpriteInfo(t_data);
+            t_matInfo = t_meshManager.BuildMaterialInfo("HealthbarCropped_Background.dds");
+            ScreenObject t_backBar = ScreenObject(t_matInfo, t_spriteInfo);
+
+            m_soundBar = Bar(t_barBar, t_backBar, t_frontBar, 0.75f, 0.08f);
+            m_bars.push_back(&m_soundBar);
             // Some extra stuff!
             CreateButtons(p_sharedContext);
             CreateScreenResolutionOption(p_sharedContext);
@@ -695,7 +716,8 @@ namespace Doremi
             }
 
             // Check if we currently have a frequency to determine if the player is effecting
-            if(AudioHandler::GetInstance()->GetFrequency() > 0)
+            float amplitudeCutOff = m_sharedContext.GetConfigurationModule().GetAllConfigurationValues().AmplitudeCutOff;
+            if(AudioHandler::GetInstance()->GetAmplitudeOfRecording() > amplitudeCutOff)
             {
                 m_recordingHearing.SetCurrentObject(0);
             }
@@ -703,7 +725,7 @@ namespace Doremi
             {
                 m_recordingHearing.SetCurrentObject(1);
             }
-
+            m_soundBar.UpdateProgress(AudioHandler::GetInstance()->GetAmplitudeOfRecording());
             // Check to exit TODO move place of code
             if(t_inputHandler->CheckForOnePress(static_cast<uint32_t>(UserCommandPlaying::ExitGame)))
             {
