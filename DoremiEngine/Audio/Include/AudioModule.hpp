@@ -91,7 +91,7 @@ namespace DoremiEngine
             /**
             Analyze a sound at the giving moment and returns the frequency
             */
-            virtual float AnalyseSoundSpectrum(const int& p_channelID) = 0;
+            virtual float AnalyseSoundSpectrum(const int& p_channelID, float& o_amplitude) = 0;
             /**
             Returns the pointer of the position in recording
             */

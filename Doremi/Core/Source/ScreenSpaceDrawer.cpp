@@ -267,6 +267,26 @@ namespace Doremi
             Button* m_highlightedButton = OptionsHandler::GetInstance()->GetHighlightButton();
             Text* m_highlightedText = nullptr;
 
+            // Get bars to draw
+            std::vector<Bar*>& t_barsToDraw = OptionsHandler::GetInstance()->GetBars();
+
+            // For each button add to render list
+            // Remember to draw them Back->Bar->front
+            for(auto& t_bar : t_barsToDraw)
+            {
+                if(t_bar->m_barBack.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBack.m_spriteInfo), *(t_bar->m_barBack.m_materialInfo));
+                }
+
+                t_meshManager.AddSpriteToRenderList(*(t_bar->m_barBar.m_spriteInfo), *(t_bar->m_barBar.m_materialInfo));
+
+                if(t_bar->m_barFront.m_spriteInfo != nullptr)
+                {
+                    t_meshManager.AddSpriteToRenderList(*(t_bar->m_barFront.m_spriteInfo), *(t_bar->m_barFront.m_materialInfo));
+                }
+            }
+
             // Get buttons to draw
             std::vector<Button*> t_buttonsToDraw = OptionsHandler::GetInstance()->GetButtons();
 
