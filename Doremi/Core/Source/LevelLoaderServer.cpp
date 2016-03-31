@@ -171,6 +171,7 @@ namespace Doremi
                 PotentialFieldComponent* potComp = EntityHandler::GetInstance().GetComponentFromStorage<PotentialFieldComponent>(p_entityId);
                 potComp->ChargedActor = m_sharedContext.GetAIModule().GetPotentialFieldSubModule().CreateNewActor(transComp->position, -1, 2, true,
                                                                                                                   DoremiEngine::AI::AIActorType::Wall); // TODOCONFIG hardcoded shiet
+                potComp->isField = false;
             }
 
             // If a spawner, mostly enemy spawners
