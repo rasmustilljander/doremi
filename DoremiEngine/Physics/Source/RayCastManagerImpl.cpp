@@ -171,6 +171,7 @@ namespace DoremiEngine
             PxBoxGeometry box = PxBoxGeometry(halfExtents);
             /// Paramters for the sweep
             // PxGeometry* geometry
+            bool status = m_utils.m_worldScene->overlap(box, position, hit);
             size_t numberOfHits = hit.getNbAnyHits();
             for(size_t i = 0; i < numberOfHits; i++)
             {
