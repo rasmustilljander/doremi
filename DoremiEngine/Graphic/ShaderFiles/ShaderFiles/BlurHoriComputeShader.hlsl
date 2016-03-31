@@ -78,7 +78,7 @@ groupshared float4 gCache[BLOCK_SIZE + BLUR_SIZE * 2];
 [numthreads(BLOCK_SIZE, 1, 1)]
 void CS_main(ComputeShaderInput input)
 {
-    int2 topLeftBoxID = input.dispatchThreadID.xy * 2;
+    int2 topLeftBoxID = input.dispatchThreadID.xy * 1; //multeplicera med screenres multiplierns värde
 
     // get the edges
     if (input.groupThreadID.x < BLUR_SIZE)
@@ -114,15 +114,14 @@ void CS_main(ComputeShaderInput input)
         int k = input.groupThreadID.x + BLUR_SIZE + i;
         blurColor += gWeights[i + BLUR_SIZE] * gCache[k];
     }
-    output[input.dispatchThreadID.xy] = blurColor + color[topLeftBoxID.xy]*0.25f + 
-                                                    color[int2(topLeftBoxID.x + 1, topLeftBoxID.y)]*0.25f + 
-                                                    color[int2(topLeftBoxID.x, topLeftBoxID.y + 1)] * 0.25f +
-                                                    color[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)] * 0.25f;
+    output[input.dispatchThreadID.xy] = blurColor + color[topLeftBoxID.xy] * 0.25f +
+        color[int2(topLeftBoxID.x + 1, topLeftBoxID.y)] * 0.25f +
+        color[int2(topLeftBoxID.x, topLeftBoxID.y + 1)] * 0.25f +
+        color[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)] * 0.25f;
     /*output[topLeftBoxID.xy] = blurColor + color[topLeftBoxID.xy];
     output[int2(topLeftBoxID.x + 1, topLeftBoxID.y)] = blurColor + color[int2(topLeftBoxID.x + 1, topLeftBoxID.y)];
     output[int2(topLeftBoxID.x,     topLeftBoxID.y + 1)] = blurColor + color[int2(topLeftBoxID.x, topLeftBoxID.y + 1)];
     output[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)] = blurColor + color[int2(topLeftBoxID.x + 1, topLeftBoxID.y + 1)];
-*/
-    // I did for 4 .. for some reason
+    */
 
 }

@@ -24,7 +24,7 @@
 
 #define NUM_BACK_BUFFERS 2
 
-#define RESOLUTION_MULTIPLIER 2;
+#define RESOLUTION_MULTIPLIER 1;
 
 namespace DoremiEngine
 {
@@ -472,8 +472,8 @@ namespace DoremiEngine
 
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
-            viewport.Width = m_screenResolution.x * 2.0f;
-            viewport.Height = m_screenResolution.y * 2.0f;
+            viewport.Width = m_screenResolution.x * RESOLUTION_MULTIPLIER;
+            viewport.Height = m_screenResolution.y * RESOLUTION_MULTIPLIER;
             viewport.MinDepth = 0.0f;
             viewport.MaxDepth = 1.0f;
 
