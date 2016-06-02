@@ -2,28 +2,28 @@ PA2526 Large Game Project @ Blekinge Institute of Technology
 ==
 
 A project spanning 20 weeks in where the goal is to design and build a game and a gameengine from scratch using C++.
-
+Results: https://www.youtube.com/watch?v=4Mtn9GxZqxM
 
 Team members
 ------------
 |	Name				|	Nickname	|	TODO acronym	|
 | --------------------- | ------------- | ----------------- |
-| Eric Ahlström		    |				| TODOEA			|
+| Eric AhlstrÃ¶m		    |				| TODOEA			|
 | John Bergsten			|   			| TODOJB			|
 | Lucas Holmqvist		| 	            | TODOLH			|
-| Simon Hyltegård		| 		        | TODOSH			|
+| Simon HyltegÃ¥rd		| 		        | TODOSH			|
 | Christian Markowicz   | 			    | TODOCM			|
-| Rebecca Künkel		| 		        | TODORK			|
+| Rebecca KÃ¼nkel		| 		        | TODORK			|
 | Rasmus Tilljander 	| bulten/meraz	| TODORT			|
 | Joakim Westgren   	|         		| TODOJW			|
-| Konrad Öhman    		|				| TODOKO			|
+| Konrad Ã–hman    		|				| TODOKO			|
 
 
 License
 =
 The MIT License (MIT)
 
-Copyright (c) 2015 Eric Ahlström, John Bergsten, Lucas Holmqvist, Simon Hyltegård, Christian Markowicz, Rebecca Künkel, Rasmus Tilljander, Joakim Westgren, Konrad Öhman
+Copyright (c) 2015 Eric AhlstrÃ¶m, John Bergsten, Lucas Holmqvist, Simon HyltegÃ¥rd, Christian Markowicz, Rebecca KÃ¼nkel, Rasmus Tilljander, Joakim Westgren, Konrad Ã–hman
 When there are too many copyright holders for the same file the copyright holder will be set to "ArgeeNBeats Group".
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
